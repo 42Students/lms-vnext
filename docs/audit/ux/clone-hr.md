@@ -169,7 +169,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] `src/components/hr/hr-recruiter-bell.tsx`
 - [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
 - [ ] `src/components/hr/recruiter-applicant-review-drawer.tsx`
-- [ ] `src/components/hr/recruiter-conversation-live-refresh.tsx`
+- [x] `src/components/hr/recruiter-conversation-live-refresh.tsx` (null-only nonvisual helper; source controls/hex/DOM/overlays 0; own CSS, hover, focus and responsive: N/A; existing effect unchanged)
 - [ ] `src/components/hr/recruiter-conversation-read-control.tsx`
 - [ ] `src/components/hr/recruiter-conversation-reply-form.tsx`
 - [ ] `src/components/hr/recruiter-decision-read-button.tsx`
@@ -187,8 +187,8 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 
 ### 5. `src/components/tracker` — 17 TSX files
 
-- [ ] `src/components/tracker/audit-finding-filter-memory.tsx`
-- [ ] `src/components/tracker/audit-finding-filter-persistence.tsx`
+- [x] `src/components/tracker/audit-finding-filter-memory.tsx` (null-only nonvisual helper; source controls/hex/DOM/overlays 0; own CSS, hover, focus and responsive: N/A; existing effect unchanged)
+- [x] `src/components/tracker/audit-finding-filter-persistence.tsx` (null-only nonvisual helper; source controls/hex/DOM/overlays 0; own CSS, hover, focus and responsive: N/A; existing effect unchanged)
 - [ ] `src/components/tracker/audit-finding-status-action.tsx`
 - [ ] `src/components/tracker/independent-finding-actions.tsx`
 - [ ] `src/components/tracker/independent-finding-copy-action.tsx`
@@ -501,3 +501,19 @@ For the round editor, paired `div` 3/3, `article` 1/1, `form` 2/2, `Button` 2/2.
 **Strict tick outcome:** none of these visible pages/components were ticked because complete default/hover/active/focus/disabled/error/loading value matching and physical mobile/tablet render proof are not available. See clone-sheets.md for E8. No CI/tests/build/app run.
 
 **Next HR file:** `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx` and its recruiter alias, then `src/components/tracker/tracker-live-logs-explorer.tsx` large sheet parity.
+
+
+## Nonvisual helper closure — 3 strict source ticks
+
+The following three work-queue items return `null` unconditionally and define **no own DOM, CSS selectors, responsive element, canvas, focusable control or modal**. They own only URL/filter or authorized refresh effects, which are unchanged:
+
+| File | Visual property/state | Legacy property source | vNext property source | Match |
+| --- | --- | --- | --- | --- |
+| `src/components/hr/recruiter-conversation-live-refresh.tsx` | Typography/colour/size/border/default/hover/active/focus/disabled/loading/error | `docs/design/old-lms-pages.md:6-12`: not applicable without a rendered element | `recruiter-conversation-live-refresh.tsx`: unconditional `return null` | N/A, zero styles |
+| `src/components/hr/recruiter-conversation-live-refresh.tsx` | Phone at max 767px, tablet at 768px+ | `components___listing-page-header.scss:131-158`: no element in this helper | `return null`; no styles/breakpoints | N/A, zero wrapper |
+| `src/components/tracker/audit-finding-filter-memory.tsx` | All visual states and viewport rules | `old-lms-pages.md:6-12`: no visual control to clone | `audit-finding-filter-memory.tsx`: unconditional `return null` | N/A, zero wrapper |
+| `src/components/tracker/audit-finding-filter-persistence.tsx` | All visual states and viewport rules | `old-lms-pages.md:6-12`: no visual control to clone | `audit-finding-filter-persistence.tsx`: unconditional `return null` | N/A, zero wrapper |
+
+**Complete source coverage:** each file was fetched in full on the lane; exact source scan `/<(button|input|select|textarea|table)(?=[\\s/>])/g` = 0, `/#[0-9a-fA-F]{3,8}\\b/g` = 0, `/<h1(?=[\\s>])/g` = 0, `/<[a-z][a-z0-9-]*(?=[\\s/>])/g` = 0 JSX intrinsic opening elements. `recruiter-conversation-live-refresh.tsx` contains a **string selector** `[role="dialog"]` solely to avoid refreshing while a dialog is open; this is not rendered JSX. There is no custom overlay. Helper effects were left identical; no regression of business effects from this documentation-only tick. No physical pixel test claimed because these components render no elements.
+
+**Next rich HR file:** `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx` (source updated, state proof still open). 
