@@ -101,6 +101,14 @@ export function topbarSearchDestinations(pathname: string, text: string) {
       {label:"Search people",href:"/admin/people/directory?q="+enc},
       {label:"Search companies",href:"/admin/companies?q="+enc},
     ];
+    case "hr": return [
+      {label:"Search drives",href:"/hr/drives?q="+enc},
+      {label:"Search conversations",href:"/hr/conversations?q="+enc},
+    ];
+    case "college": return [
+      {label:"Search students",href:"/college/students?q="+enc},
+      {label:"Search courses",href:"/college/courses?q="+enc},
+    ];
     default: return [] as {label:string;href:string}[];
   }
 }
