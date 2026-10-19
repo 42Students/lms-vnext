@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 
 import Link from "next/link";
@@ -16,11 +17,11 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
     <nav aria-label="Drive workspace sections"
       className="min-w-0 border-b border-border pb-2">
       <label className="grid gap-1 text-sm font-semibold sm:hidden">Workspace section
-        <select aria-label="Drive workspace section" value={selected}
+        <Select aria-label="Drive workspace section" value={selected}
           onChange={event=>router.push(event.target.value)}
           className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           {tabs.map(tab=><option key={tab.href} value={tab.href}>{tab.label}</option>)}
-        </select>
+        </Select>
       </label>
       <div className="hidden min-w-0 flex-wrap items-center gap-1 sm:flex">
       {tpoDriveTabs(jobId).map((tab) => {
