@@ -66,7 +66,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   </dl>
   <div className="flex flex-wrap gap-2 text-xs">
    {journey.undecided!==null?<Badge tone="warning">Not decided: {journey.undecided}</Badge>:null}
-   {journey.registrationGap!==null?<span className="rounded-[var(--lms-control-radius)] bg-muted px-2 py-1">No choice recorded: {journey.registrationGap}</span>:null}
+   {journey.registrationGap!==null?<Badge tone="neutral">No choice recorded: {journey.registrationGap}</Badge>:null}
   </div>
   {journey.sampled?<p className="text-xs text-muted-foreground">Eligibility covers a sample of {journey.sampleCount} learners; full-cohort eligibility and invited counts are not inferred.</p>:null}
   {!registrationCounts.available?<p className="text-xs text-muted-foreground">Registration choice totals are unavailable.</p>:null}
