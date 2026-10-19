@@ -24,14 +24,14 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   appliedFrom:raw.appliedFrom||undefined,appliedTo:raw.appliedTo||undefined,
  });
  if(!parsed.success)return <div className="space-y-4">
-  <PageHeader eyebrow="Super Admin · Placements" title="Analytics"/>
+  <PageHeader title="Analytics"/>
   <ErrorState title="Invalid analytics filters"
    description="Check the selected dates or filters."
    action={<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Clear all</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Placements" title="Placement Analytics"
+  <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
   <EmptyState title="Select a college to continue" description="Choose a college in the Super Admin scope selector before reviewing placement analytics."/>
  </div>;
@@ -73,7 +73,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <option value="">All {label.toLowerCase()}</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</Select></label>
  );
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Placements" title="Placement Analytics"
+  <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
   <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold">Drive or company

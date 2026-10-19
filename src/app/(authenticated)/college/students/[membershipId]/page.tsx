@@ -22,7 +22,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
     throw error;
   }
   return <div className="space-y-6">
-    <PageHeader eyebrow="College Admin · Students" title={data.person.name}
+    <PageHeader title={data.person.name}
       description="Read-only college-owned learner academic record; private identity and documents are excluded."
       actions={<Link href="/college/students" className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to students</Link>} />
     <section className="border-t border-border pt-5">

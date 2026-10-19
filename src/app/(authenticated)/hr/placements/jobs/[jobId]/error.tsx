@@ -1,11 +1,12 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 export default function HrJobError({reset}:{
  error:Error & {digest?:string};reset:()=>void;
 }){
  return <section role="alert" className="space-y-4">
-  <h1 className="text-[30px] font-semibold text-[var(--lms-heading)]">Drive details could not load</h1>
+  <PageHeader title={"Drive details could not load"} />
   <p className="mt-2 max-w-xl text-sm text-body">
    Some drive information may be stale or unavailable. We couldn&apos;t verify this drive right now. No applicant or offer details are
    shown until the employer and college access check succeeds.

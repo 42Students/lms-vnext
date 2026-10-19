@@ -15,7 +15,7 @@ export default async function CollegeStudentsImportPage() {
       organizationId: membership.organizationId })) redirect("/dashboard");
   const choices = await listCollegeStudentImportOptions(context);
   return <main className="min-w-0 space-y-6">
-    <PageHeader eyebrow="College Admin · Students"
+    <PageHeader
       title="Import students"
       description="Dry-run validation followed by explicit per-row learner onboarding and enrollment."
       actions={<Link href="/college/students"
