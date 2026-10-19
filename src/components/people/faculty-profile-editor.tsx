@@ -77,7 +77,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    <p>{error}</p>
    {needsReload?<Button variant="secondary" type="button" onClick={()=>{
     setReloadOpen(true);
-   }} className="min-h-11 sm:min-h-9">Reload latest profile</Button>:null}
+   }} >Reload latest profile</Button>:null}
   </div>:null}
   {pending&&savingSection?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-foreground">
     Saving {facultyProfileSaveSectionLabel(savingSection)}…</p>:null}
