@@ -51,7 +51,7 @@ export function CollegeFacultyCsvImport(){
       </p>
       <p className="break-words font-mono text-xs">{header}</p>
       <a download="faculty-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(header+"\n")}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
+        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
         Download CSV template
       </a>
       <label className="grid gap-2 text-sm font-semibold">Choose CSV
@@ -87,7 +87,7 @@ export function CollegeFacultyCsvImport(){
       {report.structuralErrors.length>0&&<p role="alert">{report.structuralErrors.join(", ")}</p>}
       <a download="faculty-import-report.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent("row,status,detail,membershipId\r\n"+csvResult)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
+        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
         Download row report
       </a>
       <DataTable<Row> caption="Faculty CSV import row results" rows={report.results}
