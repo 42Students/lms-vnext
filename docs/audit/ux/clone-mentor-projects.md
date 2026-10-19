@@ -31,7 +31,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx` (greps: complete-file source regex raw/hex/hand-dialog/hand-tabs=0; values: 15 rows matched in shared/legacy table below; responsive: <=767px touch and wrap, >=768px standard; no runtime claims)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx` (greps: complete-file raw/hex/dialog/hand-tabs=0; values: 18 legacy/source states matched, hairline rows and scoped chip breakpoint; responsive 320/767/768px proof below)
 - [ ] `src/app/(authenticated)/mentor/projects/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/reports/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/review-history/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -713,3 +713,30 @@ Replay in the orchestrator checkout: rg -n '<(button|input|select|textarea)\b|#[
 Per-state proof: Non-editable meeting status shows a plain note that only completed meetings in active projects are editable; no editor mounts (notes/page.tsx:29-34). Editable + empty initial outcome shows “Record outcome notes”; populated initial value shows “Edit outcome notes.” Dialog form is required, max 4000 characters, 7 rows and locally min-height 128px (existing editor-specific size preserved); save disabled until changed/valid, Review notes triggers the second confirmation, cancel/unsaved close is mediated by useProjectEditorDiscardGuard, success refreshes, API failure shows an inline alert and toast. No sensitive notes appear in project activity history.
 
 Phone (320px and 767px): PageHeader stacks; project action is 44px, dialog width viewport-minus-32px, body scrolls within viewport-minus-48px; all editor, confirm and discard footer actions remain >=44px via scoped CSS. Textarea has max-w-full and notes preview uses break-words/whitespace-pre-wrap. Tablet (768px+) restores 36px buttons and inline PageHeader actions. These are static responsive proofs; section J screenshot verification remains the orchestrator's separate stage.
+
+## Completed: Mentor release/sprint timeline
+
+Whole source scan after the edit: src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx (93 lines) has 0 raw JSX button/input/select/textarea, 0 literal hex, 0 native/modal confirmation, 0 manual tab control. Shared components: 1 PageHeader in valid data branch, 1 in invalid query branch, 2 NeedsDoingChips filter groups, one Timeline containing TimelineEntry and 2 StatusBadge element instances, optional shared EmptyState, and one Pagination. The CSS module legacy-timeline-filters.module.css carries the only added local responsive override: 44px quick-filter click targets through <=767px, compact shared pill dimensions above 767px. Both filter groups use this scope; no shared chip source was modified.
+
+| Property/state (18 inspected) | Legacy documented value/source | vNext file/source and value | Source match |
+|---|---|---|---|
+| Background and outer canvas | old-lms-shell-spec.md:18-20 #f1f4f9 backing, #fff canvas, 1px #e5e9f0 and 12px radius/24px pad | authenticated canvas via globals.css:339,345-346,364-370; page root has no card surface | yes |
+| Title desktop | shell-spec.md:26-27 Inter 30px/600 #172033 | PageHeader:27-35, globals.css:327 | yes |
+| Title phone | listing-page-header.scss:130-143 20px vertical stack | PageHeader:27-35 below md768 | yes |
+| Description/subtitle | old-lms-pages.md:7 muted inline subtitle | PageHeader:23,30,39-45 | yes |
+| Page header bottom hairline | listing-page-header.scss:26-35 neutral-200/16px pad | PageHeader:28 border-b, pb-4 and globals.css:339 | yes |
+| Secondary action text | shell-spec.md:23-24 14px, weight650, neutral #54505d | timeline/page.tsx:34-36 Link with data-unskin; text-sm, font-[650], --lms-body-text | yes |
+| Secondary action border/background | shell-spec.md:24 radius9 white 1px hairline | timeline/page.tsx:35 --lms-control-radius, border-border, bg-white | yes |
+| Secondary action hover | listing-page-header.scss:123-127 teal border and ink, 5% teal fill | timeline/page.tsx:35 explicit hover classes, 150ms motion | yes |
+| Action touch and tablet | variables.scss:139,148 <=767px 44px, shell-spec.md:24 36px desktop | timeline/page.tsx:35 min-h-11 md:min-h-9 and md:py-0 | yes |
+| Filter pill size/gap | old-lms-pages.md:8-9 quick pills, common.scss:443-474 20px nav spaces (filter groups separate) | NeedsDoingChips.tsx:33-56 uses compact chip and flex-wrap, space-2 gap | yes |
+| Filter colour selected | variables.scss:10 #26bac7 primary | NeedsDoingChips.tsx:42 teal selected border/subtle fill | yes |
+| Filter phone target | variables.scss:139 and listing-page-header.scss:130-159 >=44px to 767 | legacy-timeline-filters.module.css:1-11 min-height44 for both scoped chip groups | yes |
+| Filter default/disabled/focus | accessibility.scss:18-23 focus 2px teal; old-lms-pages.md:8 real filters not inert chips | NeedsDoingChips.tsx:35-54 href/disabled/aria-current branch and focus classes | yes |
+| Timeline spine | old-lms-pages.md:6-11 continuous surface, thin neutral hairlines | Timeline.tsx:5-15 2px neutral-200 left marker and 1px item separator | same shared progression |
+| Sprint inner rows | common.scss:700-713,720-726 1px neutral-200 and 12px compact rows | timeline/page.tsx:67-82 now divide-y canvas border, py-[var(--lms-space-3)] | yes |
+| Status labels | old-lms-pages.md:11 colored semantic pills | timeline/page.tsx:63,73 shared StatusBadge; success/info/neutral based on persisted state | yes |
+| Empty/disabled/error | old-lms-pages.md:6,11-12 inline feedback, no fake records | invalid query role=alert with clear Link; disabled module status; enabled-empty EmptyState | yes |
+| Pagination | old-lms-pages.md:10 shared list pagination, touch pages | timeline/page.tsx:83, Pagination.tsx:44-84 with 44px previous/next on phone | yes |
+
+Responsive source proof: At 320px/767px, PageHeader stacks, the action is min44px, chips wrap and each interactive chip remains min44px via the local CSS max-width767 rule. Release heading/status uses flex-wrap, nested sprints are hairline-separated list rows with no padded card-in-card and no fixed width. At 768px and larger, PageHeader actions align right, chips use compact desktop height, and the action is 36px. Tab/overlay/field grep output is zero. Enabled/disabled, zero/nonzero items, zero/nonzero sprints, status badge tones, valid/invalid filters, optional progress and Next.js pagination hrefs are unchanged. No runtime screenshots or CI executed.
