@@ -84,7 +84,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
-  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-4">
+  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-4 print:hidden">
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
@@ -156,7 +156,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    </label>
    <Button type="submit" variant="primary" className="self-end">Filter</Button>
   </form>
-  <form method="get" action={path} aria-label="Refresh directory">
+  <form method="get" action={path} aria-label="Refresh directory" className="print:hidden">
     {data.query.q ? <Input type="hidden" name="q" value={data.query.q} /> : null}
     <Input type="hidden" name="status" value={data.query.status} />
     {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
@@ -194,7 +194,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
   <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
     className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline sm:min-h-[var(--lms-control-height)]">Clear search</Link>
-  <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
+  <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm print:hidden">
    <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
    <div className="flex flex-wrap gap-3">
     {data.query.page>1?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page-1})} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline sm:min-h-[var(--lms-control-height)]">Previous</Link>:null}
