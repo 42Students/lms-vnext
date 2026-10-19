@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { PUBLIC_RECRUIT_COPY,publicRecruitThanks } from "@/modules/placements/public-enquiry/public-copy";
 import {publicRecruiterWorkEmailSchema} from "@/modules/placements/public-college-join-model";
 
-const control="min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-[var(--lms-focus-ring)] md:min-h-9";
+const control="w-full";
 export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;enabled:boolean}){
  const [email,setEmail]=useState(""),[name,setName]=useState(""),[company,setCompany]=useState("");
  const [mobile,setMobile]=useState(""),[hiringFor,setHiringFor]=useState("");
