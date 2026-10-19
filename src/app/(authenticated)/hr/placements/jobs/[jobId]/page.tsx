@@ -11,7 +11,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
-import { DataTable } from "@/components/ui/data-table";
+import { HrJobSelectionGrid } from "@/components/hr/hr-job-selection-grid";
+import { HrJobOffersGrid } from "@/components/hr/hr-job-offers-grid";
 import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focus-refresh";
 import {RecruiterRoundInlineEditor} from "@/components/hr/recruiter-round-inline-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -657,21 +658,19 @@ export default async function HrPlacementJobPage({
             <section aria-label="Placement-cell selection history" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
               <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
               <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
-                            <DataTable
-                caption="Placement-cell selection history"
-                rows={selectionRows}
-                getRowKey={item => item.id}
-                empty={<p role="status" className="text-sm text-muted-foreground">No selections have been recorded in this status.</p>}
-                columns={[
-                  { key: "candidate", header: "Candidate", mobilePriority: "primary", cell: item => item.name ?? "Unnamed applicant" },
-                  { key: "role", header: "Role", mobilePriority: "secondary", cell: item => item.role },
-                  { key: "ctc", header: "CTC (LPA)", mobilePriority: "secondary", cell: item => item.annualCtcInr == null ? "—" :
-                    (item.annualCtcInr / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) },
-                  { key: "status", header: "Status", mobilePriority: "secondary", cell: item =>
-                    <StatusBadge tone={item.status==="VERIFIED"?"success":item.status==="REVOKED"?"error":"warning"}>{item.status === "SELECTED" ? "With the placement cell" :
-                      item.status === "VERIFIED" ? "Verified, awaiting release" : "Selection cancelled"}</StatusBadge> },
-                ]}
-              />
+              {selectionRows.length ? <HrJobSelectionGrid
+                scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id].join(":")}
+                rows={selectionRows.map(item=>({
+                  id:item.id,candidate:item.name??"Unnamed applicant",role:item.role,
+                  ctcLpa:item.annualCtcInr==null?"—":
+                    (item.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2}),
+                  ctcSort:item.annualCtcInr,
+                  status:item.status==="SELECTED"?"With the placement cell":
+                    item.status==="VERIFIED"?"Verified, awaiting release":"Selection cancelled",
+                }))}
+              />:<p role="status" className="text-sm text-muted-foreground">
+                No selections have been recorded in this status.
+              </p>}
               <p className="text-xs text-muted-foreground">
                {selectionPage.first===0?"No selection rows":`Showing ${selectionPage.first}–${selectionPage.last}`} of {selectionTotal}
               </p>
