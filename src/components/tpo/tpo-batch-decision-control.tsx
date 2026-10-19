@@ -23,7 +23,7 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
   if(!(await askConfirm("Apply this eligibility decision to the entire batch? Learner and class overrides take precedence.")))return;
   setPending(true);setError("");setMessage("");setActionId(null);
   try{
-   const response=await fetch("/api/placements/tpo/batches/"+batchId+"/decisions",{
+   const response=await fetch("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/decisions",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({membershipId:batchId,decision,expectedVersion:current.expectedVersion,
       ...(decision==="INELIGIBLE"?{reason:reason.trim()}:{})}),
@@ -36,11 +36,11 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
   }catch(e){setError(e instanceof Error?e.message:"Unable to confirm the change.");}
   finally{setPending(false);}
  }
- return <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4" aria-label="Batch eligibility decision">
+ return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Batch eligibility decision">
   <h2 className="font-semibold">Who is in placements?</h2>
   <p className="text-sm text-muted-foreground">This sets the default for this whole cohort. More specific class and student decisions override it.</p>
   <label className="block text-sm">Batch default decision
-   <Select className="min-h-11 min-[768px]:min-h-9" value={decision} disabled={pending}
+   <Select className="min-h-11 md:min-h-9" value={decision} disabled={pending}
      onChange={e=>setDecision(e.target.value as Decision)}>
     <option value="NOT_DECIDED">Not decided</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
    </Select>
@@ -50,7 +50,7 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
     onChange={e=>setReason(e.target.value)} disabled={pending}/>
   </label>:null}
   <Button type="button" onClick={()=>void submit()} disabled={pending||!valid}
-   className="min-h-11 min-[768px]:min-h-9">{pending?"Saving…":"Review and save batch decision"}</Button>
+   className="min-h-11 md:min-h-9">{pending?"Saving…":"Review and save batch decision"}</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm">{message}</p>:null}
   {actionId?<TpoBatchUndoControl batchId={batchId} actionId={actionId}/>:null}
