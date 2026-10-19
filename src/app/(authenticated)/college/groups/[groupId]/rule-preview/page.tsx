@@ -52,7 +52,7 @@ export default async function CollegeGroupRulePreviewPage({
         ["Matches already active", projection.alreadyActive],
         ["Matches not currently active", projection.potentiallyNew],
       ].map(([title, value]) => (
-        <div key={title} className="rounded-xl border border-border bg-surface p-5">
+        <div key={title} className="rounded-[8px] border border-border bg-surface p-5">
           <p className="text-xs font-semibold text-muted-foreground">{title}</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
         </div>
@@ -86,7 +86,7 @@ export default async function CollegeGroupRulePreviewPage({
       are enforced by the actual refresh workflow, not simulated by this eligibility-only preview.
     </p>
     {projection.examined === 0 ? (
-      <p className="rounded-xl border border-border p-5 text-sm text-body">
+      <p className="rounded-[8px] border border-border p-5 text-sm text-body">
         No active learner program enrollments with valid college memberships were found.
         This does not mean that the college has no learners.
       </p>
