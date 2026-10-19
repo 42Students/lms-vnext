@@ -56,7 +56,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     {visible.length === 0 ? <EmptyState title="Open this on your college&apos;s placement address" description="Your recruiter account works inside one college&apos;s placement site. Ask the placement cell that invited you to restore access." /> :
     <section className="grid gap-3 sm:grid-cols-2">{visible.map(grant => {
       const detail=byId.get(grant.id)!;
-      return <article key={grant.id} className="space-y-3 rounded-lg border border-border bg-surface p-5">
+      return <article key={grant.id} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-5">
         <h2 className="font-semibold text-foreground">{detail.collegeName}</h2>
         {detail.collegeCode?<p className="text-xs text-muted-foreground">College code: {detail.collegeCode}</p>:null}
         <p className="text-xs text-muted-foreground">Access granted: {detail.grantedAtLabel} (IST)</p>
@@ -137,26 +137,26 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
         aria-current={item.collegeId === selectedId ? "page" : undefined}
         className={item.collegeId === selectedId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{item.collegeName}</Link>)}</nav> : null}
-    {recentJobCapReached?<aside role="status" className="rounded-lg border border-warning bg-surface p-3 text-sm text-body">
+    {recentJobCapReached?<aside role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-surface p-3 text-sm text-body">
       Today is displaying the 500 most recently created employer drives for this college.
       Older drives may not appear in these quick summaries. Open Drives for full history.
     </aside>:null}
-    {summaryPartiallyUnavailable?<div role="alert" className="rounded-lg border border-warning bg-surface p-4 text-sm text-body">
+    {summaryPartiallyUnavailable?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-surface p-4 text-sm text-body">
       <p className="font-semibold">Drive summary is partially unavailable.</p>
       <p className="mt-1">Your available drive information is shown below. Some notifications or calendar events may be missing.</p>
       <Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
         className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry</Link>
     </div>:null}
     <section aria-label="Recruiter tasks" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{actions.map(action=>
-      <Link key={action.label} href={action.url} className="rounded-xl border border-border bg-surface p-5 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <Link key={action.label} href={action.url} className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
       </Link>)}</section>
-    <section aria-label="Next recruiter actions" className="space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <section aria-label="Next recruiter actions" className="space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 sm:p-5">
       <h2 className="text-lg font-semibold text-foreground">Next up</h2>
       <p className="text-xs text-muted-foreground">Only active drives belonging to your selected college and company appear here.</p>
       {actionQueue.length ? <ul className="grid gap-3 sm:grid-cols-2">
         {actionQueue.map(task => <li key={task.key}>
-          <Link href={task.href} className="block min-w-0 rounded-lg border border-border p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
+          <Link href={task.href} className="block min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
             <span className="inline-flex items-center gap-2 text-xs font-semibold text-body">
               <span aria-hidden="true" className={task.tone==="URGENT"?"size-2 rounded-full bg-error":task.tone==="SOON"?"size-2 rounded-full bg-warning":"size-2 rounded-full bg-primary"}/>
               {task.tone==="URGENT"?"Urgent":task.tone==="SOON"?"Soon":"When you can"}
@@ -172,7 +172,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           </Link>
         </li>)}
       </ul> : collegeJobs.length===0 && requestCount===0 ? (
-        <div className="rounded-lg border border-border bg-surface-secondary p-4">
+        <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
           <h3 className="font-semibold text-foreground">Start with your first drive</h3>
           <ol className="mt-3 list-inside list-decimal space-y-2 text-sm text-body">
             <li>Describe the role, pay and how you select. It takes a few minutes, and your draft is kept as you type.</li>
@@ -185,20 +185,20 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           </Link>
         </div>
       ) : (
-        <div role="status" className="rounded-lg border border-border bg-surface-secondary p-4">
+        <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
           <h3 className="font-semibold text-foreground">You are all caught up</h3>
           <p className="mt-2 text-sm text-body">New applicants, replies and decisions from the placement cell will show up here.</p>
         </div>
       )}
     </section>
-    <section aria-label="This week" className="rounded-xl border border-border bg-surface p-5">
+    <section aria-label="This week" className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-semibold text-foreground">This week</h2>
         <Link href={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)} className="text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Full calendar</Link>
       </div>
       {weekEvents.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {weekEvents.map(item=><li key={item.id}>
-          <Link href={item.href} className="block rounded-lg border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
+          <Link href={item.href} className="block rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
             <span className="block text-xs font-semibold text-muted-foreground">{item.kind.replaceAll("_"," ")}</span>
             <span className="mt-1 block font-semibold text-foreground">{item.title}</span>
             <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
@@ -209,7 +209,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         </li>)}
       </ul>:<p className="mt-3 text-sm text-muted-foreground">Nothing scheduled here for the next eight days.</p>}
     </section>
-    <section aria-label="Live recruiter hiring drives" className="rounded-xl border border-border bg-surface p-5">
+    <section aria-label="Live recruiter hiring drives" className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-semibold text-foreground">Live hiring drives</h2>
         <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=LIVE"}
@@ -234,7 +234,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         </Link>)}
       </div>:<p className="mt-3 text-sm text-muted-foreground">No live, non-archived drives for this employer and college.</p>}
     </section>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Actionable deadlines</h2>
       {today.dueSoon.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.dueSoon.map(item =>
         <Link key={item.job.id} href={"/recruiter/drives/" + item.job.id}
@@ -242,7 +242,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           <span className="mt-1 block text-sm text-body">Applications close {when(item.job.applicationDeadline!)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No application deadlines in the next seven days.</p>}
     </section>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">This week · upcoming rounds</h2>
       {today.upcomingRounds.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.upcomingRounds.map(event =>
         <Link key={event.id} href={"/recruiter/drives/" + event.jobId + "?tab=rounds"}
@@ -250,7 +250,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           <span className="mt-1 block text-sm text-body">{event.jobTitle} · {when(event.startsAt)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No upcoming scheduled rounds for this college during this week.</p>}
     </section>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Results due this week</h2>
       <p className="mt-1 text-sm text-body">Recorded result deadlines on authorized employer rounds. A past timestamp alone does not establish that results remain outstanding.</p>
       {dueResults.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{dueResults.map(item =>
@@ -264,7 +264,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         </Link>)}</div> : <p className="mt-3 text-sm text-muted-foreground">No upcoming results deadlines are recorded for this college this week.</p>}
     </section>
     <section aria-label="Unread placement-cell conversations"
-      className="rounded-xl border border-border bg-surface p-5">
+      className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-semibold text-foreground">Replies to read</h2>
         <Link href={hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1})}
@@ -284,7 +284,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         No unread placement-cell conversations on this inbox page.
       </p>}
     </section>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">With the placement cell</h2>
       <p className="mt-2 text-sm text-body">Formal requests awaiting a college decision. Results and selections require recorded submissions.</p>
       {waitingRequests.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
