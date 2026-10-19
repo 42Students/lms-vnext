@@ -221,3 +221,9 @@ src/components/placements/college-interview-appointments.tsx
 src/components/placements/college-application-pipeline-controls.tsx
 src/components/courses/college-lesson-visibility-controls.tsx
 ```
+
+### Final direct-route follow-up (same continuation)
+
+- Three further source commits reconciled remaining direct-route white-card stacks found by a source scan of **all 37 assigned admin page files**: `admin/lecture-halls/[hallId]`, `admin/lessons`, and `admin/placements/applications/[applicationId]`. Converted schedule-date native controls to shared UI and changed lesson, hall and stage-history cards to hairline lists.
+- Total for this continuation: **30 source commits on 30 source files**, plus ledger updates; branch-only writes. The only direct-route rounded-xl remaining in this sweep is an intentional invalid-filter alert in `admin/inbound-mail`; status/warning banners and genuinely independent calendar panels remain deliberately separate.
+- No compile, test, CI, browser run, deployment or pixel comparison was performed.
