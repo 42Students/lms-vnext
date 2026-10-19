@@ -11,11 +11,13 @@ export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) 
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 768px)");
-    const closeForDesktop = () => { if (media.matches) setOpen(false); };
+    const media = typeof window.matchMedia === "function" ? window.matchMedia("(min-width: 768px)") : null;
+    const isDesktop = () => media?.matches ?? window.innerWidth >= 768;
+    const closeForDesktop = () => { if (isDesktop()) setOpen(false); };
     closeForDesktop();
-    media.addEventListener("change", closeForDesktop);
-    return () => media.removeEventListener("change", closeForDesktop);
+    media?.addEventListener("change", closeForDesktop);
+    window.addEventListener("resize", closeForDesktop);
+    return () => { media?.removeEventListener("change", closeForDesktop); window.removeEventListener("resize", closeForDesktop); };
   }, []);
 
   return <>
