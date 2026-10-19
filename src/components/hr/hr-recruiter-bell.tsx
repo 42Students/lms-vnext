@@ -7,7 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ShellNavGlyph } from "@/components/shell/shell-nav-icons";
 import { Drawer } from "@/components/ui/drawer";
 import { PopoverPanel } from "@/components/ui/popover";
-import {TopbarNotificationEmpty} from "@/components/shell/topbar/notification-empty";
 import style from "@/components/shell/topbar/topbar.module.css";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
@@ -111,8 +110,9 @@ export function HrRecruiterBell(){
   <Button ref={triggerRef} type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"}
    aria-expanded={open} aria-haspopup="dialog" aria-busy={loading} aria-controls={open?(mobile?"hr-topbar-mobile-notifications":"hr-topbar-desktop-notifications"):undefined}
    onClick={()=>setOpen(value=>!value)}
-   variant="secondary" className="relative">
-   Notifications {unread>0?<Badge tone="error" className="ml-1 min-w-4 px-1 text-[10px] leading-none">{unread}</Badge>:null}
+   variant="secondary" className="relative !h-11 !w-11 !min-w-11 !p-0 sm:!h-9 sm:!w-9 sm:!min-w-9">
+   <ShellNavGlyph name="bell"/>
+   {unread>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-error)] px-1 text-[10px] leading-3 text-white">{unread>99?"99+":unread}</span>:null}
   </Button>
   {mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} bodyClassName={style.hrNotificationDrawerBody} footer={panelFooter}>
    {panelBody}
