@@ -25,7 +25,6 @@ export default async function SuperAdminOfferingLearningPage({
       <AdminOfferingLearningPage
       context={context}
       offeringId={offeringId}
-      eyebrow="Super Admin · Courses"
       backHref="/admin/courses"
       />
     </div>
