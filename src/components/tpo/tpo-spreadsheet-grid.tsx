@@ -54,7 +54,7 @@ export function TpoSpreadsheetGrid<Row>({
   if(!viewKey)return {};
   const width=colWidth(key);
   if(!columnView[key]?.pinned)return {minWidth:width,width};
-  const before=display.slice(0,display.findIndex(col=>col.key===key))
+  const before=(selection?48:0)+display.slice(0,display.findIndex(col=>col.key===key))
     .filter(col=>columnView[col.key]?.pinned)
     .reduce((sum,col)=>sum+colWidth(col.key),0);
   return {minWidth:width,width,left:before,position:"sticky",zIndex:1,background:"var(--surface, white)"};
