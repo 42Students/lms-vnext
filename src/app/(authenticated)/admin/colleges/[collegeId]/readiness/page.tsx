@@ -131,7 +131,6 @@ export default async function CollegeReadinessPage({
       </Link>
 
       <PageHeader
-        eyebrow="Super Admin · Tenant Setup"
         title={`${college.name} · Readiness Gate`}
         description={`Read-only go-live checklist for ${college.code}. Checks use persisted, college-scoped data. No settings are modified.`}
         actions={
