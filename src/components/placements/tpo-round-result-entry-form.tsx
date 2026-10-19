@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -53,8 +52,8 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
   </label>
   {error?<p role="alert" className="text-sm text-foreground sm:col-span-2">{error}</p>:null}
   {saved?<p role="status" className="text-sm text-body sm:col-span-2">Result staged. Refresh to review the new version before another edit.</p>:null}
-  <Button variant="primary" type="submit" disabled={pending||saved} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] disabled:opacity-50 sm:col-span-2 text-primary-foreground">
-   {pending?"Saving…":saved?"Result staged":"Confirm staged result"}</Button>
+  <button type="submit" disabled={pending||saved} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] disabled:opacity-50 sm:col-span-2 text-primary-foreground">
+   {pending?"Saving…":saved?"Result staged":"Confirm staged result"}</button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
     title="Stage this round result?"
     description="This writes an audited version; applying results to progression is a separate action."
