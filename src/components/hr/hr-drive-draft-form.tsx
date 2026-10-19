@@ -230,11 +230,11 @@ export function HrDriveDraftForm({
     <p className="text-sm text-body">Your request was saved. The placement cell will review and set the dates before it can open to students.</p>
     <div className="flex flex-wrap gap-3">
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link underline">Open the request</a>
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open the request</a>
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link underline">Go to Drives</a>
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Go to Drives</a>
       <a href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link underline">Request another</a>
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Request another</a>
     </div>
   </section>;
 
