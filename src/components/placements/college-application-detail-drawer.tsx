@@ -95,16 +95,16 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       <h2 className="text-lg font-semibold">Application Details</h2>
       <div className="flex gap-2">
        <button type="button" onClick={()=>void reload()} disabled={loading}
-        className="min-h-11 rounded border border-border px-3 focus-visible:ring-2 focus-visible:ring-primary">Refresh</button>
-       <button type="button" onClick={onClose} className="min-h-11 rounded border border-border px-3">Close</button>
+        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 focus-visible:ring-2 focus-visible:ring-primary">Refresh</button>
+       <button type="button" onClick={onClose} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3">Close</button>
       </div>
     </div>
     {!detail&&!loading&&!error?<button type="button" onClick={()=>void reload()}
-      className="mt-4 min-h-11 rounded bg-primary px-4 text-foreground">Open application details</button>:null}
+      className="mt-4 min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover sm:min-h-9">Open application details</button>:null}
     {loading?<p role="status" className="py-4 text-sm">Loading application details…</p>:null}
     {error?<p ref={errorRef} tabIndex={-1} role="alert" className="my-4 text-sm text-error">{error}</p>:null}
     {detail?<div className="mt-4 space-y-5">
-      <div className="rounded-lg border border-border p-4">
+      <div className="border-b border-border py-4">
        <h3 className="font-semibold">{detail.application.name??"Unnamed learner"} · {detail.application.role}</h3>
        <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
         <p>Email: {detail.application.email??"Not provided"}</p>
@@ -122,7 +122,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         {detail.screening.internalReason?<p>Internal screening reason: {detail.screening.internalReason}</p>:null}
        </div>:null}
       </div>
-      <section className="rounded-lg border border-border p-4">
+      <section className="border-b border-border py-4">
        <h3 className="font-semibold">Resume and match score</h3>
        <p className="mt-2 text-sm text-body">{detail.resume.reason}</p>
        {detail.resume.available&&detail.resume.url?
@@ -134,11 +134,11 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        <p className="text-xs text-muted-foreground">The private document endpoint checks access again. No fabricated public resume URL or match score is shown.</p>
        <button type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
         onClick={()=>void rescreen()}
-        className="mt-3 min-h-11 rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+        className="mt-3 min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
         {rescreening?"Re-screening…":"Re-screen"}
        </button>
        <p className="mt-1 text-xs text-muted-foreground">Re-screen checks recorded academic eligibility under current policy. It does not fabricate a match score or reverse an existing screening decision.</p>
-       {rescreenResult?<div role="status" className="mt-3 space-y-2 rounded border border-border p-3">
+       {rescreenResult?<div role="status" className="mt-3 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
         <p className="font-semibold">Current eligibility: {rescreenResult.status}</p>
         {rescreenResult.checks.length?<ul className="space-y-1 text-sm">
          {rescreenResult.checks.map((check,i)=><li key={i}>
@@ -147,7 +147,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         <p className="text-xs text-muted-foreground">Reviewed {when(rescreenResult.reviewedAt)}</p>
        </div>:null}
       </section>
-      <section className="rounded-lg border border-border p-4">
+      <section className="border-b border-border py-4">
        <h3 className="font-semibold">Assessment Link</h3>
        {detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).length?
         <div className="mt-3 space-y-2">{detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).map(r=>
@@ -155,11 +155,11 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
             rel="noreferrer noopener" className="font-semibold text-[var(--lms-teal-deep)] underline">{r.name} · Open assessment</a>
             <span className="mt-1 block break-all text-xs text-muted-foreground">{r.testUrl}</span>
             <button type="button" onClick={async()=>{try{await navigator.clipboard.writeText(r.testUrl!);setLinkNotice("Assessment link copied.");}catch{setLinkNotice("Copy unavailable. Select and copy the link shown above.");}}}
-             className="mt-1 min-h-11 rounded border border-border px-3 font-semibold focus-visible:ring-2 focus-visible:ring-primary">Copy assessment link</button></p>)}</div>
+             className="mt-1 min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold focus-visible:ring-2 focus-visible:ring-primary">Copy assessment link</button></p>)}</div>
         :<p className="mt-2 text-sm text-body">Link shared soon</p>}
       </section>
       {linkNotice?<p role="status" className="text-sm text-body">{linkNotice}</p>:null}
-      <section className="rounded-lg border border-border p-4">
+      <section className="border-b border-border py-4">
        <h3 className="font-semibold">Interview scheduling</h3>
        <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+
         (basePath==="/admin/placements"?"/schedule":"/interviews")+"?applicationId="+encodeURIComponent(applicationId)}
@@ -167,7 +167,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         Schedule or view candidate interviews
        </a>
       </section>
-      <section className="rounded-lg border border-border p-4">
+      <section className="border-b border-border py-4">
        <h3 className="font-semibold">Offer history</h3>
        {detail.offers.length?<ul className="mt-2 space-y-3 text-sm">{detail.offers.map(o=>
         <li key={o.id} className="space-y-2 rounded border border-border p-2">
@@ -178,26 +178,26 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           <label className="grid gap-1">Offer-letter HTTPS link
            <input type="url" placeholder="https://..." value={letterInput[o.id]??""}
             onChange={e=>setLetterInput(prev=>({...prev,[o.id]:e.target.value}))}
-            className="min-h-11 rounded border border-border bg-surface p-2 text-base sm:text-sm"/>
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base sm:text-sm"/>
           </label>
           <button type="button" disabled={savingLetter} onClick={()=>void attachLetter(o.id)}
-           className="min-h-11 rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+           className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
            {savingLetter?"Saving…":"Attach Offer Letter"}</button>
          </div>:null}
         </li>)}</ul>:
         <p className="mt-2 text-sm text-body">No issued offers.</p>}
       </section>
-      <section className="rounded-lg border border-border p-4">
+      <section className="border-b border-border py-4">
        <h3 className="font-semibold">Internal Notes</h3>
        <p className="mt-1 text-xs text-muted-foreground">Visible only to the college placement team; correcting a note adds a new version and preserves its history.</p>
        {detail.notes.length>3?<p id="application-notes-scroll-cue" className="mt-2 text-xs text-muted-foreground">More internal notes below ↓</p>:null}
        <div tabIndex={0} role="region" aria-label="Internal notes history"
         aria-describedby={detail.notes.length>3?"application-notes-scroll-cue":undefined}
         className="mt-3 max-h-48 space-y-2 overflow-y-auto overscroll-contain pb-5 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">{detail.notes.map(n=>
-        <div key={n.id} className="rounded border border-border p-2 text-sm">
+        <div key={n.id} className="border-b border-border py-2 text-sm">
          <p>{n.body}</p><p className="mt-1 text-xs text-muted-foreground">{when(n.createdAt)}</p>
          <button type="button" onClick={()=>{setAmendsNoteId(n.id);setNote(n.body);setSuccess("");}}
-          className="mt-1 min-h-11 rounded border border-border px-2 font-semibold text-[var(--lms-teal-deep)]">
+          className="mt-1 min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 font-semibold text-[var(--lms-teal-deep)]">
           Edit Internal Notes
          </button>
         </div>)}</div>
@@ -209,9 +209,9 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         className="mt-3 min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
          {saving?"Saving…":amendsNoteId?"Save correction":"Add note"}</button>
        {amendsNoteId?<button type="button" onClick={()=>{setAmendsNoteId(null);setNote("");}}
-         className="ml-2 min-h-11 rounded border border-border px-3">Cancel correction</button>:null}
+         className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3">Cancel correction</button>:null}
       </section>
-      {sections.map(section=><section key={section.label} className="rounded-lg border border-border p-4">
+      {sections.map(section=><section key={section.label} className="border-b border-border py-4">
         <h3 className="font-semibold">{section.label}</h3>
         {section.rows.length?<ol className="mt-3 space-y-2 text-sm">{section.rows.map((event,index)=>
           <li key={index} className="rounded border border-border p-2">
