@@ -462,3 +462,6 @@
 }
 
 .topbarNotificationState { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:32px 20px; text-align:center; font-size:14px; line-height:1.5; color:var(--lms-body-text); }
+
+.topbarNotificationState > p { margin:0; }
+.topbarNotificationState > p + p { max-width:260px; color:var(--lms-muted-text); }
