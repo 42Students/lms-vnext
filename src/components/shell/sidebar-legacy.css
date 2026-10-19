@@ -3,7 +3,7 @@
  * Desktop: 96px rail -> 256px on hover/focus, content PUSHES right.
  * Mobile uses the existing focus-trapped drawer and always shows labels.
  */
-@media (min-width:1024px) {
+@media (min-width:768px) {
  .lms-desktop-sidebar {
   width:96px;
   min-width:96px;
