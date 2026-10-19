@@ -34,13 +34,13 @@ export default async function CollegeClassesPage({
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <div className="flex flex-wrap items-center gap-3">
       <a href={classesExportHref(classes.query)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
         Export CSV
       </a>
       <span className="text-xs text-muted-foreground">Up to {CLASSES_EXPORT_CAP} classes; download includes a truncation notice when capped.</span>
     </div>
     <Link href="/college/classes/recurring-preview"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
       Preview recurring class schedule
     </Link>
     <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
