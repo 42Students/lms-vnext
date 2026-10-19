@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -140,10 +141,10 @@ export function CollegeCohortCreateForm({ programs, periods }: {
           {dateInvalid?<p role="alert" className="text-error">End date cannot be before start date.</p>:null}
         </div>
         <div className="sm:col-span-2 lg:col-span-5">
-          <button disabled={pending||dateInvalid} type="submit"
-            className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">
+          <Button variant="primary" disabled={pending||dateInvalid} type="submit"
+            >
             {pending ? "Creating…" : "Create batch"}
-          </button>
+          </Button>
         </div>
       </form>}
     {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
@@ -235,25 +236,25 @@ export function CollegeCohortRowActions({ row, periods }: {
 
   return <div className="min-w-28">
     <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={pending || blocked}
+    <Button variant="secondary" type="button" disabled={pending || blocked}
       onClick={() => { setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);setNotice(""); }}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+      >
       Edit
-    </button>
-    {row.status === "ACTIVE" && <button type="button"
+    </Button>
+    {row.status === "ACTIVE" && <Button variant="secondary" type="button"
       disabled={pending || !row.currentTermNumber || (row.durationTerms !== undefined && row.currentTermNumber < row.durationTerms)}
       onClick={graduate}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+      >
       Mark graduated
-    </button>}
-    <button type="button" disabled={pending || row.status!=="PLANNED" ||
+    </Button>}
+    <Button variant="secondary" type="button" disabled={pending || row.status!=="PLANNED" ||
         row.activeSections>0 || row.activeEnrolledLearners>0} onClick={retire}
       title={row.activeSections>0 || row.activeEnrolledLearners>0
         ? `Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.`
         : row.status!=="PLANNED" ? "Only planned batches can be removed." : "Remove this unlinked planned batch"}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+      >
       Remove
-    </button>
+    </Button>
     </div>
     <ConfirmDialog open={Boolean(pendingLifecycleAction)}
       onOpenChange={next=>{if(!next)setPendingLifecycleAction(null);}}
@@ -302,14 +303,14 @@ export function CollegeCohortRowActions({ row, periods }: {
         </p>}
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
         <div className="flex flex-wrap justify-end gap-3">
-          <button disabled={pending} type="button" onClick={close}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+          <Button variant="secondary" disabled={pending} type="button" onClick={close}
+            >
             Cancel
-          </button>
-          <button disabled={pending || !hasUnsavedCollegeCohortEdit(original, draft)} type="submit"
-            className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+          </Button>
+          <Button variant="primary" disabled={pending || !hasUnsavedCollegeCohortEdit(original, draft)} type="submit"
+            >
             {pending ? "Saving…" : "Save changes"}
-          </button>
+          </Button>
         </div>
       </form>
     </Dialog> : null}
