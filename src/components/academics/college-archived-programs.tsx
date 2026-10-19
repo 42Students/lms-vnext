@@ -10,7 +10,7 @@ export function CollegeArchivedPrograms({ programs }: {
   const [open, setOpen] = useState(false);
   const [busy, start] = useTransition();
   const [error, setError] = useState("");
-  return <section className="rounded-xl border border-border bg-surface p-4">
+  return <section className="- border-t border-border pt-4">
     <button type="button" onClick={() => setOpen(value => !value)}
       className="font-semibold text-primary-text">
       {open ? "Hide archived programs" : "Show archived programs"} ({programs.length}{programs.length === 100 ? "+" : ""})
@@ -22,7 +22,7 @@ export function CollegeArchivedPrograms({ programs }: {
         className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
         <p className="text-sm text-body">{program.name} ({program.code}) · {program.departmentName}</p>
         <button type="button" disabled={busy}
-          className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text"
+          className="rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm font-semibold text-primary-text"
           onClick={() => {
             if (!window.confirm(`Restore ${program.name}? Its active name and code must remain unique.`)) return;
             setError("");

@@ -45,20 +45,20 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-5">
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">From (IST)
         <input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
       </label>
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">To (IST)
         <input name="to" type="date" required defaultValue={typeof to === "string" ? to : ""}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-foreground">View schedule</button>
+      <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-foreground">View schedule</button>
     </form>
     {!parsed.success && hasRange ? <ErrorState title="Invalid date range"
       description="Choose valid from/to dates in IST, up to 31 consecutive calendar days. No schedule was loaded." />
       : !result ? <p className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
         Select an IST date range to inspect persisted sessions and configured capacity.
       </p> : <>
-        <section className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-3">
+        <section className="grid gap-3 - sm:grid-cols-3 border-t border-border pt-5">
           <p className="text-sm text-body"><span className="font-semibold">Capacity:</span> {result.hall.capacity} seats</p>
           <p className="text-sm text-body"><span className="font-semibold">Status:</span> {result.hall.status}</p>
           <p className="text-sm text-body"><span className="font-semibold">Scheduled:</span> {result.sessions.length}{result.truncated ? "+" : ""} sessions</p>

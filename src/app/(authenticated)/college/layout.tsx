@@ -15,8 +15,8 @@ export default async function CollegeAdminLayout({
     redirect("/dashboard");
   }
 
-  return <>
+  return <div className="lms-college-portal">
     <CollegeLegacyGroupTabs />
-    <div className="lms-college-portal">{children}</div>
-  </>;
+    {children}
+  </div>;
 }

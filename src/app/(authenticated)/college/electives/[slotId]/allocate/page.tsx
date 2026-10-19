@@ -170,7 +170,7 @@ export default async function CollegeElectiveAllocatePage({
         <input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
           className={fieldStyle} placeholder="Search eligible students" />
       </label>
-      <button className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Search</button>
+      <button className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-foreground">Search</button>
     </form>
     <form action={allocate} className="space-y-4 rounded-lg border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold">Allocate selected to…
@@ -210,7 +210,7 @@ export default async function CollegeElectiveAllocatePage({
           placeholder="One roll number or membership ID per line, comma separated also supported" />
       </label>
       <button type="submit" disabled={!offerings.length}
-        className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
+        className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
         Allocate selected to…
       </button>
     </form>

@@ -27,7 +27,7 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
    <button className="mt-3 min-h-11 rounded bg-primary px-4 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Search students</button>
   </form>
   {data&&!data.students.length?<p className="rounded border border-border p-5">No matching college students.</p>:null}
-  {data?.students.map(person=><section key={person.membershipId} className="space-y-3 rounded-xl border border-border bg-surface p-5">
+  {data?.students.map(person=><section key={person.membershipId} className="space-y-3 - border-t border-border pt-5">
    <div className="flex flex-wrap items-center justify-between gap-2">
     <div><h2 className="font-semibold">{person.name??person.roll??"Student"}</h2>
      <p className="text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p></div>

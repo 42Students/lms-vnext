@@ -33,7 +33,7 @@ export default async function CollegeVideosPage({
   return <main className="min-w-0 space-y-4">
     <CollegeContentAuthoringControl kind="YOUTUBE" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} />
     <Link prefetch={false} download href={collegeContentCsvHref("VIDEO",parsed.data)}
-      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Export filtered video metadata CSV
     </Link>
     <CollegeContentAggregate data={await listCollegeContentAggregate(context, "VIDEO", parsed.data)} />

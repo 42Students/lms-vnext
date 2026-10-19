@@ -41,7 +41,7 @@ export function CollegeFacultyCsvImport(){
   const csvResult=report?.results.map(item=>[item.row,item.status,item.detail,item.membershipId??""]
     .map(neutralStudentCsvCell).join(",")).join("\r\n")??"";
   return <div className="space-y-5">
-    <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+    <section className="space-y-3 - border-t border-border pt-5">
       <h2 className="text-lg font-semibold">Bulk register faculty</h2>
       <p className="text-sm text-muted-foreground">
         Choose CSV (up to 500 rows, 1 MB). Validate before creating faculty.
@@ -79,7 +79,7 @@ export function CollegeFacultyCsvImport(){
       </button>
       {error&&<p role="alert" className="text-sm text-error">{error}</p>}
     </section>
-    {report&&<section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    {report&&<section className="space-y-4 - border-t border-border pt-5">
       <h2 className="text-lg font-semibold">{report.preview?"Preview":"Faculty registration results"}</h2>
       <p role="status" className="text-sm">{report.valid} valid; {report.invalid} invalid.</p>
       {report.structuralErrors.length>0&&<p role="alert">{report.structuralErrors.join(", ")}</p>}

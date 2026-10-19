@@ -122,7 +122,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       .slice().sort((a, b) => a.displayOrder - b.displayOrder || a.id.localeCompare(b.id));
   }
 
-  return <section className="space-y-4 rounded-xl border border-border bg-surface p-4">
+  return <section className="space-y-4 - border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
     <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
     <form onSubmit={prepare} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

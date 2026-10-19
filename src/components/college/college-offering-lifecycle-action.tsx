@@ -25,7 +25,7 @@ export function CollegeOfferingLifecycleAction({id,name,status}:{
   }
   return <div className="space-y-1">{confirmation}
     <button type="button" disabled={pending} onClick={submit}
-      className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
+      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text">
       {pending?"Saving…":action==="ARCHIVE"?"Archive":"Restore"}
     </button>
     {error?<p role="alert" className="text-xs text-error">{error}</p>:null}

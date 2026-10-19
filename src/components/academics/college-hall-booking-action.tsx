@@ -32,7 +32,7 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
     });
   }
   const field="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground";
-  return <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Book lecture hall">
+  return <section className="- sm: border-t border-border pt-4" aria-label="Book lecture hall">
     <h2 className="font-semibold text-foreground">Book class session</h2>
     <p className="mt-2 text-sm text-body">Dates and times use IST. A booking is only confirmed after rechecking persisted overlaps.</p>
     {classes.length===0?<p role="status">No active classes are available for booking.</p>:
@@ -57,7 +57,7 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
           <input className={field} required type="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
         <div className="sm:col-span-2 lg:col-span-3">
           <button type="submit" disabled={pending||!sectionId||!title.trim()}
-            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
             {pending?"Booking…":"Confirm booking"}</button>
         </div>
       </form>}

@@ -87,14 +87,14 @@ export default async function CollegeGroupDetailPage({
         actions={
           <Link
             href="/college/groups"
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)]"
           >
             All groups
           </Link>
         }
       />
 
-      <section className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 lg:grid-cols-5">
+      <section className="grid gap-4 - sm:grid-cols-2 lg:grid-cols-5 border-t border-border pt-5">
         <Stat title="Type" value={label(group.kind)} />
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -119,7 +119,7 @@ export default async function CollegeGroupDetailPage({
       </section>
 
       {group.selfJoinOpenFrom || rule ? (
-        <section className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-3">
+        <section className="grid gap-4 - sm:grid-cols-3 border-t border-border pt-5">
           <Stat
             title="Self-join window"
             value={
@@ -144,7 +144,7 @@ export default async function CollegeGroupDetailPage({
       ) : null}
 
       {rule ? (
-        <section className="rounded-xl border border-border bg-surface p-4">
+        <section className="- border-t border-border pt-4">
           <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/rule-preview"}
             className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
             Preview persisted membership rule (read-only)
@@ -189,7 +189,7 @@ export default async function CollegeGroupDetailPage({
       {group.kind === "STUDY_GROUP" ? <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Manage members</h2>
         <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           Validate member CSV (dry run)
         </Link>
         <CollegeStudyMemberActions groupId={group.id} name={group.name}

@@ -74,16 +74,16 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     <PageHeader eyebrow="College Admin" title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory}
       description="Manage college memberships, roles and lifecycle. For the read-only legacy contact tabs, open Contacts."
       actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/groups"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Export filtered CSV</Link><PersonOnboardDialog collegeId={membership.collegeId} /></div>} />
-    <section className="rounded-xl border border-border bg-surface p-4" aria-label="People filters">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Export filtered CSV</Link><PersonOnboardDialog collegeId={membership.collegeId} /></div>} />
+    <section className="- border-t border-border pt-4" aria-label="People filters">
       <form action="/college/people/manage" method="get" role="search" className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Name, email or phone
           <input name="q" type="search" maxLength={100} defaultValue={filter.q}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Role
           <select name="role" defaultValue={filter.role}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="ALL">All roles</option>
             <option value="LEARNER">Learner</option>
             <option value="FACULTY">Faculty</option>
@@ -94,15 +94,15 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Membership
           <select name="status" defaultValue={filter.status}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="ALL">All statuses</option>
             <option value="ACTIVE">Active</option>
             <option value="SUSPENDED">Suspended</option>
             <option value="ENDED">Ended</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Apply</button>
-        <Link href="/college/people" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Apply</button>
+        <Link href="/college/people" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
     </section>
     <section className="space-y-2" aria-label="Filtered people">
@@ -123,9 +123,9 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       </span>
       <div className="flex flex-wrap gap-3">
         {pagination.hasPrevious ? <Link href={collegePeopleManageHref({ ...filter, page: filter.page - 1 })}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link> : null}
         {pagination.hasNext ? <Link href={collegePeopleManageHref({ ...filter, page: filter.page + 1 })}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link> : null}
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">The CSV includes at most 1,000 matching memberships and visibly discloses truncation. Roles are membership grants, not separate people. A multi-role person may appear under multiple role filters. Profile and lifecycle actions are governed by existing permissions.</p>

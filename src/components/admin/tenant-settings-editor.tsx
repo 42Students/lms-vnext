@@ -40,7 +40,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   finally{setSaving(false);}
  }
  const groups=[...new Set(keys.map(spec=>spec.group))];
- return <section aria-label="Edit Tenant Settings" className="space-y-5 rounded-xl border border-border bg-surface p-5">
+ return <section aria-label="Edit Tenant Settings" className="space-y-5 - border-t border-border pt-5">
   <h2 className="text-lg font-semibold">Edit Tenant Settings</h2>
   <p className="text-sm text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
    Each field has its legacy validation range. Platform security overrides require a separate rollout before taking effect.</p>

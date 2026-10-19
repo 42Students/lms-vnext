@@ -19,7 +19,7 @@ export default async function CollegeStudentsImportPage() {
       title="Import students"
       description="Dry-run validation followed by explicit per-row learner onboarding and enrollment."
       actions={<Link href="/college/students"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Student directory</Link>} />
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Student directory</Link>} />
     <CollegeStudentCsvImport choices={choices} />
   </main>;
 }

@@ -66,7 +66,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   }catch(error){setMessage(error instanceof Error?error.message:"Upload failed.");}
   finally{setBusy(false);}
  }
- return <section aria-label="College logo upload" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="College logo upload" className="space-y-3 - border-t border-border pt-4">
   <h3 className="font-semibold">College logo</h3>
   <p className="text-sm text-body">Upload a square logo. Choose a crop area; the saved image is a 200-pixel-or-larger PNG. Original files are not made public.</p>
   {(savedUrl||currentUrl)?<div className="w-fit rounded-md border border-border p-3">
