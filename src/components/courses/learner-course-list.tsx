@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { LearnerCourseCardImage } from "./learner-course-card-image";
 import {learnerCourseImageResetKey} from "@/modules/courses/learner-course-image-reset-key-model";
 import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card-due-label-model";
@@ -164,7 +167,7 @@ export function LearnerCourseList({
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-xs font-semibold text-body">
               Semester
-              <select
+              <Select
                 value={selectedPeriodId}
                 onChange={(event) => {
                   const reset = learnerCourseSemesterFilterReset();
@@ -177,7 +180,7 @@ export function LearnerCourseList({
                   setSortMode("NAME");
                   setVisibleLimit(reset.visibleLimit);
                 }}
-                className="mt-1.5 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+                className="mt-1.5 w-full"
                 aria-label="Select semester"
               >
                 {periods.map((period) => (
@@ -185,12 +188,12 @@ export function LearnerCourseList({
                     {period.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
 
             <label className="text-xs font-semibold text-body">
               Search courses
-              <input
+              <Input
                 value={query}
                 maxLength={100}
                 onChange={(event) => {
@@ -198,14 +201,14 @@ export function LearnerCourseList({
                   setVisibleLimit(PAGE_SIZE);
                 }}
                 placeholder="Search courses…"
-                className="mt-1.5 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+                className="mt-1.5 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
               />
             </label>
           </div>
 
           {electiveCount > 0 ? (
             <div
-              className="grid min-h-11 sm:min-h-9 w-full grid-cols-3 gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-1 sm:inline-flex sm:w-auto"
+              className="grid min-h-9 w-full grid-cols-3 gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-1 sm:inline-flex sm:w-auto"
               aria-label="Filter by course type"
             >
               {[
@@ -213,8 +216,7 @@ export function LearnerCourseList({
                 ["core", `Regular ${coreCount}`],
                 ["elective", `Electives ${electiveCount}`],
               ].map(([value, label]) => (
-                <button
-                  key={value}
+                <Button variant="ghost" key={value}
                   type="button"
                   aria-pressed={effectiveTypeFilter === value}
                   onClick={() => {
@@ -228,7 +230,7 @@ export function LearnerCourseList({
                   }
                 >
                   {label}
-                </button>
+                </Button>
               ))}
             </div>
           ) : null}
@@ -237,46 +239,46 @@ export function LearnerCourseList({
         <div className="mt-3 flex flex-wrap items-end gap-3">
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Term access
-            <select value={termState} onChange={e=>{setTermState(e.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
+            <Select value={termState} onChange={e=>{setTermState(e.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}
+              className="w-full">
               <option value="ALL">All term courses</option>
               <option value="CURRENT">Currently active</option>
               <option value="HISTORY">Past semester (read-only)</option>
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Learning progress
-            <select value={progressFilter} onChange={event=>{setProgressFilter(event.target.value as LearnerCourseProgressFilter);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
+            <Select value={progressFilter} onChange={event=>{setProgressFilter(event.target.value as LearnerCourseProgressFilter);setVisibleLimit(PAGE_SIZE);}}
+              className="w-full">
               <option value="ALL">Any progress</option>
               <option value="NOT_STARTED">Not started</option>
               <option value="IN_PROGRESS">In progress</option>
               <option value="COMPLETED">Completed</option>
               <option value="UNMEASURED">No tracked items</option>
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Sort Courses
-            <select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
+            <Select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setVisibleLimit(PAGE_SIZE);}}
+              className="w-full">
               <option value="NAME">Course name</option><option value="PROGRESS">Least progress first</option>
               <option value="DUE">Next assessment due</option>
                <option value="RECENT">Most recently active</option>
-            </select>
+            </Select>
           </label>
-          <button type="button" aria-pressed={continueOnly}
+          <Button variant="secondary" type="button" aria-pressed={continueOnly}
             onClick={() => {setContinueOnly(value => !value);setVisibleLimit(PAGE_SIZE);}}
             className={continueOnly
-              ? "min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
-              : "min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary"}>
+              ? "min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
+              : "min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary"}>
             Continue learning only
-          </button>
+          </Button>
         </div>
         {learnerCourseHasActiveFilters({query,typeFilter:effectiveTypeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
-          <button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
+          <Button variant="secondary" type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
             className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
             Clear Course filters
-          </button>
+          </Button>
         ) : null}
         <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
           {periodRows[0]?.course.programName ? (
@@ -338,7 +340,7 @@ export function LearnerCourseList({
       {rows.some(row => row.unavailable) ? (
         <p role="alert" className="rounded-lg border border-warning bg-surface p-4 text-sm text-body">
           Some course records have incomplete or duplicate information. Unavailable cards cannot be opened.
-          <button type="button" onClick={() => window.location.reload()} className="ml-2 font-semibold text-primary-text underline">Retry</button>
+          <Button variant="secondary" type="button" onClick={() => window.location.reload()} className="ml-2 font-semibold text-primary-text underline">Retry</Button>
         </p>
       ) : null}
       <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length, periodRows.length)}</p>
@@ -492,13 +494,13 @@ export function LearnerCourseList({
                           readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
                           nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
                         })!}
-                        className="mt-2 flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-warning px-3 text-sm font-semibold text-foreground">
+                        className="mt-2 flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-warning px-3 text-sm font-semibold text-foreground">
                         Open overdue assignment: {row.firstOverdue.title}
                       </Link>
                     ) : null}
                     {learnerCourseNextItemHref(row) ? (
                       <Link href={learnerCourseNextItemHref(row)!}
-                        className="mt-2 flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text hover:bg-muted">
+                        className="mt-2 flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text hover:bg-muted">
                         Continue at next learning item →
                       </Link>
                     ) : null}
@@ -509,13 +511,13 @@ export function LearnerCourseList({
           </div>
           {visibleRows.length > visibleLimit ? (
             <div className="text-center">
-              <button
+              <Button variant="secondary"
                 type="button"
                 onClick={() => setVisibleLimit((value) => value + PAGE_SIZE)}
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
               >
                 Show more courses ({visibleRows.length - visibleLimit} remaining)
-              </button>
+              </Button>
             </div>
           ) : null}
         </>
