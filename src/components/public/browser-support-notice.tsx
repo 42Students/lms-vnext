@@ -19,7 +19,7 @@ export function BrowserSupportNotice() {
     return () => clearTimeout(timer);
   }, []);
   if (!unsupported) return null;
-  return <p role="alert" className="bg-surface p-4 text-center text-sm text-foreground">
+  return <p role="alert" className="border-b border-warning bg-warning-subtle p-4 text-center text-sm font-medium text-foreground">
     This browser is not supported. Please update your browser and try again.
   </p>;
 }
