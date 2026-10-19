@@ -322,3 +322,42 @@ src/components/placements/tpo-drive-deadline-form.tsx
 - Re-read the source of **all 37 assigned Super Admin second-third direct routes** after the report and people-directory batch. No remaining literal `rounded-xl`, `rounded-lg`, `rounded-md`, `rounded-[9px]`, hard-coded hexadecimal colours, `shadow-sm/lg/xl`, or malformed `bg/text-[var(...)]-hover/subtle` style classes in their direct page `className` declarations. This is a source scan, **not** a pixel-diff or execution verdict; directly rendered child components and genuine overlays can still retain appropriate independent styling.
 - Latest concurrent upstream advanced to `10ac677d5ab403f3c037d559c3321ac55c6cffa6`. Compared from merge base `2a7bd65bab6499f603d32ab65864ef44f8efc813`: there were **13 lane-changed files and zero overlapping upstream paths**. Created two-parent merge `39a43c00007426fc6af572a943ba66e1cdd40245` from current `main` tree plus the 13 chat-6 file blobs. This preserved the latest upstream tree and all lane changes; no force push.
 - This continuation total: **32 source-file commits across three batches (10 + 10 + 12)**, three ledger updates, and two non-force upstream merges, all on `chatgpt/chat-6-b`. TypeScript compiler, CI, tests, browser and deployment deliberately not run. Static JSX closing-tag and token scans are not a strict compilation guarantee.
+
+## 2026-10-19 continuation — second-third delegated controls and auth
+
+- Safe fast-forwarded chat-6 branch to `main` at `8049636671c97d9e4ef6476e2d41f219ab3d3fa4` before edits (confirmed lane was strictly behind). All writes landed only on `chatgpt/chat-6-b`, never `main`.
+- **17 file-level [chat-6] source commits**, one source file per commit, restoring the old LMS shared control skin for Super Admin second-third delegated placement actions, faculty assignment, membership/onboarding, bulk student access, lesson authoring and sign-in policy selection.
+- Converted long-class native buttons, selects, textareas and text inputs to existing shared Button/Select/Input/Textarea controls; native checkbox/radio controls to shared Checkbox/Radio while retaining their event callbacks, disabled states, selection limits, form names and candidate/role state. Fixed duplicate Button and Textarea imports in `college-interview-appointments.tsx` discovered during the source pass.
+- Removed extra white inset card around inbound mail loading and retained neutral skeleton placeholders inside the shared white canvas for unassigned people. Kept independent dialogs, alerts, appointment/calendar panels and status surfaces, and preserved the existing request/offer/assignment/session business logic.
+- **Static-only inspection:** re-fetched edited TSX, counted paired Button/Select closing tags, checked control replacements for leftover native tags, duplicate imports, malformed `rounded-[var(...)]-` suffixes and truncated JSX close tags. No TypeScript compiler, tests, CI, app execution, browser or visual pixel comparison, per owner directive. Shared global skin components and shell files were not modified.
+- Verified against `main`: lane was **17 commits ahead, 0 behind**, touching only the 17 source files below before this ledger update.
+
+### Changed source files in this continuation
+
+```text
+src/components/courses/super-admin-content-authoring.tsx
+src/components/placements/placement-operations-overview.tsx
+src/components/placements/college-interview-appointments.tsx
+src/components/placements/college-application-pipeline-controls.tsx
+src/components/placements/placement-request-queue.tsx
+src/components/admin/super-admin-interview-operations.tsx
+src/components/placements/college-application-detail-drawer.tsx
+src/components/placements/super-admin-needs-attention.tsx
+src/components/placements/placement-season-manager.tsx
+src/components/admin/person-membership-actions.tsx
+src/components/admin/person-onboard-dialog.tsx
+src/components/placements/placement-bulk-add-applicants.tsx
+src/components/admin/super-admin-faculty-assignment-create.tsx
+src/components/admin/super-admin-student-bulk-access.tsx
+src/components/admin/college-signin-method-form.tsx
+src/app/(authenticated)/admin/inbound-mail/loading.tsx
+src/app/(authenticated)/admin/people/unassigned/loading.tsx
+```
+
+### Module-access checkbox follow-on
+
+- Three additional `[chat-6]` source commits brought college module lock, learner module lock, and descendant academic scope lock controls onto shared `Checkbox` without changing acknowledgement requirements, inherited policy behavior, confirmation or authorization.
+- Files: `src/components/admin/college-feature-rule-editor.tsx`, `src/components/admin/student-rule-editor.tsx`, `src/components/admin/descendant-feature-rule-editor.tsx`.
+- Static re-fetch found paired `Button`/`Select` tags in all three, no remaining native checkbox tags, and no tests/TypeScript/CI/runtime invoked. This continuation totals **20 source file commits plus two ledger updates**, on the lane branch only.
+
+- Follow-up syntax fix: restored the leading `"use client";` directive before the new Checkbox import in `super-admin-interview-operations.tsx` (commit `c91b1c6`), then re-read the edited source. Updated continuation count: **21 source commits across 20 source files**, plus ledger updates. Multiline `import {` statements in the membership/onboard dialogs are distinct imports, not duplicates.
