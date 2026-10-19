@@ -1,6 +1,8 @@
 "use client";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -70,11 +72,11 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download CSV template
       </a>
-      <div className="mt-3 grid gap-3 sm:grid-cols-3 print:hidden">
+      <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-3 print:hidden">
         <label className="grid gap-1 text-sm font-semibold">Program
           <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
-            className="min-h-11 text-base md:min-h-9 sm:text-sm">
+            className="min-h-11 md:min-h-9">
             <option value="">Choose program</option>
             {choices.programs.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
           </Select>
@@ -82,7 +84,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Batch
           <Select required value={cohortId}
             onChange={event=>{setCohortId(event.target.value);setSectionId("");setReport(null);}}
-            className="min-h-11 text-base md:min-h-9 sm:text-sm">
+            className="min-h-11 md:min-h-9">
             <option value="">Choose batch</option>
             {choices.batches.filter(option=>option.programId===programId).map(option=>
               <option key={option.id} value={option.id}>{option.name}</option>)}
@@ -91,7 +93,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Class/Section
           <Select value={sectionId}
             onChange={event=>{setSectionId(event.target.value);setReport(null);}}
-            className="min-h-11 text-base md:min-h-9 sm:text-sm">
+            className="min-h-11 md:min-h-9">
             <option value="">No class placement</option>
             {choices.classes.filter(option=>option.cohortId===cohortId).map(option=>
               <option key={option.id} value={option.id}>{option.name} · capacity {option.capacity??"unlimited"}</option>)}
@@ -110,16 +112,16 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setReport(null); setConfirm(false);
         }} rows={8} spellCheck={false}
-          className="w-full font-mono text-xs sm:text-sm" />
+          className="w-full font-mono text-xs md:text-sm" />
       </label>
-      <Button variant="primary" type="button" disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => guardRun(async () => {
+      <Button variant="primary" type="button" loading={pending} disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => guardRun(async () => {
         try { await submit("PREVIEW"); } catch (reason) {
           setError(reason instanceof Error ? reason.message : "Validation failed");
         }
       })} className="mt-4 min-h-11 md:min-h-9 print:hidden">
         {pending ? "Validating..." : "Preview validation"}
       </Button>
-      {error ? <p role="alert" className="mt-3 text-sm text-error">{error}</p> : null}
+      {error ? <Alert tone="error" className="mt-3">{error}</Alert> : null}
     </section>
 
     {report ? <section aria-label="CSV validation and result report"
@@ -127,12 +129,12 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
       <h2 className="text-lg font-semibold text-foreground">
         {report.preview ? "Dry-run report" : "Import result"}
       </h2>
-      <p className="text-sm text-body">{report.valid} structurally valid; {report.invalid} invalid.
+      <Alert tone="info">{report.valid} structurally valid; {report.invalid} invalid.
         {report.preview ? " No learner has been created or enrolled." :
-          " Import is per-row. PARTIAL means onboarding succeeded but enrollment did not."}</p>
-      {report.structuralErrors.length ? <p role="alert" className="text-sm text-error">
+          " Import is per-row. PARTIAL means onboarding succeeded but enrollment did not."}</Alert>
+      {report.structuralErrors.length ? <Alert tone="error">
         {report.structuralErrors.join(", ")}
-      </p> : null}
+      </Alert> : null}
       {csvDownload ? <a href={csvDownload} download="student-import-result.csv"
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Export neutralized result CSV
@@ -144,7 +146,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
           {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="IMPORTED"||item.status==="VALID"?"success":item.status==="FAILED"||item.status==="INVALID"?"error":"warning"}>{item.status}</StatusBadge>,mobilePriority:"secondary"},
           {key:"reason",header:"Reason",cell:item=>item.detail,mobilePriority:"secondary"},
         ]}
-        empty={<p className="text-sm text-body">No row-level results are available.</p>}/>
+        empty={<EmptyState title="No row results" description="No row-level results are available."/>}/>
 
       {report.preview && report.valid > 0 && report.invalid === 0 && report.structuralErrors.length === 0 ? <div className="space-y-3">
         <label className="flex min-h-11 items-start gap-2 text-sm text-body print:hidden">
@@ -152,7 +154,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
           I understand that importing creates real identities and memberships, successful rows are not rolled back,
           and any partial onboarding requires manual enrollment recovery.
         </label>
-        <Button variant="primary" type="button" disabled={!confirm || pending}
+        <Button variant="primary" type="button" loading={pending} disabled={!confirm || pending}
           onClick={() => guardRun(async () => {
             try { await submit("IMPORT"); } catch (reason) {
               setError(reason instanceof Error ? reason.message : "Import failed");

@@ -1,5 +1,7 @@
 "use client";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 
@@ -36,7 +38,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const [gender,setGender]=useState<""|"Male"|"Female"|"Other"|"Prefer not to say">("");
   const [dateOfBirth,setDob]=useState("");
   const [address,setAddress]=useState("");
-  const field="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+  const field="min-h-11 min-w-0 md:min-h-9";
   async function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();setError("");setResult(null);setSavedMemberId(null);
     if(!indianMobileToE164(phoneE164)){setError("Mobile number must be 10 digits");return;}
@@ -65,7 +67,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       }catch(reason){setError(reason instanceof Error?reason.message:"Registration failed");}
     });
   }
-  return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid gap-4 rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 sm:grid-cols-2">
+  return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid min-w-0 gap-4 md:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold">First Name
       <Input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
     </label>
@@ -110,17 +112,17 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     <label className="grid gap-1 text-sm font-semibold">Date of Birth
       <Input type="date" value={dateOfBirth} onChange={e=>setDob(e.target.value)} className={field}/>
     </label>
-    <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Address
+    <label className="grid gap-1 text-sm font-semibold md:col-span-2">Address
       <Textarea maxLength={1000} rows={3} value={address} onChange={e=>setAddress(e.target.value)}
-        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground text-base sm:text-sm"/>
+        className="min-w-0"/>
     </label>
-    <div className="space-y-2 sm:col-span-2">
-      <Button variant="primary" type="submit" disabled={pending} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 font-semibold text-[var(--lms-on-primary)] disabled:opacity-50">
+    <div className="space-y-2 md:col-span-2">
+      <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 md:min-h-9">
         {pending?"Registering…":"Register student"}
       </Button>
-      {result&&<p role="status" className="text-sm text-body">{result}</p>}
-      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Open registered student profile →</Link>:null}
-      {error&&<p role="alert" className="text-sm text-error">{error}</p>}
+      {result&&<Alert tone={result.startsWith("Partially")?"warning":"success"}>{result}</Alert>}
+      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open registered student profile →</Link>:null}
+      {error&&<Alert tone="error">{error}</Alert>}
     </div>
   </form></>;
 }

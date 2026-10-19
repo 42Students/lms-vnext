@@ -308,14 +308,14 @@
 - [ ] `src/components/college/college-offering-lifecycle-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-offering-metadata-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-person-audit-modal.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/components/college/college-person-edit-action.tsx`
-- [ ] `src/components/college/college-person-profile-overview-modal.tsx`
-- [ ] `src/components/college/college-role-directory-workspace.tsx`
-- [ ] `src/components/college/college-student-csv-import.tsx`
+- [ ] `src/components/college/college-person-edit-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/college-person-profile-overview-modal.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/college-role-directory-workspace.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/college-student-csv-import.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-student-import-history.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-student-lifecycle-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/components/college/college-student-register-form.tsx`
-- [ ] `src/components/college/student-class-move-action.tsx`
+- [ ] `src/components/college/college-student-register-form.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/student-class-move-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/use-college-confirmation.tsx`
 - [ ] `src/components/colleges/college-contact-profile-form.tsx`
 - [ ] `src/components/groups/college-group-actions.tsx`
@@ -1253,3 +1253,114 @@ Shared component references from inspected source: `src/components/admin/managed
 **Strict box remains unchecked.** Raw controls/hex/inline modal patterns are absent locally, but complete legacy field-by-field visual values for all states, old LMS per-dialog details, repo-wide zero grep, actual phone/tablet browser comparison, TypeScript typecheck and accessibility interaction replay are not available. Under Section H's rule these gaps must remain open; do not infer certification from source-only work.
 
 **Exact next file:** `src/components/college/college-student-csv-import.tsx`, then `src/components/college/college-student-register-form.tsx`, followed by other Student/Faculty/People queue entries.
+
+
+### Replacement chat-4 student imports, profile/dialogs and role directory — 2026-10-20
+
+**Scope:** six complete modified files fetched and scanned after commits. No shared UI or global skin edits, app execution, CI, TypeScript compile, Playwright, screenshot or interaction replay. Source proof only; source-specific values that cannot be established from legacy SCSS remain open.
+
+**Grep proof per fetched TSX:** `/<(button|select|input|textarea|table)\b/g`, `/#[a-f0-9]{3,8}\b/gi`, `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`. Compared opening/closing tag families for shared elements, native form/page tags and dialog sections. No orphan closing families found. This is not a repository-wide `grep -rl` result.
+
+| Full file | Raw controls | Hex literals | Custom overlays | Native h1 | md / sm responsive tokens |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `src/components/college/college-student-csv-import.tsx` | 0 | 0 | 0 | 0 | 10 / 0 |
+| `src/components/college/college-student-register-form.tsx` | 0 | 0 | 0 | 0 | 6 / 0 |
+| `src/components/college/student-class-move-action.tsx` | 0 | 0 | 0 | 0 | 3 / 0 |
+| `src/components/college/college-person-edit-action.tsx` | 0 | 0 | 0 | 0 | 10 / 0 |
+| `src/components/college/college-person-profile-overview-modal.tsx` | 0 | 0 | 0 | 0 | 5 / 0 |
+| `src/components/college/college-role-directory-workspace.tsx` | 0 | 0 | 0 | 0 | 14 / 0 |
+
+#### `src/components/college/college-student-csv-import.tsx`
+
+| Property/state | Legacy source/value | VNext source/value | Verification |
+| --- | --- | --- | --- |
+| Canvas and section | old-lms-shell-spec.md:18-20: one white canvas #fff, 1px #e5e9f0 border, radius 12px, padding 24px | No nested PageCanvas in file; shared page layout inherited from authenticated shell | **Source matches structure; exact per-route padding remains unmeasured** |
+| Buttons and focus | old-lms-shell-spec.md:22-24: 36px, radius 9px, 14px/650, teal #0a7c88/white; legacy-styles/components___form.scss:117-143: focus shadow and 10px field radius | Shared Button/Input/Select variants if applicable; Three shared Select controls, FileUpload, Textarea; preserve 500-row/1MB limits | **Source token family; button active/focus state side-by-side unverified** |
+| Status/errors/empty | old-lms-pages.md:6,11: status strip and hairline rows, no handmade extra canvas | Alert info/error, StatusBadge and EmptyState; preview remains dry run | **Shared family; precise old state metrics not available** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone hit target | Three metadata fields stack through 767px; md:grid-cols-3 thereafter; 44px phone targets | **Breakpoint source proof, not rendered viewport evidence** |
+| Input/select/textarea | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Three shared Select controls, FileUpload, Textarea; preserve 500-row/1MB limits | **Source reviewed; exact legacy state values pending** |
+| Validation/invalid | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Alert info/error, StatusBadge and EmptyState; preview remains dry run | **Source reviewed; exact legacy state values pending** |
+| Loading/disabled | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Both import/preview Buttons supply loading and disabled | **Source reviewed; exact legacy state values pending** |
+| Responsive | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Three metadata fields stack through 767px; md:grid-cols-3 thereafter; 44px phone targets | **Source reviewed; exact legacy state values pending** |
+
+**Source anchors:** `src/components/college/college-student-csv-import.tsx:117` Button, `src/components/college/college-student-csv-import.tsx:124` Alert, `src/components/college/college-student-csv-import.tsx:n/a` Dialog, `src/components/college/college-student-csv-import.tsx:149` EmptyState. Actual browser resize and focus behaviour not verified; full test/TSX parser prohibited by lane constraints.
+
+#### `src/components/college/college-student-register-form.tsx`
+
+| Property/state | Legacy source/value | VNext source/value | Verification |
+| --- | --- | --- | --- |
+| Canvas and section | old-lms-shell-spec.md:18-20: one white canvas #fff, 1px #e5e9f0 border, radius 12px, padding 24px | No nested PageCanvas in file; shared page layout inherited from authenticated shell | **Source matches structure; exact per-route padding remains unmeasured** |
+| Buttons and focus | old-lms-shell-spec.md:22-24: 36px, radius 9px, 14px/650, teal #0a7c88/white; legacy-styles/components___form.scss:117-143: focus shadow and 10px field radius | Shared Button/Input/Select variants if applicable; Shared Input/Select/Textarea, removed inner bordered canvas; unchanged identity contact fields | **Source token family; button active/focus state side-by-side unverified** |
+| Status/errors/empty | old-lms-pages.md:6,11: status strip and hairline rows, no handmade extra canvas | Alert warning for partial, success for complete, error for failures | **Shared family; precise old state metrics not available** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone hit target | One column below 768px; two above; registration CTA 44px on phones | **Breakpoint source proof, not rendered viewport evidence** |
+| Form fields | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Shared Input/Select/Textarea, removed inner bordered canvas; unchanged identity contact fields | **Source reviewed; exact legacy state values pending** |
+| Partial/success/error | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Alert warning for partial, success for complete, error for failures | **Source reviewed; exact legacy state values pending** |
+| Loading/disabled | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Button loading while async guarded registration; old validation kept | **Source reviewed; exact legacy state values pending** |
+| Responsive | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | One column below 768px; two above; registration CTA 44px on phones | **Source reviewed; exact legacy state values pending** |
+
+**Source anchors:** `src/components/college/college-student-register-form.tsx:120` Button, `src/components/college/college-student-register-form.tsx:123` Alert, `src/components/college/college-student-register-form.tsx:n/a` Dialog, `src/components/college/college-student-register-form.tsx:n/a` EmptyState. Actual browser resize and focus behaviour not verified; full test/TSX parser prohibited by lane constraints.
+
+#### `src/components/college/student-class-move-action.tsx`
+
+| Property/state | Legacy source/value | VNext source/value | Verification |
+| --- | --- | --- | --- |
+| Canvas and section | old-lms-shell-spec.md:18-20: one white canvas #fff, 1px #e5e9f0 border, radius 12px, padding 24px | No nested PageCanvas in file; shared page layout inherited from authenticated shell | **Source matches structure; exact per-route padding remains unmeasured** |
+| Buttons and focus | old-lms-shell-spec.md:22-24: 36px, radius 9px, 14px/650, teal #0a7c88/white; legacy-styles/components___form.scss:117-143: focus shadow and 10px field radius | Shared Button/Input/Select variants if applicable; Inline move panel replaced by shared Dialog with stable title, no duplicate heading | **Source token family; button active/focus state side-by-side unverified** |
+| Status/errors/empty | old-lms-pages.md:6,11: status strip and hairline rows, no handmade extra canvas | Alert info preview, Alert(error), EmptyState for unavailable classes, Skeleton while fetching | **Shared family; precise old state metrics not available** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone hit target | No fixed min-width, Dialog wraps; trigger/confirm/cancel 44px below md | **Breakpoint source proof, not rendered viewport evidence** |
+| Modal/confirmation | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Inline move panel replaced by shared Dialog with stable title, no duplicate heading | **Source reviewed; exact legacy state values pending** |
+| Validation/error/empty | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Alert info preview, Alert(error), EmptyState for unavailable classes, Skeleton while fetching | **Source reviewed; exact legacy state values pending** |
+| Focus/disabled | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Shared Button/Select focus and disabled busy, dialog dismissible only when idle | **Source reviewed; exact legacy state values pending** |
+| Responsive | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | No fixed min-width, Dialog wraps; trigger/confirm/cancel 44px below md | **Source reviewed; exact legacy state values pending** |
+
+**Source anchors:** `src/components/college/student-class-move-action.tsx:71` Button, `src/components/college/student-class-move-action.tsx:85` Alert, `src/components/college/student-class-move-action.tsx:75` Dialog, `src/components/college/student-class-move-action.tsx:78` EmptyState. Actual browser resize and focus behaviour not verified; full test/TSX parser prohibited by lane constraints.
+
+#### `src/components/college/college-person-edit-action.tsx`
+
+| Property/state | Legacy source/value | VNext source/value | Verification |
+| --- | --- | --- | --- |
+| Canvas and section | old-lms-shell-spec.md:18-20: one white canvas #fff, 1px #e5e9f0 border, radius 12px, padding 24px | No nested PageCanvas in file; shared page layout inherited from authenticated shell | **Source matches structure; exact per-route padding remains unmeasured** |
+| Buttons and focus | old-lms-shell-spec.md:22-24: 36px, radius 9px, 14px/650, teal #0a7c88/white; legacy-styles/components___form.scss:117-143: focus shadow and 10px field radius | Shared Button/Input/Select variants if applicable; Missing Button import repaired, shared Dialog with single heading and Input/Select/Textarea | **Source token family; button active/focus state side-by-side unverified** |
+| Status/errors/empty | old-lms-pages.md:6,11: status strip and hairline rows, no handmade extra canvas | Canonical fields remain readOnly, membership-scoped save unchanged | **Shared family; precise old state metrics not available** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone hit target | Grid 1-column below 768px/2-column after; footer wrap remains | **Breakpoint source proof, not rendered viewport evidence** |
+| Modal and field values | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Missing Button import repaired, shared Dialog with single heading and Input/Select/Textarea | **Source reviewed; exact legacy state values pending** |
+| Read-only and permission | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Canonical fields remain readOnly, membership-scoped save unchanged | **Source reviewed; exact legacy state values pending** |
+| Pending/status | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Skeleton while loading, Alert error/success, save button loading/disabled | **Source reviewed; exact legacy state values pending** |
+| Responsive | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Grid 1-column below 768px/2-column after; footer wrap remains | **Source reviewed; exact legacy state values pending** |
+
+**Source anchors:** `src/components/college/college-person-edit-action.tsx:77` Button, `src/components/college/college-person-edit-action.tsx:81` Alert, `src/components/college/college-person-edit-action.tsx:82` Dialog, `src/components/college/college-person-edit-action.tsx:n/a` EmptyState. Actual browser resize and focus behaviour not verified; full test/TSX parser prohibited by lane constraints.
+
+#### `src/components/college/college-person-profile-overview-modal.tsx`
+
+| Property/state | Legacy source/value | VNext source/value | Verification |
+| --- | --- | --- | --- |
+| Canvas and section | old-lms-shell-spec.md:18-20: one white canvas #fff, 1px #e5e9f0 border, radius 12px, padding 24px | No nested PageCanvas in file; shared page layout inherited from authenticated shell | **Source matches structure; exact per-route padding remains unmeasured** |
+| Buttons and focus | old-lms-shell-spec.md:22-24: 36px, radius 9px, 14px/650, teal #0a7c88/white; legacy-styles/components___form.scss:117-143: focus shadow and 10px field radius | Shared Button/Input/Select variants if applicable; Removed duplicate h2; shared Dialog title; education list hairline separators | **Source token family; button active/focus state side-by-side unverified** |
+| Status/errors/empty | old-lms-pages.md:6,11: status strip and hairline rows, no handmade extra canvas | Skeleton on read, Alert on error, EmptyState if no education | **Shared family; precise old state metrics not available** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone hit target | Two-column metadata after md; single column on phones; close button 44px | **Breakpoint source proof, not rendered viewport evidence** |
+| Modal title and rows | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Removed duplicate h2; shared Dialog title; education list hairline separators | **Source reviewed; exact legacy state values pending** |
+| Empty/loading/error | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Skeleton on read, Alert on error, EmptyState if no education | **Source reviewed; exact legacy state values pending** |
+| Data and dynamic sections | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Person role/bio/education/skills unchanged; separate topical row groups use border-bottom | **Source reviewed; exact legacy state values pending** |
+| Responsive | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Two-column metadata after md; single column on phones; close button 44px | **Source reviewed; exact legacy state values pending** |
+
+**Source anchors:** `src/components/college/college-person-profile-overview-modal.tsx:31` Button, `src/components/college/college-person-profile-overview-modal.tsx:39` Alert, `src/components/college/college-person-profile-overview-modal.tsx:33` Dialog, `src/components/college/college-person-profile-overview-modal.tsx:47` EmptyState. Actual browser resize and focus behaviour not verified; full test/TSX parser prohibited by lane constraints.
+
+#### `src/components/college/college-role-directory-workspace.tsx`
+
+| Property/state | Legacy source/value | VNext source/value | Verification |
+| --- | --- | --- | --- |
+| Canvas and section | old-lms-shell-spec.md:18-20: one white canvas #fff, 1px #e5e9f0 border, radius 12px, padding 24px | No nested PageCanvas in file; shared page layout inherited from authenticated shell | **Source matches structure; exact per-route padding remains unmeasured** |
+| Buttons and focus | old-lms-shell-spec.md:22-24: 36px, radius 9px, 14px/650, teal #0a7c88/white; legacy-styles/components___form.scss:117-143: focus shadow and 10px field radius | Shared Button/Input/Select variants if applicable; Three scoped numeric metrics and Visible now now use shared StatTile | **Source token family; button active/focus state side-by-side unverified** |
+| Status/errors/empty | old-lms-pages.md:6,11: status strip and hairline rows, no handmade extra canvas | EmptyState with authorized filter-clear action; existing ErrorState for denied read | **Shared family; precise old state metrics not available** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone hit target | Summary 1-col phone, 2-col tablet, 4-col desktop, link actions 44px phone | **Breakpoint source proof, not rendered viewport evidence** |
+| Summary metrics | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Three scoped numeric metrics and Visible now now use shared StatTile | **Source reviewed; exact legacy state values pending** |
+| Headers/links/forms | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Single PageHeader, role-specific actions, shared Input/Select/Disclosure | **Source reviewed; exact legacy state values pending** |
+| Empty/error | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | EmptyState with authorized filter-clear action; existing ErrorState for denied read | **Source reviewed; exact legacy state values pending** |
+| Responsive | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Summary 1-col phone, 2-col tablet, 4-col desktop, link actions 44px phone | **Source reviewed; exact legacy state values pending** |
+| Legacy disparity | old-lms-pages.md:6-11, shell-spec.md:18-24, legacy form/button SCSS | Custom duplicate mobile roster rows still exist, shared DataTable switches at 640px; strict UI parity unverified | **Source reviewed; exact legacy state values pending** |
+
+**Source anchors:** `src/components/college/college-role-directory-workspace.tsx:343` Button, `src/components/college/college-role-directory-workspace.tsx:n/a` Alert, `src/components/college/college-role-directory-workspace.tsx:n/a` Dialog, `src/components/college/college-role-directory-workspace.tsx:357` EmptyState. Actual browser resize and focus behaviour not verified; full test/TSX parser prohibited by lane constraints.
+
+**Strict ticks: 0 newly checked.** All six are source-migrated, **not** certified pixel clones. Global greps, fully matched computed values for hover/active/focus/disabled/loading/errors/empty, responsive browser proof and TypeScript/JSX parse are missing. Shared PageHeader typography and DataTable mobile breakpoint remain external owner blockers; for the role directory, duplicate custom mobile roster layout also needs a dedicated parity pass.
+
+**Exact next file:** `src/components/college/college-faculty-assignment-actions.tsx` has prior source proof; proceed to remaining College Admin owned routes and overlay/detail components, starting `src/app/(authenticated)/college/students/error.tsx` if in the Work queue; audit remaining error/loading files by queue order.

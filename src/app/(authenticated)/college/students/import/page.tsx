@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { PageHeader } from "@/components/ui/page-header";
 import { CollegeStudentCsvImport } from "@/components/college/college-student-csv-import";
 import { listCollegeStudentImportOptions } from "@/modules/people/college-student-import-options";
@@ -18,8 +18,7 @@ export default async function CollegeStudentsImportPage() {
     <PageHeader
       title="Import students"
       description="Dry-run validation followed by explicit per-row learner onboarding and enrollment."
-      actions={<Link href="/college/students"
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Student directory</Link>} />
+      actions={<PageBackLink href="/college/students" label="Student directory"/>} />
     <CollegeStudentCsvImport choices={choices} />
   </main>;
 }
