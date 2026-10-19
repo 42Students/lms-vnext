@@ -57,7 +57,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       <PageHeader eyebrow="College Admin · Courses & Content" title="Lessons" />
       <ErrorState title="Invalid lesson filters"
         description="The search, lesson status or page is invalid. No lesson data was loaded."
-        action={<Link href="/college/lessons" className="font-semibold text-link">Clear filters</Link>} />
+        action={<Link href="/college/lessons" className="font-semibold text-link lms-inline-link">Clear filters</Link>} />
     </div>
   );
   const authoringOptions=await getCollegeLessonAuthoringOptions(context);
