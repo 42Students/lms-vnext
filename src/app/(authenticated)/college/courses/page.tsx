@@ -23,10 +23,7 @@ export default async function CollegeCoursesPage({searchParams}:{searchParams:Pr
   const duplicateCourseId=typeof raw.duplicate==="string"&&/^[a-f0-9-]{36}$/i.test(raw.duplicate)?raw.duplicate:undefined;
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
-      <PageHeader
-       
-        title="Courses"
-      />
+      <PageHeader title="Courses"/>
       <AdminCourseOverview
         workspace={workspace}
         catalogueQuery={catalogueQuery}
