@@ -1,3 +1,4 @@
+import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -108,10 +109,10 @@ export default async function LearnerOffersPage({
 
       <PageHeader title="My offers" description="Your official placement offers and recorded joining outcomes." />
 
-      {conflictingDeadlines ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">
+      {conflictingDeadlines ? <Banner tone="warning">
         The due-soon and historical expiry filters cannot be combined. Showing the selected expiry state instead.
-      </p> : null}
-      {invalidQuery ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">Invalid offer filters were ignored. Check the selected status, search and dates before continuing.</p> : null}
+      </Banner> : null}
+      {invalidQuery ? <Banner tone="warning">Invalid offer filters were ignored. Check the selected status, search and dates before continuing.</Banner> : null}
       <Tabs ariaLabel="Offer status" renderPanel={false} value={view} items={tabs.map(tab=>({value:tab.id,label:tab.label,count:offers.counts[tab.id],href:learnerOfferStatusHref(tab.id,{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry})}))}/>
       {view==="pending"&&expiredIssuedCount>0 ? (
         <p role="status" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
