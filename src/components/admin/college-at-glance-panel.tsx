@@ -42,7 +42,7 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
    {ITEMS.map(item=><div key={item.key} className="h-28 animate-pulse rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle"/>)}
   </div>:null}
   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-   {ITEMS.map(item=><Link key={item.key} href={item.href} className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5">
+   {ITEMS.map(item=><Link key={item.key} href={item.href} className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5 hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      <p className="text-xs font-semibold uppercase text-muted-foreground">{item.label}</p>
      <p className="mt-2 text-3xl font-semibold tabular-nums">{displayedGlanceNumber(counts?.[item.key]??null)}</p>
      <p className="mt-2 text-xs text-body">Recorded in the selected college</p>
