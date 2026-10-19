@@ -1,7 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { LEARNER_LEGACY_NOTICES_TITLE } from "@/modules/placements/learner-placement-copy-model";
@@ -73,9 +70,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   return (
     <div className="min-w-0 space-y-6">
       <div>
-        <Link href="/learn/my-placements" className="text-sm text-primary-text underline">Back to My Placements</Link>
-        <h1 className="mt-3 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">{LEARNER_LEGACY_NOTICES_TITLE}</h1>
-        <p className="mt-2 text-sm text-body">Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown.</p>
+        <PageHeader title={LEARNER_LEGACY_NOTICES_TITLE}
+          description="Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown."
+          actions={<Link href="/learn/my-placements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text sm:min-h-9">Back to My Placements</Link>} />
         {hadInvalidNoticeFilters ? <p role="status" className="mt-2 text-sm text-warning">Some notice filters were invalid and have been reset to safe defaults.</p> : null}
       </div>
       <nav aria-label="Placement notice views" className="flex flex-wrap gap-3">
