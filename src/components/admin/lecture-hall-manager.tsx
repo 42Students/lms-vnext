@@ -175,7 +175,7 @@ export function LectureHallManager({
     });
   }
 
-  const field = "mb-1.5 block text-xs font-semibold text-body";
+  const field = "mb-1.5 block text-[13px] font-semibold text-body";
 
   return (
     <div className="space-y-4">
@@ -218,7 +218,7 @@ export function LectureHallManager({
               cell: (hall) => (
                 <div className="flex flex-wrap justify-end gap-2">
                   <Link href={`${availabilityBase}/${hall.id}`}
-                    className="inline-flex min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">
                     Availability
                   </Link>
                   <Button variant="secondary" size="sm" onClick={() => open(hall)}>
@@ -274,7 +274,7 @@ export function LectureHallManager({
             <Input id="hall-name" value={draft.name} maxLength={255} placeholder={LECTURE_HALL_COPY.namePlaceholder}
               onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-2">
             <div>
               <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
               <Input id="hall-capacity" type="number" min={1} max={5000} value={draft.capacity}

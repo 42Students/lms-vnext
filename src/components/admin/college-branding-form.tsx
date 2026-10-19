@@ -166,6 +166,7 @@ export function CollegeBrandingForm({
                   disabled={!canEdit}
                   maxLength={7}
                   aria-invalid={Boolean(errors[key])}
+                  className="min-h-11 min-[768px]:min-h-9"
                 />
               </div>
               {errors[key] ? (
@@ -191,6 +192,7 @@ export function CollegeBrandingForm({
               placeholder={field.placeholder}
               disabled={!canEdit}
               aria-invalid={Boolean(errors[field.key])}
+              className="min-h-11 min-[768px]:min-h-9"
             />
             {field.hint ? (
               <span className="mt-1 block text-xs text-muted-foreground">

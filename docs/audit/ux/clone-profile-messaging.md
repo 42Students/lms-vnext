@@ -438,3 +438,107 @@ Every one of the **18** fully retrieved lane-branch files listed in the table ab
 The lane was **32 ahead / 0 behind main** when this turn began. While the 18 source files were being completed, main advanced repeatedly as other lanes and the orchestrator integrated changes. A branch-only synchronization PR was opened as **#195** (`head=main`, `base=chatgpt/chat-11-b`), never the reverse. It was reported **not mergeable** by GitHub, and a safe GitHub merge attempt returned HTTP 405 (conflicts). The only overlapping HR files visible in the initial compare, `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx` and `src/components/hr/recruiter-conversation-reply-form.tsx`, were replaced on the lane with their newer main versions **verbatim**, because those versions already retained the 44px/768px fixes and brought in newer shared `Alert`/`InlineNotice` usage. No file under `src/components/ui/**` was changed and main was never written to by this lane.
 
 A subsequent compare showed **15 ahead / 657 behind**, with merge-base advancement indicating that several lane commits had already been incorporated into main by the concurrent orchestrator. Because main continued changing and the sync PR was conflicted, **the branch was NOT force-reset or falsely marked rebased/current**. This is a branch-sync handoff, not a blocker to the verified 18-file static source work; the orchestrator or next bounded turn must reconcile the moving main with a conflict-aware update. No automated browser/CI checks were claimed.
+
+## Replacement lane G2/G3 notices, team and campaign source checkpoint
+  
+Source-only batch: 21 files, all written and read back on chatgpt/chat-11-b; commits prefixed [chat-11]. No src/components/ui edits, app run, tests, typecheck or CI.
+
+### Legacy source value table
+
+| Property/state | Old LMS exact reference | Updated vNext source value |
+| --- | --- | --- |
+| Mobile minimum tap | docs/design/legacy-styles/components___notification-drawer.scss:21-24,31-33 — 44px | min-h-11 gives 44px at widths at most 767px in changed controls |
+| Desktop button geometry | docs/design/old-lms-shell-spec.md:24-27 — 36px high, radius 9px, type 14px/650 | min-[768px]:min-h-9 starts at 768px; shared Button tokens own radius, typography and variants |
+| Notification mobile cutoff | docs/design/legacy-styles/components___notification-drawer.scss:23,355-360 — 767px | changed source uses 768px transition, removing premature sm:min-h-9 |
+| Filter pill spacing, state and overflow | docs/design/legacy-styles/components___learn-notifications.scss:60-84,90-127 — gap 8px, scrolling through 767px, 8px radius, active/focus/hover styles | TPO announcement and email history navigation horizontally scroll through 767px; shared stateful controls retained |
+| Single page header | docs/design/old-lms-pages.md:5-6 — 30px/600 title with subtitle/actions, no eyebrow | shared PageHeader without eyebrow in TPO team, announcement and campaign routes, and learner profile workspace |
+| Form focus/disabled states | docs/design/legacy-styles/components___form.scss:14-23 — keyboard focus-visible; existing shared disabled/selected styles | retained Button, Input, Select, Textarea, Dialog component contracts without modifying props/logic; actual browser computed states unverified |
+
+### File-by-file source and responsive proof
+
+| Source file (under src/) | Source lines | Checked presentation |
+| --- | --- | --- |
+
+| src/components/tpo/tpo-notice-composer-dialog.tsx | 11 | shared Dialog opener; 44px mobile / 36px tablet+ |
+| src/app/(authenticated)/tpo/announcements/page.tsx | 79,148 | PageHeader without eyebrow; horizontal pill navigation through 767px |
+| src/components/tpo/tpo-notice-delete-confirm.tsx | 18,29,32 | shared Dialog; opener/confirm/cancel 44px mobile |
+| src/components/tpo/tpo-placement-cell-read-action.tsx | 32 | read receipt action; semantic error color; mobile target 44px |
+| src/components/tpo/tpo-public-join-link-card.tsx | 146,147,160,177,190 | join link controls 44px through 767px |
+| src/components/tpo/tpo-outcome-labels-editor.tsx | 57,63,69,75,80,85,89 | label inputs/select/save controls 44px through 767px |
+| src/components/tpo/tpo-prep-percentage-editor.tsx | 43,47 | numeric input/save 44px through 767px |
+| src/components/tpo/tpo-custom-job-type-placed.tsx | 28,30 | Yes/No pressed controls 44px through 767px |
+| src/components/tpo/tpo-custom-job-type-rename.tsx | 31,34 | rename input/submit 44px through 767px |
+| src/components/tpo/tpo-after-college-bulk-editor.tsx | 116,124,128 | bulk selection, apply and undo 44px through 767px |
+| src/components/tpo/tpo-team-ask-panel.tsx | 47,50,93,98 | ask controls 44px through 767px |
+| src/components/profile/learner-profile-workspace.tsx | 540-1040 | 21 Buttons / 18 Inputs / 5 Selects source-swept; no eyebrow; 768px grids |
+| src/components/tpo/tpo-new-recruiter-conversation.tsx | 76,94,117,120,122 | composer, quick replies and actions 44px through 767px |
+| src/components/tpo/tpo-campaign-compose.tsx | 15,88,132,135,139 | campaign fields/actions/links 44px through 767px |
+| src/app/(authenticated)/tpo/team/[threadId]/page.tsx | 38,56,58,126,131 | no eyebrow; back/pager touch-safe |
+| src/app/(authenticated)/tpo/team/page.tsx | 79,184,188,191,195 | no eyebrow; team pager 44px; 768px grids |
+| src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx | 17 | no redundant eyebrow |
+| src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx | 22,27,45-103 | no eyebrow; email/history controls 44px; scrollable pill nav |
+| src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx | 23,30 | shared heading without eyebrow |
+| src/app/(authenticated)/tpo/recruiters/campaigns/[batchId]/page.tsx | 16,18 | shared heading/back link; tablet grid |
+| src/app/(authenticated)/tpo/recruiters/campaigns/preview/page.tsx | 18,37 | shared heading and responsive preview |
+
+### Scoped source pattern results
+
+After the edits, the 21 listed files were fetched and scanned individually using expressions equivalent to grep -nE within those files only:
+
+| Pattern | Match count | Exemptions |
+| --- | ---: | --- |
+| Raw button/input/select/textarea opening elements | 11 | All 11 are hidden POST form inputs: 9 announcement page and 2 delete confirmation; 0 visible raw controls |
+| Hex literal colors | 0 | None |
+| fixed inset-0 or role=dialog | 0 | Shared Dialog provides overlays |
+| sm:min-h-9 | 0 | The 640px height transition is absent |
+| eyebrow= | 0 | No duplicate PageHeader eyebrow |
+
+These are source-only checks, not a repo-wide terminal grep, browser-computed responsive measurements, or pixel diff. No opening/closing JSX tags were renamed and existing form submit, validation, permission, reply, notification, draft and receipt behavior was retained. G2/G3 strict category items must stay UNCHECKED until repo-wide coverage and phone/tablet/desktop runtime proof at 320/360/390/768/1280, actual old LMS chat-bubble comparison, and hover/focus/disabled/loading/empty/error states are verified.
+
+Next file: src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx (confirm actual route path), then remaining G2/G3 profile and messaging components.
+
+## Replacement lane follow-on G2/G3 imported-editor source checkpoint
+  
+13 more source files read back and aligned with old-LMS mobile/desktop controls. In addition, the earlier listed custom-job-type Placed/Rename controls now use the same shared useConfirmFlow rather than window.confirm; previously authored 44px action sizes remain intact.
+
+| Property | Legacy value / source | Current vNext source |
+| --- | --- | --- |
+| Minimum mobile target | components___notification-drawer.scss:21-24,31-33 = 44px | min-h-11 through 767px |
+| Tablet/desktop target | old-lms-shell-spec.md:24-27 = 36px default control | min-[768px]:min-h-9 from 768px |
+| Mobile form layout | components___learn-notifications.scss:60-84 = mobile through 767px | min-[768px]:grid-cols for changed settings forms |
+| Focus/confirmation | components___form.scss:14-23 = focus-visible keyboard ring; owner requires shared overlays | useConfirmFlow uses shared ConfirmDialog; keyboard behavior inherited from shared UI |
+| Page head | old-lms-pages.md:5-6 = single header on canvas, no eyebrow | existing PageHeaders left in place; no extra eyebrow in scanned files |
+
+### Follow-on individual source rows
+
+| Source file (relative to src/) | Changed/verified lines | Source-level responsive or dialog proof |
+| --- | --- | --- |
+
+| app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx | 29,55 | Draft/back link 44px mobile; 36px from 768px |
+| components/tpo/tpo-campaign-send-control.tsx | 45 | Send confirmation opener touch-safe; status gating unchanged |
+| components/hr/recruiter-conversation-read-control.tsx | 61 | Read receipt action 44px through 767px |
+| app/(authenticated)/tpo/messages/[threadId]/page.tsx | 30 | Back-to-messages link 44px mobile; thread bubble copy/sender untouched |
+| components/placements/learner-placement-notification-settings.tsx | 82,85,93-94 | Preference review/reload/confirm/cancel 44px mobile |
+| components/admin/college-branding-form.tsx | 169,195,209 | Hex input and branding URI fields 44px mobile; user color data preserved |
+| components/tpo/tpo-after-college-editor.tsx | 68,78,81,90-91 | Confirmation buttons 44px mobile |
+| components/tpo/tpo-blocked-dates-editor.tsx | 41,59,74,83,88 | 767px one-column grids; shared confirmation for range/day deletion |
+| components/tpo/tpo-job-types-editor.tsx | 46,53,57,60,65,80 | 767px form grids; shared field/action tokens |
+| components/tpo/tpo-company-visibility-editor.tsx | 42,48,55 | Shared confirmation replaces native window.confirm; Save 44px mobile |
+| components/tpo/tpo-team-handover.tsx | 40,47 | Shared confirmation; select/send 44px mobile |
+| components/admin/descendant-feature-rule-editor.tsx | 45,54,59,61,64-65 | Shared confirmation and scope selects/buttons 44px mobile |
+| components/tpo/tpo-batch-decision-control.tsx | 43,53 | Shared confirmation; select/save 44px mobile |
+
+### Re-fetched scoped pattern counts, these 13 files only
+
+| Pattern | Count | Exemption |
+| --- | ---: | --- |
+| Raw visible button/input/select/textarea | 0 | All visible controls use shared src/components/ui |
+| Hidden raw input | 0 | None in this follow-on subset |
+| Literal hex colours | 0 | Branding colour values are data, not CSS literals |
+| Native window.confirm, fixed inset-0, role=dialog | 0 | useConfirmFlow/ConfirmDialog handles confirmation |
+| sm:min-h-9 and PageHeader eyebrow= | 0 | Responsive switch at 768px; no duplicate eyebrow |
+
+Each modified file was reread after its GitHub write and exact intended source text matched. JSX tag names were retained; no run of the app, TypeScript, CI, compiled CSS or browser simulation was done. The STRICT TICK RULE for complete G2/G3 remains open: a repository-wide grep, legacy chat bubble comparison, browser-computed focus/disabled/loading/error state table, and phone/tablet/pixel proofs are still needed.
+
+Exact next file: src/components/tpo/tpo-audit-saved-views.tsx only if queue ownership includes saved personal views; otherwise resume source sweep at src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx.
+

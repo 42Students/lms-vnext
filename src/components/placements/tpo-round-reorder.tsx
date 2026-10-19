@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState} from "react";
-import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {moveRound} from "@/modules/placements/tpo-round-reorder-model";
 import {useUnsavedDriveGuard} from "./use-unsaved-drive-guard";
@@ -40,7 +40,7 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
  return <section aria-label="Reorder rounds" className="border-b border-border pb-6">
   <h2 className="text-base font-semibold text-foreground">Round order</h2>
   <p className="mt-1 text-sm text-body">Drag by the handle or use Move up / Move down. Save the order before you continue.</p>
-  {!readiness.allowed?<p role="status" className="mt-2 text-sm text-body">{readiness.reason}</p>:null}
+  {!readiness.allowed?<InlineNotice tone="info" message={readiness.reason??"Round order changes are unavailable."}/>:null}
   <ol className="mt-3 divide-y divide-border border-y border-border">{ids.map((id,index)=>{
    const round=roundsById.get(id);
    if(!round)return null;
@@ -59,7 +59,7 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
      className="min-h-11 md:min-h-9">Move down</Button>
    </li>;
   })}</ol>
-  {changed?<p role="status" className="mt-2 text-sm text-[var(--lms-gold-accent)]">Unsaved round order changes. Save or undo before leaving this page.</p>:null}
+  {changed?<InlineNotice tone="info" message="Unsaved round order changes. Save or undo before leaving this page."/>:null}
   <div className="mt-3 flex flex-wrap gap-2">
    <Button type="button" disabled={!readiness.allowed||busy||!changed} onClick={()=>void save()}
     className="min-h-11 md:min-h-9">
@@ -67,7 +67,7 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
    <Button type="button" variant="secondary" disabled={busy||!changed} onClick={()=>{setIds(readiness.rounds.map(round=>round.id));clearDirty();setError(null);}}
     className="min-h-11 md:min-h-9">Undo</Button>
   </div>
-  {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}
-  {saved?<p role="status" className="mt-3 text-sm text-body">Round order saved.</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {saved?<InlineNotice tone="success" message="Round order saved."/>:null}
  </section>;
 }

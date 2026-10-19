@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {useState,type FormEvent} from "react";
@@ -86,8 +87,8 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
   {!readOnly?<Button type="button" onClick={()=>edit(null)}
    variant="secondary">
    Add a round</Button>:null}
-  {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
-  {error&&!open?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
+  {error&&!open?<InlineNotice tone="error" message={error}/>:null}
   {!readOnly?<div className="flex flex-wrap gap-2">{rows.filter(canEdit).map(row=>
    <Button key={row.id} type="button" onClick={()=>edit(row)}
     variant="secondary">
@@ -110,7 +111,7 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
        <option value="ON_CAMPUS">On campus</option>
        <option value="VIRTUAL">Online</option>
       </Select></label>
-     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+     {error?<InlineNotice tone="error" message={error}/>:null}
      <div className="flex flex-wrap justify-end gap-2">
       {active?<Button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
        variant="secondary" className="border-error text-error">Remove</Button>:null}

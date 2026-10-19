@@ -1,5 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -78,9 +81,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
     } catch (e) { setError(e instanceof Error ? e.message : "Calendar update failed."); }
     finally { setPending(false); }
   }
-  if (choices.length === 0) return <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">
-    No pending or scheduled rounds exist in published drives. Create a round in its job workspace first.
-  </p>;
+  if (choices.length === 0) return <EmptyState title="No pending or scheduled rounds exist in published drives." description="Create a round in its job workspace first."/>;
   return <section className="space-y-4 border-b border-border pb-6">
     <label className="block text-sm font-semibold text-foreground">Drive round
       <Select className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-body"
@@ -99,12 +100,8 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
         <Input type="datetime-local" className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
           value={dateInput} onChange={(event) => setDateInput(event.target.value)} />
       </label>
-      {blockedDay?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-[var(--lms-gold-accent)]">
-       This day is blocked in placement settings. Review the clash before scheduling a round.
-      </p>:null}
-      {!blockedDatesAvailable?<p role="status" className="text-sm text-[var(--lms-gold-accent)]">
-       Blocked-date storage is unavailable; schedule clashes cannot be verified.
-      </p>:null}
+      {blockedDay?<Alert tone="warning">This day is blocked in placement settings. Review the clash before scheduling a round.</Alert>:null}
+      {!blockedDatesAvailable?<Alert tone="warning">Blocked-date storage is unavailable; schedule clashes cannot be verified.</Alert>:null}
       <label className="block text-sm font-semibold text-foreground">Mode
         <Select className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
           value={mode} onChange={(event) => setMode(event.target.value as "ON_CAMPUS" | "VIRTUAL")}>
@@ -133,6 +130,6 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
         </Button>
       </div>
     </> : null}
-    {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+    {error ? <InlineNotice tone="error" message={error}/> : null}
   </section>;
 }

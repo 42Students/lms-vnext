@@ -56,6 +56,9 @@ export function InfoPopover({ content, children, className, label }: TooltipProp
           if (!detailsRef.current) return;
           if (pointerTypeRef.current === "touch" || pointerTypeRef.current === "pen") {
             detailsRef.current.open = !openAtPointerDown.current;
+          } else if (event.detail === 0) {
+            // Keyboard/assistive-technology activation toggles as native details does.
+            detailsRef.current.open = !detailsRef.current.open;
           } else detailsRef.current.open = true;
           pointerTypeRef.current = "keyboard";
         }} className="inline-flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">

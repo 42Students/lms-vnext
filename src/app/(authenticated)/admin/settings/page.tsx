@@ -84,13 +84,13 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
         actions={<Link href="/admin/settings/auth"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Authentication and privileged access checklist →</Link>}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle min-[768px]:min-h-9">Authentication and privileged access checklist →</Link>}
       />
 
       <section aria-label="Tenant Settings overview" className="border-b border-border pb-5">
         <p className="text-sm font-semibold">Runtime configuration · {scopeLabel}</p>
         <h2 className="mt-1 text-base font-semibold">Settings with explicit execution scope</h2>
-        <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
+        <dl className="mt-3 grid gap-3 text-sm min-[768px]:grid-cols-3">
           <div><dt>Documented controls</dt><dd className="font-semibold">{documentedControls} visible inventory settings</dd></div>
           <div><dt>Stored keys</dt><dd className="font-semibold">{editorData?.ready?editorData.entries.length:"Unavailable"} in this scope</dd></div>
           <div><dt>Editing</dt><dd className="font-semibold">{editorData?.ready?scopeLabel:"Select an authorized scope"}</dd></div>
@@ -131,20 +131,20 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
       <Link href="/admin/settings/auth"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text min-[768px]:min-h-9">
         Authentication and privileged access checklist →
       </Link>
 
       <form className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
-          <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 sm:min-h-9"/>
+          <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 min-[768px]:min-h-9"/>
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section
-          <Select name="section" defaultValue={parsed.section} className="min-h-11 sm:min-h-9">
+          <Select name="section" defaultValue={parsed.section} className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
           </Select>
         </label>
-        <Button type="submit">Filter</Button>
+        <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Filter</Button>
         <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."/> : null}
@@ -156,7 +156,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] border-transparent px-3 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9"
+            className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] border-transparent px-3 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
           >
             {section.title}
           </a>

@@ -3,6 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -91,8 +92,8 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
     </label>
     <p className="text-xs text-body">Shortcuts: S to shortlist, R to reject (outside form fields). Ctrl+Enter submits only after you review the decision.</p>
     <p className="text-xs text-body">Only pending or held submitted applicants can be reviewed. Refresh if another TPO made a decision.</p>
-    {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
-    {saved ? <p role="status" className="text-sm text-body">Decision saved. Refresh the applicant list to see its current stage.</p> : null}
+    {error ? <InlineNotice tone="error" message={error}/> : null}
+    {saved ? <InlineNotice tone="success" message="Decision saved. Refresh the applicant list to see its current stage."/> : null}
     <Button variant="primary" type="submit" disabled={pending || saved || !reviewed || note.trim().length<10}
       className="min-h-11 md:min-h-9 px-4">
       {pending ? "Saving…" : saved ? "Decision saved" : "Review and confirm decision"}
