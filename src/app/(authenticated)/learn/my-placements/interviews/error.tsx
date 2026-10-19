@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ export default function LearnerInterviewError({ reset }: {
 }) {
   return (
     <section className="py-6 text-center">
-      <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Interviews could not load</h1>
+      <PageHeader title={"Interviews could not load"} />
       <p className="mt-2 text-sm text-body">
         A loading failure does not mean you have no scheduled interview rounds.
       </p>
