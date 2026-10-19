@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -85,20 +86,7 @@ export default async function MentorReviewHistoryPage({
         <Button type="submit" variant="primary">Search</Button>
         <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
-      <nav aria-label="Review decision filter" className="flex flex-wrap gap-2">
-        {([
-          ["ALL","All decisions"],
-          ["APPROVED","Approved"],
-          ["CHANGES_REQUESTED","Changes requested"],
-        ] as const).map(([decision,label]) =>
-          <Link key={decision} href={mentorReviewHistoryHref({...data.query,decision,page:1})}
-            aria-current={data.query.decision===decision?"page":undefined}
-            className={data.query.decision===decision
-              ? "rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
-              : "rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-body"}>
-            {label}
-          </Link>)}
-      </nav>
+      <Tabs ariaLabel="Review decision filter" renderPanel={false} value={data.query.decision} items={([["ALL","All decisions"],["APPROVED","Approved"],["CHANGES_REQUESTED","Changes requested"]] as const).map(([decision,label])=>({value:decision,label,href:mentorReviewHistoryHref({...data.query,decision,page:1})}))}/>
       <p className="text-sm text-body">
         {data.total} persisted delivery decision{data.total === 1 ? "" : "s"} across assigned projects
       </p>

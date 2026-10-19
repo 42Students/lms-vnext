@@ -11,7 +11,7 @@ Branch: `chatgpt/chat-7-b`; commit prefix `[chat-7]`. Source of truth: owner NOR
 - Shared course assignment/progress controls used on learner routes: **8** files
 - Other learner-facing UI components: **51** files
 
-All paths below are tracked for visual audit; an unchanged file may legitimately have no local style overrides. All error/loading states remain accessible. Do **not** change page content, wording, UI behaviour, or data fetching.
+All paths below are tracked for visual audit; three additional shared course components were discovered and included in the later source review. An unchanged file may legitimately have no local style overrides. All error/loading states remain accessible. Do **not** change page content, wording, UI behaviour, or data fetching.
 
 ### Learner portal routes
 
@@ -303,7 +303,7 @@ Do not edit shared `src/app/globals.css`, `src/components/ui/**`, `src/component
 ## Progress log
 
 - Inventory created against latest main tree after fast-forwarding chat-7 branch to main.
-- UI edits: in progress. 131 distinct files listed in the six completed visual batches have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
+- UI edits: source sweep covers all 256 originally inventoried files, including 150 directly edited and 106 inspected without further changes. Three additional shared course files found from the current directory listing were directly edited (153 distinct edited files in all). The visual parity check still requires rendering against the old LMS.
 
 
 ## Completed visual edits — 2026-10-19 (first sweep batch)
@@ -466,3 +466,186 @@ Removed duplicated white full-page cards inside the authenticated canvas, kept r
 - [x] `src/components/placements/learner-placement-academic-evidence.tsx`
 
 Neutral skeleton placeholders remain visibly distinguishable on the white page canvas. Academic evidence, placement preferences, and placement requests now align their existing sectional separators and internal margins with the shared canvas instead of nesting full-page border cards. Functional workflows and JSX hierarchy are preserved; no CI, tests, typecheck, or application execution.
+
+## Completed visual edits — reset-to-main shared-control pass (18 additional files)
+
+The stale `chatgpt/chat-7-b` history was deliberately overwritten with the then-current `origin/main` commit `0a542bfcf587fd23955883a7a98a33dc011d7023` using a force-with-lease ref update. All following lane edits are descendants of that exact main head; old conflicting lane history is not replayed.
+
+- [x] `src/components/projects/learner-project-mobile-filters.tsx`
+- [x] `src/components/projects/learner-project-board-search.tsx`
+- [x] `src/components/projects/learner-own-task-controls.tsx`
+- [x] `src/components/projects/learner-task-status-actions.tsx`
+- [x] `src/components/placements/learner-placement-notification-settings.tsx`
+- [x] `src/components/placements/learner-placement-registration.tsx`
+- [x] `src/components/projects/learner-board-interactive.tsx`
+- [x] `src/components/projects/learner-task-progress-control.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/learner-board-task-detail-dialog.tsx`
+- [x] `src/components/courses/learner-course-overview.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/courses/page.tsx`
+- [x] `src/components/courses/admin-course-display-editor.tsx`
+- [x] `src/components/courses/assignment-submission-links.tsx`
+- [x] `src/components/projects/learner-board-task-index.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/learner-career-rounds.tsx`
+
+Replaced local native search/select/textarea/button/checkbox/radio controls with shared Input, Select, Textarea, Button, Checkbox and Radio components. Kept hidden navigation form inputs native. Replaced course metadata, submitted link and project task-count pills with shared Badge; flattened course and student progress statistics onto white canvas separators, and grouped Super Admin course directory links without changing their order. Restyled learner interview/assessment bucket controls using the shared Button variants, retaining their aria-pressed filters and URL workflows. Preserved dialog's method=dialog submit semantics.
+
+Manual source hygiene: all touched `Select`, `Button`, `Badge`, `nav`, `form` and `dialog` opening/closing JSX tag counts balanced; no partial `</Select` tags found. Every touched client component keeps `"use client"` before imports. No application execution, build, lint, typecheck, test, CI or deployment. Untouched inventory entries still require review; this entry is **not** a claim of sweep completion.
+
+## Continued course content and error fallback fixes — 4 additional files
+
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/error.tsx`
+- [x] `src/components/courses/course-display-read-only.tsx` (extra discovered course component)
+- [x] `src/components/courses/expandable-course-description.tsx` (extra discovered course component)
+- [x] `src/components/courses/expandable-course-update.tsx` (extra discovered course component)
+
+The placement notification error fallback now respects the single white page canvas and uses the shared retry Button. The read-only Course overview no longer nests its own card inside the canvas; expandable course content actions use shared ghost Buttons while preserving `aria-controls`, `aria-expanded` and disclosure behavior. Client directives remain first. Manually checked the changed JSX open/close tag pairs, no TypeScript/build/test execution.
+
+## Source-inspected original inventory — no further edit needed (106 files)
+
+The following routes and components were reviewed from current branch source and had no remaining local raw styled control, hard-coded colour override, or extraneous page-size card requiring a change. Route-level redirects, shared error/loading delegates and distinct skeleton placeholders intentionally remain untouched. The source check does **not** replace the owner's final runtime screenshot comparison.
+
+- [x] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/loading.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/page.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/loading.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/page.tsx`
+- [x] `src/app/(authenticated)/learn/assignments/error.tsx`
+- [x] `src/app/(authenticated)/learn/assignments/loading.tsx`
+- [x] `src/app/(authenticated)/learn/assignments/page.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/calendar/loading.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/loading.tsx`
+- [x] `src/app/(authenticated)/learn/calendar/loading.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/loading.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/loading.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/loading.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/loading.tsx`
+- [x] `src/app/(authenticated)/learn/courses/loading.tsx`
+- [x] `src/app/(authenticated)/learn/courses/page.tsx`
+- [x] `src/app/(authenticated)/learn/error.tsx`
+- [x] `src/app/(authenticated)/learn/layout.tsx`
+- [x] `src/app/(authenticated)/learn/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/calendar/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/calendar/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/layout.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/schedule/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/schedule/loading.tsx`
+- [x] `src/app/(authenticated)/learn/not-found.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/error.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/loading.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/loading.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/page.tsx`
+- [x] `src/app/(authenticated)/learn/page.tsx`
+- [x] `src/app/(authenticated)/learn/placements/error.tsx`
+- [x] `src/app/(authenticated)/learn/placements/loading.tsx`
+- [x] `src/app/(authenticated)/learn/placements/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/academic-record/error.tsx`
+- [x] `src/app/(authenticated)/learn/profile/academic-record/loading.tsx`
+- [x] `src/app/(authenticated)/learn/profile/completeness/loading.tsx`
+- [x] `src/app/(authenticated)/learn/profile/data-access/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/verification/loading.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/loading.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/not-found.tsx`
+- [x] `src/app/(authenticated)/learn/projects/loading.tsx`
+- [x] `src/app/(authenticated)/learn/projects/page.tsx`
+- [x] `src/app/(authenticated)/learn/quizzes/error.tsx`
+- [x] `src/app/(authenticated)/learn/quizzes/loading.tsx`
+- [x] `src/app/(authenticated)/learn/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/admin/assignments/error.tsx`
+- [x] `src/app/(authenticated)/admin/assignments/loading.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/error.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/loading.tsx`
+- [x] `src/app/(authenticated)/admin/courses/error.tsx`
+- [x] `src/app/(authenticated)/admin/courses/loading.tsx`
+- [x] `src/app/(authenticated)/admin/courses/offerings/[offeringId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/courses/offerings/[offeringId]/loading.tsx`
+- [x] `src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/lessons/error.tsx`
+- [x] `src/app/(authenticated)/admin/lessons/loading.tsx`
+- [x] `src/app/(authenticated)/admin/live-classes/error.tsx`
+- [x] `src/app/(authenticated)/admin/live-classes/loading.tsx`
+- [x] `src/app/(authenticated)/admin/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/admin/quizzes/error.tsx`
+- [x] `src/app/(authenticated)/admin/quizzes/loading.tsx`
+- [x] `src/app/(authenticated)/admin/resources/error.tsx`
+- [x] `src/app/(authenticated)/admin/resources/loading.tsx`
+- [x] `src/app/(authenticated)/admin/resources/page.tsx`
+- [x] `src/app/(authenticated)/admin/videos/error.tsx`
+- [x] `src/app/(authenticated)/admin/videos/loading.tsx`
+- [x] `src/app/(authenticated)/admin/videos/page.tsx`
+- [x] `src/components/courses/learner-course-card-image.tsx`
+- [x] `src/components/courses/learner-course-document-title.tsx`
+- [x] `src/components/courses/learner-formatted-response.tsx`
+- [x] `src/components/courses/resource-progress-control.tsx`
+- [x] `src/components/admin/learner-module-access-drawer.tsx`
+- [x] `src/components/placements/learner-support-cancel.tsx`
+- [x] `src/components/profile/learner-profile-academic-retry.tsx`
+- [x] `src/components/profile/learner-verification-live-refresh.tsx`
+- [x] `src/components/projects/learner-project-goals.tsx`
+- [x] `src/components/projects/learner-project-tabs.tsx`
+
+**Source sweep status at prior pass:** 256/256 original inventory entries read, but the later control-level audit found hand-rolled controls in previously checked files. Do not treat a source-reviewed checkbox as pixel-parity signoff. Runtime visual parity, TypeScript validation and CI remain deferred to orchestration.
+
+## Owner checkpoint re-audit — 2026-10-19, fresh-main continuation
+
+First integrated origin/main commit `3de148112368b7201378f721841a5d4348ec9f6d` with a two-parent merge, preserving the lane-only style changes without overwriting already-landed changes from the other lanes. Main's newer Super Admin courses navigation won the overlapping change, while the lane-only learner-course styles were retained. Continued exclusively on `chatgpt/chat-7-b`.
+
+**23 previously inventoried course/learner components received another control-level pass (one new commit per file; no CI):**
+
+- [x] `src/components/courses/admin-assessment-read-directory.tsx` — shared filter submit button
+- [x] `src/components/courses/admin-course-create-panel.tsx` — shared duplicate cancellation
+- [x] `src/components/courses/admin-course-overview.tsx` — shared course search input
+- [x] `src/components/courses/admin-offering-section-preview.tsx` — shared section select and action
+- [x] `src/components/courses/learner-course-state-retry.tsx` — shared retry button
+- [x] `src/components/courses/learner-live-class-link.tsx` — shared meeting-copy action
+- [x] `src/components/courses/learner-rich-response-editor.tsx` — legacy field tokens; retained native textarea because its cursor-selection ref requires the actual element, while the shared Textarea currently does not forward refs
+- [x] `src/components/courses/learner-roadmap-item-dialog.tsx` — shared dialog opener
+- [x] `src/components/courses/super-admin-content-actions.tsx` — shared edit/publish/delete buttons
+- [x] `src/components/courses/super-admin-course-bulk-visibility.tsx` — shared checkboxes and hide action
+- [x] `src/components/courses/super-admin-lesson-bulk-visibility.tsx` — shared checkboxes
+- [x] `src/components/courses/learner-video-player.tsx` — shared playback-speed select and retry button
+- [x] `src/components/courses/learner-course-list.tsx` — shared semester/term/progress/sort inputs, filter chips, retry and load more buttons
+- [x] `src/components/courses/learner-assessment-overview.tsx` — shared assignment/quiz filters, CTA and pagination buttons
+- [x] `src/components/courses/learner-course-workspace.tsx` — shared disabled submission action
+- [x] `src/components/courses/learner-course-discussion.tsx` — shared moderation/reply/jump buttons; native textarea intentionally retained to preserve composer focus ref
+- [x] `src/components/courses/learner-course-attendance.tsx` — shared month input
+- [x] `src/components/courses/assignment-submission-control.tsx` — shared link kind select
+- [x] `src/components/courses/learner-quiz-attempt.tsx` — shared quiz navigation/review buttons and native-semantics shared Checkbox/Radio choices
+- [x] `src/components/courses/assignment-multipart-parts-editor.tsx` — shared URL, caption and link kind controls
+- [x] `src/components/courses/lesson-resource-materials-control.tsx` — shared materials fields
+- [x] `src/components/courses/quiz-attempt-control.tsx` — shared radio/checkbox choices
+- [x] `src/components/courses/assignment-file-submission-control.tsx` — shared file picker and final confirmation checkbox
+
+**Parity boundaries:** No learner, admin or course wording changed; no API route, data, option value, disabled guard, submission flow, keyboard semantics, modal lifecycle or content order intentionally changed. Course filters retain `aria-pressed`, quiz answers retain single/multiple grouping, discussion composer retains native `ref`, and assignment text cursor selection retains native `ref`. Source-level inspection checked matching `Button`/`Select` close tags and first-position `"use client"` directives. Existing self-closing `<div />` skeletons and native textareas are intentional, not unbalanced tags. No build, typecheck, lint, tests, CI, application run, or deployment performed.
+
+**Still open:** screenshot-by-screenshot pixel comparison against old LMS, plus raw-control re-audit of any remaining non-course learner-owned component implementations. The previous checklist's checked status means reviewed, not verified pixel-identical.

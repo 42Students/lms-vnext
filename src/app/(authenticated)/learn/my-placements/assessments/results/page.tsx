@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -56,20 +57,7 @@ export default async function LearnerAssessmentResultsPage({
         title="Official assessment results"
         description="Only placement-team-applied test outcomes from your own applications. A scheduled or submitted assessment is not a published result."
       />
-      <nav aria-label="Filter published assessment results" className="flex flex-wrap gap-2">
-        {views.map((option) => (
-          <Link
-            key={option.id}
-            href={href(option.id)}
-            aria-current={view === option.id ? "page" : undefined}
-            className={view === option.id
-              ? "inline-flex min-h-11 items-center rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-              : "inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-body hover:bg-primary-subtle"}
-          >
-            {option.label} ({results.counts[option.id]})
-          </Link>
-        ))}
-      </nav>
+      <Tabs ariaLabel="Filter published assessment results" renderPanel={false} value={view} items={views.map(option=>({value:option.id,label:option.label,count:results.counts[option.id],href:href(option.id)}))}/>
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         {view!=="all" ? <input type="hidden" name="view" value={view}/> : null}
         <label className="min-w-0 flex-1 text-xs font-semibold text-body">

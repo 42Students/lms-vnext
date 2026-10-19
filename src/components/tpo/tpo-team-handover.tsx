@@ -4,9 +4,6 @@ import { Select } from "@/components/ui/select";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
-import {Select} from "@/components/ui/select";
-import {Button} from "@/components/ui/button";
-
 type Member={membershipId:string;displayName:string};
 export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
  sourceMembershipId:string;sourceName:string;members:Member[];
@@ -38,14 +35,14 @@ export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
  return <section aria-label={"Hand over "+sourceName+"'s placement work"} className="mt-3 space-y-2">
   <label className="grid gap-1 text-sm text-body">Who takes over?
    <Select value={target} onChange={event=>setTarget(event.target.value)} disabled={busy}
-    className="min-h-9">
+    className="min-h-11 sm:min-h-9">
     <option value="">Choose an active placement team member</option>
     {members.filter(member=>member.membershipId!==sourceMembershipId).map(member=>
      <option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </Select>
   </label>
   <Button type="button" variant="secondary" disabled={!target||busy} onClick={()=>void handover()}
-   className="min-h-9">
+   className="min-h-11 sm:min-h-9">
    {busy?"Handing over…":"Hand over work"}
   </Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

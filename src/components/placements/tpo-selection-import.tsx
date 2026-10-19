@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -59,10 +60,10 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     {entries.map(e=><p key={e.applicationId} className="min-h-9 border-b border-border px-2 py-2 last:border-b-0">{e.name} · {e.roleTitle}
      {e.annualCtcInr==null?"":" · ₹"+(e.annualCtcInr/100000)+" LPA"}</p>)}
    </div>
-   <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
+   <Button variant="primary" type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
+    className="min-h-11 md:min-h-9 px-4">
     {busy?"Recording…":"Confirm and record "+entries.length+" selections"}
-   </button>
+   </Button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
     title={"Record "+entries.length+" matched company selections?"}

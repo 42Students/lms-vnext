@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -104,13 +105,13 @@ export function TpoCompanyPersonEditor({
       {reviewing?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm text-body">
         {current?"Save edits to this linked company contact?":"Add this contact person to the selected company?"}
         An immutable audit note will be recorded.
-        <button type="button" className="ml-3 text-primary-text underline" onClick={()=>setReviewing(false)}>Cancel review</button>
+        <Button variant="ghost" type="button" className="ml-3" onClick={()=>setReviewing(false)}>Cancel review</Button>
       </p>:null}
-      <button type="button" onClick={() => void save()}
+      <Button variant="primary" type="button" onClick={() => void save()}
         disabled={busy || !name.trim() || !email.trim()}
-        className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-on-primary">
+        className="min-h-9 px-4">
         {busy ? "Saving..." : reviewing?"Confirm contact save":current ? "Review and save changes" : "Review and add contact"}
-      </button>
+      </Button>
       {message ? <p role="status" className="text-sm text-body">{message}</p> : null}
     </section>
   );

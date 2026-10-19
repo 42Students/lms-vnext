@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 import { Button } from "@/components/ui/button";
+import { OverlayCloseIcon } from "@/components/ui/overlay-close-icon";
 
 type ToastTone = "success" | "error" | "info";
 export type ToastItem = { id: string; title: string; description?: string; tone: ToastTone };
@@ -69,16 +70,16 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
     style={bounds}
     className="lms-toast-scroll-cue pointer-events-auto fixed inset-x-4 z-[1050] flex min-w-0 max-w-sm flex-col gap-[var(--lms-space-2)] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:inset-x-auto sm:right-4">
     {toasts.map(toast => <section key={toast.id} role={toast.tone === "error" ? "alert" : "status"}
-      className={cx("min-w-0 shrink-0 rounded-[12px] border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[toast.tone])}>
+      className={cx("min-w-0 shrink-0 rounded-[var(--lms-canvas-radius)] border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[toast.tone])}>
       <div className="flex items-start gap-[var(--lms-space-3)]">
         <span aria-hidden="true" className={cx("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[toast.tone])} />
         <div className="min-w-0 flex-1">
-          <p className="m-0 break-words text-[13px] leading-5 font-semibold text-[var(--lms-heading)]">{toast.title}</p>
+          <p className="m-0 break-words text-[13px] font-semibold leading-5 text-[var(--lms-heading)]">{toast.title}</p>
           {toast.description ? <p className="mt-1 break-words text-[13px] leading-5 text-[var(--lms-body-text)]">{toast.description}</p> : null}
         </div>
         <Button variant="ghost" type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
           onClick={() => onDismiss(toast.id)}
-          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)]"><span aria-hidden="true">×</span></Button>
+          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)]"><OverlayCloseIcon /></Button>
       </div>
     </section>)}
   </div>;

@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import { learnerOffersQueryHasInvalidFields } from "@/modules/placements/learner-offers-query-feedback-model";
 import {learnerOfferStatusTabLabel} from "@/modules/placements/learner-offer-status-label-model";
 import {learnerExpiredIssuedOffers} from "@/modules/placements/learner-offer-issued-expired-model";
@@ -105,20 +106,7 @@ export default async function LearnerOffersPage({
         The due-soon and historical expiry filters cannot be combined. Showing the selected expiry state instead.
       </p> : null}
       {invalidQuery ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">Invalid offer filters were ignored. Check the selected status, search and dates before continuing.</p> : null}
-      <nav aria-label="Offer status" className="flex flex-wrap gap-2">
-        {tabs.map((tab) => (
-          <Link
-            key={tab.id}
-            href={learnerOfferStatusHref(tab.id,{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
-            aria-current={view === tab.id ? "page" : undefined}
-            className={view === tab.id
-              ? "inline-flex min-h-11 items-center rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-              : "inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-body hover:bg-primary-subtle"}
-          >
-            {tab.label} ({offers.counts[tab.id]})
-          </Link>
-        ))}
-      </nav>
+      <Tabs ariaLabel="Offer status" renderPanel={false} value={view} items={tabs.map(tab=>({value:tab.id,label:tab.label,count:offers.counts[tab.id],href:learnerOfferStatusHref(tab.id,{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry})}))}/>
       {view==="pending"&&expiredIssuedCount>0 ? (
         <p role="status" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
           {expiredIssuedCount} issued {expiredIssuedCount===1?"offer has":"offers have"} passed the recorded response deadline. They remain in issued history but cannot be accepted or declined after expiry.

@@ -4,6 +4,9 @@ import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-s
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Pagination } from "@/components/ui/pagination";
 import { SuperAdminBulkDriveActions } from "@/components/placements/super-admin-bulk-drive-actions";
@@ -79,23 +82,23 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   <form action="/admin/placements/drives" method="get"
    className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search by drive or company
-    <input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+    <Input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
+     className="w-full"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Status
-    <select name="status" defaultValue={parsed.data.status}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select name="status" defaultValue={parsed.data.status}
+     className="w-full">
      <option value="ALL">All</option><option value="DRAFT">Draft</option>
      <option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
-    <select name="pageSize" defaultValue={parsed.data.pageSize}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select name="pageSize" defaultValue={parsed.data.pageSize}
+     className="w-full">
      {[10,20,50,100].map(n=><option key={n} value={n}>{n}</option>)}
-    </select>
+    </Select>
    </label>
-   <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover">Filter</button>
+   <Button type="submit" >Filter</Button>
    <Link href="/admin/placements/drives" className="min-h-11 inline-flex items-center text-primary-text">Clear all</Link>
   </form>
   <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 /** A failed export must never download HTML or JSON as if it were a CSV. */
 export function TpoSafeCsvDownload({href,filename,label}:{href:string;filename:string;label:string}){
@@ -32,10 +33,10 @@ export function TpoSafeCsvDownload({href,filename,label}:{href:string;filename:s
   }finally{inFlight.current=false;setPending(false);}
  }
  return <span className="inline-flex flex-col items-start gap-2">
-  <button type="button" disabled={pending} onClick={()=>void download()}
-   className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:ring-2 disabled:opacity-50">
+  <Button variant="secondary" type="button" disabled={pending} onClick={()=>void download()}
+   className="min-h-9">
    {pending?"Preparing export…":label}
-  </button>
+  </Button>
   {error?<span role="alert" className="max-w-xs text-xs text-error">{error}</span>:null}
  </span>;
 }

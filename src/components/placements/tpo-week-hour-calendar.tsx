@@ -1,5 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Dialog } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
@@ -144,7 +147,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
      const offHours=positioned.filter(e=>e.outsideHours);
      const inHours=positioned.filter(e=>!e.outsideHours);
      return <div key={day} className="relative border-r border-border" style={{height}} aria-label={label(day)+" events"}>
-      {Array.from({length:LAST-FIRST},(_,offset)=><button key={offset} type="button"
+      {Array.from({length:LAST-FIRST},(_,offset)=><Button variant="primary" key={offset} type="button"
        aria-label={"Add follow-up on "+label(day)+" at "+clock(FIRST+offset)}
        disabled={!canCreate||saving} onClick={clickEvent=>void open(day,FIRST+offset,clickEvent.currentTarget)}
        onDragOver={event=>{if(canCreate){event.preventDefault();event.dataTransfer.dropEffect="move";}}}
@@ -152,7 +155,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         event.preventDefault();const followupId=event.dataTransfer.getData("application/x-tpo-followup");
         if(followupId)void moveFollowup(followupId,day,FIRST+offset);
        }}
-       className="absolute inset-x-0 border-t border-border text-left text-xs hover:bg-primary-subtle focus-visible:z-20 focus-visible:outline-2 disabled:cursor-default"
+       className="inset-x-0 text-left"
        style={{top:offset*HEIGHT,height:HEIGHT}}/>)}
       {day===today&&nowMinutes>=FIRST*60&&nowMinutes<=LAST*60?
        <div aria-label="Current time" className="pointer-events-none absolute inset-x-0 z-10 border-t-2 border-warning"
@@ -187,20 +190,14 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     })}
    </div>
   </div>
-  {move?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-    onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();setMove(null);}}}>
-    <section role="dialog" aria-modal="true" aria-label="Move recruiter follow-up"
-      className="w-full max-w-lg border-b border-border pb-6">
-      <h2 className="text-lg font-semibold">Move follow-up</h2>
+  {move?<Dialog open={Boolean(move)} onOpenChange={next=>{if(!next)setMove(null);}} title="Move follow-up" className="max-w-lg">
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
-      <button type="button" onClick={()=>setMove(null)}
-        className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Close</button>
-    </section>
-   </div>:null}
+      <Button variant="secondary" type="button" onClick={()=>setMove(null)}
+        className="mt-3 min-h-11 md:min-h-9 px-4">Close</Button>
+  </Dialog>:null}
   {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
-  {slot?<div role="dialog" aria-modal="true" aria-label="New recruiter follow-up" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <div className="w-full max-w-md space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-[var(--lms-space-5)]" onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();cancelDraft();}}}>
-    <h2 className="text-lg font-semibold">New recruiter follow-up</h2>
+  {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next)cancelDraft();}} title="New recruiter follow-up" className="max-w-md">
+   <div className="space-y-3">
     {slot&&blocked.has(slot.slice(0,10))?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-warning px-3 py-2 text-sm text-[var(--lms-gold-accent)]">This day is blocked for placement scheduling. Choose another date if possible.</p>:null}
     {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}
     <label className="grid gap-1 text-sm">Date and time (IST)
@@ -219,12 +216,12 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
     {message?<p role="alert" className="text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
     <div className="flex justify-end gap-2">
-     <button type="button" disabled={saving} onClick={cancelDraft}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</button>
-     <button type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">{saving?"Saving…":"Add follow-up"}</button>
+     <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft}
+      className="min-h-11 md:min-h-9 px-4">Cancel</Button>
+     <Button variant="primary" type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
+      className="min-h-11 md:min-h-9 px-4">{saving?"Saving…":"Add follow-up"}</Button>
     </div>
    </div>
-  </div>:null}
+  </Dialog>:null}
  </section>;
 }

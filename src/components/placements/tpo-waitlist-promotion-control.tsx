@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -51,17 +52,17 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
    <label className="grid gap-1 text-sm">Reason for promotion
     <textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>setReason(e.target.value)}
      className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/></label>
-   <button type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-primary-foreground disabled:opacity-50">
-    {busy?"Verifying…":"Verify and release next offer"}</button>
+   <Button variant="primary" type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}
+    className="min-h-11 md:min-h-9 px-4">
+    {busy?"Verifying…":"Verify and release next offer"}</Button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
     title={preview.next?"Verify and release one offer to "+preview.next.name+" (waitlist rank "+preview.next.rank+")?":"Verify and release one offer?"}
     description="This issues a real offer and records the seat."
     confirmLabel="Verify and release next offer" onConfirm={()=>void promote()}/>
   {success?<p role="status">{success}</p>:null}
-  <button type="button" disabled={busy} onClick={()=>router.refresh()}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Refresh waitlist and seats</button>
+  <Button variant="secondary" type="button" disabled={busy} onClick={()=>router.refresh()}
+    className="min-h-11 md:min-h-9 px-3">Refresh waitlist and seats</Button>
   {error?<p role="alert" className="text-foreground">{error} Refresh the preview before retrying.</p>:null}
  </section>;
 }

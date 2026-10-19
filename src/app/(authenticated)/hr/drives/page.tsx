@@ -112,6 +112,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)}/>
     {grants.length > 1 ? <nav aria-label="College" className="flex flex-wrap gap-2">{grants.map(grant =>
       <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
+        aria-current={selectedCollege === grant.collegeId ? "page" : undefined}
         className={selectedCollege === grant.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>{grant.collegeName}</Link>)}</nav> : null}
     {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
       className="border-b border-border pb-4 sm:pb-5">

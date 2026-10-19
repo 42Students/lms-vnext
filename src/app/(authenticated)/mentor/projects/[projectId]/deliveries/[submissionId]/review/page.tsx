@@ -21,7 +21,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Review overview
       </Link>}/>
-    <section className="border-b border-border pb-5">
+    <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
       <h2 className="text-base font-semibold">Registered review decision</h2>
       <dl className="mt-4 grid gap-3 sm:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Submission state</dt>
@@ -54,13 +54,13 @@ export default async function MentorDeliveryVersionPage({params}:{
           No written reviewer feedback is recorded for this version.
         </p>}
     </section>
-    <section className="border-b border-border pb-5">
+    <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
       <h2 className="font-semibold">Learner notes</h2>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
         {v.notes||"No learner notes were attached to this version."}
       </p>
     </section>
-    <section className="border-b border-border pb-5">
+    <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
       <h2 className="font-semibold">Submitted source and demo links</h2>
       <div className="mt-3 flex flex-wrap gap-3">
         {([{label:"Source",href:safeProjectExternalHref(v.sourceUrl)},
@@ -72,14 +72,14 @@ export default async function MentorDeliveryVersionPage({params}:{
           <p className="text-sm text-muted-foreground">No valid source or demo URL.</p>:null}
       </div>
     </section>
-    <section className="border-b border-border pb-5">
+    <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
       <h2 className="font-semibold">Additional submission files and links ({attachments.length})</h2>
       {!attachments.length?<p className="mt-2 text-sm text-muted-foreground">No extra attachments recorded.</p>:null}
-      <ul className="mt-3 space-y-2">{attachments.map((entry,index)=>{
+      <ul className="mt-3 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{attachments.map((entry,index)=>{
         const name=typeof entry.name==="string"?entry.name:"Attachment "+(index+1);
         const kind=entry.kind==="FILE"?"File":entry.kind==="LINK"?"Link":"Attachment";
         const href=typeof entry.url==="string"?safeProjectExternalHref(entry.url):null;
-        return <li key={index} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+        return <li key={index} className="py-[var(--lms-space-3)] text-sm">
           <span className="font-semibold">{name}</span> · {kind}
           {href?<a href={href} target="_blank" rel="noopener noreferrer"
             className="ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open link ↗</a>:null}
@@ -88,7 +88,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         </li>;
       })}</ul>
     </section>
-    <section className="border-b border-border pb-5">
+    <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
       <h2 className="font-semibold">Recorded submission history</h2>
       <ol className="mt-3 space-y-2 text-sm">
         {v.createdAt?<li>Draft created · {format(v.createdAt)} · {data.createdByName??"Project learner"}</li>:null}
