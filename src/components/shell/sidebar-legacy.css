@@ -4,10 +4,15 @@
  * Mobile uses the existing focus-trapped drawer and always shows labels.
  */
 @media (min-width:768px) {
+ /* Old fl-d-panel-l is a relative flex sibling; changing width pushes page naturally. */
+ .lms-shell-frame {display:flex;align-items:stretch;}
  .lms-desktop-sidebar {
   width:96px;
   min-width:96px;
   max-width:256px;
+  flex-shrink:0;
+  position:relative;
+  height:100vh;
   background:#fff;
   border-right:1px solid #f1f4f9;
   box-shadow:none;
@@ -16,12 +21,7 @@
  }
  .lms-desktop-sidebar:is(:hover,:focus-within) {width:256px;}
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-logo-row {justify-content:flex-start;padding-left:20px;}
- .lms-shell-page {
-  min-width:0;
-  padding-left:96px;
-  transition:padding-left .15s cubic-bezier(.2,0,0,1);
- }
- .lms-desktop-sidebar:is(:hover,:focus-within) ~ .lms-shell-page {padding-left:256px;}
+ .lms-shell-page {min-width:0;flex:1 1 0%;}
  .lms-desktop-sidebar .lms-sidebar-nav .lms-sidebar-item {
   justify-content:center;
   gap:0;
