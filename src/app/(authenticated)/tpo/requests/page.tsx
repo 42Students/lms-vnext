@@ -7,6 +7,8 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import {TpoRequestBulkDecision} from "@/components/placements/tpo-request-bulk-decision";
 import {TpoSequentialRequestReview} from "@/components/placements/tpo-sequential-request-review";
@@ -51,13 +53,13 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   if(!parsed.success)return <div className="space-y-5">
     <PageHeader title="Requests"
       description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first."/>
-    <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+    <Alert tone="error">
       <h2 className="font-semibold text-foreground">Invalid request filters</h2>
       <p className="mt-2 text-sm text-body">Check the request status, kind, age, sorting and page values. No request data was loaded.</p>
       <Link href="/tpo/requests" className="mt-3 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
         Clear invalid filters
       </Link>
-    </section>
+    </Alert>
   </div>;
   const [data,jobChoices]=await Promise.all([
     getTpoGlobalRequestsInbox(context, parsed.data),
@@ -141,14 +143,11 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     }))}/>
     <TpoSafeCsvDownload href={tpoRequestsExportHref(data.query)} filename="tpo-requests.csv" label="Export filtered requests CSV" />
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
-    {data.requests.length===0?<section role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5">
-      {data.total>0?"This page is past the available request results.":data.query.status==="PENDING"?"Nothing is waiting for you.":"No requests in this period."}
-      {data.total===0?<p className="mt-2 text-sm">Withdrawals, off-campus offers, registration changes and disputes from students show up here.</p>:null}
-      <Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):tpoRequestClearAdvancedHref(data.query.status)}
-       className="ml-3 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">
-       {data.total>0?"First matching page":"Reset filters"}
-      </Link>
-    </section>:<ul className="space-y-3">{data.requests.map(request=>
+    {data.requests.length===0?<EmptyState
+      title={data.total>0?"This page is past the available request results.":data.query.status==="PENDING"?"Nothing is waiting for you.":"No requests in this period."}
+      description={data.total===0?"Withdrawals, off-campus offers, registration changes and disputes from students show up here.":undefined}
+      action={<Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):tpoRequestClearAdvancedHref(data.query.status)}
+       className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">{data.total>0?"First matching page":"Reset filters"}</Link>}/>:<ul className="space-y-3">{data.requests.map(request=>
       <li key={request.id} className="min-w-0 border-b border-border py-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
