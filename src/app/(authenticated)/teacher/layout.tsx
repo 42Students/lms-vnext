@@ -14,7 +14,7 @@ export default async function TeacherLayout({
   return (
     <>
       <a href="#faculty-page-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-md focus:border focus:border-primary focus:bg-surface focus:px-4 focus:text-sm focus:font-semibold focus:text-primary-text focus:shadow-lg focus:outline-none focus:ring-4 focus:ring-[var(--lms-focus-ring)]">
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-[var(--lms-control-radius)] focus:border focus:border-primary focus:bg-surface focus:px-4 focus:text-sm focus:font-semibold focus:text-primary-text focus:shadow-none focus:outline-none focus:ring-4 focus:ring-[var(--lms-focus-ring)]">
         Skip to faculty content
       </a>
       <div id="faculty-page-content" tabIndex={-1}
