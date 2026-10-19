@@ -51,9 +51,9 @@ function MeetingRow({
         <p className="mt-2 text-xs text-muted-foreground">Archived project · Read-only</p>
       ) : null}
       <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
-        {safeProjectExternalHref(href) ? <a className="inline-flex min-h-11 items-center font-medium text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={safeProjectExternalHref(href)!}
+        {safeProjectExternalHref(href) ? <a className="inline-flex min-h-11 items-center font-medium text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link" href={safeProjectExternalHref(href)!}
           target="_blank" rel="noopener noreferrer">Join link</a> : null}
-        <Link className="inline-flex min-h-11 items-center font-medium text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        <Link className="inline-flex min-h-11 items-center font-medium text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link"
           href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) + "?tab=team"}>
           Open project
         </Link>
