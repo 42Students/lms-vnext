@@ -35,6 +35,8 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
   it("keeps mobile drawer controls accessible and its scroll surface padded", () => {
     const mobile = read("src/components/shell/mobile-navigation.tsx");
     expect(mobile).toContain('import { Drawer } from "@/components/ui/drawer"');
+    expect(mobile).toContain('import { usePathname } from "next/navigation"');
+    expect(mobile).toContain("useEffect(() => { setOpen(false); }, [pathname]);");
     expect(mobile).toContain('import {Button} from "@/components/ui/button"');
     expect(mobile).toContain('side="left"');
     expect(mobile).toContain('headerLeading={<ShellLogoMark />}');

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
+import { legacySidebarItemActive } from "@/components/shell/legacy-sidebar-active-model";
 
 const mobile = () => readFileSync("src/components/shell/learner-faculty-mobile-footer.tsx", "utf8");
 const styles = () => readFileSync("src/components/shell/legacy-mobile-footer.css", "utf8");
@@ -36,6 +37,19 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
     // The counter is visual decoration; the link names its count for screen readers.
     expect(mobile()).toContain('aria-label={alerts?item.label+", "+unread+" unread":item.label}');
     expect(mobile()).toContain('aria-hidden="true" className="lms-legacy-mobile-footer-badge"');
+  });
+  it("highlights role-owned legacy aliases using the same desktop and phone rule", () => {
+    const active = (path:string,href:string,label:string) =>
+      legacySidebarItemActive(path,{href,label},null,null);
+    expect(mobile()).toContain("legacySidebarItemActive(pathname,item,null,null)");
+    expect(active("/recruiter/home","/hr/home","Today")).toBe(true);
+    expect(active("/recruiter/drives/example","/hr/drives","Drives")).toBe(true);
+    expect(active("/hr/placements/jobs/example","/hr/drives","Drives")).toBe(true);
+    expect(active("/recruiter/messages","/hr/conversations","Messages")).toBe(true);
+    expect(active("/hr/round-results","/hr/drives","Drives")).toBe(true);
+    expect(active("/college/college-profile","/college/profile","Profile")).toBe(true);
+    expect(active("/learn/projects/demo","/learn/projects","Projects")).toBe(true);
+    expect(active("/recruiter/messages","/hr/calendar","Calendar")).toBe(false);
   });
   it("retains learner and faculty icon order without mixing portal links", () => {
     const content = mobile();
