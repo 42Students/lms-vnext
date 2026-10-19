@@ -316,7 +316,7 @@ export function TenantDomainManager({
 
                 {!domain.isVerified &&
                 domain.verificationToken ? (
-                  <div className="mt-5 rounded-lg border border-border bg-muted p-4">
+                  <div className="mt-5 rounded-[var(--lms-control-radius,9px)] border border-border bg-muted p-4">
                     <p className="m-0 text-sm font-semibold text-foreground">
                       DNS ownership record
                     </p>
@@ -338,7 +338,7 @@ export function TenantDomainManager({
                         <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Name
                         </dt>
-                        <dd className="mt-1 break-all rounded-md border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
+                        <dd className="mt-1 break-all rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
                           {dnsName(domain.host)}
                         </dd>
                       </div>
@@ -346,7 +346,7 @@ export function TenantDomainManager({
                         <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Value
                         </dt>
-                        <dd className="mt-1 break-all rounded-md border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
+                        <dd className="mt-1 break-all rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
                           {dnsValue(
                             domain.verificationToken,
                           )}
@@ -403,7 +403,7 @@ export function TenantDomainManager({
         {deleteTarget?.isPrimary ? <label className="grid gap-2 text-sm font-semibold text-body">Type the full primary hostname
           <input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
             onChange={event => setDeleteHostConfirmation(event.target.value)}
-            className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-foreground" />
+            className="min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground" />
         </label> : null}
       </ConfirmDialog>
     </div>

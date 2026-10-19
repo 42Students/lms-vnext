@@ -6,7 +6,7 @@ import type { CollegeOwnProfileInput } from "@/modules/people/college-admin-prof
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 
-const fieldStyle = "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground";
+const fieldStyle = "min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground";
 function Field({ label, value, onChange, type = "text", hint }: {
   label: string; value: string; onChange: (value: string) => void;
   type?: string; hint?: string;
