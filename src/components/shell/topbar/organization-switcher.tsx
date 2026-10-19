@@ -43,7 +43,11 @@ export function TopbarOrganizationSwitcher({
     };
   },[open]);
   if(!canSwitch)return <p className={style.orgName} title={organizationName}>{organizationName}</p>;
-  return <div ref={root} className={style.orgSwitcher}>
+  return <div ref={root} className={style.orgSwitcher}
+    onBlur={event=>{
+      const next=event.relatedTarget;
+      if(open && next instanceof Node && !event.currentTarget.contains(next))setOpen(false);
+    }}>
     <button ref={trigger} type="button" className={style.orgTrigger}
       title={organizationName} aria-label={"Switch workspace, current "+organizationName}
       aria-haspopup="dialog" aria-expanded={open}
