@@ -169,7 +169,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
           <option value="WARNING">Warning and above</option>
         </Select>
       </label>
-      <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold">Search this page
+      <label className="grid w-full min-w-0 basis-full gap-1 text-sm font-semibold md:min-w-44 md:basis-auto md:flex-1">Search this page
         <Input type="search" maxLength={150} value={query} onChange={event=>setQuery(event.target.value)}
           placeholder="Message, route, reference" className="min-h-11"/>
       </label>
