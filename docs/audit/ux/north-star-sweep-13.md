@@ -286,3 +286,18 @@ Every row refers to a full source file, not to an arbitrary commit. The checked 
 **Grep:** `rg -o '<(button|input|select|textarea)\\b' <file> | wc -l` and `rg -o '#[0-9a-fA-F]{3,8}\\b' <file> | wc -l` => `0` for both files; shared tag counts match. **Responsive source:** `pages___admin-list-pages.scss:8,193` 44px phone/767px mobile ceiling, `globals.css:341` 36px normal control. Browser and functional validation remain pending.
 
 - [ ] **Next file:** `src/components/admin/super-admin-people-csv-control.tsx`, then `src/components/admin/person-membership-actions.tsx`.
+
+
+### Super Admin people role, onboarding and profile source check
+
+| Completed file | Legacy source and exact property values | Source grep and responsive/behavior proof |
+| --- | --- | --- |
+| [x] `src/components/admin/person-membership-actions.tsx` | Suspension-reason form label at :342 uses 13px/600 body `components___form.scss:110-112`; shared `Dialog` / `Textarea` / `Button` and role `Checkbox` remain untouched. | Native controls `0`, hex `0`, inline styles `0`, `Button` 6/6. Role rows 44px phone and 36px from `md` 768px; existing dialog actions, confirm and disabled states preserved. |
+| [x] `src/components/admin/person-onboard-dialog.tsx` | First/last/name/phone/email labels and role legends now 13px/600, matching form SCSS `:110-112`; shared Input / Checkbox / Dialog. | Native controls `0`, hex `0`, inline styles `0`, Button 3/3. Faculty Mentor checkbox row min-height 44px phone/36px ≥768px; form fields 1-column phone, 2-column tablet; onboarding/API unchanged. |
+| [x] `src/components/admin/person-profile-dialog.tsx` | Learner/faculty detail field labels at `:255` onward changed from 12px to exact 13px/600; headings, shared Select/Input/Dialog unaffected. | Native controls `0`, hex `0`, inline styles `0`, Button 3/3, Select 1/1. Two-column form starts `md` ≥768px, one phone; responsive modal and edit permissions unchanged. |
+| [x] `src/components/admin/super-admin-people-csv-control.tsx` — source-reviewed | Shared `Button` variant secondary, color/border/focus and 9px radius; file contains no standalone hand-rolled chrome to modify. | Native controls `0`, hex `0`, inline styles `0`, Button 1/1, already min-height 44px phone/`md:min-h-9` desktop and print:hidden. |
+
+**Grep proof (GitHub branch read, no shell run):** `rg -o '<(button|select|input|textarea)\\b' <file> | wc -l` returns `0` in all four scanned files, `rg -o '#[0-9A-Fa-f]{3,8}\\b' <file> | wc -l` `0`, `rg -o 'style=\\{' <file> | wc -l` `0`. Opening/closing shared component counts match. 13px/600 labels are sourced from legacy `components___form.scss:110-112`, phone ≥44px `components___variables.scss:139`, 36px desktop `globals.css:341`, 768px layout threshold `pages___admin-list-pages.scss:193`.
+
+- [ ] Browser computed-style visual diff, compile, tests, CI and real interaction/keyboard verification not performed (owner no-runtime instruction).
+- [ ] **Next exact file:** `src/components/admin/scoped-membership-lifecycle-actions.tsx`, then `src/components/admin/admin-revoke-sessions.tsx`.
