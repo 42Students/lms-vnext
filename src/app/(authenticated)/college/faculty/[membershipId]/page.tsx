@@ -28,7 +28,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
           className="text-sm font-semibold text-link">Lifecycle audit</Link>
         <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
-        <Link href="/college/faculty" className="text-sm font-semibold text-link">Back to faculty</Link>
+        <Link href="/college/faculty" className="text-sm font-semibold text-link lms-inline-link">Back to faculty</Link>
       </div>} />
     <section className="border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Faculty record</h2>
