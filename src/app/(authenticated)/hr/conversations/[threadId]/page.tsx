@@ -92,7 +92,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
       <p className="mt-1 text-xs text-muted-foreground">Recorded change requests for this hiring drive. Decisions are controlled by the placement cell.</p>
       <ScrollCue axis="y" label="Drive change request updates" className="mt-3" viewportClassName="max-h-56"><ol className="space-y-2">
         {changeRequests.requests.slice(0,8).map(request=><li key={request.id}
-          className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm">
+          className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm">
           <span className="font-semibold text-foreground">
             {request.proposerParty==="COMPANY"?"You asked":"Placement cell asked"} · {request.field.replaceAll("_"," ")}
           </span>
@@ -116,7 +116,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
    {messages.map(message=><li key={message.id}
     className="py-4">
     <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} · {dateTime(message.createdAt)} IST</p>
-    {message.proposal?<div className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-xs text-body">
+    {message.proposal?<div className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-xs text-body">
       <p className="font-semibold text-foreground">Drive proposal · sent as discussion message</p>
       <p>Role: {message.proposal.title}</p>
       <p>Proposal reference: {message.proposal.referenceId}</p>
