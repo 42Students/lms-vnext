@@ -524,9 +524,9 @@ These regex counts were computed over the entire fetched UTF-8 content of exactl
 | `src/components/placements/tpo-report-saved-filters.tsx` | 0/0/0/0/0 | 0 | 1 | 3/3 |
 | `src/components/placements/college-report-navigation.tsx` | 0/0/0/0/0 | 0 | 1 | 0/0 |
 | `src/components/tpo/tpo-batch-undo-control.tsx` | 0/0/0/0/0 | 0 | 1 | 1/1 |
-| `src/components/placements/placement-report-ui.tsx` | 0/0/0/0/0 | 0 | 4 | 2/2 |
+| `src/components/placements/placement-report-ui.tsx` | 0/1/0/0/0 | 0 | 4 | 2/2 |
 
-**Scoped totals:** raw controls `0/0/0/0/0`; hard-coded hex `0`; all shared Button pairs balanced. The **one native input** is `src/components/placements/placement-report-ui.tsx:92-97`, intentionally `type="hidden"` to preserve season scope across a drive filter GET form; it is not a visible hand-rolled input and has no CSS class override. No native `<button>` remains in these eleven files. JSX open/close counts are lexical proof, not a TypeScript parser.
+**Scoped totals:** raw controls `0/1/0/0/0`; hard-coded hex `0`; all shared Button pairs balanced. The **one native input** is `src/components/placements/placement-report-ui.tsx:92-97`, intentionally `type="hidden"` to preserve season scope across a drive filter GET form; it is not a visible hand-rolled input and has no CSS class override. No native `<button>` remains in these eleven files. JSX open/close counts are lexical proof, not a TypeScript parser.
 
 Checkout reproduction, **not executed**:
 ```sh
