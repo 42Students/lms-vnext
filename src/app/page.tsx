@@ -127,17 +127,18 @@ export default async function HomePage({
 
       <header className={styles.brandHeader}>
         <div className={styles.brandRow}>
-          {branding?.logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={branding.logoUrl} alt={branding.collegeName}
-              referrerPolicy="no-referrer" className={styles.collegeLogo} />
-          ) : (
-            <span aria-hidden="true" className={styles.logoMark} />
-          )}
-          <span className={styles.wordmark} aria-label="42LMS">42<span className={styles.wordmarkAccent}>LMS</span></span>
+          {/* The mark and letterforms are the original LMS SVG, not a CSS approximation. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
         </div>
         {branding?.collegeName ? (
-          <p className={styles.collegeName}>{branding.collegeName}</p>
+          <div className={styles.collegeBrand}>
+            {branding.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={branding.logoUrl} alt="" referrerPolicy="no-referrer" className={styles.collegeLogo} />
+            ) : null}
+            <p className={styles.collegeName}>{branding.collegeName}</p>
+          </div>
         ) : null}
       </header>
 
