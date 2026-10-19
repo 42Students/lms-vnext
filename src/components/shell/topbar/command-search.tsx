@@ -146,6 +146,13 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
             setMobileOpen(false);
             return;
           }
+          if (!event.ctrlKey && !event.metaKey && !event.altKey &&
+              event.key.length === 1) {
+            event.preventDefault();
+            setQuery(value => (value + event.key).slice(0, 100));
+            input.current?.focus();
+            return;
+          }
           if (event.defaultPrevented ||
               !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
           const options = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('[role="option"]'));
