@@ -17,15 +17,15 @@ export default async function TpoDriveDiscussion({params}:{
   <PageHeader eyebrow="TPO · Drive" title={data.job.title+" · Discussion"}
     description="Conversations with recruiters attached to this drive. Private team notes are not shared with recruiters."/>
   <Link href={root} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">← Back to drive</Link>
-  {!data.available?<p role="status" className="rounded-md border border-border p-4 text-sm">
+  {!data.available?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">
     Recruiter conversation records are unavailable right now. Other drive work is still available. Try again later.
-   </p>:data.threads.length===0?<section role="status" className="rounded-md border border-border p-4 text-sm">
+   </p>:data.threads.length===0?<section role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">
     No recruiter conversation is attached to this drive yet.
     <p className="mt-2">Use Recruiter Messages to begin or find a recruiter conversation.</p>
     <Link href="/tpo/messages" className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Open Recruiter Messages</Link>
    </section>:<section aria-label="Recruiter conversations" className="space-y-3">
    <p role="status" className="text-sm text-body">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
-   <ul className="space-y-3">{data.threads.map(thread=><li key={thread.id} className="min-w-0 rounded-lg border border-border bg-surface p-4">
+   <ul className="space-y-3">{data.threads.map(thread=><li key={thread.id} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
     <h2 className="break-words font-semibold">{thread.recruiterName?.trim()||"Recruiter"}</h2>
     {thread.lastPreview?<p className="mt-1 break-words text-sm text-body">{thread.lastPreview}</p>:null}
     <p className="text-sm text-body">{thread.count} recorded message(s) · {thread.unread} unread recruiter message(s)</p>
