@@ -22,7 +22,7 @@ export default async function HrProfilePage() {
         description="Manage your recruiter details."
       />
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Your details</h2>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
         <dl className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -43,7 +43,7 @@ export default async function HrProfilePage() {
         </p>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Account</h2>
         <dl className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>

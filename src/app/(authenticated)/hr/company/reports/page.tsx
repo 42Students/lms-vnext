@@ -103,7 +103,7 @@ export default async function RecruiterCompanyReportsPage({
             description="Your recruiter account has no active college relationship available for reporting."
           />
         ) : (
-          <section className="rounded-xl border border-border bg-surface p-5">
+          <section className="border-b border-border pb-5">
             <h2 className="text-lg font-semibold text-foreground">
               Choose a college
             </h2>
@@ -280,7 +280,7 @@ export default async function RecruiterCompanyReportsPage({
         </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="border-b border-border pb-4 sm:pb-5">
         <h2 className="text-lg font-semibold text-foreground">
           Drive report filters
         </h2>
@@ -346,7 +346,7 @@ export default async function RecruiterCompanyReportsPage({
         </form>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="border-b border-border pb-4 sm:pb-5">
         <h2 className="font-semibold text-foreground">Current page hiring totals</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Totals cover only the visible authorized drive rows on this page, not every company drive.
