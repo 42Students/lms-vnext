@@ -153,6 +153,7 @@
   }
   [data-slot="dropdown-root"][open] > [data-slot="dropdown"],
   [role="dialog"][aria-modal="false"]:not([data-slot]),
+  [data-slot="notification-popover"],
   [data-slot="toast-stack"] > section {
     animation: lms-legacy-popup-enter 200ms ease-out both;
   }
