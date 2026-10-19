@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/ui/empty-state";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getRecruiterDriveConversations} from "@/modules/placements/hr-drive-conversation-service";
@@ -25,7 +25,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
  return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader title="Messages"
    description={result.workspace.job.title+" · "+result.workspace.college.name+". Private recruiter and placement cell discussion."}/>
-  <Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive overview</Link>
+  <Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive overview</Link>
   <section className="border-b border-border pb-5">
    <h2 className="font-semibold text-foreground">Drive conversation</h2>
    <p className="mt-2 text-sm text-body">Open or resume the conversation tied to this authorized employer drive.</p>

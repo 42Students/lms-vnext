@@ -25,7 +25,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   const id = projectTemplateIdSchema.safeParse((await params).templateId);
   if (!id.success) notFound();
   if (!can(context,"project-template.read")) return <div className="min-w-0 space-y-5">
-    <PageHeader eyebrow="Super Admin · Template college availability" title="College availability" />
+    <PageHeader title="College availability" />
     <ErrorState title="College availability access denied"
       description="Only an active Super Admin can read global project template assignments."
       action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>} />
@@ -41,7 +41,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     // A failed college/template read must never be interpreted as an empty
     // assignment list. Keep the filters for an explicit retry instead.
     return <div className="min-w-0 space-y-5">
-      <PageHeader eyebrow="Super Admin · Template college availability" title="College availability" />
+      <PageHeader title="College availability" />
       <ErrorState title="College availability unavailable"
         description="Template assignments could not be loaded. No availability is shown until the read succeeds."
         action={<Link href={templateCollegeAvailabilityHref(id.data,parsed.data)} className="font-semibold text-primary-text">Retry loading colleges</Link>} />
@@ -49,7 +49,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   }
   const statuses = ["ALL", "ASSIGNED", "UNASSIGNED"] as const;
   return <div className="min-w-0 space-y-5">
-    <PageHeader eyebrow="Super Admin · Template college availability" title={data.template.title}
+    <PageHeader title={data.template.title}
       description="Availability within the current safety scope. Existing workspaces retain their pinned versions."
       actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Template catalogue</Link>} />
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />

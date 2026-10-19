@@ -14,6 +14,7 @@ import {ShellLogoMark, ShellLogoWordmark} from "./shell-nav-icons";
 import { LegacyTopbar } from "./topbar/legacy-topbar";
 import { RouteAnnouncer } from "./route-announcer";
 import { RouteTransition } from "./route-transition";
+import { RouteProgress } from "./route-progress";
 import { LearnerFacultyMobileFooter } from "./learner-faculty-mobile-footer";
 import {ShellWidgetBoundary} from "./shell-widget-boundary";
 import {ShellConnectivityNotice} from "./shell-connectivity-notice";
@@ -116,12 +117,13 @@ export async function AppShell({
           tpoCollegeId={hasMembershipRole(context, "TPO") ? context.membership?.collegeId ?? null : null}
         />
 
+        <RouteProgress />
         <Suspense fallback={null}><RouteAnnouncer /></Suspense>
         <ShellConnectivityNotice />
         <main id="lms-main-content" tabIndex={-1} style={{ paddingRight: "16px" }} className={"mx-auto min-w-0 w-full max-w-[1600px] px-4 py-6 sm:pl-6 sm:pr-4 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           <RouteTransition>{children}</RouteTransition>
         </main>
-        <LearnerFacultyMobileFooter />
+        <LearnerFacultyMobileFooter items={navigation} />
       </div>
     </div>
       <TrackerQuickReportLauncher />

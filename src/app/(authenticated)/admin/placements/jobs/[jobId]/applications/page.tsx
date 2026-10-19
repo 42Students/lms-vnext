@@ -1,7 +1,7 @@
-import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { ErrorState } from "@/components/ui/error-state";
@@ -24,7 +24,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
 }) {
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
-    <PageHeader eyebrow="Super Admin" title="Placement Drives" description="Placement administration requires a college safety scope." />
+    <PageHeader title="Placement Drives" description="Placement administration requires a college safety scope." />
     <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
   </div>;
   requireSuperAdminSelectedCollege(context,"placements.manage");
@@ -36,8 +36,8 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     listCollegeDriveApplicationFilters(context),
   ]);
   return <div className="min-w-0 space-y-6">
-    <SuperAdminDriveTabs jobId={jobId} active="Applications"/>
-    <PageHeader eyebrow="Super Admin · Placements" title={"Applications · " + data.drive.title}
+    
+    <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -85,18 +85,12 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       </label>
       <Button type="submit" className="self-end">Filter</Button>
     </form>
-    <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2 border-b border-border">
-      {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>
-        <Link key={stage} href={adminHref(jobId,{...query,stage,page:1})}
-          aria-current={query.stage===stage?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-sm font-semibold sm:min-h-9 "+
-            (query.stage===stage?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
-          {stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase()}
-          <span className="tabular-nums">{stage==="ALL"?
-            Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):
-            data.stageCounts[stage]??0}</span>
-        </Link>)}
-    </nav>
+    <Tabs ariaLabel="Application pipeline stages" value={query.stage} renderPanel={false}
+      items={(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>({
+       value:stage,label:stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase(),
+       count:stage==="ALL"?Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):data.stageCounts[stage]??0,
+       href:adminHref(jobId,{...query,stage,page:1}),
+      }))}/>
     <div className="flex flex-wrap justify-between gap-3 text-sm">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${adminHref(jobId,query,true).split("/export")[1] ?? ""}`}
@@ -113,7 +107,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle},
         {key:"application",header:"Application",mobilePriority:"secondary",cell:row=>row.status},
         {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening??"Not recorded"},
-       ]} empty={<p role="status" className="text-sm text-body">No applications match these filters.</p>}/>
+       ]} empty={<EmptyState title="No matching applications" description="No applications match these filters."/>}/>
      </section>:
      <CollegeApplicationPipelineControls jobId={jobId} rows={data.items} total={data.total} query={query} basePath="/admin/placements"/>}
     <p role="status" className="text-sm text-muted-foreground">Page {query.page} of {data.totalPages}</p>

@@ -1,4 +1,5 @@
 "use client";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -214,7 +215,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
           </div>
         </Disclosure>
       </li>)}
-    </ol>:<p role="status" className="text-sm text-body">No live errors loaded.</p>}
+    </ol>:<EmptyState title="No live errors loaded" description="Load or refresh live logs to see the latest authorized error events."/>}
     {nextPage?<Button variant="secondary" type="button" onClick={()=>void load(true)} loading={pending} disabled={pending||exporting}
      >
       Load older

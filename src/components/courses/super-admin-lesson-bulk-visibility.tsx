@@ -1,4 +1,6 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -48,7 +50,7 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
    <Button type="button" disabled={pending||!selected.length} onClick={()=>void mutate(true)}>{pending?"Saving…":"Show selected"}</Button>
    <Button type="button" variant="secondary" disabled={pending||!selected.length} onClick={()=>void mutate(false)}>Hide selected</Button>
   </div>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   {report?<div role="status" className="space-y-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm">
    <p>{report.changed} content records updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
    {report.failures.length?<ul className="list-disc pl-5">{report.failures.slice(0,25).map(row=><li key={row.id}>Lesson update was not applied. Review the selection and retry.</li>)}</ul>:null}

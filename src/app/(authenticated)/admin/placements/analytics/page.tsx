@@ -120,8 +120,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   <section aria-label="Company hiring results" className="min-w-0 space-y-4">
    <h2 className="text-lg font-semibold">Company hiring results</h2>
    <DataTable columns={columns} rows={data.rows} getRowKey={row=>row.jobId}
-     caption="Company hiring report" empty={<p role="status" className="text-sm text-body">
-       No hiring results match these filters.</p>}/>
+     caption="Company hiring report" empty={<EmptyState title="No hiring results" description="No hiring results match these filters."/>}/>
   </section>
   {groups.length?<section aria-label="Company totals" className="space-y-3">
    <h2 className="text-lg font-semibold">Company totals</h2>

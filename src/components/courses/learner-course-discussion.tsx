@@ -1,4 +1,6 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
+
 
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -451,9 +453,7 @@ export function LearnerCourseDiscussion({
           setDraft("");
           if(destination)router.push(destination);
         }}/>
-      {moderationError?<p role="alert" className="text-sm text-error">
-        {moderationError}
-      </p>:null}
+      {moderationError?<Alert tone="error">{moderationError}</Alert>:null}
       <section className="relative overflow-hidden rounded-xl border border-border bg-surface">
         <div
           ref={scrollRef}

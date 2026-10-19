@@ -7,6 +7,7 @@ import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
 import { TrackerIssueSavedViews } from "@/components/tracker/tracker-issue-saved-views";
 import { TrackerIssueBulkActions } from "@/components/tracker/tracker-issue-bulk-actions";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -38,17 +39,14 @@ export default async function TrackerIssuesPage({
     return (
       <div className="space-y-6">
         <PageHeader
-          eyebrow="42 Tracker"
           title="Issues"
           description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
         />
         <TrackerAdminNav />
-        <div role="status" className="border-y border-border py-6">
-          <p className="m-0 font-semibold text-foreground">Tracker database is not enabled.</p>
-          <p className="mt-2 text-sm text-body">
-            Apply and verify migration 0076, then explicitly set DB10_TRACKER_READY=DB10_VERIFIED before enabling these issue reads.
-          </p>
-        </div>
+        <Banner tone="warning">
+          <strong>Tracker database is not enabled.</strong>
+          Apply and verify migration 0076, then explicitly set DB10_TRACKER_READY=DB10_VERIFIED before enabling these issue reads.
+        </Banner>
       </div>
     );
   }
@@ -56,7 +54,7 @@ export default async function TrackerIssuesPage({
   if (!parsed) {
     return (
       <div className="space-y-6">
-        <PageHeader eyebrow="42 Tracker" title="Issues" description="Review and triage reported LMS issues." />
+        <PageHeader title="Issues" description="Review and triage reported LMS issues." />
         <TrackerAdminNav />
         <ErrorState title="Invalid issue filter." description="Review and triage reported LMS issues."
           action={<Link className="inline-flex min-h-9 items-center font-semibold text-primary-text underline" href="/tracker/issues">
@@ -83,7 +81,6 @@ export default async function TrackerIssuesPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="42 Tracker"
         title="Issues"
         description="Private Super Admin triage. Engineering notes and attachment metadata are never exposed through a public list."
       />
@@ -148,9 +145,9 @@ export default async function TrackerIssuesPage({
         <EmptyState title="No matching issues." description="Review and triage reported LMS issues."
           action={<Link href="/tracker/issues" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Reset</Link>}/>
       ) : (
-        <div className="divide-y divide-border border-y border-border">
+        <div className="divide-y divide-[var(--lms-canvas-border)]">
           {page.items.map((issue) => (
-            <article key={issue.id} className="py-4">
+            <article key={issue.id} className="min-w-0 py-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap gap-2">
