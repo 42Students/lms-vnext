@@ -12,6 +12,7 @@ import {learnerAssessmentPastReview} from "@/modules/placements/learner-assessme
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { FilterChip } from "@/components/ui/filter-chip";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerRoundSearchHref,learnerRoundSearchQuerySchema }
   from "@/modules/placements/learner-round-search-query-model";
@@ -303,13 +304,13 @@ export function LearnerCareerRoundsWorkspace({
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 sm:flex-wrap" role="group" aria-label="Filter by schedule">
           {timeChoices.map(({ value, label }) => (
-            <Button
+            <FilterChip
               type="button"
               key={value}
               aria-pressed={filters.time === value}
               onClick={() => chooseTimeView(value)}
-              variant={filters.time === value ? "primary" : "secondary"} className="min-h-11 shrink-0 whitespace-nowrap"
-            >{label}{interviewCounts ? ` (${interviewCounts[value]})` : ""}</Button>
+               className="min-h-11 shrink-0 whitespace-nowrap"
+            >{label}{interviewCounts ? ` (${interviewCounts[value]})` : ""}</FilterChip
           ))}
         </div>
         {kind==="INTERVIEW" ? (
@@ -321,36 +322,36 @@ export function LearnerCareerRoundsWorkspace({
         ) : null}
         {kind === "ASSESSMENT" ? (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Assessment due buckets">
-            <Button type="button" aria-pressed={dueBucket === "all"}
+            <FilterChip type="button" aria-pressed={dueBucket === "all"}
               onClick={() => selectDueBucket("all")}
-              variant={dueBucket === "all" ? "primary" : "secondary"} className="min-h-11">
+               className="min-h-11">
               All assessment rounds ({relevant.length})
-            </Button>
-            <Button type="button" aria-pressed={missingLinkOnly}
+            </FilterChip
+            <FilterChip type="button" aria-pressed={missingLinkOnly}
               onClick={()=>{const next=!missingLinkOnly;selectDueBucket("all");setMissingLinkOnly(next);}}
-              variant={missingLinkOnly ? "primary" : "secondary"} className="min-h-11">
+               className="min-h-11">
               Waiting on employer link ({relevant.filter(row=>learnerAssessmentLinkState(row)==="MISSING").length})
-            </Button>
-            <Button type="button" aria-pressed={dueBucket === "today"}
+            </FilterChip
+            <FilterChip type="button" aria-pressed={dueBucket === "today"}
               onClick={() => selectDueBucket("today")}
-              variant={dueBucket === "today" ? "primary" : "secondary"} className="min-h-11">
+               className="min-h-11">
               Due today ({dueCounts.today.length})
-            </Button>
-            <Button type="button" aria-pressed={dueBucket === "week"}
+            </FilterChip
+            <FilterChip type="button" aria-pressed={dueBucket === "week"}
               onClick={() => selectDueBucket("week")}
-              variant={dueBucket === "week" ? "primary" : "secondary"} className="min-h-11">
+               className="min-h-11">
               Due this week ({dueCounts.week.length})
-            </Button>
+            </FilterChip
             {([
               ["later","Later",dueCounts.later.length],
               ["past","Scheduled time passed",dueCounts.past.length],
               ["unscheduled","Awaiting employer schedule",dueCounts.unscheduled.length],
             ] as const).map(([value,label,count])=>(
-              <Button type="button" key={value} aria-pressed={dueBucket===value}
+              <FilterChip type="button" key={value} aria-pressed={dueBucket===value}
                 onClick={()=>selectDueBucket(value)}
-                variant={dueBucket===value ? "primary" : "secondary"} className="min-h-11">
+                 className="min-h-11">
                 {label} ({count})
-              </Button>
+              </FilterChip
             ))}
             <p className="w-full text-xs text-muted-foreground">
               IST schedule categories: Today and this week refer to the published
