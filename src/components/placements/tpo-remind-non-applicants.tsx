@@ -38,7 +38,7 @@ export function TpoRemindNonApplicants({jobId}:{jobId:string}){
   {error&&!open?<span role="alert" className="text-xs text-error">{error}</span>:null}
   {open&&preview?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <div role="dialog" aria-modal="true" aria-label="Review not-applied reminder"
-    className="w-full max-w-xl space-y-4 rounded-xl border border-border bg-surface p-6 shadow-xl">
+    className="w-full max-w-xl space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 shadow-xl">
     <h2 className="text-lg font-semibold">Remind students who haven&apos;t applied</h2>
     <p className="text-sm text-body">{preview.count} eligible registered students have not applied to this drive.
      These students will receive an in-app notification linking to the drive. Reminders are allowed once per drive each day before the deadline.</p>
