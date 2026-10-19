@@ -74,7 +74,10 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  );
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Placement Analytics"
-   description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
+   description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."
+   actions={<a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
+    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+    Export report (CSV) →</a>}/>
   <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold">Drive or company
     <Input name="q" defaultValue={q.q} maxLength={100} className="min-w-0"/></label>
@@ -90,11 +93,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear all</Link></div>
   </form>
   {params.size?<p className="text-sm text-body">Active filters: {[...params.entries()].map(([key,value])=>key+" = "+value).join(" · ")}</p>:null}
-  <div className="flex flex-wrap items-center justify-between gap-3">
-   <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
-   <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Export report (CSV) →</a>
-  </div>
+  <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
   {data.truncated?<Banner tone="warning">
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
   </Banner>:null}
