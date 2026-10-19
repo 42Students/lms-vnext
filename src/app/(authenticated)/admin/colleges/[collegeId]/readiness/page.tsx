@@ -155,7 +155,7 @@ export default async function CollegeReadinessPage({
 
       <section
         aria-label="Readiness summary"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+        className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4"
       >
         {[
           {
@@ -222,7 +222,7 @@ export default async function CollegeReadinessPage({
             <Select name="area" defaultValue={parsed.area} className="min-h-11 min-[768px]:min-h-9 ">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </Select>
-          </label><Button type="submit">Filter</Button>
+          </label><Button type="submit" className="min-h-11 min-[768px]:min-h-9">Filter</Button>
           <Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>
         </form>
         <p className="mt-2 text-xs text-muted-foreground">Showing {shownChecks.length} of {evaluation.checks.length} required checks; the overall verdict always uses all ten.</p>
@@ -290,7 +290,7 @@ export default async function CollegeReadinessPage({
           or runtime access are functional.
         </p>
 
-        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+        <dl className="mt-4 grid gap-4 min-[768px]:grid-cols-2">
           <div>
             <dt className="text-xs font-semibold text-muted-foreground">
               Active lecture halls
