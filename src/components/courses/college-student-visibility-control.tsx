@@ -1,5 +1,6 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {collegeStudentVisibilityAction} from "@/modules/courses/college-student-visibility-control-model";
@@ -44,6 +45,6 @@ export function CollegeStudentVisibilityControl({contentId,initialVisible,initia
       className="min-h-11 max-w-full text-xs">
       {pending?"Saving…":action.label}
     </Button>
-    {notice?<p role="alert" className="break-words text-xs text-error">{notice}</p>:null}
+    {notice?<Alert tone="error">{notice}</Alert>:null}
   </div>;
 }
