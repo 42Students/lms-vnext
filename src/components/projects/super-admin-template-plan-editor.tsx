@@ -160,7 +160,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         {draft.sprints.map((sprint, index) => <fieldset key={index}
           className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
           <legend className="px-1 text-sm font-semibold">Sprint {index + 1}</legend>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
               <Input className={field} required maxLength={64} value={sprint.key}
                 disabled={pending} onChange={event => updateSprint(index, { key: event.target.value })}/>
@@ -214,7 +214,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         {draft.tasks.map((task, index) => <fieldset key={index}
           className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
           <legend className="px-1 text-sm font-semibold">Task {index + 1}</legend>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
               <Input className={field} required maxLength={64} disabled={pending}
                 value={task.key} onChange={event => updateTask(index, { key: event.target.value })}/>
