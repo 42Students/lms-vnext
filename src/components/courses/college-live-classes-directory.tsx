@@ -14,7 +14,7 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
   <PageHeader eyebrow="College Admin · Courses & Content" title="Live Classes"
     description="Saved lesson sessions in your college. Meeting links are available only through authorized course workspaces."/>
   <form method="get" action="/college/live-classes"
-    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+    className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
       Session, lesson or course
       <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
