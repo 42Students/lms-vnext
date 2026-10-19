@@ -524,3 +524,13 @@
   :where(tbody tr[aria-selected="true"]):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-primary-subtle) !important;
 }
+
+/* NATIVE DIALOG BACKDROP
+ * Legacy: components___antddesign.scss:143-146 (drawer mask uses
+ * rgba(30,54,63,.10)); role dialogs use their own chat-16 overlay/backdrop
+ * mechanisms and are intentionally unaffected.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(dialog):not(:where([data-unskin], [data-unskin] *))::backdrop {
+  background-color: rgba(30, 54, 63, 0.1) !important;
+}
