@@ -36,11 +36,11 @@ export function LearnerVerificationSubmit({
  }
  return <div className="mt-4 min-w-0">
   <Button type="button" disabled={pending||refreshRequired} onClick={submit}
-   className="min-h-11 sm:min-h-9 max-w-full">
+   className="min-h-11 min-[768px]:min-h-9 max-w-full">
    {pending?"Submitting…":learnerVerificationSubmitLabel(status)}
   </Button>
   {message?<p role="status" aria-live="polite" className="mt-2 break-words text-sm text-body">{message}</p>:null}
   {refreshRequired?<Button type="button" onClick={()=>router.refresh()}
-    variant="secondary" className="mt-3 min-h-11 sm:min-h-9">Refresh verification status</Button>:null}
+    variant="secondary" className="mt-3 min-h-11 min-[768px]:min-h-9">Refresh verification status</Button>:null}
  </div>;
 }

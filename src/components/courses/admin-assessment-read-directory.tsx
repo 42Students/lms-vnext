@@ -3,6 +3,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {FacultyItemActions} from "@/components/courses/faculty-item-actions";
@@ -28,13 +29,13 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} />
-    <form action={base} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-3">
+    <form action={base} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-3 print:hidden">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment title
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
-          className="min-h-11 sm:min-h-9" />
+          className="min-h-11 md:min-h-9" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <Select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9">
+        <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ALL">All</option><option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
           {!assignment ? <option value="CLOSED">Closed</option> : null}
@@ -42,15 +43,15 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course code
-        <Input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 sm:min-h-9"/>
+        <Input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 md:min-h-9"/>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Audience
-        <Select name="scope" defaultValue={data.query.scope} className="min-h-11 sm:min-h-9">
+        <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
           <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option><option value="SECTION">Section-specific</option>
         </Select>
       </label>
       {!assignment?<label className="grid gap-1 text-sm font-semibold text-body">Results
-        <Select name="results" defaultValue={data.query.results} className="min-h-11 sm:min-h-9">
+        <Select name="results" defaultValue={data.query.results} className="min-h-11 md:min-h-9">
          <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
         </Select>
       </label>:null}
@@ -95,21 +96,18 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
               deadlineReached={item.resultsReleaseReady}/>:null}
         </div>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}#lesson-authoring`}
-          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline print:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Open offering builder / submissions →
         </Link>
       </article>)}
     </div> : <EmptyState title={assignment?"No assignments found for this college":"No quizzes found for this college"} description="Try adjusting your filters." />}
-    <nav aria-label={title + " pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
-      <span className="text-muted-foreground">Page {data.page} of {data.totalPages} · 25 per page</span>
-      <div className="flex gap-2">
-        {data.page > 1 ? <Link href={adminAssessmentHref(data.kind, { ...data.query, page: data.page - 1 })}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link> : null}
-        {data.page < data.totalPages ? <Link href={adminAssessmentHref(data.kind, { ...data.query, page: data.page + 1 })}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Next</Link> : null}
-      </div>
-    </nav>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <span className="text-xs text-muted-foreground">25 per page</span>
+      <Pagination page={data.page} pageCount={data.totalPages}
+        hrefForPage={page => adminAssessmentHref(data.kind, { ...data.query, page })}
+        label={title + " pages"} showBoundaryLinks={false} />
+    </div>
     <p className="text-xs text-muted-foreground">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
-    <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text print:hidden">← Courses</Link>
   </div>;
 }

@@ -2,6 +2,7 @@
 import { useRef, useState } from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
@@ -50,8 +51,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     aria-label="Super Admin bulk drive actions">
     <div className="flex flex-wrap items-center gap-3">
       <h2 className="font-semibold">Bulk Open / Close</h2>
-      <label className="flex min-h-11 items-center gap-2 text-sm">
-        <input type="checkbox" disabled={busy || !eligible.length}
+      <label className="flex min-h-11 items-center gap-2 text-sm text-body">
+        <Checkbox disabled={busy || !eligible.length}
           checked={eligible.length>0 && eligible.every(d=>selected.includes(d.id))}
           onChange={e=>{setSelected(e.target.checked?eligible.slice(0,25).map(d=>d.id):[]);
             setPreview(null);setResult(null);}}/>
@@ -74,8 +75,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     {eligible.length>3?<p id="bulk-drive-scroll-cue" className="text-xs text-muted-foreground">More drives below ↓ · Scroll to review the eligible drives.</p>:null}
     <div tabIndex={0} role="region" aria-label="Eligible drive list" aria-describedby={eligible.length>3?"bulk-drive-scroll-cue":undefined}
       className="grid max-h-48 min-w-0 gap-2 overflow-y-auto overscroll-contain sm:grid-cols-2 xl:grid-cols-4 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">
-      {eligible.map(d=><label key={d.id} className="flex gap-2 border-b border-border py-2 text-xs">
-        <input type="checkbox" disabled={busy} checked={selected.includes(d.id)}
+      {eligible.map(d=><label key={d.id} className="flex min-w-0 items-start gap-2 border-b border-border py-2 text-xs">
+        <Checkbox disabled={busy} checked={selected.includes(d.id)}
           onChange={()=>toggle(d.id)}/>
         <span><strong>{d.title}</strong><span className="block text-muted-foreground">
           {d.companyName} · {d.status}</span></span>
@@ -86,7 +87,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       Affected issued offers may be withdrawn when closing. Historical decisions remain.
     </p>
     {preview?<div role="group" aria-label="Bulk action impact"
-      className="space-y-2 rounded border border-border p-3 text-sm">
+      className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
       <p>{preview.eligible} eligible, {preview.ignored+preview.excluded} skipped.</p>
       <p>{action==="CLOSE"?
         `${preview.pendingLettersWithdrawn} issued offers may be withdrawn when these drives close.`:
@@ -101,8 +102,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       <p>{result.updated} updated, {result.skipped} failed. Retry will target only failed drives.</p>
       {result.results.filter(x=>x.status==="SKIPPED").map(x=>
         <p key={x.jobId}>{drives.find(d=>d.id===x.jobId)?.title??"Drive"}: {x.reason}</p>)}
-      {result.skipped>0?<button type="button" onClick={()=>void send(false)}
-        className="min-h-11 font-semibold text-[var(--lms-teal-deep)] underline">Preview failed drives for retry</button>:null}
+      {result.skipped>0?<Button type="button" variant="link" onClick={()=>void send(false)}
+        className="!min-h-11 !px-0 !text-primary-text">Preview failed drives for retry</Button>:null}
     </div>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     <ConfirmDialog open={confirmOpen&&preview!==null} pending={busy}
