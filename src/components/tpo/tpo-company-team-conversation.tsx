@@ -1,4 +1,8 @@
 "use client";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useCallback,useEffect,useRef,useState,type FormEvent} from "react";
 import Link from "next/link";
@@ -29,11 +33,11 @@ function formatTokens(body:string,members:TeamPayload["members"]){
       const name=members.find(m=>m.membershipId.toLowerCase()===chunk.slice(8).toLowerCase())?.name;
       return <span key={i} className="rounded bg-primary-subtle px-1 font-[650]">@{name??"team member"}</span>;
     }
-    if(chunk.startsWith("#drive:"))return <Link key={i} className="text-primary-text underline"
+    if(chunk.startsWith("#drive:"))return <Link key={i} className="underline text-link px-0"
       href={"/tpo/placements/jobs/"+encodeURIComponent(chunk.slice(7))}>{chunk}</Link>;
-    if(chunk.startsWith("#company:"))return <Link key={i} className="text-primary-text underline"
+    if(chunk.startsWith("#company:"))return <Link key={i} className="underline text-link px-0"
       href={"/tpo/companies/"+encodeURIComponent(chunk.slice(9))}>{chunk}</Link>;
-    if(chunk.startsWith("#student:"))return <Link key={i} className="text-primary-text underline"
+    if(chunk.startsWith("#student:"))return <Link key={i} className="underline text-link px-0"
       href={"/tpo/students/"+encodeURIComponent(chunk.slice(9))+"/participation"}>{chunk}</Link>;
     if(chunk.startsWith("@")||chunk.startsWith("#"))
       return <span key={i} className="rounded bg-primary-subtle px-1 font-[650]">{chunk}</span>;
@@ -136,17 +140,17 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
     </p>
    </div>
    <div className="flex flex-wrap items-center gap-3 text-sm">
-    {data?.status==="READY"?<button type="button" disabled={busy}
-      className="font-semibold text-primary-text underline"
+    {data?.status==="READY"?<Button variant="ghost" type="button" disabled={busy}
+      className="underline text-link px-0"
       onClick={()=>void mutate({action:"FOLLOW",following:!data.following})}>
       {data.following?"Following":"Follow"}
-    </button>:null}
+    </Button>:null}
     <Link href={"/tpo/team/company/"+encodeURIComponent(companyId)}
-      className="font-semibold text-primary-text underline">Open in Team</Link>
+      className="underline text-link px-0">Open in Team</Link>
    </div>
   </div>
-  {error?<p role="alert" className="text-sm text-danger">{error} <button className="font-semibold underline"
-    type="button" onClick={()=>void load()}>Retry</button></p>:null}
+  {error?<p role="alert" className="text-sm text-danger">{error} <Button variant="ghost" className="underline text-link px-0"
+    type="button" onClick={()=>void load()}>Retry</Button></p>:null}
   {!data&&!error?<p role="status" className="text-sm text-body">Loading company Team conversation…</p>:null}
   {data?.status==="NOT_REGISTERED"?<p role="status" className="text-sm text-body">
     Company Team messages are unavailable until the database migration is registered. No messages have been fabricated.
@@ -176,44 +180,44 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
         {m.askOverdue?"Overdue ask":"Open ask"} · {data.members.find(person=>person.membershipId===m.askAssigneeMembershipId)?.name??"Team member"}
         {m.dueLabel?" · by "+m.dueLabel:""} · {m.askStatus??"OPEN"}
         {m.askStatus==="OPEN"&&m.askAssigneeMembershipId===actorMembershipId?
-         <button className="ml-2 font-semibold text-primary-text underline" type="button" disabled={busy}
-           onClick={()=>void mutate({action:"ASK_DONE",messageId:m.id})}>Mark done</button>:null}
+         <Button variant="ghost" className="underline text-link px-0" type="button" disabled={busy}
+           onClick={()=>void mutate({action:"ASK_DONE",messageId:m.id})}>Mark done</Button>:null}
         {m.askStatus==="OPEN"&&m.authorMembershipId===actorMembershipId?
-         <button className="ml-2 font-semibold text-primary-text underline" type="button" disabled={busy}
-           onClick={()=>void mutate({action:"ASK_CANCEL",messageId:m.id})}>Cancel ask</button>:null}
+         <Button variant="ghost" className="underline text-link px-0" type="button" disabled={busy}
+           onClick={()=>void mutate({action:"ASK_CANCEL",messageId:m.id})}>Cancel ask</Button>:null}
        </div>:null}
        {!m.deletedAt?<div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
-         <button type="button" disabled={busy} className="font-semibold text-primary-text underline"
+         <Button variant="ghost" type="button" disabled={busy} className="underline text-link px-0"
            onClick={()=>void mutate({action:"DECISION",messageId:m.id,marked:!m.decision})}>
-           {m.decision?"Take the decision mark off":"Mark as decision"}</button>
+           {m.decision?"Take the decision mark off":"Mark as decision"}</Button>
          {m.authorMembershipId===actorMembershipId?<>
-           <button type="button" className="text-primary-text underline"
-             onClick={()=>{setEditing(m.id);setEditBody(m.body);}}>Edit (within 15 minutes)</button>
-           <button type="button" className="text-primary-text underline"
-             onClick={()=>setDeleting(m.id)}>Delete</button>
+           <Button variant="ghost" type="button" className="underline text-link px-0"
+             onClick={()=>{setEditing(m.id);setEditBody(m.body);}}>Edit (within 15 minutes)</Button>
+           <Button variant="ghost" type="button" className="underline text-link px-0"
+             onClick={()=>setDeleting(m.id)}>Delete</Button>
          </>:null}
        </div>:null}
        {editing===m.id?<form className="mt-2 space-y-2" onSubmit={event=>{event.preventDefault();
           void mutate({action:"EDIT",messageId:m.id,body:editBody}).then(ok=>{if(ok)setEditing(null);});}}>
-        <textarea required maxLength={4000} rows={3} className="w-full rounded-[var(--lms-control-radius)] border border-border p-2"
+        <Textarea required maxLength={4000} rows={3} 
           value={editBody} onChange={event=>setEditBody(event.target.value)}/>
-        <button type="submit" disabled={busy||!editBody.trim()} className="text-primary-text underline">Save edit</button>
-        <button type="button" className="ml-3 text-primary-text underline" onClick={()=>setEditing(null)}>Cancel</button>
+        <Button variant="primary" type="submit" disabled={busy||!editBody.trim()} className="underline text-link px-0">Save edit</Button>
+        <Button variant="ghost" type="button" className="underline text-link px-0" onClick={()=>setEditing(null)}>Cancel</Button>
        </form>:null}
     </li>)}
    </ol></ScrollCue>
    <form onSubmit={event=>void send(event)} className="grid gap-3">
     <label className="grid gap-1 text-sm font-semibold text-body">
      Write to the team. @ to mention, # to link a drive, company or student.
-     <textarea required maxLength={4000} rows={3} value={body} disabled={busy}
+     <Textarea required maxLength={4000} rows={3} value={body} disabled={busy}
        onChange={event=>updateDraft({body:event.target.value,decision,assignee,dueAt})}
        onKeyDown={event=>{if(event.key==="Enter"&&!event.shiftKey&&!event.nativeEvent.isComposing){
         event.preventDefault();event.currentTarget.form?.requestSubmit();
        }}}
-       className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
+       />
     </label>
     <label className="grid gap-1 text-sm">Mention a teammate
-      <select disabled={busy} defaultValue="" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"
+      <Select disabled={busy} defaultValue="" 
         onChange={event=>{if(event.target.value){
           updateDraft({body:(body.trimEnd()+" @member:"+event.target.value+" ").slice(0,4000),decision,assignee,dueAt});
           event.currentTarget.value="";
@@ -221,21 +225,21 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
         <option value="">Choose a colleague to @mention</option>
         {data.members.filter(m=>m.membershipId!==actorMembershipId).map(m=>
           <option key={m.membershipId} value={m.membershipId}>{m.name}</option>)}
-      </select>
+      </Select>
     </label>
     <p className="text-xs text-muted-foreground">Use @team to notify the placement team or #drive:&lt;UUID&gt; and #company:&lt;UUID&gt; to link authorized records.</p>
     <div className="grid gap-3 sm:grid-cols-2">
      <label className="grid gap-1 text-sm">Ask someone (optional)
-       <select value={assignee} disabled={busy} onChange={event=>updateDraft({body,decision,assignee:event.target.value,dueAt:event.target.value?dueAt:""})}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+       <Select value={assignee} disabled={busy} onChange={event=>updateDraft({body,decision,assignee:event.target.value,dueAt:event.target.value?dueAt:""})}
+        >
         <option value="">No ask attached</option>
         {data.members.filter(member=>member.membershipId!==actorMembershipId).map(member=>
          <option key={member.membershipId} value={member.membershipId}>{member.name}</option>)}
-       </select>
+       </Select>
      </label>
      {assignee?<label className="grid gap-1 text-sm">By (IST, optional)
-       <input type="datetime-local" value={dueAt} onChange={event=>updateDraft({body,decision,assignee,dueAt:event.target.value})}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
+       <Input type="datetime-local" value={dueAt} onChange={event=>updateDraft({body,decision,assignee,dueAt:event.target.value})}
+        />
      </label>:null}
     </div>
     <label className="flex items-center gap-2 text-sm">
@@ -244,10 +248,10 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
     </label>
     <div className="flex items-center justify-between gap-3">
      <span className="text-xs text-muted-foreground">{body.length}/4000</span>
-     <button type="submit" disabled={busy||!body.trim()}
-      className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
+     <Button variant="primary" type="submit" disabled={busy||!body.trim()}
+      >
        {busy?"Sending…":"Send"}
-     </button>
+     </Button>
     </div>
    </form>
    <ConfirmDialog open={deleting!==null} onOpenChange={open=>{if(!open)setDeleting(null);}}
