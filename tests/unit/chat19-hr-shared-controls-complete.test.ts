@@ -10,14 +10,14 @@ describe("NORTH-STAR chat-19 shared HR controls",()=>{
  it("leaves no raw interactive HTML controls across the 19 recruiter components",()=>{
   for(const name of hrComponents){
    const content=source("src/components/hr/"+name+".tsx");
-   expect(content,name).not.toMatch(/<(?:button|input|select|textarea)\\b/);
+   expect(content,name).not.toMatch(/<(?:button|input|select|textarea)\b/);
   }
  });
  it("keeps all 22 canonical HR pages on shared interactive controls",()=>{
   for(const name of hrPages){
    const content=source("src/app/(authenticated)/hr/"+name+"/page.tsx");
-   expect(content,name).not.toMatch(/<(?:button|select|textarea)\\b/);
-   for(const input of content.match(/<input\\b[^>]*\\/>/g)??[]){
+   expect(content,name).not.toMatch(/<(?:button|select|textarea)\b/);
+   for(const input of content.match(/<input\b[^>]*\/>/g)??[]){
     expect(input,name).toContain('type="hidden"');
    }
   }
@@ -26,11 +26,11 @@ describe("NORTH-STAR chat-19 shared HR controls",()=>{
   for(const name of ["hr-drive-draft-form","recruiter-round-inline-editor","recruiter-private-rating-editor"]){
    const content=source("src/components/hr/"+name+".tsx");
    for(const tag of ["Select","Button"]){
-    const opens=(content.match(new RegExp("<"+tag+"\\\\b","g"))??[]).length;
+    const opens=(content.match(new RegExp("<"+tag+"\\b","g"))??[]).length;
     const closes=(content.match(new RegExp("</"+tag+">","g"))??[]).length;
     expect(opens,name+" "+tag).toBe(closes);
    }
-   expect(content,name).not.toMatch(/<\\/Select\\s*\n/);
+   expect(content,name).not.toMatch(/<\/Select\s*\n/);
   }
  });
 });
