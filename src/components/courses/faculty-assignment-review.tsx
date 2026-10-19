@@ -340,7 +340,7 @@ function SubmissionGradeCard({
 
       <form
         onSubmit={saveGrade}
-        className="mt-4 grid gap-3 lg:grid-cols-[10rem_1fr]"
+        className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
       >
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
