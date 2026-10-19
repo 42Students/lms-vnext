@@ -33,7 +33,7 @@ export function topbarConfigForPath(pathname: string): TopbarConfig {
     searchHref: "/tpo/students", newHref: "/tpo/placements/new",
     messagesHref: "/tpo/messages", notificationsHref: "/tpo/notifications",
   };
-  if (pathname === "/hr" || pathname.startsWith("/hr/")) return {
+  if (pathname === "/hr" || pathname.startsWith("/hr/") || pathname === "/recruiter" || pathname.startsWith("/recruiter/")) return {
     portal: "hr", placeholder: "Find a drive, applicant or message",
     searchHref: "/hr/drives", newHref: "/hr/drives/new",
     messagesHref: "/hr/conversations", notificationsHref: "/hr/notifications",
@@ -43,7 +43,7 @@ export function topbarConfigForPath(pathname: string): TopbarConfig {
     searchHref: "/learn/courses", newHref: null,
     messagesHref: null, notificationsHref: "/learn/notifications",
   };
-  if (pathname === "/teacher" || pathname.startsWith("/teacher/")) return {
+  if (pathname === "/teacher" || pathname.startsWith("/teacher/") || pathname === "/teach" || pathname.startsWith("/teach/")) return {
     portal: "teacher", placeholder: "Find a course or assignment",
     searchHref: "/teacher/courses", newHref: null,
     messagesHref: null, notificationsHref: "/teacher/notifications",
