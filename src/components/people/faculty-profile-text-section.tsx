@@ -47,7 +47,7 @@ export function FacultyProfileTextSection({ section, title, description, fields,
           {props=>field.multiline
             ? <Textarea {...props} rows={4} value={draft[field.name]??""} maxLength={field.maxLength}
                 disabled={pending} onChange={event=>setDraft(current=>({...current,[field.name]:event.target.value}))}/>
-            : <Input {...props} type={field.type??"text"} value={draft[field.name]??""}
+            : <Input {...props} className="min-h-11 min-[768px]:min-h-9" type={field.type??"text"} value={draft[field.name]??""}
                 maxLength={field.maxLength} disabled={pending}
                 onChange={event=>setDraft(current=>({...current,[field.name]:event.target.value}))}/>}
         </FormField>;
