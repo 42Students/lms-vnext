@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,7 @@ export default function LearnerPlacementsError({
 }) {
   return (
     <section role="alert" className="py-8 text-center">
-      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
-        We could not load your placements
-      </h1>
+      <PageHeader title={"We could not load your placements"} />
       <p className="mt-2 text-sm text-body">
         Your data is safe. Check your connection and try again. This is a loading problem, not an empty account.
       </p>
