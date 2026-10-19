@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
@@ -117,7 +118,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </p>:null}
   <div className="flex flex-wrap items-center justify-end gap-2">
    <VerificationExportControl query={Object.fromEntries(exportQuery)}/>
-   <button type="button" disabled={bulkBusy} onClick={()=>{if(canNavigateCollegeVerificationQueue(bulkBusy))router.refresh();}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Refresh</button>
+   <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{if(canNavigateCollegeVerificationQueue(bulkBusy))router.refresh();}} >Refresh</Button>
   </div>
   {reviewFeedback&&<p role="status" className="rounded-md border p-3 text-sm">
     {reviewFeedback}
@@ -125,16 +126,16 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Review one by one" className="space-y-2 rounded-md border p-3">
     <h2 className="font-semibold">Review one by one</h2>
     <p className="text-sm">Each student&apos;s values next to their documents, with Verify and Send back. The next one opens by itself.</p>
-    <button type="button" disabled={bulkBusy} onClick={()=>{
+    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{
       setSequential({keys:queueKeys,index:0});setSelected(selectable[0]??null);setReviewFeedback("");
-    }} className="rounded-md border px-3 py-2 text-sm font-semibold">
+    }} >
       Start with the first of {selectable.length}
-    </button>
+    </Button>
   </section>}
   <nav aria-label="Verification attention shortcuts" className="flex flex-wrap gap-2">
-   {verificationAttentionShortcuts.map(item=><button type="button" key={item.attention} aria-pressed={query.attention===item.attention}
-    onClick={()=>navigate(verificationAttentionShortcutPatch(item.attention))} className="rounded-md border px-3 py-2 text-sm">{item.label}</button>)}
-   {query.attention&&query.attention!=="ALL"&&<button type="button" onClick={()=>navigate({attention:"ALL",page:"1"})} className="rounded-md border px-3 py-2 text-sm">All attention states</button>}
+   {verificationAttentionShortcuts.map(item=><Button variant="secondary" type="button" key={item.attention} aria-pressed={query.attention===item.attention}
+    onClick={()=>navigate(verificationAttentionShortcutPatch(item.attention))} >{item.label}</Button>)}
+   {query.attention&&query.attention!=="ALL"&&<Button variant="secondary" type="button" onClick={()=>navigate({attention:"ALL",page:"1"})} >All attention states</Button>}
   </nav>
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} programChoices={programChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts} legacyCollegeCopy
@@ -146,10 +147,10 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="space-y-3 rounded-md border p-3">
    <p role="status" className="text-sm">{selectedRows.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));resetBulkFeedback();}} className="rounded-md border px-3 py-2 text-sm">Select first 20 waiting</button>
-    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(new Set());resetBulkFeedback();}} className="rounded-md border px-3 py-2 text-sm">Clear selection</button>
-    <button type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("VERIFY");}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview verify</button>
-    <button type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("SEND_BACK");}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview send back</button>
+    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));resetBulkFeedback();}} >Select first 20 waiting</Button>
+    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelection(new Set());resetBulkFeedback();}} >Clear selection</Button>
+    <Button variant="secondary" type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("VERIFY");}} >Preview verify</Button>
+    <Button variant="secondary" type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("SEND_BACK");}} >Preview send back</Button>
    </div>
    {bulkAction&&<div className="space-y-2 rounded-md border p-3">
     <h2 className="font-semibold">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
@@ -165,19 +166,19 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
         : selectedRows.every(row=>row.section==="EDUCATION")
           ? tpoVerificationSectionReasons("EDUCATION")
           : ["Submitted details do not match the document"] as const).map(reason=>
-          <button key={reason} type="button" disabled={bulkBusy}
-            onClick={()=>setBulkReason(reason)} className="rounded-md border px-3 py-2 text-xs">
+          <Button variant="secondary" key={reason} type="button" disabled={bulkBusy}
+            onClick={()=>setBulkReason(reason)} >
             {reason}
-          </button>)}
+          </Button>)}
     </div>}
     {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
      <textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
       className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" placeholder="Describe the correction required"/>
      <span className="mt-1 block text-xs">A shared reason of at least 3 characters is required and will be recorded for each learner.</span>
     </label>}
-    {bulkAction==="SEND_BACK"&&<button type="button" disabled={bulkBusy||selectedRows.length===0||bulkReason.trim().length<3}
-      onClick={()=>void executeBulk("SEND_BACK",bulkReason)} className="rounded-md border px-3 py-2 text-sm font-semibold disabled:opacity-50">
-      {bulkBusy?"Sending decisions…":"Confirm send back selected"}</button>}
+    {bulkAction==="SEND_BACK"&&<Button variant="secondary" type="button" disabled={bulkBusy||selectedRows.length===0||bulkReason.trim().length<3}
+      onClick={()=>void executeBulk("SEND_BACK",bulkReason)} >
+      {bulkBusy?"Sending decisions…":"Confirm send back selected"}</Button>}
     {bulkAction==="VERIFY"&&<>
      <h3 className="font-semibold">Verify without opening</h3>
      <p className="text-sm">Only do this when you have checked these students&apos; documents another way (for example against the college&apos;s own records). Each one is recorded with your name.</p>
@@ -186,11 +187,11 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
        I have checked their documents another way (for example the college&apos;s own records).
      </label>
      <p className="text-xs text-muted-foreground">A missing marksheet or ID document blocks blind verification. The server rechecks document receipts before any decision.</p>
-     <button type="button" disabled={bulkBusy||!acknowledged||(preview?.eligible.length??0)===0}
+     <Button variant="secondary" type="button" disabled={bulkBusy||!acknowledged||(preview?.eligible.length??0)===0}
       onClick={()=>void executeBulk("VERIFY")}
-      className="rounded-md border px-3 py-2 text-sm font-semibold disabled:opacity-50">{bulkBusy?"Saving reviews…":"Verify "+(preview?.eligible.length??0)+" without opening each"}</button>
+      >{bulkBusy?"Saving reviews…":"Verify "+(preview?.eligible.length??0)+" without opening each"}</Button>
     </>}
-    <button type="button" disabled={bulkBusy} onClick={()=>setBulkAction(null)} className="rounded-md border px-3 py-2 text-sm">Cancel preview</button>
+    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>setBulkAction(null)} >Cancel preview</Button>
    </div>}
   </section>}
   {bulkResult&&<section aria-label="Bulk review outcome" role="status" className="space-y-2 rounded-md border p-3">
@@ -199,7 +200,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    <ul className="space-y-1 text-sm">{bulkResult.labels.map(result=><li key={result.key}>
     {result.label} · {result.section}: {result.message}
    </li>)}</ul>
-   <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={()=>router.refresh()}>Refresh queue</button>
+   <Button variant="secondary" type="button"  onClick={()=>router.refresh()}>Refresh queue</Button>
   </section>}
   {bulkError&&<p role="alert" className="rounded-md border p-3 text-sm">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</p>}
   <nav aria-label="Verification pagination" className="flex flex-wrap items-center gap-4 text-sm">
@@ -210,8 +211,8 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     <option value="10">10</option><option value="25">25</option><option value="50">50</option>
    </select></label>
    <span>Showing {rows.length} of {total} requests in the selected view</span>
-   {page>1&&<button type="button" onClick={()=>navigate({page:String(page-1)})} className="underline">Previous page</button>}
-   {hasMore&&<button type="button" onClick={()=>navigate({page:String(page+1)})} className="underline">Next page</button>}
+   {page>1&&<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page-1)})} className="underline">Previous page</Button>}
+   {hasMore&&<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page+1)})} className="underline">Next page</Button>}
   </nav>
   {selected&&<VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
     row={selected}
