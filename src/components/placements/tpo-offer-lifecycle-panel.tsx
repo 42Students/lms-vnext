@@ -1,3 +1,5 @@
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 "use client";
 
 import { useState } from "react";
@@ -165,7 +167,7 @@ export function TpoOfferLifecyclePanel({
       ) : null}
       <label className="block text-sm font-semibold text-foreground">
         Mandatory evidence / reason (10–1200 characters)
-        <textarea
+        <Textarea
           rows={3}
           maxLength={1200}
           value={reason}
@@ -177,7 +179,7 @@ export function TpoOfferLifecyclePanel({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span className="text-sm text-body">{ids.length} / 200 selected</span>
         <label className="flex items-start gap-2 text-sm text-body">
-          <input type="checkbox" checked={reviewed} disabled={busy}
+          <Checkbox checked={reviewed} disabled={busy}
             onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
           I reviewed the {selected.length} affected offer(s) and supporting evidence.
           This is an audited administrative action, not a learner self-response.
