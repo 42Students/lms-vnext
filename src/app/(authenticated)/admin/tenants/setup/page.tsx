@@ -40,7 +40,7 @@ export default async function SuperAdminTenantSetup({
  </div>;
  const id=context.adminScope?.collegeId??null;
  const tab=selectedSuperAdminTenantSetupTab(parsed.data,id!==null);
- const active="border-primary bg-primary-subtle text-primary-text";
+ const active="border-primary text-primary-text";
  const inactive="border-transparent text-body hover:bg-surface-subtle";
  const tabLink=(next:Tab)=>"/admin/tenants/setup?tab="+next;
  // Read failures must never present a partial college creation path as an
@@ -91,7 +91,7 @@ export default async function SuperAdminTenantSetup({
     <p className="mt-2 break-words text-sm font-semibold">{college?.name??(id?"Selected college":"No college selected")}</p>
    </article>
   </section>
-  <nav aria-label="Tenant Setup steps" className="flex flex-wrap gap-2">
+  <nav aria-label="Tenant Setup steps" className="flex flex-wrap gap-2 border-b border-border">
    <Link href={tabLink("STRUCTURE")} aria-current={tab==="STRUCTURE"?"page":undefined}
     className={"inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] px-3 text-sm font-semibold "+ (tab==="STRUCTURE"?active:inactive)}>
     1. Tenant structure
