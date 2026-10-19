@@ -33,4 +33,9 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(legacy()).toContain("translateY(6px) scale(0.998)");
  expect(css()).toContain("translateY(6px) scale(.998)");
 });
+ it("disables entry and exit movement for reduced motion",()=>{
+ expect(css()).toContain("@media (prefers-reduced-motion:reduce)");
+ expect(css()).toContain("animation:none;transition:none;transform:none");
+ expect(css()).toContain("opacity:1;transform:none;will-change:auto");
+});
 });
