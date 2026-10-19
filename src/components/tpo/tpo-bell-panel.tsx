@@ -18,6 +18,15 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
  const [refreshing,setRefreshing]=useState(false);
  const refreshInFlight=useRef(false);
  const displayedItems=latest?.items??items;
+ const groupedItems=displayedItems.slice(0,20).reduce<{day:string;items:BellItem[]}[]>((groups,item)=>{
+  const day=new Intl.DateTimeFormat("en-IN",{
+   day:"numeric",month:"long",year:"numeric",timeZone:"Asia/Kolkata",
+  }).format(new Date(item.createdAt));
+  const last=groups[groups.length-1];
+  if(last?.day===day)last.items.push(item);
+  else groups.push({day,items:[item]});
+  return groups;
+ },[]);
  const unread=allReadRevision===revision?0:Math.max(0,(latest?.unread??initialUnread)-
   readIds.filter(id=>displayedItems.some(item=>item.id===id&&!item.readAt)).length);
  const router=useRouter();
