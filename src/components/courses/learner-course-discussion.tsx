@@ -398,7 +398,7 @@ export function LearnerCourseDiscussion({
       </div>
 
       {loadError && messages.length > 0 && loadedOnce.current ? (
-        <div role="alert" className="flex flex-wrap items-center gap-3 rounded-md border border-warning p-3">
+        <div role="alert" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3">
           <p className="m-0 flex-1 text-sm text-warning-text">
             Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.
           </p>
