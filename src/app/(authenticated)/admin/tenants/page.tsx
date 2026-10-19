@@ -74,7 +74,7 @@ export default async function TenantDirectory({searchParams}:{
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">College status
-    <Select name="status" defaultValue={data.query.status} className="min-h-[var(--lms-control-height)] ">
+    <Select name="status" defaultValue={data.query.status}>
      {statuses.map(status=><option key={status}>{status}</option>)}
     </Select>
    </label>
