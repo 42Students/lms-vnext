@@ -364,7 +364,7 @@ export function RecruiterResultControls({
         if(outcome){event.preventDefault();draftSelectedOutcome(activeRoundId,outcome);}
       }}>
       {rounds.length === 0 ? (
-        <p className="m-0 rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
+        <p className="m-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-5 text-sm text-muted-foreground">
           The placement team has not configured any rounds yet.
         </p>
       ) : (
@@ -380,7 +380,7 @@ export function RecruiterResultControls({
           return (
             <article
               key={round.id}
-              className="rounded-xl border border-border bg-surface"
+              className="rounded-[var(--lms-radius-card)] border border-border bg-surface"
             >
               <div className="border-b border-border px-5 py-4">
                 <div className="flex flex-wrap items-center gap-2">
@@ -412,21 +412,21 @@ export function RecruiterResultControls({
                   ] as const).map(([outcome,label])=><button key={outcome} type="button"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
                     disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
-                    className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-primary-text disabled:opacity-40">
+                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text disabled:opacity-40">
                     {label}
                   </button>)}
                   <button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
-                    onClick={undoDraftOutcome} className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-primary-text disabled:opacity-40">
+                    onClick={undoDraftOutcome} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text disabled:opacity-40">
                     Undo draft
                   </button>
                   <button type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
-                    className="rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50"
+                    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-[650] text-on-primary disabled:opacity-50"
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":
                       "Send "+(selected[round.id]??[]).length+" results"}
                   </button>
                   <button type="button" disabled={bulkPending!==null||pendingKey!==null}
-                    className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text disabled:opacity-50"
+                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text disabled:opacity-50"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
                         []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}));}}>

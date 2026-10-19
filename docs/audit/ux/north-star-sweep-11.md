@@ -13,7 +13,7 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 ## Follow-on execution
 
 - Fast-forwarded `chatgpt/chat-11-b` to `main` (`7e3ab610`) before edits; the historical chat-11 sweep was already merged.
-- **54 new source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 41 scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
+- **96 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 57 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
 - Eliminated duplicate filters/form shell cards in TPO blocked dates and Super Admin module filters, plus redundant section padding in settings and public placements. Preserved distinct metric/tenant/setup cards and status notices.
 - Replaced residual literal 9px, generic `rounded-md`, and legacy `--radius` control overrides with the canonical `--lms-control-radius`, without changing inputs' values, forms, labels or handlers. Fixed inconsistent tap targets on tenant setup tabs.
 - Removed invalid standalone `-`/`-subtle` utility tokens in tenant domains, college sign-in, logo upload, college setup checklist, and tenant settings scope.
@@ -40,11 +40,17 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 - `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
 - `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
 - `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- `src/app/(authenticated)/tpo/settings/see/page.tsx`
+- `src/app/(authenticated)/tpo/settings/templates/page.tsx`
+- `src/components/admin/college-admin-lifecycle-action.tsx`
 - `src/components/admin/college-at-glance-panel.tsx`
 - `src/components/admin/college-create-form.tsx`
+- `src/components/admin/college-dashboard-cards.tsx`
+- `src/components/admin/college-dashboard-section-failure.tsx`
 - `src/components/admin/college-logo-uploader.tsx`
 - `src/components/admin/college-setup-checklist.tsx`
 - `src/components/admin/college-signin-method-form.tsx`
+- `src/components/admin/managed-college-subdomain.tsx`
 - `src/components/admin/tenant-domain-manager.tsx`
 - `src/components/placements/placement-season-manager.tsx`
 - `src/components/placements/tpo-college-rules-control.tsx`
@@ -55,11 +61,21 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 - `src/components/tpo/tpo-after-college-editor.tsx`
 - `src/components/tpo/tpo-blocked-dates-editor.tsx`
 - `src/components/tpo/tpo-communication-settings-editors.tsx`
+- `src/components/tpo/tpo-company-visibility-editor.tsx`
 - `src/components/tpo/tpo-custom-job-type-placed.tsx`
 - `src/components/tpo/tpo-custom-job-type-rename.tsx`
 - `src/components/tpo/tpo-job-types-editor.tsx`
 - `src/components/tpo/tpo-my-notification-preferences-editor.tsx`
+- `src/components/tpo/tpo-notice-acknowledge.tsx`
+- `src/components/tpo/tpo-notice-audience-picker.tsx`
+- `src/components/tpo/tpo-notice-composer-dialog.tsx`
+- `src/components/tpo/tpo-notice-delete-confirm.tsx`
+- `src/components/tpo/tpo-notice-read-progress.tsx`
+- `src/components/tpo/tpo-notice-schedule-controls.tsx`
+- `src/components/tpo/tpo-notice-undo-toast.tsx`
+- `src/components/tpo/tpo-notification-refresh.tsx`
 - `src/components/tpo/tpo-optional-emails-editor.tsx`
+- `src/components/tpo/tpo-outcome-labels-editor.tsx`
 - `src/components/tpo/tpo-prep-percentage-editor.tsx`
 - `src/components/tpo/tpo-prep-readiness-editor.tsx`
 - `src/components/tpo/tpo-public-join-link-card.tsx`
@@ -76,6 +92,60 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 ## Final source-token spot-check
 
 After the 54 source commits, the 41 touched TSX paths were read back from `chatgpt/chat-11-b` and scanned without executing the app. No occurrences remained of the targeted literal `rounded-[9px]`, old `rounded-[var(--radius)]`, blue/slate/gray utility palettes, literal six-digit hex palette declarations, misplaced foreground-on-primary combinations, or the previously malformed leading-hyphen class tokens. This is **limited static source inspection**, not a TypeScript compile, complete CSS audit, snapshot diff, or guarantee of identical rendering.
+
+## Additional continuation — 2026-10-19, after syncing latest main
+
+The chat-11 branch was fast-forwarded again to `main` at `6222f78a4a19` **before** this batch. A further **28 commits**, all prefixed `[chat-11]`, were pushed to the lane branch, changing **18 scoped TSX sources** (**16 files not in the previous 41-file list**). This yields **82 cumulative source commits** and **57 distinct source files** across the two continuation batches, before ledger-only commits.
+
+### Changes in the newest batch
+
+- TPO settings: After-college outcome labels, recruiter-visible company fields, manual communication templates, notification preferences/history spacing and TPO branding/visibility summaries now use the old-LMS control tokens and page-canvas rhythm.
+- College setup: Managed subdomain actions, college overview metric tiles, administrator access state actions, and recovery links now inherit the shared controls, single white canvas and accessible responsive touch heights. The managed-address card wrapper was flattened without changing domain writes or permission checks.
+- Notice settings and related composers: Audience search/selects, scheduling fields and submit button now render the shared `Input`, `Select`, and `Button` where applicable. Acknowledgement, read-progress/error, delete confirmation and undo actions were aligned to the shared radius/semantic styling. Existing pending states, confirmation flow, saved draft information, target counts, validation and navigation remain intact.
+- Kept actual metric, modal and branding-preview objects distinct; only generic section wrappers and unnecessary inner background/padding were removed.
+- Read back **all 18 touched TSX sources** on the branch and statically scanned for old literal `rounded-[9px]`, unrelated blue/slate/gray palettes, malformed dash utility classes, and primary foreground conflicts. No matches in this targeted scan. **No TypeScript, unit tests, CI, application startup, screenshot rendering or functional execution** was performed.
+
+### Exact touched files in the additional 28-commit batch
+
+- `src/app/(authenticated)/tpo/settings/branding/page.tsx`
+- `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- `src/app/(authenticated)/tpo/settings/see/page.tsx`
+- `src/app/(authenticated)/tpo/settings/templates/page.tsx`
+- `src/components/admin/college-admin-lifecycle-action.tsx`
+- `src/components/admin/college-dashboard-cards.tsx`
+- `src/components/admin/college-dashboard-section-failure.tsx`
+- `src/components/admin/managed-college-subdomain.tsx`
+- `src/components/tpo/tpo-company-visibility-editor.tsx`
+- `src/components/tpo/tpo-notice-acknowledge.tsx`
+- `src/components/tpo/tpo-notice-audience-picker.tsx`
+- `src/components/tpo/tpo-notice-composer-dialog.tsx`
+- `src/components/tpo/tpo-notice-delete-confirm.tsx`
+- `src/components/tpo/tpo-notice-read-progress.tsx`
+- `src/components/tpo/tpo-notice-schedule-controls.tsx`
+- `src/components/tpo/tpo-notice-undo-toast.tsx`
+- `src/components/tpo/tpo-notification-refresh.tsx`
+- `src/components/tpo/tpo-outcome-labels-editor.tsx`
+
+## Third source pass — 2026-10-19 (14 commits)
+
+A further **14 `[chat-11]` source commits** refined **10 previously inventoried pages/editors**, resulting in **96 cumulative source commits across 57 unique source files**. All 14 commits were pushed to `chatgpt/chat-11-b`, not `main`.
+
+This batch removes residual parallel styling from TPO notification and recruiter access list filters, personal and college email preferences, trusted domains, preparation percentage and course readiness, blocked-date filters, job types, and communication policy editors. Their buttons, text/number/date/search controls, selects, and message textareas now use the canonical `Button`, `Input`, `Select`, and `Textarea` wherever applicable. Native checkboxes/radio controls, form submission handlers, confirmation dialogs, and permission/data logic remain unchanged. Small control-specific mobile heights and separate data-object tiles remain.
+
+### Exact changed files in this pass
+
+- `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- `src/components/tpo/tpo-blocked-dates-editor.tsx`
+- `src/components/tpo/tpo-communication-settings-editors.tsx`
+- `src/components/tpo/tpo-job-types-editor.tsx`
+- `src/components/tpo/tpo-my-notification-preferences-editor.tsx`
+- `src/components/tpo/tpo-optional-emails-editor.tsx`
+- `src/components/tpo/tpo-prep-percentage-editor.tsx`
+- `src/components/tpo/tpo-prep-readiness-editor.tsx`
+- `src/components/tpo/tpo-trusted-domain-editor.tsx`
+
+Source text was fetched again from the lane branch after the edits. The scoped scan found no `rounded-[9px]`, unrelated blue/slate/gray palette classes, malformed lone dash classes, or wrong foreground-on-primary classes in these ten files. Their opening/closing `Button` and `Select` component tags were also counted and matched. **This is not a compiler, runtime, accessibility, screenshot, or CI test.** The owner/orchestrator still needs to reconcile concurrent changes to `main`.
 
 ## Remaining verification and ownership boundaries
 

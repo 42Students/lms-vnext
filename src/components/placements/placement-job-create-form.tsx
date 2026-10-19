@@ -826,13 +826,13 @@ export function PlacementJobCreateForm({
             {companySearch.trim()&&!companies.some(company=>
               (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
               <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
-              {selectedEmployer?.memory?<section aria-label="Company Memory" className="rounded-lg border border-border bg-muted p-4 text-sm">
+              {selectedEmployer?.memory?<section aria-label="Company Memory" className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4 text-sm">
                 <h3 className="font-semibold text-foreground">Company Memory</h3>
                 <p>{selectedEmployer.memory.pastDrives} past drives · {selectedEmployer.memory.joinedLearners} confirmed hires</p>
                 <p>Last drive: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(selectedEmployer.memory.lastDriveAt))} IST</p>
                 <p>Recent roles: {selectedEmployer.memory.recentRoles.join(", ")}</p>
                 {existingDrive?
-                  <p role="alert" className="mt-2 font-semibold text-amber-900">
+                  <p role="alert" className="mt-2 font-semibold text-[var(--lms-gold-accent)]">
                     A drive for {selectedEmployer.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).{" "}
                     <Link href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="underline">Open it</Link> before creating another.
                   </p>:null}
@@ -876,11 +876,11 @@ export function PlacementJobCreateForm({
                   placeholder="https://example.com"
                 />
               </label>
-              {matchingEmployer?<div role="status" className="rounded border border-border bg-muted p-3 text-sm">
+              {matchingEmployer?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm">
                 <p className="font-semibold">This may already be {matchingEmployer.name}</p>
                 <p className="mt-1 text-xs text-body">Reuse the existing college employer to keep recruiter and drive history together.</p>
                 <button type="button" onClick={()=>{setCompanyRelationshipId(matchingEmployer.relationshipId);setCompanyMode("EXISTING");setCompanySearch("");}}
-                  className="mt-2 min-h-11 rounded-[9px] border border-primary px-3 font-semibold text-primary-text md:min-h-9">
+                  className="mt-2 min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-3 font-semibold text-primary-text md:min-h-9">
                   Use {matchingEmployer.name}
                 </button>
               </div>:null}
@@ -1123,7 +1123,7 @@ export function PlacementJobCreateForm({
           <p className="mt-1 text-sm text-body">Responsibilities, dates and preferences are informational. Only the eligibility policy below governs learner eligibility.</p>
         </div>
         <div className="grid gap-4 pt-4 sm:grid-cols-2">
-          <fieldset className="sm:col-span-2 grid gap-3 rounded-lg border border-border p-3">
+          <fieldset className="sm:col-span-2 grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Pool drive logistics (optional, staff-reviewed)</legend>
             <label className="grid gap-1 text-sm">Host college
               <input name="poolHostCollege" maxLength={160} className={inputClass} />
@@ -1136,7 +1136,7 @@ export function PlacementJobCreateForm({
             </label>
             <p className="text-xs text-muted-foreground">Pool logistics are informational and do not create a round, venue booking or student travel authorization.</p>
           </fieldset>
-          <fieldset className="sm:col-span-2 grid gap-3 rounded-lg border border-border p-3">
+          <fieldset className="sm:col-span-2 grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Separate employer registration</legend>
             <label className="flex items-center gap-2 text-sm">
               <input name="studentsRegisterSeparately" type="checkbox" /> Students also register on the company's portal
@@ -1212,7 +1212,7 @@ export function PlacementJobCreateForm({
             </span>
           </label>
           <div className="grid gap-4 lg:grid-cols-2">
-            <fieldset className="rounded-lg border border-border bg-muted p-4">
+            <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible programs
               </legend>
@@ -1260,7 +1260,7 @@ export function PlacementJobCreateForm({
               )}
             </fieldset>
 
-            <fieldset className="rounded-lg border border-border bg-muted p-4">
+            <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible cohorts
               </legend>
@@ -1310,7 +1310,7 @@ export function PlacementJobCreateForm({
             </fieldset>
           </div>
 
-          <fieldset className="rounded-lg border border-border bg-muted p-4">
+          <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
             <legend className="px-1 text-xs font-semibold text-body">Classes (sections)</legend>
             <p className="mb-3 text-xs text-muted-foreground">
               Leave unselected to include all classes in the selected programs and batches.
@@ -1458,13 +1458,13 @@ export function PlacementJobCreateForm({
             value="review-publish"
             aria-label="Publish after reviewing the drive"
             disabled={pending || !activeSeason || uncertainCreate}
-            className="min-h-11 rounded-[9px] border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50 md:min-h-9"
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50 md:min-h-9"
           >
             Publish
           </button>
         </div>
       </section>
-      {uncertainCreate?<div role="alert" className="space-y-2 rounded-md border border-warning p-3 text-sm text-body">
+      {uncertainCreate?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
         The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline">Review Drives</Link> before retrying.
         <button type="button" className="ml-3 font-semibold text-primary-text underline"
           onClick={()=>{try{localStorage.removeItem(uncertainKey);}catch{}setUncertainCreate(false);}}>
@@ -1476,7 +1476,7 @@ export function PlacementJobCreateForm({
         clearedBackup.current=true;
         try{localStorage.removeItem(backupKey);}catch{}
         setRestoredBackup(false);
-      }} className="min-h-11 rounded-[9px] border border-border px-3 text-xs font-semibold text-primary-text md:min-h-9">Discard saved browser backup</button>:null}
+      }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text md:min-h-9">Discard saved browser backup</button>:null}
       {partialJobId?<p role="alert" className="text-sm text-body">A draft exists. If setup did not finish, retry without changing the form or
         <a className="ml-1 font-semibold text-primary-text underline" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
         Do not submit a second drive.

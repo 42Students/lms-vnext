@@ -268,7 +268,7 @@ export async function PlacementDriveWorkspace({
             <summary className="flex min-h-11 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] md:hidden md:min-h-9">Actions</summary>
             <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden">Scroll for more drive actions ↓</p>
             <div role="group" aria-label="Drive action choices" tabIndex={0}
-              className="hidden max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain rounded border border-border bg-surface p-3 pb-7 group-open:flex md:flex md:max-h-none md:flex-row md:flex-wrap md:overflow-visible md:border-0 md:p-0 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)] md:[mask-image:none]">
+              className="hidden max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 pb-7 group-open:flex md:flex md:max-h-none md:flex-row md:flex-wrap md:overflow-visible md:border-0 md:p-0 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)] md:[mask-image:none]">
             {nextStep ? (
               <Link href={nextStep.primary.href}
                 className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] md:min-h-9">
@@ -303,7 +303,7 @@ export async function PlacementDriveWorkspace({
               <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground md:min-h-9">
                 More ▾
               </summary>
-              <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 shadow-[var(--lms-overlay-shadow)]">
+              <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 shadow-[var(--lms-dropdown-shadow)]">
                 <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
                   className="min-h-9 rounded-[var(--lms-control-radius)] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] md:min-h-9">
                   Export applicants
@@ -389,7 +389,7 @@ export async function PlacementDriveWorkspace({
           <span>{headerFacts.applicationMode}</span>
           <span>· {headerFacts.workMode}</span>
           <span>· {headerFacts.employmentType}</span>
-          <strong className="rounded border border-border px-2 py-1">{headerFacts.category}</strong>
+          <strong className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1">{headerFacts.category}</strong>
           {headerFacts.recordedOutside?<strong>Recorded: happened outside</strong>:null}
         </div>
         <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-body">
@@ -441,7 +441,7 @@ export async function PlacementDriveWorkspace({
         </section>
       ):null}
       {nextStep ? (
-        <section aria-label="Next step" className="rounded-xl border border-border bg-surface p-5">
+        <section aria-label="Next step" className="border-b border-border py-5">
           <h2 className="text-base font-semibold text-foreground">Next step</h2>
           <p className="mt-2 text-sm text-body">{nextStep.primary.description}</p>
           <Link href={nextStep.primary.href}
@@ -485,7 +485,7 @@ export async function PlacementDriveWorkspace({
                 row.request.status==="PENDING"&&row.request.requestType==="ROUND_RESCHEDULE"&&
                 row.request.roundId===round.id).length;
               return (
-                <article key={round.id} className="rounded-lg border border-border bg-muted p-4">
+                <article key={round.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
                     <span className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs font-semibold">{round.status}</span>

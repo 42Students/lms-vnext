@@ -34,6 +34,10 @@ const paths:Record<ShellNavIconName,string>={
  table:"M3 4h18v16H3z M3 10h18 M3 15h18 M9 4v16",
  inbox:"M3 4h18v16H3z M3 13h5l2 3h4l2-3h5",
  help:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20 M9 9a3 3 0 1 1 5 2c-2 1-2 2-2 3 M12 18h.01",
+ comment:"M4 4h16v13H9l-5 4V4z",
+ "check-circle":"M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M8 12l3 3 5-6",
+ "file-text":"M6 2h9l5 5v15H6V2z M15 2v5h5 M9 12h8 M9 16h8",
+ wrench:"M21 7a6 6 0 0 1-8 6L7 19a3 3 0 0 1-4-4l6-6a6 6 0 0 1 7-8l-4 4 3 3 4-4a6 6 0 0 1 2 3z",
 };
 export function ShellNavGlyph({name}:{name:ShellNavIconName}){
  return <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"
