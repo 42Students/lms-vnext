@@ -93,7 +93,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-link underline">Back to project</Link>
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Board</h1>
+   <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Board</h1>
    <div className="flex flex-wrap items-center gap-2">
      {!readOnly?<MentorTaskCreate projectId={projectId}
        sprintId={creationDefault?.id??""}
