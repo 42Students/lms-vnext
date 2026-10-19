@@ -158,7 +158,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   </div>
   {!lessons.length&&<p className="text-sm">Create a course offering, learning path and lesson before adding content.</p>}
   {open&&<div className="grid max-w-3xl gap-3 md:grid-cols-2">
-   <label className="text-sm">Lesson
+   <label className="text-xs font-semibold text-body">Lesson
     <Select className="mt-1" value={selectedLesson?lessonId:""}
      onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}} disabled={Boolean(editing)}>
      {editing&&!selectedLesson?<option value="">Saved Lesson outside authoring picker</option>:null}
@@ -168,26 +168,26 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    {editing&&!selectedLesson?<p role="status" className="text-xs text-muted-foreground md:col-span-2">
     This saved Lesson is outside the first 250 authoring choices. Its Course and Section association cannot be changed; metadata can still be edited.
    </p>:null}
-   <label className="text-sm">Section
+   <label className="text-xs font-semibold text-body">Section
     <Select value={deliveryId} disabled={Boolean(editing)} onChange={e=>setDeliveryId(e.target.value)}
       className="mt-1">
      <option value="">All sections taking this course</option>
      {allowedDeliveries.map(row=><option key={row.deliveryId} value={row.deliveryId}>
       {row.sectionName} ({row.sectionCode})</option>)}
     </Select></label>
-   <label className="text-sm">Title
+   <label className="text-xs font-semibold text-body">Title
     <Input required maxLength={200} className="mt-1"
      value={title} onChange={e=>setTitle(e.target.value)}/></label>
-   <label className="text-sm">{kind==="YOUTUBE"?"YouTube URL":kind==="RESOURCE"?"HTTPS resource link (optional with notes)":"Meeting Link"}
+   <label className="text-xs font-semibold text-body">{kind==="YOUTUBE"?"YouTube URL":kind==="RESOURCE"?"HTTPS resource link (optional with notes)":"Meeting Link"}
     <Input type="url" maxLength={2048} required={kind!=="RESOURCE"&&!editing} className="mt-1"
      value={url} onChange={e=>setUrl(e.target.value)} placeholder={editing?"Leave blank to keep saved link":"https://"}/></label>
-   {kind==="RESOURCE"?<label className="text-sm">Notes
+   {kind==="RESOURCE"?<label className="text-xs font-semibold text-body">Notes
      <Textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
        className="mt-1"/>
-    </label>:kind==="YOUTUBE"?<label className="text-sm">Video length (seconds)
+    </label>:kind==="YOUTUBE"?<label className="text-xs font-semibold text-body">Video length (seconds)
     <Input type="number" required placeholder="Actual video duration" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
      className="mt-1"/></label>:<>
-    <label className="text-sm">Time Zone
+    <label className="text-xs font-semibold text-body">Time Zone
      <Select value={timeZone} onChange={event=>{
        const next=event.target.value as MeetingZone;
        if(next===timeZone)return;
@@ -203,14 +203,14 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      </Select>
      <span className="mt-1 block text-xs text-muted-foreground">Changing Time Zone preserves the scheduled instant and converts the displayed dates.</span>
     </label>
-    <label className="text-sm">Start Date and Time
+    <label className="text-xs font-semibold text-body">Start Date and Time
      <Input type="datetime-local" required value={start} onChange={e=>setStart(e.target.value)}
       className="mt-1"/></label>
-    <label className="text-sm">End Date and Time
+    <label className="text-xs font-semibold text-body">End Date and Time
      <Input type="datetime-local" required value={end} onChange={e=>setEnd(e.target.value)}
       className="mt-1"/></label>
    </>}
-   {kind==="RESOURCE"&&editing?<label className="flex items-center gap-2 text-sm md:col-span-2">
+   {kind==="RESOURCE"&&editing?<label className="flex min-h-11 items-center gap-2 text-xs font-semibold text-body md:col-span-2">
     <Checkbox checked={removeLink} onChange={e=>setRemoveLink(e.target.checked)}/>
     Remove existing resource link
    </label>:null}
@@ -229,19 +229,19 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    {existingTruncated?<p role="status" className="text-xs text-muted-foreground">
     Showing the first 250 saved items. Use the filtered catalogue to find additional content; the list below is not complete.
    </p>:null}
-   <label className="grid gap-1 text-sm font-semibold">Search Existing Content
+   <label className="grid gap-1 text-xs font-semibold text-body">Search Existing Content
     <Input type="search" maxLength={100} value={listQuery} onChange={event=>setListQuery(event.target.value)}
      placeholder="Content title, Lesson or Course code"
      className="min-h-11 w-full max-w-2xl md:min-h-9"/>
    </label>
-   <label className="grid gap-1 text-sm font-semibold">Lesson
+   <label className="grid gap-1 text-xs font-semibold text-body">Lesson
     <Select value={listLessonId} onChange={event=>{setListLessonId(event.target.value);setListSectionId("");}}
      className="min-h-11 w-full max-w-2xl md:min-h-9">
      <option value="">All Lessons</option>
      {lessons.map(row=><option key={row.id} value={row.id}>{row.courseCode} · {row.name}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm font-semibold">Section
+   <label className="grid gap-1 text-xs font-semibold text-body">Section
     <Select value={listSections.some(row=>row.deliveryId===listSectionId)?listSectionId:""}
      onChange={e=>setListSectionId(e.target.value)}
      className="min-h-11 w-full max-w-2xl md:min-h-9">
