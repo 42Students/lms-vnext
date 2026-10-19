@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Input} from "@/components/ui/input";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
@@ -272,7 +273,7 @@ export function HrDriveDraftForm({
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="grid gap-1 text-sm text-body sm:col-span-2">
             Role title
-            <Input value={draft.title} maxLength={200}
+            <Input className="w-full" value={draft.title} maxLength={200}
               onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} />
           </label>
           <label className="grid gap-1 text-sm text-body sm:col-span-2">
@@ -282,7 +283,7 @@ export function HrDriveDraftForm({
           </label>
           <label className="grid gap-1 text-sm text-body">
             Location
-            <Input value={draft.location} maxLength={180}
+            <Input className="w-full" value={draft.location} maxLength={180}
               onChange={(event) => setDraft((current) => ({ ...current, location: event.target.value }))} />
           </label>
           <label className="grid gap-1 text-sm text-body">
@@ -303,7 +304,7 @@ export function HrDriveDraftForm({
           </label>
           {draft.driveMode==="OFF_CAMPUS"?<label className="grid gap-1 text-sm text-body sm:col-span-2">
             Application website (HTTPS)
-            <Input type="url" inputMode="url" maxLength={2000}
+            <Input className="w-full" type="url" inputMode="url" maxLength={2000}
               placeholder="https://example.com/apply" value={draft.externalApplicationUrl??""}
               onChange={event=>setDraft(current=>({...current,externalApplicationUrl:event.target.value}))}/>
             <span className="text-xs text-muted-foreground">
@@ -328,23 +329,23 @@ export function HrDriveDraftForm({
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <label className="grid gap-1 text-sm text-body">
             CTC (LPA){draft.employmentType==="INTERNSHIP"?" after the internship (optional)":""}
-            <Input inputMode="decimal" value={draft.ctcLpa??""}
+            <Input className="w-full" inputMode="decimal" value={draft.ctcLpa??""}
               onChange={event=>setDraft(current=>({...current,ctcLpa:event.target.value}))}/>
           </label>
           <label className="grid gap-1 text-sm text-body">
             Fixed (optional, LPA)
-            <Input inputMode="decimal" value={draft.fixedLpa??""}
+            <Input className="w-full" inputMode="decimal" value={draft.fixedLpa??""}
               onChange={event=>setDraft(current=>({...current,fixedLpa:event.target.value}))}/>
           </label>
           <label className="grid gap-1 text-sm text-body">
             Variable (optional, LPA)
-            <Input inputMode="decimal" value={draft.variableLpa??""}
+            <Input className="w-full" inputMode="decimal" value={draft.variableLpa??""}
               onChange={event=>setDraft(current=>({...current,variableLpa:event.target.value}))}/>
           </label>
           <p className="text-xs text-muted-foreground sm:col-span-3">Fixed and variable LPA must add up to the total CTC if entered.</p>
           {draft.employmentType!=="FULL_TIME"&&draft.employmentType!=="CONTRACT"?<label className="grid gap-1 text-sm text-body">
             Stipend per month (₹)
-            <Input inputMode="numeric" value={draft.stipendMonthlyInr??""}
+            <Input className="w-full" inputMode="numeric" value={draft.stipendMonthlyInr??""}
               onChange={event=>setDraft(current=>({...current,stipendMonthlyInr:event.target.value}))}/>
           </label>:null}
         </div>
@@ -361,7 +362,7 @@ export function HrDriveDraftForm({
           ] as const).map(([field, label]) => (
             <label key={field} className="grid gap-1 text-sm text-body">
               {label}
-              <Input inputMode="decimal" value={draft[field]}
+              <Input className="w-full" inputMode="decimal" value={draft[field]}
                 onChange={(event) => setDraft((current) => ({ ...current, [field]: event.target.value }))} />
             </label>
           ))}
@@ -369,7 +370,7 @@ export function HrDriveDraftForm({
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="grid gap-1 text-sm text-body">
             Branches
-            <Input list="recruiter-eligible-branches"
+            <Input className="w-full" list="recruiter-eligible-branches"
               value={branchInput} placeholder="e.g. CSE, ECE, Mechanical"
               onChange={event=>{setBranchInput(event.target.value);setDraft(current=>({...current,
                 branches:[...new Map(event.target.value.split(",").map(value=>value.trim()).filter(Boolean)
@@ -381,7 +382,7 @@ export function HrDriveDraftForm({
           </label>
           <label className="grid gap-1 text-sm text-body">
             Passing year
-            <Input inputMode="numeric" maxLength={4}
+            <Input className="w-full" inputMode="numeric" maxLength={4}
               value={draft.passingYear??""} placeholder="YYYY"
               onChange={event=>setDraft(current=>({...current,passingYear:event.target.value}))}/>
           </label>
@@ -425,7 +426,7 @@ export function HrDriveDraftForm({
               </label>
               <label className="grid min-w-0 gap-1 text-sm text-body">
                 Round name
-                <Input maxLength={120} value={round.name}
+                <Input className="w-full" maxLength={120} value={round.name}
                   onChange={(event) => setDraft((current) => ({
                     ...current, rounds: current.rounds.map((item, i) => i === index
                       ? { ...item, name: event.target.value } : item),
