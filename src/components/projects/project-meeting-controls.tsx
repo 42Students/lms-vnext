@@ -640,7 +640,7 @@ export function ScheduleProjectMeetingControl({
               </Select>
             </label>
           </div>
-          <fieldset className="grid gap-3 rounded-lg border border-border p-3">
+          <fieldset className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Meeting notes and follow-up</legend>
             {([
               ["notes","Notes"],["actionItems","Action items"],
