@@ -39,4 +39,9 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(sidebar()).toContain("background:#eff8fa;");
  expect(sidebar()).toContain("box-shadow:inset 3px 0 #26bac7;");
 });
+ it("keeps 7-percent teal hover wash and teal labels",()=>{
+ expect(legacy()).toContain("background: rgba(38, 186, 199, 0.07)");
+ expect(sidebar()).toContain("background:rgba(38,186,199,.07);");
+ expect(sidebar()).toContain("color:#1a95a1;");
+});
 });
