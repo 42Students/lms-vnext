@@ -17,7 +17,7 @@
   --lms-button-primary: #0a7c88;
   --lms-button-primary-hover: #086873;
   --lms-on-primary: #ffffff;
-  --lms-link-text: #0e7c87;
+  --lms-link-text: #26bac7;
   --lms-primary-hover: #1e9aa8;
   --lms-primary-text: #1a95a1;
   --lms-primary-subtle: #eff8fa;
@@ -1093,3 +1093,12 @@ body {
   background: transparent;
   border-color: transparent;
 }
+
+/* Legacy components___common.scss:68-76 .ln-lnk-ul. A textual link is teal
+   with medium weight, and underlined only on hover; other links (cards, tabs,
+   buttons, navigation) deliberately retain their own inherited treatment. */
+.lms-inline-link { color: var(--lms-link-text); font-weight:500; text-decoration:none; text-underline-offset:2px; }
+.lms-inline-link:visited { color:var(--lms-link-text); }
+.lms-inline-link:is(:hover,:focus-visible) { color:var(--lms-link-text); text-decoration:underline; }
+.lms-inline-link:focus-visible { outline:2px solid var(--lms-primary); outline-offset:2px; }
+@media (prefers-reduced-motion:reduce) { .lms-inline-link { transition:none; } }
