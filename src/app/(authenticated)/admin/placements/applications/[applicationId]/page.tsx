@@ -13,8 +13,8 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
  return <div className="space-y-5">
   <SuperAdminPlacementDetailView data={detail}/>
   {detail.related?<div className="flex flex-wrap gap-3">
-   <Link href={detail.related.href+"/applications"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Manage this drive&apos;s applications and stage decisions →</Link>
-   <Link href={detail.related.href+"/schedule?applicationId="+encodeURIComponent(applicationId)} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Schedule candidate interview →</Link>
+   <Link href={detail.related.href+"/applications"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Manage this drive&apos;s applications and stage decisions →</Link>
+   <Link href={detail.related.href+"/schedule?applicationId="+encodeURIComponent(applicationId)} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Schedule candidate interview →</Link>
   </div>:null}
   <section aria-label="Application stage history" className="space-y-3 border-b border-border pb-5">
    <h2 className="text-lg font-semibold">Status history</h2>
