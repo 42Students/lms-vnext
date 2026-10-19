@@ -70,7 +70,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
      {key:"actions",header:"Actions",mobileLabel:"Actions",mobilePriority:"action" as const,
       cell:(company:TpoCompanyRow)=>company.companyId
        ?<Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-         className="inline-flex min-h-9 items-center font-semibold text-link underline lms-inline-link">Create drive</Link>
+         className="inline-flex min-h-9 items-center font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Create drive</Link>
        :<span className="text-xs text-muted-foreground">Link company first</span>},
     ].filter(column=>active.has(column.key))}/>
   }}
