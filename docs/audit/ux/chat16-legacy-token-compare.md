@@ -17,7 +17,7 @@ Branch: `chatgpt/chat-16-b`. Reference sources: `docs/design/legacy-styles/pages
 | Tab controls | Historical page uses large `.login-radio` selections, not Email/Phone tabs | Email / Phone tabs | Segmented 40px-tall tab buttons on #f1f4f9; selected white + teal text; correct keyboard semantics retained |
 | Button baseline | `.ln-btn`: 40px, 14/16px, radius 8; `.ln-btn--pri` asymmetric shape | #0a7c88, white, radius 9, 36px globally | Sign-in Continue/Verify min-height 40px and radius 9; owner colour/shape override applied |
 | OTP | No matching legacy countdown component (earlier one-time OTP form) | Resend code timer and Get the code by email | Existing 30s/60s timers and channels preserved, digit typography 18px and .35em tracking |
-| Footer | `.from-panel-footer a`: #54505d; mobile text 10px | Copyright, Privacy, Terms | #54505d links, 12px compact footer, copyright on platform and “Powered by 42LMS” on colleges |
+| Footer | `.from-panel-footer a`: #54505d; mobile text 10px | Copyright, Privacy, Terms | #54505d links, 12px compact footer, copyright on every tenant; colleges additionally show “Powered by 42LMS” |
 | Base background | `$clrglobal: #f1f4f9` | Soft grid | Exact base colour and 28x28px ultra-light grid |
 
 ## Scope and non-visual invariants
