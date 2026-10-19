@@ -15,3 +15,54 @@
  * limited to paint/type declarations that must beat page Tailwind utilities.
  * Role-specific shared components can opt out with [data-unskin].
  */
+
+/* TABLE BASE
+ * Legacy: components___common.scss:700-709 (white cells, #e5e9f0 hairlines);
+ *         components___variables.scss:24-32 (neutral ink/surfaces);
+ *         globals.css:550-572 (existing AntD-derived 13px data-table metrics).
+ * Row heights and cell padding are deliberately left to the existing page/table
+ * layout: the skin cannot change geometry under the SMARTER PLAN contract.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(table):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-700) !important;
+  background-color: var(--lms-white) !important;
+  font-size: 13px !important;
+  font-variant-numeric: tabular-nums;
+  border-color: var(--lms-neutral-200) !important;
+  border-radius: 12px;
+}
+
+/* Legacy: components___common.scss:831-837 (muted column headings),
+ * components___variables.scss:28,30,32 (#a9a7ae, #e5e9f0, #fafbfc).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(thead, thead tr, thead th):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-400) !important;
+  background-color: var(--lms-neutral-50) !important;
+  border-bottom-color: var(--lms-neutral-200) !important;
+}
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(th):not(:where([data-unskin], [data-unskin] *)) {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-bottom-color: var(--lms-neutral-200) !important;
+}
+
+/* Legacy: components___common.scss:700-713 (white cells, separators,
+ * last row borderless); components___antddesign.scss:658-680 shows the
+ * special borderless filter table, which can set [data-unskin].
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(tbody tr):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-white) !important;
+  box-shadow: inset 0 -1px 0 var(--lms-neutral-200);
+  transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(tbody td):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-700) !important;
+  background-color: transparent !important;
+  font-size: 13px !important;
+  border-bottom-color: var(--lms-neutral-200) !important;
+}
