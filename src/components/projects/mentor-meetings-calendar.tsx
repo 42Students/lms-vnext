@@ -9,6 +9,7 @@ import {
 import { StatusBadge } from "@/components/ui/status-badge";
 import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import {Button} from "@/components/ui/button";
+import styles from "./mentor-meetings-calendar.module.css";
 
 const PAST_PREVIEW = 20;
 const prettyDate = (iso: string) => {
@@ -31,11 +32,11 @@ function MeetingRow({
   const status = mentorMeetingDisplayStatus(meeting, now);
   const href = safeMentorMeetingJoinUrl(meeting, now);
   return (
-    <article className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] last:border-b-0">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="m-0 break-words font-semibold text-foreground">{meeting.title}</h3>
-          <p className="mt-1 text-sm text-body">{meeting.projectTitle}</p>
+    <article className={styles.row}>
+      <div className={styles.head}>
+        <div className={styles.titleBlock}>
+          <h3 className={styles.title}>{meeting.title}</h3>
+          <p className={styles.subtitle}>{meeting.projectTitle}</p>
         </div>
         <StatusBadge tone={
           status === "COMPLETED" ? "success" :
@@ -43,7 +44,7 @@ function MeetingRow({
           status === "REQUESTED" ? "warning" : "info"
         }>{status}</StatusBadge>
       </div>
-      <p className="mt-3 text-sm text-muted-foreground">
+      <p className={styles.meta}>
         {prettyDate(meeting.startsAt)} · {prettyTime(meeting.startsAt)}
         {" – "}{prettyTime(meeting.endsAt)}
         {meeting.linkedSprintTitle ? " · Sprint: " + meeting.linkedSprintTitle : ""}
@@ -51,10 +52,10 @@ function MeetingRow({
       {meeting.projectStatus === "ARCHIVED" ? (
         <p className="mt-2 text-xs text-muted-foreground">Archived project · Read-only</p>
       ) : null}
-      <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
-        {safeProjectExternalHref(href) ? <a className="inline-flex min-h-11 items-center font-medium text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link" href={safeProjectExternalHref(href)!}
+      <div className={styles.actions}>
+        {safeProjectExternalHref(href) ? <a className={styles.action} href={safeProjectExternalHref(href)!}
           target="_blank" rel="noopener noreferrer">Join link</a> : null}
-        <Link className="inline-flex min-h-11 items-center font-medium text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link"
+        <Link className={styles.action}
           href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) + "?tab=team"}>
           Open project
         </Link>
@@ -83,31 +84,31 @@ export function MentorMeetingsCalendar({
   const instant = useMemo(() => new Date(now), [now]);
   const {upcoming, past} = useMemo(() => splitMentorMeetings(meetings, instant), [meetings, instant]);
 
-  return <div className="space-y-8" aria-label="Mentor meetings calendar">
-    <section aria-labelledby="mentor-upcoming-meetings" className="space-y-3">
-      <h2 id="mentor-upcoming-meetings" className="text-lg font-semibold text-foreground">
+  return <div className={styles.calendar} aria-label="Mentor meetings calendar">
+    <section aria-labelledby="mentor-upcoming-meetings" className={styles.section}>
+      <h2 id="mentor-upcoming-meetings" className={styles.heading}>
         Upcoming ({upcoming.length})
       </h2>
       {upcoming.length
         ? upcoming.map(meeting => <MeetingRow key={meeting.id} meeting={meeting}
             now={instant} />)
-        : <p className="border-b border-border py-4 text-sm text-body">
+        : <p className={styles.empty}>
             No upcoming meetings.
           </p>}
     </section>
-    <section aria-labelledby="mentor-past-meetings" className="space-y-3">
-      <h2 id="mentor-past-meetings" className="text-lg font-semibold text-foreground">
+    <section aria-labelledby="mentor-past-meetings" className={styles.section}>
+      <h2 id="mentor-past-meetings" className={styles.heading}>
         Past &amp; Cancelled ({past.length})
       </h2>
       {past.length
         ? (expanded ? past : past.slice(0, PAST_PREVIEW)).map(meeting =>
             <MeetingRow key={meeting.id} meeting={meeting} now={instant}
               />)
-        : <p className="border-b border-border py-4 text-sm text-body">
+        : <p className={styles.empty}>
             No past meetings yet.
           </p>}
       {past.length > PAST_PREVIEW ? (
-        <Button variant="secondary" type="button" 
+        <Button variant="secondary" className={styles.expand} type="button" 
           onClick={() => setExpanded(value => !value)}
           aria-expanded={expanded}>
           {expanded ? "Show fewer" : "Show all " + past.length + " past meetings"}

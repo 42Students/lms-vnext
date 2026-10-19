@@ -361,3 +361,69 @@ Complete latest branch TSX/CSS bodies were fetched and checked for the edited fi
 **Verification limit:** No physical phone/tablet rendering, app source execution, build, TypeScript, lint, test or CI. Existing props/handlers were source-preserved. Overall category E7/E8 strict ticks remain **[ ]**: other portal charts and remaining state variants have not been exhaustively inventoried; original/vNext browser-computed values, side-by-side screenshots and all-portal greps are outstanding. These two **file migrations are source-complete**, not asserted as whole-category pixel parity.
 
 **Next exact unticked file:** `src/components/academics/learner-class-schedule.tsx`, then teacher/HR/learner seven-day calendar surfaces; compare their month/day responsive styling to `lms2-fe@prod-2026/src/styles/components/_learn-class-schedule.scss` and the relevant legacy calendar SCSS, keeping page content unchanged.
+
+
+## 2026-10-19 chat-2 continuation — learner class schedule and mentor meetings calendar
+
+**Work-queue progress:** `src/components/academics/learner-class-schedule.tsx` and `src/components/projects/mentor-meetings-calendar.tsx` are **source-migrated**, with their two local CSS modules, no shared UI or model changes. All UI values below were inspected against `42Students/lms2-fe@prod-2026`; the checked source line numbers are recorded for handover. **Do not tick E7 umbrella** until the remaining calendar/chart/stat files and global/responsive visual proof are complete. These calendar renderers intentionally preserve different vNext page contents and structures.
+
+### Exact-value checks — learner class schedule
+
+| Property / state | Old LMS location and value | vNext location and value | Source verdict |
+| --- | --- | --- | --- |
+| Schedule page content | `src/styles/components/_learn-class-schedule.scss:26-36`: 100% width/max, box-sizing:border-box, overflow-x:hidden | `src/components/academics/learner-class-schedule.module.css:7-12`, applied `learner-class-schedule.tsx:420` | Match |
+| Upcoming container | `_learn-class-schedule.scss:65-73`: grid gap16, padding16, bottom gap16, white, 1px rgba(teal,.12), radius12 | `learner-class-schedule.module.css:14-23`; TSX:447 | Match |
+| Upcoming 3-column / phone list | `_learn-class-schedule.scss:96-104`: repeat(3,minmax(0,1fr)), gap8; <=767px one column | `learner-class-schedule.module.css:34-39,267`; TSX:458 | Match source breakpoint |
+| Upcoming heading / count | `_learn-class-schedule.scss:75-94`: heading14px/850/primary `#1a1d21`, metadata12px/800 `#6b7280`/0.02em/uppercase | `learner-class-schedule.module.css:24-33`; TSX:450 | Match |
+| Calendar card boundary | `_learn-class-schedule.scss:147-151`: margin-top16, hidden overflow, zero component padding | `learner-class-schedule.module.css:50-57`; TSX:470 | Match spacing and overflow; retained surface outline follows global Ant/card border |
+| Toolbar geometry | `_learn-class-schedule.scss:156-169`: flex/wrap/space-between, 16px gap, 16px 24px padding, white, bottom hairline `#e5e9f0` | `learner-class-schedule.module.css:58-68`; TSX:471 | Match |
+| Nav grouping | `_learn-class-schedule.scss:171-175`: center-aligned flex, 8px gap | `learner-class-schedule.module.css:69-74`; TSX:472 | Match |
+| Previous/next arrows default | `_learn-class-schedule.scss:185-198`: 44x44, no border, transparent, radius8, muted `#6b7280`, 0.2s ease | `learner-class-schedule.module.css:75-87`; TSX:474,493 | Match |
+| Arrow hover / focus | `_learn-class-schedule.scss:199-207`: teal `#26bac7` on 8% teal; focus 2px teal, offset2px | `learner-class-schedule.module.css:88-95` | Match |
+| Period name | `_learn-class-schedule.scss:214-228`: font16/600/1.3, `#1a1d21`, margin8 each side, 140px min-width; phone font14/min120 | `learner-class-schedule.module.css:107-116,281`; TSX:501 | Match |
+| Today default/hover | `_learn-class-schedule.scss:241-252`: min-height44, `#26bac7` border + ink; hover `#1e9aa8` and 8% teal fill | `learner-class-schedule.module.css:96-106`; TSX:483 | Match after explicit token correction |
+| View select and keyboard focus | `_learn-class-schedule.scss:254-270`: width120, min-height44, radius8, border `#e5e9f0`, font14; focus `#26bac7` / 2px 20% teal | `learner-class-schedule.module.css:122-141`; TSX:514 | Match |
+| Filters spacing | `_learn-class-schedule.scss:272-291` legacy course filter min160, max260, touch44, phone max none | `learner-class-schedule.module.css:142-167,282-287` for available filter surfaces; vNext keeps multiple search/kind/course filters (different content) | Partial: view and global Select apply; not every vNext filter has the old course-select class |
+| Main calendar surface | `_learn-class-schedule.scss:297-358`: min-height320, width100%, min-width0 for desktop, no hard horizontal minimum | `learner-class-schedule.module.css:168-185,211-262`; TSX:626-655 and 185-214 | Width/density source aligned; legacy RBC markup differs from vNext's `CalendarGrid` and hourly renderer |
+| Phone month/date grid | `_learn-class-schedule.scss:380-455`: <=767px edge-to-edge calendar, radius12 top corners, 16px inset removal; mobile list contains width/overflow and 44px events | `learner-class-schedule.module.css:265-294`; TSX:626-672 retains the functional custom 42-day month and selected agenda | Geometry match where comparable; **mobile toolbar kept** because old calendar's mobile list had its own nav and current vNext depends on the toolbar to change view/date |
+| Day and week accessibility | Legacy uses antd/mobile list states and 44px touch target | `learner-class-schedule.module.css:244-261`; TSX:185-214 retains labelled empty hour buttons and old vNext schedule tooltip | Source behavior preserved; browser keyboard and touch not executed |
+
+**Exact old style reference note:** `src/styles/components/_variables.scss:5-28` defines `$clrThird=#26bac7`, `$teal-dark=#1e9aa8`, `$neutral-900=#1a1d21`, `$neutral-500=#6b7280`, `$neutral-200=#e5e9f0`. The original app uses a different calendar implementation; no claim of exact event-row DOM parity is made. Existing IST clock, month selection, filters, course links, section awareness, weekday ICS export, disclosure notes and teacher attendance link were not changed.
+
+### Exact-value checks — mentor meeting list/calendar
+
+| Property / state | Old LMS source and expected | vNext module and caller | Source verdict |
+| --- | --- | --- | --- |
+| List rhythm | `_learn-projects.scss:3674-3696,3743-3746`: grid with 12px gap, uppercase/12px history label | `mentor-meetings-calendar.module.css:7-16,117-126`; TSX:87-109 | 12px rows match; vNext's Upcoming/Past section headings remain its own text |
+| Card base | `_learn-projects.scss:3721-3727`: positioned grid, 1px `$border=#e5e9f0`, `$radius-md=16px`, white | `mentor-meetings-calendar.module.css:29-52`; TSX:35 | Uses compact variant surface (below) instead of normal 16px base because vNext list rows are compact |
+| Compact cards | `_learn-projects.scss:3729-3739`: gap20px, padding20px, radius20px, teal 12% border, nearly white gradient, elevation2 | `mentor-meetings-calendar.module.css:29-52`; TSX:35 | Match border/padding/radius/fill/shadow; old 44px icon track not inserted because vNext has no corresponding icon content |
+| Hover card | `_learn-projects.scss:3763-3767`: raise1px, teal25% border, elevation3 | `mentor-meetings-calendar.module.css:45-52` | Match values/durations based on legacy token pair 140ms/ease-out |
+| Title and secondary | `_learn-projects.scss:3790-3815`: wrapping header gap12, 16px/1.35 title `#1a1d21`, 6px secondary margin, muted `#6b7280`, line-height1.55 | `mentor-meetings-calendar.module.css:53-81`; TSX:36-39 | Match |
+| Time/meta/actions | `_learn-projects.scss:3818-3829`: flex-wrap with 8px gap; actions to end | `mentor-meetings-calendar.module.css:82-112`; TSX:47,55 | Match geometry, vNext real join/project links unchanged |
+| Phone <=767px | `_learn-projects.scss:5569-5578`: compact card drops rigid grid, uses 12px padding, 12px row gap, actions full row aligned start | `mentor-meetings-calendar.module.css:127-136`; TSX unchanged | Match source breakpoint; actual screenshot/touch not tested |
+| Empty / focus / reduced motion | Empty rows originally need meaningful absent state; global keyboard focus required | `mentor-meetings-calendar.module.css:46-51,113-140`; TSX:95,107 | Scoped dashed empty state + focus-within and motion-reduction; accessibility enhancement, **not** literal original markup |
+
+**Source-only responsive proof:** checked selectors for phone `max-width:767px`, desktop `min-width:768px` and reduced motion in `learner-class-schedule.module.css`; phone and reduced motion in `mentor-meetings-calendar.module.css`. They match the legacy compact-card 767px breakpoint; class schedule hourly grid remains scrollable only where needed. No running app, Playwright, CSS-computed layout, CI, compile, lint or screenshot inspection.
+
+### Scoped source-search (paste-ready greps and actual counts)
+
+| Reproducible search | Count from the complete fetched branch files |
+| --- | --- |
+| `grep -o '<Button' src/components/academics/learner-class-schedule.tsx; grep -o '</Button>' ...` | **7 opens / 7 closes** |
+| `grep -o '<Select' src/components/academics/learner-class-schedule.tsx; grep -o '</Select>' ...` | **3 / 3** |
+| `grep -o '<CalendarGrid' src/components/academics/learner-class-schedule.tsx; grep -o '</CalendarGrid>' ...` | **1 / 1** |
+| `grep -o '<FilterChip' src/components/academics/learner-class-schedule.tsx; grep -o '</FilterChip>' ...` | **2 / 2** |
+| `grep -Eo '<(select|input|textarea)\\b' src/components/academics/learner-class-schedule.tsx` | **0** |
+| `grep -o '<button' src/components/academics/learner-class-schedule.tsx` | **1**, retained date-grid dynamic pressed-state control; real `type=button`, label, aria-pressed and click handler; deliberate exempt judgement control |
+| `grep -E 'className="-subtle|sm: border-t' src/components/academics/learner-class-schedule.tsx` | **0** malformed old class spans after replacement |
+| `grep -o '<article' src/components/projects/mentor-meetings-calendar.tsx; grep -o '</article>' ...` | **1 / 1** |
+| `grep -o '<section' src/components/projects/mentor-meetings-calendar.tsx; grep -o '</section>' ...` | **2 / 2** |
+| `grep -Eo '<(button|select|input|textarea)\\b' src/components/projects/mentor-meetings-calendar.tsx` | **0** |
+| `grep -o '<StatusBadge' src/components/projects/mentor-meetings-calendar.tsx; grep -o '</StatusBadge>' ...` | **1 / 1** |
+| Full bodies: local `styles.foo` references resolving to CSS module selectors | **27 distinct + 13 distinct, all found**, no undefined CSS selectors |
+| `grep -Ec '@media' src/components/academics/learner-class-schedule.module.css` and mentor module | **3 + 2** respectively |
+| Bad duplicate quote before className, in four complete files | **0** |
+
+**Strict E7 queue status:** `- [ ] calendar/tiles/charts entire category` (missing: remaining HR and faculty/stat/schedule instances, whole-repository grep proof, all values/states for every listed component, desktop/phone/tablet computed visual proof). These two files are **completed as scoped visual migrations**, not certified category-wide pixel clones. Original and vNext meeting-calendar markup and course-calendar engines intentionally differ.
+
+**Next exact unticked file:** `src/components/hr/recruiter-report-funnel.module.css` and its caller(s), then remaining teacher/HR reporting charts and date grids. Search original HR/report SCSS before editing. E8 export AG Grid ownership is now chat-14 per current `docs/design/ui-clone-checklist.md:57`, so chat-2 stays on E7 surfaces.

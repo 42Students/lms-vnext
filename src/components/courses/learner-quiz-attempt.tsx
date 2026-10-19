@@ -491,7 +491,7 @@ export function LearnerQuizAttempt() {
           </div>
         </aside>
 
-        <div className="p-5 sm:p-7">
+        <div className="p-4 md:p-7">
           {current ? (
             <>
               <div className="flex items-start justify-between gap-4">
@@ -536,7 +536,7 @@ export function LearnerQuizAttempt() {
             {showReview ? (
               <section aria-label="Your quiz answer review" className="mt-3 rounded-xl border border-border bg-surface-subtle p-4">
                 <p className="text-sm text-body">Review your responses. These are not grading results.</p>
-                <ol className="mt-3 grid gap-2 sm:grid-cols-2">
+                <ol className="mt-3 grid gap-2 md:grid-cols-2">
                   {reviewRows.map((item,index)=>(
                     <li key={item.questionId}>
                       <Button type="button" onClick={()=>{setStep(index);setShowReview(false);}}
