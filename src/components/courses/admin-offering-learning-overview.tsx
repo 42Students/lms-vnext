@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { summarizeCollegeCourseContents } from "@/modules/courses/college-course-contents-summary-model";
 import type {
@@ -452,9 +453,9 @@ export function AdminOfferingLearningOverview({
                       ) : null}
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {itemCount} items
-                      </span>
+                      </Badge>
                       <CollegeLessonReorderActions
                         learningPathId={learningPath.id}
                         lessonId={lesson.id}
