@@ -35,7 +35,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    invited:Boolean(lifecycle?.invitedAt),deadline:lifecycle?.registrationDeadline??null,
    invitable:invitePreview.invitable,registered:registrations.registered},new Date());
  return <div className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
- <Link href={backHref} className="text-sm text-link underline lms-inline-link">← Placement eligibility</Link>
+ <Link href={backHref} className="inline-flex min-h-11 items-center text-sm text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Placement eligibility</Link>
  {undoable?<details className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
   <summary className="min-h-11 cursor-pointer font-semibold text-link"
    title={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}>
