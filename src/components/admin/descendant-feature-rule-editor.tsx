@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import type {AcademicModuleScope} from "@/modules/module-access/admin-descendant-rule-write";
 type Observed={enabled:boolean;locked:boolean}|null;
 export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string;scopes:readonly AcademicModuleScope[]}){

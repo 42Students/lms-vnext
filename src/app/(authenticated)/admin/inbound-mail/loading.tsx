@@ -1,1 +1,1 @@
-export default function LoadingInboundMail(){return <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm">Loading inbound mail…</p>;}
+export default function LoadingInboundMail(){return <p role="status" className="border-l-2 border-primary px-4 py-3 text-sm text-body">Loading inbound mail…</p>;}

@@ -1,4 +1,6 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -84,16 +86,16 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  }
  return <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <h2 className="font-semibold">Import eligibility</h2>
-  <button type="button" disabled={busy} onClick={()=>setImportOpen(true)}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+  <Button variant="secondary" type="button" disabled={busy} onClick={()=>setImportOpen(true)}
+   >
    Import eligibility decisions
-  </button>
+  </Button>
   <Drawer open={importOpen} onOpenChange={setImportOpen} title="Import eligibility decisions"
     dismissible={!busy}><div className="space-y-3">
    <div className="flex items-center justify-between gap-3">
     <h3 className="font-semibold">Import eligibility</h3>
-    <button type="button" disabled={busy} onClick={()=>setImportOpen(false)}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3">Close</button>
+    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setImportOpen(false)}
+     >Close</Button>
    </div>
   <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
   <div className="rounded-[var(--lms-canvas-radius)] border border-dashed border-border p-3"
@@ -107,27 +109,27 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    <a download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Download a template</a>
   </div>
   <label className="block text-sm">CSV contents
-   <textarea className="mt-1 min-h-32 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 font-mono text-xs"
+   <Textarea className="mt-1 min-h-32 font-mono text-xs"
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");}} disabled={busy} maxLength={1500000}/>
   </label>
-  <button type="button" disabled={busy} onClick={()=>void previewChanges()} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">{busy?"Working…":"Preview import"}</button>
+  <Button variant="secondary" type="button" disabled={busy} onClick={()=>void previewChanges()} >{busy?"Working…":"Preview import"}</Button>
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
    {unresolved>0?<p role="alert" className="text-sm text-warning-text">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
    <div role="tablist" aria-label="Import preview filters" className="flex flex-wrap gap-2">
-    {(["ALL","MATCHED","UNUSABLE"] as const).map(tab=><button key={tab} type="button" role="tab"
+    {(["ALL","MATCHED","UNUSABLE"] as const).map(tab=><Button variant="ghost" className={previewTab===tab?"border-b-2 border-[var(--lms-primary)]":""} key={tab} type="button" role="tab"
      aria-selected={previewTab===tab} onClick={()=>{setPreviewTab(tab);setPreviewPage(1);}}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link">
-     {tab==="ALL"?"All":tab==="MATCHED"?"Matched":"Can't use"}</button>)}
+     >
+     {tab==="ALL"?"All":tab==="MATCHED"?"Matched":"Can't use"}</Button>)}
    </div>
    <ul className="space-y-1 text-xs">{preview.preview.map((row,i)=>({row,i}))
     .filter(({row})=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable"))
     .slice((previewPage-1)*8,previewPage*8)
     .map(({row,i})=><li className="min-w-0 break-all rounded-[var(--lms-control-radius)] border border-border p-2" key={i}>
-    {row.status==="unusable"?<button type="button" disabled={busy||skippedByUser.includes(i)}
+    {row.status==="unusable"?<Button variant="secondary" type="button" disabled={busy||skippedByUser.includes(i)}
      onClick={()=>setSkippedByUser(current=>current.includes(i)?current:[...current,i])}
      className="mr-2 min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-link">
-     {skippedByUser.includes(i)?"Row skipped":"Skip row"}</button>:
+     {skippedByUser.includes(i)?"Row skipped":"Skip row"}</Button>:
      <label className="mr-2 inline-flex items-center gap-1"><input type="checkbox" checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy}/>Include</label>}
     <strong>Row {i+1}: {row.studentName??preview.rows[i]?.studentCode}</strong>
     <p>Roll: {row.rollNumber??preview.rows[i]?.studentCode} · Current: {row.currentStatus??"—"} · Becomes: {row.proposedStatus??"—"}</p>
@@ -135,15 +137,15 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
       "No change":row.status==="matched"?"Matched":"Can't use"}{row.reason?" — "+row.reason:""}</p>
    </li>)}</ul>
    <nav aria-label="Import preview pages" className="flex flex-wrap items-center gap-3 text-xs">
-    <button type="button" disabled={busy||previewPage===1} onClick={()=>setPreviewPage(p=>Math.max(1,p-1))} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 disabled:opacity-50">Previous</button>
+    <Button variant="secondary" type="button" disabled={busy||previewPage===1} onClick={()=>setPreviewPage(p=>Math.max(1,p-1))} >Previous</Button>
     <span>Page {previewPage} of {Math.max(1,Math.ceil(preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length/8))}</span>
-    <button type="button" disabled={busy||previewPage*8>=preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length} onClick={()=>setPreviewPage(p=>p+1)} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 disabled:opacity-50">Next</button>
+    <Button variant="secondary" type="button" disabled={busy||previewPage*8>=preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length} onClick={()=>setPreviewPage(p=>p+1)} >Next</Button>
    </nav>
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={busy} onClick={()=>fileInput.current?.click()} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Choose another file</button>
-    <button type="button" disabled={busy} onClick={()=>setDiscardPending(true)} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Discard review</button>
+    <Button variant="secondary" type="button" disabled={busy} onClick={()=>fileInput.current?.click()} >Choose another file</Button>
+    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setDiscardPending(true)} >Discard review</Button>
    </div>
-   <button type="button" disabled={busy} onClick={()=>void copyPreview()} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Copy preview outcomes CSV</button>
+   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void copyPreview()} >Copy preview outcomes CSV</Button>
    <label className="flex items-start gap-2 text-sm text-body">
      <input type="checkbox" className="mt-1 h-4 w-4 accent-primary"
        checked={acknowledged} disabled={busy}
@@ -151,8 +153,8 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
      I reviewed the matched learners and understand that applying these decisions will be audited.
      Unusable rows must be explicitly skipped before the matched decisions can be saved.
    </label>
-   <button type="button" disabled={busy||preview.ready===0||unresolved>0||!acknowledged} onClick={()=>void commit()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm matched decisions</button>
+   <Button variant="primary" type="button" disabled={busy||preview.ready===0||unresolved>0||!acknowledged} onClick={()=>void commit()}
+    >Confirm matched decisions</Button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}

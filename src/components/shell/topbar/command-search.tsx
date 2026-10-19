@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {Button} from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ShellNavItem } from "../shell-model";
@@ -108,7 +109,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
     className={mobileOpen ? style.searchOpen : ""}>
     <div className={style.search}>
       <div className={style.searchBox}>
-        <button type="button" aria-label="Open command search"
+        <Button variant="ghost" size="sm" type="button" aria-label="Open command search"
           onClick={() => {
             setOpen(true);
             setMobileOpen(true);
@@ -116,7 +117,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           }}
           className="inline-flex shrink-0 items-center justify-center text-body">
           <SearchIcon />
-        </button>
+        </Button>
         <label className="sr-only" htmlFor="lms-topbar-command-search">Search workspace</label>
         <input id="lms-topbar-command-search" ref={input} type="search" value={query}
           autoComplete="off" role="combobox" aria-haspopup="listbox"
@@ -135,7 +136,27 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         <kbd className={style.searchHint}>Ctrl K</kbd>
       </div>
       {open ? <div id="lms-topbar-command-results" role="listbox"
-        aria-label="Workspace commands" className={style.dropdown}>
+        aria-label="Workspace commands" className={style.dropdown}
+        onKeyDown={event => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            input.current?.focus();
+            setOpen(false);
+            setMobileOpen(false);
+            return;
+          }
+          if (event.defaultPrevented ||
+              !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+          const options = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('[role="option"]'));
+          const index = options.findIndex(option => option === event.target);
+          if (index < 0 || options.length === 0) return;
+          event.preventDefault();
+          const next = event.key === "Home" ? 0
+            : event.key === "End" ? options.length - 1
+            : event.key === "ArrowDown" ? (index + 1) % options.length
+            : (index - 1 + options.length) % options.length;
+          options[next]?.focus();
+        }}>
         <p className="px-2 py-1 text-[11px] font-semibold uppercase tracking-[.08em] text-muted-foreground">Go to</p>
         {config.portal === "learn" && courseError ?
           <p role="status" className="px-2 py-2 text-xs text-error">Could not load courses. Search shortcuts remain available.</p> : null}

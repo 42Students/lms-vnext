@@ -1,6 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {Button} from "@/components/ui/button";
 
 /** A signed resume URL exists only in an ephemeral response to this click.
  * Never place a raw private receipt or object key into SSR props, DOM or storage.
@@ -30,10 +32,9 @@ export function RecruiterResumeDownload({jobId,applicationId}:{jobId:string;appl
   }
  }
  return <div className="space-y-1">
-  <button type="button" onClick={()=>void openResume()} disabled={pending}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50">
+  <Button type="button" variant="secondary" onClick={()=>void openResume()} disabled={pending}>
    {pending?"Preparing resume…":"Open shared resume"}
-  </button>
+  </Button>
   {message?<p role="status" className="text-xs text-body">{message}</p>:null}
  </div>;
 }

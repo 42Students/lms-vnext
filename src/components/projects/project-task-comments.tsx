@@ -48,7 +48,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
    <Button size="sm" variant="secondary" onClick={()=>open?setOpen(false):void show()}>
      Comments
    </Button>
-   {open?<div className="space-y-2 border-b border-border py-3" aria-label="Task comments">
+   {open?<div className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-label="Task comments">
      <p className="text-xs text-muted-foreground">Notes and progress updates people on this task have written.</p>
      <label className="block text-xs font-semibold text-body">Filter comments
        <Select value={filter} onChange={event=>setFilter(event.target.value as typeof filter)}
@@ -62,7 +62,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
      {rows.length===0?<p role="status" className="text-sm text-muted-foreground">No comments yet.</p>:null}
      {rows.length>0&&!rows.some(row=>filter==="ALL"||row.commentKind===filter)?
        <p role="status" className="text-sm text-muted-foreground">No comments match this filter.</p>:null}
-     {rows.filter(row=>filter==="ALL"||row.commentKind===filter).map(row=><article key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+     {rows.filter(row=>filter==="ALL"||row.commentKind===filter).map(row=><article key={row.id} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body last:border-b-0">
       <p className="mb-1 text-xs font-semibold text-muted-foreground">
         {row.authorName || "Project member"} · {new Intl.DateTimeFormat("en-IN", {
           dateStyle: "medium",timeStyle: "short",timeZone: "Asia/Kolkata",

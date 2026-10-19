@@ -41,6 +41,18 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(scopedShellNavigation([college,collegeMore,faculty],"/teacher/courses")).toEqual([faculty]);
   expect(scopedShellNavigation([college,collegeMore,faculty],"/college/courses")).toEqual([college,collegeMore]);
  });
+ it("restores the exact unqualified legacy labels after role filtering",()=>{
+  const items:ShellNavItem[]=[
+   {href:"/learn/courses",label:"Courses · Learning",shortLabel:"C"},
+   {href:"/teacher/courses",label:"Courses · Teaching",shortLabel:"C"},
+  ];
+  expect(scopedShellNavigation(items,"/teacher/courses")).toEqual([
+   {href:"/teacher/courses",label:"Courses",shortLabel:"C"},
+  ]);
+  expect(scopedShellNavigation(items,"/learn/courses")).toEqual([
+   {href:"/learn/courses",label:"Courses",shortLabel:"C"},
+  ]);
+ });
  it("keeps visible group headings exclusive to TPO and hairlines elsewhere",()=>{
   const nav=source("src/components/shell/sidebar-nav.tsx");
   const css=source("src/components/shell/sidebar-legacy.css");
@@ -99,6 +111,17 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain("font-size:15px");
   expect(css).toContain("scrollbar-width:none");
   expect(css).toContain("transform:scale(.72)");
+ });
+ it("uses the legacy thin TPO scrollbar only on expanded rails",()=>{
+  const css=source("src/components/shell/sidebar-legacy.css");
+  const nav=source("src/components/shell/sidebar-nav.tsx");
+  expect(nav).toContain("data-sidebar-portal={sidebarPortal}");
+  expect(css).toContain('.lms-sidebar-nav[data-sidebar-portal="tpo"]');
+  expect(css).toContain("scrollbar-width:thin;");
+  expect(css).toContain("width:4px;");
+  expect(css).toContain("scrollbar-color:rgba(107,114,128,.28) transparent;");
+  expect(css).toContain("line-height:1;");
+  expect(css).toContain(".lms-sidebar-item-icon svg {display:block;width:20px;height:20px;}");
  });
  it("hides expanded headings and labels in collapsed desktop mode, keeps mobile labels",()=>{
   const css=source("src/components/shell/sidebar-legacy.css");

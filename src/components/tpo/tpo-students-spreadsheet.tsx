@@ -1,4 +1,6 @@
 "use client";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {tpoStudentMarksVerificationLabel} from "@/modules/placements/tpo-student-marks-label";
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
@@ -177,10 +179,10 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{selectedScoped.length} selected of {shared?.totalCount??rows.length} in the authorized view.</p>
    {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Export selected XLSX</a>:
     selectedScoped.length>200?<p role="status" className="text-xs text-warning-text">Export up to 200 individually selected students or select all matching students.</p>:null}
-  <button type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
-    onClick={downloadSelection} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+  <Button variant="secondary" type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
+    onClick={downloadSelection} >
     Export selected CSV
-  </button>
+  </Button>
   {downloadError?<p role="alert" className="text-xs text-error">{downloadError}</p>:null}
   <details className="rounded-[var(--lms-canvas-radius)] border border-border p-4">
    <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
@@ -199,38 +201,38 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
   </details>
   <label className="inline-flex items-center gap-3 text-sm font-semibold">Sort visible roster page
-   <select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+   <Select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}
+    >
     <option value="NAME">Name</option><option value="APPLICATIONS_DESC">Applications · most</option>
     <option value="APPLICATIONS_ASC">Applications · fewest</option>
     <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>
-   </select>
+   </Select>
   </label>
   <TpoGridFilterPanel fields={filters} mobileSheet/>
   <TpoSpreadsheetGrid mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
-    <button type="button" className="min-h-9 text-link underline"
+    <Button variant="ghost" type="button" className="underline text-link px-0"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
       Open student panel
-    </button>
+    </Button>
     <TpoStudentOutcomePill recorded={afterCollege[row.membershipId]?.outcome??null}
       placed={row.placed} registered={row.registeredForPlacements}/>
     <TpoAfterCollegeEditor membershipId={row.membershipId} learnerName={row.displayName}
       initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none"}}
       available={afterCollegeAvailable} />
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
-      aria-label={"Placement history for "+row.displayName} className="min-h-9 text-link underline">Placement history</Link>
+      aria-label={"Placement history for "+row.displayName} className="underline text-link px-0">Placement history</Link>
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-      aria-label={"Change participation for "+row.displayName} className="min-h-9 text-link underline">Change participation</Link>
+      aria-label={"Change participation for "+row.displayName} className="underline text-link px-0">Change participation</Link>
    </div>}/>
   {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
     recordedOutcome={afterCollege[active.membershipId]?.outcome??null}
     onNavigate={open} onClose={()=>open(null)} />:null}
   {selected&&!active?<p role="status" className="text-sm">
     Selected student is not on this roster page. Clear the student panel selection or change filters.
-    <button type="button" className="ml-2 text-link underline" onClick={()=>open(null)}>Clear selection</button>
+    <Button variant="ghost" type="button" className="ml-2 underline text-link px-0" onClick={()=>open(null)}>Clear selection</Button>
   </p>:null}
  </div>;
 }

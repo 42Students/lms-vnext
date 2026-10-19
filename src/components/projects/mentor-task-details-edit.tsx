@@ -1,6 +1,7 @@
 "use client";
 
 import { type FormEvent, useState } from "react";
+import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -96,48 +97,48 @@ export function MentorTaskDetailsEdit(props:Props) {
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit task details"
       description="Change registered task details. Status, assignee and sprint remain unchanged.">
       <form onSubmit={review} className="grid gap-4">
-        <label className="grid gap-1 text-xs font-semibold text-body">Title
+        <label className="grid gap-1 text-sm font-semibold text-body">Title
           <Input required maxLength={200} value={title}
             onChange={event=>setTitle(event.target.value)} />
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Description
+        <label className="grid gap-1 text-sm font-semibold text-body">Description
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Approach (optional)
+        <label className="grid gap-1 text-sm font-semibold text-body">Approach (optional)
           <Textarea maxLength={4000} value={approach}
             onChange={event=>setApproach(event.target.value)}/>
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Done when (optional)
+        <label className="grid gap-1 text-sm font-semibold text-body">Done when (optional)
           <Textarea maxLength={4000} value={criteria}
             onChange={event=>setCriteria(event.target.value)} />
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Priority
-          <select data-slot="select" value={priority} onChange={event=>setPriority(event.target.value)}
+        <label className="grid gap-1 text-sm font-semibold text-body">Priority
+          <Select value={priority} onChange={event=>setPriority(event.target.value)}
             className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
-          </select>
+          </Select>
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Estimate
+        <label className="grid gap-1 text-sm font-semibold text-body">Estimate
           <Input type="number" min={0} max={1000} value={estimate}
             onChange={e=>setEstimate(e.target.value)}/>
         </label>
         {!estimateValid?<p role="alert" className="text-xs text-error">
           Estimate must be a whole number from 0 to 1000.
         </p>:null}
-        <label className="grid gap-1 text-xs font-semibold text-body">Type
-          <select data-slot="select" className="rounded border border-border p-2" value={taskType}
+        <label className="grid gap-1 text-sm font-semibold text-body">Type
+          <Select className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px]" value={taskType}
             onChange={e=>setTaskType(e.target.value)}>
             <option value="">Not specified</option><option value="STORY">Story</option>
             <option value="BUG">Bug</option><option value="CHORE">Chore</option>
             <option value="SPIKE">Spike</option>
-          </select>
+          </Select>
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Due
+        <label className="grid gap-1 text-sm font-semibold text-body">Due
           <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Blocker note
+        <label className="grid gap-1 text-sm font-semibold text-body">Blocker note
           <Textarea maxLength={4000} value={blockerReason}
             onChange={e=>setBlockerReason(e.target.value)}/>
         </label>

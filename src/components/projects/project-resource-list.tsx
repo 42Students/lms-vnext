@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
@@ -127,7 +128,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
         </Select>
       </label>
       <label className="flex min-h-10 items-center gap-2 text-xs font-semibold">
-        <input type="checkbox" className="size-4 accent-[var(--lms-button-primary)]" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
+        <Checkbox className="size-5" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
         Pinned only
       </label>
       <label className="grid gap-1 text-xs font-semibold">Sprint

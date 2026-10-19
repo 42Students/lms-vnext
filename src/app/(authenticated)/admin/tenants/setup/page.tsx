@@ -40,7 +40,7 @@ export default async function SuperAdminTenantSetup({
  </div>;
  const id=context.adminScope?.collegeId??null;
  const tab=selectedSuperAdminTenantSetupTab(parsed.data,id!==null);
- const active="border-primary bg-primary-subtle text-primary-text";
+ const active="border-primary text-primary-text";
  const inactive="border-transparent text-body hover:bg-surface-subtle";
  const tabLink=(next:Tab)=>"/admin/tenants/setup?tab="+next;
  // Read failures must never present a partial college creation path as an
@@ -76,7 +76,7 @@ export default async function SuperAdminTenantSetup({
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."
-   actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Tenant directory</Link>} />
+   actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Tenant directory</Link>} />
   <section aria-label="Tenant setup overview" className="grid gap-3 sm:grid-cols-3">
    <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Current step</p>
@@ -91,7 +91,7 @@ export default async function SuperAdminTenantSetup({
     <p className="mt-2 break-words text-sm font-semibold">{college?.name??(id?"Selected college":"No college selected")}</p>
    </article>
   </section>
-  <nav aria-label="Tenant Setup steps" className="flex flex-wrap gap-2">
+  <nav aria-label="Tenant Setup steps" className="flex flex-wrap gap-2 border-b border-border">
    <Link href={tabLink("STRUCTURE")} aria-current={tab==="STRUCTURE"?"page":undefined}
     className={"inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] px-3 text-sm font-semibold "+ (tab==="STRUCTURE"?active:inactive)}>
     1. Tenant structure

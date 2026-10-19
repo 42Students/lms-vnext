@@ -1,7 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { useRef, useState } from "react";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
+import {Button} from "@/components/ui/button";
 import {isConfirmedRecruiterLeaveResponse} from "@/modules/placements/recruiter-profile-access-model";
 import Link from "next/link";
 import {hrRecruiterGrantLinks} from "@/modules/placements/hr-recruiter-grant-navigation-model";
@@ -82,14 +84,15 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
                   ))}
                 </nav>
               </div>
-              <button
+              <Button
+                variant="secondary"
                 type="button"
                 disabled={leaving === grant.id}
                 onClick={() => setConfirmGrant(grant)}
-                className="min-h-9 rounded-[var(--lms-control-radius)] border border-error/30 bg-surface px-3 py-2 text-sm font-medium text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:bg-error/5 disabled:opacity-50"
+                className="border-error/30 text-error hover:bg-error/5"
               >
                 {leaving === grant.id ? "Leaving…" : "Leave Access"}
-              </button>
+              </Button>
             </div>
           ))}
         </div>

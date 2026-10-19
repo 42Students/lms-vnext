@@ -1,4 +1,6 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
@@ -54,20 +56,20 @@ export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
   <h3 className="font-semibold">Task actions</h3>
   {task.blockerReason?<p className="text-sm text-body">Blocker: {task.blockerReason}</p>:null}
   {canBlock?<label className="block text-sm text-body">What is blocking this task?
-   <textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
-    className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" />
+   <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
+    className="mt-1" />
   </label>:null}
   <div className="flex flex-wrap gap-3">
-   {canStart?<button type="button" disabled={pending} onClick={()=>void change("IN_PROGRESS")}
-     className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">Start work</button>:null}
-   {canBlock?<button type="button" disabled={pending} onClick={()=>void change("BLOCKED")}
-     className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-foreground disabled:opacity-50">Report blocker</button>:null}
+   {canStart?<Button type="button" disabled={pending} onClick={()=>void change("IN_PROGRESS")}
+     className="min-h-11">Start work</Button>:null}
+   {canBlock?<Button type="button" disabled={pending} onClick={()=>void change("BLOCKED")}
+     variant="secondary" className="min-h-11">Report blocker</Button>:null}
   </div>
   {["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?<div className="flex flex-wrap gap-2" aria-label="Reorder my task">
-   <button type="button" disabled={pending} onClick={()=>void reorder("MOVE_UP")}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground">Move up</button>
-   <button type="button" disabled={pending} onClick={()=>void reorder("MOVE_DOWN")}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground">Move down</button>
+   <Button type="button" disabled={pending} onClick={()=>void reorder("MOVE_UP")}
+    variant="secondary" className="min-h-11">Move up</Button>
+   <Button type="button" disabled={pending} onClick={()=>void reorder("MOVE_DOWN")}
+    variant="secondary" className="min-h-11">Move down</Button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}

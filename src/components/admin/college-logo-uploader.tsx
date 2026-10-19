@@ -70,7 +70,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
  return <section aria-label="College logo upload" className="space-y-3 border-t border-border pt-4">
   <h3 className="font-semibold">College logo</h3>
   <p className="text-sm text-body">Upload a square logo. Choose a crop area; the saved image is a 200-pixel-or-larger PNG. Original files are not made public.</p>
-  {(savedUrl||currentUrl)?<div className="w-fit rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+  {(savedUrl||currentUrl)?<div className="w-fit rounded-[var(--lms-control-radius)] border border-border p-3">
    <img src={savedUrl||currentUrl!} alt="Current college logo" className="h-24 w-24 object-contain"/>
   </div>:null}
   {canEdit?<><label className="block text-sm font-medium">Select logo to crop
@@ -84,13 +84,13 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
        style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
     </div>
     <label className="block text-sm">Horizontal crop position ({positionX}%)
-     <input aria-label="Horizontal crop position" className="block w-52 accent-[var(--lms-button-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
+     <input aria-label="Horizontal crop position" className="block w-52 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
     </label>
     <label className="block text-sm">Vertical crop position ({positionY}%)
-     <input aria-label="Vertical crop position" className="block w-52 accent-[var(--lms-button-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
+     <input aria-label="Vertical crop position" className="block w-52 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
     </label>
     <label className="block text-sm">Zoom ({Math.round(zoom*100)}%)
-     <input aria-label="Crop zoom" className="block w-52 accent-[var(--lms-button-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
+     <input aria-label="Crop zoom" className="block w-52 accent-[var(--lms-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
     </label>
     <Button type="button" disabled={busy} onClick={()=>void upload()}
      className="min-h-11 sm:min-h-9">

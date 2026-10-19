@@ -31,7 +31,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
   <PageHeader eyebrow="Super Admin · Tenant" title={data.target.name+" · History"}
    description="Recorded identity, college-admin lifecycle and platform actions concerning this administrator in this college. Cross-college and raw event metadata are excluded."/>
   <a href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export shown history (CSV)</a>
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Export shown history (CSV)</a>
   <p role="status" className="text-sm text-body">
    Page {data.page} · {data.events.length} recorded event(s) shown{data.truncated?" · more available":""}.
   </p>
