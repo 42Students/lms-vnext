@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -89,14 +90,14 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
         </Button>
       </div>
     </div>:null}
-    {notice?<p role={failed.length?"alert":"status"} className="text-sm text-body">{notice}</p>:null}
-    {failed.length?<p role="alert" className="text-sm text-error">Failed IDs: {failed.join(", ")}. {success} other issues were processed.</p>:null}
+    {notice?<InlineNotice tone={failed.length?"error":"success"} message={notice}/>:null}
+    {failed.length?<InlineNotice tone="error" message={"Failed IDs: "+failed.join(", ")+". "+success+" other issues were processed."}/>:null}
     <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
       title={"Apply to "+selected.length+" selected"}
       description={"Set status to… "+status.replaceAll("_"," ")}
       confirmLabel={"Apply to "+selected.length+" selected"} confirmVariant="primary" pending={busy}
       onConfirm={()=>void apply(true)}>
-      {notice?<p role="alert" className="text-sm text-body">{notice}</p>:null}
+      {notice?<InlineNotice tone={failed.length?"error":"info"} message={notice}/>:null}
     </ConfirmDialog>
   </section>;
 }
