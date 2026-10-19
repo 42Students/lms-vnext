@@ -159,7 +159,7 @@ export function LearnerPlacementJourney({
         <div className="grid gap-3 sm:grid-cols-2">
           {items.map(item=>(
             <a key={item.applicationId} href={"#placement-application-"+encodeURIComponent(item.applicationId)}
-              className="min-w-0 rounded-lg border border-border p-3 hover:bg-surface-subtle">
+              className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3 hover:bg-primary-subtle">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="min-w-0 break-words text-sm font-semibold text-foreground">{item.companyName} · {item.jobTitle}</span>
                 <StatusBadge tone={item.applicationStatus==="WITHDRAWN"||item.screening.status==="REJECTED"?"error":"info"}>
@@ -167,10 +167,10 @@ export function LearnerPlacementJourney({
                 </StatusBadge>
               </div>
               <ol className="mt-3 flex flex-wrap gap-2 text-xs text-body">
-                <li className="rounded border border-border px-2 py-1">Applied</li>
-                <li className="rounded border border-border px-2 py-1">Screening: {humanize(item.screening.status)}</li>
+                <li className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1">Applied</li>
+                <li className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1">Screening: {humanize(item.screening.status)}</li>
                 {[...item.results].sort((a,b)=>a.roundSequence-b.roundSequence).map(result=>(
-                  <li key={result.resultId} className="rounded border border-border px-2 py-1">
+                  <li key={result.resultId} className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1">
                     {result.roundName}: {result.appliedAt?roundOutcomeLabel(result.outcome):"Awaiting confirmation"}
                   </li>
                 ))}
@@ -225,7 +225,7 @@ export function LearnerPlacementJourney({
             </div>
 
             {isPlacementCellApplied(item.channel) && item.applicationStatus==="SUBMITTED" ? (
-              <aside role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-4">
+              <aside role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
                 <p className="font-semibold text-foreground">The placement cell applied for you</p>
                 <p className="mt-1 text-sm text-body">
                   If you don&apos;t want this one, withdraw before {new Intl.DateTimeFormat("en-IN",{

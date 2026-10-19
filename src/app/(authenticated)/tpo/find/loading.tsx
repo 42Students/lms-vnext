@@ -1,1 +1,1 @@
-export default function Loading(){return <p role="status" className="text-sm text-body">Searching TPO records…</p>;}
+export default function Loading(){return <p role="status">Searching TPO records…</p>;}

@@ -51,12 +51,6 @@ export default async function SuperAdminProjectTemplateDetailPage({
         basePath="/admin/projects"
         active="templates"
       />
-      <Link
-        href="/admin/projects/templates"
-        className="inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
-      >
-        ← Template catalogue
-      </Link>
       <PageHeader
         eyebrow="Global Project Template"
         title={detail.template.title}
@@ -66,6 +60,10 @@ export default async function SuperAdminProjectTemplateDetailPage({
         }
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            <Link href="/admin/projects/templates"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+              ← Template catalogue
+            </Link>
             <StatusBadge
               tone={
                 detail.template.status === "PUBLISHED"

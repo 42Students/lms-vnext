@@ -2,6 +2,8 @@
 
 import {useState, type FormEvent} from "react";
 import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -52,13 +54,13 @@ export function SuperAdminFacultyAssignmentCreate({
    }
   });
  }
- const inputClass="min-h-11 w-full sm:min-h-9";
+ const inputClass="w-full";
  return <section aria-label="Create teaching assignment" className="space-y-3">
-   <button type="button" disabled={!available.length||!faculty.length||pending}
+   <Button variant="secondary" type="button" disabled={!available.length||!faculty.length||pending}
     onClick={()=>setOpen(value=>!value)} aria-expanded={open}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+    className="min-h-11 sm:min-h-9">
     Create teaching assignment
-   </button>
+   </Button>
    {!available.length?<p role="status" className="text-sm text-body">
     Create an active course offering and class delivery before assigning a teacher.
    </p>:null}
@@ -79,7 +81,7 @@ export function SuperAdminFacultyAssignmentCreate({
       <div role="region" aria-label="Available courses in the selected class" tabIndex={0}
         className="grid max-h-48 gap-2 overflow-y-auto overscroll-contain sm:grid-cols-2 [mask-image:linear-gradient(to_bottom,black_90%,transparent)]">
         {sameClass.map(item=><label key={item.id} className="flex min-h-11 items-center gap-2 text-sm">
-          <input type="checkbox" checked={item.id===deliveryId||otherDeliveryIds.includes(item.id)}
+          <Checkbox checked={item.id===deliveryId||otherDeliveryIds.includes(item.id)}
             disabled={pending||item.id===deliveryId||(!otherDeliveryIds.includes(item.id)&&deliveryIds.length>=10)}
             onChange={e=>setOtherDeliveryIds(values=>e.target.checked?[...values,item.id]:values.filter(id=>id!==item.id))}/>
           {item.courseCode} · {item.courseName}
@@ -106,11 +108,11 @@ export function SuperAdminFacultyAssignmentCreate({
     </p>:null}
     {error?<p role="alert" className="sm:col-span-2 text-sm text-error">{error}</p>:null}
     <div className="flex flex-wrap gap-2 sm:col-span-2">
-      <button type="submit" disabled={pending} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary sm:min-h-9 disabled:opacity-50">
+      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 sm:min-h-9">
        {pending?"Assigning…":"Assign faculty"}
-      </button>
-      <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold sm:min-h-9">Cancel</button>
+      </Button>
+      <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
+       className="min-h-11 sm:min-h-9">Cancel</Button>
     </div>
    </form>:null}
  </section>;
@@ -146,25 +148,24 @@ export function SuperAdminTeachingRoleEdit({
   });
  }
  return <div className="min-w-0 space-y-2">
-   <button type="button" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold"
+   <Button variant="secondary" size="sm" type="button" className="min-h-9"
      aria-expanded={open} disabled={pending}
      onClick={()=>{setRole(initialRole);setNotice("");setOpen(v=>!v);}}>
       Edit role
-   </button>
+   </Button>
    {open?<div className="grid gap-2">
       <label className="grid gap-1 text-xs font-semibold">Teaching role
        <Select value={role} disabled={pending}
         onChange={e=>setRole(e.target.value as CourseTeachingRole)}
-        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm sm:min-h-9">
+        >
         {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
           {facultyAssignmentRoleLabel(value)}</option>)}
        </Select>
       </label>
-      <button type="button" disabled={pending||role===initialRole}
-       onClick={()=>void save()}
-       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold sm:min-h-9">
+      <Button variant="primary" type="button" disabled={pending||role===initialRole}
+       onClick={()=>void save()} className="min-h-11 sm:min-h-9">
        {pending?"Saving…":"Save role"}
-      </button>
+      </Button>
     </div>:null}
    {notice?<p role="alert" className="text-xs text-body">{notice}</p>:null}
  </div>;

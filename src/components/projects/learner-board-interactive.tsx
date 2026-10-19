@@ -1,4 +1,6 @@
 "use client";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
@@ -90,10 +92,10 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   {notice?<p role="status" aria-live="polite" className="text-sm text-success-text">{notice}</p>:null}
   {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null}
   {undo&&tasks.some(task=>task.id===undo.taskId&&canLearnerMoveOwnTask(task.status,undo.status))?
-   <button type="button" disabled={busy||readOnly} className="min-h-11 text-sm font-semibold text-primary-text underline"
+   <Button type="button" disabled={busy||readOnly} variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline"
     onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
     Undo last task move
-  </button>:null}
+  </Button>:null}
   <p className="text-xs text-muted-foreground sm:hidden">Scroll sideways to see all Board lanes.</p>
   <div role="region" aria-label="Project Board lanes, scroll horizontally to see more"
     tabIndex={0} className="overflow-x-auto overscroll-x-contain pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -120,24 +122,24 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
         {task.sprintId===null && own && !readOnly ?
           <label className="mt-2 block text-xs font-semibold text-body">
             Pull into sprint
-            <select defaultValue="" disabled={busy||!sprints.some(s=>s.status==="ACTIVE")}
+            <Select defaultValue="" disabled={busy||!sprints.some(s=>s.status==="ACTIVE")}
               onChange={event=>{if(event.target.value)void pull(task,event.target.value);}}
-              className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:min-h-9">
+              className="mt-1 min-h-11">
               <option value="">Choose active sprint</option>
               {sprints.filter(s=>s.status==="ACTIVE").map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
-            </select>
+            </Select>
             {!sprints.some(s=>s.status==="ACTIVE")?
               <span className="mt-1 block text-xs font-normal">Start a sprint before moving backlog tasks onto the board.</span>:null}
           </label> : null}
         {editable?<label className="mt-2 block text-xs font-semibold text-body">
           Move {task.title}
-          <select aria-label={"Move "+task.title} value={task.status} disabled={busy}
+          <Select aria-label={"Move "+task.title} value={task.status} disabled={busy}
            onChange={event=>void move(task.id,event.target.value as EditableStatus)}
-           className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
+           className="mt-1 min-h-11">
             {statuses.filter(status=>status===task.status||canLearnerMoveOwnTask(task.status,status))
               .map(status=><option key={status} value={status} disabled={status===task.status}>
                {status==="TODO"?"To Do":status==="IN_PROGRESS"?"In Progress":"Blocked"}</option>)}
-          </select>
+          </Select>
         </label>:null}
        </li>;
      })}

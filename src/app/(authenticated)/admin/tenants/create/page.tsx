@@ -34,9 +34,9 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
  const params=await searchParams;
  const preferredId=preferredNewTenantOrganization(params.organizationId,creatable);
  return <div className="min-w-0 space-y-6">
-  <Link href="/admin/tenants" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Tenant directory</Link>
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Create the customer, then make one college launch-ready"
-   description="Creating organizations and colleges is a platform-level action. Domains, branding and readiness checks are college-specific, so the current scope is always visible before you edit."/>
+   description="Creating organizations and colleges is a platform-level action. Domains, branding and readiness checks are college-specific, so the current scope is always visible before you edit."
+   actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3.5 text-sm font-semibold text-primary-text sm:min-h-9">← Tenant directory</Link>}/>
   <section className="space-y-3 border-b border-border pb-5" aria-label="Create organization">
    <h2 className="text-lg font-semibold">Create an organization and its colleges</h2>
    {orgCreate?<OrganizationCreateForm advanceToCollege/>:

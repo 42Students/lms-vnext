@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useRef,useState} from "react";
 import {bulkStudentSelectionIsCurrent,superAdminStudentBulkFailure} from "@/modules/module-access/super-admin-student-bulk-feedback";
 import {useRouter} from "next/navigation";
@@ -42,13 +43,13 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
    <p role="status" className="text-sm text-muted-foreground">{selected.length}/25 students selected</p></div>
   <p className="text-xs text-muted-foreground">Membership-scoped overrides work for Projects and Electives. Placements is configured at college scope, so it is deliberately not offered here. Locked ancestor policies remain protected.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm">
-   <input type="checkbox" checked={capped.length>0&&selected.length===Math.min(capped.length,25)}
+   <Checkbox checked={capped.length>0&&selected.length===Math.min(capped.length,25)}
     onChange={e=>setSelected(e.target.checked?capped.slice(0,25).map(x=>x.id):[])} disabled={busy}/>
    Select first {Math.min(25,capped.length)} students in these search results
   </label>
   <div role="region" aria-label="Bulk student selection" tabIndex={0} className="grid max-h-44 gap-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] sm:grid-cols-2 focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
    {capped.map(learner=><label key={learner.id} className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={selected.includes(learner.id)} disabled={busy||(!selected.includes(learner.id)&&selected.length>=25)}
+    <Checkbox checked={selected.includes(learner.id)} disabled={busy||(!selected.includes(learner.id)&&selected.length>=25)}
      onChange={e=>setSelected(curr=>e.target.checked?[...curr,learner.id]:curr.filter(id=>id!==learner.id))}/>
     <span className="truncate">{learner.name}</span>
    </label>)}
@@ -62,7 +63,7 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
     <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
     <option value="INHERIT">Clear override / Inherit</option></Select></label>
    <Button variant="primary" type="button" disabled={busy||!selected.length} onClick={()=>void submit()}
-    className="">{busy?"Saving…":"Apply to selected"}</Button>
+    >{busy?"Saving…":"Apply to selected"}</Button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {report?<div role="status" className="space-y-1 text-sm">

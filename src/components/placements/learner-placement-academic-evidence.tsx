@@ -171,8 +171,8 @@ export function LearnerPlacementAcademicEvidence({
   }
 
   return (
-    <section id="placement-academic-evidence" className="scroll-mt-24 rounded-xl border border-border bg-surface">
-      <div className="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
+    <section id="placement-academic-evidence" className="scroll-mt-24 border-b border-border pb-5">
+      <div className="flex flex-col gap-3 border-b border-border py-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="m-0 text-base font-semibold text-foreground">
             Academic eligibility evidence
@@ -199,7 +199,7 @@ export function LearnerPlacementAcademicEvidence({
       </div>
       <form
         onSubmit={save}
-        className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4"
+        className="grid gap-4 py-5 sm:grid-cols-2 lg:grid-cols-4"
       >
         {[
           ["cgpa", "CGPA", evidence.cgpa, "0.01", "10"],

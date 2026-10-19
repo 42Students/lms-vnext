@@ -105,7 +105,7 @@ export function TpoCompanyCreateForm() {
                 value={form.primaryDomain} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, primaryDomain: event.target.value }));}}/>
             </label>
-            {reviewing?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+            {reviewing?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm text-body">
               Create or link {form.name.trim()} to this college?
               Existing canonical companies will be reused where identity matches.
               This creates an auditable college relationship.

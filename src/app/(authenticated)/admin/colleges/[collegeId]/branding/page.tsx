@@ -33,7 +33,7 @@ export default async function SuperAdminCollegeBrandingPage({
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-center gap-3">
       <Link href={`/admin/colleges/${encodeURIComponent(collegeId)}`}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← College overview</Link>
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">← College overview</Link>
       {context.adminScope?.collegeId===collegeId ? <Link href={`/admin/colleges/${encodeURIComponent(collegeId)}/subdomain`}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Verify web address

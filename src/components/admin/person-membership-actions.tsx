@@ -12,6 +12,7 @@ import {
   type MembershipStatus,
 } from "@/modules/identity/constants";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { PersonProfileDialog } from "@/components/admin/person-profile-dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
@@ -273,8 +274,7 @@ export function PersonMembershipActions({
                 <span className="text-sm font-semibold text-body">
                   {roleLabel(role)}
                 </span>
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={checked}
                   disabled={
                     Boolean(rolePending) ||

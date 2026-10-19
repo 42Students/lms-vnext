@@ -109,13 +109,13 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       {editorData?<TenantSettingsEditor key={editorScope+":"+(context.adminScope?.collegeId??"GLOBAL")} scopeType={editorScope}
        collegeId={context.adminScope?.collegeId??undefined}
        ready={editorData.ready} entries={editorData.entries}/>:(
-       <p role="status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-4 text-sm text-body">
+       <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
         {editorResult&&!editorResult.ok
           ?"Tenant settings editor is temporarily unavailable. Existing settings were not changed."
           :"Clear the Super Admin safety scope to access global setting overrides, or select an individual college to edit its scoped settings."}
        </p>)}
       {attendanceResult&&!attendanceResult.ok?
-        <p role="status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-4 text-sm text-body">
+        <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
           Attendance policy is temporarily unavailable. Existing settings were not changed.
         </p>:null}
       {attendancePolicy?<SuperAdminAttendanceSettingsEditor
@@ -124,32 +124,32 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
       <Link href="/admin/settings/auth"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">
         Authentication and privileged access checklist →
       </Link>
 
       <form className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
-          <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 sm:min-h-9"/>
+          <Input name="q" defaultValue={parsed.q} maxLength={100} className="w-full"/>
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section
-          <Select name="section" defaultValue={parsed.section} className="min-h-11 sm:min-h-9">
+          <Select name="section" defaultValue={parsed.section} className="w-full">
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
           </Select>
         </label>
         <Button type="submit">Filter</Button>
         <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
       </form>
-      {sections.length===0 ? <p role="status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-4 text-sm text-body">No visible settings match the selected filters.</p> : null}
+      {sections.length===0 ? <p role="status" className="border-l-2 border-border bg-muted px-3 py-2 text-sm text-body">No visible settings match the selected filters.</p> : null}
       <nav
         aria-label="Settings sections"
-        className="flex flex-wrap gap-2"
+        className="flex flex-wrap gap-2 border-b border-border"
       >
         {sections.map((section) => (
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle sm:min-h-9"
           >
             {section.title}
           </a>

@@ -2,6 +2,8 @@
 import {Button} from "@/components/ui/button";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 const labels={
@@ -37,14 +39,14 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
   <section aria-label="How sharing works" className="border-t border-border pt-3 text-sm"><h4 className="font-semibold">How sharing works</h4><ul className="mt-2 list-disc space-y-1 pl-5"><li>The college sets the fields recruiters may see.</li><li>Learner consent and verification still apply.</li><li>Some values appear only as a band when exact sharing is off.</li><li>These settings do not grant access to a learner or drive.</li><li>Changes to sharing settings affect future views and exports.</li></ul></section>
   {Object.entries(labels).slice(0,3).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
    <span>{label}</span>
-   <input type="checkbox" disabled={busy} checked={values[key as keyof Choice]}
+   <Checkbox disabled={busy} checked={values[key as keyof Choice]}
     onChange={e=>setValues(current=>({...current,[key]:e.target.checked}))}/>
   </label>)}
-  <details className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
+  <details className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-3">
     <summary className="cursor-pointer text-sm font-semibold">Additional sharing options</summary>
     {Object.entries(labels).slice(3).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
       <span>{label}</span>
-      <input type="checkbox" disabled={busy} checked={values[key as keyof Choice]}
+      <Checkbox disabled={busy} checked={values[key as keyof Choice]}
         onChange={event=>setValues(current=>({...current,[key]:event.target.checked}))}/>
     </label>)}
   </details>

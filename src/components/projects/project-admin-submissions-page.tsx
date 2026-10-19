@@ -117,11 +117,11 @@ export async function ProjectAdminSubmissionsPage({
         description="Final project deliverables across all workspaces."
       />
 
-      <nav aria-label="Submission categories" className="flex flex-wrap gap-3 text-sm font-semibold">
+      <nav aria-label="Submission categories" className="flex flex-wrap gap-3 border-b border-border text-sm font-semibold">
         <Link href={projectAdminSubmissionHref(queuePath,query)} aria-current={view==="ALL"?"page":undefined}
-          className="inline-flex min-h-9 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text">All submissions</Link>
+          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text">All submissions</Link>
         <Link href={projectAdminUnsubmittedHref(queuePath,query)} aria-current={view==="NOT_SUBMITTED"?"page":undefined}
-          className="inline-flex min-h-9 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text">Not submitted</Link>
+          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text">Not submitted</Link>
       </nav>
       <nav aria-label="Review status shortcuts" className="flex flex-wrap gap-2 text-xs font-semibold">
         <Link href={projectAdminSubmissionHref(queuePath,query,"UNDER_REVIEW")}
@@ -181,12 +181,12 @@ export async function ProjectAdminSubmissionsPage({
           ["Reviewed", summary.reviewed, queuePath+"?submissionStatus=APPROVED"],
         ] as const).map(([name, value, href]) => {
           return <Link key={name} href={href}
-            className="rounded-xl border border-border bg-surface p-4 hover:border-primary">
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 hover:border-primary">
             <p className="text-xs font-semibold text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>;
         })}
-      </div>:<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+      </div>:<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
         Submission totals are temporarily unavailable. The filtered submissions below are still visible.
       </p>}
       <ProjectAdminFilters

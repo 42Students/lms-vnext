@@ -24,15 +24,16 @@
   border-bottom: 1px solid var(--lms-header-border);
   box-shadow: var(--lms-header-shadow);
 }
-.command { display: grid; grid-template-columns: minmax(0, 291px) auto; align-items: center; gap: 12px; min-width: 0; flex: 1; }
-.search { position: relative; min-width: 0; width: 291px; max-width: 100%; }
+.command { display:grid; grid-template-columns:auto minmax(0,380px); align-items:center; gap:12px; min-width:0; flex:1; justify-content:start; }
+.commandNoNew { grid-template-columns:minmax(0,380px); }
+.search { position: relative; min-width: 0; width: min(291px, 100%); max-width: 100%; }
 .searchBox { display:flex; align-items:center; gap:9px; box-sizing:border-box; height:36px; width:100%; padding:0 10px; border:1px solid var(--lms-header-border); border-radius:var(--lms-control-radius); background:var(--topbar-search-bg); color:var(--topbar-muted); }
 .searchInput { min-width:0; width:100%; flex:1; padding:0; background:transparent; border:0; outline:none; font-family:inherit; font-size:12px; font-weight:400; line-height:1.4; color:var(--lms-heading); }
 .searchInput::placeholder { color:var(--topbar-placeholder); opacity:1; }
 .searchHint { flex:none; font-family:inherit; font-size:11px; font-weight:500; line-height:1.1; color:var(--topbar-muted); white-space:nowrap; border:1px solid var(--topbar-key-border); border-radius:4px; padding:3px 4px; }
 .searchBox:focus-within { border-color:var(--lms-button-primary); box-shadow: 0 0 0 3px rgba(38,186,199,.13); }
-.dropdown { position:absolute; z-index:60; left:0; top:calc(100% + 8px); width:min(390px,calc(100vw - 24px)); max-height:min(65vh,430px); overflow:auto; border:1px solid var(--lms-header-border); border-radius:var(--lms-canvas-radius); background:var(--lms-white); padding:8px; box-shadow:var(--lms-overlay-shadow); }
-.suggestion { display:flex; align-items:center; min-height:38px; width:100%; padding:8px 10px; gap:8px; border-radius:7px; font-family:inherit; font-size:13px; font-weight:500; line-height:1.45; color:var(--topbar-ink); text-align:left; }
+.dropdown { position:absolute; z-index:60; left:0; top:calc(100% + 8px); width:min(390px,calc(100vw - 24px)); max-height:min(65vh,430px); overflow:auto; overscroll-behavior:contain; border:1px solid var(--lms-header-border); border-radius:var(--lms-canvas-radius); background:var(--lms-white); padding:8px; box-shadow:var(--lms-overlay-shadow); }
+.suggestion { display:flex; align-items:center; min-height:44px; width:100%; padding:8px 10px; gap:8px; border-radius:7px; font-family:inherit; font-size:13px; font-weight:500; line-height:1.45; color:var(--topbar-ink); text-align:left; }
 .suggestion:hover,.suggestion:focus-visible { outline:none; background:var(--lms-primary-subtle); color:var(--lms-primary-text); }
 .new { display:inline-flex; height:36px; min-height:36px; width:82px; align-items:center; justify-content:center; gap:4px; flex:none; border-radius:var(--lms-control-radius); background:var(--lms-button-primary); color:var(--lms-white); font-family:inherit; font-size:14px; font-weight:650; line-height:1; white-space:nowrap; }
 .new:hover { background:var(--lms-button-primary-hover); color:var(--lms-white); }
@@ -45,7 +46,7 @@
 .avatar { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; flex:none; border-radius:50%; background:var(--topbar-avatar-bg); color:var(--lms-button-primary); font-family:inherit; font-size:13px; font-weight:700; line-height:1; border:1px solid var(--topbar-avatar-border); }
 .avatar:hover { background:var(--topbar-avatar-hover); }
 .menu { position:absolute; top:calc(100% + 9px); right:0; z-index:60; width:min(280px,calc(100vw - 24px)); border:1px solid var(--lms-header-border); border-radius:var(--lms-canvas-radius); padding:12px; background:var(--lms-white); box-shadow:var(--lms-overlay-shadow); }
-.menuItem { display:flex; align-items:center; width:100%; min-height:38px; padding:8px 11px; border-radius:7px; color:var(--topbar-ink); font-family:inherit; font-size:13px; font-weight:600; line-height:1.4; text-align:left; }
+.menuItem { display:flex; align-items:center; width:100%; min-height:44px; padding:8px 11px; border-radius:7px; color:var(--topbar-ink); font-family:inherit; font-size:13px; font-weight:600; line-height:1.4; text-align:left; }
 .menuItem:hover,.menuItem:focus-visible { outline:2px solid transparent; background:var(--lms-primary-subtle); color:var(--lms-button-primary); }
 .menuDivider { border:0; border-top:1px solid var(--lms-header-border); margin:8px 0; }
 .bellAdapter { position:relative; width:36px; height:36px; flex:none; }
@@ -57,13 +58,15 @@
 .bellAdapter > div > section { z-index:70; }
 @media (min-width:768px) and (max-width:1199px) {
   .bar { gap:10px; padding:0 14px; }
-  .command { gap:8px; grid-template-columns:minmax(150px,1fr) auto; }
+  .command { gap:8px; grid-template-columns:auto minmax(180px,1fr); }
+  .commandNoNew { grid-template-columns:minmax(180px,1fr); }
   .search { width:100%; }
   .orgName { max-width:180px; }
 }
 @media (max-width:767px) {
   .bar { min-height:58px; height:58px; gap:8px; padding:0 10px; }
   .command { gap:8px; grid-template-columns:auto auto; justify-content:flex-start; flex:1; }
+  .commandNoNew { grid-template-columns:auto; }
   .search { width:36px; }
   .searchBox { width:36px; padding:0; justify-content:center; }
   .searchInput { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
@@ -94,7 +97,7 @@
    The panels are anchored to the existing authenticated, role-scoped bell widgets. */
 .recruiterBell > div > section, .learnerBell > div > section {
   right:0; width:min(420px,calc(100vw - 24px)); min-width:min(360px,calc(100vw - 24px));
-  max-height:min(520px,calc(100vh - 120px)); overflow-y:auto;
+  max-height:min(520px,calc(100vh - 120px)); overflow-y:auto; overscroll-behavior:contain;
   border:1px solid var(--lms-canvas-border); border-radius:var(--lms-canvas-radius); background:var(--lms-white);
   box-shadow:var(--lms-overlay-shadow);
   scrollbar-width:thin; scrollbar-color:var(--topbar-key-border) transparent;
@@ -112,4 +115,40 @@
 @media (max-width:767px) {
   .recruiterBell > div > section, .learnerBell > div > section { position:fixed; top:58px; right:0; left:0; width:100vw; min-width:0; max-width:100vw; max-height:calc(100dvh - 58px); border-radius:0 0 12px 12px; }
   .iconButton { min-width:36px; min-height:36px; }
+}
+
+/* Legacy compact header: keep touch targets keyboard-visible even in cramped widths. */
+.createMenu > summary:focus-visible,
+.menuItem:focus-visible,
+.suggestion:focus-visible,
+.iconButton:focus-visible {
+  outline:2px solid var(--lms-button-primary);
+  outline-offset:2px;
+}
+.recruiterBell > div > section,
+.learnerBell > div > section {
+  -webkit-overflow-scrolling:touch;
+}
+@media (max-width:767px) {
+  .searchOpen .search { max-width:calc(100vw - 20px); }
+  .searchOpen .dropdown { width:100%; max-width:100%; }
+  .menu, .createOptions { max-height:calc(100dvh - 76px); overflow-y:auto; overscroll-behavior:contain; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .new, .iconButton, .avatar, .suggestion, .menuItem { transition:none; }
+}
+
+/* Keep the command's two real children on measured tracks without reserving an empty column. */
+.searchBox button:focus-visible { outline:2px solid var(--lms-button-primary); outline-offset:2px; border-radius:4px; }
+.searchInput::-webkit-search-cancel-button { cursor:pointer; }
+
+/* Shared Button instances within the legacy command box keep its measured 36px field. */
+.searchBox [data-slot="button"] {
+  flex:none; width:20px; min-width:20px; height:28px; min-height:28px;
+  padding:0; border:0; background:transparent; box-shadow:none;
+}
+.searchBox [data-slot="button"]:hover { background:transparent; }
+.dropdown [data-slot="button"][role="option"] {
+  width:100%; min-height:44px; justify-content:flex-start; padding:8px 10px;
+  border:0; text-align:left; font-size:13px; font-weight:500;
 }

@@ -1,5 +1,4 @@
 "use client";
-import {Input} from "@/components/ui/input";
 import {useEffect,useRef,useState} from "react";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 /** A legacy q= deep link resolves on the server; editing normalizes to search=. */
@@ -8,7 +7,7 @@ export function TpoDebouncedStudentSearch({initial}:{initial:string}){
  const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  useEffect(()=>()=>{if(timer.current)clearTimeout(timer.current);},[]);
- return <Input type="search" name="search" value={value} maxLength={150}
+ return <input type="search" name="search" value={value} maxLength={150}
   placeholder="Search name, roll no., email"
   aria-label="Search name, roll no., email"
   onChange={event=>{
@@ -21,5 +20,5 @@ export function TpoDebouncedStudentSearch({initial}:{initial:string}){
     router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
    },350);
   }}
-  />;
+  className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>;
 }

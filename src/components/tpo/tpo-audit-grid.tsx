@@ -48,24 +48,24 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
    cell:(row:TpoAuditRow)=><span className="break-words">{row.detail}</span>}]:[]),
   {key:"who",header:"Who",mobilePriority:"secondary",cell:row=>row.actorName},
   {key:"open",header:"Open",mobilePriority:"action",cell:row=>row.entityHref?
-    <Link href={row.entityHref} className="inline-flex min-h-9 items-center font-semibold text-link underline">Open item →</Link>:
+    <Link href={row.entityHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Open item →</Link>:
     row.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)}
-     className="inline-flex min-h-9 items-center font-semibold text-link underline">Open job →</Link>:"—"},
+     className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Open job →</Link>:"—"},
  ];
  return <section aria-label="Audit history grid" className="min-w-0 space-y-3">
-  <div className="flex flex-wrap items-end gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+  <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3">
    <label className="text-sm">What happened
     <input value={what} onChange={event=>setWhat(event.target.value)} type="search"
-     maxLength={120} className="mt-1 block min-h-9 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm" />
+     maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm" />
    </label>
    <label className="text-sm">Who
     <input value={who} onChange={event=>setWho(event.target.value)} type="search"
-     maxLength={120} className="mt-1 block min-h-9 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm" />
+     maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm" />
    </label>
    <label className="text-sm">When
     <select value={oldestFirst?"oldest":"newest"}
      onChange={e=>setOldestFirst(e.target.value==="oldest")}
-     className="mt-1 block min-h-9 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+     className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm">
      <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
     </select>
    </label>
@@ -76,9 +76,9 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
     <input type="checkbox" checked={showDetail} onChange={e=>setShowDetail(e.target.checked)} />Detail
    </label>
    <button type="button" onClick={()=>void copy()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-[var(--lms-teal-deep)]">Copy rows</button>
+    className="min-h-11 rounded border border-border px-3 text-sm text-[var(--lms-teal-deep)]">Copy rows</button>
    <button type="button" onClick={()=>{setWho("");setWhat("");setOldestFirst(false);setSelected([]);setShowAbout(true);setShowDetail(true);}}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Reset grid</button>
+    className="min-h-11 rounded border border-border px-3 text-sm">Reset grid</button>
   </div>
   <label className="inline-flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" aria-label="Select all visible rows"
    checked={visible.length>0&&visible.every(row=>selected.includes(row.kind+":"+row.id))}

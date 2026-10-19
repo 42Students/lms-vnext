@@ -59,7 +59,7 @@ export default async function SuperAdminProgramsPage() {
         description="Manage programs within the selected college safety scope."
       />
       <Link href="/admin/academics"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle">
         Open Academic Setup overview →
       </Link>
       <AdminProgramDirectory

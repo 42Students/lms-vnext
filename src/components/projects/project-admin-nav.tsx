@@ -34,7 +34,7 @@ export function ProjectAdminNav({
   return (
     <nav
       aria-label="Projects"
-      className="mb-6 flex gap-2 overflow-x-auto border-b border-border pb-3"
+      className="mb-6 flex gap-2 overflow-x-auto border-b border-border"
     >
       {PROJECT_ADMIN_LINKS.map(
         ([suffix, label]) => (
@@ -49,7 +49,7 @@ export function ProjectAdminNav({
             className={
               "whitespace-nowrap border-b-[3px] px-3 py-2 text-[14px] font-semibold transition " +
               (suffix === activePath
-                ? "border-primary bg-primary-subtle text-primary-text"
+                ? "border-primary text-primary-text"
                  : "border-transparent text-body hover:bg-primary-subtle hover:text-primary-text")
             }
           >

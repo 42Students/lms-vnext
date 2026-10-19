@@ -27,7 +27,7 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
   <label className="grid gap-1 text-sm">Audience
    <Select name="audience" value={audience}
     onChange={event=>{setAudience(event.target.value as Audience);setTarget("");setTargets([]);setSearch("");}}
-    className="min-h-9">
+    className="min-h-11 sm:min-h-9">
     <option value="COLLEGE">Whole college</option>
     <option value="PLACEMENTS">Students in placements</option>
     <option value="BATCHES">Selected batches</option>
@@ -38,7 +38,7 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
   {multiple&&options?<div className="grid min-w-48 gap-2 text-sm">
    <label className="grid gap-1">Find {targetKind==="batches"?"batches":"branches"}
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-     placeholder="Search options" className="min-h-9"/>
+     placeholder="Search options" className="min-h-11 sm:min-h-9"/>
    </label>
    <label className="grid gap-1">Choose {targetKind==="batches"?"batches":"branches"}
     <Select aria-label="Selected audience groups" multiple value={targets}
@@ -57,12 +57,12 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
     <Input type="search" value={search}
      onChange={event=>{setSearch(event.target.value);setTarget("");}}
      placeholder="Search published drives"
-     className="min-h-9 max-w-full"/>
+     className="min-h-11 sm:min-h-9 max-w-full"/>
    </label>
    <label className="grid gap-1">Choose a drive
     <Select name="targetId" required value={target}
      onChange={event=>setTarget(event.target.value)}
-     className="min-h-9 max-w-full">
+     className="min-h-11 sm:min-h-9 max-w-full">
      <option value="">{!available.length?emptyText:!filtered.length?"Nothing matches this search":"Choose an option"}</option>
      {filtered.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>

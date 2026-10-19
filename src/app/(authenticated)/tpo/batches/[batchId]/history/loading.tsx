@@ -1,1 +1,1 @@
-export default function Loading(){return <p role="status" className="text-sm text-body">Loading eligibility history…</p>;}
+export default function Loading(){return <p role="status">Loading eligibility history…</p>;}

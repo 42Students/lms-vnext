@@ -144,7 +144,7 @@ export function CollegeCreateForm({
         />
       </div>
       <div className="space-y-3 lg:col-span-4">
-       <details className="rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+       <details className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-3">
         <summary className="cursor-pointer text-sm font-semibold">Address details (optional)</summary>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
          {([

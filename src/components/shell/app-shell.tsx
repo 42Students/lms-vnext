@@ -101,8 +101,8 @@ export async function AppShell({
         <LegacyTopbar
           navigation={navigation}
           roleLabel={getShellRoleLabel(context)}
-          organizationName={currentMembership?.collegeName ??
-            selectedScopeLabel ?? context.recruiter?.companyName ??
+          organizationName={selectedScopeLabel ??
+            currentMembership?.collegeName ?? context.recruiter?.companyName ??
             "Platform administration"}
           identityUid={context.user.identityUid}
           accountVariant={accountVariant}
@@ -115,7 +115,7 @@ export async function AppShell({
 
         <Suspense fallback={null}><RouteAnnouncer /></Suspense>
         <ShellConnectivityNotice />
-        <main id="lms-main-content" tabIndex={-1} className={"mx-auto min-w-0 w-full max-w-[1600px] px-4 py-6 sm:pl-6 sm:pr-4 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
+        <main id="lms-main-content" tabIndex={-1} style={{ paddingRight: "16px" }} className={"mx-auto min-w-0 w-full max-w-[1600px] px-4 py-6 sm:pl-6 sm:pr-4 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           {children}
         </main>
       </div>
