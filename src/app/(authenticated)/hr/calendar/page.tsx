@@ -1,3 +1,4 @@
+import { CalendarGrid } from "@/components/ui/calendar-grid";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Input } from "@/components/ui/input";
@@ -555,7 +556,7 @@ export default async function HrCalendarPage({
                   </p>
                 ) : null}
               </div>
-              <div className="hidden min-w-[56rem] grid-cols-7 gap-2 md:grid">
+              <CalendarGrid className="hidden min-w-[56rem] gap-2 md:grid">
                 {[
                   "Mon",
                   "Tue",
@@ -656,7 +657,7 @@ export default async function HrCalendarPage({
                     </div>
                   );
                 })}
-              </div>
+              </CalendarGrid>
             </section>
           ) : null}
 
