@@ -86,14 +86,14 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
    });
   }catch{setError("Undo could not finish. Review the current override before trying again.");}
  }
- return <section aria-label="Show or hide a drive for selected students" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ return <section aria-label="Show or hide a drive for selected students" className="min-w-0 space-y-3 border-y border-border py-4">
   <h2 className="font-semibold">Show or hide a drive for selected students</h2>
   <p className="text-sm text-body">Apply an individual include or exclude decision with a reason. The eligibility rules still protect college and cohort targeting. Existing applications are preserved. Each selected override is version-checked so another officer’s newer decision is not overwritten.</p>
   <p role="status">{picked.length} selected from the current filtered roster (up to 200 per review).</p>
   {drives.length===0?<p>No draft or published drives can be changed here.</p>:null}
-  <div className="flex flex-wrap gap-3">
-   <label className="grid gap-1 text-sm">Drive
-    <Select className="max-w-full" value={jobId} disabled={pending} onChange={e=>{setJobId(e.target.value);setResults([]);}}
+  <div className="flex min-w-0 flex-wrap gap-3">
+   <label className="grid min-w-0 flex-1 gap-1 text-sm">Drive
+    <Select className="min-h-11 max-w-full md:min-h-9" value={jobId} disabled={pending} onChange={e=>{setJobId(e.target.value);setResults([]);}}
      >
      <option value="">Choose a drive</option>
      {drives.map(job=><option key={job.id} value={job.id}>{job.name} · {job.status}</option>)}

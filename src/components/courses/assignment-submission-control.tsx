@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import { Input } from "@/components/ui/input";
 import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
 import {Dialog} from "@/components/ui/dialog";
@@ -226,15 +227,9 @@ export function AssignmentSubmissionControl({
           role="group"
           aria-label="Submission type"
         >
-          <Button
+          <FilterChip
             type="button"
-            size="sm"
             disabled={submitting||!methodsLoaded||!mayWrite}
-            variant={
-              submissionType === "TEXT"
-                ? "primary"
-                : "secondary"
-            }
             aria-pressed={
               submissionType === "TEXT"
             }
@@ -243,16 +238,10 @@ export function AssignmentSubmissionControl({
             }
           >
             Written response
-          </Button>
-          <Button
+          </FilterChip>
+          <FilterChip
             type="button"
-            size="sm"
             disabled={submitting||!methodsLoaded||!mayLink}
-            variant={
-              submissionType === "LINK"
-                ? "primary"
-                : "secondary"
-            }
             aria-pressed={
               submissionType === "LINK"
             }
@@ -261,13 +250,12 @@ export function AssignmentSubmissionControl({
             }
           >
             External Link
-          </Button>
-          <Button type="button" size="sm" disabled={!methodsLoaded || submitting ||
+          </FilterChip>
+          <FilterChip type="button" disabled={!methodsLoaded || submitting ||
               (multipartEnabled ? !(mayWrite&&mayLink) && !(fileUploadsEnabled&&mayUpload) : !fileUploadsEnabled || !mayUpload)}
-            variant={submissionType === "FILE" ? "primary" : "secondary"}
             aria-pressed={submissionType === "FILE"} onClick={() => setSubmissionType("FILE")}>
             {multipartEnabled?"Combine work":"File Upload"}
-          </Button>
+          </FilterChip>
         </div>
 
         {methodsError?<p role="alert" className="mt-2 text-sm text-error">{methodsError}</p>:null}

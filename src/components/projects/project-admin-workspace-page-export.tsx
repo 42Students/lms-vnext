@@ -12,7 +12,7 @@ export function ProjectAdminWorkspacePageExport({items}:{items:readonly ProjectA
   document.body.appendChild(anchor);anchor.click();anchor.remove();
   window.setTimeout(()=>URL.revokeObjectURL(url),0);
  }
- return <Button variant="secondary" size="sm" onClick={download} disabled={items.length===0}>
+ return <Button variant="secondary" onClick={download} disabled={items.length===0}>
   Export this page
  </Button>;
 }

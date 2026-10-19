@@ -46,6 +46,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
   const [selectedNames, setSelectedNames] = useState<string[]>([]);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const required = Boolean(props.required);
   useEffect(() => {
     if (!showImagePreview || !previewFile || !previewFile.type.startsWith("image/")) { setPreviewUrl(null); return; }
     const url = URL.createObjectURL(previewFile);
@@ -53,13 +54,14 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
     return () => URL.revokeObjectURL(url);
   }, [previewFile, showImagePreview]);
   const percentage = typeof progress === "number" && Number.isFinite(progress) ? Math.max(0, Math.min(100, progress)) : null;
+  const unavailable = pickerUnavailable || Boolean(disabled);
   // Preserve every applicable assistive description when a picker is disabled
   // or rejects a file; an error must not make the size/type guidance vanish.
   const describedBy = [...new Set([
     ...(props["aria-describedby"]?.split(/\s+/).filter(Boolean) ?? []),
     helper ? `${id}-help` : null,
-    error && !pickerUnavailable && !disabled ? `${id}-error` : null,
-    (pickerUnavailable || disabled) ? `${id}-unavailable` : null,
+    error && !unavailable ? `${id}-error` : null,
+    unavailable ? `${id}-unavailable` : null,
   ].filter((value): value is string => Boolean(value)))].join(" ") || undefined;
   const inputRef = useRef<HTMLInputElement | null>(null);
   const selectedRef = useRef(false);
@@ -68,7 +70,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
   // Clearing after a picker is disabled is necessary even if the DOM input
   // unmounts: the form's parent must never retain a previously approved file.
   useEffect(() => {
-    if (pickerUnavailable || disabled) { setError(null); setSelectedNames([]); setPreviewFile(null); }
+    if (pickerUnavailable || disabled) { setError(null); setSelectedNames([]); setPreviewFile(null); setPreviewUrl(null); }
     if (!mustClearFileSelection(selectedRef.current, pickerUnavailable, Boolean(disabled))) return;
     selectedRef.current = false;
     if (inputRef.current) inputRef.current.value = "";
@@ -90,6 +92,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
       selectedRef.current = false;
       setSelectedNames([]);
       setPreviewFile(null);
+      setPreviewUrl(null);
       onFiles(null);
       event.currentTarget.value = "";
       return;
@@ -97,23 +100,28 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
     selectedRef.current = Boolean(files?.length);
     setSelectedNames(Array.from(files ?? [], file => file.name));
     setPreviewFile(files?.[0] ?? null);
+    setPreviewUrl(null);
     setError(null);
     onFiles(files);
   }
   return <div className={cx("min-w-0 space-y-2", className)} data-slot="file-upload">
-    <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</label>
+    <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      {label}{required ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}
+      {required ? <span className="sr-only"> required</span> : null}
+    </label>
     {pickerUnavailable ? <p role="status" className="text-[13px] leading-5 text-[var(--lms-body-text)]">File selection is unavailable in this app view. {fallback ? "Use the alternative below." : "Open this form in a browser that supports file selection."}</p> :
       <Input {...props} ref={bindInput} id={id} type="file" accept={accept} disabled={disabled} onChange={handleChange}
-        aria-invalid={pickerUnavailable || disabled ? undefined : error ? true : props["aria-invalid"]}
+        aria-invalid={unavailable ? undefined : error ? true : props["aria-invalid"]}
         aria-describedby={describedBy}
-        aria-errormessage={error && !pickerUnavailable && !disabled ? `${id}-error` : undefined}
-        className="block min-h-9 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3 py-2 text-[14px] text-foreground file:mr-3 file:rounded-[var(--lms-radius-control)] file:border-0 file:bg-[var(--lms-primary-subtle)] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[var(--lms-primary-text)] aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[var(--lms-error-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-invalid:focus-visible:outline-[var(--lms-error)] disabled:opacity-50 motion-reduce:transition-none" />}
+        aria-errormessage={error && !unavailable ? `${id}-error` : props["aria-errormessage"]}
+        aria-required={required || undefined}
+        className="block min-h-9 max-[767px]:min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3 py-2 text-[14px] text-foreground file:mr-3 file:rounded-[var(--lms-radius-control)] file:border-0 file:bg-[var(--lms-primary-subtle)] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[var(--lms-primary-text)] aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[var(--lms-error-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-invalid:focus-visible:outline-[var(--lms-error)] disabled:opacity-50 motion-reduce:transition-none" />}
     {helper ? <p id={`${id}-help`} className="text-[13px] leading-5 text-[var(--lms-body-text)]">{helper}</p> : null}
     {showSelectedFiles && selectedNames.length > 0 && !pickerUnavailable && !disabled
       ? <ul aria-label="Selected files" className="space-y-1 text-[13px] leading-5 text-[var(--lms-body-text)]">
           {selectedNames.map((name, index) => <li key={`${index}-${name}`} className="min-w-0 break-all">{name}</li>)}
         </ul> : null}
-    {showImagePreview && previewUrl && !pickerUnavailable && !disabled
+    {showImagePreview && previewFile && previewUrl && !pickerUnavailable && !disabled
       ? <div data-slot="image-upload-preview" className="rounded-[10px] border border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)] p-2">
           <img src={previewUrl} alt={`${label} preview`} className="max-h-40 max-w-full rounded-[6px] object-contain" />
         </div> : null}
@@ -122,7 +130,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
           className="h-2 w-full overflow-hidden rounded-full bg-[var(--lms-primary-light)]">
           <div className="h-full rounded-full bg-[var(--lms-primary)] transition-[width] duration-150 motion-reduce:transition-none" style={{ width: `${percentage}%` }} />
         </div> : null}
-    {error ? <p id={`${id}-error`} role="alert" className="text-[12px] leading-5 text-[var(--lms-error-text)]">{error}</p> : null}
+    {error && !unavailable ? <p id={`${id}-error`} role="alert" className="text-[12px] leading-5 text-[var(--lms-error-text)]">{error}</p> : null}
     {fallback ? <div className="min-w-0 space-y-2">{fallback}</div> : null}
     {(pickerUnavailable || disabled) ? <p id={`${id}-unavailable`} role="alert" className="text-[13px] leading-5 text-[var(--lms-body-text)]">This upload cannot continue with the file picker disabled. {fallback ? "Use the alternative provided." : "Enable file selection before continuing."}</p> : null}
   </div>;

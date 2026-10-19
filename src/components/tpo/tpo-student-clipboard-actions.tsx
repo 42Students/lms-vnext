@@ -23,7 +23,7 @@ export function TpoStudentClipboardActions({rows,selected,onSelect}:{
   setMissing(result.missing);
   setMessage("Matched "+result.found.length+" of "+result.requested+" roll number(s) on this page.");
  }
- return <section className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 print:hidden">
+ return <section className="min-w-0 space-y-2 border-y border-border py-3 print:hidden">
   <div className="flex flex-wrap items-center gap-2">
    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" onClick={()=>void copy()} >
     Copy {selected.length?"selected":"visible"} rows
@@ -34,14 +34,14 @@ export function TpoStudentClipboardActions({rows,selected,onSelect}:{
    </Button>
   </div>
   {open?<div className="space-y-2">
-   <label className="grid gap-2 text-sm font-semibold">Roll numbers (one per line, space or comma separated)
+   <label className="grid min-w-0 gap-2 text-sm font-semibold">Roll numbers (one per line, space or comma separated)
     <Textarea rows={3} maxLength={15000} value={text} className="min-h-11" onChange={e=>setText(e.target.value)}
      /></label>
    <Button variant="primary" type="button" className="min-h-11 md:min-h-9" disabled={!text.trim()} onClick={paste}
     >
     Select matching students on this page
    </Button>
-   {missing.length?<p role="alert" className="text-sm text-warning">Not on this page: {missing.slice(0,30).join(", ")}{missing.length>30?" and "+(missing.length-30)+" more":""}.</p>:null}
+   {missing.length?<p role="alert" className="text-sm text-warning-text">Not on this page: {missing.slice(0,30).join(", ")}{missing.length>30?" and "+(missing.length-30)+" more":""}.</p>:null}
   </div>:null}
   {message?<p role="status" className="text-xs text-muted-foreground">{message}</p>:null}
  </section>;

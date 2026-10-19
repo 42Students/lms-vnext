@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
@@ -33,21 +34,21 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   className="space-y-4 border-b border-border pb-5">
   <h2 className="text-lg font-semibold text-foreground">Additional metadata</h2>
   <p className="text-sm text-muted-foreground">Edit optional text fields. Existing non-text metadata is preserved unchanged. Never enter passwords or identity numbers.</p>
-  {rows.length>5?<label className="block text-sm text-body">Find metadata
+  {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find metadata
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      className="mt-1 min-h-11 w-full min-[768px]:min-h-9"/>
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
-    <Button variant="secondary" type="button" className="min-h-11 rounded-[8px] border border-border px-3 text-sm font-medium min-[768px]:min-h-9" onClick={()=>setSearch("")}>Clear Metadata search</Button>
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setSearch("")}>Clear Metadata search</Button>
    </div>:null}
   {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No metadata fields match. Clear the search to view all.</p>:null}
-  {visibleRows.map(({row,index})=><div key={row.id} className="grid min-w-0 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 min-[768px]:grid-cols-[1fr_2fr_auto] min-[768px]:items-end">
-   <label className="min-w-0 text-sm font-semibold text-body">Field {index+1}
+  {visibleRows.map(({row,index})=><div key={row.id} className="grid min-w-0 gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3 min-[768px]:grid-cols-[1fr_2fr_auto] min-[768px]:items-end">
+   <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Field {index+1}
     <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0"
      maxLength={120} required disabled={pending} value={row.key} onChange={event=>edit(row.id,"key",event.target.value)}/>
    </label>
-   <label className="min-w-0 text-sm font-semibold text-body">Value
+   <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Value
     <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0"
      maxLength={5000} disabled={pending} value={row.value} onChange={event=>edit(row.id,"value",event.target.value)}/>
    </label>
@@ -57,8 +58,8 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
     Remove draft
    </Button>
   </div>)}
-  {dirty&&issue?<p role="alert" className="text-sm text-error">{issue}</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {dirty&&issue?<Alert tone="error">{issue}</Alert>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   <div className="flex flex-wrap gap-3">
    <Button variant="secondary" type="button" disabled={pending||rows.length>=100} className="min-h-11 min-[768px]:min-h-9"
      onClick={async()=>{

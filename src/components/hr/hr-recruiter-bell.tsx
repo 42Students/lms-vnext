@@ -92,7 +92,7 @@ export function HrRecruiterBell(){
  const panelFooter=<><div role="group" aria-label="Recruiter notification actions" className="flex flex-wrap items-center justify-between gap-3">
     <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
     {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
-      variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
+      variant="secondary" className="min-h-11 md:min-h-9">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>
    {saveError?<Alert tone="error" className="mt-2">{saveError}</Alert>:null}</>;
  const panelBody=<>
@@ -111,7 +111,7 @@ export function HrRecruiterBell(){
   <Button ref={triggerRef} type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"}
    aria-expanded={open} aria-haspopup="dialog" aria-busy={loading} aria-controls={open?(mobile?"hr-topbar-mobile-notifications":"hr-topbar-desktop-notifications"):undefined}
    onClick={()=>setOpen(value=>!value)}
-   variant="secondary" className="relative !h-11 !w-11 !min-w-11 !p-0 sm:!h-9 sm:!w-9 sm:!min-w-9">
+   variant="secondary" className="relative !h-11 !w-11 !min-w-11 !p-0 md:!h-9 md:!w-9 md:!min-w-9">
    <ShellNavGlyph name="bell"/>
    {unread>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-error)] px-1 text-[10px] leading-3 text-white">{unread>99?"99+":unread}</span>:null}
   </Button>

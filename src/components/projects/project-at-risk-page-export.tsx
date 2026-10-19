@@ -22,7 +22,7 @@ export function ProjectAtRiskPageExport({rows,collegeId}:{rows:Row[];collegeId:s
   document.body.appendChild(anchor);anchor.click();anchor.remove();
   window.setTimeout(()=>URL.revokeObjectURL(url),0);
  }
- return <Button variant="secondary" size="sm" onClick={save} disabled={!rows.length}>
+ return <Button variant="secondary" onClick={save} disabled={!rows.length}>
   Export this page
  </Button>;
 }

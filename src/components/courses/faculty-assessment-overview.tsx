@@ -90,8 +90,8 @@ export function FacultyAssessmentOverview({
         </Badge>
       </div>
 
-      <Disclosure title={kind==="QUIZ"?"Quizzes by Course":"Assignments by Course"} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
-        <ul className="mt-3 grid gap-2 text-sm text-body sm:grid-cols-2">
+      <Disclosure title={kind==="QUIZ"?"Quizzes by Course":"Assignments by Course"} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+        <ul className="mt-3 grid gap-2 text-sm text-body md:grid-cols-2">
           {Array.from(new Set(items.map(item=>item.courseCode))).sort().map(code=>
             <li key={code} className="flex justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border px-3 py-2">
               <span>{items.find(item=>item.courseCode===code)?.courseName??code}</span>
@@ -100,7 +100,7 @@ export function FacultyAssessmentOverview({
         </ul>
       </Disclosure>
       <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-3">
-        <label className="text-sm font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-body">
           Course / Section
           <Select
             value={courseId}
@@ -118,7 +118,7 @@ export function FacultyAssessmentOverview({
             ))}
           </Select>
         </label>
-        <label className="text-sm font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-body">
           Status
           <Select
             value={status}
@@ -135,7 +135,7 @@ export function FacultyAssessmentOverview({
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
-        <label className="text-sm font-semibold text-body">
+        <label className="text-[13px] font-semibold leading-4 text-body">
           Search assessments
           <Input
             className="mt-1.5"
@@ -164,7 +164,7 @@ export function FacultyAssessmentOverview({
           {rows.map((item) => (
             <article
               key={`${item.deliveryId}:${item.id}`}
-              className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 sm:p-5"
+              className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 md:p-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -194,7 +194,7 @@ export function FacultyAssessmentOverview({
                     <p className="mt-2 line-clamp-2 text-sm text-body">{item.description}</p>
                   ) : null}
                 </div>
-                <div className="grid w-full min-w-0 grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+                <div className="grid w-full min-w-0 grid-cols-1 gap-2 md:flex md:w-auto md:flex-wrap">
                   {item.facultyOwned ? (
                     <>
                       <FacultyAssessmentEditor
@@ -221,7 +221,7 @@ export function FacultyAssessmentOverview({
                       <Link
                         href={"/teacher/courses/" + encodeURIComponent(item.deliveryId) +
                           (item.kind === "QUIZ" ? "/quizzes/manage" : "/assignments/manage")}
-                        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]"
+                        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
                       >
                         Manage {item.kind === "QUIZ" ? "quiz" : "assignment"}
                       </Link>
@@ -238,18 +238,18 @@ export function FacultyAssessmentOverview({
                   ) : null}
                   <Link
                     href={`/teacher/report/${item.kind === "QUIZ" ? "quiz" : "assignment"}/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}`}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]"
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
                   >
                     View Report
                   </Link>
                   {item.kind==="ASSIGNMENT"?<Link
                     href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}#submissions`}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">
                     View submissions
                   </Link>:null}
                   <Link
                     href={facultyCourseTabHref(item.deliveryId, "blueprint")}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]"
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
                   >
                     Open Course
                   </Link>
@@ -297,7 +297,7 @@ export function FacultyAssessmentOverview({
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            className="min-h-11 text-body hover:bg-primary-subtle sm:min-h-9" >
+            className="min-h-11 text-body hover:bg-primary-subtle md:min-h-[var(--lms-control-height)]" >
             Previous
           </Button>
           <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
@@ -305,7 +305,7 @@ export function FacultyAssessmentOverview({
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            className="min-h-11 text-body hover:bg-primary-subtle sm:min-h-9" >
+            className="min-h-11 text-body hover:bg-primary-subtle md:min-h-[var(--lms-control-height)]" >
             Next
           </Button>
         </nav>

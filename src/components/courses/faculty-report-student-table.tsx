@@ -1,7 +1,6 @@
 "use client";
-import {Button} from "@/components/ui/button";
-
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
@@ -35,7 +34,7 @@ export function FacultyReportStudentTable({
           </p>
         </div>
         {rows.length > 8 ? (
-          <label className="w-full max-w-sm text-xs font-semibold text-body">
+          <label className="w-full max-w-sm text-[13px] font-semibold leading-4 text-body">
             Search students
             <Input
               aria-label="Search report students"
@@ -49,16 +48,16 @@ export function FacultyReportStudentTable({
       </div>
 
       {rows.length === 0 ? (
-        <p className="mt-4 text-sm text-body">{emptyMessage}</p>
+        <EmptyState title={emptyMessage} />
       ) : result.rows.length === 0 ? (
-        <p className="mt-4 text-sm text-body">No students match this search.</p>
+        <EmptyState title="No students match this search." />
       ) : (
         <div className="mt-4 min-w-0">
           <DataTable
             caption={title}
             rows={result.rows}
             getRowKey={student=>student.id}
-            empty={<p className="text-sm text-body">No students match this search.</p>}
+            empty={<EmptyState title="No students match this search." />}
             columns={[
               {key:"learner",header:"Learner",mobilePriority:"primary" as const,
                 cell:(student)=><strong className="break-words text-foreground">{student.name}</strong>},
@@ -78,12 +77,12 @@ export function FacultyReportStudentTable({
       )}
 
       {result.pages > 1 ? (
-        <nav aria-label="Report student pages" className="mt-4 flex items-center justify-between gap-3">
+        <nav aria-label="Report student pages" className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <Button variant="secondary"
             type="button"
             disabled={result.page === 1}
             onClick={() => setRequestedPage(result.page - 1)}
-            className="min-h-11"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
           >
             Previous
           </Button>
@@ -92,7 +91,7 @@ export function FacultyReportStudentTable({
             type="button"
             disabled={result.page >= result.pages}
             onClick={() => setRequestedPage(result.page + 1)}
-            className="min-h-11"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
           >
             Next
           </Button>

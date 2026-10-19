@@ -1,6 +1,7 @@
 "use client";
 
 import { MetricBar } from "@/components/ui/metric-bar";
+import progressStyles from "./learner-course-progress.module.css";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -429,7 +430,7 @@ export function LearnerCourseList({
                           </span>
                         </div>
                         {safeCardProgress(row) !== null ?
-                          <MetricBar role="progressbar" label="Course progress"
+                          <MetricBar role="progressbar" label="Course progress" className={progressStyles.track}
                             value={safeCardProgress(row)!} maximum={100} unit="percent" />
                           : <p className="text-xs text-muted-foreground">No published learning items to measure.</p>}
                         {!row.readOnly && row.overdueAssignments ? (

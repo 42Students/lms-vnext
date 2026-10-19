@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import progressStyles from "@/components/courses/learner-course-progress.module.css";
 import { StatTile } from "@/components/ui/stat-tile";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
@@ -70,7 +71,7 @@ export default async function LearnerCourseProgressPage({
                 </StatusBadge>
               </div>
               {lesson.percentage !== null ? (
-                <MetricBar className="mt-3" role="progressbar"
+                <MetricBar className={progressStyles.track+" mt-3"} role="progressbar"
                   label={lesson.name + " completion"} value={lesson.percentage} maximum={100} unit="percent" />
               ) : null}
               {lesson.items.length ? (

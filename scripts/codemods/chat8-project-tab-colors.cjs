@@ -7,7 +7,7 @@
  *
  * The shared Tabs already owns font/gap/scroll/focus/ink animation; only its
  * active/hover text token differs (#1a95a1 vs legacy #26bac7). Add the
- * project-scoped CSS module class to the three owned link-tab wrappers.
+ * project-scoped CSS module class to the four owned link-tab wrappers.
  *
  * Usage: node scripts/codemods/chat8-project-tab-colors.cjs [--apply]
  * Do not touch src/components/ui/* or src/styles/legacy-skin.css.
@@ -22,6 +22,7 @@ const files = [
   "src/components/projects/mentor-project-tabs.tsx",
   "src/components/projects/learner-project-tabs.tsx",
   "src/components/projects/super-admin-template-tabs.tsx",
+  "src/components/projects/project-admin-nav.tsx",
 ];
 const results = [], skipped = [];
 for (const rel of files) {
