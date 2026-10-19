@@ -232,7 +232,7 @@ export function AcademicsCreatePanel({
     <section className="grid min-w-0 gap-[var(--lms-space-5)] xl:grid-cols-2">
       <form
         onSubmit={createPeriod}
-        className="border-t border-border pt-5"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New academic period
@@ -314,7 +314,7 @@ export function AcademicsCreatePanel({
 
       <form
         onSubmit={createProgram}
-        className="border-t border-border pt-5"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New program
@@ -410,7 +410,7 @@ export function AcademicsCreatePanel({
 
       <form
         onSubmit={createCohort}
-        className="border-t border-border pt-5"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New cohort / batch
@@ -550,7 +550,7 @@ export function AcademicsCreatePanel({
 
       <form
         onSubmit={createSection}
-        className="border-t border-border pt-5"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New section
