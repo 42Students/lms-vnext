@@ -1,4 +1,6 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -102,7 +104,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             </div>
             <label className="block text-sm font-semibold text-body">
               Reason shown to students
-              <textarea
+              <Textarea
                 required
                 name="reason"
                 value={reason}
@@ -119,7 +121,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
           <p className="text-xs text-body">If the drive or counts change after this preview, the cancellation is rejected.</p>
           {error ? <p role="alert" className="text-sm text-foreground">{error}</p> : null}
           <label className="flex items-start gap-2 text-sm text-body">
-            <input type="checkbox" checked={reviewed} onChange={event=>setReviewed(event.target.checked)}
+            <Checkbox checked={reviewed} onChange={event=>setReviewed(event.target.checked)}
               disabled={pending} className="mt-1 h-4 w-4 accent-primary"/>
             I reviewed the affected applications, rounds and offers. I understand cancellation
             will notify affected learners and cannot be silently undone.
