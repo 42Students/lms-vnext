@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 "use client";
 import { Input } from "@/components/ui/input";
 
@@ -114,11 +115,11 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Expected end period (optional)
           <Select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
@@ -129,15 +130,15 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Academic Year
           <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)}
-            placeholder="2026–2027" className="min-h-[var(--lms-control-height)] "/>
+            placeholder="2026–2027" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Start Date
           <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}
-            className="min-h-[var(--lms-control-height)] "/>
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">End Date
           <Input type="date" value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)}
-            className="min-h-[var(--lms-control-height)] "/>
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
         </label>
         <div className="sm:col-span-2 lg:col-span-5 text-sm text-body">
           <p>Start Date: {start?.startDate??"Choose start period"} · End Date: {end?.endDate??"Not specified"}</p>
@@ -278,11 +279,11 @@ export function CollegeCohortRowActions({ row, periods }: {
         <p className="text-sm text-muted-foreground">Program and starting period cannot change after creation.</p>
         <label className="grid gap-1 text-sm font-medium text-body">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Expected end period
           <Select value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
@@ -294,13 +295,13 @@ export function CollegeCohortRowActions({ row, periods }: {
           </Select>
         </label>
         <label className="grid gap-1 text-sm">Academic Year
-          <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-[var(--lms-control-height)] "/>
+          <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">Start Date
-          <Input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-[var(--lms-control-height)] "/>
+          <Input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">End Date
-          <Input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-[var(--lms-control-height)] "/>
+          <Input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         {endDateLocked && <p className="text-xs text-muted-foreground">
           End period is locked because the batch has enrolled learners or classes. Name and code remain editable.
