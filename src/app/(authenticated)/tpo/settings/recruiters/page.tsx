@@ -136,7 +136,7 @@ export default async function TpoRecruiterAccessPage({
       />
 
       {communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
-       <p role="status" className="rounded border border-border p-4 text-sm">Recruiter access duration settings are not available yet.</p>}
+       <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">Recruiter access duration settings are not available yet.</p>}
       <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
 
       <TpoRecruiterGrantForm companies={linkedCompanies.companies.map((company) => ({
