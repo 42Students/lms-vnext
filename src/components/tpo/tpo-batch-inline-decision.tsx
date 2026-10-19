@@ -73,7 +73,7 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
     <div className="flex gap-2">
      <button type="button" onClick={()=>setReasonOpen(false)} className="min-h-11 rounded border border-border px-3">Cancel</button>
      <button type="button" disabled={!valid} onClick={()=>setReasonOpen(false)}
-      className="min-h-11 rounded bg-primary px-3 text-foreground disabled:opacity-50">Use reason</button>
+      className="min-h-11 rounded bg-primary px-3 text-on-primary disabled:opacity-50">Use reason</button>
     </div>
    </div></Dialog>
   </div>:null}
