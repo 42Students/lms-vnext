@@ -43,7 +43,7 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
   <div className={expanded?"flex flex-wrap gap-2":"hidden flex-wrap gap-2 md:flex"}>
    <Button variant="secondary" type="button" onClick={selectVisible} className="min-h-11 px-3">Select visible</Button>
    <Button variant="secondary" type="button" onClick={()=>{setSelected([]);setMessage("");}}
-    className="min-h-9 px-3">Clear selection</Button>
+    className="min-h-11 px-3">Clear selection</Button>
    <Button variant="secondary" type="button" disabled={!valid.length} onClick={()=>void copy()}
     className="min-h-9 px-3">Copy selected</Button>
    {downloadHref?<a href={downloadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Export filtered page CSV</a>:null}
