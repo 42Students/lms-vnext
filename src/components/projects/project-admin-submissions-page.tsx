@@ -11,6 +11,7 @@ import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { ListToolbar } from "@/components/ui/list-toolbar";
+import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref,projectAdminSubmissionHref } from "@/modules/projects/admin-submissions-query-model";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
@@ -181,9 +182,9 @@ export async function ProjectAdminSubmissionsPage({
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>;
         })}
-      </div>:<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
+      </div>:<Banner tone="warning">
         Submission totals are temporarily unavailable. The filtered submissions below are still visible.
-      </p>}
+      </Banner>}
       <ProjectAdminFilters
         query={query}
         includeSubmissionStatus
