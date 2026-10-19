@@ -9,7 +9,7 @@ export default function FacultyNotificationsError({ reset }: {
 }) {
   return (
     <section role="alert" className="rounded-xl border border-border bg-surface p-8 text-center">
-      <h1 className="text-lg font-semibold text-foreground">Unable to load Notifications</h1>
+      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Unable to load Notifications</h1>
       <p className="mt-2 text-sm text-body">
         This Faculty page could not load. Retry to recheck current access.
       </p>

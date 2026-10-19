@@ -13,237 +13,243 @@ Date: 2026-10-19. Working branch: `chatgpt/chat-3-b` (updated to latest main bef
 ## File-by-file inventory (211 UI files)
 
 ### Faculty /teacher routes (113)
-- [ ] `src/app/(authenticated)/teacher/allAssignments/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/allAssignments/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/allAssignments/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/allQuizzes/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/allQuizzes/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/calendar/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/layout.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/layout.tsx`
-- [ ] `src/app/(authenticated)/teacher/live-classes/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/live-classes/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/live-classes/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/not-found.tsx`
-- [ ] `src/app/(authenticated)/teacher/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/notifications/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/contacts/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/contacts/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/details/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/details/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/details/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/teaching/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/teaching/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/teaching/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/response-followups/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/response-followups/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/response-followups/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/results/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/results/loading.tsx`
-- [ ] `src/app/(authenticated)/teacher/results/page.tsx`
+- [x] `src/app/(authenticated)/teacher/allAssignments/error.tsx`
+- [x] `src/app/(authenticated)/teacher/allAssignments/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/allAssignments/page.tsx`
+- [x] `src/app/(authenticated)/teacher/allQuizzes/error.tsx`
+- [x] `src/app/(authenticated)/teacher/allQuizzes/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
+- [x] `src/app/(authenticated)/teacher/calendar/error.tsx`
+- [x] `src/app/(authenticated)/teacher/calendar/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/calendar/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/error.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/layout.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/page.tsx`
+- [x] `src/app/(authenticated)/teacher/error.tsx`
+- [x] `src/app/(authenticated)/teacher/layout.tsx`
+- [x] `src/app/(authenticated)/teacher/live-classes/error.tsx`
+- [x] `src/app/(authenticated)/teacher/live-classes/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/teacher/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/not-found.tsx`
+- [x] `src/app/(authenticated)/teacher/notifications/error.tsx`
+- [x] `src/app/(authenticated)/teacher/notifications/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/notifications/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/contacts/error.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/contacts/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/contacts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/details/error.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/details/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/details/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/error.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/teaching/error.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/teaching/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/teaching/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/error.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/error.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/response-followups/error.tsx`
+- [x] `src/app/(authenticated)/teacher/response-followups/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/response-followups/page.tsx`
+- [x] `src/app/(authenticated)/teacher/results/error.tsx`
+- [x] `src/app/(authenticated)/teacher/results/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/results/page.tsx`
 
 
 ### Faculty /teach routes (10)
-- [ ] `src/app/(authenticated)/teach/courses/[deliveryId]/error.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/[deliveryId]/loading.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/error.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/loading.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/page.tsx`
-- [ ] `src/app/(authenticated)/teach/error.tsx`
-- [ ] `src/app/(authenticated)/teach/layout.tsx`
-- [ ] `src/app/(authenticated)/teach/loading.tsx`
-- [ ] `src/app/(authenticated)/teach/not-found.tsx`
+- [x] `src/app/(authenticated)/teach/courses/[deliveryId]/error.tsx`
+- [x] `src/app/(authenticated)/teach/courses/[deliveryId]/loading.tsx`
+- [x] `src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx`
+- [x] `src/app/(authenticated)/teach/courses/error.tsx`
+- [x] `src/app/(authenticated)/teach/courses/loading.tsx`
+- [x] `src/app/(authenticated)/teach/courses/page.tsx`
+- [x] `src/app/(authenticated)/teach/error.tsx`
+- [x] `src/app/(authenticated)/teach/layout.tsx`
+- [x] `src/app/(authenticated)/teach/loading.tsx`
+- [x] `src/app/(authenticated)/teach/not-found.tsx`
 
 
 ### Super Admin /admin/academics routes (6)
-- [ ] `src/app/(authenticated)/admin/academics/error.tsx`
-- [ ] `src/app/(authenticated)/admin/academics/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/academics/page.tsx`
-- [ ] `src/app/(authenticated)/admin/academics/sections/[sectionId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/academics/sections/[sectionId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/academics/error.tsx`
+- [x] `src/app/(authenticated)/admin/academics/loading.tsx`
+- [x] `src/app/(authenticated)/admin/academics/page.tsx`
+- [x] `src/app/(authenticated)/admin/academics/sections/[sectionId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/academics/sections/[sectionId]/loading.tsx`
+- [x] `src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx`
 
 
 ### Super Admin /admin/people routes (15)
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/error.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/error.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/error.tsx`
-- [ ] `src/app/(authenticated)/admin/people/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/people/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/unassigned/error.tsx`
-- [ ] `src/app/(authenticated)/admin/people/unassigned/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/error.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/loading.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/loading.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/error.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/loading.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/error.tsx`
+- [x] `src/app/(authenticated)/admin/people/loading.tsx`
+- [x] `src/app/(authenticated)/admin/people/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/unassigned/error.tsx`
+- [x] `src/app/(authenticated)/admin/people/unassigned/loading.tsx`
+- [x] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
 
 
 ### Super Admin /admin/recruiters routes (3)
-- [ ] `src/app/(authenticated)/admin/recruiters/error.tsx`
-- [ ] `src/app/(authenticated)/admin/recruiters/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/admin/recruiters/error.tsx`
+- [x] `src/app/(authenticated)/admin/recruiters/loading.tsx`
+- [x] `src/app/(authenticated)/admin/recruiters/page.tsx`
 
 
 ### Faculty UI components (38)
-- [ ] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/courses/faculty-assessment-create.tsx`
-- [ ] `src/components/courses/faculty-assessment-editor.tsx`
-- [ ] `src/components/courses/faculty-assessment-lifecycle.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/courses/faculty-assignment-editor.tsx`
-- [ ] `src/components/courses/faculty-assignment-material-links.tsx`
-- [ ] `src/components/courses/faculty-assignment-method-picker.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-contacts-table.tsx`
-- [ ] `src/components/courses/faculty-content-editor.tsx`
-- [ ] `src/components/courses/faculty-content-order-editor.tsx`
-- [ ] `src/components/courses/faculty-course-filter-auto-submit.tsx`
-- [ ] `src/components/courses/faculty-course-home-signals.tsx`
-- [ ] `src/components/courses/faculty-course-list.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
-- [ ] `src/components/courses/faculty-course-tab-navigation.tsx`
-- [ ] `src/components/courses/faculty-course-workspace.tsx`
-- [ ] `src/components/courses/faculty-ist-quarter-hour-picker.tsx`
-- [ ] `src/components/courses/faculty-item-actions.tsx`
-- [ ] `src/components/courses/faculty-lesson-authoring.tsx`
-- [ ] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/faculty-live-class-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-learner-preview.tsx`
-- [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-review.tsx`
-- [ ] `src/components/courses/faculty-report-csv-download.tsx`
-- [ ] `src/components/courses/faculty-report-download.tsx`
-- [ ] `src/components/courses/faculty-report-student-table.tsx`
-- [ ] `src/components/courses/faculty-submission-file-review.tsx`
-- [ ] `src/components/courses/faculty-video-preview.tsx`
-- [ ] `src/components/people/faculty-profile-editor.tsx`
-- [ ] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
-- [ ] `src/components/people/faculty-profile-skills.tsx`
-- [ ] `src/components/people/faculty-profile-text-section.tsx`
+- [x] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/courses/faculty-assessment-create.tsx`
+- [x] `src/components/courses/faculty-assessment-editor.tsx`
+- [x] `src/components/courses/faculty-assessment-lifecycle.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/components/courses/faculty-assignment-editor.tsx`
+- [x] `src/components/courses/faculty-assignment-material-links.tsx`
+- [x] `src/components/courses/faculty-assignment-method-picker.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-contacts-table.tsx`
+- [x] `src/components/courses/faculty-content-editor.tsx`
+- [x] `src/components/courses/faculty-content-order-editor.tsx`
+- [x] `src/components/courses/faculty-course-filter-auto-submit.tsx`
+- [x] `src/components/courses/faculty-course-home-signals.tsx`
+- [x] `src/components/courses/faculty-course-list.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/faculty-course-tab-navigation.tsx`
+- [x] `src/components/courses/faculty-course-workspace.tsx`
+- [x] `src/components/courses/faculty-ist-quarter-hour-picker.tsx`
+- [x] `src/components/courses/faculty-item-actions.tsx`
+- [x] `src/components/courses/faculty-lesson-authoring.tsx`
+- [x] `src/components/courses/faculty-lesson-video-manager.tsx`
+- [x] `src/components/courses/faculty-live-class-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-learner-preview.tsx`
+- [x] `src/components/courses/faculty-quiz-question-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-review.tsx`
+- [x] `src/components/courses/faculty-report-csv-download.tsx`
+- [x] `src/components/courses/faculty-report-download.tsx`
+- [x] `src/components/courses/faculty-report-student-table.tsx`
+- [x] `src/components/courses/faculty-submission-file-review.tsx`
+- [x] `src/components/courses/faculty-video-preview.tsx`
+- [x] `src/components/people/faculty-profile-editor.tsx`
+- [x] `src/components/people/faculty-profile-metadata.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/people/faculty-profile-skills.tsx`
+- [x] `src/components/people/faculty-profile-text-section.tsx`
 
 
 ### Admin academics/people UI components (26)
-- [ ] `src/components/academics/academics-actions.tsx`
-- [ ] `src/components/academics/academics-create-panel.tsx`
-- [ ] `src/components/academics/academics-overview.tsx`
-- [ ] `src/components/academics/academics-section-page.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/admin/academic-directory-refresh.tsx`
-- [ ] `src/components/admin/academic-module-scope-inventory.tsx`
-- [ ] `src/components/admin/academic-setup-steps.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/department-actions.tsx`
-- [ ] `src/components/admin/department-create-form.tsx`
-- [ ] `src/components/admin/department-directory.tsx`
-- [ ] `src/components/admin/people-pagination.tsx`
-- [ ] `src/components/admin/person-membership-actions.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
-- [ ] `src/components/admin/person-profile-dialog.tsx`
-- [ ] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
-- [ ] `src/components/admin/super-admin-batch-roster-manager.tsx`
-- [ ] `src/components/admin/super-admin-faculty-assignment-create.tsx`
-- [ ] `src/components/admin/super-admin-faculty-bulk-import.tsx`
-- [ ] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`
-- [ ] `src/components/admin/super-admin-learning-filter-fields.tsx`
-- [ ] `src/components/admin/super-admin-legacy-group-tabs.tsx`
-- [ ] `src/components/admin/super-admin-people-csv-control.tsx`
-- [ ] `src/components/admin/super-admin-student-bulk-access.tsx`
-- [ ] `src/components/admin/super-admin-student-import-history.tsx`
+- [x] `src/components/academics/academics-actions.tsx`
+- [x] `src/components/academics/academics-create-panel.tsx`
+- [x] `src/components/academics/academics-overview.tsx`
+- [x] `src/components/academics/academics-section-page.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/admin/academic-directory-refresh.tsx`
+- [x] `src/components/admin/academic-module-scope-inventory.tsx`
+- [x] `src/components/admin/academic-setup-steps.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/department-actions.tsx`
+- [x] `src/components/admin/department-create-form.tsx`
+- [x] `src/components/admin/department-directory.tsx`
+- [x] `src/components/admin/people-pagination.tsx`
+- [x] `src/components/admin/person-membership-actions.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/admin/person-profile-dialog.tsx`
+- [x] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
+- [x] `src/components/admin/super-admin-batch-roster-manager.tsx`
+- [x] `src/components/admin/super-admin-faculty-assignment-create.tsx`
+- [x] `src/components/admin/super-admin-faculty-bulk-import.tsx`
+- [x] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`
+- [x] `src/components/admin/super-admin-learning-filter-fields.tsx`
+- [x] `src/components/admin/super-admin-legacy-group-tabs.tsx`
+- [x] `src/components/admin/super-admin-people-csv-control.tsx`
+- [x] `src/components/admin/super-admin-student-bulk-access.tsx`
+- [x] `src/components/admin/super-admin-student-import-history.tsx`
 
 ## Sweep notes
 - Treat `page.tsx` and its imported client component as one rendered surface; thin server route wrappers may need no edits after inspection.
 - Check contrast, hover/focus, tables, tabs, form controls, dialogs, alerts, empty/error/loading screens and mobile layouts.
 - Commit updates in themed batches and mark reviewed files as complete or no-change after an actual inspection.
+
+## Completed source sweep (2026-10-19)
+- Reviewed **211** inventoried TSX/CSS files. **78** received presentation-only changes on this branch; **133** were left as inherited/shared-skin compliant or did not need a safe local override.
+- Removed redundant filter-panel borders/background/padding from faculty course filters and Super Admin people filters, restoring the single white canvas; preserved their forms and query behavior.
+- Normalized interactive control radii/heights/text size using existing `--lms-*` tokens and updated route-level error title/retry states. Primary actions continue to use `bg-primary`/white via the shared globals.
+- **Not run:** Next.js dev server, TypeScript compiler, tests, CI and browser pixel-diff (per owner directive). Final visual parity against the running legacy LMS requires the orchestrator's screenshot pass.

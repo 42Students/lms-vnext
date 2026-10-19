@@ -45,8 +45,8 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
   <div className="flex flex-wrap items-center justify-between gap-2">
    <h3 className="font-semibold">Academic hierarchy</h3>
    <div className="flex gap-2 text-sm">
-    <button type="button" className="inline-flex min-h-11 items-center underline disabled:opacity-50" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</button>
-    <button type="button" className="inline-flex min-h-11 items-center underline disabled:opacity-50" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</button>
+    <button type="button" className="inline-flex min-h-9 items-center underline disabled:opacity-50" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</button>
+    <button type="button" className="inline-flex min-h-9 items-center underline disabled:opacity-50" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</button>
    </div>
   </div>
   <p className="text-xs text-muted-foreground">{scopes.length} academic scopes loaded (including inheriting scopes). Effective values trace the configured scope hierarchy and locks; an individual learner still needs active enrollment and participation. Student counts include active learners with current enrollment in this college.</p>

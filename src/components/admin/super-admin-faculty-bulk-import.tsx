@@ -84,7 +84,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   <p className="text-sm text-body">Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional). Existing identities are verified by the server.</p>
   <div className="flex flex-wrap items-center gap-3">
    <button type="button" onClick={downloadSample}
-    className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text">Download sample CSV</button>
+    className="min-h-9 rounded border border-border px-3 text-sm font-semibold text-primary-text">Download sample CSV</button>
    <label className="text-sm font-semibold">Choose CSV
     <input type="file" accept=".csv,text/csv" disabled={busy}
       onChange={event=>void fileSelected(event.target.files?.[0]??null)}

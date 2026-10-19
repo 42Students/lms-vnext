@@ -80,7 +80,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
         </details>
       </div>
       <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
-        className="space-y-3 rounded-xl border border-border bg-surface p-4">
+        className="space-y-3">
         <FacultyCourseFilterAutoSubmit />
         <div className="grid gap-3 md:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Search courses
@@ -223,9 +223,9 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
       )}
       <nav aria-label="Faculty Courses pages" className="flex flex-wrap items-center justify-between gap-3">
         {pagination.page > 1 ? <Link href={facultyCourseListHref({...query,page:pagination.page-1})}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : <span />}
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : <span />}
         {pagination.page < pagination.totalPages ? <Link href={facultyCourseListHref({...query,page:pagination.page+1})}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
       </nav>
     </div>
   );
