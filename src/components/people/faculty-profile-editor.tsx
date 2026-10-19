@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { LoadingState } from "@/components/ui/loading-state";
 import { useRef,useState } from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
@@ -73,15 +75,14 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
     title="Reload the latest Faculty profile?" description="Any unsaved changes in every section will be lost."
     confirmLabel="Reload latest profile" onConfirm={() => window.location.reload()} />
   <p className="text-sm text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
-  {error?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-error">
+  {error?<Alert tone="error" className="space-y-2">
    <p>{error}</p>
    {needsReload?<Button variant="secondary" type="button" className="min-h-11 min-[768px]:min-h-9" onClick={()=>{
     setReloadOpen(true);
    }} >Reload latest profile</Button>:null}
-  </div>:null}
-  {pending&&savingSection?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-foreground">
-    Saving {facultyProfileSaveSectionLabel(savingSection)}…</p>:null}
-  {success?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-foreground">{success}</p>:null}
+  </Alert>:null}
+  {pending&&savingSection?<LoadingState label={"Saving "+facultyProfileSaveSectionLabel(savingSection)+"…"} />:null}
+  {success?<Alert tone="success">{success}</Alert>:null}
   <nav aria-label="Profile sections" className="min-w-0 border-b border-border pb-4">
     <p className="mb-3 text-sm font-semibold text-foreground">Jump to a profile section</p>
     <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible">{FACULTY_PROFILE_NAV.map(item=><a key={item.section}
