@@ -86,8 +86,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {hadInvalidNoticeFilters ? <Banner tone="warning" className="mt-2">Some notice filters were invalid and have been reset to safe defaults.</Banner> : null}
       </div>
       <nav aria-label="Placement notice views" className="flex flex-wrap gap-3">
-        <a href="#college-notices" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Announcements</a>
-        <a href="#personal-updates" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Updates about you ({unreadCount.available ? unreadCount.items[0] : "?"} unread)</a>
+        <a href="#college-notices" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Announcements</a>
+        <a href="#personal-updates" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Updates about you ({unreadCount.available ? unreadCount.items[0] : "?"} unread)</a>
       </nav>
       <div id="college-notices" className="scroll-mt-24"/>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
@@ -102,9 +102,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           <Input type="search" name="q" maxLength={100} defaultValue={queryText}
             placeholder="Title or message" className="min-h-11 min-w-0" />
         </label>
-        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Search</Button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Search</Button>
         {queryText ? <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey,alertQ,source})}
-          className="inline-flex min-h-9 sm:min-h-9 items-center text-sm text-primary-text underline">Clear search</Link> : null}
+          className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
         {alertQ?<Input type="hidden" name="alertQ" value={alertQ}/>:null}
@@ -120,7 +120,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
             <option value="oldest">Oldest first</option>
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Apply sort</Button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Apply sort</Button>
       </form>
       <nav aria-label="Notice filter" className={placementFilterNavClass}>
         <Link href={learnerNoticeFilterHref({pinned:false,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={!pinnedOnly ? "page" : undefined} className={placementFilterPillClass}>All notices</Link>
@@ -157,7 +157,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           That notice is not among your currently visible college notices. It may have expired or become unavailable to your membership.
           <Link href={learnerNoticeRecoveryHref(filters.focus)}
-            className="ml-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">
+            className="ml-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
             Search all my visible notices
           </Link>
         </div>
@@ -170,7 +170,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <div role="alert" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
           College notices are temporarily unavailable. Your personal placement alerts are still accessible below.
           <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}
-            className="ml-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">
+            className="ml-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
             Retry college notices
           </Link>
         </div>
@@ -204,7 +204,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
               {notice.senderLabel==="Placement cell"?<TpoNoticeAcknowledge id={notice.id}/>:null}
               {learnerNoticeHref(notice.id) ? (
                 <Link href={learnerNoticeHref(notice.id)!}
-                  className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+                  className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
                   Link to this notice
                 </Link>
               ) : null}
@@ -220,9 +220,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       )}
       {pages.total > 0 ? <nav aria-label="College notice pages" className="flex flex-wrap items-center gap-3 text-sm">
         <p className="text-muted-foreground">{pages.from}–{pages.to} of {pages.total} loaded matching notices</p>
-        {pages.page>1 ? <Link href={noticePageUrl(pages.page-1)} className="inline-flex min-h-9 sm:min-h-9 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text">Previous</Link> : null}
+        {pages.page>1 ? <Link href={noticePageUrl(pages.page-1)} className="inline-flex min-h-11 md:min-h-9 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text">Previous</Link> : null}
         <span aria-current="page">Page {pages.page} of {pages.pages}</span>
-        {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-9 sm:min-h-9 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text">Next</Link> : null}
+        {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-11 md:min-h-9 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text">Next</Link> : null}
       </nav> : null}
       <div id="personal-updates" className="scroll-mt-24"/>
       <nav aria-label="Personal alert filter" className={placementFilterNavClass}>
@@ -239,15 +239,15 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-semibold text-foreground">
           Search loaded personal alerts
           <Input type="search" name="alertQ" defaultValue={alertQ} maxLength={80}
-            placeholder="Title or message" className="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/>
+            placeholder="Title or message" className="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9"/>
         </label>
-        <Button className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text" type="submit">Search alerts</Button>
+        <Button className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text" type="submit">Search alerts</Button>
       </form>
       {alertQ ? (
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs text-muted-foreground">This search covers the latest 20 loaded personal alerts, not your full notification history.</p>
           <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,alertQ:"",sort:sortKey,source})}
-            className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             Clear personal alert search
           </Link>
         </div>
@@ -257,7 +257,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <div role="alert" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
           Personal placement alerts are temporarily unavailable; the college notice results above remain accessible.
           <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}
-            className="ml-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">Retry personal alerts</Link>
+            className="ml-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Retry personal alerts</Link>
         </div>}
 
     </div>
