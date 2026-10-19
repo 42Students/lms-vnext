@@ -32,7 +32,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
   const route = "/learn/projects/" + encodeURIComponent(projectId);
   return <section aria-label="Project Activity" className="space-y-4">
     <h2 className="text-lg font-semibold text-foreground">Activity</h2>
-    <form method="get" action={route} className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-5">
+    <form method="get" action={route} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-5">
       <input type="hidden" name="tab" value="activity" />
       <label className="text-sm font-semibold text-foreground">Activity type
         <select name="activityCategory" defaultValue={category}
@@ -52,7 +52,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <Link href={route + "?tab=activity"} className="inline-flex min-h-11 sm:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
     </form>
     {parsed.success && pageRows.length > 0 ? (
-      <div className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-3">
+      <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="min-w-0 flex-1 text-sm font-semibold text-foreground">Find in this activity page
           <input type="search" maxLength={100} value={textQuery}
             onChange={event=>setTextQuery(event.target.value)}
@@ -84,8 +84,8 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
         olderPage:parsed.success && Boolean(parsed.data.beforeTime),
         hasMore,
       })}
-    </div> : <ol className="space-y-3">{shown.map(event => <li key={event.id}
-      className="min-w-0 rounded-xl border border-border bg-surface p-4">
+    </div> : <ol className="divide-y divide-border border-y border-border">{shown.map(event => <li key={event.id}
+      className="min-w-0 py-4">
       <p className="break-words text-sm font-semibold text-foreground">{event.summary}</p>
       {event.subjectLabel ? <p className="mt-1 break-words text-sm text-body">{event.subjectLabel}</p> : null}
       <p className="mt-2 break-words text-xs text-muted-foreground">{event.actorDisplayName ?? "System"} · <time dateTime={event.occurredAt.toISOString()}>{formatter.format(event.occurredAt)} IST</time></p>

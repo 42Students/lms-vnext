@@ -48,11 +48,11 @@ export default async function TpoSeasonPipelinePage({
         description="Recorded application, screening, offer and joining evidence for one placement season."
         actions={report.season ? (
           <a href={"/api/placements/reports/season-pipeline?" + csvQuery.toString()}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
             Export funnel CSV
           </a>
         ) : null} />
-      <Link href="/tpo/reports" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
+      <Link href="/tpo/reports" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link hover:underline">
         ← All reports
       </Link>
       <form action="/tpo/reports/season-pipeline" method="get"
@@ -61,7 +61,7 @@ export default async function TpoSeasonPipelinePage({
           Placement season
           <select name="seasonId" defaultValue={report.season?.id ?? ""}
             disabled={!report.seasons.length}
-            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             {report.seasons.length === 0 ? <option value="">No season</option> : null}
             {report.seasons.map((s) => (
               <option key={s.id} value={s.id}>{s.name} · {s.code}</option>
@@ -72,7 +72,7 @@ export default async function TpoSeasonPipelinePage({
           Drive
           <select name="jobId" defaultValue={report.selectedJobId ?? ""}
             disabled={!report.season}
-            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="">All drives</option>
             {report.jobs.map((job) => (
               <option key={job.id} value={job.id}>{job.companyName} · {job.title}</option>
@@ -80,7 +80,7 @@ export default async function TpoSeasonPipelinePage({
           </select>
         </label>
         <button type="submit" disabled={!report.season}
-          className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
           Apply filters
         </button>
       </form>
@@ -91,7 +91,7 @@ export default async function TpoSeasonPipelinePage({
         <>
           <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Season pipeline counts">
             {cards.map(([label, value]) => (
-              <div key={label} className="rounded-xl border border-border bg-surface p-4">
+              <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
                 <p className="text-xs font-semibold uppercase text-body">{label}</p>
                 <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
                   {value === null ? "Unavailable" : reportNumber(value)}
@@ -99,7 +99,7 @@ export default async function TpoSeasonPipelinePage({
               </div>
             ))}
           </section>
-          <p className="rounded-lg border border-border bg-surface-subtle p-4 text-sm leading-6 text-body">
+          <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm leading-6 text-body">
             Applied counts all recorded application IDs, including withdrawn; shortlisted counts
             current submitted applications with a SHORTLISTED screening. Offered and accepted
             count offer versions, not distinct learners. Joined requires a currently ACCEPTED offer

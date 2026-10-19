@@ -51,7 +51,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
   }
 
   return <section aria-labelledby="placement-notification-title"
-    className="rounded-xl border border-border bg-surface p-5 sm:p-6">
+    className="border-b border-border pb-5">
     <h2 id="placement-notification-title" className="text-lg font-semibold text-foreground">
       Placement notification choices
     </h2>

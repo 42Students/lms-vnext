@@ -69,7 +69,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
     });
   }
 
-  return <section aria-label="Create class" className="- sm: border-t border-border pt-4">
+  return <section aria-label="Create class" className="sm: border-t border-border pt-4">
     <h2 className="m-0 text-lg font-semibold text-foreground">Create class</h2>
     {!cohorts.length || !periods.length
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
