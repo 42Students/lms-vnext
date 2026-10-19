@@ -806,7 +806,7 @@ export function SectionActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Link
           href={operationsHref}
           className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
