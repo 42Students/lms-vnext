@@ -745,9 +745,7 @@ export function SectionOperations({
             value={facultyRole}
             onChange={(event) =>
               setFacultyRole(
-                event.target.value as
-                  | "ADVISOR"
-                  | "COORDINATOR",
+                event.target.value as "ADVISOR" | "COORDINATOR",
               )
             }
           >
