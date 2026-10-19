@@ -22,6 +22,7 @@ type GridWorkspaceProps<Row>={
  columnKeys?:readonly string[];
  onColumnKeysChange?:(keys:string[])=>void;
  filters?:readonly TpoFilterField[];
+ externalFilters?:{count:number;open:boolean;controlsId:string;onToggle:()=>void};
  selection?:Selection;
  rollOf?:(row:Row)=>string|readonly string[]|null|undefined;
  savedViews?:ReactNode;
