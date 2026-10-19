@@ -26,11 +26,20 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
  it("keeps Faculty and TPO navigation separate for an overlapping multi-role membership",()=>{
   const both=[faculty,tpo,college];
   expect(scopedShellNavigation(both,"/teacher/courses").map(row=>row.href))
-   .toEqual(["/teacher/courses","/college"]);
+   .toEqual(["/teacher/courses"]);
   expect(scopedShellNavigation(both,"/tpo/home").map(row=>row.href))
-   .toEqual(["/tpo/home","/college"]);
+   .toEqual(["/tpo/home"]);
   expect(scopedShellNavigation([faculty,college],"/teacher/courses"))
-   .toEqual([faculty,college]);
+   .toEqual([faculty]);
+ });
+ it("never appends a generic Dashboard or second role to a selected portal",()=>{
+  const entries:ShellNavItem[]=[
+   {href:"/dashboard",label:"Dashboard",shortLabel:"D"},
+   {href:"/hr/home",label:"Today",shortLabel:"T"},
+   {href:"/college",label:"Dashboard · College",shortLabel:"D"},
+  ];
+  expect(scopedShellNavigation(entries,"/hr/home").map(item=>item.href)).toEqual(["/hr/home"]);
+  expect(scopedShellNavigation(entries,"/college").map(item=>item.href)).toEqual(["/college"]);
  });
  it("isolates secondary legacy portals even when they have one menu row",()=>{
   const learner:ShellNavItem={href:"/learn/courses",label:"Courses",shortLabel:"C"};
@@ -76,9 +85,9 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   const learnMore:ShellNavItem={href:"/learn/attendance",label:"Attendance",shortLabel:"A",group:"tracking"};
   const combined=[learn,learnMore,faculty,teacherMore,mentor,college];
   expect(scopedShellNavigation(combined,"/teacher/courses").map(item=>item.href))
-   .toEqual(["/teacher/courses","/teacher/calendar","/college"]);
+   .toEqual(["/teacher/courses","/teacher/calendar"]);
   expect(scopedShellNavigation(combined,"/learn/attendance").map(item=>item.href))
-   .toEqual(["/learn/courses","/learn/attendance","/college"]);
+   .toEqual(["/learn/courses","/learn/attendance"]);
   // College Admin's legacy Placement cell access is not a second full TPO account.
   expect(scopedShellNavigation([college,{
    href:"/college/courses",label:"Courses",shortLabel:"C"
