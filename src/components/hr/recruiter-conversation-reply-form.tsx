@@ -102,7 +102,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
   {notice?<p role={notice.startsWith("Could not") || notice.startsWith("Write a") || notice.startsWith("Keep a") ? "alert" : "status"}
-   className={notice.startsWith("Could not") || notice.startsWith("Write a") || notice.startsWith("Keep a") ? "text-sm text-[var(--lms-error-text)]" : "text-sm text-body"}>{notice}</p>:null}
+   className={notice.startsWith("Could not") || notice.startsWith("Write a") || notice.startsWith("Keep a") ? "text-sm text-error" : "text-sm text-body"}>{notice}</p>:null}
   <div className="flex flex-wrap items-center gap-3">
   <Button type="submit" disabled={sending} loading={sending} className="min-h-11 sm:min-h-9">
    {sending?"Sending…":"Send reply"}
