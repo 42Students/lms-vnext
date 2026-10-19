@@ -725,10 +725,10 @@ export function RecruiterLeadsWorkspace({
               }}/>
           </div>
           <div className="space-y-3">
-            <button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
+            {view!=="table"?<button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
               aria-expanded={filterOpen} aria-controls="engage-filter-panel">
               Filters{filterChips.length?" ("+filterChips.length+")":""}
-            </button>
+            </button>:null}
             {filterChips.length?<div role="group" aria-label="Active recruiter filters"
               className="flex flex-wrap gap-2">
               {filterChips.map(chip=><Button type="button" key={chip.key}
