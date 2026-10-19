@@ -529,3 +529,5 @@
 .hrNotificationFooter { flex:none; padding:12px 20px; border-top:1px solid #e5e9f0; background:#fafbfc; }
 
 .hrNotificationFooter a,.hrNotificationFooter button { min-height:44px; }
+
+.hrNotificationFooter a:hover { color:#18212f; background:rgba(0,0,0,.06); }
