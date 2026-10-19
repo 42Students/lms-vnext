@@ -26,8 +26,8 @@ export default async function MentorProjectCloseoutPage({
     <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-foreground">Persisted completion checklist</h2>
       <ul className="mt-3 grid gap-2">{items.map(([label,passed])=>
-        <li key={label} className="flex items-center justify-between gap-3 text-sm">
-          <span>{label}</span><strong>{passed?"Recorded":"Not satisfied"}</strong>
+        <li key={label} className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
+          <span className="min-w-0 flex-1 break-words">{label}</span><strong className="shrink-0">{passed?"Recorded":"Not satisfied"}</strong>
         </li>)}</ul>
       {!data.checklist.canComplete
         ? <p role="status" className="mt-4 text-sm text-body">
