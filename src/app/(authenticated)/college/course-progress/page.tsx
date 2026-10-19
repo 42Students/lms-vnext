@@ -64,7 +64,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
   return <div className="min-w-0 overflow-x-clip space-y-4">
     <CollegeLearnerProgressReport data={report}/>
     <Link prefetch={false} download href={collegeProgressCsvHref(parsed.data)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
       Export recorded course activity CSV
     </Link>
     <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} />
