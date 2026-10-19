@@ -35,8 +35,8 @@ export default async function MentorProjectActivityHistoryPage({
   return <div className={mentorProjectActivityMobileLayout}>
     <PageHeader eyebrow="Mentor · Project Activity" title="Recorded project activity"
       description={data.enabled?data.title+" · Events linked to this assigned project.":"Projects access is disabled. No private project activity was loaded."}
-      actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0">
+      actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Project activity workspace
       </Link>} />
     {!data.enabled ?
