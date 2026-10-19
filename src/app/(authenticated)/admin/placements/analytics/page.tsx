@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "@/components/placements/super-admin-hiring-funnel.module.css";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -106,11 +107,11 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     <p className="text-sm text-muted-foreground">Current persisted stages · the percentage is relative to the previous stage.</p>
    </div>
    <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{funnel.map(step=>
-    <li key={step.key} className="min-w-0 border-l-2 border-border pl-3 py-1">
-     <span className="block text-sm font-semibold">{step.label}</span>
-     <strong className="block text-2xl tabular-nums">{step.count.toLocaleString("en-IN")}</strong>
-     <p className="text-xs text-muted-foreground">{step.percentPrevious===null?"No preceding stage":step.percentPrevious+"% of previous"}</p>
-     <MetricBar className="mt-2" role="img"
+    <li key={step.key} className={styles.step}>
+     <span className={styles.label}>{step.label}</span>
+     <strong className={styles.count}>{step.count.toLocaleString("en-IN")}</strong>
+     <p className={styles.percent}>{step.percentPrevious===null?"No preceding stage":step.percentPrevious+"% of previous"}</p>
+     <MetricBar className={styles.track+" mt-2"} role="img"
       label={step.label+": "+step.count+" applications"}
       value={step.widthPercent} maximum={100} unit="percent" />
     </li>)}</ol>
