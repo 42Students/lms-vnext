@@ -11,7 +11,7 @@ export function safeTpoFindResult(value: unknown): value is TpoFindResult {
       typeof row.href !== "string" || row.href.length > 2048) return false;
   // A protocol-relative URL or a backslash can be normalized by a browser
   // into an external navigation; escaped and control-character paths fail closed.
-  if (!/^\\/tpo\\/(?!\\/)[^\\\\\\u0000-\\u001f\\u007f]*$/.test(row.href)) return false;
+  if (!/^\/tpo\/(?!\/)[^\\\u0000-\u001f\u007f]*$/.test(row.href)) return false;
   const path = row.href.split(/[?#]/, 1)[0]!;
   // Canonicalization must not move a result outside the TPO portal.
   // Encoded slash, dot and backslash path separators are not permitted.
