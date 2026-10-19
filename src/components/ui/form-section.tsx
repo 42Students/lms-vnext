@@ -1,4 +1,4 @@
-import type { ComponentPropsWithRef, ReactNode } from "react";
+import { useId, type ComponentPropsWithRef, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 
 export type FormSectionProps = Omit<ComponentPropsWithRef<"fieldset">, "children"> & {
@@ -11,11 +11,17 @@ export type FormSectionProps = Omit<ComponentPropsWithRef<"fieldset">, "children
 export function FormSection({
   label, description, className, children, ...props
 }: FormSectionProps) {
+  const generatedId = useId();
+  const descriptionId = `${generatedId}-description`;
+  const describedBy = [...new Set([
+    ...(props["aria-describedby"]?.split(/\s+/).filter(Boolean) ?? []),
+    ...(description ? [descriptionId] : []),
+  ])].join(" ") || undefined;
   return (
-    <fieldset {...props} data-slot="form-section"
+    <fieldset {...props} aria-describedby={describedBy} data-slot="form-section"
       className={cx("min-w-0 border-0 p-0 disabled:opacity-50", className)}>
       <legend className="mb-2 text-[14px] font-semibold leading-5 text-[var(--lms-neutral-900)]">{label}</legend>
-      {description ? <p className="mb-3 text-[13px] leading-5 text-[var(--lms-muted-text)]">{description}</p> : null}
+      {description ? <p id={descriptionId} className="mb-3 text-[13px] leading-5 text-[var(--lms-muted-text)]">{description}</p> : null}
       <div className="grid min-w-0 gap-[var(--lms-space-4)]">{children}</div>
     </fieldset>
   );
