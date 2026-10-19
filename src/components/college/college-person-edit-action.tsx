@@ -2,6 +2,9 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import {Dialog} from "@/components/ui/dialog";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
@@ -32,7 +35,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   const [error,setError]=useState("");
   const [success,setSuccess]=useState("");
   const base="/api/college/people/"+encodeURIComponent(membershipId)+"/edit";
-  const field="min-h-[var(--lms-control-height)] w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+  const field="min-h-11 w-full min-w-0 md:min-h-9";
   async function load(){
     setLoading(true);setError("");setSuccess("");setPerson(null);setOpen(true);
     try{
@@ -72,20 +75,19 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   }
   return <div className="inline-block">{confirmation}
     <Button variant="secondary" type="button" onClick={()=>void load()}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text">
+      className="min-h-11 md:min-h-9">
       {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
     </Button>
-    {success&&<span role="status" className="ml-2 text-xs text-body">{success}</span>}
+    {success&&<Alert tone="success" className="mt-2">{success}</Alert>}
     <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending}>
-        <div className="flex items-start justify-between gap-3">
-          <h2 className="text-lg font-semibold">{kind==="FACULTY"?"Edit Faculty":"Edit Student"}</h2>
+        <div className="flex justify-end">
           <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3">Close</Button>
+            className="min-h-11 md:min-h-9">Close</Button>
         </div>
-        {loading&&<p role="status" className="mt-4 text-sm">Loading profile…</p>}
-        {error&&<p role="alert" className="my-2 text-sm text-error">{error}</p>}
-        {person&&<form onSubmit={submit} className="mt-4 grid gap-3 sm:grid-cols-2">
-          <p className="sm:col-span-2 text-xs text-muted-foreground">
+        {loading&&<Skeleton variant="form" count={4} label="Loading profile" className="mt-4"/>}
+        {error&&<Alert tone="error" className="my-2">{error}</Alert>}
+        {person&&<form onSubmit={submit} className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
+          <p className="md:col-span-2 text-xs text-muted-foreground">
             Canonical identity name, login phone and login email are managed separately to protect access to other memberships.
           </p>
           <label className="grid gap-1 text-sm">Name
@@ -148,20 +150,20 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             <Input className={field} type="email" value={person.contactEmail}
               onChange={e=>patch("contactEmail",e.target.value)}/>
           </label>
-          <label className="grid gap-1 text-sm sm:col-span-2">Address
-            <Textarea className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base sm:text-sm" rows={2} maxLength={1000}
+          <label className="grid gap-1 text-sm md:col-span-2">Address
+            <Textarea className="min-w-0" rows={2} maxLength={1000}
               value={person.address} onChange={e=>patch("address",e.target.value)}/>
           </label>
-          <label className="grid gap-1 text-sm sm:col-span-2">Bio
-            <Textarea className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base sm:text-sm" rows={3} maxLength={3000}
+          <label className="grid gap-1 text-sm md:col-span-2">Bio
+            <Textarea className="min-w-0" rows={3} maxLength={3000}
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
           </label>
-          <div className="flex gap-2 sm:col-span-2">
-            <Button variant="primary" type="submit" disabled={pending} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary disabled:opacity-50">
+          <div className="flex gap-2 md:col-span-2">
+            <Button variant="primary" type="submit" disabled={pending} loading={pending} className="min-h-11 md:min-h-9">
               {pending?"Saving…":"Save changes"}
             </Button>
             <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4">Cancel</Button>
+              className="min-h-11 md:min-h-9">Cancel</Button>
           </div>
         </form>}
     </Dialog>

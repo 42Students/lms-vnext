@@ -1,5 +1,5 @@
 import {redirect} from "next/navigation";
-import Link from "next/link";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
@@ -15,8 +15,7 @@ export default async function CollegeFacultyImportPage(){
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader title="Import faculty"
       description="Validate and register faculty using the legacy CSV template."
-      actions={<Link href="/college/faculty"
-        className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link">Back to Faculty</Link>}/>
+      actions={<PageBackLink href="/college/faculty" label="Back to Faculty"/>}/>
     <CollegeFacultyCsvImport/>
   </div>;
 }

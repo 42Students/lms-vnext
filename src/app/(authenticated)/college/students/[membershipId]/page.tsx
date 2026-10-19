@@ -1,7 +1,9 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { getCollegeStudentDetail } from "@/modules/people/college-student-detail-service";
 import { CollegePersonNotFoundError } from "@/modules/people/college-person-detail-model";
 import {Select} from "@/components/ui/select";
@@ -24,13 +26,13 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
   return <div className="space-y-6">
     <PageHeader title={data.person.name}
       description="Read-only college-owned learner academic record; private identity and documents are excluded."
-      actions={<Link href="/college/students" className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to students</Link>} />
+      actions={<PageBackLink href="/college/students" label="Back to students"/>} />
     <section className="border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Student record</h2>
-      <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+      <dl className="mt-4 grid min-w-0 gap-3 text-sm md:grid-cols-2">
         <div><dt className="text-muted-foreground">Roll number</dt><dd>{data.person.rollNumber ?? "Not recorded"}</dd></div>
         <div><dt className="text-muted-foreground">Registration number</dt><dd>{data.person.registrationNumber ?? "Not recorded"}</dd></div>
-        <div><dt className="text-muted-foreground">Membership</dt><dd>{data.person.status}</dd></div>
+        <div><dt className="text-muted-foreground">Membership</dt><dd><StatusBadge tone={data.person.status==="ACTIVE"?"success":"warning"}>{data.person.status}</StatusBadge></dd></div>
       </dl>
     </section>
     <section className="border-t border-border pt-5">
@@ -47,18 +49,18 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
             <option value="WITHDRAWN">Withdrawn</option>
           </Select>
         </label>
-        <Button type="submit" >Filter</Button>
+        <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
       </form>
       <p className="mt-2 text-xs text-muted-foreground">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>
-      {data.enrollments.length === 0 ? <p className="mt-3 text-sm text-body">No program enrollment matches the selected lifecycle status.</p> :
-        <ul className="mt-3 space-y-2">{data.enrollments.map(row =>
-          <li key={row.id} className="text-sm text-body">
+      {data.enrollments.length === 0 ? <EmptyState title="No matching enrollments" description="No program enrollment matches the selected lifecycle status."/> :
+        <ul className="mt-3 divide-y divide-border">{data.enrollments.map(row =>
+          <li key={row.id} className="py-2 text-sm text-body">
             {row.programName} ({row.programCode}) · {row.cohortName} ({row.cohortCode}) · {row.status}
           </li>)}</ul>}
       <h3 className="mt-5 font-semibold text-foreground">Active classes</h3>
-      {data.classes.length === 0 ? <p className="mt-2 text-sm text-body">No active class enrollment recorded.</p> :
-        <ul className="mt-2 space-y-1">{data.classes.map(row =>
-          <li key={row.enrollmentId + row.sectionCode} className="text-sm text-body">
+      {data.classes.length === 0 ? <EmptyState title="No active classes" description="No active class enrollment recorded."/> :
+        <ul className="mt-2 divide-y divide-border">{data.classes.map(row =>
+          <li key={row.enrollmentId + row.sectionCode} className="py-2 text-sm text-body">
             {row.sectionName} ({row.sectionCode})
           </li>)}</ul>}
     </section>
