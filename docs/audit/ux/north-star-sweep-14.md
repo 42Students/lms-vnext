@@ -365,3 +365,14 @@ Scope: shared tabs, table/data-table, chips, list toolbar, pagination and badges
 ### Verification boundary
 
 Re-read changed JSX elements and performed source-only checks on all 35 touched UI/mentor files for tag names, closing-tag presence, truncated `</Select>`, and accidental malformed class fragments. This is **not** a TypeScript parser, typecheck, build or pixel-comparison verification. No app, tests, CI, lint, typecheck or browser were executed as requested. Existing checkmarks in this file continue to mean source sweep only, not runtime acceptance.
+
+## Chat-14 follow-up: shared-list components and remaining mentor controls (2026-10-19)
+
+Baseline: checked `origin/main` before changes; branch was 74 commits ahead and 0 behind. All edits were committed directly to `chatgpt/chat-14-b` in roughly five-commit batches, tagged `[chat-14]`.
+
+- **Shared kit (5):** `list-toolbar` no longer overrides the appearance of page-owned primary actions; `badge` protects its own slot/tone; `status-badge` uses the common compact font/dimensions; `needs-doing-chips` uses supported semantic theme borders; `filter-bar` does not expose an empty mobile filter launcher.
+- **Mentor fallback/actions (10):** fixed duplicate heading weight and retry focus in Projects error; flattened the delivery lock editor, task-allocation filters and closeout confirmations; normalized sprint/task destructive controls, the task status form, meeting calendar rows, unavailable and project-error states.
+- **Mentor project forms (10):** task-create, sprint-create, task-details, task-allocation and product-backlog select menus now use the shared `Select`. About, delivery-lock, meeting-notes, release and backlog editors now use shared `Input`/`Textarea` where previously bare native controls carried duplicate styles.
+- **Mentor list and detail pages (16):** activity, notifications, reports, reviews, sprint progress, review history, task reviews, task-review history, team coverage, board review, risk readiness, resources directory, team meetings, review overview, activity history and team history were normalized to shared `Select`/`Input` on forms. Route params, GET form fields and options remain unchanged.
+
+**Verification boundary:** Source-only per-file count checks confirmed every newly replaced `<Select>` has a matching complete `</Select>`; checked malformed closing-tag patterns, preserved JSX self-closing `Input`/`Textarea` and all existing handlers. No app run, build, lint, typecheck, tests, CI or browser/pixel comparison. This is still a visual-source sweep rather than runtime certification.
