@@ -28,7 +28,7 @@ export function ProjectTaskAssigneeControl({projectId,taskId,taskTitle,assigneeM
   return <div className="flex flex-wrap items-center gap-2">
     <label className="text-xs font-semibold text-body">Assignee
       <Select value={selected} disabled={pending} onChange={e=>setSelected(e.target.value)}
-        aria-label={"Reassign "+(taskTitle??"task")+" to a team member"} className="ml-2 w-auto">
+        aria-label={"Reassign "+(taskTitle??"task")+" to a team member"} className="ml-2 w-full min-w-0 max-w-full md:w-auto">
         <option value="">Unassigned</option>
         {learners.map(person=><option key={person.membershipId} value={person.membershipId}>{person.displayName ?? "Learner"}</option>)}
       </Select>
