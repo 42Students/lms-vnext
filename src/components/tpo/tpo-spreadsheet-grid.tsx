@@ -145,6 +145,7 @@ export function TpoSpreadsheetGrid<Row>({
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
   <TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>
   {rows.length>0?<Button variant="secondary" type="button" onClick={copyVisibleRows}>Copy visible TSV</Button>:null}
+  {sort?<Button variant="ghost" type="button" onClick={()=>setSort(null)} aria-label="Clear grid sorting">Clear grid sort</Button>:null}
   {clipboardMessage?<p role="status" className="text-xs text-muted-foreground">{clipboardMessage}</p>:null}
   {rows.length===0?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-3">No matching records.</p>:<>
    <div className="hidden md:block" tabIndex={0} aria-label="TPO grid keyboard copy"
