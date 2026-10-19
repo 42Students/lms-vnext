@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -84,19 +86,19 @@ export default async function TpoAccreditationReportPage({
       >
         ← All reports
       </Link>
-      <section id="accreditation-batch" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+      <section id="accreditation-batch" className="space-y-3 border-t border-border pt-5">
        <h2 className="font-semibold">NAAC 5.2.1 · Placed students</h2>
        <p role="status" className="text-sm">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
        <form method="get" className="flex flex-wrap items-end gap-3">
         <label className="text-sm">Batch
-         <select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border bg-background px-3">
+         <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border bg-background px-3">
           <option value="">Pick a batch</option>
           {batches.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.name}</option>)}
-         </select>
+         </Select>
         </label>
         {report.selectedSeasonId&&<input type="hidden" name="seasonId" value={report.selectedSeasonId}/>}
         {report.selectedJobId&&<input type="hidden" name="jobId" value={report.selectedJobId}/>}
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-4 text-sm">Show students</button>
+        <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-4 text-sm">Show students</Button>
        </form>
        {batchId&&!selectedBatch&&<p role="alert" className="text-sm">Choose a batch from this college.</p>}
        {selectedBatch&&studentReport?.rows.length===0?<p role="status" className="text-sm text-muted-foreground">No placed students in this batch. Export is unavailable until a recorded placement exists.</p>:null}
@@ -133,7 +135,7 @@ export default async function TpoAccreditationReportPage({
         />
        </>}
       </section>
-      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+      <section className="border-t border-border py-5">
         <h2 className="text-lg font-semibold text-foreground">
           Reporting scope
         </h2>
@@ -154,7 +156,7 @@ export default async function TpoAccreditationReportPage({
 
       <section
         aria-label="Accreditation data completeness"
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
+        className="border-t border-border py-5"
       >
         <h2 className="text-lg font-semibold text-foreground">
           Completeness preflight
