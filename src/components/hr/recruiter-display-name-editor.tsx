@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {useEffect,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import {splitHrRecruiterName,hrRecruiterNameFieldsSchema,joinHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
 export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
  initialName:string|null;updatedAt:string;
@@ -50,18 +52,18 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
    <label htmlFor="hr-first-name" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">First name</label>
    <Input id="hr-first-name" value={firstName} maxLength={100} required
     onChange={event=>setFirstName(event.target.value)}
-   />
+    className="w-full"/>
    <label htmlFor="hr-last-name" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Last name</label>
    <Input id="hr-last-name" value={lastName} maxLength={100}
     onChange={event=>setLastName(event.target.value)}
-   />
-   <Button variant="primary" type="submit" disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)||!hrRecruiterNameFieldsSchema.safeParse({firstName,lastName}).success}
-   >
+    className="w-full"/>
+   <Button type="submit" disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)||!hrRecruiterNameFieldsSchema.safeParse({firstName,lastName}).success}
+    >
     {saving?"Saving…":"Save name"}
    </Button>
-   <Button variant="primary" type="button" disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)}
+   <Button type="button" disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)}
      onClick={()=>{setFirstName(savedName.firstName);setLastName(savedName.lastName);setMessage("");}}
-    >
+     variant="secondary">
      Cancel unsaved changes
    </Button>
    {message?<p role="status" className="text-xs text-body">{message}</p>:null}
