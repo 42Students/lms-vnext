@@ -88,6 +88,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
                 variant="secondary"
                 type="button"
                 disabled={leaving === grant.id}
+                loading={leaving === grant.id}
                 onClick={() => setConfirmGrant(grant)}
                 className="border-error/30 text-error hover:bg-error/5"
               >
