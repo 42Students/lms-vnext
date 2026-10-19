@@ -31,9 +31,9 @@ export function TpoNotificationRefresh(){
    document.removeEventListener("visibilitychange",onVisible);};
  },[router]);
  if(state==="refreshing")return <p role="status" className="text-sm text-muted-foreground">Refreshing notifications…</p>;
- if(state==="failed")return <div role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+ if(state==="failed")return <div role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-3 text-sm">
   This refresh failed. Showing the last successful load.
-  <Button variant="ghost" type="button" className="ml-3 font-semibold text-primary-text underline"
+  <Button variant="ghost" type="button" className="ml-3 min-h-11 sm:min-h-9 underline"
    onClick={()=>router.refresh()}>Retry</Button>
  </div>;
  return null;
