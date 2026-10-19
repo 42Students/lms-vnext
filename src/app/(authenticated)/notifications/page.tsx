@@ -70,7 +70,7 @@ export default async function NotificationsPage({
       />
       <NotificationToolbar view={view} unreadCount={unreadCount} />
       {parsedCursor.invalid ? (
-        <div role="alert" className="rounded-[9px] border border-border bg-primary-subtle p-4 text-sm text-foreground">
+        <div role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-primary-subtle p-4 text-sm text-foreground">
           The notification page link is invalid.{" "}
           <Link href={view === "unread" ? "/notifications?view=unread" : "/notifications?view=all"} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Return to the newest notifications
@@ -84,7 +84,7 @@ export default async function NotificationsPage({
           />
           {nextHref ? (
             <div className="flex justify-center">
-              <Link href={nextHref} className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <Link href={nextHref} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Older notifications
               </Link>
             </div>
