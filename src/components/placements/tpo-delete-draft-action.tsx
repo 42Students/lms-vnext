@@ -5,6 +5,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:string}){
  const router=useRouter(),{run}=useGuardedAction({timeoutMs:35000});
  const [reviewed,setReviewed]=useState(false),[pending,setPending]=useState(false);
@@ -38,6 +39,6 @@ export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:s
   <Button variant="secondary" type="button" disabled={!reviewed||pending} onClick={()=>void archive()}
    >
    {pending?"Removing draft…":"Delete draft"}</Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
