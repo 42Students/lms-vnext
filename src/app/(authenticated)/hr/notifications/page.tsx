@@ -39,13 +39,13 @@ export default async function HrMessagesPage({searchParams}:{
     href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
     className="block rounded-[var(--lms-control-radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{grant.collegeName}</Link>)}
   </section>:<>
-   <nav aria-label="Inbox filters" className="flex flex-wrap gap-3 border-b border-[#e5e9f0]">
+   <nav aria-label="Inbox filters" className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)]">
     {result.choices.length>1?result.choices.map(grant=><Link key={grant.id}
      href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
-     className={grant.collegeId===result.collegeId ? "inline-flex min-h-11 items-center border-b-[3px] border-[#26bac7] px-3 py-2 text-sm font-semibold text-[#1a95a1] sm:min-h-9" : "inline-flex min-h-11 items-center border-b-[3px] border-transparent px-3 py-2 text-sm text-body hover:text-[#1a95a1] sm:min-h-9"}>{grant.collegeName}</Link>):null}
+     className={grant.collegeId===result.collegeId ? "inline-flex min-h-11 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-sm font-semibold text-[var(--lms-primary-text)] sm:min-h-9" : "inline-flex min-h-11 items-center border-b-[3px] border-transparent px-3 py-2 text-sm text-body hover:text-[var(--lms-primary-text)] sm:min-h-9"}>{grant.collegeName}</Link>):null}
     <Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+
       (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
-     className="inline-flex min-h-11 items-center border-b-[3px] border-transparent px-3 py-2 text-sm text-primary-text hover:border-[#26bac7] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className="inline-flex min-h-11 items-center border-b-[3px] border-transparent px-3 py-2 text-sm text-primary-text hover:border-[var(--lms-primary)] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      {query.data.unreadOnly==="true"?"Show all":"Unread only"}
     </Link>
    </nav>
@@ -77,9 +77,9 @@ export default async function HrMessagesPage({searchParams}:{
          <span className="text-xs text-muted-foreground">{group.items.length} on this page · {group.unread} unread</span>
        </div>
        <ol className="mt-3 divide-y divide-border">{group.items.map(row=>
-         <li key={row.id} className="rounded-[8px] px-2 py-3 transition-colors hover:bg-[#fafbfc]">
+         <li key={row.id} className="rounded-[8px] px-2 py-3 transition-colors hover:bg-[var(--lms-neutral-50)]">
            <div className="flex flex-wrap justify-between gap-2">
-             <span className="text-sm text-body">{row.label}{row.unread?<span className="ml-2 inline-flex rounded-full bg-[#eff8fa] px-2 py-0.5 text-xs font-semibold text-[#1a95a1]">Unread</span>:null}</span>
+             <span className="text-sm text-body">{row.label}{row.unread?<span className="ml-2 inline-flex rounded-full bg-[var(--lms-primary-subtle)] px-2 py-0.5 text-xs font-semibold text-[var(--lms-primary-text)]">Unread</span>:null}</span>
              <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
            </div>
            {row.unread?<HrNotificationReadButton notificationId={row.id}
