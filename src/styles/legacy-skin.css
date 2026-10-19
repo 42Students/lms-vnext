@@ -66,3 +66,24 @@
   font-size: 13px !important;
   border-bottom-color: var(--lms-neutral-200) !important;
 }
+
+/* TABLE INTERACTIONS
+ * Legacy: components___variables.scss:10-13 (teal/subtle);
+ * components___common.scss:700-713 (row tracking by hairline);
+ * old-lms-shell.css:45-48 (rgba teal hover language).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(tbody tr:hover):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: rgba(38, 186, 199, 0.045) !important;
+}
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(tbody tr:focus-within):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: rgba(38, 186, 199, 0.045) !important;
+}
+/* Legacy: components___common.scss:711-713 (last row without separator).
+ * Inset paint rather than border-width avoids moving any table row.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(tbody tr:last-child):not(:where([data-unskin], [data-unskin] *)) {
+  box-shadow: none;
+}
