@@ -90,12 +90,12 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
    <label className="grid gap-1 text-sm">What needs doing?
     <Input required maxLength={200} disabled={busy} value={title}
      onChange={event=>{setTitle(event.target.value);key.current=null;}}
-     className="min-h-9 w-full"/>
+     className="min-h-11 sm:min-h-9 w-full"/>
    </label>
    <label className="grid gap-1 text-sm">By (optional, IST)
     <Input type="datetime-local" disabled={busy} value={due}
      onChange={event=>{setDue(event.target.value);key.current=null;}}
-     className="min-h-9 w-full"/>
+     className="min-h-11 sm:min-h-9 w-full"/>
    </label>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
    <Button type="submit" disabled={busy||!title.trim()||!recipientId}
