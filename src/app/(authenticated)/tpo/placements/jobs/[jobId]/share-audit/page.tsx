@@ -41,7 +41,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
    </Link>)}
   </nav>
   {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)}
-    className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">
     Export access history CSV
   </a>:null}
   {!result.ready?<p role="status" className="rounded border border-border p-5">
