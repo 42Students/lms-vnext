@@ -115,7 +115,7 @@ export async function AppShell({
 
         <Suspense fallback={null}><RouteAnnouncer /></Suspense>
         <ShellConnectivityNotice />
-        <main id="lms-main-content" tabIndex={-1} className={"mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
+        <main id="lms-main-content" tabIndex={-1} className={"mx-auto min-w-0 w-full max-w-[1600px] px-4 py-6 sm:pl-6 sm:pr-4 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           {children}
         </main>
       </div>

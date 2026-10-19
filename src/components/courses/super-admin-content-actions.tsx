@@ -117,11 +117,14 @@ export function SuperAdminContentActions({item}:{item:Content}){
  if(item.status==="ARCHIVED")return <p className="text-xs text-muted-foreground">Archived content is read-only.</p>;
  return <div className="space-y-2">
   <div className="flex flex-wrap gap-2">
-   <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={toggleEditor} className="min-h-11 sm:min-h-9">Edit</Button>
-   {item.status==="DRAFT"?<Button type="button" size="sm" disabled={busy} onClick={()=>void transition("PUBLISH")} className="min-h-11 sm:min-h-9">Publish</Button>:null}
-   <Button type="button" size="sm" variant="danger" disabled={busy} onClick={()=>void transition("ARCHIVE")} className="min-h-11 sm:min-h-9">Delete</Button>
+   <button type="button" disabled={busy} onClick={toggleEditor}
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-primary-text hover:bg-primary-subtle">Edit</button>
+   {item.status==="DRAFT"?<button type="button" disabled={busy} onClick={()=>void transition("PUBLISH")}
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-primary-text hover:bg-primary-subtle">Publish</button>:null}
+   <button type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-error hover:bg-error-subtle">Delete</button>
   </div>
-  {editing?<fieldset disabled={busy} className="grid gap-3 border-t border-border pt-4">
+  {editing?<fieldset disabled={busy} className="grid gap-2 rounded-xl border border-border bg-surface p-3">
    <p className="text-xs text-muted-foreground">Edit saved metadata or replace a link.
     Private files and existing published URLs are not exposed in this form.</p>
    <label className="grid gap-1 text-xs font-semibold">Title

@@ -27,7 +27,7 @@ export default async function SuperAdminCompaniesPage({
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
     <ErrorState title="Invalid company search" description="Check search text or relationship status."
-      action={<Link href="/admin/companies" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
+      action={<Link href="/admin/companies" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   const [data, availableColleges] = await Promise.all([
@@ -42,12 +42,12 @@ export default async function SuperAdminCompaniesPage({
     <nav aria-label="Company directory tabs" className="flex flex-wrap gap-3">
       <Link href="/admin/companies?view=GLOBAL"
        aria-current={view==="GLOBAL"?"page":undefined}
-       className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+       className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
        42&apos;s company list
       </Link>
       {context.adminScope?.collegeId?<Link href="/admin/companies?view=COLLEGE"
        aria-current={view==="COLLEGE"?"page":undefined}
-       className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+       className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
        This college&apos;s companies
       </Link>:null}
     </nav>
@@ -56,11 +56,11 @@ export default async function SuperAdminCompaniesPage({
     </p>:null}
     {data.query.companyId ? <section role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
       Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
-      <Link href="/admin/companies" className="font-semibold text-[var(--lms-teal-deep)] underline">Show all employers</Link>
+      <Link href="/admin/companies" className="font-semibold text-primary-text underline">Show all employers</Link>
     </section> : null}
     <div className="flex flex-wrap gap-3 text-sm">
-      <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show deleted (archived) companies →</Link>
-      <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Active companies →</Link>
+      <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle">Show deleted (archived) companies →</Link>
+      <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle">Active companies →</Link>
     </div>
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Company
@@ -126,7 +126,7 @@ export default async function SuperAdminCompaniesPage({
       <Button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary">Filter</Button>
     </form>
     <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
-      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
       Export matching companies as CSV →
     </Link>
     {context.adminScope?.collegeId?
@@ -136,7 +136,7 @@ export default async function SuperAdminCompaniesPage({
       {([["Companies in this page", data.distinctCompanies], ["Archived", data.archivedCompaniesOnPage],
         ["Visible now", data.visibleCompaniesOnPage],["With drives",data.relationshipsWithDrivesOnPage],
         ["Relationships", data.relationships],["Trusted relationships", data.trustedRelationships]] as const).map(([label, count]) =>
-        <div key={label} className="rounded-xl border border-border bg-surface p-4">
+        <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <p className="m-0 text-xs text-muted-foreground">{label}</p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{count}</p>
         </div>)}
@@ -168,7 +168,7 @@ export default async function SuperAdminCompaniesPage({
       {data.truncated?<p className="text-xs text-muted-foreground">Only this page of scoped relationships was reviewed.</p>:null}
     </section>
     {data.rows.length ? <div className="grid gap-3 md:grid-cols-2">
-      {data.rows.map(row => <article key={row.relationshipId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+      {data.rows.map(row => <article key={row.relationshipId} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <h2 className="m-0 break-words text-base font-semibold text-foreground">{row.name}</h2>
         {row.companyStatus==="ARCHIVED"&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
          <SuperAdminCompanyRestore id={row.companyId} name={row.name}/>:null}
@@ -205,21 +205,21 @@ export default async function SuperAdminCompaniesPage({
           <div><dt className="text-muted-foreground">Drives in this college</dt><dd className="tabular-nums">{row.driveCount??0}</dd></div>
           <div><dt className="text-muted-foreground">Last drive activity</dt><dd>{row.lastActiveAt?new Date(row.lastActiveAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"}):"—"}</dd></div>
         </dl>
-        <Link className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline"
+        <Link className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
           href={`/admin/companies/${encodeURIComponent(row.companyId)}/drives`}>
           Drive history →
         </Link>
-        <Link className="mt-2 ml-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline"
+        <Link className="mt-2 ml-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
           href={"/admin/companies?" + new URLSearchParams({companyId:row.companyId,status:"ALL",companyStatus:"ALL",trust:"ALL"}).toString()}>
           Review this employer&apos;s relationships →
         </Link>
       </article>)}
-    </div> : <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">No company relationships match the current scope and filters.</p>}
+    </div> : <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-muted-foreground">No company relationships match the current scope and filters.</p>}
     {data.truncated ? <p className="text-sm text-muted-foreground">Only 50 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
     <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
-      {data.query.page > 1 ? <Link className="font-semibold text-[var(--lms-teal-deep)]" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,searchField:data.query.searchField,companyStatus:data.query.companyStatus,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
-      {data.query.page < data.totalPages ? <Link className="font-semibold text-[var(--lms-teal-deep)]" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,trust:data.query.trust,searchField:data.query.searchField,companyStatus:data.query.companyStatus,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),page:String(data.query.page+1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Next</Link> : null}
+      {data.query.page > 1 ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,searchField:data.query.searchField,companyStatus:data.query.companyStatus,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
+      {data.query.page < data.totalPages ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,trust:data.query.trust,searchField:data.query.searchField,companyStatus:data.query.companyStatus,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),page:String(data.query.page+1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Next</Link> : null}
     </nav>
-    <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Placement operations</Link>
+    <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← Placement operations</Link>
   </div>;
 }

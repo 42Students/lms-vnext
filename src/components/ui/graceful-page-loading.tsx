@@ -20,7 +20,7 @@ export function GracefulPageLoading({ label = "Loading your page...", shape = "c
       <Skeleton label={label} variant="row" count={3} />
     </> : <Skeleton label={label} variant="card" count={2} />}
     {slow ? <div role="status" aria-live="polite" className="flex flex-wrap items-center gap-[var(--lms-space-3)]">
-      <p className="text-[13px] leading-5 text-[var(--lms-body-text)]">This is taking longer than expected. Please try again.</p>
+      <p className="m-0 text-[13px] leading-5 text-[var(--lms-body-text)]">This is taking longer than expected. Please try again.</p>
       <Button type="button" variant="secondary" onClick={() => window.location.reload()}>Try again</Button>
     </div> : null}
   </section>;

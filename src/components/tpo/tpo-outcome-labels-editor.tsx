@@ -1,4 +1,5 @@
 "use client";
+import {Button} from "@/components/ui/button";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Input} from "@/components/ui/input";
@@ -63,9 +64,9 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
      {MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
     </Select>
    </label>
-   <button type="button" disabled={busy} aria-label={"Remove "+row.label}
+   <Button variant="secondary" type="button" disabled={busy} aria-label={"Remove "+row.label}
     onClick={()=>setLabels(rows=>rows.filter((_,i)=>i!==index))}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm">Remove</button>
+    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Remove</Button>
   </li>)}</ul>
   <div className="flex flex-wrap items-end gap-2 border-t border-border pt-4">
    <label className="min-w-52 flex-1 text-sm">New label
@@ -80,12 +81,12 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
      {MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
     </Select>
    </label>
-   <button type="button" onClick={add} disabled={!draft.trim()||Boolean(problem)||busy||labels.length>=30}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm">Add</button>
+   <Button variant="secondary" type="button" onClick={add} disabled={!draft.trim()||Boolean(problem)||busy||labels.length>=30}
+    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Add</Button>
   </div>
   <p className="text-xs text-muted-foreground">{labels.length}/30 labels. Changing a mapping affects how future student choices are grouped; existing recorded outcomes are not silently rewritten.</p>
-  <button type="button" onClick={()=>void save()} disabled={busy||!dirty||invalid>=0}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save changes</button>
+  <Button variant="primary" type="button" onClick={()=>void save()} disabled={busy||!dirty||invalid>=0}
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save changes</Button>
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
   {notice?<p role="status" className="text-sm text-success-text">{notice}</p>:null}
  </section>;

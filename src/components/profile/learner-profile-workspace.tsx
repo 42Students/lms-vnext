@@ -547,7 +547,7 @@ export function LearnerProfileWorkspace(props: {
           Refresh saved profile
         </Button>
       </div>
-      <section id="profile-introduction" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
+      <section id="profile-introduction" className="scroll-mt-24 border-b border-border pb-5">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
@@ -563,11 +563,11 @@ export function LearnerProfileWorkspace(props: {
           <Button variant="secondary" onClick={openDetails}>Edit profile</Button>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-lg border border-border bg-surface-subtle p-4">
+          <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
             <p className="m-0 text-sm font-semibold text-foreground">Profile image</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/replace remains blocked until the shared Cloud Storage profile-asset workflow is live.</p>
           </div>
-          <div className="rounded-lg border border-border bg-surface-subtle p-4">
+          <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
             <p className="m-0 text-sm font-semibold text-foreground">Resume</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/import/remove remains explicitly blocked until Cloud Storage signing and cleanup are live.</p>
           </div>
