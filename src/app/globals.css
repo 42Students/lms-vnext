@@ -1109,3 +1109,15 @@ body {
 [data-slot="multi-select"]:focus-visible { outline: 2px solid rgba(38,186,199,.65); outline-offset: 2px; }
 [data-slot="file-upload"] [aria-invalid="true"]:focus-visible,
 [data-slot="multi-select"][aria-invalid="true"]:focus-visible { border-color: var(--lms-error); outline-color: var(--lms-error); box-shadow: 0 0 0 2px rgba(239,68,68,.2); }
+
+/* Old LMS responsive forms: the desktop control is 36px, touch controls >=44px. */
+@media (max-width: 767px) {
+  [data-slot="otp-input"], [data-slot="date-input"],
+  [data-slot="multi-select"], [data-slot="password-input"] [data-slot="button"],
+  [data-slot="file-upload"] [data-slot="input"], [data-slot="search-field"] [data-slot="button"] {
+    min-height: var(--lms-touch-target);
+  }
+}
+/* Keep browser selection affordances with native inputs and range slider. */
+[data-slot="range-slider"] input[type="range"] { accent-color: var(--lms-primary); }
+[data-slot="file-dropzone"]:focus-within { border-color: var(--lms-primary); }
