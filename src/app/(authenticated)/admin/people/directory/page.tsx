@@ -78,7 +78,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    {" "}
    {data.contactVisible?"Contact shown within the explicitly selected college.":"Email and phone are masked outside a selected college."}
   </p>
-  <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
+  <form method="get" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
    <input type="hidden" name="tab" value={tabForm.hiddenTab} />
    <label className="grid gap-1 text-sm font-semibold text-body">Name or college
     <Input type="search" name="q" maxLength={100} defaultValue={query.data.q}
@@ -105,7 +105,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   </form>
   <p className="text-xs text-muted-foreground">{data.total} matching memberships · page {data.query.page} of {data.totalPages} · 30 per page</p>
   {data.items.length?<div className="grid gap-3 md:grid-cols-2">
-   {data.items.map(row=><article key={row.membershipId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+   {data.items.map(row=><article key={row.membershipId} className="min-w-0 border-b border-border py-4">
     <h2 className="m-0 break-words font-semibold text-foreground">{row.displayName||"Unnamed user"}</h2>
     <p className="mt-1 text-sm text-body">{row.collegeName}</p>
     <p className="mt-1 break-all text-xs text-muted-foreground">
