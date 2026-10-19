@@ -8,3 +8,7 @@ This is a pointer to the canonical lane tracker, [north-star-sweep-chat-5.md](./
 - Fourth pass: `main` merged into `chatgpt/chat-5-b` via PR #180, then 27 `[chat-5]` source commits across 20 files pushed to that branch.
 - Visual changes: old-LMS underline tabs, white-on-teal CTA tokens, secondary exports, page-canvas-aligned hairline rows, metric strips, mobile 44px touch targets and 36px desktop controls.
 - Pending: integration with any subsequent upstream `main` changes, and source-to-browser visual parity verification by the orchestrator. No application code, tests, typecheck, or CI executed.
+
+## Sixth pass (2026-10-19)
+
+Pulled and manually resolved upstream main into chat-5-b at merge `b1f950c9464afd30e34c1ea6992bd847d68431c7`, keeping upstream JSX components and reapplying only legacy styling across 39 source files. Both histories preserved. No CI, app run or test execution. See the full tracker and verification log.
