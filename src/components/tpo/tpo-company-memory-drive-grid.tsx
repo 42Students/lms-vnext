@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
+import dynamic from "next/dynamic";
+import {useRouter} from "next/navigation";
+import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {companyDriveCsv} from "@/modules/placements/tpo-company-drive-export-model";
 import {GridWorkspace} from "./grid/grid-workspace";
@@ -26,22 +27,17 @@ const columns:readonly TpoGridColumn<CompanyMemoryDriveRow>[]=[
  {key:"applied",label:"Applied",read:row=>row.applied+" · "+row.offers+" offers"},
  {key:"created",label:"Created",read:row=>date(row.createdAt),sortKind:"date",sortValue:row=>new Date(row.createdAt).getTime()},
 ];
-const rowColumns:readonly DataTableColumn<CompanyMemoryDriveRow>[]=[
- {key:"role",header:"Role",mobilePriority:"primary",cell:row=>
-  <Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.id)}
-   className="inline-flex min-h-9 items-center font-semibold text-link hover:underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-   {row.jobTitle}
-  </Link>},
- {key:"status",header:"Status",mobilePriority:"secondary",cell:row=>statusLabel(row.status)},
- {key:"year",header:"Year",mobilePriority:"secondary",cell:row=>year(row.createdAt)},
- {key:"applied",header:"Applied",mobilePriority:"secondary",cell:row=>row.applied+" · "+row.offers+" offers"},
- {key:"created",header:"Created",mobilePriority:"secondary",cell:row=>date(row.createdAt)},
-];
+/** Quartz sheet mounts in the browser; rows remain the server-scoped company's drives. */
+const TpoGrid=dynamic<TpoSpreadsheetGridProps<CompanyMemoryDriveRow>>(
+ ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<CompanyMemoryDriveRow>),
+ {ssr:false,loading:()=> <p role="status" className="py-4 text-sm text-muted-foreground">Loading company drives…</p>},
+);
 
 export function TpoCompanyMemoryDriveGrid({companyName,drives,search,onSearchChange}:{
  companyName:string;drives:readonly CompanyMemoryDriveRow[];
  search:string;onSearchChange:(next:string)=>void;
 }){
+ const router=useRouter();
  const term=search.trim().toLocaleLowerCase("en-IN");
  const shown=drives.filter(row=>!term||[
   row.jobTitle,statusLabel(row.status),year(row.createdAt),
@@ -62,8 +58,13 @@ export function TpoCompanyMemoryDriveGrid({companyName,drives,search,onSearchCha
   searchMode="controlled" searchValue={search} onSearchChange={onSearchChange}
   searchMaxLength={120} searchPlaceholder="Search role, status or year"
   exportName="company-drives" onExportCsv={()=>exportCurrent()}>
-  {visibleKeys=><DataTable rows={shown} getRowKey={row=>row.id}
-   caption="Company drives" empty={<p role="status">No matching drives.</p>}
-   columns={rowColumns.filter(column=>visibleKeys.includes(column.key))}/>}
+  {visibleKeys=><TpoGrid rows={shown} rowKey={row=>row.id}
+   columns={columns.filter(column=>visibleKeys.includes(column.key))}
+   integratedWorkspace storageKey="tpo-company-memory-drives-v1"
+   openPrimary={{
+    columnKey:"role",
+    ariaLabel:row=>"Open "+row.jobTitle+" drive",
+    onOpen:row=>router.push("/tpo/placements/jobs/"+encodeURIComponent(row.id)),
+   }}/>} 
  </GridWorkspace>;
 }
