@@ -46,7 +46,7 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
  }
  return <div className="mt-2 flex min-w-0 flex-wrap items-end gap-2">
   <label className="min-w-0 flex-1 text-xs">Learner override
-   <Select className="mt-1" aria-label="Learner eligibility override" 
+   <Select className="mt-1 min-h-11 w-full md:min-h-9" aria-label="Learner eligibility override" 
     value={decision} disabled={busy} onChange={event=>{setDecision(event.target.value as Decision);setReviewed(false);}}>
     <option value="NOT_DECIDED">Inherit class/batch</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
    </Select>
@@ -82,13 +82,13 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
     </div>
    </div></Dialog>
   </div>:null}
-  <label className="flex w-full items-center gap-2 text-xs text-body">
+  <label className="flex min-h-11 w-full items-center gap-2 text-xs text-body">
    <Checkbox checked={reviewed} disabled={busy}
     onChange={event=>setReviewed(event.target.checked)}/>
    I reviewed this learner eligibility decision; it will be audited.
   </label>
   <Button variant="primary" type="button" onClick={()=>void save()} disabled={!valid||busy||!reviewed}
-   >
+   className="min-h-11 md:min-h-9">
    {busy?"Saving…":"Save decision"}</Button>
   {error?<p role="alert" className="w-full text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="w-full text-sm">{notice}</p>:null}
