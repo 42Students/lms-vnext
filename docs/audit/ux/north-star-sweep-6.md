@@ -117,3 +117,7 @@ Initial state: 37 page routes and 5 auth/session UI files pending inspection; up
 ### Git evidence
 
 Compared lane branch against baseline `371eb3168b5aa494ab29926e915003ee7a765d66`: **13 commits**, **38 changed files** (including this ledger). Latest verified ref before this ledger update: `c2b1a3cf53ded5b7823c53b9195eb3673d25bb92`. All writes targeted `chatgpt/chat-6-b`, never `main`.
+
+## Follow-on: next portal in `north-star-sweep-7.md` — learner/course second pass
+
+After fast-forwarding `main` at `ee98b58c86df02c0513136baab6d35ef633fef59`, continued beyond chat-6's 37 admin pages into the next available portal inventory. This cross-portal pass is **visual-only** and does not claim to close chat-7's own checklist. Inspect first: learner course overview, assessment overview, course list/tabs, quiz attempt, roadmap item, rich response editor, discussions, and learner profile. Fixes target white-on-white links, outer duplicate canvas cards, dense record card stacks, inconsistent control radii, and heading typography. Leave existing user copy, permission checks, application actions, test coverage and shared UI unchanged.

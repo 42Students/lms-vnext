@@ -290,7 +290,7 @@ export function LearnerCareerRoundsWorkspace({
   return (
     <div className="space-y-5">
       <section aria-label={kind === "ASSESSMENT" ? "Assessment filters" : "Interview filters"}
-        className="space-y-4 rounded-xl border border-border bg-surface p-3 sm:p-5">
+        className="space-y-4 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="m-0 text-sm font-semibold text-foreground">
             {relevant.length} scheduled round{relevant.length === 1 ? "" : "s"}
