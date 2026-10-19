@@ -45,8 +45,8 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
    <Button variant="secondary" type="button" onClick={()=>{setSelected([]);setMessage("");}}
     className="min-h-11 px-3">Clear selection</Button>
    <Button variant="secondary" type="button" disabled={!valid.length} onClick={()=>void copy()}
-    className="min-h-9 px-3">Copy selected</Button>
-   {downloadHref?<a href={downloadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Export filtered page CSV</a>:null}
+    className="min-h-11 px-3 md:min-h-9">Copy selected</Button>
+   {downloadHref?<a href={downloadHref} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export filtered page CSV</a>:null}
   </div>
   <label className="flex min-h-11 items-center gap-2 text-sm">
    <Checkbox checked={rows.length>0&&valid.length===rows.length}
