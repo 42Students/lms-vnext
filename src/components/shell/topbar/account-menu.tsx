@@ -42,10 +42,26 @@ export function TopbarAccountMenu({
       if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        trigger.current?.focus();
+        return;
+      }
+      if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+      if (!(event.target instanceof HTMLElement) ||
+          !root.current?.contains(event.target) ||
+          event.target.matches("input, select, textarea")) return;
+      const actions = Array.from(root.current.querySelectorAll<HTMLElement>(
+        '[role="dialog"] a[href], [role="dialog"] button:not([disabled])'
+      )).filter(action => action.getClientRects().length > 0);
+      if (!actions.length) return;
+      const index = actions.indexOf(event.target);
       event.preventDefault();
-      setOpen(false);
-      trigger.current?.focus();
+      const next = event.key === "Home" ? 0 : event.key === "End" ? actions.length - 1
+        : event.key === "ArrowDown" ? (index + 1) % actions.length
+        : (index - 1 + actions.length) % actions.length;
+      actions[next]?.focus();
     };
     document.addEventListener("pointerdown", onPointer);
     document.addEventListener("keydown", onKey);
