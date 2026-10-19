@@ -1,5 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
+import { CalendarGrid } from "@/components/ui/calendar-grid";
 
 import Link from "next/link";
 import {useSearchParams} from "next/navigation";
@@ -220,7 +221,7 @@ export function LearnerCareerCalendar({
 
       {calendarDays.length ? (
         <section className="hidden overflow-x-auto rounded-xl border border-border bg-surface p-3 md:block" aria-label={view + " calendar grid"}>
-          <div className="grid min-w-[38rem] grid-cols-7 gap-1">
+          <CalendarGrid className="min-w-[38rem]">
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label) => (
               <p key={label} className="py-2 text-center text-xs font-semibold uppercase text-muted-foreground">
                 {label}
@@ -252,7 +253,7 @@ export function LearnerCareerCalendar({
                 </button>
               );
             })}
-          </div>
+          </CalendarGrid>
         </section>
       ) : null}
 
