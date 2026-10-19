@@ -872,3 +872,21 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 | Email signature paper preview | `src/components/tpo/tpo-communication-settings-editors.tsx:74-100`: existing signature preview and hidden editable controls | Same limitations. |
 
 **Responsive source proof:** 0–767px `min-h-11` = 44px for locally sized controls and 768px+ `md:min-h-9` = 36px; wide disclosure/table containers retain existing flex wrapping. Print-only draft paragraphs use `whitespace-pre-wrap` to maintain line breaks; no measured paper margins, font metrics, clipping or real email-client snapshots were available. G4/G5 strict ticks remain open pending exact legacy assets and whole-repo checks.
+
+## G5 campaign draft composer source pass — chat-6
+
+- [x] **Source pass** `src/components/tpo/tpo-campaign-compose.tsx`: Complete campaign draft editing/preview: opener/segment/input values, selected recruiter audience validation, template-key guard, preview, save/disabled/error and paper-only campaign/subject identifiers. Displayed preview remains explicitly a sample, not a provider-hosted sent email.
+- [ ] **Next exact file:** `src/components/tpo/tpo-optional-emails-editor.tsx` — study optional email preference toggles and printable settings summary, then remaining email and receipt output surfaces.
+
+| State/property | Old LMS file:line exact value | Current vNext file:line value | Status |
+|---|---|---|---|
+| Phone hit target | `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/tpo/tpo-campaign-compose.tsx:15, 89, 134, 137, 141`: `min-h-11` | Token source aligned; device not inspected |
+| Desktop height/radius | `docs/design/ui-clone-checklist.md:46-47` — 36px, radius 9px, text 14/650 | `src/components/tpo/tpo-campaign-compose.tsx:15, 89, 134, 137, 141`: `md:min-h-9`, shared controls | Resolved computed styles unavailable |
+| Keyboard focus | `docs/design/legacy-styles/components___accessibility.scss:18-21` — 2px teal solid / 3px offset | `src/components/tpo/tpo-campaign-compose.tsx:134, 137`: audience link 2px/3px with `--lms-primary-text`; shared Button inherited focus remains separate | Partial exact source match; full states open |
+| Error/status and busy | `docs/design/old-lms-pages.md:9` statuses/alerts and labels | `src/components/tpo/tpo-campaign-compose.tsx:88, 95, 96, 140, 146` role alert with `text-error`; `:84, 87, 91, 140, 145` live status; existing busy/disabled condition unchanged | Semantic source only |
+| Paper text view | Original old-LMS provider template HTML absent | `src/components/tpo/tpo-campaign-compose.tsx:83, 114` prints current title/subject; `:79, 89, 100, 106, 110, 115, 126, 134, 137, 141` hides editable controls, return links, Save action; existing `whitespace-pre-wrap` body preview stays | No printer preview or historical provider email comparison |
+| HTML email template | `src/modules/notifications/zeptomail-email.ts:85-117` calls remotely hosted `template_key` | No hosted markup edited; `previewTpoCampaignText` still uses local example merge variables | G5 email visual parity **OPEN** |
+
+**Entire-file scoped grep:** raw lowercase `button/input/select/textarea/table` = `0/0/0/0/0`, hex literals `0`, shared Button opens/closes `2/2`. No raw visible controls or local color hex introduced; both JSX label and Button pairs remained balanced in the checked-in source. Reproduce (not executed): `grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' src/components/tpo/tpo-campaign-compose.tsx` (expected no hits). Responsive proof is 44px phone/36px desktop **source class comparison**, not phone screenshot or tablet physical test. Print-only content is static, line breaks preserved by the existing preview block.
+
+**G4 and G5 category boxes remain [ ]**. A full old-LMS email client rendering, external ZeptoMail template HTML, printable PDFs and run-time/no-regression proof are still unavailable.
