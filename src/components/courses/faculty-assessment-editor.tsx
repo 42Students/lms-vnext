@@ -247,7 +247,9 @@ export function FacultyAssessmentEditor({
           <>
             {facultyAssessmentCanArchive(assessment.kind,assessment.status) ? <Button
               variant="danger"
-              disabled={saving || deleting}
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
+              loading={deleting}
+              disabled=saving || deleting}
               onClick={deleteAssessment}
             >
               {deleting
@@ -256,6 +258,8 @@ export function FacultyAssessmentEditor({
             </Button> : null}
             <Button
               type="submit"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
+              loading={saving}
               form={`faculty-assessment-edit-${assessment.id}`}
               disabled={saving || deleting}
             >
