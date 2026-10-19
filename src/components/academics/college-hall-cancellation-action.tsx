@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {hallCancellationPrompt} from "@/modules/academics/college-hall-cancel-model";
@@ -30,10 +31,10 @@ export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}
       <input value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
         className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground"/>
     </label>
-    <button type="button" disabled={pending||reason.trim().length<3} onClick={cancel}
-      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+    <Button variant="secondary" type="button" disabled={pending||reason.trim().length<3} onClick={cancel}
+      className="text-primary-text">
       {pending?"Cancelling…":"Cancel booking"}
-    </button>
+    </Button>
     {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}
   </div>;
 }
