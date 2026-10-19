@@ -525,3 +525,161 @@ The earlier remote-source sweep across 41 shell TypeScript/CSS files
 coverage proof, not a checkout `git grep`. Browser hover, keyboard
 and phone/tablet screenshot parity remain open. **B3 stays [ ]; B4
 stays [ ].**
+
+## Next batch: executable grep ledger and unified mobile active highlighting
+
+The old LMS `lms2-fe/prod-2026/src/components/MobileFooter/MobileFooter.jsx:35-225`
+shares the same role-specific active footer semantics as its desktop
+navigation. The current recruiter alias pages can render from `/recruiter/*`
+while navigation URLs are canonical `/hr/*`. Before this batch their
+mobile bar had **no active tab**, although the desktop sidebar correctly
+recognized the alias. The mobile footer now reuses the same pure route
+ownership helper used by `SidebarNav`. All link destinations, icons,
+spacing, permission filtering and content remain unchanged.
+
+| Property/state | Original production value and source | Current file:line evidence | Result |
+|---|---|---|---|
+| Active icon opacity | `mobileFooter.scss:32-40` sets active image opacity 1 | `legacy-mobile-footer.css:36-45` same; `learner-faculty-mobile-footer.tsx:94-105` derives the active item | Exact CSS; active logic reconciled |
+| Active caption | `mobileFooter.scss:37-39` active #26bac7 | `legacy-mobile-footer.css:43-45` same | Exact CSS |
+| Inactive caption | `mobileFooter.scss:23-30` 10px/500/#a9a7ae/line-height1.2 | `legacy-mobile-footer.css:43-45` same | Exact CSS |
+| 24px icons | `MobileFooter.jsx:38-224` image width24/height24 | `learner-faculty-mobile-footer.tsx:98-103` 24×24 | Exact declared size |
+| Active recruiter aliases | Legacy maps `/recruiter/home|drives|messages|calendar|company` to their own active footer items (`MobileFooter.jsx:195-210`) | `legacy-sidebar-active-model.ts` maps aliases to canonical HR routes; `learner-faculty-mobile-footer.tsx:94` reuses it | Corrected canonical-route adaptation |
+| Nested drive/message detail | Legacy footer active selected by account section id | `legacy-sidebar-active-model.ts:20-47` owns result/job and conversation child pages; shared by both footer and sidebar | Corrected modern route ownership |
+| Active College Admin profile utility | Legacy College Admin footer Profile option at `MobileFooter.jsx:65-69` | `legacy-sidebar-active-model.ts:17-23` maps branding/domains/college-profile to Profile; shared by mobile and desktop | Modern alias continuity |
+| Role filtering | Legacy role predicates at `MobileFooter.jsx:12-35` | `learner-faculty-mobile-footer.tsx:58-87` role+permitted sidebar paths | Existing behavior retained |
+| Phone versus tablet | Legacy `d-md-none` at ≥768px | `legacy-mobile-footer.css:5-6` renders ≤767px, hidden ≥768px | Same breakpoint |
+| Safe-area height | `components___antddesign.scss:912-936` 64px+safe-area | `legacy-mobile-footer.css:7-25` same | Exact source values |
+
+**Grep proof available now:** A source-only scan of the complete
+41-file `src/components/shell/**/*.{ts,tsx,css}` subtree at the
+previous recorded tree has 0 raw button/input/select/textarea opening
+tags, and 50 `lms-desktop-sidebar|fl-d-panel-l|lms-sidebar-item`
+references confined to the three canonical shell files. This batch
+adds one pure import and one helper call; it introduces no new class
+selector or raw control. The full-checkout command script has been
+upgraded to print each individual Git command and unabridged path:line
+matching output, plus line count, file count and shell/TPO breakdown
+for six separate B3/B4 patterns. It accepts
+`node scripts/audit/chat19-shell-grep.cjs --markdown` for a directly
+pasteable audit table or defaults to JSON. It treats Git grep's exit
+status 1 as zero matches and propagates all other failures.
+
+**Important limitation:** the GitHub-connected environment has no
+mounted Git worktree, so the revised script and
+`tests/unit/chat19-shell-grep-ledger.test.ts` are authored but
+not executed. The exact whole-checkout count cannot be claimed.
+The owner can run:
+
+```sh
+node scripts/audit/chat19-shell-grep.cjs --markdown
+```
+
+at the final branch HEAD and attach its actual output. Only after that,
+reconcile any hand-rolled legacy/sidebar/footer references and record
+exemptions for topbar/TPO files owned by other lanes. At phone widths
+320/360/390px, alias-aware active class uses the same 24px icon and
+10px caption inside 64px+safe-area as before. At 768/1024/1280px,
+the footer remains absent and desktop `SidebarNav` remains canonical.
+
+**B3: [ ] and B4: [ ]**. Both retain missing executable complete-tree
+grep and browser source-vNext comparison; B4 additionally retains the
+known intentional non-legacy top route progress bar.
+
+**Next file for execution evidence:**
+`docs/audit/ux/clone-sidebar.md` (paste actual
+`chat19-shell-grep.cjs --markdown` output and browser observations).
+
+### Follow-up: routed mobile Drawer and scoped TPO counter states
+
+This batch corrected two source-visible state mismatches without changing
+the shared Drawer, underlying server counter route, or any page contents.
+
+| State | Legacy or existing source contract | Current source implementation | Result |
+|---|---|---|---|
+| Drawer width phone | `components___antddesign.scss:305-308`: 82%, cap 300px | `sidebar-legacy.css:189-199`: 82vw capped 300px | Values match |
+| Drawer focus/close | Original drawer modal closes on navigation; shared vNext `Drawer` handles Escape/backdrop/focus trap | `mobile-navigation.tsx:13-18,32-43` closes on route pathname commit, link click, and shared `onOpenChange` | Additional Back/Forward safeguard; browser still pending |
+| Open state on desktop breakpoint | Original phone only through 767px | `mobile-navigation.tsx:20-28`: closes at min-width 768px and resize | Source match |
+| Expanded TPO badge poll | Only a genuine TPO portal needs TPO notifications, requests, messages/team counts | `sidebar-nav.tsx:49-82`: `sidebarPortal==="tpo"` guard, 60-second poll and visibility refetch | No college-only API poll |
+| College Admin Placement cell | College Admin has a single `/tpo/home` shortcut but not a full TPO rail | `shell-model.ts:108-126`, `sidebar-nav.tsx:49-62`: route resolves to college menu and no TPO count requests | Corrected scoped behavior |
+| Unknown TPO Team count | `shell-counts-model.ts`: `team:number|null`, unknown must not be inferred as 0 | `sidebar-nav.tsx:30-37`: returns nullable `counts.team` directly | Corrected unknown state |
+| Known zero / positive counts | `shell-counts-model.ts`: only positive badges, 99+ overflow | `sidebar-nav.tsx:97-119`: existing `shellUnreadBadge` unchanged | No regression |
+| Mobile vs tablet counter UI | Old sidebar switches from touch drawer ≤767 to rail ≥768 | `SidebarNav` is shared inside both, same guarded data and link state | Structural match, browser check open |
+
+The `mobile-navigation.tsx` role menu still has its single 44px
+launcher, native-dialog focus trap, Escape and backdrop handling.
+The new pathname listener is cleaned up by React, while its existing
+breakpoint listener cleans up on unmount. The read-only script
+`scripts/audit/chat19-shell-grep.cjs` searches all tracked source
+`.ts/.tsx/.css` entries in B3/B4 scopes and records line/file counts.
+This turn added no custom button, input, modal or footer implementation.
+
+Tests in `chat19-north-star-legacy-sidebar.test.ts` and
+`chat19-shell-sidebar-clone.test.ts` now assert TPO count authority
+and pathname-based Drawer closure; **not executed**.
+Responsive source analysis covers phone 320/360/390 and tablet
+768/1024px; physical browser and old-site side-by-side proof are still
+the orchestrator's section J work.
+
+**Strict status remains B3 [ ], B4 [ ]:** actual full-checkout
+`git grep` output has not been executed/recorded and browser
+artwork/animation comparison remains open.
+
+### Exhaustive connected-source TPO subtree coverage (127 files)
+
+To supplement the completed **41-file shell** scan, every one of the
+**127** tracked `src/components/tpo/**/*.{ts,tsx,css}` files was read
+from the lane branch Git tree in eight complete, disjoint batches:
+0–15, 16–31, 32–47, 48–63, 64–79, 80–95, 96–111 and 112–126.
+The Git tree listing was nontruncated. The source regex for raw tags
+was `<(button|input|select|textarea)(?=[\\s>])`; for overlays,
+`role="(dialog|alertdialog)"|fixed inset-0|fixed inset-x-0 bottom-0`.
+
+| Coverage expression/scope | Files searched | Occurrences / matching lines | File count | Interpretation |
+|---|---:|---:|---:|---|
+| Raw controls, **shell** | 41 | **0 / 0** | 0 | Shell B3/B4 does not hand-roll form controls |
+| Raw controls, **TPO components** | 127 | **28 tag occurrences / 22 source lines** | 10 | Outside chat-19's shell/footer ownership; see owner handoff below |
+| Potential overlay/position patterns, TPO | 127 | **4 / 4** | 4 | One legitimate fixed TPO footer; other three use shared `Dialog`, NOT hand-rolled overlays |
+| Shell/footer CSS class identifiers, TPO | 127 | **7 occurrences** | **1** | Only `src/components/tpo/tpo-mobile-footer.tsx`; shell re-export simply reuses this component |
+| Class identifier duplication under TPO | 127 | **0 second fixed-footer implementations** | 0 | No duplicate TPO mobile bar component in that directory |
+
+**TPO raw source matches, routed to other owners rather than changed
+outside this lane:** `recruiter-bulk-invite-controls.tsx` (1),
+`recruiter-bulk-owner-controls.tsx` (9),
+`recruiter-bulk-stage-controls.tsx` (9),
+`tpo-batch-facet-filters.tsx` (1 hidden input),
+`tpo-batch-invitation-control.tsx` (1 checkbox),
+`tpo-draft-drive-step-one-form.tsx` (1 button),
+`tpo-find-shortcut.tsx` (1 button),
+`tpo-notice-audience-picker.tsx` (1 hidden input),
+`tpo-notice-delete-confirm.tsx` (2 hidden inputs),
+`tpo-notice-undo-toast.tsx` (2 hidden inputs).
+The 28 number counts individual JSX tag openings, including several
+multiple-tag lines; `git grep -n` will report **22 source lines**,
+not 28 occurrences, for the same TPO files.
+
+**Overlay proof by file:line:** `tpo-mobile-footer.tsx:32` is the
+intended fixed footer (not a modal); `tpo-notice-delete-confirm.tsx:22`,
+`tpo-team-ask-panel.tsx:40` and `tpo-team-message-actions.tsx:42`
+pass `role="alertdialog"` to the shared `Dialog`. These three
+are allowed shared-dialog usages, not new absolute-positioned overlays.
+This source distinction avoids misreporting every grep hit as a
+violation. The separate UI/Forms owners must resolve non-hidden raw
+buttons/checkboxes in the TPO client components if the global strict
+form audit requires that; chat-19 will not modify their work.
+
+**Important scope and reproducibility disclaimer:** These are
+exhaustive **GitHub remote-content** regex scans of the two directories,
+not an executed local `git grep`, and not an exhaustive check of
+every `src/app` file. The full-checkout script
+`node scripts/audit/chat19-shell-grep.cjs --markdown` must still be
+run on the final branch SHA and its exact output recorded. B3/B4
+remain unticked.
+
+**Responsive proof for the found intended footer:** the unique TPO
+nav in `src/components/tpo/tpo-mobile-footer.tsx:32` has
+`md:hidden`, and `legacy-mobile-footer.css:27-34` supplies
+fixed 64px + safe-area, #fff surface, #f1f4f9 border and upward
+0 -2px 8px shadow below 768px. It cannot create a second desktop bar
+at 768/1024/1280px. The `ShellMobileFooter` import path is an
+explicit re-export, not independent nav markup. This is source
+breakpoint proof, not a rendered comparison.

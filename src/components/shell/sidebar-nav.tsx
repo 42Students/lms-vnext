@@ -29,7 +29,7 @@ function sectionLabel(item:ShellNavItem,portal:string):string|null{
 function tpoItemCount(href:string,counts:TpoShellCounters):number|null{
  if(href==="/tpo/requests")return counts.requests;
  if(href==="/tpo/messages")return counts.messages;
- if(href==="/tpo/team")return counts.team??0;
+ if(href==="/tpo/team")return counts.team;
  if(href==="/tpo/notifications")return counts.notifications;
  return null;
 }
@@ -57,7 +57,9 @@ export function SidebarNav({
    ?"tpo":pathname==="/hr"||pathname.startsWith("/hr/")||
     pathname==="/recruiter"||pathname.startsWith("/recruiter/")?"recruiter":"other";
  useEffect(()=>{
-  if(!pathname.startsWith("/tpo/"))return;
+  // Only a genuine TPO rail may poll TPO counts; a college-only
+  // Placement cell crossover can have the same /tpo/home URL.
+  if(sidebarPortal!=="tpo")return;
   let active=true;
   const refresh=async()=>{
    if(document.hidden)return;
@@ -77,7 +79,7 @@ export function SidebarNav({
    window.clearInterval(timer);
    document.removeEventListener("visibilitychange",refresh);
   };
- },[pathname]);
+ },[pathname,sidebarPortal]);
 
  const superAdminGroup=pathname.startsWith("/admin/")
   ?superAdminLegacyGroupForPath(pathname):null;
