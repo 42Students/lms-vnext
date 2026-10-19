@@ -28,7 +28,7 @@ export function LearnerSaveDriveButton({jobId,jobTitle,initialSaved}:{jobId:stri
   finally{lock.current=false;setBusy(false);}
  }
  return <span className="inline-flex flex-wrap items-center gap-2">
-  <Button variant="secondary" type="button" disabled={busy} aria-pressed={saved} onClick={()=>void toggle()}
+  <Button className="max-md:min-h-11" variant="secondary" type="button" disabled={busy} aria-pressed={saved} onClick={()=>void toggle()}
    aria-label={saved?"Remove "+jobTitle+" from saved drives":"Save "+jobTitle+" for later"}>
    <span aria-hidden="true">{saved?"♥":"♡"}</span>
    {busy?"Saving…":learnerSavedDriveCopy(saved).action}
