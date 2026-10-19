@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -38,7 +39,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    <PageHeader title="Project templates"/>
    <ErrorState title="Project templates access denied"
     description="This account cannot read the global project template catalogue. Check the active Super Admin session."
-    action={<Link href="/dashboard" className="font-semibold text-primary-text">Return to dashboard</Link>}/>
+    action={<PageBackLink href="/dashboard" label="Return to dashboard" />}/>
   </div>;
  let data:Awaited<ReturnType<typeof listSuperAdminTemplateDirectory>>;
  try {
@@ -56,8 +57,8 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <PageHeader title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
-   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">New template →</Link>:undefined}/>
-  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">New template →</Link>:undefined}/>
+  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="w-full"/>
