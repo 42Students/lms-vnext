@@ -458,3 +458,36 @@ Responsive source implications: **375px phone** and **700px tablet** show one-co
 This file has 1 shared PageHeader, 1 results destination link, 0 raw button/input/select/textarea, 0 hex literals and 0 deprecated `sm:` utility instances. `assessments/page.tsx` and `interviews/page.tsx` retain the same learner-owned request/schedule services and the combined `learner-career-rounds-workspace.tsx`. Browser rendering, keyboard and mobile screenshots remain outstanding; LRN-02 still unticked.
 
 **Next queued file:** `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`, then nested notification error/loading page inventory. Do not alter courses owned chat-7.
+
+## Learner placement notification preferences — source parity (2026-10-20)
+
+Source-completed `src/app/(authenticated)/learn/my-placements/notification-preferences/{page.tsx,loading.tsx}` and `src/components/placements/learner-placement-notification-settings.tsx`. Inspected existing `notification-preferences/error.tsx` and found its one PageHeader, retry Button, hairline error state already source-compatible; did not rewrite it unnecessarily.
+
+| Property/state | Legacy SCSS / intended value | Current vNext source | Status |
+|---|---|---|---|
+| Page anatomy | `old-lms-pages.md:5-13`: back link, one PageHeader, white canvas | Return link placed before one shared PageHeader; page remains `min-w-0 space-y-6` | Source match |
+| Checkbox affordance | `components___form.scss` / `components___accessibility.scss:19-38`: native input semantics, 2px teal focus, 44px minimum touch area | Two existing shared Checkbox controls inside labels `min-h-12`, `rounded-lg`, `focus-within:outline-2 outline-offset-2` and token focus colour | Source match |
+| Checkbox states | Selected teal surface, neutral unselected, disabled when pending | Conditional `border-primary bg-primary-subtle` vs `border-border bg-surface hover:border-primary`, `disabled={pending}` preserved | Source check, rendered states pending |
+| Selectable row padding | Legacy discrete option/row panels 16px inset with 8px radius | Both rows retain `p-4` and use `rounded-lg` 8px, `min-w-0` | Source match |
+| Button mobile size | `components___learn-notifications.scss:9-10`: 44px through 767px | Review/reload/keep/save: four shared Buttons with `max-md:min-h-11`, normal desktop height | Source match |
+| Motion sensitivity | `components___accessibility.scss`: reduced motion removes effects | Checkbox option transitions retain 150ms and gain `motion-reduce:transition-none` | Source match |
+| Loading state | `old-lms-pages.md:5-13`: single directory canvas | Shared `GracefulPageLoading shape="directory"` rather than legacy-mismatched `shape="card"` | Source match |
+| No-regression | Owner: preserve contents/API choices | Two preference names, optimistic `expected` match, PUT endpoint, pending disable, confirmation Dialog, toast and router refresh unchanged | Source logic review; runtime untested |
+
+GitHub full-file scan, not shell grep:
+
+| File | Raw controls | Hex values | Old `sm:` geometry classes | Header | Shared Button pairs | Checkbox | 44px tokens |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `notification-preferences/page.tsx` (23 lines) | 0 | 0 | 0 | 1 | 0/0 | 0 | 1 |
+| `notification-preferences/loading.tsx` (6 lines) | 0 | 0 | 0 | 0 | 0/0 | 0 | 0 |
+| `notification-preferences/error.tsx` (16 lines; inspected unchanged) | 0 | 0 | 0 | 1 | 1/1 | 0 | 1 |
+| `learner-placement-notification-settings.tsx` (105 lines) | 0 | 0 | 0 | 0 | 4/4 | 2 | 4 |
+
+Scan patterns: `/<(button|input|select|textarea)(?=\\s|>)/g`; `/#[0-9a-f]{6}\\b/gi`; `/\\bsm:(min-h-9|p-5|p-6|grid-cols-2)\\b/g`; opens `/<Button(?=\\s|>)/g`, closes `/<\\/Button>/g`.
+
+Phone **375px** and small tablet **700px**: both selectable option rows stack, have at least 48px selectable height, four actions have >=44px target; 768px+: normal shared Button desktop sizing and preserved label layout. Layout derived from class rules only; computed visual values and manual interaction not measured. LRN-02/04/06 remain strictly unticked.
+
+### Batch codemod note
+`scripts/codemods/chat1-learner-rounds-responsive.cjs` added for the 4 previously source-migrated round/result files: idempotent source substitutions, dry-run default, TypeScript TSX parse guard. The Node codemod was **not run**, as per user dev-only/no-code-execution instruction.
+
+**Next exact file for continuation:** `src/app/(authenticated)/learn/my-placements/preparation/page.tsx` (remaining LRN-02 page type; inspect against existing proof before making any changes); after that `src/app/(authenticated)/learn/my-placements/support/page.tsx`. Full runtime screenshot/keyboard parity and whole-lane grep remain the reason all strict checklist items are open.
