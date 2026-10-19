@@ -91,7 +91,7 @@ export default async function FacultyCalendarPage({
         <CalendarGrid variant="hairline" className="min-w-[44rem]">
           {names.map(name=><div key={name} className="bg-surface-subtle p-2 text-center text-xs font-semibold">{name}</div>)}
           {grid.days.map(day=><section key={day.key}
-            aria-label={day.key+" IST"} className={"min-h-28 p-2 "+(day.inMonth?"bg-surface":"bg-surface-subtle")}>
+            aria-label={day.key+" IST"} className={"min-h-28 border border-[var(--lms-canvas-border)] p-[var(--lms-space-2)] "+(day.inMonth?"bg-[var(--lms-surface)]":"bg-[var(--lms-neutral-50)]")}>
             <time dateTime={day.key} className="text-xs font-semibold text-foreground">
               {Number(day.key.slice(8))}
             </time>
