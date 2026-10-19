@@ -18,7 +18,7 @@ export function SuperAdminDriveTabs({jobId,active}:{
   <nav aria-label="Drive tabs" className="flex flex-wrap gap-2">
     {tabs.map(tab=><Link key={tab.label} href={base+tab.suffix}
        aria-current={tab.label===active?"page":undefined}
-       className={"inline-flex min-h-11 items-center rounded-md border px-3 text-sm font-semibold "+
+       className={"inline-flex min-h-11 items-center rounded-[9px] border px-3 text-sm font-semibold "+
         (tab.label===active?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border bg-surface text-body")}>
        {tab.label}</Link>)}
   </nav>
