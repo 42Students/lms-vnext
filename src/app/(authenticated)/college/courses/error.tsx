@@ -9,5 +9,5 @@ export default function CollegeCoursesError({ reset }: {
 }) {
   return <ErrorState title="Course catalogue unavailable"
     description="The course catalogue failed to load. Missing records cannot be assumed."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>} />;
+    action={<Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>} />;
 }
