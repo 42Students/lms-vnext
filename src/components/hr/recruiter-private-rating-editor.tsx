@@ -85,7 +85,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   <div className="flex flex-wrap gap-2">
    <button type="submit" disabled={!ready||!dirty||pending}
-    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50">
     {pending?"Saving…":"Save private review"}</button>
    <button type="button" disabled={!ready||pending||(rating===null&&!note)}
     onClick={()=>void save(undefined,true)}
