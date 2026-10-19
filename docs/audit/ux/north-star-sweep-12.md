@@ -74,3 +74,18 @@ Owner: chat-12 · Branch: `chatgpt/chat-12-b` · 2026-10-19
 ## Execution log
 - 2026-10-19: Created inventory on the fast-forwarded lane branch, before editing page components.
 - Batch results will be recorded only after verified GitHub commits.
+
+## Verified source-edit summary (GitHub branch, not a browser visual diff)
+- Fast-forwarded this branch from its pre-sweep ancestor to `main` before any edits (no force push).
+- Source commits on branch above baseline at this checkpoint: **120**, behind main: **0**; distinct changed files: **117**.
+- Changed TPO route files: **60**, including student rosters, company CRM, batch eligibility, team and first-third landing, plus corresponding error/loading states.
+- Changed TPO-specific component files: **56**; placements-specific company controls: **0**.
+- Newly covered routes outside the initial inventory: `src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx`, `src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx` (audited; no changes required), and relevant error/loading variants.
+- Newly covered first-third/roster components: `tpo-students-spreadsheet`, `tpo-students-bulk-debar`, `tpo-students-assign-prep`, `tpo-student-saved-views`, `tpo-student-nudge-panel`, `tpo-student-note-editor`, `tpo-student-quick-panel`, `tpo-timed-debar-control`, `tpo-student-clipboard-actions`, `tpo-bulk-action-panel`, `tpo-bulk-action-preview`, `tpo-roster-verification-bulk`, `tpo-spreadsheet-grid`, `tpo-grid-filter-panel`, `tpo-grid-column-chooser`, `tpo-academic-import-preview`, `tpo-academic-import-workspace`, `tpo-batch-class-decision`, `tpo-batch-lifecycle-control`, `tpo-batch-invitation-control`, `tpo-batch-eligibility-import`, and TPO company/team presentation controls.
+- Replaced literal link colours with `text-link`, literal heading colour with `var(--lms-heading)`, small custom radii with the shared 9px radius, old-LMS panel radii with 12px, and 44px overrides on button/form controls with 36px defaults where appropriate. Kept `rounded-full` on pills and chart bars. Preserved table structures and all page content and interaction paths.
+- Removed two redundant top-level card wrappers from the Home disabled-module and Companies invalid-filter states; did **not** flatten independently bordered alerts, grids, popovers or content panels.
+- Fixed company CRM workspace h1 to 30px/600, local button height to 36px, and dropdown shadow to the corresponding shared legacy token.
+
+## Verification limits / handoff
+- Source edits have been accepted as GitHub commits on `chatgpt/chat-12-b`; no code, TypeScript compiler, tests, CI, dev server, screenshot capture or browser interaction was run, per lane instruction. Syntax was preserved by targeted class/attribute edits, but compile validity and pixel-exact appearance remain unverified.
+- No shared shell/UI/globals files, tests, data structures or placement business logic were modified by this sweep. Pixel-level review against the running old LMS is reserved for the orchestrator's final visual pass.
