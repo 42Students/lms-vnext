@@ -1,5 +1,9 @@
 "use client";
 
+import { DateInput } from "@/components/ui/date-input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -103,7 +107,7 @@ export function TpoOfferLifecyclePanel({
       </div>
       <label className="block text-sm font-semibold text-foreground">
         Administrative action
-        <select
+        <Select
           value={action}
           disabled={busy}
           onChange={(event) => {
@@ -116,7 +120,7 @@ export function TpoOfferLifecyclePanel({
           {TPO_OFFER_ACTIONS.map((value) => (
             <option key={value} value={value}>{value.replaceAll("_", " ")}</option>
           ))}
-        </select>
+        </Select>
       </label>
       {eligible.length === 0 ? (
         <p role="status" className="text-sm text-body">
@@ -126,8 +130,7 @@ export function TpoOfferLifecyclePanel({
         <div tabIndex={0} role="group" aria-label="Eligible offers, scroll for more" className="max-h-56 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
           {eligible.map((offer) => (
             <label key={offer.id} className="flex min-h-11 items-center gap-3 px-2 text-sm hover:bg-muted md:min-h-9">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={ids.includes(offer.id)}
                 disabled={busy || (ids.length >= 200 && !ids.includes(offer.id)) ||
                   (statuses.length > 0 && !statuses.includes(offer.status))}
@@ -142,8 +145,8 @@ export function TpoOfferLifecyclePanel({
       {action === "EXTEND" ? (
         <label className="block text-sm font-semibold">
           New expiry (IST)
-          <input
-            type="datetime-local"
+          <DateInput
+            mode="datetime-local"
             value={expiresAt}
             disabled={busy}
             onChange={(event) => setExpiresAt(event.target.value)}
@@ -154,8 +157,8 @@ export function TpoOfferLifecyclePanel({
       {action === "RECORD_JOINED" ? (
         <label className="block text-sm font-semibold">
           Confirmed joining date
-          <input
-            type="date"
+          <DateInput
+            mode="date"
             value={joiningDate}
             disabled={busy}
             onChange={(event) => setJoiningDate(event.target.value)}
@@ -165,7 +168,7 @@ export function TpoOfferLifecyclePanel({
       ) : null}
       <label className="block text-sm font-semibold text-foreground">
         Mandatory evidence / reason (10–1200 characters)
-        <textarea
+        <Textarea
           rows={3}
           maxLength={1200}
           value={reason}
@@ -177,7 +180,7 @@ export function TpoOfferLifecyclePanel({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span className="text-sm text-body">{ids.length} / 200 selected</span>
         <label className="flex items-start gap-2 text-sm text-body">
-          <input type="checkbox" checked={reviewed} disabled={busy}
+          <Checkbox checked={reviewed} disabled={busy}
             onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
           I reviewed the {selected.length} affected offer(s) and supporting evidence.
           This is an audited administrative action, not a learner self-response.
