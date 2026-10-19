@@ -59,7 +59,7 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
    </button>
    <button type="button" disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)}
      onClick={()=>{setFirstName(savedName.firstName);setLastName(savedName.lastName);setMessage("");}}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body disabled:opacity-40">
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-40">
      Cancel unsaved changes
    </button>
    {message?<p role="status" className="text-xs text-body">{message}</p>:null}
