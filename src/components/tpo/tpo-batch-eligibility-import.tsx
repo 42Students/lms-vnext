@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
@@ -130,7 +131,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
      onClick={()=>setSkippedByUser(current=>current.includes(i)?current:[...current,i])}
      className="mr-2 min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-link">
      {skippedByUser.includes(i)?"Row skipped":"Skip row"}</Button>:
-     <label className="mr-2 inline-flex items-center gap-1"><input type="checkbox" checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy}/>Include</label>}
+     <label className="mr-2 inline-flex items-center gap-1"><Checkbox checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy}/>Include</label>}
     <strong>Row {i+1}: {row.studentName??preview.rows[i]?.studentCode}</strong>
     <p>Roll: {row.rollNumber??preview.rows[i]?.studentCode} · Current: {row.currentStatus??"—"} · Becomes: {row.proposedStatus??"—"}</p>
     <p>{row.status==="matched"&&row.currentStatus===row.proposedStatus?
@@ -147,7 +148,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    </div>
    <Button variant="secondary" type="button" disabled={busy} onClick={()=>void copyPreview()} >Copy preview outcomes CSV</Button>
    <label className="flex items-start gap-2 text-sm text-body">
-     <input type="checkbox" className="mt-1 h-4 w-4 accent-primary"
+     <Checkbox className="mt-1 h-4 w-4 accent-primary"
        checked={acknowledged} disabled={busy}
        onChange={event=>setAcknowledged(event.target.checked)}/>
      I reviewed the matched learners and understand that applying these decisions will be audited.
