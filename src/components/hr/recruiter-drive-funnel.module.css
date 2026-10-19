@@ -52,3 +52,18 @@
 @media (prefers-reduced-motion: reduce) {
   .track > div { transition: none; }
 }
+
+/* Focused review pager: old recruiter-review__bar flex 1, min-width 100px,
+ * margin 0 (lms2-fe@prod-2026/_recruiter-v2.scss:116-118). */
+.reviewTrack {
+  flex: 1 1 120px;
+  min-width: 100px;
+  margin: 0 !important;
+  height: 8px !important;
+  border-radius: 999px;
+  background: #e7ecf2 !important;
+}
+.reviewTrack > div { background: #26bac7 !important; }
+@media (max-width: 767px) {
+  .reviewTrack { min-width: 100px; }
+}
