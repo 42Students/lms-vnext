@@ -70,7 +70,7 @@ function invalidCompanyFilters(){
   <p className="mt-2 text-sm text-body">
    The requested search or pagination values are invalid. No company data was loaded.
   </p>
-  <Link href="/tpo/companies" className="mt-4 inline-block font-semibold text-link hover:underline">
+  <Link href="/tpo/companies" className="mt-4 inline-block font-semibold text-link hover:underline lms-inline-link">
    Clear filters
   </Link>
  </section>;
@@ -281,7 +281,7 @@ export default async function TpoCompanyMemoryPage({
             columns={[
               {key:"company",header:"Company",mobileLabel:"Company",mobilePriority:"primary",
                cell:company=><div className="min-w-0">
-                <Link href={companyHref(company)} className="inline-flex min-h-9 items-center break-words font-semibold text-link underline">{company.name}</Link>
+                <Link href={companyHref(company)} className="inline-flex min-h-9 items-center break-words font-semibold text-link underline lms-inline-link">{company.name}</Link>
                 {company.unlinkedLeadGroup?<div className="mt-2"><StatusBadge tone="warning">CRM name only · not linked</StatusBadge></div>:<p className="mt-1 text-xs text-muted-foreground">Linked employer</p>}
                 {company.websiteUrl?<p className="mt-1 break-all text-xs text-body">{company.websiteUrl}</p>:null}
                </div>},
