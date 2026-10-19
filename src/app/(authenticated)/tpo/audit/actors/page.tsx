@@ -45,7 +45,7 @@ export default async function TpoActorAuditPage({
   const parsed = tpoActorAuditQuerySchema.safeParse(filters);
   if (!parsed.success) {
     return <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
-      <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Invalid audit filters</h1>
+      <PageHeader title="Invalid audit filters" />
       <Link className="mt-2 inline-block text-[var(--lms-teal-deep)] underline" href="/tpo/audit/actors">
         Clear filters
       </Link>
