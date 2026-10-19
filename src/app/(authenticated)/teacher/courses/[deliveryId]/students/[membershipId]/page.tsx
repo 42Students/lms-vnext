@@ -1,3 +1,4 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -21,8 +22,7 @@ export default async function FacultyStudentDetailPage({
   const name = data.student.displayName?.trim() || "Unnamed learner";
   const root = "/teacher/courses/" + encodeURIComponent(data.course.deliveryId);
   return <div className="min-w-0 max-w-full space-y-6">
-    <Link href={root + "/students"}
-      className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Students</Link>
+    <PageBackLink href={root + "/students"} label="Students" />
     <PageHeader eyebrow="Faculty · Course Students" title={name}
       description={[data.course.courseName, data.course.sectionName,
         data.course.academicPeriodName].join(" · ")} />
