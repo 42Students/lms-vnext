@@ -114,13 +114,13 @@ export function SuperAdminContentActions({item}:{item:Content}){
  return <div className="space-y-2">
   <div className="flex flex-wrap gap-2">
    <button type="button" disabled={busy} onClick={toggleEditor}
-    className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">Edit</button>
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-primary-text hover:bg-primary-subtle">Edit</button>
    {item.status==="DRAFT"?<button type="button" disabled={busy} onClick={()=>void transition("PUBLISH")}
-    className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">Publish</button>:null}
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-primary-text hover:bg-primary-subtle">Publish</button>:null}
    <button type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
-    className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-error">Delete</button>
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-error hover:bg-error-subtle">Delete</button>
   </div>
-  {editing?<fieldset disabled={busy} className="grid gap-2 rounded border border-border p-3">
+  {editing?<fieldset disabled={busy} className="grid gap-2 rounded-xl border border-border bg-surface p-3">
    <p className="text-xs text-muted-foreground">Edit saved metadata or replace a link.
     Private files and existing published URLs are not exposed in this form.</p>
    <label className="grid gap-1 text-xs font-semibold">Title
