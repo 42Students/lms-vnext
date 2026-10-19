@@ -1,6 +1,5 @@
 "use client";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 
 
@@ -94,7 +93,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    <div><h2 className="font-semibold">Quizzes</h2>
     <p className="text-xs text-muted-foreground">Author questions for all eligible Sections or a specific Section.</p></div>
    <Button variant="secondary" type="button" disabled={!lessons.length||busy} onClick={()=>{setError("");setNotice("");setOpened(true);}}
-    className="min-h-10 px-3">
+    className="text-primary-text">
     Create New Quiz</Button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">Create an active course lesson before adding quizzes.</p>:null}
@@ -162,26 +161,26 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      <Input maxLength={2000} disabled={busy} value={option.text} placeholder={"Option "+(j+1)}
       onChange={e=>replaceQuestion(i,{...question,options:question.options.map((o,k)=>k===j?{...o,text:e.target.value}:o)})}
       className="min-h-10 min-w-0 flex-1 rounded border border-border px-2"/>
-     {question.options.length>2?<Button variant="ghost" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
+     {question.options.length>2?<Button variant="secondary" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
       ...question,options:question.options.filter((_,k)=>k!==j)})}
-      >Remove</Button>:null}
+      className="text-xs font-semibold text-error">Remove</Button>:null}
     </label>)}
     <div className="flex flex-wrap gap-3">
      <Button variant="ghost" type="button" disabled={busy||i===0} onClick={()=>moveQuestion(i,-1)}
-      >Move question up</Button>
+      className="text-sm font-semibold text-primary-text disabled:opacity-40">Move question up</Button>
      <Button variant="ghost" type="button" disabled={busy||i===questions.length-1} onClick={()=>moveQuestion(i,1)}
-      >Move question down</Button>
+      className="text-sm font-semibold text-primary-text disabled:opacity-40">Move question down</Button>
      <Button variant="ghost" type="button" disabled={busy||question.options.length>=20}
       onClick={()=>replaceQuestion(i,{...question,options:[...question.options,{text:"",correct:false}]})}
-      >+ Add option</Button>
-     {questions.length>1?<Button variant="ghost" type="button" disabled={busy}
+      className="text-sm font-semibold text-primary-text">+ Add option</Button>
+     {questions.length>1?<Button variant="secondary" type="button" disabled={busy}
       onClick={()=>setQuestions(rows=>rows.filter((_,k)=>k!==i))}
-      >Remove question</Button>:null}
+      className="text-sm font-semibold text-error">Remove question</Button>:null}
     </div>
    </fieldset>)}
    <Button variant="secondary" type="button" disabled={busy||questions.length>=100}
     onClick={()=>setQuestions(rows=>[...rows,empty()])}
-    className="min-h-10 px-3">
+    className="text-primary-text">
     + Add question</Button>
    <label className="flex items-center gap-2 text-sm">
     <input type="checkbox" disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
@@ -189,7 +188,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    </label>
    <div className="flex flex-wrap gap-2">
     <Button variant="primary" type="button" disabled={busy} onClick={()=>void create()}
-     className="min-h-10 px-4">
+     >
      {busy?"Saving…":"Create quiz draft"}</Button>
     <Button variant="secondary" type="button" disabled={busy} onClick={()=>{
       const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||
@@ -200,7 +199,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       setOpened(false);setTitle("");setDescription("");setDueAt("");setDeliveryId("");
       setMaxAttempts("1");setShuffleQuestions(false);setShuffleOptions(false);
       setQuestions([empty()]);setError("");
-    }} className="min-h-10 px-4">Cancel</Button>
+    }} >Cancel</Button>
    </div>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
