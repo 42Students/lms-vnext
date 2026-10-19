@@ -1,6 +1,5 @@
 "use client";
-import { Input } from "@/components/ui/input";
-
+import { Button } from "@/components/ui/button";
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
@@ -99,20 +98,20 @@ export function CollegeContactProfileForm({ initial }: {
       {success}
     </p> : null}
     <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
-      <button disabled={pending} type="submit"
-        className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-60">
+      <Button variant="primary" disabled={pending} type="submit"
+        >
         {pending ? "Saving…" : "Confirm and save changes"}
-      </button>
-      <button disabled={pending} type="button" onClick={() => {
+      </Button>
+      <Button variant="secondary" disabled={pending} type="button" onClick={() => {
         setName(initial.collegeName);
         setEmail(initial.supportEmail ?? "");
         setPhone(initial.supportPhone ?? "");
         setTerms(initial.termsUrl ?? "");
         setPrivacy(initial.privacyUrl ?? "");
         setError(null);
-      }} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-5 text-sm font-semibold">
+      }} >
         Reset
-      </button>
+      </Button>
     </div>
     <p className="text-xs leading-5 text-muted-foreground sm:col-span-2">
       Only display name and public support/policy fields are editable here.
