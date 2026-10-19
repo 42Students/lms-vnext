@@ -97,7 +97,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
         <div><dt>Skipped</dt><dd>{row.suppressed}</dd></div>
       </dl>
     </li>)}
-  </ol>:<p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">No emails sent from Engage yet.</p>}
+  </ol>:<p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">No emails sent from Engage yet.</p>}
   <nav className="flex flex-wrap gap-3" aria-label="Campaign history pagination">
     {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">Previous</Link>:null}
     {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">Next</Link>:null}
