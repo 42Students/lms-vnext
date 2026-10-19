@@ -238,7 +238,7 @@ export function AdminCourseOverview({
               "/" +
               offering.id
             }
-            className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Open learning
           </Link> : null}
@@ -423,7 +423,7 @@ export function AdminCourseOverview({
 
   return (
     <div className="min-w-0 space-y-8">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
           label="Courses"
           value={workspace.summary.courses}
@@ -478,25 +478,25 @@ export function AdminCourseOverview({
          </label>
          <label className="grid gap-1 text-sm font-semibold">Sort
           <Select name="sort" defaultValue={catalogueQuery.sort}
-           className="min-h-11 sm:min-h-9">
+           className="min-h-11 md:min-h-9">
            <option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option>
            <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
           </Select>
          </label>
          {courseBasePath.startsWith("/admin/")?<label className="grid gap-1 text-sm font-semibold">Per page
           <Select name="pageSize" defaultValue={catalogueQuery.pageSize??"25"}
-           className="min-h-11 sm:min-h-9">
+           className="min-h-11 md:min-h-9">
            <option value="25">25</option><option value="50">50</option><option value="100">100</option>
           </Select>
          </label>:null}
-         <Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
+         <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
          <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
           Export CSV
          </a>
-         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle sm:min-h-9"
+         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle md:min-h-9"
           href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses",courseBasePath)}>Refresh</Link>:null}
-         <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle sm:min-h-9" href={courseBasePath}>Clear</Link>
+         <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle md:min-h-9" href={courseBasePath}>Clear</Link>
         </form>:null}
         {catalogue&&catalogue.total>1000?<p className="text-xs text-muted-foreground">
          Export CSV includes up to the first 1,000 matching courses. Narrow filters to export a smaller set.

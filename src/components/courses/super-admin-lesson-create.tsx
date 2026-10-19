@@ -41,7 +41,7 @@ export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
   <h2 className="font-semibold text-foreground">Add Lesson</h2>
   <label className="grid gap-1 text-sm font-semibold text-body">Course / Offering
    <Select required value={pathId} onChange={event=>setPathId(event.target.value)}
-    className="w-full">
+    className="min-h-11 w-full md:min-h-9">
     {paths.map(path=><option key={path.id} value={path.id}>
      {path.courseName} · {path.cohortName} · {path.periodName}
     </option>)}
@@ -49,15 +49,15 @@ export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">Lesson name
    <Input required maxLength={255} value={name} onChange={event=>setName(event.target.value)}
-    className="min-h-11 w-full sm:min-h-9"/>
+    className="min-h-11 w-full md:min-h-9"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">Description (optional)
    <Textarea maxLength={5000} rows={2} value={description}
     onChange={event=>setDescription(event.target.value)}
-    className="min-h-11 w-full sm:min-h-9"/>
+    className="min-h-11 w-full md:min-h-9"/>
   </label>
   {error?<Alert tone="error">{error}</Alert>:null}
-  <Button type="submit" disabled={pending||!name.trim()||!pathId}>
+  <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending||!name.trim()||!pathId}>
    {pending?"Saving…":"Add Lesson"}</Button>
  </form>;
 }
