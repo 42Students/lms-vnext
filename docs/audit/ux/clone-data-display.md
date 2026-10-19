@@ -382,3 +382,21 @@ grep -rnE '<details([[:space:]>])|<summary([[:space:]>])' src --include='*.tsx'
 - Pending verification: no application or CI was run, no TypeScript compiler/test invocation, no real phone/tablet/browser side-by-side, and no exhaustive repo-wide grep; user asked for dev-only source changes. **Do not tick E1–E5 or E8 globally** until full state/property matrix, coverage, responsive and runtime proofs meet STRICT TICK RULE. E8 still blocked by missing `ag-grid-community` and `ag-grid-react` manifest entries (do not modify `package.json`).
 
 **Next exact file:** `src/components/courses/faculty-course-workspace.tsx` (rich selected-lesson accordion; preserve dynamic open and summary `aria-label`). Then `src/components/courses/learner-course-workspace.tsx` (rich focused-lesson accordion exemption) and remaining E2 action pagers such as `src/components/verification/CollegeVerificationPanel.tsx`.
+
+### Rich lesson accordion continuation (chat-14, same bounded turn)
+
+After the initial E5 file census, both previously documented rich-lesson exceptions were migrated **without discarding their explicit open condition, focus anchor, label, progress metadata or content**. This uses a backward-compatible extension to the shared `src/components/ui/disclosure.tsx`, not a generic text-only replacement.
+
+| Completed file | Before | After / exact source static proof |
+|---|---|---|
+| [x] `src/components/courses/faculty-course-workspace.tsx` | 1 rich native details with `open={selectedLessonId?true:lessonIndex===0?true:undefined}`, accessible summary label, lesson description and item count | `<Disclosure>` **1 opening / 1 closing**, native `<details>` **0**; `defaultOpen={Boolean(selectedLessonId \|\| lessonIndex === 0)}`, exact lesson-count summary `summaryAriaLabel`, rich title fragment, original `min-h-11 sm:min-h-9` summary classes. Authoring controls unchanged |
+| [x] `src/components/courses/learner-course-workspace.tsx` | 1 mobile jump disclosure and 1 rich lesson disclosure with `id=lesson-...`, focused-lesson/default-first open logic, badges and progress | `<Disclosure>` **2 openings / 2 closings**, native `<details>` **0**; retained `id={\`lesson-\${lesson.id}\`}`, focus expression, rich lesson summary contents, progress badges, expandable body and `group-open` arrow |
+| [x] `src/components/ui/disclosure.tsx` | String/ReactNode titles, native details, defaultOpen and generic chevron | Added optional `id`, `summaryAriaLabel`, `summaryClassName`, `contentClassName`, and `preserveSummary`. Defaults unchanged for existing call sites. `preserveSummary` keeps rich summary layout/own arrow without a second indicator; native details still supplies Enter/Space and semantic open/closed state. Exactly **1** native details and **1** native summary intentionally remain *inside* this shared primitive |
+
+**Responsive source comparison:** Faculty rich lesson summary retains minimum 44px through phones and 36px from `sm`, and its flex-wrap + badge position; learner rich summary retains 16px padding on phone and 20px from `md`, while the simpler mobile outline still uses `md:hidden`. Neither layout was redesigned. Source static inspection found no newline-before-`as` cast or extra `title={<>{{` sequence in these two files. These are source assertions, **not** a TS compiler or browser output.
+
+**Earlier audit correction:** The neutral 50 token in `src/app/globals.css` is at approximately line 40 in the inspected source, not the previously recorded line 38; its literal value is confirmed `#fafbfc`. The matched legacy neutral status text color is now the literal `#84828b` inside `src/components/ui/status-badge.tsx` (allowed UI-component-local legacy value).
+
+**Unresolved category status:** E1/E2/E3/E4/E5/E8 global checklist entries remain unticked: exhaustive repo-wide grep, full state-by-state legacy computed values, phone/tablet rendered snapshots, and runtime interaction/strict TS checks were not run. E8 has the preexisting undeclared AG Grid packages in the repository manifest. Individual files above can be marked source-migrated only.
+
+**Next exact file after this batch:** `src/components/verification/CollegeVerificationPanel.tsx` (action-based pagination: preserve `navigate` selection-reset guard and page-size change; not safe to replace directly with href-only Pagination).
