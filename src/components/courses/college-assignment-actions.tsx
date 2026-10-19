@@ -1,4 +1,7 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -68,7 +71,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  }
  return <div className="mt-2 space-y-2">
   <div className="flex flex-wrap gap-2">
-   {assignment.status!=="ARCHIVED"?<button type="button" disabled={busy}
+   {assignment.status!=="ARCHIVED"?<Button type="button" disabled={busy}
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text"
     onClick={()=>void (async()=>{
       if(editing){setEditing(false);return;}
@@ -89,30 +92,30 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
        setMethods(normalizeAssignmentMethods(data.assignment.allowedMethods));setMethodsDirty(false);
        setMethodsLoaded(true);setEditing(true);
       }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load assignment settings.");}
-    })()}>Edit</button>:null}
-   {assignment.status==="DRAFT"?<button type="button" disabled={busy}
+    })()}>Edit</Button>:null}
+   {assignment.status==="DRAFT"?<Button type="button" disabled={busy}
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text"
-    onClick={()=>void command("PUBLISH")}>Publish</button>:null}
-   {assignment.status!=="ARCHIVED"?<button type="button" disabled={busy}
+    onClick={()=>void command("PUBLISH")}>Publish</Button>:null}
+   {assignment.status!=="ARCHIVED"?<Button type="button" disabled={busy}
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error"
-    onClick={()=>void command("ARCHIVE")}>Delete</button>:null}
+    onClick={()=>void command("ARCHIVE")}>Delete</Button>:null}
   </div>
   {editing?<div className="grid gap-2 rounded border border-border p-3">
    <label className="grid gap-1 text-xs font-semibold">Title
-    <input maxLength={200} disabled={busy} value={title} onChange={e=>setTitle(e.target.value)}
+    <Input maxLength={200} disabled={busy} value={title} onChange={e=>setTitle(e.target.value)}
      className="min-h-10 rounded border border-border px-2"/></label>
    <label className="grid gap-1 text-xs font-semibold">Points
-    <input type="number" min={1} max={10000} disabled={busy} value={points}
+    <Input type="number" min={1} max={10000} disabled={busy} value={points}
      onChange={e=>setPoints(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
    <label className="grid gap-1 text-xs font-semibold">Deadline (IST)
-    <input type="datetime-local" disabled={busy} value={dueAt} onChange={e=>setDueAt(e.target.value)}
+    <Input type="datetime-local" disabled={busy} value={dueAt} onChange={e=>setDueAt(e.target.value)}
      className="min-h-10 rounded border border-border px-2"/></label>
    <label className="grid gap-1 text-xs font-semibold">Instructions
-    <textarea value={description} disabled={busy} maxLength={10000} rows={3}
+    <Textarea value={description} disabled={busy} maxLength={10000} rows={3}
      onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/></label>
    <FacultyAssignmentMethodPicker methods={methods} onChange={next=>{setMethods(next);setMethodsDirty(true);}} disabled={busy}/>
-   <button disabled={busy} className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary"
-    type="button" onClick={()=>void command("SAVE")}>{busy?"Saving…":"Save changes"}</button>
+   <Button disabled={busy} className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary"
+    type="button" onClick={()=>void command("SAVE")}>{busy?"Saving…":"Save changes"}</Button>
   </div>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-success">{notice}</p>:null}
