@@ -53,6 +53,17 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(route()).toContain("event.ctrlKey");
  expect(route()).toContain("destination.origin!==window.location.origin");
 });
+ it("applies the legacy exit only to learner routes",()=>{
+ expect(route()).toContain('const learnerRoute=pathname==="/learn"||pathname.startsWith("/learn/")');
+ expect(route()).toContain('data-route-portal={learnerRoute?"learner":"other"}');
+ expect(css()).toContain('.lms-shell-route-content[data-route-portal="learner"]');
+ expect(css()).toContain('[data-route-portal="learner"][data-route-transitioning="true"]');
+});
+ it("does not dim the page when navigation is prevented",()=>{
+ expect(route()).toContain("event.defaultPrevented");
+ expect(route()).toContain('document.addEventListener("click",onNavigate)');
+ expect(route()).toContain('document.removeEventListener("click",onNavigate)');
+});
  it("cleans up recovery timer when the route changes",()=>{
  expect(route()).toContain("recoveryTimer.current=window.setTimeout(()=>setLeaving(false),3000)");
  expect(route()).toContain("window.clearTimeout(recoveryTimer.current)");
