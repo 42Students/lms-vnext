@@ -7,6 +7,7 @@ import { getSuperAdminTemplateVersionHistory } from "@/modules/projects/template
 import { templateVersionHistoryQuerySchema, templateVersionHistoryHref, type templateVersionHistoryPage } from "@/modules/projects/template-version-history-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
@@ -182,10 +183,7 @@ export async function SuperAdminTemplateSubviewPage({
         }
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <Link href="/admin/projects/templates"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
-              ← Template catalogue
-            </Link>
+            <PageBackLink href="/admin/projects/templates" label="Template catalogue" />
             {detail.template.status === "PUBLISHED" ? (
               <Link href={"/admin/projects/workspaces/new?templateId=" + encodeURIComponent(detail.template.id)}
                 className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">
