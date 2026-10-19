@@ -4,6 +4,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 import {
@@ -55,19 +57,16 @@ export default async function TpoCalendarExportPage({
         Preview range
       </Button>
     </form>
-    {!parsed.success ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">
+    {!parsed.success ? <Alert tone="error">
       Invalid date range. Select real IST dates with a maximum inclusive span of 93 days.
-    </p> : result ? <section className="space-y-4">
+    </Alert> : result ? <section className="space-y-4">
       <p className="text-sm text-body">
         {result.rows.length} upcoming scheduled rounds within {result.from} to {result.to} (IST).
         {result.truncated
           ? " More than 500 matched: this export is truncated, narrow the range."
           : ""}
       </p>
-      {result.rows.length === 0 ? <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">
-        No future scheduled rounds were found in this college for the chosen dates.
-        Unscheduled, cancelled, completed and non-published drives are not inferred.
-      </p> : null}
+      {result.rows.length === 0 ? <EmptyState title="No future scheduled rounds were found in this college for the chosen dates." description="Unscheduled, cancelled, completed and non-published drives are not inferred."/> : null}
       <a href={"/api/placements/tpo/calendar/export?" + params?.toString()}
         className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
         Download rounds CSV
