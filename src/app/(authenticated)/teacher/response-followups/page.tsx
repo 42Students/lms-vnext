@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -118,15 +119,8 @@ export default async function FacultyResponseFollowUpsPage({
           Open authorized Section report →
         </Link>
       </article>)}</div>}
-    <nav aria-label="Assessment follow-up pages" className="flex items-center justify-between gap-3">
-      <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
-      <div className="flex gap-3">
-        {data.page > 1 && <Link href={facultyResponseFollowUpHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
-        {data.page < data.totalPages && <Link href={facultyResponseFollowUpHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
-      </div>
-    </nav>
+    <Pagination label="Assessment follow-up pages" page={data.page}
+      pageCount={data.totalPages} hrefForPage={page=>facultyResponseFollowUpHref({...data.query,page})} />
     <p className="text-xs leading-5 text-muted-foreground">
       Missing means no persisted submission or quiz attempt for a currently enrolled learner.
       It does not establish misconduct, failure or a notification being sent. No messages are sent
