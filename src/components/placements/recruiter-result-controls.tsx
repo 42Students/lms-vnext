@@ -412,21 +412,21 @@ export function RecruiterResultControls({
                   ] as const).map(([outcome,label])=><button key={outcome} type="button"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
                     disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
-                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text disabled:opacity-40">
+                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-40">
                     {label}
                   </button>)}
                   <button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
-                    onClick={undoDraftOutcome} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text disabled:opacity-40">
+                    onClick={undoDraftOutcome} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-40">
                     Undo draft
                   </button>
                   <button type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
-                    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-[650] text-on-primary disabled:opacity-50"
+                    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50"
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":
                       "Send "+(selected[round.id]??[]).length+" results"}
                   </button>
                   <button type="button" disabled={bulkPending!==null||pendingKey!==null}
-                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text disabled:opacity-50"
+                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
                         []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}));}}>
