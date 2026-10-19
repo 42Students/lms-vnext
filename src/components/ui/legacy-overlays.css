@@ -99,7 +99,9 @@
   line-height: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
 }
-[data-slot="info-popover"] [role="tooltip"] > [aria-hidden="true"] {
+[data-slot="info-popover"] [role="tooltip"] > [aria-hidden="true"] {  left: auto;
+  right: -2px;
+
   width: 10px;
   height: 10px;
   background: #1a1d21;
