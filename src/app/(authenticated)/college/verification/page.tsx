@@ -26,7 +26,7 @@ export default async function CollegeVerificationPage({searchParams}:{
  if(!parsed.success)return <main className="min-w-0 space-y-4 p-4">
   <PageHeader title="Profile verification"/>
   <ErrorState title="Profile verification" description={collegeVerificationFilterError(raw)}
-    action={<Link href="/college/verification" className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>}/>
+    action={<Link href="/college/verification" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>}/>
  </main>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>|undefined;
  let loadFailure:"UNAVAILABLE"|"LIMIT"|null=null;
@@ -44,7 +44,7 @@ export default async function CollegeVerificationPage({searchParams}:{
   return <main className="min-w-0 space-y-4 p-4">
    <PageHeader title="Profile verification"/>
    <ErrorState title="Profile verification" description={description}
-     action={<Link href="/college/verification" prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>}/>
+     action={<Link href="/college/verification" prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Retry</Link>}/>
   </main>;
  }
  if(!data)throw new Error("VERIFICATION_QUEUE_UNAVAILABLE");
