@@ -74,9 +74,9 @@ export function RecruiterNotificationBell(){
       {data.unread>99?"99+":data.unread}</span>:null}
   </Button>
   {isOpen?<section ref={popoverRef} role="dialog" aria-modal="false" aria-label="Notifications"
-    className="absolute right-0 top-full z-[1050] mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,94vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[#e5e9f0] bg-white p-4 shadow-[var(--lms-overlay-shadow)]">
-   <div className="-mx-4 -mt-4 flex items-center justify-between gap-3 rounded-t-[12px] border-b border-[#e5e9f0] bg-[#fafbfc] px-4 py-3">
-    <h2 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.02em] text-[#1a1d21]">Notifications</h2>
+    className="absolute right-0 top-full z-[1050] mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,94vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-[var(--lms-overlay-shadow)]">
+   <div className="-mx-4 -mt-4 flex items-center justify-between gap-3 rounded-t-[12px] border-b border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-4 py-3">
+    <h2 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--lms-foreground)]">Notifications</h2>
     <Button variant="ghost" type="button" onClick={()=>{setIsOpen(false);triggerRef.current?.focus();}}
      aria-label="Close notifications" className="min-h-11 px-3 text-primary-text">Close</Button>
    </div>
