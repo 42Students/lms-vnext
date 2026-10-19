@@ -38,7 +38,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
     {!selected ? <p role="status" className="rounded-xl border border-border bg-surface p-5">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
     {data ? <>
       <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} />
-      <section aria-label="Filter managed batches" className="rounded-xl border border-border bg-surface p-4">
+      <section aria-label="Filter managed batches" className="border-b border-border pb-4">
         <form action="/admin/batches" method="get" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 w-full sm:min-w-48 gap-1 text-sm font-semibold text-body">
             Program
@@ -75,7 +75,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
         <Link href="/admin/batches?status=INACTIVE" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show inactive</Link>
         <Link href="/admin/batches?status=COMPLETED" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show completed</Link>
       </nav>
-      <section aria-label="Manage batches" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+      <section aria-label="Manage batches" className="space-y-3 pt-2">
         <h2 className="text-lg font-semibold">Manage batches</h2>
         <p className="text-sm text-muted-foreground">Only planned batches without dependents can be edited or removed.</p>
         <DataTable<(typeof data.items)[number]> caption="Manage batches" rows={data.items} getRowKey={row=>row.id}
