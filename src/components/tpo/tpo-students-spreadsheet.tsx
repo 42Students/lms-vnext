@@ -12,6 +12,7 @@ import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
 import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
 import {tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard-model";
 import {exportTpoStudentsCsv} from "@/modules/placements/tpo-students-csv";
+import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -34,9 +35,9 @@ const TpoGrid = dynamic<TpoSpreadsheetGridProps<TpoStudentRow>>(
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"student",label:"Student",read:row=>row.fromFinishedBatch?
    row.displayName+" · From "+row.cohortName:row.displayName},
- {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
- {key:"branch",label:"Branch",exportAlways:true,read:row=>row.branchName},
+ {key:"number",label:"Roll no.",read:row=>row.rollNumber??row.registrationNumber},
  {key:"batch",label:"Batch",exportAlways:true,read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
+ {key:"branch",label:"Branch",exportAlways:true,read:row=>row.branchName},
  {key:"stage",label:"Stage",filter:{urlKey:"journeyState",
   options:TPO_STUDENT_JOURNEY_STATES.map(value=>({value,label:tpoStudentDisplayLabel(value)}))},
   read:row=>tpoStudentDisplayLabel(row.journeyState)},
@@ -133,7 +134,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const anchor=document.createElement("a");
-    anchor.href=url;anchor.download="selected-tpo-students.csv";document.body.appendChild(anchor);
+    anchor.href=url;anchor.download=legacyGridExportFilename("students","csv");document.body.appendChild(anchor);
     anchor.click();anchor.remove();
    }finally{URL.revokeObjectURL(url);}
   }catch{setDownloadError("Could not prepare the selected CSV. Please try again.");}
@@ -187,8 +188,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{selectedScoped.length} selected of {shared?.totalCount??rows.length} in the authorized view.</p>
-   {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link lms-inline-link">Export selected XLSX</a>:
-    selectedScoped.length>200?<p role="status" className="text-xs text-warning-text">Export up to 200 individually selected students or select all matching students.</p>:null}
+   {!xlsxHref&&selectedScoped.length>200?<p role="status" className="text-xs text-warning-text">Export up to 200 individually selected students or select all matching students.</p>:null}
   <Button variant="secondary" type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
     onClick={downloadSelection} >
     Export selected CSV
@@ -221,13 +221,13 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    selection={{selected:noteSelection,onChange:setNoteSelection}}
    filters={filters} rollOf={row=>[row.rollNumber??"",row.registrationNumber??""]}
-   filterTitle="Filter students" exportName="tpo-students" xlsxHref={xlsxHref}
+   filterTitle="Filter students" exportName="students" xlsxHref={xlsxHref}
    savedViews={canManageViews?<TpoStudentSavedViews embedded/>:undefined}>
   <TpoGrid integratedWorkspace mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
-    <Button variant="ghost" type="button" className="underline text-link px-0"
+    <Button variant="ghost" type="button" className="underline text-link lms-inline-link px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
       Open student panel
     </Button>
@@ -237,9 +237,9 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
       initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none"}}
       available={afterCollegeAvailable} />
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
-      aria-label={"Placement history for "+row.displayName} className="underline text-link px-0">Placement history</Link>
+      aria-label={"Placement history for "+row.displayName} className="underline text-link lms-inline-link px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Placement history</Link>
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-      aria-label={"Change participation for "+row.displayName} className="underline text-link px-0">Change participation</Link>
+      aria-label={"Change participation for "+row.displayName} className="underline text-link lms-inline-link px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Change participation</Link>
    </div>}/>
   </GridWorkspace>
   {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}

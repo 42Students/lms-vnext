@@ -1,11 +1,12 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 
 export default function Error({reset}:{
   error:Error & {digest?:string};reset:()=>void;
 }){
   return <section role="alert" className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-    <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Unable to load task review history</h1>
+    <PageHeader title={"Unable to load task review history"} />
     <p className="mt-2 text-sm text-body">
       The read failed; missing data cannot be assumed from this error.
     </p>

@@ -340,7 +340,7 @@ function SubmissionGradeCard({
 
       <form
         onSubmit={saveGrade}
-        className="mt-4 grid gap-3 lg:grid-cols-[10rem_1fr]"
+        className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
       >
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -476,7 +476,7 @@ export function FacultyAssignmentReview({
 
   if(status==="ARCHIVED")return null;
   if(status==="DRAFT")return <div className="mt-3">
-    <Button type="button" size="sm" variant="secondary"
+    <Button type="button" size="sm" variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]"
       onClick={()=>setOpen(true)}>View submissions</Button>
     <Drawer open={open} onOpenChange={setOpen} title="Assignment submissions"
       description="Draft assignments are hidden from learners.">
@@ -518,7 +518,7 @@ export function FacultyAssignmentReview({
   return (
     <>
       <div className="mt-3">
-        <Button type="button" size="sm" variant="secondary"
+        <Button type="button" size="sm" variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]"
           onClick={() => void load()}>
           View submissions
         </Button>
@@ -609,7 +609,7 @@ export function FacultyAssignmentReview({
               </option>)}
             </Select>
           </label>
-          <Button type="button" size="sm" variant="secondary"
+          <Button type="button" size="sm" variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id)}>
             Previous student
@@ -617,7 +617,7 @@ export function FacultyAssignmentReview({
           <span className="text-xs text-muted-foreground">
             {Math.max(1,submissions.findIndex(item=>item.id===selectedSubmissionId)+1)} / {submissions.length}
           </span>
-          <Button type="button" size="sm" variant="secondary"
+          <Button type="button" size="sm" variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id)}>
             Next student
@@ -644,9 +644,9 @@ export function FacultyAssignmentReview({
         </div>
       ) : null}
       {pagination ? <nav aria-label="Submission pages" className="flex flex-wrap items-center justify-between gap-3">
-        <Button type="button" size="sm" variant="secondary" disabled={loading||pagination.page<=1}
+        <Button type="button" size="sm" variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]" disabled={loading||pagination.page<=1}
           onClick={()=>void load({filter,page:pagination.page-1})}>Previous</Button>
-        <Button type="button" size="sm" variant="secondary" disabled={loading||pagination.page>=pagination.totalPages}
+        <Button type="button" size="sm" variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]" disabled={loading||pagination.page>=pagination.totalPages}
           onClick={()=>void load({filter,page:pagination.page+1})}>Next</Button>
       </nav> : null}
       </div>

@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import {useState} from "react";
@@ -52,7 +53,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    <legend className="mb-2 text-base font-semibold">{group}</legend>
    <div className="grid gap-3 md:grid-cols-2">
     {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className="grid min-w-0 gap-1 border-b border-border py-3 text-sm">
-     <span className="font-semibold">{spec.label}{spec.dangerous?" · High impact":""}</span>
+     <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="warning">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
      {spec.type==="textarea"?<Textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
       onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}

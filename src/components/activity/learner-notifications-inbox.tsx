@@ -233,7 +233,7 @@ export function LearnerNotificationsInbox({
               <Link
                 href={learnerNotificationPlacementAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
+                className="inline-flex min-h-11 min-[768px]:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text min-[768px]:w-auto"
               >
                 {learnerNotificationPlacementAction(selected?.actionHref)?.label??"Open details"}
               </Link>
