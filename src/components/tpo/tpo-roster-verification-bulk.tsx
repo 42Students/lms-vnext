@@ -68,7 +68,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
     onChange={event=>{setSelected(event.target.checked?waiting.slice(0,20).map(verificationSelectionKey):[]);invalidate();}}/>
    Select first {Math.min(20,waiting.length)} waiting section(s)
   </label>
-  <div className="grid max-h-64 gap-2 overflow-y-auto sm:grid-cols-2">
+  <div className="grid max-h-64 min-w-0 grid-cols-1 gap-2 overflow-y-auto overscroll-contain pr-1 sm:grid-cols-2">
    {waiting.map(row=>{const key=verificationSelectionKey(row);return <label key={key} className="flex min-h-10 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">
     <Checkbox  disabled={busy||selected.length>=20&&!selected.includes(key)}
      checked={selected.includes(key)} onChange={()=>toggle(key)}/>
