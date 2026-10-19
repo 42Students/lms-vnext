@@ -470,3 +470,9 @@
   outline:2px solid var(--lms-button-primary);
   outline-offset:2px;
 }
+
+.orgPopover :global(select):disabled,
+.orgPopover :global(input):disabled {
+  opacity:.55; cursor:not-allowed;
+  background:#fafbfc;
+}
