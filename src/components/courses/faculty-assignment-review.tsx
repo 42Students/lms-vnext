@@ -14,6 +14,8 @@ import { Tabs } from "@/components/ui/tabs";
 import { Drawer } from "@/components/ui/drawer";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -502,9 +504,7 @@ export function FacultyAssignmentReview({
       onClick={()=>setOpen(true)}>View submissions</Button>
     <Drawer open={open} onOpenChange={setOpen} title="Assignment submissions"
       description="Draft assignments are hidden from learners.">
-      <p role="status" className="text-sm text-muted-foreground">
-        No submissions yet. Publish this assignment to allow students to submit work.
-      </p>
+      <EmptyState title="No submissions yet" description="Publish this assignment to allow students to submit work." />
     </Drawer>
   </div>;
 
@@ -596,22 +596,14 @@ export function FacultyAssignmentReview({
         {pagination.total} matching submissions · Page {pagination.page} of {pagination.totalPages}
       </p> : null}
 
-      {loading ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          Loading submissions…
-        </p>
-      ) : null}
+      {loading ? <LoadingState label="Loading submissions…" /> : null}
 
       {error ? (
         <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
       ) : null}
 
-      {!loading &&
-      submissions &&
-      submissions.length === 0 ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          {facultySubmissionReviewEmptyLabel(filter)}
-        </p>
+      {!loading && submissions && submissions.length === 0 ? (
+        <EmptyState title={facultySubmissionReviewEmptyLabel(filter)} description="" />
       ) : null}
 
       {!loading && submissions && submissions.length>0 ? (
