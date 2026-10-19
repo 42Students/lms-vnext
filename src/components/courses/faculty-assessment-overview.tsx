@@ -1,4 +1,5 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -80,12 +81,12 @@ export function FacultyAssessmentOverview({
     <div className="space-y-5">
       <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
       <div aria-label={kind === "QUIZ" ? "Quiz totals" : "Assignment totals"} className="flex flex-wrap items-center gap-2">
-        <span className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground">
+        <Badge  tone="neutral">
           {items.length} {kind === "QUIZ" ? (items.length === 1 ? "Quiz" : "Quizzes") : (items.length === 1 ? "Assignment" : "Assignments")}
-        </span>
-        <span className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground">
+        </Badge>
+        <Badge  tone="neutral">
           {new Set(items.map(item => item.courseCode)).size} {new Set(items.map(item => item.courseCode)).size === 1 ? "Course" : "Courses"}
-        </span>
+        </Badge>
       </div>
 
       <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
