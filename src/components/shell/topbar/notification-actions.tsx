@@ -29,7 +29,7 @@ function IconLink({
  * learner accounts. The adapter changes just the icon trigger presentation.
  */
 function ExistingBell({ portal }: { portal: "hr" | "learn" }) {
-  return <div className={style.bellAdapter}>
+  return <div className={portal === "hr" ? style.bellAdapter + " " + style.recruiterBell : style.bellAdapter + " " + style.learnerBell}>
     {portal === "hr" ? <HrRecruiterBell /> : <LearnerNotificationBell />}
     <span aria-hidden="true" className={style.bellOverlay}><BellIcon /></span>
   </div>;

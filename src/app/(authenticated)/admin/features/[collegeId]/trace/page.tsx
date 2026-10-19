@@ -221,7 +221,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           </label>
           <Button
             type="submit"
-            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground hover:bg-primary-hover"
+            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
           >
             Search
           </Button>

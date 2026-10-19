@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ShellNavItem } from "../shell-model";
+import { apiFetch } from "@/lib/api-fetch";
+
+type LearnerCourse = { deliveryId: string; courseName: string; courseCode: string; sectionName: string };
 import { topbarCommands, topbarConfigForPath } from "./portal-config";
 import { SearchIcon } from "./icons";
 import style from "./topbar.module.css";
@@ -13,10 +16,43 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const router = useRouter();
   const config = topbarConfigForPath(pathname);
   const [query, setQuery] = useState("");
+  const [courses, setCourses] = useState<LearnerCourse[]>([]);
+  const [courseError, setCourseError] = useState(false);
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const root = useRef<HTMLDivElement>(null);
+  // Preserve the old learner header's authorized course lookup when moving
+  // its search box into the common command bar.
+  useEffect(() => {
+    if (config.portal !== "learn") return;
+    let cancelled = false;
+    void apiFetch<unknown>("/api/courses/learner", { cache: "no-store" })
+      .then(payload => {
+        if (cancelled) return;
+        const value = payload && typeof payload === "object" &&
+          "courses" in payload ? (payload as {courses: unknown}).courses : null;
+        if (!Array.isArray(value)) throw new Error("Invalid courses");
+        setCourses(value.filter((row): row is LearnerCourse =>
+          row && typeof row === "object" &&
+          typeof row.deliveryId === "string" &&
+          typeof row.courseName === "string" &&
+          typeof row.courseCode === "string" &&
+          typeof row.sectionName === "string",
+        ));
+        setCourseError(false);
+      })
+      .catch(() => { if (!cancelled) setCourseError(true); });
+    return () => { cancelled = true; };
+  }, [config.portal]);
+  const courseMatches = useMemo(() => {
+    if (config.portal !== "learn") return [];
+    const search = query.trim().toLocaleLowerCase("en-IN");
+    return courses.filter(course => !search ||
+      [course.courseName, course.courseCode, course.sectionName]
+        .some(value => value.toLocaleLowerCase("en-IN").includes(search)))
+      .slice(0, 6);
+  }, [config.portal, courses, query]);
   const commands = useMemo(() => topbarCommands(pathname, items), [pathname, items]);
   const matches = useMemo(() => {
     const search = query.trim().toLocaleLowerCase("en-IN");
@@ -52,7 +88,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   }, []);
 
   function submit() {
-    if (matches[0]) {
+    if (query.trim() && courseMatches[0]) {
+      router.push("/learn/courses/" + encodeURIComponent(courseMatches[0].deliveryId) + "/home");
+    } else if (matches[0]) {
       router.push(matches[0].href);
     } else if (query.trim()) {
       // The destination performs its own scoped search; this bar never
@@ -92,6 +130,17 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       {open ? <div id="lms-topbar-command-results" role="listbox"
         aria-label="Workspace commands" className={style.dropdown}>
         <p className="px-2 py-1 text-[11px] font-semibold uppercase tracking-[.08em] text-[#64748b]">Go to</p>
+        {config.portal === "learn" && courseError ?
+          <p role="status" className="px-2 py-2 text-xs text-[#b91c1c]">Could not load courses. Search shortcuts remain available.</p> : null}
+        {courseMatches.length > 0 ? <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">Courses</p> : null}
+        {courseMatches.map(course => <Link key={course.deliveryId}
+          role="option" aria-selected={false}
+          href={"/learn/courses/" + encodeURIComponent(course.deliveryId) + "/home"}
+          className={style.suggestion}
+          onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
+          <SearchIcon /> <span className="min-w-0"><span className="block truncate">{course.courseName}</span>
+            <span className="block truncate text-[11px] text-[#64748b]">{course.courseCode} · {course.sectionName}</span></span>
+        </Link>)}
         {matches.map(command => <Link role="option" aria-selected={false}
           key={command.href} href={command.href} className={style.suggestion}
           onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>

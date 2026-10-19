@@ -16,12 +16,16 @@ export type TopbarConfig = {
 export function topbarConfigForPath(pathname: string): TopbarConfig {
   if (pathname === "/admin" || pathname.startsWith("/admin/")) return {
     portal: "admin", placeholder: "Search colleges, people or companies",
-    searchHref: "/admin/people/directory", newHref: "/admin/placements/new",
+    searchHref: "/admin/people/directory",
+    newHref: pathname.startsWith("/admin/placements") ? "/admin/placements/new" :
+      pathname.startsWith("/admin/projects") ? "/admin/projects/workspaces/new" :
+      pathname.startsWith("/admin/tenants") ? "/admin/tenants/create" : null,
     messagesHref: null, notificationsHref: "/notifications",
   };
   if (pathname === "/college" || pathname.startsWith("/college/")) return {
     portal: "college", placeholder: "Find a course, person or project",
-    searchHref: "/college/students", newHref: "/college/projects/create",
+    searchHref: "/college/students",
+    newHref: pathname.startsWith("/college/projects") ? "/college/projects/create" : null,
     messagesHref: null, notificationsHref: "/notifications",
   };
   if (pathname === "/tpo" || pathname.startsWith("/tpo/")) return {

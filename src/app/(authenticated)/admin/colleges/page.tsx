@@ -155,7 +155,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
          {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
         </Select>
        </label>
-       <Button type="submit" className="min-h-11 rounded bg-primary px-4 text-foreground">Search</Button>
+       <Button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Search</Button>
        <Link href="/admin/colleges" className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Clear search</Link>
        <Link href={href(page)} className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Refresh</Link>
       </form>
