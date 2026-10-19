@@ -19,6 +19,15 @@
   padding: 16px 24px;
   background: #fff;
 }
+[data-slot="dialog"] > div > div:first-child {
+  position: relative;
+}
+[data-slot="dialog"] > div > div:first-child > button[aria-label="Close dialog"] {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1;
+}
 [data-slot="dialog"] > div > div:last-child:not(:first-child) {
   background: #fff;
 }
