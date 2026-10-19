@@ -56,7 +56,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
   return (
     <form
       onSubmit={submit}
-      className="flex min-w-0 flex-col gap-3 border-t border-border pt-4 md:flex-row md:items-end"
+      className="flex min-w-0 flex-col gap-3 border-t border-border pt-4 md:flex-row md:items-end print:hidden"
     >
       <div className="min-w-0 flex-1">
         <label
@@ -66,7 +66,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           Organization name
         </label>
         <Input
-          id="organization-name"
+          className="min-h-11 md:min-h-9" id="organization-name"
           value={name}
           onChange={(event) => setName(event.target.value)}
           required
