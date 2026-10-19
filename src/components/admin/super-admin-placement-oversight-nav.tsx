@@ -6,7 +6,7 @@ import {
 
 function NavLinks({ links }: { links: readonly { href: string; label: string }[] }) {
   return <>{links.map(link => <Link key={link.href} href={link.href}
-    className="inline-flex min-h-10 max-w-full items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+    className="inline-flex min-h-10 max-w-full items-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
     {link.label}</Link>)}</>;
 }
 

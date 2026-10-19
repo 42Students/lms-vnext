@@ -38,7 +38,7 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
   <p className="text-sm text-body">Delete archives the drive and preserves its history.
    Learners are notified; scheduled interviews and unaccepted offers are cancelled.</p>
   {!preview?<button type="button" disabled={pending} onClick={()=>void inspect()}
-   className="min-h-10 rounded border border-border px-4 text-primary-text">
+   className="min-h-10 rounded-[9px] border border-border px-4 text-primary-text">
    Preview delete impact</button>:
    <form onSubmit={e=>void confirm(e)} className="space-y-3">
     <p className="text-sm font-semibold">Delete {title}?</p>
@@ -55,12 +55,12 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
     <label className="grid gap-1 text-sm">Reason (required)
      <textarea required minLength={10} maxLength={1000} value={reason}
       onChange={e=>setReason(e.target.value)} rows={2}
-      className="rounded border border-border bg-surface p-3"/></label>
+      className="rounded-[9px] border border-border bg-surface p-3"/></label>
     <button type="submit" disabled={pending||!preview.archivable||reason.trim().length<10}
      className="min-h-10 rounded border border-error px-4 text-error disabled:opacity-50">
      {pending?"Deleting…":"Confirm delete (archive)"}</button>
     <button type="button" disabled={pending} onClick={()=>setPreview(null)}
-     className="ml-2 min-h-10 rounded border border-border px-4">Cancel</button>
+     className="ml-2 min-h-10 rounded-[9px] border border-border px-4">Cancel</button>
    </form>}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;
