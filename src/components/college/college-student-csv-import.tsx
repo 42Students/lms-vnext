@@ -1,5 +1,6 @@
-import { Select } from "@/components/ui/select";
 "use client";
+import { Select } from "@/components/ui/select";
+
 import {DataTable} from "@/components/ui/data-table";
 
 import { useState } from "react";
