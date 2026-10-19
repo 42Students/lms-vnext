@@ -312,3 +312,13 @@ After the initial 211-file sweep, this lane revisited the high-density teaching 
 - **Scope coordination:** merged `main` into the lane using a branch-only merge; the 29 files independently changed since the merge base had no path overlap with the 132-file main-side change list. No files owned by the shared token/sidebar/topbar lanes were edited here.
 
 **Validation boundary:** Source-only edits and connector-level review; no application execution, TypeScript build, tests, CI or screenshot/pixel-diff were run, per owner instruction. Browser comparison against the legacy LMS remains the final validation gate.
+
+## Incremental north-star value pass — 2026-10-19, chat-3 continuation
+
+After fast-forwarding `chatgpt/chat-3-b` to current `main` (main commit `a98732e8ad1845a88229c57ba38c4a90f02eca77`), this continuation produced **20 additional [chat-3] commits** on the lane branch. The checked initial inventory remains complete; these are a deeper appearance-only pass, not behavioural changes.
+
+- **Faculty courses and assessments:** replaced lingering standalone `rounded-lg`/`rounded-xl` card, filter, notice and lesson styles with the existing 9px control / 12px canvas tokens; aligned course signal cards, quiz-review cards, assessment overview cards, assignment review panels, video resource previews and faculty contacts navigation.
+- **Faculty attendance and authoring:** normalized attendance tab/group corners and row treatments, faculty profile editor alerts and secondary actions, lesson-authoring resource panels and IST scheduling inputs. Controls keep 44px mobile touch targets with 36px desktop minimum height where explicitly set.
+- **Super Admin academics and people:** removed an accidental stray `-` utility class in section summary grid, aligned people-directory desktop link heights, and corrected the faculty-assignment create action's mobile touch target while keeping white-on-teal primary style.
+- **Syntax-preserving approach:** each edit was scoped to literal presentation class attributes and verified to preserve the ordered JSX closing-tag sequence. No JSX structure, data logic, routes, services, query parsing, copy or feature behavior was changed.
+- **Execution boundary:** did **not** run the app, TypeScript compiler, tests, lint, CI or pixel comparison per owner direction. Actual old-LMS visual parity still requires the final screenshot check by the orchestrator.

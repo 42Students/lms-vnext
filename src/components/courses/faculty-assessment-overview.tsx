@@ -87,13 +87,13 @@ export function FacultyAssessmentOverview({
         </span>
       </div>
 
-      <details className="rounded-lg border border-border bg-surface p-3">
+      <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
         <summary className="cursor-pointer text-sm font-semibold">
           {kind==="QUIZ"?"Quizzes by Course":"Assignments by Course"}
         </summary>
         <ul className="mt-3 grid gap-2 text-sm text-body sm:grid-cols-2">
           {Array.from(new Set(items.map(item=>item.courseCode))).sort().map(code=>
-            <li key={code} className="flex justify-between gap-3 rounded border border-border px-3 py-2">
+            <li key={code} className="flex justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border px-3 py-2">
               <span>{items.find(item=>item.courseCode===code)?.courseName??code}</span>
               <strong>{items.filter(item=>item.courseCode===code).length}</strong>
             </li>)}
@@ -164,7 +164,7 @@ export function FacultyAssessmentOverview({
           {rows.map((item) => (
             <article
               key={`${item.deliveryId}:${item.id}`}
-              className="min-w-0 rounded-xl border border-border bg-surface p-3 sm:p-5"
+              className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 sm:p-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
