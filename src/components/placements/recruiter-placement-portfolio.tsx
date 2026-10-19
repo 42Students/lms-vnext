@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Card } from "@/components/ui/card";
+import { cx } from "@/lib/class-names";
 import type { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 
 type RecruiterJobs = Awaited<
@@ -44,9 +46,9 @@ export function RecruiterPlacementPortfolio({
   return (
     <div className="grid gap-4">
       {[...jobs].sort((a,b)=>Number((unansweredRequests[b.job.id]??0)>0)-Number((unansweredRequests[a.job.id]??0)>0)).map((item) => (
-        <article
+        <Card as="article"
           key={item.job.id}
-          className={(unansweredRequests[item.job.id]??0)>0 ? "rounded-[var(--lms-radius-card)] border border-warning bg-muted p-5" : "rounded-[var(--lms-radius-card)] border border-border bg-surface p-5"}
+          className={cx("rounded-[var(--lms-radius-card)] border p-5", (unansweredRequests[item.job.id]??0)>0 ? "border-warning bg-[var(--lms-warning-subtle)]" : "border-border bg-surface")}
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
@@ -138,7 +140,7 @@ export function RecruiterPlacementPortfolio({
               Answer
             </Link>
           </nav>
-        </article>
+        </Card>
       ))}
     </div>
   );

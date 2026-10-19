@@ -18,7 +18,6 @@ export default async function CollegeNewPlacementPage() {
     <PlacementJobCreateWorkspace
       context={context}
       collegeId={context.membership.collegeId}
-      eyebrow="College Admin"
       basePath="/college/placements"
     />
   );

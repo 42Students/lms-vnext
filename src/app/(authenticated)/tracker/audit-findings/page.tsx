@@ -9,6 +9,7 @@ import {redirect} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {Tabs} from "@/components/ui/tabs";
+import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {ErrorState} from "@/components/ui/error-state";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
@@ -86,14 +87,12 @@ export default async function IndependentFindingsPage({searchParams}:{
      {value:"ALL",label:"All"},
    ] as const).map(item=>({...item,
     href:independentFindingHref({...parsed,view:item.value,page:1})}))}/>
-  <section aria-label="Finding status counts" className="flex flex-wrap items-center gap-2 text-sm">
-   <p className="font-semibold">Critical open: {data.criticalOpen}</p>
-   {FINDING_STATUSES.map(status=><Link key={status}
-    href={independentFindingHref({...parsed,statuses:[status],page:1})}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-    {status.replaceAll("_"," ")}: {data.statusCounts[status]??0}
-   </Link>)}
-  </section>
+  <NeedsDoingChips label={"Critical open: "+data.criticalOpen}
+   items={FINDING_STATUSES.map(status=>({
+    key:status,label:status.replaceAll("_"," "),
+    count:data.statusCounts[status]??0,
+    href:independentFindingHref({...parsed,statuses:[status],page:1}),
+   }))}/>
   <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-3">
    <input type="hidden" name="view" value={parsed.view}/>
    <label className="text-sm font-semibold">Search

@@ -165,7 +165,7 @@ export default async function LearnerOffersPage({
           <Link key={tab.id}
             href={learnerOfferStatusHref(view,{searchTerm,dueOnly,sort:order,kind,joining:tab.id,expiry})}
             aria-current={joiningFilter===tab.id?"page":undefined}
-            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text">
+            className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text min-h-11 whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">
             {tab.label}
           </Link>
         ))}
@@ -173,24 +173,24 @@ export default async function LearnerOffersPage({
       <nav aria-label="Offer document kind" className="flex flex-wrap gap-3 text-sm">
         {kindTabs.map(({id:value,label})=><Link key={value} href={kindHref(value)}
           aria-current={kind===value?"page":undefined}
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text">
+          className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text min-h-11 whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">
           {label}
         </Link>)}
       </nav>
       <nav aria-label="Offer deadline filter" className="flex flex-wrap gap-3 text-sm">
         <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:false,sort:order,kind,joining:joiningFilter,expiry:"all"})}
           aria-current={!dueOnly?"page":undefined}
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text">All deadlines</Link>
+          className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text min-h-11 whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">All deadlines</Link>
         <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:true,sort:order,kind,joining:joiningFilter,expiry:"all"})}
           aria-current={dueOnly?"page":undefined}
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text">Awaiting response · next 7 days</Link>
+          className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text min-h-11 whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">Awaiting response · next 7 days</Link>
       </nav>
       <nav aria-label="Issued offer expiry state" className="flex flex-wrap gap-3 text-sm">
         {expiryTabs.map(tab=>(
           <Link key={tab.id}
             href={learnerOfferStatusHref(view,{searchTerm,dueOnly:false,sort:order,kind,joining:joiningFilter,expiry:tab.id})}
             aria-current={expiry===tab.id?"page":undefined}
-            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text">
+            className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text min-h-11 whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">
             {tab.label}
           </Link>
         ))}
