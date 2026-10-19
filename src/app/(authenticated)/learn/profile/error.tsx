@@ -11,7 +11,7 @@ export default function LearnerProfileError({
   reset: () => void;
 }) {
   return (
-    <Alert tone="error" className="px-3 py-10 text-center">
+    <Alert tone="error" className="text-center">
       <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
         Unable to load your profile
       </h1>
