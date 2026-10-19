@@ -100,3 +100,13 @@ Completed source-file work:
 - [x] `src/components/tpo/tpo-notification-refresh.tsx` — shared retry button and radius token
 
 **Source verification:** all 18 changed TSX files re-read from the lane branch after their commits. Static inspection confirmed that every newly authored `</Select>`, `</Button>`, and `</Textarea>` closing tag is complete, `<Button>`/`<Select>` counts balance, and the referenced shared-control imports exist. Self-closing `Input`, `Checkbox`, `Radio`, and `Textarea` keep JSX self-closing syntax. **No app runtime, compiler, tests, screenshot verification or CI executed**, per lane instructions; final semantic/visual parity remains an owner integration task.
+
+## Further round, recruiter and reports component sweep (2026-10-19)
+- [x] `src/components/placements/tpo-round-check-in.tsx` — shared secondary attendance actions
+- [x] `src/components/placements/tpo-outside-participants-editor.tsx` — three fully closed shared `Select` controls, shared primary button, flat divider rows
+- [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx` — shared selector/textarea/buttons with canonical radii; preserve chooser focus and dialog behavior
+- [x] `src/components/placements/tpo-report-saved-filters.tsx` — shared input/selector/buttons; canonical report-section radius
+- [x] `src/components/placements/tpo-report-presentation.tsx` — shared secondary presentation-toggle button
+- [x] `src/components/placements/tpo-bulk-drive-reminder.tsx` — shared secondary bulk reminder and selection buttons preserving native form event semantics
+
+This continuation changes **24 production TSX files** (24 lane commits) plus the source-only tracker. Every changed source file was re-read from the branch and inspected for complete JSX shared-component closers, balanced `<Button>` / `</Button>` and `<Select>` / `</Select>`, and necessary imports; no truncated `</Select` was detected. This check does **not** replace TSX parser/typecheck or screenshot verification. **No CI, runtime, tests, TypeScript compilation or visual screenshots were run.**
