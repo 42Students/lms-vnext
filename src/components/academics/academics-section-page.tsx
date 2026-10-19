@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { notFound } from "next/navigation";
 import { ZodError } from "zod";
 import { AcademicsServiceError } from "@/modules/academics/errors";
@@ -44,12 +44,7 @@ export async function AcademicsSectionPage({
         title={workspace.section.name}
         description={`${workspace.section.programName} · ${workspace.section.cohortName} · ${workspace.section.academicPeriodName}`}
         actions={
-          <Link
-            href={backHref}
-            className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)]"
-          >
-            Back to Academics
-          </Link>
+<PageBackLink href={backHref} label="Back to Academics" />
         }
       />
       <SectionOperations
