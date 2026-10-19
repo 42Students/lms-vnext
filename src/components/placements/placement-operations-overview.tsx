@@ -8,7 +8,7 @@ import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operati
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
 function Metric({ label, value, description }: { label: string; value: number; description: string }) {
-  return <section className="border-b border-border pb-6">
+  return <section className="border-b border-border px-4 py-4 last:border-r-0 sm:border-r sm:border-b-0">
     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">{label}</p>
     <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
     <p className="mt-1 text-xs leading-5 text-body">{description}</p>
@@ -44,13 +44,13 @@ function FunnelMetric({
 }
 export function PlacementOperationsOverview({ operations, basePath, showDriveSearch = false, staleDays=7 }: { operations: Operations; basePath: string; showDriveSearch?: boolean; staleDays?: number }) {
   return <div className="space-y-6">
-    {showDriveSearch ? <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    {showDriveSearch ? <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
       <Metric label="Active drives" value={operations.jobs.filter(r=>r.job.status==="PUBLISHED").length} description="Currently published opportunities." />
       <Metric label="Closed / draft" value={operations.jobs.filter(r=>["CLOSED","DRAFT"].includes(r.job.status)).length} description="Closed and draft opportunities." />
       <Metric label="All drives" value={operations.jobs.length} description="Non-archived drives in this college." />
       <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Drives with outstanding operations." />
     </div> : null}
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
       <Metric label="Live jobs" value={operations.summary.publishedJobs} description="Published opportunities currently operated by the placement cell." />
       <Metric label="Applications" value={operations.summary.submittedApplications} description="Active submitted applications across current jobs." />
       <Metric label="Needs screening" value={operations.summary.pendingScreening} description="Candidates waiting for a placement-cell screening decision." />
@@ -76,21 +76,21 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
         {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
           <label className="flex items-center gap-2">Stale after
-            <select name="staleDays" defaultValue={staleDays} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            <select name="staleDays" defaultValue={staleDays} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
               {[3,7,14,30].map(n=><option key={n} value={n}>{n} days</option>)}
             </select></label>
-          <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold">Apply</button>
+          <button type="submit" className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold">Apply</button>
         </form>:null}
       </div>
       {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." /></div> :
         <div className="divide-y divide-border">{operations.workQueue.map((item, index) =>
-          <div key={item.jobId + item.code + index} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div key={item.jobId + item.code + index} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={priorityTone(item.priority)}>{item.priority}</StatusBadge><span className="text-xs font-semibold text-muted-foreground">{item.count} {item.count === 1 ? "item" : "items"}</span></div>
               <p className="mt-2 font-semibold text-foreground">{item.jobTitle}</p>
               <p className="mt-1 text-sm text-body">{item.companyName} · {item.code.toLowerCase().split("_").join(" ")}</p>
             </div>
-            <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
+            <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-11 md:min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
           </div>)}</div>}
     </section>}
     <section className="border-b border-border pb-6">
