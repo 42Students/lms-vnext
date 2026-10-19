@@ -13,4 +13,8 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(css()).toContain("transform:translateY(8px)");
  expect(css()).toContain("transform:translateY(0)");
 });
+ it("animates only page content on 250ms ease-out",()=>{
+ expect(legacy()).toContain("animation: pageSlideIn 250ms ease-out");
+ expect(css()).toContain("animation:lms-route-slide-in 250ms ease-out");
+});
 });
