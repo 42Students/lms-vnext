@@ -138,7 +138,7 @@ export default async function AnnouncementsPage({
         }
       />
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        {includeDeleted ? <input type="hidden" name="deleted" value="1"/> : null}
+        {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
         <label className="text-sm font-semibold text-body">Visibility
           <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1">
             <option value="">All visible states</option>
