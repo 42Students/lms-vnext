@@ -1,3 +1,4 @@
+import { MetricBar } from "@/components/ui/metric-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
@@ -71,19 +72,8 @@ function ProgressBar({
           {value}%
         </span>
       </div>
-      <div
-        className="h-2.5 overflow-hidden rounded-full bg-muted"
-        role="progressbar"
-        aria-label={label}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={value}
-      >
-        <div
-          className="h-full rounded-full bg-primary"
-          style={{ width: `${value}%` }}
-        />
-      </div>
+      <MetricBar size="medium" role="progressbar"
+        label={label} value={value} maximum={100} unit="percent" />
     </div>
   );
 }
