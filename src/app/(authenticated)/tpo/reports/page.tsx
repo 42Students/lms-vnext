@@ -44,7 +44,7 @@ export default async function TpoReportsPage({
   const parsedGroup=tpoReportGalleryGroupSchema.safeParse(first(query.group)??"ALL");
   if(!parsedSearch.success||!parsedGroup.success)return <section role="alert"
     className="border-t border-border py-6">
-    <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Invalid report search</h1>
+    <PageHeader title="Invalid report search" />
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
     <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-link underline">
       Clear search
