@@ -33,15 +33,15 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
   <div className="flex flex-wrap items-center justify-between gap-2">
    <h2 className="font-semibold">At a glance</h2>
    <button type="button" disabled={refreshing} onClick={()=>void refresh()}
-     className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+     className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
      {refreshing?"Refreshing…":"Retry"}</button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {!counts&&refreshing?<div role="status" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-   {ITEMS.map(item=><div key={item.key} className="h-28 animate-pulse rounded-xl border border-border bg-surface-subtle"/>)}
+   {ITEMS.map(item=><div key={item.key} className="h-28 animate-pulse rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle"/>)}
   </div>:null}
   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-   {ITEMS.map(item=><Link key={item.key} href={item.href} className="rounded-xl border border-border bg-surface p-5">
+   {ITEMS.map(item=><Link key={item.key} href={item.href} className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5">
      <p className="text-xs font-semibold uppercase text-muted-foreground">{item.label}</p>
      <p className="mt-2 text-3xl font-semibold tabular-nums">{displayedGlanceNumber(counts?.[item.key]??null)}</p>
      <p className="mt-2 text-xs text-body">Recorded in the selected college</p>
