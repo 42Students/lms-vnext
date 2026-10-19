@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
@@ -125,30 +126,6 @@ function kindLabel(
     case "QUIZ":
       return "Quiz";
   }
-}
-
-function Metric({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string | number;
-  detail: string;
-}) {
-  return (
-    <section className="rounded-xl border border-border bg-surface p-4">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-        {value}
-      </p>
-      <p className="mt-1 text-xs leading-5 text-body">
-        {detail}
-      </p>
-    </section>
-  );
 }
 
 function ContentCard({
@@ -772,22 +749,22 @@ export function LearnerCourseWorkspace({
       </section>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric
+        <StatTile
           label="Overall"
           value={measuredProgress === null ? "Not measured" : `${measuredProgress}%`}
           detail={`${summary.itemsCompleted} of ${summary.itemsTotal} learning items complete.`}
         />
-        <Metric
+        <StatTile
           label="Lessons"
           value={`${summary.lessonsCompleted}/${summary.lessonsTotal}`}
           detail="A lesson is complete when all of its actionable items are complete."
         />
-        <Metric
+        <StatTile
           label="Assessments"
           value={summary.assignmentsCompleted + summary.quizzesCompleted}
           detail={`${summary.assignmentsTotal} assignments · ${summary.quizzesTotal} quizzes.`}
         />
-        <Metric
+        <StatTile
           label="Missed"
           value={summary.itemsMissed}
           detail="Closed quizzes remain visible in the learning path."
