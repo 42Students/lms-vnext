@@ -104,27 +104,27 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
             Search title
             <Input name="q" type="search" maxLength={100}
               defaultValue={data.query.q} placeholder="Assessment title"
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11" />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Exact course code
             <Input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11" />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Batch / cohort code (exact)
             <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+              className="min-h-11"/>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Program code (exact)
             <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode??""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+              className="min-h-11"/>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Audience scope
             <Select name="scope" defaultValue={data.query.scope}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
               <option value="SECTION">Section-specific</option>
             </Select>
@@ -132,7 +132,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           {!isAssignment?<label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Quiz results
             <Select name="results" defaultValue={data.query.results}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">Any visibility</option><option value="PUBLISHED">Results published</option>
               <option value="HIDDEN">Results hidden</option>
             </Select>
@@ -140,7 +140,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Due-date configuration
             <Select name="duePresence" defaultValue={data.query.duePresence}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">All deadlines</option><option value="SCHEDULED">Deadline configured</option>
               <option value="UNSCHEDULED">No deadline</option>
             </Select>
@@ -148,7 +148,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Deadline window
             <Select name="dueWindow" defaultValue={data.query.dueWindow}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">Any deadline</option><option value="PAST">Deadline passed</option>
               <option value="FUTURE">Deadline upcoming</option>
             </Select>
@@ -156,12 +156,12 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Academic period code
             <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode??""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+              className="min-h-11"/>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Status
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">All statuses</option>
               <option value="DRAFT">Draft</option>
               <option value="PUBLISHED">Published</option>
@@ -170,7 +170,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
             </Select>
           </label>
           <Button type="submit"
-            className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary">
+            className="min-h-11 px-5">
             Filter
           </Button>
           <Link href={collegeAssessmentHref(data.kind, { q: "", scope: "ALL", results: "ALL", duePresence: "ALL", dueWindow: "ALL", status: "ALL", page: 1 })}
