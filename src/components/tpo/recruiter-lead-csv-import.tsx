@@ -271,7 +271,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                     empty={<p>No import results to display.</p>}
                     columns={[
                       {key:"row",header:"File row",mobilePriority:"primary",cell:item=>item.row},
-                      {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>item.status},
+                      {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="created"?"success":item.status==="duplicate"?"info":item.status==="invalid"?"error":"warning"}>{item.status}</StatusBadge>},
                       {key:"details",header:"Details",mobilePriority:"secondary",cell:item=>item.leadId?
                         <Link href={"/tpo/recruiters/"+encodeURIComponent(item.leadId)}
                           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
