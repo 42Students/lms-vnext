@@ -112,7 +112,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
   <h2 className="font-semibold">Act on selected requests</h2>
   <p className="text-xs text-muted-foreground">Choose up to {MAX_BULK_REQUESTS} waiting requests of one kind on this page. Each decision is rechecked and saved separately; a failure never approves the next request.</p>
   <div tabIndex={0} role="group" aria-label="Waiting requests, scroll for more" className="max-h-64 min-h-0 space-y-1 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
-   {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
+   {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 border-b border-border p-2 text-sm">
     <input type="checkbox" checked={selected.includes(row.id)}
      disabled={pending||auditRetry!==null||(!selected.includes(row.id)&&(selected.length>=MAX_BULK_REQUESTS||
       chosenKind!==null&&chosenKind!==row.requestType))}
@@ -157,7 +157,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
   </Dialog>
   {outcomes.length>0?<div role="status" aria-live="polite" className="space-y-2 text-sm">
    <p>{outcomes.filter(row=>row.status==="updated").length} decided · {outcomes.filter(row=>row.status==="failed").length} not decided.</p>
-   <ul className="space-y-1">{outcomes.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-2">
+   <ul className="space-y-1">{outcomes.map(row=><li key={row.id} className="border-b border-border py-2">
     <strong>{row.name}</strong>: {row.message}
    </li>)}</ul>
    {outcomes.some(row=>row.status==="failed")?<div className="space-y-2">
