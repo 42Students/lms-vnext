@@ -469,6 +469,7 @@ export function FacultyQuizQuestionEditor({
                       <Button
                         size="sm"
                         variant="ghost"
+                        className="min-h-11 md:min-h-[var(--lms-control-height)]"
                         onClick={() =>
                           setQuestions(
                             (current) =>
@@ -625,6 +626,7 @@ export function FacultyQuizQuestionEditor({
                           <Button
                             size="sm"
                             variant="ghost"
+                            className="min-h-11 md:min-h-[var(--lms-control-height)]"
                             disabled={
                               question
                                 .options
@@ -645,6 +647,7 @@ export function FacultyQuizQuestionEditor({
                     <Button
                       size="sm"
                       variant="secondary"
+                      className="min-h-11 md:min-h-[var(--lms-control-height)]"
                       disabled={
                         question.options
                           .length >= 20
@@ -662,7 +665,8 @@ export function FacultyQuizQuestionEditor({
 
             <Button
               variant="secondary"
-              disabled={
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
+              disabled=
                 questions.length >= 100
               }
               onClick={() =>
