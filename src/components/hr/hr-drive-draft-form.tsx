@@ -68,7 +68,7 @@ export function HrDriveDraftForm({
   const submittedRef=useRef(false);
   const submittingRef=useRef(false);
   const result = hrDriveDraftSchema.safeParse(draft);
-  const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
+  const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
   const selectOptions = [
     ["FULL_TIME", "Full-time"], ["INTERNSHIP", "Internship"], ["INTERNSHIP_FULL_TIME", "Internship + full-time"], ["CONTRACT", "Contract"],
   ] as const;
@@ -230,11 +230,11 @@ export function HrDriveDraftForm({
     <p className="text-sm text-body">Your request was saved. The placement cell will review and set the dates before it can open to students.</p>
     <div className="flex flex-wrap gap-3">
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] underline">Open the request</a>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-link underline">Open the request</a>
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] underline">Go to Drives</a>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-link underline">Go to Drives</a>
       <a href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] underline">Request another</a>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-link underline">Request another</a>
     </div>
   </section>;
 
@@ -392,7 +392,7 @@ export function HrDriveDraftForm({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Hiring rounds</h2>
           <button type="button" disabled={draft.rounds.length >= 12}
-            className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-3 text-sm text-link disabled:opacity-50"
             onClick={() => setDraft((current) => ({
               ...current, rounds: [...current.rounds, { kind: "INTERVIEW", name: "Interview" }],
             }))}>
@@ -401,7 +401,7 @@ export function HrDriveDraftForm({
         </div>
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
           {HR_DRIVE_ROUND_PRESETS.map(preset=><button key={preset.id}
-            type="button" className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)]"
+            type="button" className="min-h-11 rounded-md border border-border px-3 text-sm text-link"
             onClick={()=>{setDraft(current=>applyHrRoundPreset(current,preset.id));setShowPreview(false);}}>
             {preset.label}
           </button>)}
@@ -430,15 +430,15 @@ export function HrDriveDraftForm({
               </label>
               <div className="flex items-end gap-2">
                 <button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
-                  className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
+                  className="min-h-11 rounded-md border border-border px-3 text-sm text-link disabled:opacity-50"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</button>
                 <button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
-                  className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
+                  className="min-h-11 rounded-md border border-border px-3 text-sm text-link disabled:opacity-50"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</button>
               </div>
               <button type="button" disabled={draft.rounds.length>=12}
                 aria-label={"Duplicate "+round.name}
-                className="self-end rounded-md border border-border px-3 py-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
+                className="self-end rounded-md border border-border px-3 py-3 text-sm text-link disabled:opacity-50"
                 onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
                 Duplicate
               </button>
@@ -461,17 +461,17 @@ export function HrDriveDraftForm({
             onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</button>
           <button type="button" disabled={!result.success||submitting}
             aria-busy={submitting}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-link disabled:opacity-50"
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </button>
           <button type="button" disabled={!result.success}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-link disabled:opacity-50"
             onClick={() => void copyPreview()}>Copy validated draft</button>
           <button type="button" disabled={submitting}
-            className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-4 text-sm text-link disabled:opacity-50"
             onClick={saveForThisTab}>Save unsent draft</button>
-          <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]"
+          <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-link"
             onClick={()=>restoreFromThisTab()}>Restore saved draft</button>
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-body"
             onClick={() => {
@@ -498,7 +498,7 @@ export function HrDriveDraftForm({
             {draft.driveMode==="OFF_CAMPUS"?
               <p className="break-all">Application website: {result.success&&result.data.externalApplicationUrl
                 ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer" target="_blank"
-                  className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{result.data.externalApplicationUrl}</a>
+                  className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{result.data.externalApplicationUrl}</a>
                 : "Not specified"}</p>:null}
             <h4 className="font-semibold text-foreground">Planned hiring process</h4>
             <ol className="list-inside list-decimal space-y-1">
