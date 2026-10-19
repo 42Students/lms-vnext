@@ -1,4 +1,5 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
@@ -95,13 +96,13 @@ export function TpoAcademicImportWorkspace() {
   }
 
   return <div className="min-w-0">
-    <button type="button" onClick={() => setOpen(value => !value)}
+    <Button variant="secondary" type="button" onClick={() => setOpen(value => !value)}
       aria-expanded={open} aria-controls={id}
-      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+      >
       Import academic details
-    </button>
+    </Button>
     {open && <section id={id} aria-label="Import academic details"
-      className="mt-3 max-w-4xl space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+      className="mt-3 max-w-4xl space-y-3">
       <h2 className="text-lg font-semibold">Import academic details</h2>
       <p className="text-sm text-muted-foreground">
         Upload a CSV with student membership IDs, CGPA (0–10), and active backlogs.
@@ -117,15 +118,15 @@ export function TpoAcademicImportWorkspace() {
           className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm" />
       </label>
       <label className="block text-sm font-semibold">Or paste CSV rows
-        <textarea value={csv} onChange={event => {
+        <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setPreview(null); setError(""); setNotice("");
         }} rows={5} maxLength={200000}
-          className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 font-mono text-xs" />
+          className="mt-1 font-mono text-xs" />
       </label>
-      <button disabled={busy} type="button" onClick={() => void validate()}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+      <Button variant="secondary" disabled={busy} type="button" onClick={() => void validate()}
+        >
         {busy ? "Checking…" : "Preview matches"}
-      </button>
+      </Button>
       {preview && <div className="space-y-3">
         <p role="status" className="text-sm">
           {preview.filter(row => row.match === "WILL_UPDATE").length} will update;
@@ -155,11 +156,11 @@ export function TpoAcademicImportWorkspace() {
               : preview.map(row => row.studentCode))} />
           Select all matched students
         </label>
-        <button type="button" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
+        <Button variant="secondary" type="button" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
           onClick={() => setConfirmOpen(true)}
-          className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+          >
           Confirm import
-        </button>
+        </Button>
       </div>}
       <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy&&!guardedPending)setConfirmOpen(value);}}
         title="Import verified academic details"
