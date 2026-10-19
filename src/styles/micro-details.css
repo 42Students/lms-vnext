@@ -21,13 +21,11 @@
    keyboard focus is a 2px teal outline at +3px. Already specialized data-slot
    rings retain their stronger rules from globals.css. */
 :where(a[href], button, input, select, textarea, summary,
-  [role="button"], [role="tab"], [role="switch"], [role="menuitem"])
-  :focus:not(:focus-visible) {
+  [role="button"], [role="tab"], [role="switch"], [role="menuitem"]):focus:not(:focus-visible) {
   outline: none;
 }
 :where(a[href], button, input, select, textarea, summary,
-  [role="button"], [role="tab"], [role="switch"], [role="menuitem"])
-  :focus-visible {
+  [role="button"], [role="tab"], [role="switch"], [role="menuitem"]):focus-visible {
   outline-color: var(--lms-micro-focus);
   outline-style: solid;
   outline-width: 2px;
@@ -110,15 +108,13 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 
 /* Legacy: components___form.scss:57-60 and
    components___variables.scss:28 — muted placeholder #a9a7ae. */
-:where(input:not([type="checkbox"]):not([type="radio"]), textarea)
-  :not([data-unskin])::placeholder {
+:where(input:not([type="checkbox"]):not([type="radio"]), textarea):not([data-unskin])::placeholder {
   color: #a9a7ae;
   opacity: 1;
 }
 /* The legacy sources do not specify UA autofill colour: limit the fix to
    inherited ink without suppressing the existing focus halo. */
-:where(input:not([type="checkbox"]):not([type="radio"]), textarea)
-  :not([data-unskin]):-webkit-autofill {
+:where(input:not([type="checkbox"]):not([type="radio"]), textarea):not([data-unskin]):-webkit-autofill {
   -webkit-text-fill-color: var(--lms-form-ink);
   caret-color: var(--lms-form-ink);
 }
