@@ -542,3 +542,47 @@ Each modified file was reread after its GitHub write and exact intended source t
 
 Exact next file: src/components/tpo/tpo-audit-saved-views.tsx only if queue ownership includes saved personal views; otherwise resume source sweep at src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx.
 
+## Replacement lane tenant and TPO settings responsive confirmation checkpoint
+
+Readback-confirmed authored source updates for 13 additional G2/settings files. Shared components and page content are unchanged; native JavaScript confirmation prompts in seven settings editors were replaced by the preexisting promise-backed shared useConfirmFlow/ConfirmDialog, preserving every caution message and mutation guard. Current main was merged into the lane branch through branch-only PR #197; no lane pushes to main were made.
+
+| Property | Legacy source/value | vNext outcome |
+| --- | --- | --- |
+| Phone and narrow-tablet minimum | components___notification-drawer.scss:21-24,31-33 = 44px through 767px | Shared Button/Input/Select classes use min-h-11 through 767px |
+| Desktop/default control | old-lms-shell-spec.md:24-27 = 36px button, radius 9px, 14px weight 650 | min-[768px]:min-h-9 starts at 768px; shared controls inherit color/typography/radius |
+| Responsive card/form grid | components___learn-notifications.scss:60-84 = mobile through 767px | min-[768px]:grid-cols replaces premature 640px two/three-column layouts |
+| Focus and confirmation states | components___form.scss:14-23 = focus-visible ring and owner requires shared dialog | useConfirmFlow returns ConfirmDialog with focus and escape from src/components/ui; actual runtime focus needs browser test |
+| Page title/canvas | old-lms-pages.md:5-6 = white single canvas, title without eyebrow | existing PageHeader preserved, no new card-in-card or eyebrow |
+
+### Source-level file table
+
+| File under src/ | Inspected source lines | Authored mobile/tablet contract |
+| --- | --- | --- |
+
+| components/tpo/tpo-company-visibility-editor.tsx | 42,48,55 | shared confirmation and Save button 44px mobile |
+| components/tpo/tpo-blocked-dates-editor.tsx | 41,47,51,54,56,59,62,67,72,74,83,88 | single-column phone filters; shared day/range confirmation |
+| components/tpo/tpo-custom-job-type-placed.tsx | 30,32 | selected Yes/No state retained; shared confirmation |
+| components/tpo/tpo-custom-job-type-rename.tsx | 33,36 | name and rename controls; shared confirmation |
+| components/tpo/tpo-team-handover.tsx | 40,47 | member selection and handover; shared confirmation |
+| components/admin/descendant-feature-rule-editor.tsx | 45,54,59,61,64,65 | module/scope controls 44px mobile; shared confirmation |
+| components/tpo/tpo-batch-decision-control.tsx | 43,53 | batch default Select/Save; shared confirmation |
+| app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx | 158,217,222,225,293 | source mobile filter controls and 768px readiness grids |
+| app/(authenticated)/admin/settings/auth/page.tsx | 30,45 | single-column phone settings tiles |
+| app/(authenticated)/admin/settings/page.tsx | 87,93,134,140,143,147,159 | 44px search/filter/link controls, 768px grid |
+| app/(authenticated)/admin/tenants/page.tsx | 56,60,62,64,67,71,77,81,92 | tenant directory search/filter/CTA 44px phone, 768px grid |
+| app/(authenticated)/tpo/settings/branding/page.tsx | 210 | branding layout begins 2 columns at 768px |
+| app/(authenticated)/tpo/settings/public-page/page.tsx | 57 | public placement settings layout begins 2 columns at 768px |
+
+### Scoped source pattern results: 13 files
+
+- Raw visible button/input/select/textarea: 0.
+- Raw hidden fields: 0.
+- Literal hex CSS colors: 0.
+- window.confirm, fixed inset-0, role=dialog: 0.
+- Old sm:min-h-9 or sm:grid-cols breakpoint classes: 0.
+- PageHeader eyebrow props: 0.
+
+All results above were obtained by retrieving and searching the 13 changed source files on chatgpt/chat-11-b; they are NOT a full repository terminal grep or computed CSS/screenshot proof. Changes were reread after writing. No app execution, CI, typecheck or local browser run occurred. G2/G3 category strict acceptance remains UNCHECKED pending full source coverage, 320/360/390/768/1280 responsive render proof, chat bubble legacy baseline and runtime states.
+
+Next exact file: src/components/tpo/tpo-audit-saved-views.tsx (personal saved views) or, if audit view ownership belongs elsewhere, src/components/activity/notification-toolbar.tsx for source review and strict-tick evidence.
+

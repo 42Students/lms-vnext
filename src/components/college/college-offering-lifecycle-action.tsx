@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
+import {Alert} from "@/components/ui/alert";
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {offeringLifecycleConfirmation} from "@/modules/courses/college-offering-lifecycle-model";
@@ -25,10 +26,10 @@ export function CollegeOfferingLifecycleAction({id,name,status}:{
     });
   }
   return <div className="space-y-1">{confirmation}
-    <Button variant="secondary" type="button" disabled={pending} onClick={submit}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text">
+    <Button variant="secondary" type="button" disabled={pending} loading={pending} onClick={submit}
+      className="min-h-11 md:min-h-9">
       {pending?"Saving…":action==="ARCHIVE"?"Archive":"Restore"}
     </Button>
-    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
   </div>;
 }

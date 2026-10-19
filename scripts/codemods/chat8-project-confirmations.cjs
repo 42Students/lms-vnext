@@ -95,11 +95,19 @@ for (const file of files) {
     end: component.body.getStart(source) + 1,
     value: "\n const {askConfirm,dialog}=useConfirmFlow();",
   });
-  edit.push({
-    start: root.closingElement.getStart(source),
-    end: root.closingElement.getStart(source),
-    value: "  {dialog}\n ",
-  });
+  // Dialog is flow content: placing it inside a phrasing-only <span>
+  // produces invalid DOM nesting. In that case, wrap the existing span and
+  // dialog in a fragment, leaving every original visual span class intact.
+  if (root.openingElement.tagName.getText(source) === "span") {
+    edit.push({ start: root.getStart(source), end: root.getStart(source), value: "<>" });
+    edit.push({ start: root.getEnd(), end: root.getEnd(), value: "{dialog}</>" });
+  } else {
+    edit.push({
+      start: root.closingElement.getStart(source),
+      end: root.closingElement.getStart(source),
+      value: "  {dialog}\n ",
+    });
+  }
   const imports = source.statements.filter(ts.isImportDeclaration);
   if (imports.length === 0) {
     skipped.push(relative + ": cannot safely place hook import");
