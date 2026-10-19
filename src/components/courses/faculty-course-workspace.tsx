@@ -384,10 +384,7 @@ export function FacultyCourseWorkspace({
         eyebrow="Faculty · Course"
         title={course.courseName}
         description={`${course.courseCode} · ${course.sectionName} · ${course.academicPeriodName}`}
-      />
-
-      {view !== "BLUEPRINT" ? (
-        <>
+        actions={view !== "BLUEPRINT" ? (
       <nav aria-label="Overview actions" className="flex flex-wrap gap-3">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
@@ -402,6 +399,12 @@ export function FacultyCourseWorkspace({
           Current Section students
         </Link>
       </nav>
+        ) : undefined}
+      />
+
+      {view !== "BLUEPRINT" ? (
+        <>
+
       <FacultyCourseHomeSignals
         signals={homeSignals}
         deliveryId={course.deliveryId}
@@ -517,16 +520,20 @@ export function FacultyCourseWorkspace({
             </div>
           </section>
 
-          <Tabs ariaLabel="Blueprint content filters" value={contentFilter} renderPanel={false}
+          <Tabs
+            ariaLabel="Blueprint content filters"
+            value={contentFilter}
+            renderPanel={false}
             items={([
-              ["ALL", "All"], ["LECTURES", "Lectures"], ["RESOURCES", "Resources"],
-              ["ASSESSMENTS", "Assessments"], ["LIVE", "Live sessions"],
-            ] as const).map(([value, label]) => ({
+              ["ALL","All"],["LECTURES","Lectures"],["RESOURCES","Resources"],
+              ["ASSESSMENTS","Assessments"],["LIVE","Live sessions"],
+            ] as const).map(([value,label]) => ({
               value,
               label,
-              href: facultyCourseTabHref(course.deliveryId, "blueprint") +
-                (value === "ALL" ? "" : "?filter=" + value),
-            }))} />
+              href: facultyCourseTabHref(course.deliveryId,"blueprint")+
+                (value==="ALL"?"":"?filter="+value),
+            }))}
+          />
           {selectedLessonId?<nav aria-label="Lesson navigation" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
             <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline">
               Back to Blueprint
