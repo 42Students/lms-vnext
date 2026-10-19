@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -26,6 +27,6 @@ export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId:
       variant="secondary" className="min-h-11 sm:min-h-9">
       {busy ? "Saving..." : "Mark read"}
     </Button>
-    {error ? <p role="alert" className="mt-2 text-xs text-error">{error}</p> : null}
+    {error ? <InlineNotice tone="error" message={error}/> : null}
   </div>;
 }
