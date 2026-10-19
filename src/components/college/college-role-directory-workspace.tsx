@@ -152,7 +152,7 @@ export async function CollegeRoleDirectoryWorkspace({
               maxLength={100}
               defaultValue={result.filter.q}
               placeholder="Search this college"
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm"
+              
             />
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
@@ -160,7 +160,7 @@ export async function CollegeRoleDirectoryWorkspace({
             <Select
               name="status"
               defaultValue={result.filter.status}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm"
+              
             >
               <option value="ALL">All statuses</option>
               <option value="ACTIVE">Active</option>
@@ -170,7 +170,7 @@ export async function CollegeRoleDirectoryWorkspace({
           </label>
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active class / section
-            <Select name="sectionId" defaultValue={result.filter.sectionId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="sectionId" defaultValue={result.filter.sectionId??""} >
               <option value="">All classes</option>
               {selectedDirectoryValueNotListed(result.filter.sectionId,result.sectionOptions.map(row=>row.id)) ?
                 <option value={result.filter.sectionId}>Selected class (outside first 200)</option> : null}
@@ -180,7 +180,7 @@ export async function CollegeRoleDirectoryWorkspace({
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active program
-            <Select name="programId" defaultValue={result.filter.programId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="programId" defaultValue={result.filter.programId??""} >
               <option value="">All programs</option>
               {selectedDirectoryValueNotListed(result.filter.programId,result.programOptions.map(row=>row.id)) ?
                 <option value={result.filter.programId}>Selected program (outside first 200)</option> : null}
@@ -191,7 +191,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active batch
             <Select name="cohortId" defaultValue={result.filter.cohortId ?? ""}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="">All batches</option>
               {selectedDirectoryValueNotListed(result.filter.cohortId,result.cohortOptions.map(c=>c.id)) ?
                 <option value={result.filter.cohortId}>Selected batch (outside first 200)</option> : null}
@@ -206,7 +206,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Department
             <Select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="">All departments</option>
               {selectedDirectoryValueNotListed(result.filter.facultyDepartmentId,result.departmentOptions.map(d=>d.id)) ?
                 <option value={result.filter.facultyDepartmentId}>Selected department (outside first 200)</option> : null}
@@ -219,7 +219,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Employment type
             <Select name="employmentType" defaultValue={result.filter.employmentType ?? ""}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="">All employment types</option>
               {selectedDirectoryValueNotListed(result.filter.employmentType,result.employmentOptions) ?
                 <option value={result.filter.employmentType}>Selected type (outside first 100)</option> : null}
@@ -236,7 +236,7 @@ export async function CollegeRoleDirectoryWorkspace({
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Platform account
             <Select name="accountStatus" defaultValue={result.filter.accountStatus}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="ALL">All accounts</option>
               <option value="ACTIVE">Active accounts</option>
               <option value="DISABLED">Disabled accounts</option>
@@ -245,7 +245,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active enrollment
             <Select name="enrollment" defaultValue={result.filter.enrollment}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="ALL">All learners</option>
               <option value="ACTIVE">Has active program enrollment</option>
               <option value="NONE">No active program enrollment</option>
@@ -257,7 +257,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Roll number coverage
             <Select name="rollPresence" defaultValue={result.filter.rollPresence}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="ALL">All learners</option>
               <option value="PRESENT">Roll recorded</option>
               <option value="MISSING">Roll missing</option>
@@ -266,7 +266,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Registration number coverage
             <Select name="registrationPresence" defaultValue={result.filter.registrationPresence}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="ALL">All learners</option>
               <option value="PRESENT">Registration recorded</option>
               <option value="MISSING">Registration missing</option>
@@ -275,7 +275,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active class placement
             <Select name="classPresence" defaultValue={result.filter.classPresence}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="ALL">All learners</option>
               <option value="ASSIGNED">Has active class</option>
               <option value="NONE">No active class</option>
@@ -286,7 +286,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Academic title coverage
             <Select name="titlePresence" defaultValue={result.filter.titlePresence}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="ALL">All faculty</option>
               <option value="PRESENT">Title recorded</option>
               <option value="MISSING">Title missing</option>
@@ -295,7 +295,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Primary department coverage
             <Select name="departmentPresence" defaultValue={result.filter.departmentPresence}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="ALL">All faculty</option>
               <option value="ASSIGNED">Department recorded</option>
               <option value="MISSING">Department missing</option>
@@ -304,7 +304,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Course teaching
             <Select name="teaching" defaultValue={result.filter.teaching}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="ALL">All faculty</option>
               <option value="ASSIGNED">Has active teaching</option>
               <option value="NONE">No active teaching</option>
@@ -313,7 +313,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active course teaching role
             <Select name="teachingRole" defaultValue={result.filter.teachingRole}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="ALL">Any role</option>
               <option value="PRIMARY">Primary</option>
               <option value="CO_TEACHER">Co-teacher</option>
@@ -322,16 +322,16 @@ export async function CollegeRoleDirectoryWorkspace({
           </label> : null}
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Joined from (IST)
-            <Input type="date" name="joinedFrom" defaultValue={result.filter.joinedFrom??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm" />
+            <Input type="date" name="joinedFrom" defaultValue={result.filter.joinedFrom??""}  />
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Joined through (IST)
-            <Input type="date" name="joinedThrough" defaultValue={result.filter.joinedThrough??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm" />
+            <Input type="date" name="joinedThrough" defaultValue={result.filter.joinedThrough??""}  />
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Order
             <Select name="sort" defaultValue={result.filter.sort}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+              >
               <option value="NAME">Name A–Z</option>
               <option value="NAME_DESC">Name Z–A</option>
               <option value="NEWEST">Newest membership</option>
@@ -340,7 +340,7 @@ export async function CollegeRoleDirectoryWorkspace({
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Rows per page
-            <Select name="pageSize" defaultValue={result.filter.pageSize} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="pageSize" defaultValue={result.filter.pageSize} >
               <option value="10">10</option><option value="25">25</option><option value="50">50</option>
             </Select>
           </label>

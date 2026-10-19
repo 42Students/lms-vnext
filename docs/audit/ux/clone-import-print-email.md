@@ -57,5 +57,31 @@ The user explicitly prohibited executing the app/tests/CI. A full cloned-reposit
 | Print rules | `grep -R '@media print' src/app/globals.css` | **0 (fetched 1,096 lines)** | Does not cover other print CSS |
 | Hard-coded hex outside tokens | `grep -rlE '#[0-9a-fA-F]{3,8}' src --include='*.tsx' | wc -l` | **not run** | Open |
 
+## 2026-10-19 bounded-turn evidence: branch replay, G4 tables and native buttons
+
+### Confirmed edits (unexecuted)
+- Replayed the prior 13 `[chat-6]` commits on top of main `d915bd67b20838f496d2a5b25b4365e748a35dd5` as 13 new commits. The replayed file patches each applied against main without a reported text conflict; no app execution or TypeScript compile was performed.
+- `src/components/placements/tpo-round-results-import.tsx`: the missing-applicants review within the import preview is now a shared `DataTable` with Applicant and Application ID, retaining the same row keys and scroll window. The nested muted/card wrapper was removed to preserve the one-canvas legacy page anatomy (`docs/design/old-lms-pages.md:4,9`). Matched rows, unmatched rows and staged results were already using shared `DataTable`.
+- `src/components/admin/copy-finding-for-claude.tsx`: native styled button converted to shared `Button variant="secondary"`, retaining its clipboard callback and status message.
+- `src/app/(authenticated)/admin/inbound-mail/error.tsx`: native Retry button converted to shared `Button variant="secondary"`, retaining `reset`.
+- These are source-level, scoped checks only; device screenshots, keyboard interactions and production print rendering were not checked. G4 and G5 **remain unticked**.
+
+### Work queue — native-button inventory (search + file inspection, NOT a repository grep)
+1. GitHub code search `<button repo:42Students/lms-vnext path:src/components/admin` returned **58 candidate files**, all 58 fetched on branch and checked with the case-sensitive literal `/<button(?=[\\s>])/`. **0 remaining native buttons** in those 58 candidate files after the copy-finding conversion. The search also returned uppercase `<Button>` and so its candidate count is not a raw-button count.
+2. GitHub code search `<button repo:42Students/lms-vnext path:src/app/(authenticated)/admin` returned **81 candidate files**, all 81 fetched and case-sensitively checked. **0 remaining native buttons** among those 81 after the inbound-mail error conversion.
+3. The four code-search candidates `src/components/auth/device-list.tsx`, `membership-recovery.tsx`, `login-form.tsx`, `membership-chooser.tsx` were fetched and had **0 native buttons**.
+4. **Outstanding**: all other unsearched TSX files in Super Admin and shared admin ownership, plus repository-wide verification. The exact checkout commands required by the STRICT TICK RULE are:
+   - `grep -rlE '<button[ >]' src --include='*.tsx'`
+   - `grep -rlE '<button[ >]' src/components/admin src/components/auth 'src/app/(authenticated)/admin' --include='*.tsx'`
+   - `grep -rlE '<input[^>]+type="file"' src --include='*.tsx'`
+   - `grep -rlE '<table[ >]' src --include='*.tsx'`
+   **Not run** because no repository checkout is attached to this connector session. Neither zero global coverage nor absence of multiline native JSX is claimed.
+
+### G5 legacy-source inventory and blockers
+- Every checked-in file under `docs/design/legacy-styles/` was searched by reading its contents for `@media print` and `@page`: **0 print stylesheet rules found**. A drawer class `.ln-drawer-pdf` exists in `components___antddesign.scss:688`, but it is not a printed PDF/certificate/receipt page layout.
+- `docs/design/old-lms-pages.md:4-12` supplies on-screen legacy canvas and report anatomy, **not** an authenticated print stylesheet. `src/modules/courses/faculty-report-pdf.ts:11-14,63-90` uses a Courier-based PDF stream with distinct page coordinates. There is no verified old-LMS counterpart to compare every print/PDF value against.
+- Hosted email template HTML is not present in the checked-in SCSS. Do not invent email header, footer, buttons or PDF font/margins. G5 stays **[ ]** until legacy print/PDF/certificate/offer-letter/receipt/email artifacts and rendered output are available.
+- Next G5 file: `src/app/(authenticated)/layout.tsx` (review a dedicated scoped print stylesheet integration against shell owner before changing layout or `src/app/globals.css`; do not edit `src/components/ui/*`).
+
 ## Next file and unverified work
-**Next:** `src/components/placements/tpo-selection-import.tsx` — move matched + unmatched validation lists to DataTable while preserving exact text, row IDs and async staging behavior; then `src/components/placements/tpo-round-results-import.tsx` (matched, unmatched and post-stage result tables). Continue export toolbars, report tile/card anatomy, print styles, PDF model and hosted email template inventory; run full repo greps and property/state/phone/tablet comparisons before any tick. No code, TypeScript or CI execution was performed during these commits.
+**Next:** `src/app/(authenticated)/layout.tsx` — G5 authenticated print integration and a source-backed print checklist; then continue the unsearched native-button work queue. Keep G4/G5 unticked until full value/state/responsive proof exists.

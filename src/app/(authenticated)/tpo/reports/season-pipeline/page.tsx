@@ -63,7 +63,7 @@ export default async function TpoSeasonPipelinePage({
           Placement season
           <Select name="seasonId" defaultValue={report.season?.id ?? ""}
             disabled={!report.seasons.length}
-            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full">
             {report.seasons.length === 0 ? <option value="">No season</option> : null}
             {report.seasons.map((s) => (
               <option key={s.id} value={s.id}>{s.name} · {s.code}</option>
@@ -74,7 +74,7 @@ export default async function TpoSeasonPipelinePage({
           Drive
           <Select name="jobId" defaultValue={report.selectedJobId ?? ""}
             disabled={!report.season}
-            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full">
             <option value="">All drives</option>
             {report.jobs.map((job) => (
               <option key={job.id} value={job.id}>{job.companyName} · {job.title}</option>
@@ -82,7 +82,7 @@ export default async function TpoSeasonPipelinePage({
           </Select>
         </label>
         <Button type="submit" disabled={!report.season}
-          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+          className="min-h-11 sm:min-h-9">
           Apply filters
         </Button>
       </form>
