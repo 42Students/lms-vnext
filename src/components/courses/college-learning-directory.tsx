@@ -29,7 +29,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
         description={lessons ? undefined : COLLEGE_COURSE_TAB_COPY.progressDescription}
         actions={
           <Link href="/college/courses"
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
             Course offerings
           </Link>
         }
