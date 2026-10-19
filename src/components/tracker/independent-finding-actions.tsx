@@ -89,8 +89,7 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
   {(action==="COMMENT"||action==="STATUS")?<label className="grid gap-1 text-sm">Note or reason
     <Textarea rows={3} maxLength={1000} value={note} disabled={pending} onChange={e=>setNote(e.target.value)} className="text-sm"/>
    </label>:null}
-  <Button variant="primary" type="button" onClick={()=>void submit()} disabled={pending}
-   >{pending?"Saving…":"Save details"}</Button>
+  <Button variant="primary" type="button" onClick={()=>void submit()} disabled={pending} className="min-h-11 md:min-h-9">{pending?"Saving…":"Save details"}</Button>
   {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
     title="Save this finding update? An immutable audit event will be recorded."
