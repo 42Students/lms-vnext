@@ -73,7 +73,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div>
-  <Button variant="secondary" ref={launchRef} type="button" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold"
+  <Button variant="secondary" ref={launchRef} type="button" className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold"
    onClick={()=>open?close():openDialog()}>New message</Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)close();}} dismissible={!busy}
    title="New message to a recruiter">
@@ -91,11 +91,11 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
      <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
       {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
        onClick={()=>editMessage(message?message+" "+reply:reply)}
-       className="min-h-11 min-[768px]:min-h-9 rounded-[8px] border border-border px-3 text-sm font-medium">{reply}</Button>)}
+       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-medium">{reply}</Button>)}
      </div>
      <label className="block text-sm font-semibold text-body">Message
       <Textarea aria-label="New message" placeholder="Write a message" required maxLength={4000}
-       className="mt-1 min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base sm:text-sm"
+       className="mt-1 min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base md:text-sm"
        value={message} onChange={event=>editMessage(event.target.value)}
        onKeyDown={event=>{
         if(event.key==="Enter"&&(event.ctrlKey||event.metaKey||!event.shiftKey)&&
@@ -114,12 +114,12 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
       No recruiters have verified, active placement access.</p>:null}
      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
      {createdThreadId?<a href={"/tpo/messages/"+encodeURIComponent(createdThreadId)}
-      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">Open conversation</a>:null}
+      className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open conversation</a>:null}
      <div className="flex justify-end gap-2">
       <Button variant="secondary" type="button" onClick={()=>editMessage("")} disabled={!message||busy}
-       className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Discard draft</Button>
+       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Discard draft</Button>
       <Button variant="primary" type="submit" disabled={!id||!message.trim()||busy}
-       className="min-h-11 min-[768px]:min-h-9">
+       className="min-h-11 md:min-h-9">
        {busy?"Sending…":"Send"}
       </Button>
      </div>
