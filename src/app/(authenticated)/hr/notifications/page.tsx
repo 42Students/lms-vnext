@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -97,8 +98,8 @@ export default async function HrMessagesPage({searchParams}:{
          </li>)}
        </ol>
      </section>)}
-   </div>:<p role="status" className="border-y border-border py-5 text-sm text-body">
-     No matching notifications for this employer and college.</p>}
+   </div>:<EmptyState title="No matching notifications"
+     description="No matching notifications for this employer and college."/>}
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground">
        {result.first?result.first+"–"+result.last:"No rows on this page"}
