@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
@@ -151,35 +155,35 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     </div>
     <div className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">Time window
-        <select value={windowMinutes} onChange={event=>setWindowMinutes(event.target.value)}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3">
+        <Select value={windowMinutes} onChange={event=>setWindowMinutes(event.target.value)}
+         >
           <option value="15">Last 15 minutes</option><option value="60">Last hour</option>
           <option value="360">Last 6 hours</option><option value="1440">Last 24 hours</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold">Minimum severity
-        <select value={minimumSeverity} onChange={event=>setMinimumSeverity(event.target.value as "ERROR"|"WARNING")}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3">
+        <Select value={minimumSeverity} onChange={event=>setMinimumSeverity(event.target.value as "ERROR"|"WARNING")}
+         >
           <option value="ERROR">Error and above</option>
           <option value="WARNING">Warning and above</option>
-        </select>
+        </Select>
       </label>
       <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold">Search this page
-        <input type="search" maxLength={150} value={query} onChange={event=>setQuery(event.target.value)}
-          placeholder="Message, route, reference" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3"/>
+        <Input type="search" maxLength={150} value={query} onChange={event=>setQuery(event.target.value)}
+          placeholder="Message, route, reference"/>
       </label>
-      <button type="button" onClick={()=>void load()} disabled={pending||exporting}
-        className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm font-[650] text-on-primary disabled:opacity-50">
+      <Button variant="primary" type="button" onClick={()=>void load()} disabled={pending||exporting}
+       >
         {pending?"Loading…":"Refresh newer"}
-      </button>
-      <button type="button" onClick={()=>void downloadRange("csv")} disabled={pending||exporting||configured!==true}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold disabled:opacity-50">
+      </Button>
+      <Button variant="secondary" type="button" onClick={()=>void downloadRange("csv")} disabled={pending||exporting||configured!==true}
+       >
         {exporting?"Exporting…":"Download logs"}
-      </button>
-      <button type="button" onClick={()=>setReportOpen(true)} disabled={!items.length}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
+      </Button>
+      <Button variant="secondary" type="button" onClick={()=>setReportOpen(true)} disabled={!items.length}
+       >
         Report for Claude
-      </button>
+      </Button>
     </div>
     {notice?<p role={notice.startsWith("Could not")?"alert":"status"} className="text-sm text-body">{notice}</p>:null}
     {items.length?<ol className="space-y-2">
@@ -192,31 +196,31 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
           <p className="mt-2 whitespace-pre-wrap break-words text-body">{item.message}</p>
           <p className="mt-2 text-xs text-muted-foreground">Reference: {item.requestId??"Not recorded"} · {item.component??"server"}</p>
           <div className="mt-3 flex flex-wrap gap-3">
-            <button type="button" onClick={()=>void copy(trackerLogMarkdown([item]))}
-              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Copy for Claude</button>
-            <button type="button" onClick={()=>void copy(window.location.origin+"/tracker/logs?query="+encodeURIComponent(item.requestId??item.event))}
-              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Copy permalink</button>
+            <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void copy(trackerLogMarkdown([item]))}
+             >Copy for Claude</Button>
+            <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void copy(window.location.origin+"/tracker/logs?query="+encodeURIComponent(item.requestId??item.event))}
+             >Copy permalink</Button>
             <Link href={"/tracker?context="+encodeURIComponent(
               [item.event,item.path,item.message,"Reference: "+(item.requestId??"none")].join("\n").slice(0,450))}
               className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Report this</Link>
             {item.knownErrorId?<>
               <Link href={"/tracker/logs#known-error-"+item.knownErrorId}
                 className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Known error details</Link>
-              <button type="button" disabled={mutating}
+              <Button variant="ghost" className="underline text-primary-text" type="button" disabled={mutating}
                 onClick={()=>{setMuteReason("");setMuteTarget({id:item.knownErrorId!,muted:item.muted===true});}}
-                className="inline-flex min-h-9 items-center font-semibold text-primary-text underline disabled:opacity-50">
+               >
                 {item.muted?"Unmute this error":"Mute this error"}
-              </button>
+              </Button>
             </>:<Link href="/tracker/logs#known-errors"
               className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Open Known Errors</Link>}
           </div>
         </details>
       </li>)}
     </ol>:<p role="status" className="text-sm text-body">No live errors loaded.</p>}
-    {nextPage?<button type="button" onClick={()=>void load(true)} disabled={pending||exporting}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold disabled:opacity-50">
+    {nextPage?<Button variant="secondary" type="button" onClick={()=>void load(true)} disabled={pending||exporting}
+     >
       Load older
-    </button>:null}
+    </Button>:null}
     <ConfirmDialog open={muteTarget!==null} onOpenChange={next=>{if(!next&&!mutating)setMuteTarget(null);}}
       title={muteTarget?.muted?"Unmute this known error?":"Mute this known error?"}
       description="This updates the stored error signature for every matching log. It does not erase log records."
@@ -224,21 +228,21 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       onConfirm={()=>void toggleKnownErrorMute()}>
       {!muteTarget?.muted?<label className="grid gap-1 text-sm font-semibold">
         Reason (optional)
-        <input value={muteReason} maxLength={255} onChange={event=>setMuteReason(event.target.value)}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+        <Input value={muteReason} maxLength={255} onChange={event=>setMuteReason(event.target.value)}
+         />
       </label>:null}
     </ConfirmDialog>
     <Dialog open={reportOpen} onOpenChange={setReportOpen} title="Report for Claude">
       <p className="mt-1 text-sm text-body">Copy a redacted report or download the selected time range.</p>
-      <textarea readOnly aria-label="Redacted tracker log report" value={trackerLogMarkdown(items)} rows={8}
-        className="mt-3 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-xs"/>
+      <Textarea readOnly aria-label="Redacted tracker log report" value={trackerLogMarkdown(items)} rows={8}
+       />
       <div className="mt-3 flex flex-wrap gap-3">
-        <button type="button" onClick={()=>void copy(trackerLogMarkdown(items))}
-          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Copy report</button>
-        <button type="button" onClick={()=>void downloadRange("markdown")} disabled={exporting}
-          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Download report</button>
-        <button type="button" onClick={()=>setReportOpen(false)}
-          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Close</button>
+        <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void copy(trackerLogMarkdown(items))}
+         >Copy report</Button>
+        <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void downloadRange("markdown")} disabled={exporting}
+         >Download report</Button>
+        <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>setReportOpen(false)}
+         >Close</Button>
       </div>
     </Dialog>
   </section>;
