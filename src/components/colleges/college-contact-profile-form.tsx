@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
@@ -63,30 +64,30 @@ export function CollegeContactProfileForm({ initial }: {
     className="grid max-w-3xl gap-4 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-5 sm:grid-cols-2">
     <label className="grid gap-2 text-sm font-semibold text-body sm:col-span-2">
       Public college display name
-      <input required maxLength={160} className={inputClass} value={name}
+      <Input required maxLength={160} className={inputClass} value={name}
         onChange={event => setName(event.target.value)} />
     </label>
     <label className="grid gap-2 text-sm font-semibold text-body">
       Support email
-      <input type="email" maxLength={320} className={inputClass}
+      <Input type="email" maxLength={320} className={inputClass}
         value={email} onChange={event => setEmail(event.target.value)}
         placeholder="help@example.edu" />
     </label>
     <label className="grid gap-2 text-sm font-semibold text-body">
       Support phone
-      <input type="tel" maxLength={32} className={inputClass}
+      <Input type="tel" maxLength={32} className={inputClass}
         value={phone} onChange={event => setPhone(event.target.value)}
         placeholder="+91 98765 43210" />
     </label>
     <label className="grid gap-2 text-sm font-semibold text-body">
       Terms of use URL (HTTPS)
-      <input type="url" maxLength={2048} className={inputClass}
+      <Input type="url" maxLength={2048} className={inputClass}
         value={terms} onChange={event => setTerms(event.target.value)}
         placeholder="https://college.example.edu/terms" />
     </label>
     <label className="grid gap-2 text-sm font-semibold text-body">
       Privacy policy URL (HTTPS)
-      <input type="url" maxLength={2048} className={inputClass}
+      <Input type="url" maxLength={2048} className={inputClass}
         value={privacy} onChange={event => setPrivacy(event.target.value)}
         placeholder="https://college.example.edu/privacy" />
     </label>
