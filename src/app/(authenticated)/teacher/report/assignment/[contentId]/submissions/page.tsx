@@ -22,7 +22,7 @@ export default async function FacultyAssignmentSubmissionsPage({
     assignmentId:contentId,...(search.success?search.data:{deliveryId:undefined}),
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid Section submission filters</h1>
+    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid Section submission filters</h1>
     <Link href="/teacher/allAssignments" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Back to All Assignments
     </Link>
@@ -44,10 +44,10 @@ export default async function FacultyAssignmentSubmissionsPage({
       actions={<Link href={"/teacher/report/assignment/"+
         encodeURIComponent(report.assignment.id)+"?deliveryId="+
         encodeURIComponent(report.assignment.deliveryId)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Full Section report
       </Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+    <form method="get" className="flex flex-wrap items-end gap-3">
       <input type="hidden" name="deliveryId" value={query.deliveryId}/>
       {query.filter!=="ALL"?<input type="hidden" name="filter" value={query.filter}/>:null}
       {query.order!=="NEWEST"?<input type="hidden" name="order" value={query.order}/>:null}
@@ -55,7 +55,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       <label className="grid min-w-0 flex-1 basis-56 gap-1 text-sm font-semibold text-body">
         Find learner submissions
         <input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
-          className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-body text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
+          className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-body text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
       </label>
       <Button type="submit" variant="primary">Search</Button>
       <Link href={facultySubmissionListHref({...query,q:"",page:1})}
@@ -75,24 +75,24 @@ export default async function FacultyAssignmentSubmissionsPage({
       {(["ALL","PUBLISHED","PRIVATE"] as const).map(mode=>
         <Link key={mode} href={facultySubmissionListHref({...query,publication:mode,page:1})}
           aria-current={query.publication===mode?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           {mode==="ALL"?"All grades":mode==="PUBLISHED"?"Published grades":"Private grades"}
         </Link>)}
     </nav>
     <nav aria-label="Submission date order" className="flex flex-wrap gap-2">
       <Link href={facultySubmissionListHref({...query,order:"NEWEST",page:1})}
         aria-current={query.order==="NEWEST"?"page":undefined}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Newest first</Link>
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Newest first</Link>
       <Link href={facultySubmissionListHref({...query,order:"OLDEST",page:1})}
         aria-current={query.order==="OLDEST"?"page":undefined}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Oldest first</Link>
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Oldest first</Link>
     </nav>
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body">
         {data.total} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
       <div className="min-w-0 space-y-1">
-        <Link href={csvHref} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Link href={csvHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
         </Link>
         <p className="max-w-prose text-xs leading-5 text-muted-foreground">{facultySubmissionCsvScopeNote(query)}</p>

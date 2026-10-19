@@ -20,7 +20,7 @@ export default async function FacultyTeachingProfilePage({
     search:first(raw.search)??undefined,page:first(raw.page)??undefined,
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid teaching profile filters</h1>
+    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid teaching profile filters</h1>
     <Link href="/teacher/profile/teaching" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Clear filters
     </Link>
@@ -31,7 +31,7 @@ export default async function FacultyTeachingProfilePage({
     <PageHeader eyebrow="Faculty · Self Profile" title="Current teaching assignments"
       description={"Registered teaching deliveries for "+data.title+" in this college."}
       actions={<Link href="/teacher/profile"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Profile overview
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-5">
@@ -47,11 +47,11 @@ export default async function FacultyTeachingProfilePage({
       </p>
     </section>
     <form method="get" action="/teacher/profile/teaching"
-      className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Search current teaching
         <input name="search" type="search" defaultValue={data.query.search}
           placeholder="Course, Section or academic period" maxLength={120}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
       </label>
       <Button type="submit" variant="primary">
         Search

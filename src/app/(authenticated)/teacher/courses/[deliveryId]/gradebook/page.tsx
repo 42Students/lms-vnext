@@ -29,7 +29,7 @@ export default async function FacultyGradebookPage({
     knownKeys&&noRepeatedKeys?rawSearch:{invalid:true},
   );
   if(!parsed.success||!view.success)return <section role="alert" className="space-y-3 p-6">
-    <h1 className="text-xl font-semibold text-foreground">Invalid gradebook link or filters</h1>
+    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid gradebook link or filters</h1>
     <Link href={parsed.success?
       facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1}):
       "/teacher/courses"} className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
@@ -44,7 +44,7 @@ export default async function FacultyGradebookPage({
     if(error instanceof CoursesServiceError &&
        error.code==="FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS") {
       return <section role="alert" className="space-y-3 rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-xl font-semibold text-foreground">Gradebook report limit</h1>
+        <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Gradebook report limit</h1>
         <p className="text-sm text-body">
           This Section has more than 100 published assessments. Contact your college
           administrator to request a gradebook report. No grades have been changed.
@@ -63,19 +63,19 @@ export default async function FacultyGradebookPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Published gradebook"
       actions={<Link href={csv}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Download full Section CSV
       </Link>} />
     <p className="text-sm text-body">
       {data.rosterSize} current eligible learners · {data.publishedAssessments}
       {" "}assessments with published result records
     </p>
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+    <form method="get" className="flex flex-wrap items-end gap-3">
       <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-foreground">
         Find learner
         <input type="search" name="search" defaultValue={view.data.search}
           maxLength={120} placeholder="Name, roll number or email"
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
       </label>
       <Button type="submit" variant="primary">
         Search
