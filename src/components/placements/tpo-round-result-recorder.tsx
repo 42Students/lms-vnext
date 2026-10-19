@@ -181,7 +181,7 @@ export function TpoRoundResultRecorder({
               {Object.entries(TPO_RESULT_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
               ))}
-            </Select
+            </Select>
           </label>
           {outcome === "HOLD" ? (
             <label className="block font-semibold text-body">
