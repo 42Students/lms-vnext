@@ -1,0 +1,83 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { apiFetch } from "@/lib/api-fetch";
+import { SearchIcon } from "./icons";
+import style from "./topbar.module.css";
+
+export type TpoFindResult = { group: string; label: string; href: string };
+
+/** The same authorized TPO discovery backend previously used by the
+ * duplicate in-page Find strip. Avoid treating a forged href as a link.
+ */
+export function safeTpoFindResult(value: unknown): value is TpoFindResult {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const row = value as Record<string, unknown>;
+  return typeof row.group === "string" && row.group.length <= 80 &&
+    typeof row.label === "string" && row.label.length <= 240 &&
+    typeof row.href === "string" && /^\/tpo\/(?!\/)[^\\]*$/.test(row.href);
+}
+
+export function TpoFindSuggestions({
+  query, onOpen,
+}: {
+  query: string;
+  onOpen: (href: string) => void;
+}) {
+  const [state, setState] = useState<{
+    forQuery: string; results: TpoFindResult[]; loading: boolean; error: string | null;
+  }>({ forQuery: "", results: [], loading: false, error: null });
+  const needle = query.trim().slice(0, 100);
+
+  useEffect(() => {
+    if (needle.length < 2) return;
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      void apiFetch<unknown>(
+        "/api/tpo/find-suggestions?q=" + encodeURIComponent(needle),
+        { signal: controller.signal, cache: "no-store", timeoutMs: 12000 },
+      ).then(payload => {
+        if (controller.signal.aborted) return;
+        if (!payload || typeof payload !== "object" ||
+          !("results" in payload) || !Array.isArray(payload.results))
+          throw new Error("Invalid find suggestions");
+        setState({ forQuery: needle,
+          results: payload.results.filter(safeTpoFindResult).slice(0, 12),
+          loading: false, error: null });
+      }).catch(() => {
+        if (!controller.signal.aborted)
+          setState({ forQuery: needle, results: [], loading: false,
+            error: "Search could not be loaded. Try again." });
+      });
+    }, 200);
+    return () => { controller.abort(); window.clearTimeout(timer); };
+  }, [needle]);
+
+  if (needle.length < 2) return null;
+  const ready = state.forQuery === needle && !state.loading;
+  return <section aria-label="Matching TPO records">
+    <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">Matching records</p>
+    {!ready ? <p role="status" className="p-2 text-xs text-[#64748b]">Searching…</p> : null}
+    {ready && state.error ? <p role="alert" className="p-2 text-xs text-error">{state.error}</p> : null}
+    {ready && !state.error && state.results.map((result, index) =>
+      <button type="button" role="option" aria-selected={false}
+        data-tpo-result="" key={result.href} className={style.suggestion}
+        onKeyDown={event => {
+          if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+          event.preventDefault();
+          const buttons = event.currentTarget.closest("section")?.querySelectorAll<HTMLButtonElement>("button[data-tpo-result]");
+          if (!buttons?.length) return;
+          const next = event.key === "ArrowDown" ? (index + 1) % buttons.length
+            : (index - 1 + buttons.length) % buttons.length;
+          buttons[next]?.focus();
+        }}
+        onClick={() => onOpen(result.href)}>
+        <SearchIcon/>
+        <span className="min-w-0 flex-1 truncate">{result.label}</span>
+        <span className="shrink-0 text-[11px] text-[#64748b]">{result.group}</span>
+      </button>
+    )}
+    {ready && !state.error && state.results.length === 0
+      ? <p role="status" className="p-2 text-xs text-[#64748b]">No matching records.</p> : null}
+  </section>;
+}

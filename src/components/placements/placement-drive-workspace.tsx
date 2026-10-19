@@ -271,7 +271,7 @@ export async function PlacementDriveWorkspace({
               className="hidden max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain rounded border border-border bg-surface p-3 pb-7 group-open:flex md:flex md:max-h-none md:flex-row md:flex-wrap md:overflow-visible md:border-0 md:p-0 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)] md:[mask-image:none]">
             {nextStep ? (
               <Link href={nextStep.primary.href}
-                className="inline-flex min-h-9 items-center justify-center rounded-[9px] border border-primary bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 text-[var(--lms-on-primary)]">
+                className="inline-flex min-h-9 items-center justify-center rounded-[9px] border border-primary bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] md:min-h-9">
                 {nextStep.primary.label}
               </Link>
             ) : null}
@@ -305,12 +305,12 @@ export async function PlacementDriveWorkspace({
               </summary>
               <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-[6px] border border-border bg-surface p-3 shadow-[9px_11px_28px_rgba(0,0,0,0.1)]">
                 <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
-                  className="min-h-9 rounded-[9px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[var(--lms-button-primary)]-subtle md:min-h-9 text-[var(--lms-on-primary)]">
+                  className="min-h-9 rounded-[9px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] md:min-h-9">
                   Export applicants
                 </Link>
                 {job.status!=="DRAFT"?<Link
                   href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
-                  className="min-h-9 rounded-[9px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[var(--lms-button-primary)]-subtle md:min-h-9 text-[var(--lms-on-primary)]">
+                  className="min-h-9 rounded-[9px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] md:min-h-9">
                   Share with company
                 </Link>:null}
                 {["CLOSED","CANCELLED"].includes(job.status)
@@ -367,7 +367,7 @@ export async function PlacementDriveWorkspace({
               href={isTpo
                 ? "/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applications-export"
                 : "/api/placements/jobs/" + encodeURIComponent(jobId) + "/applicants/export"}
-              className="inline-flex min-h-9 items-center justify-center rounded-[9px] border border-primary bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-[var(--lms-button-primary)]-hover md:min-h-9 text-[var(--lms-on-primary)]"
+              className="inline-flex min-h-9 items-center justify-center rounded-[9px] border border-primary bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-[var(--lms-button-primary-hover)] md:min-h-9"
             >
               {isTpo ? "Review and export applicants" : "Export applicants (CSV)"}
             </Link>
@@ -445,7 +445,7 @@ export async function PlacementDriveWorkspace({
           <h2 className="text-base font-semibold text-foreground">Next step</h2>
           <p className="mt-2 text-sm text-body">{nextStep.primary.description}</p>
           <Link href={nextStep.primary.href}
-            className="mt-3 inline-flex min-h-9 items-center rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 text-[var(--lms-on-primary)]">
+            className="mt-3 inline-flex min-h-9 items-center rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] md:min-h-9">
             {nextStep.primary.label}
           </Link>
           {nextStep.more.length > 0 ? (

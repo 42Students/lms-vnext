@@ -38,7 +38,7 @@ export default async function TpoTrustedCompaniesPage() {
         actions={
           <Link
             href="/tpo/settings/team"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Placement Team
           </Link>
@@ -87,7 +87,7 @@ export default async function TpoTrustedCompaniesPage() {
         ].map(([label, value]) => (
           <div
             key={label}
-            className="rounded-xl border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {label}
@@ -125,7 +125,7 @@ export default async function TpoTrustedCompaniesPage() {
             columns={[
               {key:"company",header:"Company",mobilePriority:"primary",cell:company=>
                 <Link href={"/tpo/companies/"+encodeURIComponent(company.companyId)}
-                  className="font-semibold text-[var(--lms-link-text)] underline">{company.name}</Link>},
+                  className="font-semibold text-link underline">{company.name}</Link>},
               {key:"trust",header:"Trust status",mobilePriority:"secondary",cell:company=>
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
                   <StatusBadge tone={company.isTrusted?"success":"neutral"}>
@@ -148,7 +148,7 @@ export default async function TpoTrustedCompaniesPage() {
 
       {data.explicitDomainsAvailable?
         <TpoTrustedDomainEditor domains={data.trustedDomains.map(entry=>entry.domain)}/>:
-        <p role="status" className="rounded-xl border border-border p-4 text-sm">
+        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">
          Trusted-domain editor is unavailable until the table is registered.
         </p>}
 

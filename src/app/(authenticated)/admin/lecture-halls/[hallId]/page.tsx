@@ -51,16 +51,16 @@ export default async function SuperAdminLectureHallAvailability({
     <PageHeader eyebrow="Super Admin · Lecture halls" title={result?.hall.name ?? "Room availability"}
       description="Read-only scheduled bookings. An empty schedule is not proof of a free room."
       actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Back to Lecture Halls</Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+    <form method="get" className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">From (IST)
         <input name="from" type="date" required defaultValue={typeof raw.from === "string" ? raw.from : ""}
-          className="min-h-9 rounded-[9px] border border-border bg-surface px-3" />
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
       <label className="grid gap-1 text-sm font-semibold">To (IST)
         <input name="to" type="date" required defaultValue={typeof raw.to === "string" ? raw.to : ""}
-          className="min-h-9 rounded-[9px] border border-border bg-surface px-3" />
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
-      <button type="submit" className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-[var(--lms-on-primary)]">View schedule</button>
+      <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View schedule</button>
     </form>
     {!parsed.success
       ? raw.from !== undefined || raw.to !== undefined

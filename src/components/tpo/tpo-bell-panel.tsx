@@ -8,7 +8,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {tpoHeaderSnapshotSchema} from "@/modules/activity/tpo-header-snapshot-model";
 export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null;createdAt:string};
-export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:number;items:readonly BellItem[];revision?:number}){
+export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{initialUnread:number;items:readonly BellItem[];revision?:number;compact?:boolean}){
  const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
  const [allReadRevision,setAllReadRevision]=useState<number|null>(null);
  const [readIds,setReadIds]=useState<string[]>([]);
@@ -79,8 +79,19 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
  }
  return <div className="relative min-w-0">
   <button type="button" aria-label={"Notifications, "+unread+" new"} aria-expanded={open} onClick={()=>changeOpen(!open)}
-   className="min-h-11 rounded border border-border bg-surface px-3 text-sm">
-   Notifications {unread>0?"("+unread+" unread)":""}
+   className={compact
+    ? "relative inline-flex h-9 w-9 min-h-9 min-w-9 items-center justify-center rounded-[9px] border border-[#e7ecf2] bg-white text-[#334155] hover:bg-[#f8fafc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    : "min-h-11 rounded border border-border bg-surface px-3 text-sm"}>
+   {compact ? <>
+    <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>
+    </svg>
+    {unread>0?<span aria-hidden="true"
+      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-white bg-[#e53e49] px-0.5 text-[10px] font-bold leading-none text-white">
+      {unread>99?"99+":unread}
+    </span>:null}
+   </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}
   </button>
   <Drawer open={open} onOpenChange={changeOpen} title="Notifications"
    description="Most recent notifications from your own college.">

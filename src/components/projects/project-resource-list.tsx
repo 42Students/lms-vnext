@@ -127,7 +127,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
         </Select>
       </label>
       <label className="flex min-h-10 items-center gap-2 text-xs font-semibold">
-        <input data-slot="input" type="checkbox" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
+        <input type="checkbox" className="size-4 accent-[var(--lms-button-primary)]" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
         Pinned only
       </label>
       <label className="grid gap-1 text-xs font-semibold">Sprint
