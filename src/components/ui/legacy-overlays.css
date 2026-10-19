@@ -188,6 +188,7 @@
 [data-slot="toast-stack"] > section { overflow-wrap: anywhere; }
 [data-slot="toast-stack"] button[aria-label^="Dismiss"]:hover { background: rgba(0,0,0,.035); }
 [data-slot="toast-stack"] button[aria-label^="Dismiss"]:active { background: rgba(0,0,0,.06); }
+[data-slot="toast-stack"] button[aria-label^="Dismiss"] { min-width: 44px; min-height: 44px; }
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
