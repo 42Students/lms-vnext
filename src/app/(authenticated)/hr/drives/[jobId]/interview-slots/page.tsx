@@ -35,8 +35,8 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     Time blocks proposed here are visible to the placement cell. They are not confirmed interview appointments until the placement cell coordinates the schedule.
   </p>
   <nav className="flex flex-wrap gap-3">
-   <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Drive rounds</Link>
-   <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter calendar</Link>
+   <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Drive rounds</Link>
+   <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter calendar</Link>
   </nav>
   <>
    <section className="space-y-3 border-b border-border pb-4">
