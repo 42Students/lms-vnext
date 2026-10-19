@@ -1,5 +1,5 @@
 "use client";
-import {Checkbox} from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
@@ -39,10 +39,10 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
     className="mt-1 h-4 w-4 accent-primary"/>
    I reviewed the batch and understand this change will be audited.
   </label>
-  <button type="button" disabled={disabled} onClick={()=>void submit()}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+  <Button variant="secondary" type="button" disabled={disabled} onClick={()=>void submit()}
+   className="min-h-9 px-4">
    {busy?"Updating…":action==="FINISH"?"Mark finished":"Reopen batch"}
-  </button>
+  </Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}
  </div>;
