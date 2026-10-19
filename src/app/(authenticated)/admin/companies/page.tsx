@@ -107,7 +107,7 @@ export default async function SuperAdminCompaniesPage({
           <option value="NAME">Company name</option><option value="RECENT">Recently changed relationship</option>
         </Select>
       </label>
-      {data.query.companyId ? <input type="hidden" name="companyId" value={data.query.companyId}/> : null}
+      {data.query.companyId ? <Input type="hidden" name="companyId" value={data.query.companyId}/> : null}
       <label className="grid gap-1 text-sm font-semibold text-body">Relationship owner
         <Select name="owner" defaultValue={data.query.owner} className="min-h-11 sm:min-h-9">
           <option value="ALL">Any owner assignment</option><option value="ASSIGNED">Owner assigned</option><option value="UNASSIGNED">Needs an owner</option>
