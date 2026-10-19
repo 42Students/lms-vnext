@@ -552,7 +552,7 @@ export function AdminAttendanceWorkspace({
                           const multiple = sessions.length > 1;
                           return (
                             <td key={day} className="px-3 py-3 text-center">
-                              <button
+                              <Button
                                 type="button"
                                 disabled={!multiple && new Date(first.startsAt).getTime() > loadedAt}
                                 aria-label={multiple
@@ -568,7 +568,7 @@ export function AdminAttendanceWorkspace({
                                 <StatusBadge tone={multiple ? "neutral" : state.tone}>
                                   {multiple ? String(sessions.length) + " sessions" : state.code}
                                 </StatusBadge>
-                              </button>
+                              </Button>
                             </td>
                           );
                         })}
