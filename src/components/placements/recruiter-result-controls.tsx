@@ -411,24 +411,24 @@ export function RecruiterResultControls({
                   <span className="text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</span>
                   {([
                     ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
-                  ] as const).map(([outcome,label])=><Button variant="primary" key={outcome} type="button"
+                  ] as const).map(([outcome,label])=><Button key={outcome} type="button"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
                     disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
-                   >
+                    variant="secondary">
                     {label}
                   </Button>)}
-                  <Button variant="primary" type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
-                    onClick={undoDraftOutcome}>
+                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
+                    onClick={undoDraftOutcome} variant="secondary">
                     Undo draft
                   </Button>
-                  <Button variant="primary" type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
-                   
+                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
+                    
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":
                       "Send "+(selected[round.id]??[]).length+" results"}
                   </Button>
-                  <Button variant="primary" type="button" disabled={bulkPending!==null||pendingKey!==null}
-                   
+                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null}
+                    variant="secondary"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
                         []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}));}}>
