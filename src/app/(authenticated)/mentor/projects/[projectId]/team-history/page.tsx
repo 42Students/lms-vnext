@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -51,26 +53,26 @@ export default async function MentorTeamHistoryPage({
       : <>
         <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"}
           className="flex flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-          <input data-slot="input" type="hidden" name="view" value={data.query.view}/>
+          <Input type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-1 text-sm font-semibold text-body">Registered role
-            <select data-slot="select" name="role" defaultValue={data.query.role}
+            <Select name="role" defaultValue={data.query.role}
               className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
               <option value="ALL">All roles</option>
               <option value="MENTOR">Mentors</option><option value="LEARNER">Learners</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Primary Mentor record
-            <select data-slot="select" name="primary" defaultValue={data.query.primary}
+            <Select name="primary" defaultValue={data.query.primary}
               className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
               <option value="ALL">All team records</option><option value="PRIMARY">Recorded primary Mentors only</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Assignment chronology
-            <select data-slot="select" name="order" defaultValue={data.query.order}
+            <Select name="order" defaultValue={data.query.order}
               className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
               <option value="OLDEST">Earliest started first</option>
               <option value="NEWEST">Most recent started first</option>
-            </select>
+            </Select>
           </label>
           <Button type="submit" variant="primary">
             Filter role
