@@ -19,6 +19,8 @@ export type FileUploadProps = Omit<ComponentPropsWithRef<"input">, "type" | "onC
   showSelectedFiles?: boolean;
   /** Preview the first selected image locally; never uploads or stores image bytes. */
   showImagePreview?: boolean;
+  /** Legacy profile frame uses 175 x 194px cover; attachments remain contained. */
+  imagePreviewKind?: "attachment" | "profile";
 };
 
 export function fileSizeIsValid(size: number, maxBytes?: number) {
@@ -39,7 +41,7 @@ export function mustClearFileSelection(selected: boolean, pickerUnavailable: boo
 }
 
 export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerUnavailable = false,
-  progress, showSelectedFiles = false, showImagePreview = false,
+  progress, showSelectedFiles = false, showImagePreview = false, imagePreviewKind = "attachment",
   id: suppliedId, className, disabled, accept, ref: forwardedRef, ...props }: FileUploadProps) {
   const autoId = useId();
   const id = suppliedId ?? autoId;
@@ -139,8 +141,13 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
           Remove selected files
         </Button> : null}
     {showImagePreview && previewFile && previewUrl && !pickerUnavailable && !disabled
-      ? <div data-slot="image-upload-preview" className="rounded-[10px] border border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)] p-2">
-          <img src={previewUrl} alt={`${label} preview`} className="max-h-40 max-w-full rounded-[6px] object-contain" />
+      ? <div data-slot="image-upload-preview" data-preview-kind={imagePreviewKind}
+          className={cx("border border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)]",
+            imagePreviewKind === "profile"
+              ? "h-[194px] w-[175px] max-w-full overflow-hidden rounded-[8px]"
+              : "rounded-[10px] p-2")}>
+          <img src={previewUrl} alt={`${label} preview`}
+            className={imagePreviewKind === "profile" ? "h-full w-full object-cover object-center" : "max-h-40 max-w-full rounded-[6px] object-contain"} />
         </div> : null}
     {percentage !== null && selectedNames.length > 0 && !pickerUnavailable && !disabled
       ? <div role="progressbar" aria-label={`${label} upload progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percentage}
