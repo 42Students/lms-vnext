@@ -7,7 +7,7 @@ export type MetricBarProps = {
   maximum: number;
   unit?: string;
   role?: "meter" | "progressbar" | "img";
-  size?: "compact" | "default";
+  size?: "compact" | "medium" | "default";
   className?: string;
 };
 
@@ -29,7 +29,7 @@ export function MetricBar({
       aria-valuetext={numericText + (unit ? " " + unit : "")}
       className={cx(
         "overflow-hidden rounded-full bg-[var(--lms-primary-light)]",
-        size === "compact" ? "h-2" : "h-3",
+        size === "compact" ? "h-2" : size === "medium" ? "h-2.5" : "h-3",
         className,
       )}
     >
