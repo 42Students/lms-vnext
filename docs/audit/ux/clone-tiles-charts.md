@@ -681,3 +681,25 @@ Complete remote files were read after edits. The following are **source-backed c
 **Strict status:** No E7/G6 umbrella tick — source checks do not prove exhaustive screen/page coverage, hover and focus within all views, or computed desktop/tablet/mobile parity. Not run: app, code, TypeScript compiler, tests, CI, screenshot, repository-wide grep. The changed UI only paints measured values; no access scope, data or routes were altered.
 
 **Next exact unticked source surface:** `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx` (hand-rolled year-by-year recruitment chart; search current `style={{width:...}}` and original `lms2-fe@prod-2026/_tpo-intelligence-light.scss` first). Also review any other non-shared progress visual only when a direct legacy style source is confirmed.
+
+
+## 2026-10-20 chat-2 TPO confirmed-joins per-year chart source migration
+
+**Source migrated:** `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`, with `src/components/tpo/legacy-company-year-chart.module.css`. Kept original vNext `hiringPulse.hiredPerYear`, `joinedLearners`, `maxYearlyHires`, no-recorded-data state, IST joining-year semantics and existing screen copy unchanged. One hand-rolled width-percentage span became a self-closing shared `MetricBar role="img"` with its own accessible label. Unlike the old `Math.max(3,...)` percentage-width floor, any nonzero value now uses the legacy 2px minimum fill while the accessible percentage is computed from the real numerator/denominator.
+
+### Exact-value / original-style comparison
+
+| Property/state | Original `lms2-fe@prod-2026` | vNext and proof | Result |
+| --- | --- | --- | --- |
+| Year row grid | `src/styles/components/_tpo-crm.scss:1220-1226`: grid `70px minmax(0,1fr) 28px`, gap8, margin-top6, align center | `legacy-company-year-chart.module.css:7-14`; mapped list row uses `yearStyles.yearRow` | Match |
+| Year label | `_tpo-crm.scss:1227-1233`, `_tpo-intelligence-light.scss:438-441`: 12px `#5b6b82`, ellipsis and nowrap | CSS `.year`, 12px, muted, ellipsis; recorded year text preserved | Match |
+| Track | `_tpo-crm.scss:1235-1240`, light override `_tpo-intelligence-light.scss:443-449,783-794`: 7px, radius999, `#e7ecf2` | CSS `.track`, shared `MetricBar` overrides height to 7px/round999/`#e7ecf2` | Match |
+| Filled bar | `_tpo-crm.scss:1241-1247`; light override `_tpo-intelligence-light.scss:443-448`: linear 90deg `#9ee4e8` to `#26bac7`, 2px minimum only when nonzero | CSS `.track > div` gradient and `[aria-valuenow]:not([aria-valuenow="0"]) > div` min2px | Match |
+| Count text | `_tpo-crm.scss:1250-1254`; light override :451-453: 12px, right-aligned, `#172033` | CSS `.count` 12px, 700, tabular, dark ink | Match |
+| Empty/no dated joins | Existing vNext page's measured-data empty state, not a rendered zero-bar list | Same `hiringPulse.hiredPerYear.length===0` branch untouched | Match existing semantics, not old-page DOM parity |
+| Phone <=767px | Original TPO detail row uses same three-column grid; no special collapse for this graph | CSS media keeps min-width0 and the same 70px/1fr/28px; no fixed 4rem/3rem chart axes | Source geometry match; browser not run |
+| Reduced motion | Original flat meter contains no interpolated hover/transition | CSS disables fill transition when reduced-motion requested | Safe improvement |
+
+**Scoped source grep results:** full 476-line TPO company detail fetched after write: `<MetricBar` **1**, hard-coded `style={{width:...` year-bar expressions **0**, `<Link>` **12/12**, raw native button/input/select/textarea **0**, malformed consecutive JSX quote-before-className **0**. All **four** `yearStyles` class references resolve to the module. CSS media selectors `max-width:767px` and reduced-motion exist. There is no app build, TypeScript run, actual employer-record data test, screenshot or full repository grep.
+
+**Next file if E7 work continues:** `src/components/courses/faculty-lesson-video-manager.tsx` (upload-meter paint) and `src/components/courses/assignment-file-submission-control.tsx` (multipart upload meter). Before changing them, verify whether upload-specific old LMS dimensions differ from current shared `MetricBar`; the source `_learn-assignments.scss` had no explicit matching upload-progress selector in inspected source, so do not guess. E7 umbrella remains **[ ]**.
