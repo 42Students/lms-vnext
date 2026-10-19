@@ -58,7 +58,7 @@ function RecruiterConversationReadControlState({threadId}:{threadId:string}){
   }finally{acknowledgePending.current=false;setBusy(false);}
  }
  return <div className="space-y-2">
-  <Button type="button" variant="secondary" className="min-h-11" disabled={busy} loading={busy} onClick={acknowledge}>
+  <Button type="button" variant="secondary" className="min-h-9 max-sm:min-h-11" disabled={busy} loading={busy} onClick={acknowledge}>
    {busy?"Updating…":"Mark placement cell messages as read"}
   </Button>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}

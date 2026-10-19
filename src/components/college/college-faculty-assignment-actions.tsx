@@ -88,7 +88,7 @@ export function CollegeFacultyAssignmentCreate({
       setError(academicSetupErrorMessage(cause, FACULTY_ASSIGNMENT_COPY.createFailed));
     } finally { setSaving(false); }
   }
-  const fieldClass = "min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+  const fieldClass = "min-h-[var(--lms-control-height)] min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
   return <>{confirmation}<section aria-label="Assign Faculty to multiple courses"
     className="border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>

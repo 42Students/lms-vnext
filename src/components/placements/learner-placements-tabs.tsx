@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 import { usePathname,useRouter } from "next/navigation";
 import {useRef} from "react";
 import {learnerPlacementSwipeDestination} from "@/modules/placements/learner-placements-swipe-model";
@@ -20,9 +20,12 @@ export function LearnerPlacementsTabs({unreadPersonalAlerts=null}:{unreadPersona
   const router=useRouter();
   const touchStart=useRef<{x:number;y:number}|null>(null);
 
+  const selected = learnerPlacementsLegacyTabs.find(tab =>
+    pathname === tab.href || (tab.href !== "/learn/my-placements" && pathname.startsWith(tab.href + "/"))
+  )?.href ?? "/learn/my-placements";
+
   return (
-    <nav aria-label="Placements workspace" className="min-w-0 border-b border-border"
-      onTouchStart={event=>{
+    <div className="min-w-0" onTouchStart={event=>{
         const touch=event.touches[0];
         touchStart.current=touch?{x:touch.clientX,y:touch.clientY}:null;
       }}
@@ -36,33 +39,14 @@ export function LearnerPlacementsTabs({unreadPersonalAlerts=null}:{unreadPersona
           end.clientY-start.y,learnerPlacementsLegacyTabs.map(tab=>tab.href));
         if(destination)router.push(destination);
       }}>
-      <div className="flex min-w-0 flex-wrap gap-1">
-        {learnerPlacementsLegacyTabs.map((tab) => {
-          const active =
-            pathname === tab.href ||
-            (tab.href !== "/learn/my-placements" && pathname.startsWith(`${tab.href}/`));
-          return (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              aria-current={active ? "page" : undefined}
-              className={
-                active
-                  ? "border-b-2 border-primary px-3 py-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
-                  : "border-b-2 border-transparent px-3 py-3 text-sm font-semibold text-body hover:border-border hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
-              }
-            >
-              {tab.label}
-              {tab.label==="Notices" && unreadPersonalAlerts!==null && unreadPersonalAlerts>0 ? (
-                <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-primary-subtle px-1 text-xs tabular-nums text-primary-text"
-                  title="Unread personal placement alerts" aria-label={unreadPersonalAlerts+" unread personal placement alerts"}>
-                  {unreadPersonalAlerts}
-                </span>
-              ) : null}
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
+      <Tabs ariaLabel="Placements workspace" renderPanel={false} value={selected}
+        items={learnerPlacementsLegacyTabs.map(tab => ({
+          value: tab.href,
+          href: tab.href,
+          label: tab.label,
+          count: tab.label==="Notices" && unreadPersonalAlerts!==null && unreadPersonalAlerts>0
+            ? unreadPersonalAlerts : undefined,
+        }))} />
+    </div>
   );
 }

@@ -93,34 +93,34 @@ export async function CollegeRoleDirectoryWorkspace({
             ) : null}
             {kind === "FACULTY" ? (
               <Link href="/college/faculty/import"
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Import faculty CSV
               </Link>
             ) : null}
             {kind === "LEARNER" ? (
               <Link href="/college/students/register"
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Register students
               </Link>
             ) : null}
             {kind==="LEARNER"?<CollegeStudentImportHistory/>:null}
             {kind === "LEARNER" ? (
               <Link href="/college/students/import"
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Import CSV
               </Link>
             ) : null}
             <Link href={"/api/college/roles/export-visible?kind="+kind+"&"+
               new URL(collegeRoleDirectoryExportHref(kind,result.filter),"https://lms.invalid").searchParams.toString()}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Export visible {kind==="FACULTY"?"faculty.csv":"students.csv"}
             </Link>
             <Link href={collegeRoleDirectoryExportHref(kind,result.filter)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Export {kind === "FACULTY" ? "Faculty" : "Learner"} CSV (max 1,000)
             </Link>
             <Link href="/college/people"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               People directory
             </Link>
           </>
@@ -231,7 +231,7 @@ export async function CollegeRoleDirectoryWorkspace({
           </label> : null}
           <details className="min-w-0 basis-full rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3"
             open={collegeRoleDirectoryHasActiveFilters(kind,result.filter)}>
-            <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
+            <summary className="min-h-[var(--lms-control-height)] cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
             <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Platform account
@@ -349,7 +349,7 @@ export async function CollegeRoleDirectoryWorkspace({
           <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Apply
           </Button>
-          <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          <Link href={path} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Clear
           </Link>
         </form>
@@ -367,7 +367,7 @@ export async function CollegeRoleDirectoryWorkspace({
                 : "No role memberships are recorded in this college."
               : "There are no records on this page. Select an earlier page."}</p>
             {collegeRoleDirectoryHasActiveFilters(kind,result.filter) ?
-              <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear roster filters</Link> : null}
+              <Link href={path} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear roster filters</Link> : null}
           </div>
         ) : (
           <>
@@ -389,9 +389,9 @@ export async function CollegeRoleDirectoryWorkspace({
                 <p className="text-xs text-muted-foreground">Joined {joinedLabel(item.joinedAt)} IST</p>
                 <div className="flex flex-wrap gap-3 text-sm">
                   <Link href={collegeRoleContactHref(item.membershipId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View contact card</Link>
+                    className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View contact card</Link>
                   {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Profile verification</Link>:null}
+                    className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Profile verification</Link>:null}
                 </div>
                 {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
                   <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
@@ -420,11 +420,11 @@ export async function CollegeRoleDirectoryWorkspace({
                   </Link>
                   <p className="mt-1 text-xs text-muted-foreground">{item.email??"No email recorded"}</p>
                   <Link href={collegeRoleContactHref(item.membershipId)}
-                    className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    className="mt-1 inline-flex min-h-[var(--lms-control-height)] items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                     View contact card
                   </Link>
                   {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
-                    className="ml-3 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    className="ml-3 inline-flex min-h-[var(--lms-control-height)] items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                     Profile verification
                   </Link>:null}
                 </>},
@@ -471,7 +471,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.filter.page > 1 ? (
             <Link
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page - 1 })}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Previous
             </Link>
@@ -479,7 +479,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.filter.page < result.totalPages ? (
             <Link
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page + 1 })}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Next
             </Link>

@@ -218,7 +218,7 @@ export function LectureHallManager({
               cell: (hall) => (
                 <div className="flex flex-wrap justify-end gap-2">
                   <Link href={`${availabilityBase}/${hall.id}`}
-                    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                    className="inline-flex min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                     Availability
                   </Link>
                   <Button variant="secondary" size="sm" onClick={() => open(hall)}>

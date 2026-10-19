@@ -1,2 +1,12 @@
 "use client";
-export default function ErrorView({reset}:{error:Error&{digest?:string};reset:()=>void}){return <main role="alert" className="space-y-4 p-4"><h2 className="font-semibold">Audience preview unavailable</h2><p>No delivery assumptions can be made from this failure.</p><button type="button" onClick={reset} className="min-h-11 rounded-[9px] border border-border px-4">Retry</button></main>;}
+
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+
+export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorState
+    title="Audience preview unavailable"
+    description="No delivery assumptions can be made from this failure."
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+  />;
+}
