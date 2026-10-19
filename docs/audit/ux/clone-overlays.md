@@ -705,3 +705,49 @@ git grep -nE '<PopoverListbox|<dialog([[:space:]>])|role="dialog"|fixed inset-0'
 **F1 [ ], F2 [ ] still not tickable:** a real checkout grep, computed CSS and keyboard/touch viewport behavior remain unrun. Header compact actions, nonmodal popup closing animation, and old toast timing still have unresolved parity rows.
 
 **Next source file:** `src/components/tpo/tpo-find-shortcut.tsx` to reconcile nested search results' listbox Escape with its parent native Dialog; then F2 checkpoint and remaining context menu consumer inventory.
+
+
+## Chat-16 remaining TPO action-menu consumers — 2026-10-20
+
+Per-file **F2 source** passes for action menus. Evidence uses old-LMS SCSS values where that variant is actually defined; broad menu similarity is not a substitute for state-by-state equality.
+
+| Element / state | Legacy value and source | New UI source and value | Result |
+| --- | --- | --- | --- |
+| Generic head menu skin | `docs/design/legacy-styles/components___dropdown.scss:96-105`: white, radius **6px**, shadow `9px 11px 28px rgba(0,0,0,.1)`, minwidth **100px**, padding **16px 24px** | Shared `src/components/ui/dropdown.tsx:125-147`, `legacy-overlays.css:159-173`: white, 6px, same shadow and min100, `px-6 py-4` desktop generic | Match specified values; alternate sheet padding differs on purpose |
+| Related hover and pressed | `components___notification-drawer.scss:18-19,41-49`: `rgba(0,0,0,.035)`, `.06`, 200ms ease | New menu action rows in `src/components/tpo/tpo-topbar-new-menu.tsx:13-26`, `recruiter-roster-display-controls.tsx:27-35`, `report-interactive-table.tsx:105-113`, `tpo-drive-workspace-nav.tsx:36-42`, `placement-drive-workspace.tsx:303-315` | Same analogous notification action colors/motion; old generic *dropdown row* specific hover rule not found |
+| Mobile minimum action height | Related `components___notification-drawer.scss:21-24`: **44px** and breakpoint **767px** | Alternative +New menu row, recruiter column labels, report chooser labels, drive More links all min44 even when desktop; source files listed above | Match 44px numeric, not exact every original menu variant |
+| Narrow company action menu | `components___dropdown.scss:107-128`: viewport-24px maximum; mobile 12px sides, max767 | `tpo-topbar-new-menu.tsx:21-29`: inner minwidth `min(240px,100vw-80px)`, anywhere-wrap company suffix; shared popup caps viewport-24px | Fits by source arithmetic at 280/375px; not an identical mobile profile menu placement |
+| Narrow column chooser | Same 24px viewport-safe maximum only for legacy profile | `recruiter-roster-display-controls.tsx:27-37`: `min(208px,100vw-80px)`; scroll max-height72=288px, no horizontal overflow by source width | Source geometry safe, no legacy roster-specific width proof |
+| Disabled fixed Contact column | No legacy disabled table-column paint in referenced SCSS | `recruiter-roster-display-controls.tsx:29-35`: disabled checkbox, row opacity .5, not-allowed cursor and no hover affordance | Complete vNext disabled state, old visual parity unproved |
+| Last-visible report column | No old report chooser disabled-state rule in listed SCSS | `report-interactive-table.tsx:95-114`: checkbox disabled when last visible column; 44px label, opacity .5 and no hover while locked | Functional guard unchanged and disabled visuals source-reviewed |
+| Report sheet scroll/closing | Old drawer mobile max767 and safe area `components___notification-drawer.scss:399-473` | `report-interactive-table.tsx:78-115`: two shared `Dropdown mobileSheet` consumers; shared styles `legacy-overlays.css:129-163` give 767 breakpoint, max70dvh, bottom safe area; explicit Close buttons focus summaries | Mobile behavior is source-specified; no actual device scroll check |
+| Drive section mobile handoff | Old LMS mobile overlay/tabs styles commonly max767 in `components___antddesign.scss:305-309,1035-1041` | `tpo-drive-workspace-nav.tsx:21-29`: mobile Select through767, desktop Tabs + More from768 | Breakpoint match to cited mobile components, not proof of exact tab style |
+| Drive sections submenu | Old menu above: radius6, shadow, white; related 44px touch min | `tpo-drive-workspace-nav.tsx:34-44`: shared Dropdown, each More link 44px, .035/.06 hover/pressed, 200ms | Source state coverage; content and route href unchanged |
+| Placement nested More menu | Old menu width max viewport-24px `components___dropdown.scss:107-113`; notification rows min44 `components___notification-drawer.scss:21` | `placement-drive-workspace.tsx:269-317`: parent `inlineDesktop mobileSheet`, nested More anchored menu bounded `min(224px,100vw-80px)`; links 44px with .035/.06 states | Source responsive/keyboard structure reviewed, no browser proof |
+| TPO find Escape inside listbox | Old SCSS has no native-dialog keyboard algorithm | `tpo-find-shortcut.tsx:74-104`: input labelled combobox and valid active descendant; Escape from inner listbox now closes **own parent Dialog** (not just moving focus to input); native Dialog restores opener | Source behavior corrected, no actual keyboard run |
+| Empty/loading/no-results | No canonical universal old menu states in supplied SCSS | Report: no-filter/locked; roster: disabled Contact; TPO find: searching/error/no-result role=status or alert; placement: status-controlled conditional links | Consumer states inventoried; old visual equivalence unproven |
+
+### Static responsive matrix (source comparisons, not screenshots)
+
+| Width/state | +New / roster menu | Report sheet | Drive sections / nested More |
+| --- | --- | --- | --- |
+| 280px | min menu inner **200px** + generic 48px padding/2px border = **250px** under viewport-24px cap **256px**; links wrap | fixed bottom sheet width viewport, max70dvh, close 44px, scroll contained | mobile Select, More actions in parent mobile sheet; nested menu min200+50=250px if displayed |
+| 375px | +New 240px and roster208px inner; all fit viewport-24px **351px** outer cap | width375px mobile sheet, bottom safe-area pad; report check rows44px | mobile Select and 44px primary actions |
+| 640px and 767px | menu trigger 44px, column rows44, scroll min and max as above | still mobile sheet to767; no premature 640px desktop pivot | mobile Select to767; shared parent drive-action sheet |
+| 768px | +New desktop anchored dropdown, 44px row min; roster normal anchored menu | desktop positioned popup; column options remain44px | desktop Tabs + More, parent drive actions inline, nested More still anchored |
+| 1024px | same desktop anchored menus and status displays | desktop filtering/column popup actions | desktop drive Links/More with source-appended disabled/hover states |
+| Keyboard/disabled | native Dropdown summary/Arrow/Home/End/Escape; Contact checkbox disabled | focusable Close+results, last-column disabled and visibly muted | native Dropdown nested Escape guards, role-based links and existing status-controlled actions |
+
+**Indexed coverage (not git grep):** GitHub default-branch `<Dropdown` query surfaced **12** `src/` candidate files including all three relevant controls; earlier `<PopoverListbox` query surfaced **5** `src/` consumers including TPO find. Existing review of `src/components/tpo/tpo-spreadsheet-grid.tsx`, `recruiter-leads-workspace.tsx`, and `report-interactive-table.tsx` confirmed usage of shared `mobileSheet`. Exact raw modal grep and dynamic-class coverage remain unexecuted.
+
+- [x] `src/components/tpo/tpo-find-shortcut.tsx` — nested listbox ARIA and one-Escape parent Dialog close, paired JSX.
+- [x] `src/components/tpo/tpo-topbar-new-menu.tsx` — analogous old item hover states, 44px targets, bounded long-company width, shared Dropdown JSX.
+- [x] `src/components/tpo/recruiter-roster-display-controls.tsx` — touch-safe columns, disabled Contact row, bounded menu width.
+- [x] `src/components/placements/tpo-drive-workspace-nav.tsx` — 767px handoff and 44px dropdown item rows.
+- [x] `src/components/placements/report-interactive-table.tsx` — row touch targets/locked state under both shared mobile sheets; no table contents changed.
+- [x] `src/components/placements/placement-drive-workspace.tsx` — nested More-action menu viewport bounds and row states only; other workstreams unchanged.
+- [x] Reviewed shared Dropdown consumers without changes: `src/components/tpo/tpo-spreadsheet-grid.tsx`, `src/components/tpo/recruiter-leads-workspace.tsx` (both `mobileSheet`), and `src/components/tpo/tpo-company-memory-workspace.tsx`.
+
+**F1 [ ], F2 [ ] still strictly open.** Missing: runtime screenshot/keyboard/resize proof at 280/375/640/767/768/1024, source-specific exact menu row variants for all consumers, complete local `git grep`, toast legacy lifetime and popup exit-motion equivalence. These file-level checks mean source edits, not category-level pixel parity.
+
+**Next source file:** `src/components/tpo/tpo-company-memory-workspace.tsx` (+ New menu responsive/actions) then `src/components/placements/placement-drive-workspace.tsx` remaining secondary menu contexts if source checklist continues.
