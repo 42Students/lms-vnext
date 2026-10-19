@@ -2,6 +2,9 @@
 import { Button } from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
 import {Dialog} from "@/components/ui/dialog";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
+import {Skeleton} from "@/components/ui/skeleton";
 import {useRef,useState} from "react";
 import {isCurrentCollegeImportHistoryRequest} from "@/modules/people/college-import-history-request-model";
 type Receipt={id:string;when:string;students:number;imported:number;partial:number;failed:number};
@@ -53,14 +56,14 @@ export function CollegeStudentImportHistory(){
  }
  return <>
   <Button variant="secondary" type="button" onClick={()=>{setOpen(true);void load(1);}}
-   className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+   className="min-h-11 md:min-h-9">
    Bulk import history</Button>
   <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else close();}} title="Bulk import history">
-    <div className="flex justify-between"><h2 className="font-semibold">Bulk import history</h2>
+    <div className="flex justify-end">
      <Button variant="secondary" type="button" onClick={close}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3">Close</Button></div>
-    {error?<p role="alert" className="text-error">{error}</p>:null}
-    {busy?<p role="status">Loading import history…</p>:null}
+      className="min-h-11 md:min-h-9">Close</Button></div>
+    {error?<Alert tone="error">{error}</Alert>:null}
+    {busy?<Skeleton variant="row" label="Loading import history"/>:null}
     <DataTable<Receipt> caption="Bulk import history" rows={rows} getRowKey={row=>row.id}
       columns={[
         {key:"when",header:"When",cell:row=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
@@ -70,13 +73,15 @@ export function CollegeStudentImportHistory(){
         {key:"partial",header:"Partial",cell:row=>row.partial,mobilePriority:"secondary"},
         {key:"failed",header:"Failed",cell:row=>row.failed,mobilePriority:"secondary"},
       ]}
-      empty={<p className="text-sm">No bulk imports have been recorded yet.</p>}/>
+      empty={busy?<Skeleton variant="row" label="Loading import history"/>:
+        error?<Alert tone="error">{error}</Alert>:
+        <EmptyState title="No bulk import history" description="No bulk imports have been recorded yet."/>}/>
     <nav aria-label="Import history pages" className="flex justify-between gap-3 text-sm">
      <Button variant="secondary" type="button" disabled={page<=1||busy} onClick={()=>void load(page-1)}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 disabled:opacity-40">Previous</Button>
+      className="min-h-11 md:min-h-9">Previous</Button>
      <span className="py-2">Page {page}</span>
      <Button variant="secondary" type="button" disabled={!hasNext||busy} onClick={()=>void load(page+1)}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 disabled:opacity-40">Next</Button>
+      className="min-h-11 md:min-h-9">Next</Button>
     </nav>
   </Dialog>
  </>;
