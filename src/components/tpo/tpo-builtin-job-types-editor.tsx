@@ -37,7 +37,7 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
    columns={[
     {key:"jobType",header:"Job type",mobilePriority:"primary",cell:row=><span className="font-medium">{row.label} <span className="text-xs text-muted-foreground">Built-in</span></span>},
     {key:"placed",header:"Counts as placed",mobilePriority:"secondary",cell:row=>row.countsAsPlaced?"Yes":"No"},
-    {key:"enabled",header:"In the drive form",mobilePriority:"action",cell:row=><label className="inline-flex min-h-11 sm:min-h-9 items-center gap-2">
+    {key:"enabled",header:"In the drive form",mobilePriority:"action",cell:row=><label className="inline-flex min-h-11 sm:min-h-9 items-center gap-2 py-1">
      <Checkbox checked={row.override?.active??true} disabled={busy||((row.override?.active??true)&&activeCount<=1)}
       aria-label={row.label+" in the drive form"} onChange={event=>void change(row.label,event.target.checked,row.override?.updatedAt??"none")}/>
      {(row.override?.active??true)?"On":"Off"}
