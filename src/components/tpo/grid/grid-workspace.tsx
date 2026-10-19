@@ -97,6 +97,7 @@ export function GridWorkspace<Row>({
  const searchKey=params.toString();
  const hasNarrowing=Boolean(querySearch.trim())||activeFilters.length>0;
  const clearNarrowing=()=>{
+  if(searchMode==="controlled"){onSearchChange?.("");return;}
   const updates:Record<string,string>={[searchParam]:""};
   for(const field of filters)updates[field.urlKey??"filter."+field.key]="";
   const next=updateTpoGridQuery(new URLSearchParams(params.toString()),updates);
