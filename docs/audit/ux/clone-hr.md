@@ -393,3 +393,14 @@ The first component pass examined all **19 original HR component TSX files** on 
 The numbers above were collected on fetched current source, not via local CLI/Playwright. Cross-portal or legacy runtime comparison, and every shared component state remain unverified. **Do not tick** remaining `hr/*` work queue entries without computed default/hover/focus/disabled and both viewport screenshots.
 
 **Remaining**: complete `hr/calendar/page.tsx`, other rich HR pages and component variations not closed by this source pass; independently review all `recruiter/*` aliases and tracker scopes. No CI/build/dev server executed.
+
+### Final additional HR calendar and route-state source proof (chat-15)
+
+| File | Legacy reference | Re-read vNext value | Source test and gap |
+| --- | --- | --- | --- |
+| `hr/calendar/page.tsx` | `components___listing-page-header.scss:131-158`; `old-lms-pages.md:6-12` | Shared PageHeader/Tabs/CalendarGrid; 2 independent event-card objects now `<Card as="article">…</Card>` (2/2 exact JSX match); bad query shows shared `ErrorState` | 0 native control tags, 0 literal hex, 0 handmade page `h1`, no card-in-card introduced. `md:grid` calendar desktop from 768px, `md:hidden` phone/day events; complete computed pixel comparison still missing. |
+| `hr/drives/[jobId]/messages/error.tsx` | legacy common failure presentation, `old-lms-pages.md:11-12` | Shared `ErrorState` title, description, button retry | Valid self-closing action wrapper, no custom heading; runtime/retry rendering unverified |
+| `hr/round-results/error.tsx` | legacy shared failure state | Shared `ErrorState` with original title and retry | No custom div/h2 shell; responsive handled by kit |
+| `hr/round-results/loading.tsx` | `components___antddesign.scss:6-13` loading/transition pattern | `GracefulPageLoading shape="directory"` | No custom pulse blocks, route layout shared; actual motion values unverified |
+
+**Decision:** the next untouched high-complexity surfaces are recruiter calendar interactions/events and HR draft component field/preview nuances. Source markup now uses shared components in many files, but exact old-LMS computed state values and a real phone/tablet comparison are not available. The 3 zero-DOM route shims remain the only definitively ticked per-file items; these visible pages remain [ ] until those proofs are supplied. **No CI, tests, app execution, or browser screenshots were run.**
