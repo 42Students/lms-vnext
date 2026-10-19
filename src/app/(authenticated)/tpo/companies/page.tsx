@@ -136,13 +136,13 @@ export default async function TpoCompanyMemoryPage({
             <TpoCompanyCreateForm />
             <Link
               href="/tpo/companies/archived"
-              className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               Archived relationships
             </Link>
             <Link
               href="/tpo/recruiters"
-              className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               Recruiter leads
             </Link>
@@ -224,7 +224,7 @@ export default async function TpoCompanyMemoryPage({
 
           <Button
             type="submit"
-            className="self-end inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+            className="self-end inline-flex min-h-11 items-center justify-center rounded-[9px] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
           >
             Search
           </Button>
@@ -235,7 +235,7 @@ export default async function TpoCompanyMemoryPage({
             href={"/api/placements/tpo/companies/export?"+new URLSearchParams({
               ...(query.search?{search:query.search}:{}),sort:query.sort,
             }).toString()}
-            className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+            className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Export companies CSV ({page.total})
           </Link>:<p role="status" className="text-xs text-muted-foreground">
             Narrow your search to 2,000 companies to export all matching rows.
@@ -320,7 +320,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Previous
               </Link>
@@ -334,7 +334,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Next
               </Link>
