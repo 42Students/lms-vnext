@@ -22,7 +22,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
         <h2 className="text-sm font-semibold text-foreground">
           {detailBaseHref?<Link
             href={detailBaseHref+"/"+encodeURIComponent(item.membershipId)+detailQuery}
-            className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{name}</Link>:name}
+            className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{name}</Link>:name}
         </h2>
         <p className="mt-2 text-sm text-body">Department: {item.departmentName??"Not recorded"}</p>
         {showRoles||item.roles.length>0?<ul
@@ -72,7 +72,7 @@ export function FacultyContactsPagination({
           Previous
         </Link>
       ) : (
-        <span className="min-h-11 px-3" />
+        <span className="min-h-11 px-3 sm:min-h-9" />
       )}
       <span className="text-sm text-muted-foreground">
         Page {page} of {totalPages}
@@ -85,7 +85,7 @@ export function FacultyContactsPagination({
           Next
         </Link>
       ) : (
-        <span className="min-h-11 px-3" />
+        <span className="min-h-11 px-3 sm:min-h-9" />
       )}
     </nav>
   );

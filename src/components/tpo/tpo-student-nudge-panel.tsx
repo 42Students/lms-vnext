@@ -45,7 +45,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
  }
  if(!rows.length)return null;
  return <section aria-label="Send a message to students"
-  className="space-y-3 rounded-[12px] border border-border bg-surface p-4">
+  className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <h2 className="font-semibold">Send a message</h2>
   <p className="text-sm text-body">Choose up to 25 learners on this page. Messages are delivered in-app and audited.</p>
   <label className="flex items-center gap-2 text-sm">
@@ -64,18 +64,18 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   <p role="status" className="text-xs text-muted-foreground">{validSelected.length} selected;
    {outside} not registered for placements (messages still deliver).</p>
   <label className="grid gap-1 text-sm">Message template
-   <select value={template} disabled={pending} className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3"
+   <select value={template} disabled={pending} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
     onChange={e=>setChoice(e.target.value as TpoStudentNudgeTemplate)}>
     {Object.entries(tpoStudentNudgeLabels).map(([key,label])=><option key={key} value={key}>{label}</option>)}
    </select>
   </label>
   <label className="grid gap-1 text-sm">Message
    <textarea rows={3} minLength={5} maxLength={1000} required
-    className="w-full rounded-[var(--radius)] border border-border bg-surface p-3"
+    className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
     disabled={pending} value={message} onChange={e=>{setMessage(e.target.value);setNotice("");}}/>
   </label>
   <button type="button" disabled={pending||guardedPending||!validSelected.length}
-   className="min-h-9 rounded-[var(--radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
+   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
    onClick={()=>setConfirmOpen(true)}>{"Send to "+validSelected.length+" selected"}</button>
   <Dialog open={confirmOpen} onOpenChange={value=>{if(!pending&&!guardedPending)setConfirmOpen(value);}}
    title="Send a message" description={"Send an in-app message to "+validSelected.length+" learner(s)? The message will be audited."}

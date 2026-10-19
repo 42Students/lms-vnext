@@ -335,7 +335,7 @@ export function FacultyQuizReview({
           {attempts.map((attempt) => (
             <section
               key={attempt.id}
-              className="rounded-lg border border-border bg-surface p-4"
+              className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>

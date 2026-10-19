@@ -21,7 +21,7 @@ function SignalCard({
   return (
     <Link
       href={href}
-      className="rounded-xl border border-border bg-surface p-4 outline-none transition hover:border-primary hover:bg-primary-subtle focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+      className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 outline-none transition hover:border-primary hover:bg-primary-subtle focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
     >
       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         {label}
@@ -60,7 +60,7 @@ export function FacultyCourseHomeSignals({
     <div className="space-y-5">
       {missing.length ? (
         <section role="status" aria-label="Incomplete faculty course signals"
-          className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm text-body">
+          className="rounded-[var(--lms-canvas-radius)] border border-warning-border bg-warning-subtle p-4 text-sm text-body">
           <p className="font-semibold">Some faculty course signals are incomplete ({missing.join(", ")}).</p>
           <p className="mt-1">Unknown metrics are shown as unavailable, not zero.</p>
           <Link href={facultyCourseTabHref(deliveryId,"home")+"?refreshSignals=1"}
@@ -165,7 +165,7 @@ export function FacultyCourseHomeSignals({
 
       {riskReady && signals.atRiskTotal > 0 ? (
         <section
-          className="rounded-xl border border-border bg-surface p-5"
+          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
           aria-label="Needs attention"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -214,11 +214,11 @@ export function FacultyCourseHomeSignals({
             ))}
           </ul>
         </section>
-      ) : <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+      ) : <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
         {riskReady ? "No major learner risk signals" : "Learner risk signals are unavailable until attendance and submission data can be refreshed."}
       </p>}
 
-      {assignmentsReady ? <section className="rounded-xl border border-border bg-surface p-5">
+      {assignmentsReady ? <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           Performance
         </h2>
@@ -258,7 +258,7 @@ export function FacultyCourseHomeSignals({
               (bucket.count / total) * 100,
             );
             return (
-              <details key={bucket.label} className="rounded-md border border-border p-2 text-sm">
+              <details key={bucket.label} className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
                 <summary className="grid cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3">
 
                 <span className="text-body">

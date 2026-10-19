@@ -52,7 +52,7 @@ export default async function SuperAdminAssignmentsPage({
      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export assignments.csv</a>
     {lessonsResult.status==="fulfilled"
       ?<CollegeAssignmentCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>
-      :<p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+      :<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
         Assignment creation options are temporarily unavailable. Existing assignments remain visible.
       </p>}
     <AdminAssessmentDirectory data={data} />

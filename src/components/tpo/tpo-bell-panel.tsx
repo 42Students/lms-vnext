@@ -80,15 +80,15 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
  return <div className="relative min-w-0">
   <button type="button" aria-label={"Notifications, "+unread+" new"} aria-expanded={open} onClick={()=>changeOpen(!open)}
    className={compact
-    ? "relative inline-flex h-9 w-9 min-h-9 min-w-9 items-center justify-center rounded-[9px] border border-[#e7ecf2] bg-white text-[#334155] hover:bg-[#f8fafc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    : "min-h-11 rounded border border-border bg-surface px-3 text-sm"}>
+    ? "relative inline-flex h-9 w-9 min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"}>
    {compact ? <>
     <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>
     </svg>
     {unread>0?<span aria-hidden="true"
-      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-white bg-[#e53e49] px-0.5 text-[10px] font-bold leading-none text-white">
+      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-surface bg-error px-0.5 text-[10px] font-bold leading-none text-white">
       {unread>99?"99+":unread}
     </span>:null}
    </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}
@@ -98,9 +98,9 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
 
    {refreshing?<p role="status" className="text-xs text-muted-foreground">Refreshing notifications…</p>:null}
    {!refreshing&&displayedItems.length===0?<div role="status" className="text-sm"><p>Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul className="space-y-2">
-    {displayedItems.slice(0,20).map(item=><li key={item.id} className="rounded border border-border text-sm">
+    {displayedItems.slice(0,20).map(item=><li key={item.id} className="border-b border-border text-sm">
      <button type="button" disabled={pending} onClick={()=>void openItem(item)}
-      className="w-full min-h-11 rounded p-3 text-left hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary">
+      className="w-full min-h-11 rounded-[var(--lms-control-radius)] p-3 text-left hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary">
      <p className="font-medium">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-primary"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</p>
      {item.body?<p className="break-words text-muted-foreground">{item.body}</p>:null}
      <time dateTime={item.createdAt} className="mt-1 block text-xs text-muted-foreground">
@@ -109,8 +109,8 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
      <span className="mt-1 inline-block text-xs font-semibold text-primary-text">{!item.readAt&&!readIds.includes(item.id)?"New  →":"→"}</span>
      </button>
     </li>)}</ul>}
-   <div className="flex flex-wrap gap-3"><button type="button" disabled={refreshing||pending} onClick={()=>void refresh()} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Refresh</button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
-    {unread>0?<button type="button" className="min-h-11 rounded border border-border px-3 text-sm disabled:opacity-50" onClick={()=>void markAll()} disabled={pending}>{pending?"Saving…":"Mark all read"}</button>:null}</div>
+   <div className="flex flex-wrap gap-3"><button type="button" disabled={refreshing||pending} onClick={()=>void refresh()} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Refresh</button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
+    {unread>0?<button type="button" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50" onClick={()=>void markAll()} disabled={pending}>{pending?"Saving…":"Mark all read"}</button>:null}</div>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </Drawer>
  </div>;

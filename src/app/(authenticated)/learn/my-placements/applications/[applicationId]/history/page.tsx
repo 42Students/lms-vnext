@@ -32,7 +32,7 @@ export default async function LearnerApplicationHistoryPage({
       <Link
         href={"/learn/my-placements/applications?applicationId=" +
           encodeURIComponent(history.applicationId)}
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
+        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
       >
         ← Back to application
       </Link>
@@ -49,7 +49,7 @@ export default async function LearnerApplicationHistoryPage({
           and round decisions remain in your application details.
         </p>
         {history.events.length === 0 ? (
-          <div role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-5 text-sm text-body">
+          <div role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-5 text-sm text-body">
             No application-status history records are available yet.
             Your current application status appears above.
           </div>

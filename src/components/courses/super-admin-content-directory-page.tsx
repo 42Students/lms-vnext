@@ -48,14 +48,14 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  if(!parsed.success)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
   <ErrorState title="Invalid content filters" description="Review search, status and page."
-   action={<Link href={adminContentHref(kind,{})} className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
+   action={<Link href={adminContentHref(kind,{})} className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
   <ErrorState title="Content access denied"
    description="Your account cannot access Super Admin course content."
-   action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)]">Back to dashboard</Link>}/>
+   action={<Link href="/dashboard" className="font-semibold text-primary-text">Back to dashboard</Link>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
@@ -73,7 +73,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <ErrorState title="Content directory unavailable"
    description="The selected college content could not be loaded. Your filters are unchanged."
    action={<Link href={adminContentHref(kind,parsed.data)}
-    className="font-semibold text-[var(--lms-teal-deep)]">Retry loading content</Link>}/>
+    className="font-semibold text-primary-text">Retry loading content</Link>}/>
  </div>;
  const data=dataResult.value;
  const lessons=lessonsResult.status==="fulfilled"?lessonsResult.value:[];
@@ -149,11 +149,11 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
      <SuperAdminContentActions item={item}/>:
      <p className="text-xs text-muted-foreground">Content editing is unavailable for an inactive offering or lesson.</p>}
     {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-     className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]">Edit, publish or archive →</Link>:null}
+     className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">Edit, publish or archive →</Link>:null}
    </article>)}
   </div>:<EmptyState title="No content found." description="Select a course and lesson to view content."/>}
   <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminContentHref(kind,{...data.query,page})}/>
-  <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]">← Courses</Link>
+  <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
  </div>;
 }

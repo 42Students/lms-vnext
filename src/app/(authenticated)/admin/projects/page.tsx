@@ -157,11 +157,11 @@ export default async function SuperAdminProjectsPage({
       )}
       <ProjectAdminFilters query={query} legacyWorkspaces />
 
-      <nav className="flex gap-2 text-sm font-semibold" aria-label="Workspace display mode">
+      <nav className="flex gap-2 border-b border-border text-sm font-semibold" aria-label="Workspace display mode">
         <Link href={viewHref("table")} aria-current={view==="table"?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">Table</Link>
+          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Table</Link>
         <Link href={viewHref("cards")} aria-current={view==="cards"?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">Cards</Link>
+          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Cards</Link>
       </nav>
       <ProjectWorkspacePageExport items={result.items.map(item=>({
         id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,

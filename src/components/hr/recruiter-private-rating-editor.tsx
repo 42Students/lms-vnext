@@ -89,7 +89,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
     {pending?"Saving…":"Save private review"}</button>
    <button type="button" disabled={!ready||pending||(rating===null&&!note)}
     onClick={()=>void save(undefined,true)}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50">
     Clear rating and note</button>
   </div>
  </form>;

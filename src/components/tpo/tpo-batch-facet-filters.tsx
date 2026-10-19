@@ -31,7 +31,7 @@ export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row
   ...selected.finalYears.map(value=>({key:"final-year",label:String(value),remove:()=>toggleYear(value)}))];
  const count=filterTpoBatchFacets(rows,selected).length;
  const facetCount=(next:TpoBatchFacetQuery)=>filterTpoBatchFacets(rows,next).length;
- return <details className="rounded-[var(--radius)] border border-border bg-surface p-3">
+ return <details className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
   <summary className="min-h-10 cursor-pointer text-sm font-semibold">Filters · State, Department, Program, Final year</summary>
   <form action="/tpo/batches" method="get" className="mt-3 space-y-3">
    {Object.entries(baseQuery).filter(([,value])=>Boolean(value)).map(([key,value])=>
@@ -69,16 +69,16 @@ export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row
    </div>
    <div role="status" aria-live="polite" className="flex flex-wrap items-center gap-2 text-sm">
     {active.map((chip,index)=><button key={chip.key+":"+chip.label+":"+index} type="button"
-     onClick={chip.remove} className="min-h-9 rounded-[var(--radius)] border border-border px-2" aria-label={"Remove "+chip.label+" filter"}>
+     onClick={chip.remove} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2" aria-label={"Remove "+chip.label+" filter"}>
      {chip.label} ×
     </button>)}
     <span>{count} matching batches</span>
    </div>
    <div className="flex flex-wrap gap-2 text-sm">
     <button type="button" onClick={()=>setSelected({states:[],programs:[],departments:[],finalYears:[]})}
-     className="min-h-10 rounded-[var(--radius)] border border-border px-3">Reset</button>
-    <Link href="/tpo/batches" className="inline-flex min-h-10 items-center rounded-[var(--radius)] border border-border px-3">Clear all</Link>
-    <button type="submit" className="min-h-10 rounded-[var(--radius)] bg-primary px-3 text-on-primary">Show {count}</button>
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3">Reset</button>
+    <Link href="/tpo/batches" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3">Clear all</Link>
+    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-on-primary">Show {count}</button>
    </div>
   </form>
  </details>;

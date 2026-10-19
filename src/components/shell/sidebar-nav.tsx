@@ -44,6 +44,9 @@ export function SidebarNav({
  const pathname=usePathname();
  const [tpoCounts,setTpoCounts]=useState<TpoShellCounters|null>(null);
  const visibleItems=scopedShellNavigation(items,pathname);
+ const sidebarPortal=pathname==="/tpo"||pathname.startsWith("/tpo/")
+  ?"tpo":pathname==="/hr"||pathname.startsWith("/hr/")||
+   pathname==="/recruiter"||pathname.startsWith("/recruiter/")?"recruiter":"other";
  useEffect(()=>{
   if(!pathname.startsWith("/tpo/"))return;
   let active=true;
@@ -72,7 +75,7 @@ export function SidebarNav({
  const collegeGroup=pathname.startsWith("/college/")
   ?collegeLegacyGroupForPath(pathname):null;
 
- return <nav aria-label="Main navigation"
+ return <nav aria-label="Main navigation" data-sidebar-portal={sidebarPortal}
   className={cx("lms-sidebar-nav flex min-w-0",compact?"flex-row flex-wrap":"flex-col")}
  >{visibleItems.map((item,index)=>{
    const previousGroup=index>0?visibleItems[index-1]?.group:null;
