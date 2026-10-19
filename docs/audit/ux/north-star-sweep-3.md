@@ -276,3 +276,10 @@ The initial 211-file sweep was marked completed, so this extension continues the
 - Reviewed 14 adjacent Super Admin academic/people route files; applied page-only token/radius/height and single-canvas filter/list wrapper changes in 12, with 2 thin wrappers left unchanged.
 - Continued use of shared `Input`, `Select`, `Button`, `PageHeader` and `DataTable`; no route permissions, queries, copy, or business actions changed.
 - Visual screenshot and CI verification intentionally deferred per lane instructions.
+
+## Follow-on portal: Super Admin attendance
+Continue legacy-shell skin in the attendance portion of Super Admin academic operations, which shares read-only widgets with College Admin. Keep service calls, table structure, action flows and page content as-is. Table grids may retain their hairline table container; metric and filter-card wrappers should flatten onto the page canvas.
+
+- [ ] `src/app/(authenticated)/admin/attendance/page.tsx`
+- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
+- [ ] `src/components/admin/super-admin-attendance-settings-editor.tsx`
