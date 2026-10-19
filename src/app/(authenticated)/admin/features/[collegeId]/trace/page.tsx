@@ -203,19 +203,19 @@ export default async function SuperAdminLearnerAccessTracePage({
           </label>
 
           <label className="grid gap-2 text-sm font-semibold text-body">Learner scope
-            <Select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground">
+            <Select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 sm:min-h-9">
               <option value="all">All active learners</option>
               <option value="only">Only students with stored overrides</option>
               <option value="locked">Only students with locked overrides</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored override module
-            <Select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground">
+            <Select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 sm:min-h-9">
               <option value="">Any module</option><option value="projects">Projects</option><option value="electives">Electives</option><option value="placements">Placements (ignored below college)</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored rule state
-            <Select name="storedValue" defaultValue={query.storedValue} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground">
+            <Select name="storedValue" defaultValue={query.storedValue} className="min-h-11 sm:min-h-9">
               <option value="all">Stored On or Off</option><option value="on">Stored On only</option><option value="off">Stored Off only</option>
             </Select>
           </label>
