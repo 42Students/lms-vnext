@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import { Button } from "@/components/ui/button";
 
@@ -13,9 +14,7 @@ export default function TpoStudentRequestsError({
       role="alert"
       className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-6 py-10 text-center"
     >
-      <h1 className="text-lg font-semibold text-foreground">
-        Couldn&apos;t load Student Requests
-      </h1>
+      <PageHeader title={"Couldn't load Student Requests"} />
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         The global placement request queue could not be
         retrieved. No request status, count or empty result
