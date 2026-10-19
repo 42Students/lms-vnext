@@ -34,6 +34,6 @@ export default async function CollegeAdministratorsPage({params}:{
       {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">View active devices</Link>},
       {key:"history",header:"History",mobilePriority:"action",cell:item=><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)+"/history"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">View history</Link>},
     ]}/>  </section>
-  {data.truncated?<p role="status" className="text-sm text-warning-text">Showing the first 500 role records. This directory needs a narrower scope to show every administrator.</p>:null}
+  {data.truncated?<p role="status" className="text-sm text-warning">Showing the first 500 role records. This directory needs a narrower scope to show every administrator.</p>:null}
  </div>;
 }
