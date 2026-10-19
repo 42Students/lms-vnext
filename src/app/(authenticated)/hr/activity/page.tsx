@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -39,9 +41,9 @@ export default async function HrJobActivityPage({searchParams}:{
      <input type="hidden" name="collegeId" value={result.collegeId}/>
      <input type="hidden" name="kind" value={input.data.kind}/>
      <label htmlFor="hr-activity-q" className="sr-only">Search authorized drive titles</label>
-     <input id="hr-activity-q" name="q" defaultValue={input.data.q} maxLength={120}
-       placeholder="Search hiring drive titles" className="min-h-11 min-w-48 flex-1 rounded-[var(--radius)] border border-border bg-surface px-3 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
-     <button type="submit" className="min-h-11 rounded-[var(--radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Search</button>
+     <Input id="hr-activity-q" name="q" defaultValue={input.data.q} maxLength={120}
+       placeholder="Search hiring drive titles" className="min-h-11 min-w-48 flex-1" />
+     <Button type="submit" variant="secondary" className="min-h-11">Search</Button>
    </form>
    <nav aria-label="Hiring activity event type" className="flex flex-wrap gap-2">
      {HR_ACTIVITY_FILTER_KINDS.map(kind=><Link key={kind}
