@@ -39,7 +39,7 @@ export function InfoPopover({ content, children, className, label }: TooltipProp
         const trigger = detailsRef.current?.querySelector("summary");
         if (detailsRef.current && !trigger?.matches(":focus-visible")) detailsRef.current.open = false;
       }}
-      onKeyDown={event => { if (event.key === "Escape" && detailsRef.current?.open) { detailsRef.current.open = false; suppressFocusOpen.current = true; detailsRef.current.querySelector<HTMLElement>("summary")?.focus(); event.preventDefault(); event.stopPropagation(); } }}
+      onKeyDown={event => { if (event.key === "Escape" && detailsRef.current?.open) { detailsRef.current.open = false; const summary = detailsRef.current.querySelector<HTMLElement>("summary"); if (summary && document.activeElement !== summary) { suppressFocusOpen.current = true; summary.focus(); } event.preventDefault(); event.stopPropagation(); } }}
       onFocus={() => { if (suppressFocusOpen.current) { suppressFocusOpen.current = false; return; } if (detailsRef.current) detailsRef.current.open = true; }}
       onBlur={event => {
         if (!event.currentTarget.contains(event.relatedTarget) && !hoverRef.current && detailsRef.current) detailsRef.current.open = false;
