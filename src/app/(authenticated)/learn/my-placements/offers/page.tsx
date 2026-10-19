@@ -220,7 +220,7 @@ export default async function LearnerOffersPage({
       ) : null}
       {!requestRead.available ? <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
-        <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
+        <section role="status" className="border-b border-border py-6">
           <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
           <p className="mt-2 text-sm text-body">{emptyState.description}</p>
           {offers.counts.all > 0 ? (
