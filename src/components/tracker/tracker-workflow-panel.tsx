@@ -1,4 +1,6 @@
 "use client";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -92,29 +94,29 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
       <div className="grid gap-4 md:grid-cols-2">
         <label className="text-sm font-semibold text-body">
           Status
-          <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" value={status} onChange={(e) => setStatus(e.target.value)}>
+          <Select value={status} onChange={(e) => setStatus(e.target.value)}>
             {BUG_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold text-body">
           Resolution
-          <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" value={resolution} onChange={(e) => setResolution(e.target.value)}>
+          <Select value={resolution} onChange={(e) => setResolution(e.target.value)}>
             <option value="">No resolution</option>
             {BUG_RESOLUTIONS.map((value) => <option key={value} value={value}>{value}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold text-body">
           Affected layer
-          <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
+          <Select value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
             <option value="">Not set</option>
             {BUG_AFFECTED_LAYERS.map((value) => <option key={value} value={value}>{value}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold text-body">
           Regression test
-          <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
+          <Select value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
             {BUG_REGRESSION_TEST_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="md:col-span-2 text-sm font-semibold text-body">
           Root cause
@@ -137,7 +139,7 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
             target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">View on GitHub ↗</a>:null}
         </label>
         <label className="flex min-h-9 items-center gap-3 text-sm font-semibold text-body">
-          <input type="checkbox" checked={productionVerified} onChange={(e) => setProductionVerified(e.target.checked)} />
+          <Checkbox checked={productionVerified} onChange={(e) => setProductionVerified(e.target.checked)} />
           Production verified
         </label>
       </div>

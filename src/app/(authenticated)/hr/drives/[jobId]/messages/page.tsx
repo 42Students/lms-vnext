@@ -1,8 +1,10 @@
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Button} from "@/components/ui/button";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getRecruiterDriveConversations} from "@/modules/placements/hr-drive-conversation-service";
@@ -29,7 +31,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
    <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
     <input type="hidden" name="collegeId" value={result.workspace.college.id}/>
     <input type="hidden" name="jobId" value={result.workspace.job.id}/>
-    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open drive discussion</button>
+    <Button type="submit">Open drive discussion</Button>
    </form>
   </section>
   {result.threads.length?<ol className="divide-y divide-border border-y border-border">

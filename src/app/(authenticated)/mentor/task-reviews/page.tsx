@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -64,54 +66,54 @@ export default async function MentorTaskReviewsPage({
         className={mentorTaskReviewMobileFilters}>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Task or project
-          <input data-slot="input" type="search" name="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
+          <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground"
             placeholder="Search pending task reviews" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Page size
-          <select data-slot="select" name="pageSize" defaultValue={String(data.pageSize)}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="pageSize" defaultValue={String(data.pageSize)}
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="20">20</option><option value="50">50</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select data-slot="select" name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 sm:min-h-9 max-w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
-          <select data-slot="select" name="assignment" defaultValue={data.query.assignment}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="assignment" defaultValue={data.query.assignment}
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">All current assignments</option>
             <option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Priority
-          <select data-slot="select" name="priority" defaultValue={data.query.priority}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="priority" defaultValue={data.query.priority}
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             {(["ALL","CRITICAL","HIGH","MEDIUM","LOW"] as const).map(priority=>
               <option key={priority} value={priority}>{priority}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Submission version
-          <input data-slot="input" type="number" name="version" min={1} max={100000}
+          <Input type="number" name="version" min={1} max={100000}
             defaultValue={data.query.version ?? ""} placeholder="All versions"
-            className="min-h-11 w-32 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 sm:min-h-9 w-32 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Waiting since
-          <select data-slot="select" name="age" defaultValue={data.query.age} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="age" defaultValue={data.query.age} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option><option value="OLDER_THAN_30_DAYS">Over 30 days old</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
-          <select data-slot="select" name="order" defaultValue={data.query.order}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="order" defaultValue={data.query.order}
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="NEWEST">Newest first</option>
             <option value="OLDEST">Oldest first</option><option value="PRIORITY">Critical priority first</option>
-          </select>
+          </Select>
         </label>
         <Button type="submit" variant="primary">
           Filter

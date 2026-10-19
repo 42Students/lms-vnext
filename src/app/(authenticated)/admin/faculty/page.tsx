@@ -19,7 +19,7 @@ export default async function SuperAdminFacultyPage({searchParams}:{
  return <div className="min-w-0 space-y-4">
   {context.adminScope?.collegeId?<div className="flex flex-wrap items-center gap-3"><p className="font-semibold">Register New Faculty</p>
     <PersonOnboardDialog collegeId={context.adminScope.collegeId} forcedRole="FACULTY"/>
-    <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href="/admin/people">
+    <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/admin/people">
       Manage memberships, profiles and account status →
     </Link>
   </div>:null}

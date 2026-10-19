@@ -1,4 +1,7 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {Dialog} from "@/components/ui/dialog";
@@ -41,39 +44,39 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
  }
  return <div className="mt-2 flex min-w-0 flex-wrap items-end gap-2">
   <label className="min-w-0 flex-1 text-xs">Learner override
-   <select aria-label="Learner eligibility override" className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"
+   <Select className="mt-1" aria-label="Learner eligibility override" 
     value={decision} disabled={busy} onChange={event=>{setDecision(event.target.value as Decision);setReviewed(false);}}>
     <option value="NOT_DECIDED">Inherit class/batch</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
-   </select>
+   </Select>
   </label>
   {decision==="INELIGIBLE"?<div className="min-w-0 flex-1 space-y-2">
    <p className="text-xs">Reason: {reason.trim()||"Not selected"}</p>
-   <button type="button" disabled={busy} onClick={()=>setReasonOpen(true)}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs text-link">
+   <Button variant="secondary" type="button" disabled={busy} onClick={()=>setReasonOpen(true)}
+    >
     Pick ineligibility reason
-   </button>
+   </Button>
    <Dialog open={reasonOpen} onOpenChange={setReasonOpen} dismissible={!busy}
     title="Mark learner ineligible"><div className="space-y-3">
     <p className="text-sm">Pick the reason. Students never see this. You can undo it straight after.</p>
     <div className="flex flex-wrap gap-2" role="group" aria-label="Common ineligibility reasons">
-     {LEGACY_INELIGIBLE_REASONS.map(preset=><button type="button" key={preset}
+     {LEGACY_INELIGIBLE_REASONS.map(preset=><Button variant="secondary" type="button" key={preset}
       aria-pressed={!other&&reason===preset} disabled={busy}
       onClick={()=>{setReason(preset);setOther(false);setReviewed(false);}}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs text-link">{preset}</button>)}
-     <button type="button" aria-pressed={other} disabled={busy}
+      >{preset}</Button>)}
+     <Button variant="secondary" type="button" aria-pressed={other} disabled={busy}
       onClick={()=>{setOther(true);setReason("");setReviewed(false);}}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs text-link">Other</button>
+      >Other</Button>
     </div>
     {other?<label className="block text-sm">Reason
-     <textarea autoFocus aria-label="Reason for ineligibility" placeholder="Why are they not in placements?"
-      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" maxLength={200}
+     <Textarea className="mt-1" autoFocus aria-label="Reason for ineligibility" placeholder="Why are they not in placements?"
+       maxLength={200}
       value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);setReviewed(false);}}/>
     </label>:null}
     {!valid?<p role="status" className="text-xs text-error">Enter a reason of at least 3 characters.</p>:null}
     <div className="flex gap-2">
-     <button type="button" onClick={()=>setReasonOpen(false)} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3">Cancel</button>
-     <button type="button" disabled={!valid} onClick={()=>setReasonOpen(false)}
-      className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-on-primary disabled:opacity-50">Use reason</button>
+     <Button variant="secondary" type="button" onClick={()=>setReasonOpen(false)} >Cancel</Button>
+     <Button variant="primary" type="button" disabled={!valid} onClick={()=>setReasonOpen(false)}
+      >Use reason</Button>
     </div>
    </div></Dialog>
   </div>:null}
@@ -82,9 +85,9 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
     onChange={event=>setReviewed(event.target.checked)}/>
    I reviewed this learner eligibility decision; it will be audited.
   </label>
-  <button type="button" onClick={()=>void save()} disabled={!valid||busy||!reviewed}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm disabled:opacity-50">
-   {busy?"Saving…":"Save decision"}</button>
+  <Button variant="primary" type="button" onClick={()=>void save()} disabled={!valid||busy||!reviewed}
+   >
+   {busy?"Saving…":"Save decision"}</Button>
   {error?<p role="alert" className="w-full text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="w-full text-sm">{notice}</p>:null}
   {actionId?<div className="w-full"><TpoBatchUndoControl batchId={batchId} actionId={actionId}/></div>:null}

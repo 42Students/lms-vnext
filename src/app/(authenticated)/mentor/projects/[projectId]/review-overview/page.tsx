@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -32,24 +34,24 @@ export default async function MentorReviewOverviewPage({
  <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
  className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
   <label className="grid gap-1 text-sm font-semibold text-body">Delivery status
-   <select data-slot="select" name="status" defaultValue={data.query.status}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+   <Select name="status" defaultValue={data.query.status}
+    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
     {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
      <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
-   </select>
+   </Select>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">Written feedback
-   <select data-slot="select" name="feedback" defaultValue={data.query.feedback}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+   <Select name="feedback" defaultValue={data.query.feedback}
+    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
     <option value="ALL">Any</option>
     <option value="WITH">Recorded</option>
     <option value="WITHOUT">Not recorded</option>
-   </select>
+   </Select>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">Exact delivery version
-   <input data-slot="input" type="number" name="version" min={1} max={1000000}
+   <Input type="number" name="version" min={1} max={1000000}
     defaultValue={data.query.version??""}
-    placeholder="All versions" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+    placeholder="All versions" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3"/>
   </label>
   <Button type="submit" variant="primary">
    Filter

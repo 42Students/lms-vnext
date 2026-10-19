@@ -27,7 +27,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
      description="Choose one of your employer's authorized published or closed hiring drives. Private college applications are never listed." />
     {jobs.length?<section className="grid gap-3 sm:grid-cols-2">{jobs.map(item=>
      <Link key={item.job.id} href={recruiterResultTableHref({jobId:item.job.id})}
-       className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        <span className="block font-semibold text-foreground">{item.job.title}</span>
        <span className="mt-1 block text-sm text-body">{item.collegeName} · {item.job.status}</span>
      </Link>)}</section>:<EmptyState title="No hiring drives" description="There are no authorized drives available for round review."/>}

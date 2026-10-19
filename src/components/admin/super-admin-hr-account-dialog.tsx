@@ -2,8 +2,10 @@
 
 import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import type {
   HrAccount,
@@ -143,7 +145,7 @@ export function SuperAdminHrAccountDialog({
         {creating ? (
           <div>
             <label className="mb-3 flex min-h-10 items-center gap-2 text-sm">
-              <input type="checkbox" checked={createCompany} disabled={pending}
+              <Checkbox checked={createCompany} disabled={pending}
                 onChange={event=>{setCreateCompany(event.target.checked);setRelationshipId("");
                   setAdditionalRelationshipIds([]);}}/>
               Company not listed? Create a company by name
@@ -210,7 +212,7 @@ export function SuperAdminHrAccountDialog({
                   option.companyRelationshipId!==companyRelationshipId &&
                   option.companyId===relationships.find(item=>item.companyRelationshipId===companyRelationshipId)?.companyId
                 ).map(option=><label key={option.companyRelationshipId} className="flex min-h-10 items-center gap-2 text-sm">
-                  <input type="checkbox" disabled={pending}
+                  <Checkbox disabled={pending}
                     checked={additionalRelationshipIds.includes(option.companyRelationshipId)}
                     onChange={event=>setAdditionalRelationshipIds(old=>
                       event.target.checked?[...old,option.companyRelationshipId]:old.filter(x=>x!==option.companyRelationshipId))}

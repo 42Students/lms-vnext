@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -18,9 +19,6 @@ export type PlacementSeasonItem = {
   endDate: string;
   status: "ACTIVE" | "CLOSED";
 };
-
-const inputClass =
-  "min-h-10 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
 
 function humanizeError(value: string) {
   return value
@@ -221,9 +219,8 @@ export function PlacementSeasonManager({
             <span className="mb-1 block text-xs font-semibold text-body">
               Season name
             </span>
-            <input
-              className={inputClass}
-              name="name"
+            <Input
+                            name="name"
               required
               maxLength={160}
               placeholder="2026-27 Placements"
@@ -233,9 +230,8 @@ export function PlacementSeasonManager({
             <span className="mb-1 block text-xs font-semibold text-body">
               Code
             </span>
-            <input
-              className={inputClass}
-              name="code"
+            <Input
+                            name="code"
               required
               maxLength={64}
               placeholder="2026-27"
@@ -245,9 +241,8 @@ export function PlacementSeasonManager({
             <span className="mb-1 block text-xs font-semibold text-body">
               Starts
             </span>
-            <input
-              className={inputClass}
-              name="startDate"
+            <Input
+                            name="startDate"
               type="date"
               required
             />
@@ -256,9 +251,8 @@ export function PlacementSeasonManager({
             <span className="mb-1 block text-xs font-semibold text-body">
               Ends
             </span>
-            <input
-              className={inputClass}
-              name="endDate"
+            <Input
+                            name="endDate"
               type="date"
               required
             />

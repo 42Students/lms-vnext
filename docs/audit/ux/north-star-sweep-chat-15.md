@@ -154,3 +154,45 @@ A subsequent **17 individually pushed `[chat-15]` file commits** tightened visua
 The updates touch visual classes and focus/hover states; existing data queries, visibility constraints, submit logic, redirects, and content remain intact. Shared shell/global CSS continues to be owned by the designated shell lanes. Status badges and meaningful contained interview/portfolio cards remain enclosed, avoiding flattening objects that have a genuine card role.
 
 **Source verification:** examined the touched markup and closing tags after edits; none of the inspected files contained a dangling standalone `</Select`/`</Button` or other truncated closing tag. **Not run:** application, TypeScript compiler, lint, tests, CI or browser screenshots. Full old-versus-vNext pixel verification remains pending.
+
+
+## 2026-10-19 further source-only HR/recruiter sweep: remaining controls and states
+
+The requested `docs/audit/ux/north-star-sweep-15.md` is not present in the repository; this `north-star-sweep-chat-15.md` remains the actual lane checklist and file disposition record.
+
+Read all substantive authenticated HR page implementations, the independent recruiter change-request route and recruiter-owned UI components. The other recruiter routes delegate to HR source implementations, and their error/loading/not-found pages use shared fallback primitives owned by other lanes. Do not add duplicate skins or change those shared files.
+
+**20 new `[chat-15]` file-edit commits** in this pass, pushed to `chatgpt/chat-15-b` only. The changes address source residuals rather than previously completed shell work:
+
+| Group | Residual styling corrected |
+|---|---|
+| Drive request receipt, stale-drive warning and round editing | White hairline secondary action surfaces, 36px height, 14px text, visible focus, hover-fill; round list empty state no longer creates a redundant inner card |
+| Recruiter profile editors | Designation save, name cancel, profile status text and private review save match semantic legacy typography, focus and primary hover |
+| Recruiter bell and activity | Notification retry and preview hover/focus, active company picker compact control and Today data-limit pale warning strip |
+| Round results and hiring portfolio | Result bulk action focus/hover and white-on-teal submit; hiring portfolio requests show slim amber strip and focused secondary actions |
+| Sent proposals and recruiter inbox | 36px legacy college picker, export and pagination controls, pale interview-slot alert, compact notification pager |
+| Recruiter pages | Round-removal confirmation, round review drive tile hover, Company/Reports underline tab vertical spacing, Calendar underline tabs keyboard-focus rings |
+
+Upstream main changed several of the same files while this lane was working. Merged upstream with a true two-parent commit; the upstream `<Button>` migration in the round-removal confirmation was deliberately retained instead of resurrecting this lane's native `<button>`. Distinct lane changes were reapplied without overwriting other branches. All commits are on `chatgpt/chat-15-b` only.
+
+Markup and JSX tag-name sequences before/after each change were compared for the ten-file second batch; the first batch also made only class/text styling changes without opening/closing JSX elements. Explicit incomplete `</Select`, `</Button`, `</Link` and native closing lines were checked. Source review cannot certify runtime pixel parity: screenshots and TypeScript verification remain outstanding, and **no CI, test, typecheck or application execution occurred**.
+
+## 2026-10-19 follow-up: shared control migration after prior source sweep
+
+This follow-up added **28 further [chat-15] file commits** on `chatgpt/chat-15-b` (17 HR/recruiter implementation files and 11 tracker files). The earlier checklist's "source complete" meant values had been normalized; these edits close a separate gap where native HTML controls still overrode the shared control kit through long local utility strings. `main` was checked before and after the batch and the branch was 0 commits behind; pushes target this lane branch only.
+
+- **HR/recruiter actions:** `hr-notification-read-button`, `recruiter-decision-read-button`, `recruiter-drive-focus-refresh`, `recruiter-request-cancel-button`, `recruiter-conversation-read-control`, `hr-unsent-drive-alert`, `recruiter-profile-access`, `hr-recruiter-bell`, `recruiter-notification-bell`, and `recruiter-resume-download` now use shared `Button` variants, retaining the existing callbacks, aria labels, loading/disabled guards and conditional displays.
+- **Recruiter forms:** `recruiter-display-name-editor`, `recruiter-designation-editor`, `recruiter-profile-details-editor`, `recruiter-private-rating-editor`, `recruiter-round-inline-editor`, `hr-drive-draft-form`, and `recruiter-result-controls` now use shared `Input`, `Select`, `Textarea`, `Button`, and `Checkbox` where applicable. The drive-request form alone replaced 28 native controls and removed the unused local input class; round-result selection retains native checkbox semantics through shared `Checkbox`.
+- **Tracker pages/components:** `tracker/issues/page.tsx`, `tracker-quick-report-launcher`, `tracker-issue-saved-views`, `tracker-issue-copy-actions`, `tracker-issue-logs-panel`, `audit-finding-status-action`, `independent-finding-copy-action`, `tracker-workflow-panel`, `tracker-issue-bulk-actions`, `tracker-live-logs-explorer`, and `tracker-telegram-manual-panel` now inherit shared control styles. Positioning is preserved for the floating quick-report launcher and the modal/report workflows are unchanged.
+
+The conversions preserved handler bodies, server endpoints, authorization/visibility guards, control values, keyboard labels, selection state, and the ordering of page contents. Intentionally leave `<input type="hidden">` as native: hidden form fields must not acquire visible input chrome, even though they are not interactive controls. Existing shared widgets remain the responsibility of the shared UI owner.
+
+**Verification:** each edited file received a source-text check for complete JSX opening/closing tag names (including self-closing `Input`, `Textarea`, and `Checkbox`), missing stale local style variables, and unchanged source handlers. No code, TypeScript, runtime, browser, screenshot or CI execution was performed. Exact visual parity and strict typecheck remain unverified until the orchestrator's integration pass.
+
+### Additional HR page controls and upstream integration
+
+Three further [chat-15] source commits completed the remaining visible native form buttons in `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` and `src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx` with shared `<Button type="submit">...</Button>` tags, and removed three duplicate shared `Button`/`Input`/`Select` imports from `hr/conversations/page.tsx`. The native `type="hidden"` inputs in these and other HR pages remain intentional unstyled form fields.
+
+During the sweep, `main` advanced by 250 commits. The lane compared both trees against their common ancestor and confirmed that the 44 lane-modified paths and 130 upstream-modified paths were **disjoint**, then built a true two-parent merge based on the upstream tree with the 44 lane blobs overlaid. Merge commit `223cbaa4f8a16278ce61b1991dcf4d0225857614` was pushed to **`chatgpt/chat-15-b` only**. GitHub comparison then reported **56 ahead / 0 behind main**, and representative file SHA reads verified retention of the updated shared `page-canvas.tsx` from main and of this lane's HR/recruiter/tracker files.
+
+This source-only follow-up totals **31 implementation-file commits plus audit changes and the upstream merge**. No application execution, tests, TypeScript compilation, CI or browser screenshots were run. Structural JSX opening/closing checks and duplicate-import checks were performed by reading source text only. Final runtime parity remains for integration verification.
