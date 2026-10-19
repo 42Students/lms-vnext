@@ -346,3 +346,57 @@ Legacy breakpoint `components___variables.scss:148` and `pages___admin-list-page
 The three requested **source files are completed** for native-control removal, modal conversion, shared-state handling, visual token use, and the source-responsive pass. **Do not tick pixel-level parity yet:** exact computed button font size for size=`sm` (13px versus north-star 14px), shared `ConfirmDialog` footer touch targets, full state-by-state rendered visual comparisons (hover/focus/disabled/error/empty), screenshots at 375px/767px/768px/1024px, and full portal-wide exhaustive category-H grep remain outside verifiable evidence. The shared-component owner must resolve any cross-component discrepancies; this lane must not edit `src/components/ui`.
 
 **Next exact file outside this three-file request:** `src/components/courses/faculty-assessment-editor.tsx` — inspect assessment editor page-level responsive states and raw confirmation opportunities, then `src/components/admin/person-profile-dialog.tsx`.
+
+
+## Next batch — Faculty assessment editor, Super Admin profile dialog, Quiz question editor (2026-10-19)
+
+**Source-complete paths (not strict pixel parity):**
+
+- [x] Source migration: `src/components/courses/faculty-assessment-editor.tsx` — existing update/archive/discard confirmation strings are preserved through shared `ConfirmDialog`; shared `Drawer`, `Banner`, `Alert`, `Input`, `Textarea`, and `Button` remain; no native confirm or raw controls. Save/archive version receipts, title-only rules, IST due-date conversion and unsaved-beforeunload logic retained.
+- [x] Source migration: `src/components/admin/person-profile-dialog.tsx` — membership profile uses shared `Dialog`, `Input`, `Select`, `LoadingState`, `Alert`, `Button`; phone-safe button sizing, tablet grid switch, pending dismissal guard and network error toast. Both profile API PUT payloads are unchanged.
+- [x] Source migration: `src/components/courses/faculty-quiz-question-editor.tsx` — native question-bank replacement prompt converted to shared `ConfirmDialog`; existing draft-only validation and `expectedUpdatedAt` PATCH retained; question/answer card tokens, shared loading/error states, phone-safe remove/add actions and responsive question/option grids updated.
+
+These checks are **source-migration completions only**. The original strict parity queue items stay [ ] until computed-style and rendered responsive proof for every property/state is obtained.
+
+### Legacy values vs current source
+
+| Property and state | Legacy reference and exact value | vNext source and values | Assessment |
+|---|---|---|---|
+| Modal border | `docs/design/legacy-styles/components___variables.scss:30`: `#e5e9f0` | `ui/dialog.tsx:44`, `ui/drawer.tsx:42`, inherited `--lms-canvas-border` from `globals.css:339` = `#e5e9f0` | Exact token |
+| Panel/card radius | `components___variables.scss:134`: `12px` | `faculty-quiz-question-editor.tsx:460`: `rounded-[var(--lms-canvas-radius)]`, `globals.css:345` = 12px; shared Dialog also uses it | Exact token |
+| Card fill | `components___variables.scss:37`: `$white: #ffffff` | `faculty-quiz-question-editor.tsx:460`: `bg-[var(--lms-surface)]`; `globals.css:71` = white | Exact token, light theme |
+| Card padding and form gaps | `components___variables.scss:119`: 16px, `:118` = 12px | Quiz question editor `:460` uses `p-[var(--lms-space-4)]` (16px); `:508` uses `gap-[var(--lms-space-3)]` (12px); `globals.css:352-353` | Exact token |
+| Label/field typography | `components___form.scss:111-125`: label 13px/600, field 14px/400; `:130-142` teal focus, error ring | `faculty-assessment-editor.tsx:277-345`, `person-profile-dialog.tsx:252-345`, `faculty-quiz-question-editor.tsx:483-560` use shared field components, legacy skin in `styles/legacy-skin.css:103-175` | Inherited; computed-state proof not run |
+| Primary action | Owner `master-queue.md` OWNER GOAL: 9px radius, 36px high, 14px/650, solid `#0a7c88` and white text | `ui/button.tsx:11,18-28` + `globals.css:24,341,343`; target components use shared `Button` | Default `md` token matches; shared `sm` font-size is 13px, so do **not** tick the full button value rule |
+| Hover/disabled/focus/loading | `components___button.scss:23-49` + `components___form.scss:23-35` for hover, disabled and keyboard-only focus | `ui/button.tsx:11-28`, `ui/dialog.tsx:39-54`, `ui/confirm-dialog.tsx:15-19` centralize styles and pending disabled state | Owned by shared UI; rendered focus and hover proof pending |
+| Mobile hit targets | `components___variables.scss:139`: 44px; `:148` threshold 767px | All action buttons in these three files use `min-h-11 md:min-h-[var(--lms-control-height)]`; `globals.css:341` =36px after 768px | Static source breakpoint match |
+| Responsive profile form | `pages___admin-list-pages.scss:193-215`: phone layout at max 767px | `person-profile-dialog.tsx:248,288,292` uses single column on 375/767px, two columns from 768px, full-width department row | Static layout proof; screenshot pending |
+| Responsive quiz question choices | Same legacy max-767px breakpoint | `faculty-quiz-question-editor.tsx:508` stacks type/points at 375/767px, `:564` displays option control+text in 2 columns and lets remove wrap; both switch at `md` | Source comparison only |
+| Drawer phone/tablet treatment | `pages___admin-list-pages.scss:193-215`: mobile padding and control areas | `ui/drawer.tsx:37-51`: full-width phone, <=600px drawer desktop, scroll cue, padding and focus management | Shared implementation; different 640px breakpoint deserves rendered inspection |
+| Save/archive/discard confirmation | Old native `window.confirm` is not a style-controlled LMS dialog | `faculty-assessment-editor.tsx:352-375` and `faculty-quiz-question-editor.tsx:690-702`: `ConfirmDialog` with warnings, pending guard, primary/danger variants | Native prompt removal verified; pixel comparison not possible from source alone |
+| Loading, error, empty | `components___variables.scss:13,30` and form error `components___form.scss:137-142` | `faculty-assessment-editor.tsx:274,348`: shared Banner/Alert; `person-profile-dialog.tsx:242-244`: LoadingState/Alert; `faculty-quiz-question-editor.tsx:450,685`: LoadingState/Alert | Shared states complete; all rendered states still unverified |
+
+### Full-file grep-equivalent evidence and tag-pair re-read
+
+The file bodies were re-fetched after edits and scanned in their entirety via exact regex-equivalent counts:
+
+| Path | Native `button/input/select/textarea/table/dialog` | `window.confirm` | Hex literals | `rounded-full` / `aria-pressed` | `sm:` | `md:` | Paired JSX |
+|---|---:|---:|---:|---:|---:|---:|---|
+| `faculty-assessment-editor.tsx` | 0 | 0 | 0 | 0 | 0 | 3 | Button 3/3; Drawer 1/1; Banner 1/1; Alert 1/1; labels 4/4; form 1/1 |
+| `person-profile-dialog.tsx` | 0 | 0 | 0 | 0 | 0 | 6 | Button 3/3; Dialog 1/1; Select 1/1; fieldsets 2/2; labels 5/5 |
+| `faculty-quiz-question-editor.tsx` | 0 | 0 | 0 | 0 | 0 | 8 | Button 6/6; Drawer 1/1; Select 1/1; form labels 3/3; section 1/1 |
+
+`Input`, `Textarea`, `Radio`, `Checkbox`, `ConfirmDialog`, `LoadingState` are deliberately self-closing. The complete files also had no leading stray quote before `className`. The effective source scans correspond to:
+
+```sh
+git grep -nE '<(button|input|select|textarea|table|dialog)([ >])|window[.]confirm[(]|#[0-9a-fA-F]{3,8}|rounded-full|aria-pressed' -- \
+  src/components/courses/faculty-assessment-editor.tsx \
+  src/components/admin/person-profile-dialog.tsx \
+  src/components/courses/faculty-quiz-question-editor.tsx
+```
+
+**The shell command above is reproducibility documentation; it was not executed.** The connector-backed scans were performed over full UTF-8 file blobs. JSX parsing/TypeScript compilation and CI were intentionally not run.
+
+**Unresolved strict proof:** 375px/767px/768px/1024px rendered screenshots, actual focus/disabled/hover states, shared button `size=sm` font size vs legacy 14px, shared overlay phone breakpoint, and portal-wide transitive grep. Therefore category H route/component strict boxes remain open.
+
+**Next exact unreviewed file:** `src/components/courses/faculty-lesson-authoring.tsx`; then `src/components/courses/faculty-content-editor.tsx`. Do not change shared `src/components/ui/*`.

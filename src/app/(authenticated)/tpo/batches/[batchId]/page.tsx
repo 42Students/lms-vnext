@@ -1,4 +1,5 @@
 import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
+import batchStyles from "@/components/tpo/legacy-batch-eligibility.module.css";
 import Link from "next/link";
 import {tpoBatchReturnHref} from "@/modules/placements/tpo-batch-return-model";
 import { redirect } from "next/navigation";
@@ -102,10 +103,10 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    </div>)}
   </dl>
   {summary.complete&&summary.assessed>0?
-   <StackedMetricBar maximum={summary.assessed}
+   <StackedMetricBar className={batchStyles.bar} maximum={summary.assessed}
     label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+summary.undecided+" not decided, "+summary.needsReview+" need review"}
     segments={[{label:"Eligible",value:summary.eligible,tone:"success"},
-      {label:"Ineligible",value:summary.ineligible,tone:"warning"},
+      {label:"Ineligible",value:summary.ineligible,tone:"error"},
       {label:"Not decided",value:summary.undecided,tone:"primary"}]} />:null}
   <p className="text-sm">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
     eligibility.nextAction==="DECIDE"?"Decide undecided learners":
