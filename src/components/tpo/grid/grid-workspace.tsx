@@ -30,6 +30,9 @@ type GridWorkspaceProps<Row>={
  searchParam?:string;
  filterTitle?:string;
  searchMaxLength?:number;
+ searchMode?:"url"|"controlled"|"hidden";
+ searchValue?:string;
+ onSearchChange?:(next:string)=>void;
 };
 
 const safeTsv=(value:unknown)=>{
