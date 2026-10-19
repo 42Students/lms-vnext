@@ -72,8 +72,9 @@ export function ResponsiveFilterDrawer({
   });
   useEffect(() => {
     if (!open) return;
-    const media = window.matchMedia("(min-width: 640px)");
-    const onResize = () => { if (media.matches) onOpenChange(false); };
+    const media = typeof window.matchMedia === "function" ? window.matchMedia("(min-width: 640px)") : null;
+    const isDesktop = () => media?.matches ?? window.innerWidth >= 640;
+    const onResize = () => { if (isDesktop()) onOpenChange(false); };
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     panel.current?.querySelector<HTMLElement>(
@@ -97,15 +98,15 @@ export function ResponsiveFilterDrawer({
         elements[0]?.focus();
       }
     };
-    media.addEventListener("change", onResize);
+    media?.addEventListener("change", onResize);
     document.addEventListener("keydown", onKey);
     window.addEventListener("resize", onResize);
     return () => {
       document.body.style.overflow = overflow;
-      media.removeEventListener("change", onResize);
+      media?.removeEventListener("change", onResize);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("keydown", onKey);
-      if (!media.matches) launcher.current?.focus();
+      if (!isDesktop()) launcher.current?.focus();
     };
   }, [open, onOpenChange, launcher]);
   return <>
