@@ -448,3 +448,8 @@
   .orgTrigger { max-width:190px; width:100%; }
   .orgTrigger .orgName { max-width:160px; }
 }
+
+@media (max-width:767px) {
+  .orgSwitcher { display:none; }
+  .orgPopover { right:12px; width:calc(100vw - 24px); border-radius:14px; }
+}
