@@ -22,6 +22,9 @@
 [data-slot="dialog"] > div > div:first-child {
   position: relative;
 }
+[data-slot="dialog"] > div > div:first-child > div:first-child {
+  padding-right: 50px;
+}
 [data-slot="dialog"] > div > div:first-child > button[aria-label="Close dialog"] {
   position: absolute;
   top: 16px;
