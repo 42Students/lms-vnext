@@ -164,3 +164,34 @@ Pixel-comparison against a running old LMS and responsive keyboard/touch checks 
 - Completed supporting recruiter applicant controls in `src/components/placements/`: private applicant notes, secure resume action and the result editor's bulk actions, outcome/score/rank inputs, reason selectors, candidate-message textarea and selection checkbox. Converted them to shared `Button`, `Input`, `Select`, `Textarea`, and `Checkbox` with original event/permission/selection logic intact.
 - Re-read every edited JSX closing tag, matching `<Button>...</Button>`, `<Select>...</Select>`, `<Link>...</Link>`, and preserving the intentional self-closing `<Input />`, `<Textarea />`, `<Checkbox />`. Added `tests/unit/chat19-hr-shared-controls-complete.test.ts` with source-only checks for 22 pages, 19 widgets and three applicant controls; fixed regex escaping in that test. The tests were **authored but not run**.
 - No typecheck, lint, build, CI, browser visual comparison, application execution, or deployment was run. Exact runtime pixel parity, interactions and accessible keyboard behaviour await the integration pass.
+
+
+## Checkpoint 2 — legacy sidebar measured-value audit and follow-on HR pass (2026-10-19)
+
+Source baseline: `docs/orchestrator/queues/master-queue.md` OWNER GOAL and the extracted `docs/design/old-lms-shell.css`. Synced lane branch with main `3de148112368b7201378f721841a5d4348ec9f6d` before these edits.
+
+| Legacy sidebar measurement | Sidebar implementation | Source-level comparison |
+| --- | --- | --- |
+| Collapsed rail 6rem / 96px | `width:96px;min-width:96px` | Matched |
+| Expanded rail 16rem / 256px on hover | `:is(:hover,:focus-within){width:256px}` | Matched; also keyboard focus |
+| `width .15s cubic-bezier(.2,0,0,1)` | Same width/opacity timing and easing | Matched |
+| Real content push rather than overlay | Adjacent `.lms-shell-page` left padding 96 → 256px using same easing | Matched intent |
+| White sidebar, `#f1f4f9` right border | `#fff`, 1px `#f1f4f9` | Matched |
+| Nav item min-height 44px, margin-bottom 6px, padding 10px 12px, radius 8px | Same CSS values | Matched |
+| Text 15px / 20px, icon 24px box, 20px glyph, opacity .55 | Same CSS values | Matched |
+| Hover fill rgba(38,186,199,.07) with teal foreground `#1a95a1` | Same CSS values | Matched |
+| Active `#eff8fa` and 3px inset `#26bac7` stripe | Same fill/box-shadow values | Matched |
+| Link focus outline 2px rgba(38,186,199,.45), offset -2px | Same CSS values | Matched |
+| Heading 18px, margin 7px 12px 4px, uppercase, tracking .105em, 750 weight | Same CSS values | Matched |
+| Collapsed headings become 22px hairlines, expanded headings show text | TPO-only group labels and 22px `::after` collapsed rule | Matched intent |
+| Collapsed badge `top:4px;left:50%;margin-left:5px;scale(.72)`; expanded badge inline | Same selectors and values | Matched |
+| TPO hover scrollbar thin, 4px thumb rgba(107,114,128,.28) | TPO-only scroll selector on expanded rail | Matched, includes keyboard focus |
+| Header 38×36px logomark | `ShellLogoMark` 38×36 inline SVG in desktop shell and mobile drawer | Matched size and supplied logo SVG |
+| Desktop hidden below 768px, touch drawer at 256px max | `md:flex` desktop, separate focus-trapped 16rem touch drawer | Matched behaviour |
+| Different portal rows kept in different account menus | `scopedShellNavigation` now filters *all* rows from other account portals, including a stray single-row role | Corrected |
+
+**Icon identity corrections:** Built route-to-glyph mappings cover all 61 literal sidebar navigation routes. The previous generic briefcase icon is now a Solution-style icon for recruiting/placement flows; Bank, Appstore, Partition, Apartment, and UsergroupAdd icon families are distinct, following the names in `docs/audit/legacy-copy-B.md`. Existing learner icon image paths were cross-checked against the 12 actual files under `public/assets/images/common/`. SVGs are faithful *style-family approximations* of the original Ant Design outlines, not claims of identical upstream path data.
+
+**HR continuation:** Re-scanned all 22 `/hr` canonical pages for raw visible controls, non-token palette/radii and extra `<main>` wrappers; found no new non-hidden raw controls. Added a missing `aria-current="page"` state to recruiter Drives' active college selector; brought keyboard focus outlines on conversation kind/status tabs and recruiter shared-applicant/offer metric links into the measured teal outline style. Did not alter business content, page ordering, mutations or access checks.
+
+**Scope of verification:** Compared the source values and authored unexecuted source assertions; no browser screenshots or computed-style visual diff. Matching source declarations supports, but cannot prove, runtime pixel-level equality. No tests, typecheck, lint, CI, build, app run or deploy were performed as instructed.
