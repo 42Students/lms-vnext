@@ -17,7 +17,6 @@ export default async function HrProfilePage() {
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
-        eyebrow="Recruiter"
         title="Profile"
         description="Manage your recruiter details."
       />
