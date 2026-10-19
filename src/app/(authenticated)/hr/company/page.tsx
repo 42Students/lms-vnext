@@ -144,7 +144,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             </div>
             <Badge  tone="neutral">Linked by the placement cell</Badge>
           </div>
-          <dl className="mt-5 grid gap-4 sm:grid-cols-2">
+          <dl className="mt-5 grid gap-4 md:grid-cols-2">
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Website</dt>
               <dd className="mt-1 text-sm text-foreground">{result.company.websiteUrl?.startsWith("https://")||result.company.websiteUrl?.startsWith("http://")
@@ -161,7 +161,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-5">
             <h3 className="text-base font-semibold text-foreground">Hiring footprint with this college</h3>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
               {[
                 {label: "All visible drives", value: overview.total},
                 {label: "Live drives", value: overview.active},
