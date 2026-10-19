@@ -127,7 +127,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       {displayedColumns.map(col=><option key={col.index} value={col.index}>{col.heading}</option>)}
      </Select>
     </label>
-    <Button variant="secondary" type="button" disabled={sort===null} aria-label="Reverse sort direction"
+    <Button variant="secondary" type="button" disabled={sort===null} aria-label="Descending order" aria-pressed={descending}
      onClick={()=>setDescending(value=>!value)} >
      {descending?"Descending":"Ascending"}
     </Button>
