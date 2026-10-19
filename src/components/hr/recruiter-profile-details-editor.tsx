@@ -80,11 +80,11 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
     </label>)}
   </div>
   {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}
-  {dirty?<p role="status" className="text-sm font-semibold">Unsaved changes</p>:null}
+  {dirty?<p role="status" className="text-sm font-semibold text-body">Unsaved changes</p>:null}
   <button type="submit" disabled={busy||!dirty}
    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50">
    {busy?"Saving…":"Save changes"}</button>
-  {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className="text-sm">{feedback}</p>:null}
+  {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className="text-sm text-body">{feedback}</p>:null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
    consequence="Your changes have not been saved." confirmLabel="Discard"
    onCancel={()=>setLeaveHref(null)} onConfirm={()=>{
