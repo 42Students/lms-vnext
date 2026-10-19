@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
 import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-model";
@@ -148,19 +149,7 @@ function Metric({
   value: string;
   detail: string;
 }) {
-  return (
-    <section className="rounded-xl border border-border bg-surface p-4">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {metricLabel}
-      </p>
-      <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-        {value}
-      </p>
-      <p className="mt-1 text-xs leading-5 text-body">
-        {detail}
-      </p>
-    </section>
-  );
+  return <StatTile label={metricLabel} value={value} detail={detail} />;
 }
 
 function safeHttpHref(value: string | null) {

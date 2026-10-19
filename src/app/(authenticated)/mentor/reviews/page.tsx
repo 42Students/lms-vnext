@@ -1,5 +1,6 @@
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
+import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -82,12 +83,8 @@ export default async function MentorReviewsPage({
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Page size
-          <Select name="pageSize" defaultValue={String(data.pageSize)}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
-            <option value="20">20</option><option value="50">50</option>
-          </Select>
-        </label>
+        <PageSizeSelect label="Page size" name="pageSize"
+          defaultValue={String(data.pageSize)} options={[20,50]} />
         <Button type="submit" variant="primary">Filter</Button>
         <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
