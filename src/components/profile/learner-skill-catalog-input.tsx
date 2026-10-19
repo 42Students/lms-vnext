@@ -42,7 +42,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    role="combobox" aria-autocomplete="list" aria-expanded={status==="ready"&&items.length>0}
    aria-controls={id+"-choices"}
    aria-activedescendant={activeIndex>=0?`${id}-choice-${activeIndex}`:undefined}
-   className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+   className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/>
   {status==="loading"?<p role="status" className="mt-1 text-xs text-muted-foreground">Searching skills…</p>:null}
   {status==="ready"&&items.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">
     No catalog suggestions found. You can still save your own skill name.
