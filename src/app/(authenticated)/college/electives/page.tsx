@@ -31,7 +31,7 @@ export default async function CollegeElectivesPage({
   const raw = readCollegeStructureParams(await searchParams);
   const parsed = collegeElectiveQuerySchema.safeParse(raw);
   if (!parsed.success) return <div className="min-w-0 overflow-x-clip space-y-4">
-    <PageHeader eyebrow="College Admin · Academic Setup" title="Electives" />
+    <PageHeader title="Electives" />
     <ErrorState title="Invalid elective filters"
       description={collegeDirectoryValidationMessage(parsed.error)}
       action={<Link href="/college/electives" className="font-semibold text-link lms-inline-link">Clear filters</Link>} />

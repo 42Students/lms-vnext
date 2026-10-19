@@ -38,7 +38,6 @@ export default async function CollegeDepartmentsPage() {
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
-        eyebrow="College Admin"
         title="Departments"
         description="Create, find, export and manage the departments in your college."
       />

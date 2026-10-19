@@ -13,7 +13,7 @@ export default async function CollegeFacultyImportPage(){
     collegeId:member.collegeId,organizationId:member.organizationId,
   });
   return <div className="min-w-0 overflow-x-clip space-y-6">
-    <PageHeader eyebrow="College Admin · Faculty" title="Import faculty"
+    <PageHeader title="Import faculty"
       description="Validate and register faculty using the legacy CSV template."
       actions={<Link href="/college/faculty"
         className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link">Back to Faculty</Link>}/>
