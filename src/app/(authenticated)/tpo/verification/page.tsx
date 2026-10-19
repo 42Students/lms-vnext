@@ -1,4 +1,4 @@
-import { Select } from "@/components/ui/select";
+import {Select} from "@/components/ui/select";
 import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -35,7 +35,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
         }).toString()} filename={"tpo-verification-"+tab.toLowerCase()+".csv"} label={label+" CSV"} />)}
      </div>:null}
   </nav>
-  <form method="get" action="/tpo/verification" className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:grid-cols-4">
+  <form method="get" action="/tpo/verification" className="grid gap-3 border-b border-border py-4 sm:grid-cols-4">
    <label className="grid gap-1 text-sm">Status
     <Select name="tab" defaultValue={query.tab} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="WAITING">Waiting</option><option value="SENT_BACK">Sent back</option><option value="VERIFIED">Verified</option>
