@@ -28,7 +28,7 @@ export default async function HrRoundsEditorPage({params}:{
    <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Back to drive rounds</Link>
    <Link href="/hr/drives" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Back to Drives</Link>
   </nav>
-  <section className="space-y-4 rounded-xl border border-border bg-surface p-4">
+  <section className="space-y-4 border-b border-border pb-4">
    <h2 className="font-semibold text-foreground">Add a round</h2>
    <form action={endpoint} method="post" className="grid gap-3 sm:grid-cols-2">
     <input type="hidden" name="action" value="CREATE"/>
