@@ -15,7 +15,8 @@ export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
  const lanes=groupLearnerBoardLanes(tasks,sprints);
  return <section aria-label="Project Board lanes" className="space-y-3">
   <p className="text-sm text-body">Tasks are grouped by their saved status. Open a task to work on it.</p>
-  <div className="overflow-x-auto pb-3">
+  <div role="region" aria-label="Project board columns; scroll sideways to see all task lanes" tabIndex={0}
+    className="overflow-x-auto overscroll-x-contain pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    <div className="flex min-w-max gap-3">
     {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label} width="compact">
       <h2 className="flex items-center justify-between font-semibold text-foreground">
