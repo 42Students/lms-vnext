@@ -4,7 +4,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import { FileUpload } from "@/components/ui/file-upload";
 
 type Result = {
   groupId: string; status: string; total: number; ready: number; blocked: number;

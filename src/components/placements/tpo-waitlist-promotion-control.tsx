@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {DataTable} from "@/components/ui/data-table";
 import {apiFetch} from "@/lib/api-fetch";
+import {Textarea} from "@/components/ui/textarea";
 type Row={applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null;rank:number;
  reasons:string[];canPromote:boolean;promotionStatus:string|null};
 type Preview={storageReady:boolean;freeSeats:number|null;activeOffers:number;rows:Row[];next:Row|null;previewToken:string};
@@ -50,8 +51,8 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
    <h2 className="font-semibold">Offer to next waitlisted: {preview.next.name} (rank {preview.next.rank})</h2>
    <p className="text-sm text-body">Review the ranked queue before release. The offer issuer rechecks held-offer rules, eligibility and response deadline.</p>
    <label className="grid gap-1 text-sm">Reason for promotion
-    <textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>setReason(e.target.value)}
-     className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/></label>
+    <Textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>setReason(e.target.value)}
+     /></label>
    <Button variant="primary" type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}
     className="min-h-11 md:min-h-9 px-4">
     {busy?"Verifying…":"Verify and release next offer"}</Button>

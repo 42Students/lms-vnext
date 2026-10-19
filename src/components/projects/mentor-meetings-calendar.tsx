@@ -8,6 +8,7 @@ import {
 } from "@/modules/projects/mentor-calendar-view";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
+import {Button} from "@/components/ui/button";
 
 const PAST_PREVIEW = 20;
 const prettyDate = (iso: string) => {
@@ -106,11 +107,11 @@ export function MentorMeetingsCalendar({
             No past meetings yet.
           </p>}
       {past.length > PAST_PREVIEW ? (
-        <button type="button" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9"
+        <Button variant="secondary" type="button" 
           onClick={() => setExpanded(value => !value)}
           aria-expanded={expanded}>
           {expanded ? "Show fewer" : "Show all " + past.length + " past meetings"}
-        </button>
+        </Button>
       ) : null}
     </section>
   </div>;

@@ -4,6 +4,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {learnerInterviewWithdrawalInputSchema,type LearnerInterviewWithdrawalTarget} from "@/modules/placements/learner-interview-withdrawal-model";
+import {Textarea} from "@/components/ui/textarea";
 export function LearnerInterviewWithdrawalRequest({target}:{target:LearnerInterviewWithdrawalTarget}){
   const router=useRouter();
   const [review,setReview]=useState(false),[reason,setReason]=useState("");
@@ -36,8 +37,8 @@ export function LearnerInterviewWithdrawalRequest({target}:{target:LearnerInterv
       Withdrawal requested; awaiting the placement team&apos;s decision. <Link className="font-semibold text-primary-text underline" href="/learn/my-placements/support?status=PENDING&type=APPLICATION_WITHDRAWAL">Review request</Link>
     </p> : review ? <div className="space-y-3">
       <label className="block text-sm font-semibold text-body">Reason for requesting withdrawal
-        <textarea value={reason} maxLength={2000} rows={3} disabled={pending} onChange={event=>setReason(event.target.value)}
-          className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal text-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
+        <Textarea value={reason} maxLength={2000} rows={3} disabled={pending} onChange={event=>setReason(event.target.value)}
+          className="mt-2 w-full" />
       </label>
       {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
       <div className="flex flex-wrap gap-2">

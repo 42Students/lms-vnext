@@ -13,6 +13,7 @@ import { learnerDriveApplyGate, learnerDriveApplySelectionSchema } from "@/modul
 import {learnerDriveDeadlineUrgency} from "@/modules/placements/learner-drive-deadline-urgency-model";
 import {learnerJobDetailFromDrivesHref} from "@/modules/placements/learner-drives-return-model";
 import {LearnerSaveDriveButton} from "@/components/placements/learner-save-drive-button";
+import {Textarea} from "@/components/ui/textarea";
 
 type EligibilityStatus =
   | "ELIGIBLE"
@@ -324,7 +325,7 @@ function JobActions({
             className="block text-sm font-semibold text-foreground">
             Reason for withdrawal
           </label>
-          <textarea
+          <Textarea
             id={`withdraw-reason-${roleOption.id}`}
             value={withdrawReason}
             onChange={(event) => setWithdrawReason(event.target.value)}
@@ -332,7 +333,7 @@ function JobActions({
             maxLength={900}
             disabled={pendingAction !== null}
             placeholder="Explain why you want to withdraw this application…"
-            className="mt-2 min-h-28 w-full rounded-lg border border-border bg-surface p-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            className="mt-2 w-full"
           />
           <p className="mt-2 text-xs text-muted-foreground">
             3–900 characters. Requesting withdrawal does not immediately

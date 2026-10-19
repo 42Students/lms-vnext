@@ -6,6 +6,8 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {tpoRequestFailedRowsTsv} from "@/modules/placements/tpo-request-failed-rows-model";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 
 type Row={id:string;studentName:string;requestType:string;expectedUpdatedAt:string};
 type Outcome={id:string;name:string;status:"updated"|"failed";message:string};
@@ -122,20 +124,20 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
   </div>
   <p role="status" className="text-sm">{chosen.length} selected of {rows.length} waiting requests on this page.</p>
   <label className="grid gap-1 text-sm">Decision
-   <select value={action} disabled={pending||auditRetry!==null} onChange={event=>{setAction(event.target.value as "APPROVE"|"REJECT");setAcknowledged(false);}}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+   <Select value={action} disabled={pending||auditRetry!==null} onChange={event=>{setAction(event.target.value as "APPROVE"|"REJECT");setAcknowledged(false);}}
+    >
     <option value="APPROVE">Approve</option><option value="REJECT">Reject</option>
-   </select>
+   </Select>
   </label>
   {action==="REJECT"?<label className="grid gap-1 text-sm">Rejection reason (required)
-   <textarea value={reason} disabled={pending||auditRetry!==null} minLength={3} maxLength={2000}
+   <Textarea value={reason} disabled={pending||auditRetry!==null} minLength={3} maxLength={2000}
     onChange={event=>{setReason(event.target.value);setAcknowledged(false);}}
-    className="min-h-20 rounded-[var(--lms-control-radius)] border border-border p-2"/>
+    />
   </label>:null}
-  <button type="button" disabled={!valid||pending||auditRetry!==null} onClick={()=>{setAcknowledged(false);setConfirmOpen(true);}}
-   className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+  <Button variant="secondary" type="button" disabled={!valid||pending||auditRetry!==null} onClick={()=>{setAcknowledged(false);setConfirmOpen(true);}}
+   >
    Review {chosen.length} selected decision(s)
-  </button>
+  </Button>
   <Dialog open={confirmOpen} onOpenChange={value=>{if(!pending)setConfirmOpen(value);}}
    title={action==="APPROVE"?"Approve selected requests?":"Reject selected requests?"}
    description={action==="APPROVE"?
@@ -162,15 +164,15 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
    </li>)}</ul>
    {outcomes.some(row=>row.status==="failed")?<div className="space-y-2">
     <p role="alert">Some requests were not decided. Recheck them before retrying.</p>
-    <button type="button" onClick={()=>void copyFailed()} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text">Copy failed</button>
+    <Button variant="secondary" type="button" onClick={()=>void copyFailed()} >Copy failed</Button>
    </div>:null}
   </div>:null}
   {auditRetry?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
    <p>Request decisions are saved, but their batch audit has not been confirmed. Retrying will only check the audit, not decide the requests again.</p>
-   <button type="button" disabled={pending} onClick={()=>void retryAudit()}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold disabled:opacity-50">
+   <Button variant="secondary" type="button" disabled={pending} onClick={()=>void retryAudit()}
+    >
     {pending?"Checking batch audit…":"Retry batch audit only"}
-   </button>
+   </Button>
   </div>:null}
   {error?<p role="alert" className="text-error">{error}</p>:null}
  </section>;

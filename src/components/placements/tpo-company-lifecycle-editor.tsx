@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 
 type Company = {
   name: string; status: string; isTrusted: boolean;
@@ -62,32 +64,32 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
       </p>
       <label className="block text-sm font-semibold text-foreground">
         Reason for change
-        <textarea
+        <Textarea
           value={reason} onChange={(event) => {setReviewAction(null);setReason(event.target.value);}}
           disabled={busy} maxLength={500} rows={3}
-          className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal"
+          className="mt-2 block w-full"
         />
       </label>
       <div className="flex flex-wrap gap-3">
         {company.status === "ACTIVE" ? (
           <>
-            <button type="button" disabled={busy || reason.trim().length < 8}
+            <Button variant="secondary" type="button" disabled={busy || reason.trim().length < 8}
               onClick={() => void submit("EDIT_TRUST")}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+              >
               {company.isTrusted ? "Remove trust" : "Mark trusted"}
-            </button>
-            <button type="button" disabled={busy || reason.trim().length < 8}
+            </Button>
+            <Button variant="secondary" type="button" disabled={busy || reason.trim().length < 8}
               onClick={() => void submit("ARCHIVE")}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+              >
               Archive relationship
-            </button>
+            </Button>
           </>
         ) : (
-          <button type="button" disabled={busy || reason.trim().length < 8}
+          <Button variant="secondary" type="button" disabled={busy || reason.trim().length < 8}
             onClick={() => void submit("RESTORE")}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+            >
             Restore relationship
-          </button>
+          </Button>
         )}
       </div>
       {reviewAction?<div role="group" aria-label="Confirm company change" className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-3 text-sm">
@@ -95,10 +97,10 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
           ?company.isTrusted?"remove trust from ":"mark trusted ":""+(reviewAction==="ARCHIVE"?"archive ":"restore ")}{company.name}?
           This changes only this college&apos;s relationship and is audited.</p>
         <div className="mt-2 flex gap-2">
-          <button type="button" disabled={busy} onClick={()=>void submit(reviewAction)}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-primary-foreground">Confirm change</button>
-          <button type="button" disabled={busy} onClick={()=>setReviewAction(null)}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4">Cancel</button>
+          <Button type="button" disabled={busy} onClick={()=>void submit(reviewAction)}
+            >Confirm change</Button>
+          <Button variant="secondary" type="button" disabled={busy} onClick={()=>setReviewAction(null)}
+            >Cancel</Button>
         </div>
       </div>:null}
       {busy ? <p role="status" className="text-sm text-body">Saving change…</p> : null}

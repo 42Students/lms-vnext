@@ -1,7 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
-import { PageHeader } from "@/components/ui/page-header";
 import { notFound, redirect } from "next/navigation";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getCurrentRequestContext } from "@/auth/request-context";

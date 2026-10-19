@@ -2,7 +2,6 @@
 import { Textarea } from "@/components/ui/textarea";
 import {useRef} from "react";
 import {Button} from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 
 /** User text stays text: no untrusted HTML is ever interpreted or injected. */
 export function LearnerRichResponseEditor({value,onChange,disabled=false}:{

@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
-import { Button } from "@/components/ui/button";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
 
 export function LearnerVerificationWithdraw({

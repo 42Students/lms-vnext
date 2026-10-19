@@ -3,6 +3,8 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {DataTable, type DataTableColumn} from "@/components/ui/data-table";
 import {lookupCollegeStudentPlacement} from "@/modules/placements/college-placement-student-lookup-service";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 type StudentApplication = NonNullable<Awaited<ReturnType<typeof lookupCollegeStudentPlacement>>>["students"][number]["applications"][number];
 const columns:DataTableColumn<StudentApplication & {uiKey:string}>[]=[
   {key:"drive",header:"Company / drive",mobilePriority:"primary",cell:row=>row.company+" · "+row.job},
@@ -20,11 +22,11 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
    actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Analytics</Link>}/>
   <form action="/college/placements/student-lookup" role="search" className="rounded-[8px] border border-border bg-surface p-5">
    <label className="grid max-w-xl gap-2 text-sm font-semibold">Name, roll number or email
-    <input type="search" name="q" minLength={3} maxLength={150} required defaultValue={q}
+    <Input type="search" name="q" minLength={3} maxLength={150} required defaultValue={q}
       placeholder="Find one student in this college"
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm"/>
+      />
    </label>
-   <button className="mt-3 min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Search students</button>
+   <Button className="mt-3">Search students</Button>
   </form>
   {data&&!data.students.length?<p className="border-b border-border pb-5">No matching college students.</p>:null}
   {data?.students.map(person=><section key={person.membershipId} className="space-y-3 border-t border-border pt-5">

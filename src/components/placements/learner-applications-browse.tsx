@@ -31,6 +31,9 @@ import {
   DEFAULT_LEARNER_APPLICATION_FILTERS,
   type LearnerApplicationBrowseFilters,
 } from "@/modules/placements/learner-applications-browse-model";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 
 const PAGE_SIZE = 20;
 const viewOptions=[
@@ -274,34 +277,34 @@ export function LearnerApplicationsBrowse({
         <div className="grid gap-3 sm:grid-cols-3">
           <label className="text-xs font-semibold text-body">
             Company or role
-            <input type="search" value={search}
+            <Input type="search" value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search company or role" maxLength={100}
-              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]" />
+              className="mt-1 w-full" />
           </label>
           <label className="text-xs font-semibold text-body">
             Screening stage
-            <select
+            <Select
               value={filters.stage}
               onChange={(event) => updateQuery({stage:event.target.value})}
-              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
+              className="mt-1 w-full">
               <option value="all">All stages</option>
               {stages.map((stage) => (
                 <option value={stage} key={stage}>{humanize(stage)}</option>
               ))}
-            </select>
+            </Select>
           </label>
           <label className="text-xs font-semibold text-body">
             Sort applications
-            <select
+            <Select
               value={sort}
               onChange={(event) => updateQuery({sort:event.target.value})}
-              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
+              className="mt-1 w-full">
               <option value="activity">Recent activity</option>
               <option value="company">Company A–Z</option>
               <option value="stage">Screening stage A–Z</option>
               <option value="oldest">Oldest application</option>
-            </select>
+            </Select>
           </label>
         </div>
         </div>
@@ -552,7 +555,7 @@ export function LearnerApplicationsBrowse({
             </p>
             <label className="block text-sm font-semibold text-foreground">
               Reason for withdrawal <span className="font-normal text-muted-foreground">(required)</span>
-              <textarea
+              <Textarea
                 value={withdrawReason}
                 onChange={(event) => { setWithdrawReason(event.target.value); setWithdrawError(null); }}
                 minLength={5}
@@ -560,7 +563,7 @@ export function LearnerApplicationsBrowse({
                 rows={4}
                 disabled={withdrawPending}
                 aria-describedby="withdrawal-reason-hint"
-                className="mt-2 min-h-24 w-full rounded-md border border-border bg-surface p-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                className="mt-2 w-full"
                 placeholder="Briefly explain why you are withdrawing"
               />
             </label>

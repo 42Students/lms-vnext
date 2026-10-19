@@ -12,6 +12,9 @@ import {
   listCollegePromotionOptions,
   previewCollegeBatchPromotion,
 } from "@/modules/academics/college-batch-promotion-service";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 type Search = Record<string, string | string[] | undefined>;
 function first(value: string | string[] | undefined) {
@@ -58,35 +61,35 @@ export default async function CollegeBatchPromotionPage({
       <form method="get" action="/college/batch-promotion" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
           Program
-          <select name="programId" defaultValue={parsed.data.programId ?? ""}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+          <Select name="programId" defaultValue={parsed.data.programId ?? ""}
+            >
             <option value="">All programs</option>
             {options.programs.map(program => <option key={program.id} value={program.id}>
               {program.name} ({program.code})
             </option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Batch
-          <select name="cohortId" defaultValue={parsed.data.cohortId ?? ""}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+          <Select name="cohortId" defaultValue={parsed.data.cohortId ?? ""}
+            >
             <option value="">Select a batch</option>
             {options.cohorts.map(cohort => <option key={cohort.id} value={cohort.id}>
               {cohort.programName} · {cohort.name} ({cohort.status})
             </option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Academic year override (optional)
-          <input name="yearStart" type="text" inputMode="numeric" pattern="[0-9]{4}-[0-9]{2}"
+          <Input name="yearStart" type="text" inputMode="numeric" pattern="[0-9]{4}-[0-9]{2}"
             defaultValue={parsed.data.yearStart === undefined ? "" : formatPromotionAcademicYear(parsed.data.yearStart)}
             placeholder="e.g., 2099-00"
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            />
         </label>
         <div className="flex items-end">
-          <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary">
+          <Button type="submit" >
             Preview
-          </button>
+          </Button>
         </div>
       </form>
     </section>

@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 "use client";
 
 export default function Error({reset}: {
@@ -9,9 +10,9 @@ export default function Error({reset}: {
     <p className="mt-2 text-sm text-body">
       The read failed; a missing display is not evidence that there are no records.
     </p>
-    <button type="button" onClick={reset}
-      className="mt-4 rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+    <Button variant="secondary" type="button" onClick={reset}
+      className="mt-4">
       Retry
-    </button>
+    </Button>
   </section>;
 }

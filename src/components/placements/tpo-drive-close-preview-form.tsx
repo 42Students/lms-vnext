@@ -6,6 +6,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {Button} from "@/components/ui/button";
 type Preview={id:string;expectedUpdatedAt:string;counts:{applications:number;rounds:number;offers:number}};
 export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  const router=useRouter(),[pending,setPending]=useState(false),[error,setError]=useState<string|null>(null);
@@ -65,8 +66,8 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
     className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/></label>
   <p className="text-xs text-body">If the drive version or these counts change, closing is rejected and you must review the consequences again.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <button type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-5 font-[650] disabled:opacity-50 text-primary-foreground">
-   {pending?"Closing…":"Review and close drive"}</button>
+  <Button type="submit" disabled={pending} >
+   {pending?"Closing…":"Review and close drive"}</Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
     title="Close this drive?"
     description="New applications stop, open applicants are marked Not selected and told, and pending withdrawal requests are settled. Accepted offers remain valid. This action is audited."

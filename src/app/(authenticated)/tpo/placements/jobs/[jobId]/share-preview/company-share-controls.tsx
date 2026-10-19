@@ -7,6 +7,9 @@ import {afterCompanyShareRevocation} from "@/modules/placements/company-share/re
 import {prependCompanyShareLink} from "@/modules/placements/company-share/link-page-model";
 import {companyShareIssueFailureMessage} from "@/modules/placements/company-share/issue-message-model";
 import {copyCompanyShareUrl} from "@/modules/placements/company-share/copy-model";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
 const SHARE_COLUMNS=[
  ["APPLICATION_ID","Applicant ID"],["NAME","Name"],["ROLL_NUMBER","Roll number"],
@@ -108,14 +111,14 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
   </p>:<>
    <div className="flex flex-wrap items-end gap-3">
     <label className="text-sm text-body">Expires in days
-     <select value={days} onChange={event=>changeExpiry(event.target.value)}
-      className="ml-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 py-2">
+     <Select value={days} onChange={event=>changeExpiry(event.target.value)}
+      className="ml-2">
       {[1,2,3,4,5,6,7,14,30,60,90].map(day=><option key={day} value={day}>{day}</option>)}
-     </select>
+     </Select>
     </label>
     <label className="grid gap-1 text-sm">Please shortlist by
-     <input type="date" value={shortlistBy} onChange={event=>setShortlistBy(event.target.value)}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
+     <Input type="date" value={shortlistBy} onChange={event=>setShortlistBy(event.target.value)}
+      />
     </label>
     <fieldset className="w-full rounded-[var(--lms-control-radius)] border border-border p-3">
      <legend className="px-1 text-sm font-semibold">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
@@ -128,10 +131,10 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
        {label}
       </label>)}</div>
     </fieldset>
-    <button type="button" disabled={pending||selectedColumns.length===0} onClick={createLink}
-     className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-primary-foreground">
+    <Button type="button" disabled={pending||selectedColumns.length===0} onClick={createLink}
+     >
      Create expiring link
-    </button>
+    </Button>
    </div>
    {newCode?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
     Share code: <strong className="font-mono text-lg">{newCode}</strong>.
@@ -139,8 +142,8 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
    </p>:null}
    {newUrl?<div className="rounded-[var(--lms-control-radius)] border border-border p-3">
     <p className="text-xs font-semibold text-body">Copy this URL now. The secret cannot be recovered later.</p>
-    <input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
-     className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-xs"/>
+    <Input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
+     className="mt-2 w-full"/>
     <button type="button" onClick={()=>void copyLink()}
      className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Copy URL</button>
     {copyState==="COPIED"?<p role="status" className="mt-2 text-sm text-body">Copied to clipboard.</p>:null}

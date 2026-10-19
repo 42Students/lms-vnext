@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import {useEffect,useId,useRef,useState} from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 type Item={id:string;name:string;displayName:string;category:string|null};
 export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange:(value:string)=>void}){

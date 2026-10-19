@@ -6,6 +6,8 @@ import {TpoVerificationPanel} from "@/components/verification/TpoVerificationPan
 import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {parseTpoVerificationParams,tpoVerificationHref} from "@/modules/verification/tpo-queue-server-model";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 export const dynamic="force-dynamic";
 
@@ -74,14 +76,14 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     </Select>
    </label>
    <label className="grid gap-1 text-sm">Student or roll number
-    <input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
+    <Input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" />
    </label>
    <label className="grid gap-1 text-sm">Page size
     <Select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="1000">First 1,000 (legacy view)</option>
     </Select>
    </label>
-   <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Apply filters</button>
+   <Button type="submit" >Apply filters</Button>
    <Link href="/tpo/verification" className="self-center text-[var(--lms-teal-deep)] underline">Reset filters</Link>
   </form>
   {queue.available&&queue.enabled&&queue.permitted&&queue.counts?

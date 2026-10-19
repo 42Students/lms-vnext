@@ -8,6 +8,8 @@ import { tpoDriveReadinessMessage } from "@/modules/placements/tpo-drive-lifecyc
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {Button} from "@/components/ui/button";
+import {Textarea} from "@/components/ui/textarea";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
@@ -91,15 +93,15 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
       </div>
       <div className="mt-4 grid gap-3 md:grid-cols-3">
         {available.map((item) => (
-          <button
+          <Button variant="secondary"
             key={item.action}
             type="button"
             onClick={() => { setAction(item.action); setError(null); setAcknowledged(false); }}
             disabled={pending || !item.decision.allowed}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50"
+            
           >
             {item.action} {item.decision.allowed ? "" : "(unavailable)"}
-          </button>
+          </Button>
         ))}
       </div>
       {available.filter((item) => item.decision.blockers.length > 0).map((item) => (
@@ -111,13 +113,13 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
         <div className="mt-4 space-y-3">
           <label className="block text-sm font-semibold text-foreground">
             Reason for {selected.action.toLowerCase()} (required)
-            <textarea
+            <Textarea
               value={reason}
               onChange={(event) => setReason(event.target.value)}
               maxLength={1000}
               rows={2}
               disabled={pending}
-              className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal"
+              className="mt-2 block w-full"
             />
           </label>
           {selected.action==="PUBLISH"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
@@ -141,22 +143,22 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
             I reviewed the learner visibility and drive state consequences. This decision is audited.
           </label>
           <div className="flex gap-3">
-            <button
+            <Button
               type="button"
               disabled={pending || reason.trim().length < 10 || !acknowledged}
               onClick={() => void submit()}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50"
+              
             >
               {pending ? "Saving..." : "Confirm " + selected.action.toLowerCase()}
-            </button>
-            <button
+            </Button>
+            <Button variant="secondary"
               type="button"
               onClick={() => setAction(null)}
               disabled={pending}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm"
+              
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       ) : null}

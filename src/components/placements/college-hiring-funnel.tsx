@@ -6,6 +6,7 @@ import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {collegeHiringAnalyticsHref} from "@/modules/placements/college-hiring-analytics-model";
 import type {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
+import {Button} from "@/components/ui/button";
 
 type Funnel=Awaited<ReturnType<typeof getCollegeHiringFunnel>>;
 const order=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED",
@@ -58,7 +59,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
      <DateInput mode="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
     </label>
     <div className="flex gap-3 sm:col-span-2 lg:col-span-5">
-     <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Apply filters</button>
+     <Button type="submit" >Apply filters</Button>
      <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined})}
       className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear all</Link>
     </div>

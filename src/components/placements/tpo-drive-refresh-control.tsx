@@ -1,6 +1,7 @@
 "use client";
 import {useCallback,useEffect,useTransition} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 
 /** Refresh stale projections on focus without discarding server-side records. */
 export function TpoDriveRefreshControl(){
@@ -11,10 +12,10 @@ export function TpoDriveRefreshControl(){
   return ()=>window.removeEventListener("focus",refresh);
  },[refresh]);
  return <div className="flex flex-wrap items-center gap-2">
-  <button type="button" disabled={pending} onClick={refresh}
-   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+  <Button variant="secondary" type="button" disabled={pending} onClick={refresh}
+   >
    {pending?"Refreshing drive workspace…":"Refresh drive workspace"}
-  </button>
+  </Button>
   {pending?<span role="status" className="text-sm text-body">Refreshing drive workspace…</span>:null}
  </div>;
 }

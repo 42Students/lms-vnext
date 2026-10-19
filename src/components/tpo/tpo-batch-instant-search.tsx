@@ -1,8 +1,8 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { Input } from "@/components/ui/input";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 
 /** TPO-batches-12: keep all existing batch filters while search changes. */
 export function TpoBatchInstantSearch({value}:{value:string}){
@@ -25,9 +25,9 @@ export function TpoBatchInstantSearch({value}:{value:string}){
     onChange={event=>setDraft(event.target.value)} autoComplete="off"
     className="min-h-9 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
     aria-label="Search batches"/>
-   {draft?<button type="button" onClick={()=>setDraft("")}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text"
-    aria-label="Clear batch search">Clear</button>:null}
+   {draft?<Button variant="secondary" type="button" onClick={()=>setDraft("")}
+    
+    aria-label="Clear batch search">Clear</Button>:null}
   </span>
  </label>;
 }

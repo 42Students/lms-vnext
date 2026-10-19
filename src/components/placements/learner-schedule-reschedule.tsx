@@ -5,6 +5,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meetingUrl}:{applicationId:string;roundId:string;mode:"ON_CAMPUS"|"VIRTUAL";venue:string|null;meetingUrl:string|null}){
  const router=useRouter();
  const [open,setOpen]=useState(false),[reason,setReason]=useState(""),[date,setDate]=useState("");
@@ -53,10 +54,10 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
      <Input required type="url" value={nextUrl} maxLength={2000} onChange={e=>setNextUrl(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/></label>}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-   <button type="button" disabled={busy||reason.trim().length<3||!date||
+   <Button type="button" disabled={busy||reason.trim().length<3||!date||
      (nextMode==="ON_CAMPUS"?!nextVenue.trim():!/^https:\/\//i.test(nextUrl))}
-     onClick={()=>void save()} className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover disabled:opacity-50 sm:min-h-9">
-    {busy?"Sending…":"Send request"}</button>
+     onClick={()=>void save()} >
+    {busy?"Sending…":"Send request"}</Button>
   </div>:null}
  </div>;
 }

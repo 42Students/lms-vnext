@@ -12,6 +12,9 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import { can } from "@/modules/permissions/policy";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusTone,driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveStatusTone,tpoDriveWhereItIs,tpoDriveEmploymentLabel,tpoDriveWorkModeLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -88,110 +91,110 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     <form action="/tpo/placements/lifecycle" method="get"
       className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Season
-        <select name="seasonId" defaultValue={data.season?.id ?? ""} disabled={!data.seasons.length}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="seasonId" defaultValue={data.season?.id ?? ""} disabled={!data.seasons.length}
+          className="mt-2 block w-full">
           <option value="">All college seasons</option>
           {data.seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Batch
-        <select name="cohortId" defaultValue={data.cohortId??""}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="cohortId" defaultValue={data.cohortId??""}
+          className="mt-2 block w-full">
           <option value="">All batches</option>
           {data.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.programName} · {batch.name}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Company
-        <select name="companyId" defaultValue={data.companyId??""}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="companyId" defaultValue={data.companyId??""}
+          className="mt-2 block w-full">
           <option value="">All companies</option>
           {data.companies.map(company=><option key={company.id} value={company.id}>{company.name}</option>)}
-        </select>
+        </Select>
       </label>
       {data.view!=="REQUESTS"?<label className="min-w-40 flex-1 text-sm font-semibold text-body">Created by
-        <select name="ownerUserId" defaultValue={data.ownerUserId??""}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="ownerUserId" defaultValue={data.ownerUserId??""}
+          className="mt-2 block w-full">
           <option value="">Any creator</option>
           {data.owners.map(owner=><option key={owner.id} value={owner.id}>{owner.name??"College staff"}</option>)}
-        </select>
+        </Select>
       </label>:null}
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Lifecycle
-        <select name="view" defaultValue={data.view}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="view" defaultValue={data.view}
+          className="mt-2 block w-full">
           <option value="ALL">All jobs</option><option value="REQUESTS">Requests</option><option value="DRAFT">Drafts</option>
           <option value="LIVE">Live</option><option value="CLOSED">Closed</option>
-        </select>
+        </Select>
       </label>
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Company or drive
-       <input name="search" defaultValue={data.search} maxLength={100}
-        className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+       <Input name="search" defaultValue={data.search} maxLength={100}
+        className="mt-2 block w-full"/>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Deadline state
-        <select name="deadline" defaultValue={data.deadline} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="deadline" defaultValue={data.deadline} className="mt-2 block w-full">
           <option value="ALL">All deadlines</option>
           <option value="TODAY">Today (IST)</option>
           <option value="DUE_SOON">Live · next 7 days</option>
           <option value="LATER">Later than 7 days</option>
           <option value="OVERDUE">Live · passed</option><option value="UNSET">No recorded deadline</option>
-        </select>
+        </Select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Card columns
-        <select name="display" defaultValue={data.display} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="display" defaultValue={data.display} className="mt-2 block w-full">
           <option value="DETAILED">Detailed</option><option value="COMPACT">Compact</option>
-        </select>
+        </Select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Where it is
-        <select name="journey" defaultValue={data.journey}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="journey" defaultValue={data.journey}
+          className="mt-2 block w-full">
           <option value="ALL">Every stage</option>
           <option value="TAKING_APPLICATIONS">Taking applications</option>
           <option value="RUNNING_ROUNDS">Rounds in progress</option>
           <option value="OFFERS_ISSUED">Offers issued</option>
           <option value="COMPLETE">Closed or cancelled</option>
-        </select>
+        </Select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Work mode
-        <select name="workMode" defaultValue={data.workMode} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="workMode" defaultValue={data.workMode} className="mt-2 block w-full">
           <option value="ALL">All modes</option><option value="ONSITE">On-site</option>
           <option value="REMOTE">Remote</option><option value="HYBRID">Hybrid</option>
-        </select>
+        </Select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Employment type
-        <select name="employmentType" defaultValue={data.employmentType} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="employmentType" defaultValue={data.employmentType} className="mt-2 block w-full">
           <option value="ALL">All employment</option><option value="FULL_TIME">Full-time</option>
           <option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
-        </select>
+        </Select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Sort drives
-        <select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="sort" defaultValue={data.sort} className="mt-2 block w-full">
           <option value="COMPANY">Company name</option><option value="DEADLINE_ASC">Earliest recorded deadline</option>
           <option value="DEADLINE_DESC">Latest recorded deadline</option>
-        </select>
+        </Select>
       </label>
       <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. applied
-        <input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+        <Input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
+          className="mt-2 block w-full"/>
       </label>
       <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. applied
-        <input name="maxApplied" type="number" min={0} max={100000} defaultValue={data.maxApplied??""}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+        <Input name="maxApplied" type="number" min={0} max={100000} defaultValue={data.maxApplied??""}
+          className="mt-2 block w-full"/>
       </label>
       <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. offers
-        <input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+        <Input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
+          className="mt-2 block w-full"/>
       </label>
       <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. offers
-        <input name="maxOffers" type="number" min={0} max={100000} defaultValue={data.maxOffers??""}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+        <Input name="maxOffers" type="number" min={0} max={100000} defaultValue={data.maxOffers??""}
+          className="mt-2 block w-full"/>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Pay category
-        <select name="payCategory" defaultValue={data.payCategory}
-          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <Select name="payCategory" defaultValue={data.payCategory}
+          className="mt-2 block w-full">
           <option value="ALL">All categories</option><option value="REGULAR">Regular</option>
           <option value="DREAM">Dream</option>
-        </select>
+        </Select>
       </label>
-      <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Apply</button>
+      <Button type="submit" >Apply</Button>
     </form>
     <div className="flex flex-wrap gap-3 text-sm">
       <Link href={exportHref("PAGE")} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
@@ -355,9 +358,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
               </div>
             </div></article>)}
           <div className="flex flex-wrap items-start gap-3">
-          <button type="submit" className="min-h-11 justify-self-start rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+          <Button variant="secondary" type="submit" className="justify-self-start">
             Export selected drives (CSV)
-          </button>
+          </Button>
            <TpoDriveActOnPanel/>
           </div>
         </form>}

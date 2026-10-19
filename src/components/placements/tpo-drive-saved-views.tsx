@@ -1,6 +1,8 @@
 "use client";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 type Saved={name:string;query:string};
 const MAX=8;
 export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
@@ -36,13 +38,13 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   <h2 className="font-semibold">My saved views</h2>
   <p className="mt-1 text-xs text-body">Save up to {MAX} named filter links in this browser for your college account. They do not change records or share filters with colleagues.</p>
   <div className="mt-3 flex flex-wrap gap-2">
-   <input aria-label="Saved view name" maxLength={50} value={name}
+   <Input aria-label="Saved view name" maxLength={50} value={name}
     onChange={e=>setName(e.target.value)} placeholder="e.g. Interviews this week"
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
-   <button type="button" onClick={save}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text">
+    />
+   <Button variant="secondary" type="button" onClick={save}
+    >
     Save current filters
-   </button>
+   </Button>
   </div>
   {error?<p role="alert" className="mt-2 text-xs text-error">{error}</p>:null}{copied?<p role="status" className="mt-2 text-xs text-body">Link copied for {copied}.</p>:null}
   {views.length>1?<button type="button" onClick={()=>{
@@ -54,12 +56,12 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   </button>:null}
   {views.length?<ul className="mt-3 flex flex-wrap gap-2">{views.map(view=>
    <li key={view.name} className="inline-flex items-center gap-1 rounded-[var(--lms-control-radius)] border border-border">
-    <button type="button" onClick={()=>router.push("/tpo/placements/lifecycle"+(view.query?"?"+view.query:""))}
-     className="min-h-11 px-3 text-sm font-semibold text-primary-text md:min-h-9">{view.name}</button>
-    <button type="button" onClick={()=>{if(!navigator.clipboard){setError("Clipboard unavailable. Open the view and copy its URL.");return;}void navigator.clipboard.writeText(window.location.origin+"/tpo/placements/lifecycle"+(view.query?"?"+view.query:"")).then(()=>{setCopied(view.name);setError("");}).catch(()=>setError("Copy failed. Open the view and copy its URL."));}}
-     aria-label={"Copy link for saved view "+view.name} className="min-h-11 px-2 text-sm text-primary-text md:min-h-9">Copy link</button>
-    <button type="button" onClick={()=>remove(view.name)}
-     aria-label={"Delete saved view "+view.name} className="min-h-11 px-2 text-sm text-body md:min-h-9">×</button>
+    <Button variant="ghost" type="button" onClick={()=>router.push("/tpo/placements/lifecycle"+(view.query?"?"+view.query:""))}
+     >{view.name}</Button>
+    <Button variant="ghost" type="button" onClick={()=>{if(!navigator.clipboard){setError("Clipboard unavailable. Open the view and copy its URL.");return;}void navigator.clipboard.writeText(window.location.origin+"/tpo/placements/lifecycle"+(view.query?"?"+view.query:"")).then(()=>{setCopied(view.name);setError("");}).catch(()=>setError("Copy failed. Open the view and copy its URL."));}}
+     aria-label={"Copy link for saved view "+view.name} >Copy link</Button>
+    <Button variant="ghost" type="button" onClick={()=>remove(view.name)}
+     aria-label={"Delete saved view "+view.name} >×</Button>
    </li>)}</ul>:<p className="mt-2 text-sm text-body">No views saved in this browser yet.</p>}
  </section>;
 }

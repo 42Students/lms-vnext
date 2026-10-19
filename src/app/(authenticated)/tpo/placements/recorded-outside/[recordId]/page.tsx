@@ -6,6 +6,8 @@ import {PageHeader} from "@/components/ui/page-header";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoOutsideDriveParticipants} from "@/modules/placements/recorded-outside-participation-service";
 import {TpoOutsideParticipantsEditor} from "@/components/placements/tpo-outside-participants-editor";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 export default async function TpoOutsideDriveDetail({params,searchParams}:{
  params:Promise<{recordId:string}>;searchParams:Promise<{q?:string}>;
 }){
@@ -23,9 +25,9 @@ export default async function TpoOutsideDriveDetail({params,searchParams}:{
    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(data.record.occurredAt)} IST</p>
   <form method="get" className="flex gap-2">
    <label className="grid gap-1 text-sm">Search college learners
-    <input name="q" defaultValue={q} maxLength={80} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3"/>
+    <Input name="q" defaultValue={q} maxLength={80} />
    </label>
-   <button type="submit" className="self-end min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold">Find</button>
+   <Button variant="secondary" type="submit" className="self-end">Find</Button>
   </form>
   <TpoOutsideParticipantsEditor recordId={recordId} choices={data.choices}
    participants={data.participants} available={data.available}/>

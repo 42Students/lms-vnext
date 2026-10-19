@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {Button} from "@/components/ui/button";
 export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:string}){
  const router=useRouter(),{run}=useGuardedAction({timeoutMs:35000});
  const [reviewed,setReviewed]=useState(false),[pending,setPending]=useState(false);
@@ -34,9 +35,9 @@ export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:s
    className="mt-1 h-4 w-4 accent-primary"/>
    I reviewed this unpublished drive and understand it will leave the active list.
   </label>
-  <button type="button" disabled={!reviewed||pending} onClick={()=>void archive()}
-   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
-   {pending?"Removing draft…":"Delete draft"}</button>
+  <Button variant="secondary" type="button" disabled={!reviewed||pending} onClick={()=>void archive()}
+   >
+   {pending?"Removing draft…":"Delete draft"}</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;
 }

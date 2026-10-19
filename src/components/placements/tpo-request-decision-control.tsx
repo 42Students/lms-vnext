@@ -68,10 +68,10 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
   function decide(){if(!mode||!valid||guardedPending)return;void runGuarded(()=>decideWith(mode,decisionNote));}
   return <div className="flex flex-col gap-2 text-sm">
     <div className="flex flex-wrap gap-2">
-      <button type="button" disabled={pending||guardedPending} onClick={()=>open("APPROVE")}
-        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-foreground disabled:opacity-50">Approve</button>
-      <button type="button" disabled={pending||guardedPending} onClick={()=>open("REJECT")}
-        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-foreground disabled:opacity-50">Reject</button>
+      <Button variant="secondary" type="button" disabled={pending||guardedPending} onClick={()=>open("APPROVE")}
+        >Approve</Button>
+      <Button variant="secondary" type="button" disabled={pending||guardedPending} onClick={()=>open("REJECT")}
+        >Reject</Button>
     </div>
     {!mode&&error?<p role="alert" className="text-error">{error}</p>:null}
     <Dialog open={mode!==null} onOpenChange={value=>{if(!value&&!pending)setMode(null);}}

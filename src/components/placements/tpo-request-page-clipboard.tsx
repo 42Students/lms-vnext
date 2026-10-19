@@ -87,7 +87,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
        onChange={e=>setVisible(keys=>e.target.checked?[...keys,option.key]:keys.filter(key=>key!==option.key))}/>
       {option.label}
     </label>)}</div>
-    <button type="button" className="mt-2 min-h-11 rounded-[9px] border border-border px-3 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" onClick={()=>setVisible(options.map(option=>option.key))}>Reset columns</button>
+    <Button variant="secondary" type="button" className="mt-2" onClick={()=>setVisible(options.map(option=>option.key))}>Reset columns</Button>
    </Disclosure>
   </div>
   <DataTable<TpoRequestClipboardRow>
@@ -123,8 +123,8 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
     onChange={event=>setSelected(event.target.checked?rows.map(row=>row.id):[])}/>
    Select visible page
   </label>
-  <button type="button" disabled={selectedRows.length===0} onClick={()=>void copy()}
-   className="min-h-11 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50">Copy selected rows</button>
+  <Button variant="secondary" type="button" disabled={selectedRows.length===0} onClick={()=>void copy()}
+   >Copy selected rows</Button>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
 }

@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
 export function MentorTaskDeleteControl({projectId,taskId,title,updatedAt}:{
  projectId:string;taskId:string;title:string;updatedAt:Date|string;
 }){
@@ -21,10 +22,10 @@ export function MentorTaskDeleteControl({projectId,taskId,title,updatedAt}:{
   finally{setPending(false);}
  }
  return <span>
-  <button type="button" disabled={pending} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-error bg-surface px-3 text-sm font-semibold text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 sm:min-h-9">
+  <Button variant="danger" type="button" disabled={pending} onClick={()=>setConfirmOpen(true)}
+    >
     {pending?"Deleting…":"Delete task"}
-  </button>
+  </Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
    title="Delete this task?" confirmLabel="Delete task" pending={pending} onConfirm={remove}
    description="This permanently removes the task from the project board. It cannot be undone.">

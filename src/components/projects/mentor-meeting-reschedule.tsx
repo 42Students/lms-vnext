@@ -11,6 +11,7 @@ import {FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {fromIstLocalInput,toIstLocalInput,mentorMeetingRescheduleSchema}
   from "@/modules/projects/mentor-meeting-reschedule-model";
+import {Input} from "@/components/ui/input";
 
 export function MentorMeetingReschedule(props:{
   projectId:string;meetingId:string;startsAt:string;endsAt:string;updatedAt:string;
@@ -59,16 +60,16 @@ export function MentorMeetingReschedule(props:{
         event.preventDefault();if(parsed.success&&changed){setOpen(false);setConfirm(true);}
       }} className="grid gap-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Start (IST)
-          <input data-slot="input" type="datetime-local" required value={start}
+          <Input data-slot="input" type="datetime-local" required value={start}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
             onChange={event=>setStart(event.target.value)}
-            className="min-h-11 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
+            className="min-w-0 max-w-full"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">End (IST)
-          <input data-slot="input" type="datetime-local" required value={end}
+          <Input data-slot="input" type="datetime-local" required value={end}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
             onChange={event=>setEnd(event.target.value)}
-            className="min-h-11 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
+            className="min-w-0 max-w-full"/>
         </label>
         {!parsed.success?<p id={validationId} role="alert" className="text-sm text-foreground">
           Select valid start/end times, with a duration up to 12 hours.</p>:null}

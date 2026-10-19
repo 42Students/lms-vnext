@@ -15,6 +15,7 @@ import { ScrollCue } from "@/components/ui/scroll-cue";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { joinGroup } from "@/modules/groups/service";
+import {Button} from "@/components/ui/button";
 
 const uuid = z.string().uuid();
 const fieldStyle = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
@@ -170,7 +171,7 @@ export default async function CollegeElectiveAllocatePage({
         <input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
           className={fieldStyle} placeholder="Search eligible students" />
       </label>
-      <button className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Search</button>
+      <Button >Search</Button>
     </form>
     <form action={allocate} className="space-y-4 border-b border-border pb-4">
       <label className="grid gap-1 text-sm font-semibold">Allocate selected to…
@@ -209,10 +210,10 @@ export default async function CollegeElectiveAllocatePage({
         <textarea name="identifiers" rows={3} maxLength={12000} className={fieldStyle}
           placeholder="One roll number or membership ID per line, comma separated also supported" />
       </label>
-      <button type="submit" disabled={!offerings.length}
-        className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+      <Button type="submit" disabled={!offerings.length}
+        >
         Allocate selected to…
-      </button>
+      </Button>
     </form>
   </main>;
 }

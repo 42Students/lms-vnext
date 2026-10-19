@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 "use client";
 
 export default function Error({reset}:{
@@ -9,9 +10,9 @@ export default function Error({reset}:{
     <p className="mt-2 text-sm text-body">
       The read failed; missing or unmarked sessions cannot be inferred from this error.
     </p>
-    <button type="button" onClick={reset}
-      className="mt-4 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+    <Button type="button" onClick={reset}
+      className="mt-4">
       Retry
-    </button>
+    </Button>
   </section>;
 }

@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import {Button} from "@/components/ui/button";
 type Preview={job:{title:string;status:string};canArchive:boolean;applications:number;
  rounds:number;offers:Record<string,number>;note:string};
 export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
@@ -34,9 +35,9 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
  return <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h2 className="font-semibold">Delete drive</h2>
   <p className="text-sm text-muted-foreground">Safely archive instead of permanently erasing placement evidence.</p>
-  {!preview?<button type="button" disabled={busy} onClick={()=>void load()}
-    className="min-h-11 rounded border border-border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-    {busy?"Loading…":"View delete impact"}</button>:
+  {!preview?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void load()}
+    >
+    {busy?"Loading…":"View delete impact"}</Button>:
    <div className="space-y-2" role="group" aria-label="Delete drive impact">
     <p className="text-sm font-semibold">{preview.job.title} · {preview.job.status}</p>
     <p className="text-sm">{preview.applications} applications, {preview.rounds} rounds,
@@ -46,13 +47,13 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
       Archive &quot;{preview.job.title}&quot;? The drive stays in the audit history.
     </p>:null}
     <div className="flex flex-wrap gap-3">
-     {awaitingConfirmation?<button type="button" disabled={busy||!preview.canArchive} onClick={()=>void archive()}
-       className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-       {busy?"Archiving…":"Yes, archive drive"}</button>:
-      <button type="button" disabled={busy||!preview.canArchive} onClick={()=>setAwaitingConfirmation(true)}
-       className="min-h-11 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Archive drive</button>}
-     <button type="button" disabled={busy} onClick={()=>{setAwaitingConfirmation(false);setPreview(null);}}
-      className="min-h-11 rounded border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
+     {awaitingConfirmation?<Button type="button" disabled={busy||!preview.canArchive} onClick={()=>void archive()}
+       >
+       {busy?"Archiving…":"Yes, archive drive"}</Button>:
+      <Button variant="secondary" type="button" disabled={busy||!preview.canArchive} onClick={()=>setAwaitingConfirmation(true)}
+       >Archive drive</Button>}
+     <Button variant="secondary" type="button" disabled={busy} onClick={()=>{setAwaitingConfirmation(false);setPreview(null);}}
+      >Cancel</Button>
     </div>
    </div>}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

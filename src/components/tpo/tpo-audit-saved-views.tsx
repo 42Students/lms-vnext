@@ -8,6 +8,8 @@ import {
  tpoAuditSavedFiltersSchema,tpoAuditSavedViewHref,
  type TpoAuditSavedFilters,type TpoAuditSavedView,type TpoAuditSavedViewCommand,
 } from "@/modules/placements/tpo-audit-saved-view-model";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 
 const endpoint="/api/placements/tpo/audit/saved-views";
 type Result={ready:boolean;views:TpoAuditSavedView[]};
@@ -125,22 +127,22 @@ export function TpoAuditSavedViews({filters}:{filters:{
   </p>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-44 flex-1 gap-1 text-xs">View name
-    <input value={name} maxLength={50} disabled={!ready||busy}
+    <Input value={name} maxLength={50} disabled={!ready||busy}
      onChange={event=>setName(event.target.value)}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-sm"/>
+     />
    </label>
    <Button variant="secondary" type="button" onClick={()=>void save()} disabled={!ready||busy||!name.trim()}
     className="min-h-9">Save current</Button>
   </div>
   {views.length?<div className="mt-3 flex flex-wrap gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs">Saved view
-    <select value={selected} onChange={event=>setSelected(event.target.value)}
-     disabled={!ready||busy} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-sm">
+    <Select value={selected} onChange={event=>setSelected(event.target.value)}
+     disabled={!ready||busy} >
      <option value="">Select a view</option>
      {views.map(view=><option key={view.id} value={view.id}>
       {view.pinned?"★ ":""}{view.name}
      </option>)}
-    </select>
+    </Select>
    </label>
    <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>void open()}
     className="min-h-9">Open</Button>

@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {Button} from "@/components/ui/button";
 type Preview={eligible:number;ignored:number;excluded:number;pendingLettersWithdrawn:number};
 type Result={updated:number;skipped:number;results:{status:string;reason:string}[]};
 /** Same locked writer and impact check as bulk drives, scoped to one drive. */
@@ -32,17 +33,17 @@ export function CollegeDriveRowLifecycleAction({jobId,title,status}:{
   finally{setBusy(false);}
  }
  return <div className="inline-flex flex-col gap-2 text-sm">
-  {!preview?<button type="button" onClick={()=>void perform(false)} disabled={busy}
-    className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-    {action==="CLOSE"?"Close":"Open"}</button>:<div role="group" aria-label={"Confirm "+action.toLowerCase()+" "+title}
+  {!preview?<Button variant="secondary" type="button" onClick={()=>void perform(false)} disabled={busy}
+    >
+    {action==="CLOSE"?"Close":"Open"}</Button>:<div role="group" aria-label={"Confirm "+action.toLowerCase()+" "+title}
     className="space-y-2 rounded border border-border bg-surface p-3">
    <p className="text-xs font-semibold">{action==="CLOSE"?"Close":"Reopen"} {title}?</p>
    {action==="CLOSE"?<p className="text-xs">{preview.pendingLettersWithdrawn} issued offers may be withdrawn. Audit and application history remain.</p>:
     <p className="text-xs">Previously withdrawn offers will not be reissued.</p>}
-   <button type="button" disabled={busy||!preview.eligible} onClick={()=>void perform(true)}
-    className="rounded bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Confirm</button>
-   <button type="button" disabled={busy} onClick={()=>setPreview(null)}
-    className="ml-2 rounded border border-border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
+   <Button type="button" disabled={busy||!preview.eligible} onClick={()=>void perform(true)}
+    >Confirm</Button>
+   <Button variant="secondary" type="button" disabled={busy} onClick={()=>setPreview(null)}
+    className="ml-2">Cancel</Button>
   </div>}
   {error?<p role="alert" className="max-w-48 text-xs text-error">{error}</p>:null}
   {message?<p role="status" className="text-xs">{message}</p>:null}

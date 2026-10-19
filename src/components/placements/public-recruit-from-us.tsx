@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PUBLIC_RECRUIT_COPY,publicRecruitThanks } from "@/modules/placements/public-enquiry/public-copy";
 import {publicRecruiterWorkEmailSchema} from "@/modules/placements/public-college-join-model";
+import {Button} from "@/components/ui/button";
 
 const control="w-full";
 export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;enabled:boolean}){
@@ -73,13 +74,13 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
       <span className="block mt-1 text-xs font-normal">{PUBLIC_RECRUIT_COPY.code}</span>
      </label>:null}
     {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
-    {sent?<button type="button" disabled={busy}
-      className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-9 border border-border px-4 text-sm text-primary-text disabled:opacity-50"
-      onClick={()=>void submit("send-code")}>Send a new code</button>:null}
-    <button type="submit" disabled={busy}
-     className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-9 bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    {sent?<Button variant="secondary" type="button" disabled={busy}
+      
+      onClick={()=>void submit("send-code")}>Send a new code</Button>:null}
+    <Button type="submit" disabled={busy}
+     >
       {sent?PUBLIC_RECRUIT_COPY.submit:PUBLIC_RECRUIT_COPY.send}
-    </button>
+    </Button>
    </form>}
  </section>;
 }

@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {Button} from "@/components/ui/button";
 
 export function TpoCompanyFeedbackForm({
   companyId,
@@ -77,11 +78,11 @@ export function TpoCompanyFeedbackForm({
         <p>Record this internal recruiter note? New CRM contacts become CONTACTED when an activity is logged.</p>
         <button type="button" className="mt-2 text-[var(--lms-teal-deep)] underline" onClick={()=>setReviewing(false)}>Cancel review</button>
       </div>:null}
-      <button type="button" disabled={busy || !leadId || note.trim().length < 3}
+      <Button type="button" disabled={busy || !leadId || note.trim().length < 3}
         onClick={() => void save()}
-        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50">
+        >
         {busy ? "Saving note..." : reviewing?"Confirm note save":"Review and save note"}
-      </button>
+      </Button>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {saved ? <p role="status" className="text-sm text-body">Note saved. The timeline is refreshing.</p> : null}
     </section>

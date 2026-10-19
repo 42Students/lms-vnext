@@ -104,7 +104,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
             <option value="ENDED">Ended</option>
           </Select>
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply</button>
+        <Button type="submit" >Apply</Button>
         <Link href="/college/people" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
     </section>

@@ -5,6 +5,7 @@ import {useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {TPO_DRIVE_REQUEST_DECISION_COPY} from "@/modules/placements/tpo-drive-request-decision-model";
+import {Button} from "@/components/ui/button";
 type Action="APPROVE_LATER"|"SEND_BACK"|"DECLINE";
 export function TpoDriveRequestActions({requestId,status}:{
   requestId:string;status:"REQUEST"|"SENT_BACK";
@@ -44,13 +45,13 @@ export function TpoDriveRequestActions({requestId,status}:{
   }
   return <div className="space-y-2">
     <div className="flex flex-wrap gap-2">
-      {actions.map(option=><button key={option.value} type="button" disabled={busy||guardedPending}
+      {actions.map(option=><Button variant="secondary" key={option.value} type="button" disabled={busy||guardedPending}
         onClick={()=>{
           setAction(option.value);setError("");setMessage("");
           setReason(option.value==="APPROVE_LATER"?"Approved for later":"");
         }}
-        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
-        {option.label}</button>)}
+        >
+        {option.label}</Button>)}
     </div>
     {action?<div role="group" aria-label={actions.find(x=>x.value===action)?.label}
       className="space-y-2 border-t border-border pt-4">
@@ -66,11 +67,11 @@ export function TpoDriveRequestActions({requestId,status}:{
       </label>
       <p className="text-xs text-body">The recruiter is notified in the app. Email delivery is not enabled.</p>
       <div className="flex gap-2">
-        <button type="button" onClick={()=>void runGuarded(submit)} disabled={busy||guardedPending||reason.trim().length<3}
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm text-primary-foreground disabled:opacity-50">
-          {busy?"Saving…":"Confirm"}</button>
-        <button type="button" disabled={busy} onClick={()=>setAction(null)}
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Cancel</button>
+        <Button type="button" onClick={()=>void runGuarded(submit)} disabled={busy||guardedPending||reason.trim().length<3}
+          >
+          {busy?"Saving…":"Confirm"}</Button>
+        <Button variant="secondary" type="button" disabled={busy} onClick={()=>setAction(null)}
+          >Cancel</Button>
       </div>
     </div>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

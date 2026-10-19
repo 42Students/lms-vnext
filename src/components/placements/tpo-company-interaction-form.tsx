@@ -6,6 +6,10 @@ import {
   interactionConfirmationSummary,
   type TpoCompanyInteractionKind,
 } from "@/modules/placements/tpo-company-interaction-model";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 
 export function TpoCompanyInteractionForm({
   companyId,
@@ -83,46 +87,46 @@ export function TpoCompanyInteractionForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="text-sm font-semibold text-foreground">
           Contact
-          <select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
+          <Select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
             disabled={busy}
-            className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-normal">
+            className="mt-1 block w-full">
             {contacts.map((contact) => (
               <option key={contact.id} value={contact.id}>{contact.name}</option>
             ))}
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold text-foreground">
           Interaction type
-          <select value={type}
+          <Select value={type}
             onChange={(event) => {setReviewing(false);setType(event.target.value as TpoCompanyInteractionKind);}}
             disabled={busy}
-            className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-normal">
+            className="mt-1 block w-full">
             {(["CALL", "EMAIL", "WHATSAPP", "MEETING", "NOTE"] as const).map((kind) => (
               <option key={kind} value={kind}>{kind}</option>
             ))}
-          </select>
+          </Select>
         </label>
       </div>
       <label className="block text-sm font-semibold text-foreground">
         Outcome (optional)
-        <input value={outcome} onChange={(event) => {setReviewing(false);setOutcome(event.target.value);}}
+        <Input value={outcome} onChange={(event) => {setReviewing(false);setOutcome(event.target.value);}}
           maxLength={30} disabled={busy}
-          className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-normal" />
+          className="mt-1 block w-full" />
       </label>
       <label className="block text-sm font-semibold text-foreground">
         Notes (required)
-        <textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
+        <Textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           maxLength={2000} rows={3} disabled={busy}
-          className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-normal" />
+          className="mt-1 block w-full" />
       </label>
       {reviewing?<div role="group" aria-label="Review company interaction" className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
         <p>{interactionConfirmationSummary({type,contactName:contacts.find(c=>c.id===leadId)?.name??"contact"})}</p>
         <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewing(false)}>Cancel review</button>
       </div>:null}
-      <button type="button" onClick={() => void submit()} disabled={busy || !leadId || note.trim().length < 3}
-        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50">
+      <Button type="button" onClick={() => void submit()} disabled={busy || !leadId || note.trim().length < 3}
+        >
         {busy ? "Recording..." : reviewing?"Confirm activity":"Review and confirm activity"}
-      </button>
+      </Button>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {saved ? <p role="status" className="text-sm text-body">
         Activity recorded. The page is refreshing.

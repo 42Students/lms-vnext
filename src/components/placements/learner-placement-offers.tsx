@@ -19,6 +19,8 @@ import {learnerOfferCtc} from "@/modules/placements/learner-offer-ctc-model";
 import {learnerOfferDisplayDate} from "@/modules/placements/learner-offer-display-date-model";
 import {learnerOfferActionErrorMessage} from "@/modules/placements/learner-offer-action-error-model";
 import { useToast } from "@/components/ui/toast";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
 
 type OfferAcceptImpact={
  offerId:string;offerStatus:string;expiresAt:string|null;blockedByAnotherAcceptedOffer:boolean;
@@ -263,10 +265,10 @@ export function LearnerPlacementOffers({
         </p>
       </div>
 
-      <button type="button" onClick={downloadOwnOffers}
-        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+      <Button type="button" onClick={downloadOwnOffers}
+        >
         Export displayed offers CSV
-      </button>
+      </Button>
       {sortedOffers.length>LEARNER_OFFER_CSV_LIMIT ? (
         <p role="status" className="text-xs text-muted-foreground">
           CSV includes the first {LEARNER_OFFER_CSV_LIMIT} of {sortedOffers.length} offers in this view. Narrow your offer filters to export others.
@@ -514,15 +516,15 @@ export function LearnerPlacementOffers({
           </p>
           <label className="block text-sm font-semibold text-foreground">
             Requested new deadline (IST)
-            <input type="datetime-local" value={extensionAt}
+            <Input type="datetime-local" value={extensionAt}
               onChange={event=>setExtensionAt(event.target.value)}
-              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
+              className="mt-1 w-full"/>
           </label>
           <label className="block text-sm font-semibold text-foreground">
             Reason
-            <textarea rows={3} maxLength={2000} value={extensionReason}
+            <Textarea rows={3} maxLength={2000} value={extensionReason}
               onChange={event=>setExtensionReason(event.target.value)}
-              className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
+              className="mt-1 w-full"/>
           </label>
           {extensionError?<p role="alert" className="text-sm text-error">{extensionError}</p>:null}
           <p className="text-xs text-muted-foreground">
@@ -556,9 +558,9 @@ export function LearnerPlacementOffers({
           <label className="block text-xs font-semibold text-body" htmlFor="offer-decline-reason">
             Reason (optional, up to 2000 characters)
           </label>
-          <textarea id="offer-decline-reason" rows={3} maxLength={2000} value={declineReason}
+          <Textarea id="offer-decline-reason" rows={3} maxLength={2000} value={declineReason}
             onChange={(event) => setDeclineReason(event.target.value)}
-            className="min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground" />
+            className="w-full" />
         </div> : null}
       </Dialog>
       <Dialog
