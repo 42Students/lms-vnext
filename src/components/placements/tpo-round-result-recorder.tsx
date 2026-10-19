@@ -212,7 +212,7 @@ export function TpoRoundResultRecorder({
             type="button"
             disabled={busy}
             onClick={() => void submitStage()}
-            className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 font-semibold text-on-primary disabled:opacity-50 text-primary-foreground"
+            className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-3 font-semibold disabled:opacity-50 text-primary-foreground md:min-h-9"
           >
             {busy ? "Saving..." : "Confirm staged result"}
           </Button>
@@ -223,7 +223,7 @@ export function TpoRoundResultRecorder({
           type="button"
           disabled={busy}
           onClick={() => void submitApply()}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-3 font-semibold text-primary-text disabled:opacity-50"
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-3 font-semibold text-primary-text disabled:opacity-50 md:min-h-9"
         >
           {busy ? "Applying..." : "Confirm and apply staged result"}
         </button>
