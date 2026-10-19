@@ -82,10 +82,10 @@ export function MobileNavigation({
       {open ? (
         <div style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties}
           className="fixed inset-0 z-50 h-[var(--lms-visual-height)] md:hidden">
-          <button
+          <Button variant="ghost"
             type="button"
             aria-label="Close navigation"
-            className="absolute inset-0 h-full w-full bg-black/45"
+            className="!absolute !inset-0 !h-full !min-h-0 !w-full !max-w-none !rounded-none !border-0 !bg-black/45 !p-0"
             onClick={() => setOpen(false)}
           />
           <aside
