@@ -51,7 +51,7 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
      {outcomes.map(code=><option key={code} value={code}>{outsideDriveResultLabel(code)}</option>)}
     </Select>
    </label>
-   <Button disabled={!membershipId||pending} type="button" onClick={()=>void save(membershipId,result)}
+   <Button variant="primary" disabled={!membershipId||pending} type="button" onClick={()=>void save(membershipId,result)}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
     Record participation
    </Button>
