@@ -46,15 +46,15 @@ export function RecruiterInlineOwner({lead,onUpdated}:{
    {loading?<p role="status" className="text-xs">Loading…</p>:null}
    <label className="block text-xs">Owner
     <Select value={target} onChange={e=>setTarget(e.target.value)}
-     className="min-h-10 w-full rounded border border-border bg-surface" disabled={loading}>
+     className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface" disabled={loading}>
      <option value="">Select staff</option>
      {owners.map(item=><option key={item.membershipId} value={item.membershipId}>
       {item.displayName??"Placement staff"}</option>)}
     </Select>
    </label>
    <Button variant="primary" type="button" disabled={loading||!target} onClick={()=>void apply()}
-    className="min-h-10 px-3">Assign</Button>
-   <Button variant="ghost" type="button" onClick={()=>setOpen(false)} className="ml-2 min-h-10">Cancel</Button>
+    className="min-h-11 md:min-h-9 px-3">Assign</Button>
+   <Button variant="ghost" type="button" onClick={()=>setOpen(false)} className="ml-2 min-h-11 md:min-h-9">Cancel</Button>
   </div>:null}
   {error?<p role="alert" className="text-xs text-warning">{error}</p>:null}
  </div>;
