@@ -244,7 +244,7 @@ export function LearnerCourseAttendance({
         </p>
       </div>
 
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="border-b border-border py-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
@@ -294,7 +294,7 @@ export function LearnerCourseAttendance({
                     navigateMonth(new Date(year,monthIndex,1));
                   }
                 }}
-                className="mt-1.5 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
+                className="mt-1.5 min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
               />
             </label>
             {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),currentMonth) ? (
@@ -318,7 +318,7 @@ export function LearnerCourseAttendance({
         </div>
       </section>
 
-      <section aria-label="Attendance this month" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label="Attendance this month" className="border-b border-border py-4 sm:py-5">
         <h3 className="text-sm font-semibold text-foreground">Attendance this month</h3>
         <p className="mt-2 text-3xl font-semibold text-foreground">{summary.percentage===null?"—":summary.percentage+"%"}</p>
         <p className="mt-2 text-xs font-semibold text-muted-foreground">Attendance threshold</p>
