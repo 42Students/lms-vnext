@@ -12,6 +12,7 @@ import { isSuperAdmin } from "@/modules/identity/context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Pagination } from "@/components/ui/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -56,7 +57,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
   <ErrorState title="Content access denied"
    description="Your account cannot access Super Admin course content."
-   action={<Link href="/dashboard" className="font-semibold text-primary-text">Back to dashboard</Link>}/>
+   action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
@@ -83,39 +84,40 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}
-   description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."}/>
+   description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."}
+   actions={<PageBackLink href="/admin/courses" label="Courses" />} />
   {lessonsResult.status==="fulfilled"
    ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false}/>
    :<Banner tone="warning">Content authoring options are temporarily unavailable. Existing content remains visible.</Banner>}
   {sectionsResult.status==="rejected"?<Banner tone="warning">Section filter choices are temporarily unavailable. Your selected filters are still applied.</Banner>:null}
-  <form method="get" className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-3">
+  <form method="get" className="grid gap-3 py-1 md:grid-cols-2 min-[1366px]:grid-cols-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Search
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-     placeholder="Content, lesson or course" className="min-h-11 sm:min-h-9"/>
+     placeholder="Content, lesson or course" className="min-h-11 md:min-h-9"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Status
     <Select name="status" defaultValue={data.query.status}
-     className="min-h-11 sm:min-h-9">
+     className="min-h-11 md:min-h-9">
      {statuses.map(status=><option key={status}>{status}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Course / offering
-    <Select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-11 sm:min-h-9">
+    <Select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-11 md:min-h-9">
      <option value="">All courses</option>{offerings.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Lesson
-    <Select name="lessonId" defaultValue={data.query.lessonId??""} className="min-h-11 sm:min-h-9">
+    <Select name="lessonId" defaultValue={data.query.lessonId??""} className="min-h-11 md:min-h-9">
      <option value="">All lessons</option>{lessons.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.name} · {item.courseCode}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Section
-    <Select name="deliveryId" defaultValue={data.query.deliveryId??""} className="min-h-11 sm:min-h-9">
+    <Select name="deliveryId" defaultValue={data.query.deliveryId??""} className="min-h-11 md:min-h-9">
      <option value="">All sections</option>{sections.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.sectionName}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Audience
-    <Select name="scope" defaultValue={data.query.scope} className="min-h-11 sm:min-h-9">
+    <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
       <option value="ALL">All audiences</option><option value="SHARED">All currently eligible sections</option><option value="SECTION">One specific section</option>
     </Select>
    </label>
@@ -145,11 +147,10 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
      <SuperAdminContentActions item={item}/>:
      <p className="text-xs text-muted-foreground">Content editing is unavailable for an inactive offering or lesson.</p>}
     {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-     className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">Edit, publish or archive →</Link>:null}
+     className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">Edit, publish or archive →</Link>:null}
    </article>)}
   </div>:<EmptyState title="No content found." description="Select a course and lesson to view content."/>}
   <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminContentHref(kind,{...data.query,page})}/>
-  <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
  </div>;
 }
