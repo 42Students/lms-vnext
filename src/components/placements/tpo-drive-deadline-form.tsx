@@ -69,7 +69,7 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
     "New deadline must be later than the current deadline and in the future.":
     "First deadline must be in the future."} Expiry is validated again under the database lock.</p>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-   <button disabled={pending} type="submit" className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">
+   <button disabled={pending} type="submit" className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-5 font-[650] text-on-primary disabled:opacity-50 text-primary-foreground">
     {pending?"Saving…":job.applicationDeadline?"Review and extend deadline":"Review and set deadline"}</button>
   </form>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}

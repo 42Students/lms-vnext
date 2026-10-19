@@ -123,7 +123,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             I reviewed the affected applications, rounds and offers. I understand cancellation
             will notify affected learners and cannot be silently undone.
           </label>
-          <button type="submit" disabled={pending || !reviewed} className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-5 font-semibold disabled:opacity-50 text-primary-foreground">
+          <button type="submit" disabled={pending || !reviewed} className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-5 font-[650] disabled:opacity-50 text-primary-foreground">
             {pending ? "Cancelling…" : "Review and cancel drive"}
           </button>
     </form>
