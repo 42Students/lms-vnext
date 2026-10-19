@@ -86,7 +86,7 @@ export function CollegeFacultyAssignmentCreate({
       setError(academicSetupErrorMessage(cause, FACULTY_ASSIGNMENT_COPY.createFailed));
     } finally { setSaving(false); }
   }
-  const fieldClass = "min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+  const fieldClass = "min-h-11 min-w-0 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
   return <>{confirmation}<section aria-label="Assign Faculty to multiple courses"
     className="- sm: border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
@@ -202,7 +202,7 @@ export function CollegeFacultyAssignmentEnd({
   }
   return <div className="space-y-1">
     <button type="button" disabled={saving} onClick={()=>{setConfirming(true);setError(null);}}
-      className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
+      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
       {saving ? "Ending…" : "End assignment"}
     </button>
     {confirming?<div role="group" aria-label="Confirm end assignment" className="mt-2 space-y-2 rounded border border-border p-3 text-xs">

@@ -226,7 +226,7 @@ export async function CollegeRoleDirectoryWorkspace({
               First 100 distinct types shown.
             </span> : null}
           </label> : null}
-          <details className="min-w-0 basis-full rounded-md border border-border bg-surface-subtle p-3"
+          <details className="min-w-0 basis-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface-subtle p-3"
             open={collegeRoleDirectoryHasActiveFilters(kind,result.filter)}>
             <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
             <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -370,7 +370,7 @@ export async function CollegeRoleDirectoryWorkspace({
           <>
           <ul aria-label={title + " mobile records"} className="space-y-3 p-3 md:hidden">
             {result.items.map(item=>(
-              <li key={item.membershipId} className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
+              <li key={item.membershipId} className="min-w-0 space-y-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4">
                 <div className="min-w-0">
                   <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
                     className="break-words font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{item.name}</Link>

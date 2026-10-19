@@ -71,7 +71,7 @@ export function CollegeFacultyCsvImport(){
         <textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
           setCsv(event.target.value);setReport(null);setConfirmed(false);
-        }} className="rounded-md border border-border bg-surface p-3 font-mono text-xs"/>
+        }} className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 font-mono text-xs"/>
       </label>
       <button type="button" disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
         className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
