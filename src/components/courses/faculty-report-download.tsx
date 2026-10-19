@@ -1,4 +1,6 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
+
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -36,7 +38,7 @@ export function FacultyReportDownload(props: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-3 print:hidden">
-      <Button variant="secondary" onClick={()=>{
+      <Button type="button" variant="secondary" aria-haspopup={props.incomplete?"dialog":undefined} onClick={()=>{
         if(props.incomplete){setError(null);setConfirmationOpen(true);}else downloadPdf();
       }}>{props.kind==="attendance"?"Download Report":"Download PDF"}</Button>
       <ConfirmDialog open={confirmationOpen} onOpenChange={setConfirmationOpen}
@@ -44,7 +46,7 @@ export function FacultyReportDownload(props: Props) {
         description="Some learners have not submitted or some submitted assignments have not been graded. The PDF will be marked incomplete."
         confirmLabel="Download marked incomplete" confirmVariant="primary"
         onConfirm={()=>{setConfirmationOpen(false);downloadPdf();}}/>
-      {error ? <p role="alert" className="text-sm font-semibold text-error">{error}</p> : null}
+      {error ? <Alert tone="error">{error}</Alert> : null}
     </div>
   );
 }

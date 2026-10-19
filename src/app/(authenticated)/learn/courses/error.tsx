@@ -2,6 +2,7 @@
 import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
 
@@ -15,9 +16,7 @@ export default function LearnerCoursesError({
   const isList=pathname==="/learn/courses";
   return (
     <div className="py-8 text-center">
-      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
-        {isList?"Failed to load courses. Please try again.":"Could not load course lessons"}
-      </h1>
+      <PageHeader title={isList ? "Failed to load courses. Please try again." : "Could not load course lessons"} />
       <p className="mt-2 text-sm text-body">
         {isList?"Check your connection and try again. Your courses have not been changed.":"This course may not exist or you may not have access. Please try again or return to your courses."}
       </p>

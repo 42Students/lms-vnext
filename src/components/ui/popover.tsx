@@ -43,14 +43,16 @@ export function PopoverListbox({ label, children, className, onDismiss, onKeyDow
       return;
     }
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
-    const links = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('a[href]:not([aria-disabled="true"])'));
-    if (!links.length) return;
-    const index = links.indexOf(document.activeElement as HTMLElement);
-    const next = event.key === "Home" ? 0 : event.key === "End" ? links.length - 1 :
-      event.key === "ArrowUp" ? (index < 0 ? links.length - 1 : (index - 1 + links.length) % links.length) :
-      (index + 1) % links.length;
+    const options = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
+      'a[href]:not([aria-disabled="true"]), button[role="option"]:not(:disabled), [role="option"] button:not(:disabled), [role="option"][tabindex]:not([tabindex="-1"])',
+    )).filter(item => item.getClientRects().length > 0);
+    if (!options.length) return;
+    const index = options.indexOf(document.activeElement as HTMLElement);
+    const next = event.key === "Home" ? 0 : event.key === "End" ? options.length - 1 :
+      event.key === "ArrowUp" ? (index < 0 ? options.length - 1 : (index - 1 + options.length) % options.length) :
+      (index + 1) % options.length;
     event.preventDefault();
-    links[next]?.focus();
+    options[next]?.focus();
   }
   return <div {...props} onKeyDown={handleKey} data-slot="popover-listbox" role="listbox" aria-label={label}
     className={cx("min-w-0 overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-white p-2 shadow-[var(--lms-overlay-shadow)]", className)}>

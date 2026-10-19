@@ -56,12 +56,12 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
     onChange={event=>setLastName(event.target.value)}
     className="w-full"/>
    <Button type="submit" loading={saving} disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)||!hrRecruiterNameFieldsSchema.safeParse({firstName,lastName}).success}
-    >
+    className="min-h-11 min-[768px]:min-h-9">
     {saving?"Saving…":"Save name"}
    </Button>
    <Button type="button" disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)}
      onClick={()=>{setFirstName(savedName.firstName);setLastName(savedName.lastName);setMessage("");}}
-     variant="secondary">
+     variant="secondary" className="min-h-11 min-[768px]:min-h-9">
      Cancel unsaved changes
    </Button>
    {message?<p role="status" className="text-xs text-body">{message}</p>:null}

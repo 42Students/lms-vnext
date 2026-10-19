@@ -1,4 +1,8 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageLoading } from "@/components/ui/page-loading";
+
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -78,8 +82,8 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
 
   if (!enabled) return <p className="text-sm text-muted-foreground">File viewing is currently unavailable. Your submitted record remains saved.</p>;
   return <section aria-label="Submitted assignment files" className="mt-3 space-y-3">
-    {loading ? <p role="status" className="text-sm text-muted-foreground">Loading submitted files…</p> : null}
-    {!loading && !error && files.length === 0 ? <p role="status" className="text-sm text-muted-foreground">No submitted files are available.</p> : null}
+    {loading ? <PageLoading label="Loading submitted files" variant="row" count={2} /> : null}
+    {!loading && !error && files.length === 0 ? <EmptyState title="No submitted files" description="No submitted files are available." /> : null}
     <ul className="space-y-2">
       {files.map(file => {
         const descriptor = fileStatusDescriptor(file.status);
@@ -93,6 +97,6 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
         </li>;
       })}
     </ul>
-    {error ? <p role="alert" className="break-words text-sm font-semibold text-error">{error}</p> : null}
+    {error ? <Alert tone="error">{error}</Alert> : null}
   </section>;
 }

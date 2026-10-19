@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import {AdminReadinessWorkspacePicker} from "./admin-readiness-workspace-picker";
 import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
@@ -51,7 +52,6 @@ function tone(status: string) {
 export async function ProjectAdminReadinessPage({
   collegeId,
   basePath,
-  eyebrow,
   searchParams,
 }: {
   collegeId: string;
@@ -90,7 +90,6 @@ export async function ProjectAdminReadinessPage({
         active="readiness"
       />
       <PageHeader
-        eyebrow={eyebrow}
         title="Submission readiness"
         description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to."
         actions={<a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
@@ -118,7 +117,7 @@ export async function ProjectAdminReadinessPage({
               className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
               href={basePath+"/"+row.projectId+"/readiness"}>Manage</Link>},
           ]}
-          empty={<p role="status" className="text-sm text-body">No workspace overrides match these filters.</p>}
+          empty={<EmptyState title="No matching overrides" description="No workspace overrides match these filters." />}
         />}
       </section>
       <section className="space-y-3 border-b border-border pb-5">
@@ -130,7 +129,7 @@ export async function ProjectAdminReadinessPage({
             Manage override
           </Link>
           <h3 className="text-sm font-semibold">Releases</h3>
-          {!releaseContext.length ? <p className="text-sm text-muted-foreground">No releases recorded.</p> :
+          {!releaseContext.length ? <EmptyState title="No releases recorded" description="There are no releases for this workspace yet."/> :
             <DataTable<(typeof releaseContext)[number]>
               caption="Readiness releases"
               rows={releaseContext}
@@ -142,7 +141,7 @@ export async function ProjectAdminReadinessPage({
                 {key:"points",header:"Points",mobilePriority:"secondary",cell:release=>release.points},
                 {key:"target",header:"Target date",mobilePriority:"secondary",cell:release=>release.targetDate??"—"},
               ]}
-              empty={<p role="status" className="text-sm text-body">No releases recorded.</p>}
+              empty={<EmptyState title="No releases recorded" description="This workspace has no recorded releases." />}
             />}
         </> : null}
       </section>
@@ -150,9 +149,7 @@ export async function ProjectAdminReadinessPage({
       <ListToolbar label="Readiness workspaces" viewCount={result.total} />
 
       {!result.items.length ? (
-        <section className="border-b border-border py-6 text-sm text-muted-foreground">
-          No project workspaces match these filters.
-        </section>
+        <EmptyState title="No matching project workspaces" description="No project workspaces match these filters."/>
       ) : (
         <div className="space-y-3">
           {result.items.map((project) => (

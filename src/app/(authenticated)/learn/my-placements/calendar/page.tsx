@@ -1,3 +1,4 @@
+import { PageLoading } from "@/components/ui/page-loading";
 import {Suspense} from "react";
 import {readLearnerCalendarUrl} from "@/modules/placements/learner-career-calendar-url-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -17,7 +18,7 @@ export default async function LearnerCareerCalendarPage({searchParams}:{searchPa
   }
   const today=initialCareerCalendarDay();
   const initial=readLearnerCalendarUrl(params.toString(),today);
-  return <div className="min-w-0 space-y-6"><PageHeader title="Career Calendar" description="Your upcoming assessments, interviews and other scheduled placement rounds." /><Suspense fallback={<p role="status" className="text-sm text-body">Loading calendar filters…</p>}><LearnerCareerCalendar
+  return <div className="min-w-0 space-y-6"><PageHeader title="Career Calendar" description="Your upcoming assessments, interviews and other scheduled placement rounds." /><Suspense fallback={<PageLoading label="Loading calendar filters" variant="form" count={2} />}><LearnerCareerCalendar
     initialAnchor={initial.date}
     todayAnchor={today}
     rounds={workspace.rounds.map((row) => ({

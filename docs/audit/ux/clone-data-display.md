@@ -148,3 +148,42 @@ Updated explicit work queue:
 **Repository-wide grep counts:** not performed. **Compilation/app/CI:** not run. All edited TSX files were fetched again from the branch; the inspected changes showed matching opening/closing tags, no stray quote before className, and no newline-before-as cast in the edited files. This is static inspection, not typecheck.
 
 - E1 follow-up: `src/components/ui/data-table.tsx:97-103` now uses white desktop heading/cell-hover paint, matching the `.ln-table` normal variant (`docs/design/legacy-styles/components___common.scss:851-860`). Mobile card layout and `sm` breakpoint remain intentionally unchanged pending the responsive comparison; E1 **remains unticked**. No runtime verification.
+
+## chat-14 source migration follow-up (2026-10-19, 21:35 IST)
+
+### AG Grid E8 — source delivered, **not build/visual parity**
+
+- \`src/components/tpo/grid/tpo-grid.tsx\` is now a native AG Grid Quartz implementation and was pushed **directly to main** as [chat-14] commits \`1308e7c\` and \`bda9e98\`. It retains \`TpoSpreadsheetGridProps<Row>\` so existing TPO and HR consumers can wire without changing their authorized row contracts.
+- Present in source: \`AllCommunityModule\` registration, Quartz styling, 48px pinned selection column, current-filter select-all, Shift/Ctrl row selection, safe clipboard TSV, numeric/date-only sorting, data-free versioned layout persistence per \`storageKey\`, row action callbacks, keyboard copy, and mobile fallback. TPO students and applications use \`next/dynamic({ssr:false})\` at their call sites.
+- **Blocking dependency:** \`package.json\` and \`package-lock.json\` on main still do not declare \`ag-grid-community\` or \`ag-grid-react\` (despite the original task saying they are installed). \`docs/design/legacy-grid/TpoGrid.jsx.txt\` is also absent. Per the original prohibition, this lane did **not** alter either package manifest. The native import cannot be claimed TypeScript/build clean until those dependencies are restored. **E8 remains [ ]**.
+- AG Grid 36.2 reference: official React cell renderer and column-state documentation; static implementation only, no app/test/CI execution. Existing exports stay with the authorized page/workspace.
+
+### Source edits completed in this continuation
+
+| File | Specific source-level work | Strict parity |
+|---|---|---|
+| \`src/components/tpo/grid/tpo-grid.tsx\` | Replaced fallback engine with AG Grid Quartz, published to main | Open: dependencies, legacy source and runtime |
+| \`src/components/ui/filter-chip.tsx\` | Added shared keyboard/aria-pressed toggle chip around Button | Open: full state/responsive comparison |
+| \`scripts/codemods/chat14-tables-tabs.cjs\` | Expanded TypeScript-AST candidates across all portals: safe status-pill spans, pressed rounded buttons, table wrappers; reports stateful tabs and pagination for review | Open: \`--apply\` was not executed and no full grep count available |
+| \`src/components/tpo/tpo-grid-filter-panel.tsx\` | Active filter removal chips to FilterChip | Source migration done; E4 globally open |
+| \`src/components/tpo/grid/grid-workspace.tsx\` | Active filter removal chips to FilterChip | Source migration done; E4 globally open |
+| \`src/components/placements/learner-career-calendar.tsx\` | Event-kind filter chips to FilterChip | Other view controls remain |
+| \`src/app/(authenticated)/tpo/placements/lifecycle/page.tsx\` | Drive status/count tabs to shared Tabs | Source migration done |
+| \`src/app/(authenticated)/admin/inbound-mail/page.tsx\` | Inbound mail route tabs and counts to shared Tabs | Source migration done |
+| \`src/app/(authenticated)/admin/people/directory/page.tsx\` | People directory route tabs to shared Tabs | Source migration done |
+| \`src/components/placements/tpo-drive-workspace-nav.tsx\` | Primary drive route tabs to shared Tabs; retained mobile Select and More dropdown | Source migration done |
+| \`src/components/placements/learner-save-drive-button.tsx\` | Raw pressed bookmark toggle to shared Button | Source migration done |
+| \`src/components/placements/tpo-request-decision-control.tsx\` | Rejection-reason toggles to shared FilterChip | Source migration done |
+
+### Still open: do not tick E1–E5 globally
+
+- [ ] Run \`node scripts/codemods/chat14-tables-tabs.cjs\` in the repository, inspect the dry-run candidate list, then execute \`--apply\` through the orchestrator and hand-review skipped dynamic \`className\` cases. The script excludes \`src/components/ui\`.
+- [ ] Migrate remaining \`aria-pressed\` category controls, \`border-b-2\` route/tab strips and semantically real \`rounded-full\` pills across all portals; avoid changing avatars, spinners, notification dots, or progress bars into badges. Source-index searches found additional examples in recruiter leads, teacher contacts, learner career view controls, and several admin/placement pages. Code-search results are not exhaustive counts.
+- [ ] Compare all visual properties/states and phone/tablet responses with legacy SCSS file:line pairs and computed-style parity report; no browser side-by-side test was done. Keep E1–E5 unchecked until STRICT TICK RULE proofs are complete.
+- [ ] Native AG Grid compile and smoke validation after the missing dependencies/legacy-grid reference are restored; verify save/restore and selection in the browser before marking E8 done.
+
+No CI, app execution, or bulk codemod execution was run. Files manually edited this turn were fetched back for structural re-reading and stray-character inspection; that inspection is **not** TypeScript typechecking.
+
+Additional source migrations: `src/components/tpo/recruiter-leads-workspace.tsx` now uses shared `FilterChip` for its attention/Unassigned counts; `src/components/placements/learner-career-calendar.tsx` also uses shared `Button` for all calendar view toggles. `scripts/codemods/chat14-tables-tabs.cjs` now discovers files containing only raw `<button>` or `<Button>` presses and recognizes `bg-primary`/`bg-muted` tone candidates. Strict category checkboxes remain unchanged; these are source-file completions, not verified pixel parity.
+
+More source-file migrations committed on this lane branch: `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx` (company-share tabs), `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx` (application pipeline tabs with counts), and `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` (grading, publication, order tabs) now use shared `Tabs`. These were fetched back from GitHub; all replaced tab groups use self-closing `<Tabs />`, no altered unmatched JSX closing tags, and no stray quoted className or newline-before-as forms were observed. This still does not establish exhaustive all-portal coverage or runtime parity, so E3 stays unticked.

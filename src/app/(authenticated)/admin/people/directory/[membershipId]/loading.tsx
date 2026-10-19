@@ -1,1 +1,5 @@
-export default function Loading(){return <div role="status" aria-label="Loading membership details" className="animate-pulse space-y-4"><div className="h-10 rounded bg-muted"/><div className="h-48 rounded bg-muted"/></div>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function Loading() {
+  return <GracefulPageLoading label="Loading membership details" shape="directory" />;
+}

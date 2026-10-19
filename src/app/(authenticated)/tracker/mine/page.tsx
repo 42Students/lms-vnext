@@ -2,6 +2,9 @@ import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
+import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {listMyTrackerReports} from "@/modules/bug-tracker/reporter-service";
 export const dynamic="force-dynamic";
@@ -9,21 +12,21 @@ export const metadata={title:"My Reports · 42 Tracker"};
 export default async function MyTrackerReportsPage(){
   const context=await getCurrentRequestContext();
   if(context.user.platformStatus!=="ACTIVE")redirect("/dashboard");
-  if(!trackerAdminRuntimeEnabled())return <div role="status" className="space-y-4">
+  if(!trackerAdminRuntimeEnabled())return <div className="space-y-4">
     <PageHeader title="My reports" description="See the issues you have reported."/>
-    <p className="text-sm text-body">Reports are temporarily unavailable. Try again soon.</p>
+    <Banner tone="warning">Reports are temporarily unavailable. Try again soon.</Banner>
   </div>;
   let reports;
   try{reports=await listMyTrackerReports(context);}
-  catch{return <div role="alert" className="space-y-4">
+  catch{return <div className="space-y-4">
     <PageHeader title="My reports" description="See the issues you have reported."/>
-    <p>We could not load your reports.</p>
-    <Link href="/tracker/mine" className="font-semibold text-primary-text underline">Retry</Link>
+    <ErrorState title="Could not load reports" description="We could not load your reports."
+      action={<Link href="/tracker/mine" className="font-semibold text-primary-text underline">Retry</Link>} />
   </div>;}
   return <section className="space-y-5">
     <PageHeader title="My reports" description="See the issues you have reported."/>
     <Link href="/tracker" className="font-semibold text-primary-text underline">Report an issue</Link>
-    {!reports.length?<p className="border-y border-border py-5 text-sm text-body">You have not reported any issues yet.</p>:
+    {!reports.length?<EmptyState title="No reports yet" description="You have not reported any issues yet." />:
       <ul className="divide-y divide-border border-y border-border">{reports.map(item=><li key={item.publicId}
         className="py-4">
         <Link href={"/tracker/mine/"+encodeURIComponent(item.publicId)}
