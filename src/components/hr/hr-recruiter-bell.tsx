@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { PopoverPanel } from "@/components/ui/popover";
+import {TopbarNotificationEmpty} from "@/components/shell/topbar/notification-empty";
 import style from "@/components/shell/topbar/topbar.module.css";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
@@ -93,8 +94,7 @@ export function HrRecruiterBell(){
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
    {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
     state?.status!=="READY"?<p className="mt-3 text-sm text-body">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
-    state.items.length===0?<div className="mt-3 text-sm"><p className="font-semibold">{HR_BELL_EMPTY}</p>
-     <p className="text-muted-foreground">{HR_BELL_EMPTY_HELP}</p></div>:
+    state.items.length===0?<TopbarNotificationEmpty title={HR_BELL_EMPTY} description={HR_BELL_EMPTY_HELP}/>:
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-80"><ul role="list" aria-label="Recent recruiter notifications" className="space-y-1.5">{state.items.map(item=><li key={item.id}>
      <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-11 items-start gap-2 rounded-[8px] border border-border bg-surface px-4 py-3 text-sm text-body hover:bg-[var(--lms-neutral-50)] hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--lms-error)]":"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted"}/>
