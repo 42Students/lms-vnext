@@ -65,8 +65,8 @@ export default async function HrMessagesPage({searchParams}:{
      <Input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
      <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
      <Input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
-       placeholder="Search drive titles" className="min-w-0 w-full basis-full sm:min-w-48 sm:basis-auto sm:flex-1" />
-     <Button type="submit" variant="secondary" className="min-h-11 sm:min-h-9">Search</Button>
+       placeholder="Search drive titles" className="min-w-0 w-full basis-full md:min-w-48 md:basis-auto md:flex-1" />
+     <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Search</Button>
    </form>
    <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
    <div className="flex justify-end">
