@@ -1,8 +1,6 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
-import { Dropdown } from "@/components/ui/dropdown";
-import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
 import {Disclosure} from "@/components/ui/disclosure";
@@ -74,7 +72,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
   <p role="status" aria-live="polite" className="text-xs">{selectedRows.length} selected of {rows.length} on this page.</p>
   <div className="flex flex-wrap gap-3">
    <label className="text-sm">Sort request rows
-    <Select className="ml-2 min-h-11 max-w-full rounded-[9px] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" value={sort}
+    <Select className="ml-2 min-h-11 max-w-full text-base" value={sort}
      onChange={e=>setSort(e.target.value as typeof sort)}>
      <option value="ASKED_NEW">Asked · newest</option><option value="ASKED_OLD">Asked · oldest</option>
      <option value="DECIDED_NEW">Decided on · newest</option><option value="DECIDED_OLD">Decided on · oldest</option>
