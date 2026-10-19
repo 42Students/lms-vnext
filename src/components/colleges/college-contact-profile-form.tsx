@@ -12,7 +12,7 @@ export type CollegeContactProfileView = {
   version: number;
 };
 
-const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground";
+const inputClass = "min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground";
 
 export function CollegeContactProfileForm({ initial }: {
   initial: CollegeContactProfileView;
@@ -98,7 +98,7 @@ export function CollegeContactProfileForm({ initial }: {
     </p> : null}
     <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
       <button disabled={pending} type="submit"
-        className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-60">
+        className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-60">
         {pending ? "Saving…" : "Confirm and save changes"}
       </button>
       <button disabled={pending} type="button" onClick={() => {
@@ -108,7 +108,7 @@ export function CollegeContactProfileForm({ initial }: {
         setTerms(initial.termsUrl ?? "");
         setPrivacy(initial.privacyUrl ?? "");
         setError(null);
-      }} className="min-h-11 rounded-md border border-border px-5 text-sm font-semibold">
+      }} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-5 text-sm font-semibold">
         Reset
       </button>
     </div>
