@@ -35,7 +35,7 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
   <p className="mt-1 text-sm text-body">Unlike college suspension, a platform block prevents login across every college. This action requires an audit reason.</p>
   <label className="mt-3 grid gap-1 text-sm font-semibold text-body">Reason
    <textarea value={reason} maxLength={1000} rows={2} disabled={pending}
-    onChange={event=>setReason(event.target.value)} className="rounded-md border border-border bg-surface p-2"/>
+    onChange={event=>setReason(event.target.value)} className="rounded-[9px] border border-border bg-surface p-2"/>
   </label>
   <button type="button" disabled={pending||reason.trim().length<4}
    onClick={()=>void submit()} className="mt-3 min-h-10 rounded-md border border-error px-4 font-semibold text-error disabled:opacity-50">
