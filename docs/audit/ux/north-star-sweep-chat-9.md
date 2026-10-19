@@ -196,3 +196,44 @@ The reviewed/modified files in this continuation:
 After the 29 file-level UI commits and the tracker commit, `main` advanced by 307 independent commits. The lane reconciled the Git ancestry using a two-parent merge commit `0609bdf0e038`, keeping the newer `main` tree as the base and overlaying only lane-owned changes with no upstream file overlap. Five overlapping pages (`/admin/module-access`, `/admin/programs`, `/admin/quizzes`, `/admin/semesters`, `/admin/students`) explicitly prefer newer upstream changes rather than overwriting concurrent work. In `/admin/settings` and `/admin/tenants`, the newer upstream contents were retained and the precise Input/Select legacy-skin overrides were re-applied; the tenant action links were normalized to legacy 36px controls. At reconciliation time, the lane was **31 commits ahead / 0 behind `main`**, with 25 source and audit paths differing. No force push and no changes to `main`.
 
 This is an ancestry/source reconciliation only. No TypeScript execution, tests, lint, CI or visual browser validation were performed. If main advances again, recompare before merging or integrating the lane.
+
+
+## Third source-only sweep and main reconciliation — 2026-10-19
+
+**Main sync before edits:** the latest available `main` at the start of this pass was `3ef2388ccf83`, ahead of the previous chat-9 head by extensive concurrent lane changes. Chat-9 produced a two-parent merge `4bbc21396cc2`, using the newer main tree as the base and preserving the chat-9 tracker continuation; older UI changes had already been incorporated upstream. This was a non-forced update to `chatgpt/chat-9-b`, not `main`.
+
+**Changes in this pass:** page contents, routes, labels, filters, permissions, data requests, mutation handling and state remain unchanged. The following source files differ from `main` in this branch comparison:
+
+- `src/app/(authenticated)/college/projects/templates/page.tsx`
+- `src/components/admin/admin-scoped-read-page.tsx`
+- `src/components/admin/super-admin-platform-block-action.tsx`
+- `src/components/admin/tenant-domain-manager.tsx`
+- `src/components/projects/admin-readiness-workspace-picker.tsx`
+- `src/components/projects/college-project-student-roster-dialog.tsx`
+- `src/components/projects/project-admin-at-risk-page.tsx`
+- `src/components/projects/project-admin-audit-page.tsx`
+- `src/components/projects/project-admin-missing-college.tsx`
+- `src/components/projects/project-admin-readiness-page.tsx`
+- `src/components/projects/project-admin-submissions-page.tsx`
+- `src/components/projects/project-mentor-reassignment.tsx`
+- `src/components/projects/project-participant-list-controls.tsx`
+- `src/components/projects/project-readiness-override-form.tsx`
+- `src/components/projects/project-workspace-readiness.tsx`
+- `src/components/projects/super-admin-template-college-bulk.tsx`
+- `src/components/projects/super-admin-template-resource-editor.tsx`
+- `src/components/projects/super-admin-template-subview-page.tsx`
+- `src/components/projects/super-admin-template-tabs.tsx`
+- `src/modules/projects/resource-file-layout-model.ts`
+
+**Fixed with the legacy source of truth:**
+- Removed custom input background, border and radius classes from readiness-override form fields and the readiness workspace selector; shared `Input`, `Select`, `Textarea`, and `Button` own their visual states and white-on-teal primary contrast.
+- Changed the readiness workspace's inner section links to thin underline navigation instead of an enclosing white tab-card or teal-filled dark-text active chip. Kept all links and the distinct top-level Projects group navigation intact.
+- Converted the Super Admin platform-wide account block/reactivation controls to shared `Textarea` and `Button` (danger for blocking; secondary for reactivation), without modifying confirmation, required reason or API behavior.
+- Reused shared `Input` in the tenant's primary-host deletion confirmation while keeping the exact-match gate and confirmation dialog intact.
+- Replaced residual hard-coded teal link variables in college template, project risk, submissions, readiness and global template subview UI with the semantic `text-primary-text` token.
+- Standardized project template, student roster and mentor reassignment checkbox accents; modernized global template tab type, focus and phone-height styling.
+- Normalized the remaining admin readiness picker buttons and resource-file UI model's row/control radii and responsive heights. Native file inputs and required browser controls stayed native.
+- Flattened non-interactive Super Admin directory statistics and project audit counters into hairline-separated summary strips on the single white page canvas. Independent clickable metric cards, per-tenant/template objects, status warnings and dialogs retain their boundaries.
+- Kept `src/components/ui/**`, `src/components/shell/**`, global styling, and page contents untouched.
+
+**Source review:** exact-match guarded every replacement before each GitHub commit; this pass was 24 commits ahead / 0 behind moving main at ledger time. No local runtime, TypeScript compiler, lint, automated tests, CI, screenshot comparison, or device acceptance was run. This is not a pixel-perfect or build-clean certification. The remaining acceptance work is independent old-LMS screenshot comparison and final upstream integration.
