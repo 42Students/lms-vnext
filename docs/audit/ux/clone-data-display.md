@@ -146,3 +146,5 @@ Updated explicit work queue:
 - [ ] Verify keyboard/focus/disabled and runtime responsive behavior before changing any checkboxes to [x].
 
 **Repository-wide grep counts:** not performed. **Compilation/app/CI:** not run. All edited TSX files were fetched again from the branch; the inspected changes showed matching opening/closing tags, no stray quote before className, and no newline-before-as cast in the edited files. This is static inspection, not typecheck.
+
+- E1 follow-up: `src/components/ui/data-table.tsx:97-103` now uses white desktop heading/cell-hover paint, matching the `.ln-table` normal variant (`docs/design/legacy-styles/components___common.scss:851-860`). Mobile card layout and `sm` breakpoint remain intentionally unchanged pending the responsive comparison; E1 **remains unticked**. No runtime verification.
