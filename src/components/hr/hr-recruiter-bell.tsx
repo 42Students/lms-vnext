@@ -81,7 +81,7 @@ export function HrRecruiterBell(){
    variant="secondary" className="relative">
    Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
   </Button>
-  {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[400px] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
+  {open?<section ref={panelRef} data-slot="notification-popover" role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[400px] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="flex items-center justify-between gap-2">
     <h2 className="font-semibold">Notifications</h2>
     <Button type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
