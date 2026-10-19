@@ -240,7 +240,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       {error && <p role="alert" className="text-sm text-error">{error}</p>}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
-        <Button disabled={pending} type="submit"
+        <Button disabled={pending} loading={pending} type="submit"
           >
           {pending ? "Reporting…" : "Report issue"}
         </Button>
