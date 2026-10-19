@@ -96,7 +96,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
      value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);invalidate();}}/>
    </label>
   </div>:null}
-  <Button variant="secondary" type="button" disabled={busy||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
+  <Button variant="secondary" type="button" disabled={busy||guardedPending||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
    onClick={()=>{setPreview(true);setError("");setOutcomes([]);}}
    >Preview selected</Button>
   {preview?<div className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 sm:px-4">
