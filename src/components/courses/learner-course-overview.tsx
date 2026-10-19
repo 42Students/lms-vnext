@@ -418,7 +418,7 @@ export function LearnerCourseOverview({
           </div>
           <Link
             href={nextAction?.href ?? `/learn/courses/${deliveryId}/roadmap`}
-            className="inline-flex min-h-11 sm:min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:min-h-9"
           >
             {readOnly
               ? "View Learning Path"
@@ -482,11 +482,11 @@ export function LearnerCourseOverview({
           </div>
           <nav aria-label="Recent course update categories" className="mt-4 flex flex-wrap gap-2">
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=assessments"}
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Assessments</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Assessments</Link>
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Discussions</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Discussions</Link>
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=live-sessions"}
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Live Sessions</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Live Sessions</Link>
           </nav>
           <div className="mt-4 divide-y divide-border">
             {unifiedUpdates.map((update) => (
