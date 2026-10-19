@@ -78,20 +78,20 @@ export function FacultyReportStudentTable({
 
       {result.pages > 1 ? (
         <nav aria-label="Report student pages" className="mt-4 flex items-center justify-between gap-3">
-          <Button
+          <Button variant="secondary"
             type="button"
             disabled={result.page === 1}
             onClick={() => setRequestedPage(result.page - 1)}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9"
+            className="min-h-11 hover:bg-primary-subtle sm:min-h-9"
           >
             Previous
           </Button>
           <span className="text-xs text-muted-foreground">Page {result.page} of {result.pages}</span>
-          <Button
+          <Button variant="secondary"
             type="button"
             disabled={result.page >= result.pages}
             onClick={() => setRequestedPage(result.page + 1)}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9"
+            className="min-h-11 hover:bg-primary-subtle sm:min-h-9"
           >
             Next
           </Button>
