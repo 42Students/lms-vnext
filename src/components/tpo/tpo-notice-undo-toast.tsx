@@ -19,7 +19,7 @@ export function TpoNoticeUndoToast({id,version,createdAt}:{
   <form action={"/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/lifecycle"} method="post">
    <input type="hidden" name="expectedVersion" value={version}/>
    <input type="hidden" name="action" value="UNDO_SEND"/>
-   <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary">
+   <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">
     Undo send
    </button>
   </form>
