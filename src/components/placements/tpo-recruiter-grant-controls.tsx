@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -45,7 +47,7 @@ export function TpoRecruiterGrantForm({ companies }: {
         active grants are not re-created. No invitation email is sent.
       </p>
       {companies.length === 0 ? (
-        <p role="status" className="text-sm text-body">No active linked companies are available for recruiter grants.</p>
+        <EmptyState title="No active linked companies are available for recruiter grants."/>
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-3">
@@ -73,14 +75,14 @@ export function TpoRecruiterGrantForm({ companies }: {
           </Button>
         </>
       )}
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
-      {success ? <p role="status" className="text-sm text-body">{success}</p> : null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
+      {success ? <InlineNotice tone="success" message={success}/> : null}
       <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
         title="Review and confirm grant"
         description="Grant the existing user recruiter access to this college/company? This changes real recruiter permissions."
         confirmLabel="Grant recruiter college access" confirmVariant="primary" pending={busy}
         onConfirm={()=>void save()}>
-        {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+        {error?<InlineNotice tone="error" message={error}/>:null}
       </ConfirmDialog>
     </section>
   );
@@ -115,13 +117,13 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
       className="min-h-11 md:min-h-9 text-xs">
       {busy ? "Revoking..." : "Revoke access"}
     </Button>
-    {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}
-    {notice ? <p role="status" className="text-xs text-success-text">{notice}</p> : null}
+    {error ? <InlineNotice tone="error" message={error}/> : null}
+    {notice ? <InlineNotice tone="success" message={notice}/> : null}
     <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
       title={"Remove "+displayName+"\'s access?"}
       description="They will no longer be able to use this college\'s recruiter workspace."
       confirmLabel="Revoke access" pending={busy} onConfirm={()=>void revoke()}>
-      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+      {error?<InlineNotice tone="error" message={error}/>:null}
     </ConfirmDialog>
   </div>;
 }
@@ -158,13 +160,13 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
    className="min-h-11 md:min-h-9 text-xs">
    {busy?"Saving…":ended?"Give access again":"Extend"}
   </Button>
-  {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}
-  {notice?<p role="status" className="w-full text-xs text-success-text">{notice}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
     title={"Extend "+displayName+"\'s access by "+months+" months?"}
     confirmLabel={ended?"Give access again":"Extend"} confirmVariant="primary"
     pending={busy} onConfirm={()=>void extend()}>
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+    {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>
  </div>;
 }
