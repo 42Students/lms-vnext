@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
 import {learnerAssessmentSubmittedLinkHref} from "@/modules/courses/learner-assessment-submitted-link-model";
 import {learnerRoadmapHeadline} from "@/modules/courses/learner-roadmap-headline-model";
@@ -505,10 +506,10 @@ function AssignmentCard({
       {!readOnly && !assignment.submissionId && submissionClosed ?
         <div role="status" className="mt-3 space-y-2 text-sm text-warning">
           <p>{assignment.dueAt?"Submissions are closed":"Submission unavailable · deadline missing"}</p>
-          <button type="button" disabled aria-disabled="true"
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-muted-foreground">
+          <Button type="button" variant="secondary" disabled aria-disabled="true"
+            className="min-h-11">
             {assignment.dueAt?"Submission closed":"Unavailable"}
-          </button>
+          </Button>
         </div>:null}
       {!readOnly && !submissionClosed && interaction.canSubmit ? (
         <AssignmentSubmissionControl
@@ -921,28 +922,28 @@ export function LearnerCourseWorkspace({
                     ) : (
                       <StatusBadge tone="neutral">Not started</StatusBadge>
                     )}
-                    <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                    <Badge  tone="neutral">
                       {lessonProgress.completed} of {lessonProgress.total} complete
-                    </span>
+                    </Badge>
                     {contentCounts.lectures > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.lectures} lecture{contentCounts.lectures === 1 ? "" : "s"}
-                      </span>
+                      </Badge>
                     ) : null}
                     {contentCounts.resources > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.resources} resource{contentCounts.resources === 1 ? "" : "s"}
-                      </span>
+                      </Badge>
                     ) : null}
                     {contentCounts.assessments > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.assessments} assessment{contentCounts.assessments === 1 ? "" : "s"}
-                      </span>
+                      </Badge>
                     ) : null}
                     {contentCounts.liveSessions > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.liveSessions} live
-                      </span>
+                      </Badge>
                     ) : null}
                     <span aria-hidden="true" className="text-primary-text group-open:rotate-90">
                       ›

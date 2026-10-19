@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
@@ -204,14 +205,14 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   </div>:null}
   <ScrollCue axis="y" label="Select applicants" className="rounded-[var(--lms-control-radius)] border border-border" viewportClassName="max-h-64 space-y-1 p-2">
    <label className="flex min-h-11 items-center gap-2 p-2 text-sm">
-    <input type="checkbox" disabled={busy} checked={isTpoBulkPageSelected(rows.map(row=>row.id),safeSelected)}
+    <Checkbox  disabled={busy} checked={isTpoBulkPageSelected(rows.map(row=>row.id),safeSelected)}
      onChange={e=>{const pageIds=rows.map(row=>row.id);setSelected(current=>e.target.checked?
       selectTpoBulkPage([...current.filter(id=>permitted.has(id)),...pageIds]):
       current.filter(id=>!pageIds.includes(id)));invalidate();}}/>
     Select current-page rows
    </label>
    {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] p-2 text-sm hover:bg-muted">
-    <input type="checkbox" disabled={busy||!canSelectTpoBulkRow(safeSelected,row.id)} checked={safeSelected.includes(row.id)}
+    <Checkbox  disabled={busy||!canSelectTpoBulkRow(safeSelected,row.id)} checked={safeSelected.includes(row.id)}
       onChange={e=>{setSelected(current=>toggleTpoBulkRow(current,row.id,e.target.checked));invalidate();}}/>
     <span className="min-w-0 break-words">{row.label}</span>
    </label>)}
@@ -337,7 +338,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
   {preview&&plan&&["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)?(
     <label className="flex items-start gap-3 rounded-[var(--lms-control-radius)] border border-warning bg-surface-subtle p-4 text-sm">
-     <input type="checkbox" checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}
+     <Checkbox  checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}
       disabled={busy||outcomes.length>0} className="mt-1"/>
      I understand this bulk action may change eligibility, reject applications, advance applicants to a scheduled round or notify students. I have reviewed the preview and left-out rows.
     </label>

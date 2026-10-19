@@ -11,6 +11,8 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { ListToolbar } from "@/components/ui/list-toolbar";
+import { Banner } from "@/components/ui/banner";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
@@ -121,7 +123,7 @@ export async function ProjectAdminReadinessPage({
       </section>
       <section className="space-y-3 border-b border-border pb-5">
         <h2 className="text-base font-semibold">Select workspace</h2>
-        {outsideScope ? <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-warning-text">This workspace belongs to a different college — switch colleges in the header and try again.</p> : null}
+        {outsideScope ? <Banner tone="warning" role="alert">This workspace belongs to a different college — switch colleges in the header and try again.</Banner> : null}
         <AdminReadinessWorkspacePicker items={workspaceChoices} selected={selected} action={readinessPath}/>
         {selected ? <>
           <Link href={basePath+"/"+selected+"/readiness"} className="text-sm font-semibold text-primary-text underline">
@@ -145,6 +147,7 @@ export async function ProjectAdminReadinessPage({
         </> : null}
       </section>
       <ProjectAdminFilters query={query} />
+      <ListToolbar label="Readiness workspaces" viewCount={result.total} />
 
       {!result.items.length ? (
         <section className="border-b border-border py-6 text-sm text-muted-foreground">

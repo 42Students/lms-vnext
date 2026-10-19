@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
@@ -417,9 +418,9 @@ export function FacultyCourseWorkspace({
       />
 
       <section aria-label="In this Course" className="flex flex-wrap items-center gap-3 border-b border-border pb-4">
-        <span className="rounded-full bg-muted px-3 py-1 text-sm font-semibold text-body">
+        <Badge  tone="neutral">
           {course.credits===null?"Credits not configured":course.credits+" Credits"}
-        </span>
+        </Badge>
         <span className="text-sm text-body">
           Instructor: You · {course.teachingRole.replaceAll("_"," ").toLowerCase()}
         </span>
@@ -615,24 +616,24 @@ export function FacultyCourseWorkspace({
                             </p>
                           ) : null}
                         </div>
-                        <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                        <Badge  tone="neutral">
                           {itemCount} items · Expand lesson
-                        </span>
+                        </Badge>
                       </summary>
 
                       {!selectedLessonId?<Link href={"?lesson="+encodeURIComponent(lesson.id)}
                         className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
                         View lesson details →
                       </Link>:<div className="mb-3 flex flex-wrap gap-2 text-xs">
-                        <span className="rounded-full border border-border bg-surface px-2 py-1">
+                        <Badge  tone="neutral">
                           {lesson.contents.length} content
-                        </span>
-                        <span className="rounded-full border border-border bg-surface px-2 py-1">
+                        </Badge>
+                        <Badge  tone="neutral">
                           {lesson.assignments.length} assignments
-                        </span>
-                        <span className="rounded-full border border-border bg-surface px-2 py-1">
+                        </Badge>
+                        <Badge  tone="neutral">
                           {lesson.quizzes.length} quizzes
-                        </span>
+                        </Badge>
                       </div>}
                       <FacultyLessonAuthoring
                         lessonId={lesson.id}

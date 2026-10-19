@@ -1,4 +1,7 @@
 "use client";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 import {useState,useTransition} from "react";
@@ -33,32 +36,32 @@ export function CollegeOfferingMetadataAction({offering}:{
     });
   }
   return <div className="space-y-1">{confirmation}
-    <button type="button" disabled={pending} onClick={()=>setOpen(true)}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">Edit</button>
+    <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(true)}
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">Edit</Button>
     <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Edit offering "+offering.courseName} dismissible={!pending}>
         <h2 className="text-lg font-semibold text-foreground">Edit course offering</h2>
         <label className="grid gap-1 text-sm font-semibold text-body">Offering type
-          <select value={type} onChange={e=>setType(e.target.value as "CORE"|"ELECTIVE")}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+          <Select value={type} onChange={e=>setType(e.target.value as "CORE"|"ELECTIVE")}
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
-          </select></label>
+          </Select></label>
         <label className="grid gap-1 text-sm font-semibold text-body">Credits (optional)
-          <input type="number" min={1} max={30} value={credits}
+          <Input type="number" min={1} max={30} value={credits}
             onChange={e=>setCredits(e.target.value)}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Display order
-          <input type="number" min={0} max={10000} required value={displayOrder}
+          <Input type="number" min={0} max={10000} required value={displayOrder}
             onChange={e=>setDisplayOrder(e.target.value)}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
         </label>
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
         <div className="flex flex-wrap justify-end gap-2">
-          <button type="button" onClick={()=>setOpen(false)} disabled={pending}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Cancel</button>
-          <button type="button" onClick={save} disabled={pending}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">
-            {pending?"Saving…":"Confirm edit"}</button>
+          <Button variant="secondary" type="button" onClick={()=>setOpen(false)} disabled={pending}
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Cancel</Button>
+          <Button variant="primary" type="button" onClick={save} disabled={pending}
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">
+            {pending?"Saving…":"Confirm edit"}</Button>
         </div>
     </Dialog>
     {!open&&error?<p role="alert" className="text-xs text-error">{error}</p>:null}

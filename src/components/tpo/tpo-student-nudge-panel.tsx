@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import {ScrollCue} from "@/components/ui/scroll-cue";
@@ -51,13 +52,13 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   <h2 className="font-semibold">Send a message</h2>
   <p className="text-sm text-body">Choose up to 25 learners on this page. Messages are delivered in-app and audited.</p>
   <label className="flex items-center gap-2 text-sm">
-   <input type="checkbox" checked={validSelected.length===Math.min(rows.length,25)}
+   <Checkbox checked={validSelected.length===Math.min(rows.length,25)}
     disabled={pending} onChange={e=>setSelected(e.target.checked?rows.slice(0,25).map(row=>row.id):[])} />
    Select first {Math.min(rows.length,25)} on this page
   </label>
   <ScrollCue axis="y" label="Students available for message" viewportClassName="max-h-48 space-y-1">
    {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={validSelected.includes(row.id)}
+    <Checkbox checked={validSelected.includes(row.id)}
      disabled={pending||(!validSelected.includes(row.id)&&validSelected.length>=25)}
      onChange={e=>setSelected(current=>e.target.checked?[...current,row.id]:current.filter(id=>id!==row.id))}/>
     {row.label}{row.registered===false?<span className="text-xs text-muted-foreground">(not in placements)</span>:null}

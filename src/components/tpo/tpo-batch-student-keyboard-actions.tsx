@@ -48,13 +48,13 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
    <a href={downloadHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Export filtered page CSV</a>
   </div>
   <label className="flex min-h-10 items-center gap-2 text-sm">
-   <input type="checkbox" checked={rows.length>0&&valid.length===rows.length}
+   <Checkbox checked={rows.length>0&&valid.length===rows.length}
     onChange={event=>event.target.checked?selectVisible():setSelected([])}/>
    Select all learners on this page
   </label>
   <div className="grid max-h-44 gap-1 overflow-y-auto sm:grid-cols-2" aria-label="Visible batch learners">
    {rows.map(row=><label key={row.id} className="flex min-h-9 items-center gap-2 text-sm">
-    <input type="checkbox" checked={valid.includes(row.id)}
+    <Checkbox checked={valid.includes(row.id)}
      onChange={event=>setSelected(ids=>event.target.checked?
       tpoBatchVisibleSelection(rows,[...ids,row.id]):ids.filter(id=>id!==row.id))}/>
     {row.name}{row.rollNumber?" · "+row.rollNumber:""}

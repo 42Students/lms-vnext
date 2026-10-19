@@ -65,3 +65,40 @@ Changes are limited to semantic tokens, 9px control radius and 12px canvas radiu
 - [ ] UI screenshot comparison, TypeScript builds, tests, application execution and CI intentionally not run per owner.
 
 **Verification policy:** dev-only; no TypeScript builds, tests, app execution or CI were run. Review and integration still required after mainline merges.
+
+
+## Checkpoint 1: TOP BAR — computed-CSS / legacy-SCSS source parity (October 19, 2026)
+
+Owner reference: `docs/design/old-lms-shell.css` TOP HEADER rules, `old-lms-shell-spec.md`, `legacy-styles/components___header.scss`, `components___dropdown.scss`, `components___notification-drawer.scss`. The computed reference takes precedence over generic variables when they disagree.
+
+| Item | Legacy reference | chat-13 implementation |
+| --- | --- | --- |
+| Header | 68px high, 18px gap, 20px horizontal padding, white | `topbar.module.css .bar`: `height/min-height:68px`, `gap:18px`, `padding:0 20px`, `--lms-white` |
+| Border + shadow | `#e7ecf2` 1px bottom; `0 1px 3px rgba(26,45,72,.035)` | `--lms-header-border` and `--lms-header-shadow` match their values in `globals.css` |
+| Command structure | `auto minmax(220px,380px) 1fr`, gap 12px; New, search and actions | Moved `TopbarNotifications` to the third grid child; `.command` uses exact 3-track grid |
+| Search box | 291×36px, `#f8fafc`, radius 9px | `.search` width 291px; `.searchBox` height 36px, `--topbar-search-bg` / `--lms-control-radius` |
+| Keyboard hint | visible `Ctrl K` with muted `#5b6b82` text | `<kbd>` within search box; Ctrl/Cmd+K opens, listbox arrow/Home/End/Escape navigation maintained |
+| New | 82×36px, 9px radius, `#0a7c88` primary/white text, 14px/650 | `.new` dimensions/weight and `--lms-button-primary`/white values match; TPO retains its authorized creation menu |
+| Icons | outlined white 36×36px, 9px radius | `.iconButton` and compact notification trigger; Messages shown only when an authorized route exists |
+| Red count badges | 10px text, 16×16px badge; `#ff7576` from `components___dropdown.scss` | `.badge` and scoped existing TPO/recruiter/learner bell overrides, with real unread counts where provided |
+| Organization | 12px/600, text `#334155`, max 260px desktop /180px tablet | `.orgName` and scope-first `app-shell.tsx` `organizationName` |
+| Avatar | 42px wrapper/38px inner circle; mobile 40px/36px | `.avatar` and `.avatarInner` + role/email-derived initials and existing account actions |
+| Account dropdown | desktop width max 280px, shadow `9px 11px 28px rgba(0,0,0,.1)`, radius 6px and padding 16×24px | `.menu` matches; mobile radius 14px, padding 16px |
+| Notification popover | min 360px/max 420px, max-height `min(520px,100vh - 120px)`, radius 12px, thin `#e5e9f0` border, layered soft shadow | scoped bell adapters retain authenticated data sources and use exact dimensions/shadow; mobile full-width overlays |
+| Tablet/mobile | 768–1199px gap 10px/padding 14px; ≤767px gap 8px, safe-area padding, 38px New, 36px search trigger, 40px avatar wrapper | matching media rules in `topbar.module.css` |
+
+**Integration boundary:** The topbar has one rendering slot in `app-shell.tsx`, with no duplicated header. The TPO route has independently authorized Messages + Notifications and unread counts. Other portals only show the Messages control when `messagesHref` is known; do not fabricate destinations or badge counts. Learner/recruiter notifications retain their existing role-specific panels. The avatar falls back to role/email-derived initials because `RequestContext.user` has no display-name field.
+
+**Verification limit:** This matrix is checked against repository CSS/SCSS sources and JSX structure. No screenshot comparison, browser rendering, TypeScript compiler, tests, app execution or CI was run. Mark visual pixel equality as unverified until screenshot inspection.
+
+## Checkpoint 3: Super Admin first-third follow-up
+
+- [x] Audited the first 36 `/admin` route sources from `docs/orchestrator/ui-ux/pages-admin.md`; every route now uses shared Button/Input/Select/Textarea abstractions or delegates to an existing component. No remaining native controls on these route pages.
+- [x] Replaced four remaining one-off legacy-link/focus colors in `batches/[batchId]/students`, `departments`, and `faculty-assignment` with shared `text-primary-text`/`outline-primary` and secondary hover tokens.
+- [x] Shared admin and verification components swept in earlier batches (including college branding, sign-in, verification filters/drawer, and faculty-assignment creation); updated account-menu scope search to `Input` in this checkpoint.
+- [x] Imported first-third components: `super-admin-college-broadcast-form` now uses shared `Select`/`Checkbox` and a flat section; `announcement-admin-workspace` uses shared `Checkbox` for pinned/consent actions; `college-logo-uploader` uses shared `Input` for crop range controls.
+- [x] Super Admin Batches and Classes delegate to `college-cohort-management` and `college-section-management`. Converted all 10+6 native text/date/number inputs, 4+3 selects, 6+4 action buttons, and 2 class description textareas to shared UI components while preserving forms, server validation, action states and original content.
+- [x] Source-only tag checks confirmed exact `Button`/`Select` closing tags, no truncated `</Select>` in converted components, and balanced CSS curly braces.
+- [x] Removed a duplicate `Button` import from `hr-recruiter-bell.tsx`, the existing recruiter notification trigger used by the topbar. No recruiter business or notification behavior was changed.
+- [ ] Further imported component visual comparison and interactive QA are still required.
+

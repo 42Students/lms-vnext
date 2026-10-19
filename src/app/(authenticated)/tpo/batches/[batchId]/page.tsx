@@ -60,7 +60,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    {own.total} {own.total===1?"student is":"students are"} decided individually
    {own.uncertain>0?", "+own.uncertain+" need class review":own.different===0?", all the same as their class or batch":", "+own.different+" differ from their class or batch"} →
   </Link>:<p role="status" className="text-sm text-body">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
- <section aria-label="Whole batch eligibility decision" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ <section aria-label="Whole batch eligibility decision" className="space-y-2 border-b border-border py-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
     <div><h2 className="font-semibold">Whole batch</h2>
       <p className="text-sm text-body">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>

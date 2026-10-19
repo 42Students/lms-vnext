@@ -4,6 +4,7 @@ import {SuperAdminDriveDuplicate} from "@/components/placements/super-admin-driv
 import {SuperAdminDriveArchive} from "@/components/placements/super-admin-drive-archive";
 import {SuperAdminPublishedDriveEdit} from "@/components/placements/super-admin-published-drive-edit";
 import Link from "next/link";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { getPlacementJob } from "@/modules/placements/job-service";
@@ -21,7 +22,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   <PageHeader eyebrow="Super Admin · Drive workspace" title="Settings" description="Drive status, deadline and policy controls for the selected college."/>
   <section className="space-y-2 border-b border-border pb-5">
    <h2 className="font-semibold">{job.title}</h2>
-   <p className="text-sm text-body">Status: {job.status}</p>
+   <p className="flex flex-wrap items-center gap-2 text-sm text-body">Status: <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>{job.status}</StatusBadge></p>
    <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? driveSettingsIstDate(job.applicationDeadline) : "Not configured"}</p>
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
    <Link href={base} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Open drive controls →</Link>
