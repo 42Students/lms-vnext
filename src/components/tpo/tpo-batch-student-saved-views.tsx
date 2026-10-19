@@ -1,4 +1,6 @@
 "use client";
+import {Radio} from "@/components/ui/radio";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {useRef,useState} from "react";
@@ -71,7 +73,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
     <Input value={name} onChange={e=>setName(e.target.value)} maxLength={100}
      className="mt-1"/></label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</label>
+    <Checkbox  checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</label>
    <div className="flex flex-wrap gap-2">
     <Button variant="primary" type="button" disabled={busy||guarded||!name.trim()} onClick={()=>void action({
      action:"CREATE",name:name.trim(),pinned,filters:current(),
@@ -83,7 +85,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
    <ul className="space-y-2">{views.map(view=><li key={view.id}
     className="flex flex-wrap items-center gap-2 rounded-[var(--lms-canvas-radius)] border border-border p-2 text-sm">
     <label className="flex min-h-11 items-center gap-2">
-     <input type="radio" name="selected-batch-view" checked={selected===view.id}
+     <Radio  name="selected-batch-view" checked={selected===view.id}
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
      {view.name}{view.pinned?" · Pinned":""}
     </label>
