@@ -461,3 +461,37 @@ are complete; do not mislabel them as perfect pixel equality.
 if orchestrator provides screenshot diffs; otherwise
 `scripts/audit/chat19-shell-grep.cjs` for full-checkout evidence
 after local checkout.
+
+### Mobile drawer pixel-value corrections (source-complete)
+
+Reviewing `docs/design/legacy-styles/components___antddesign.scss:305-426`
+exposed three real vNext mobile differences after the earlier width/scroll
+clone. They are now corrected in `sidebar-legacy.css` without changing
+the desktop 96px rail or another owner's shared Drawer:
+
+| Property/state | Legacy SCSS file:line and value | vNext file:line and value | Status |
+|---|---|---|---|
+| Left drawer shadow | `components___antddesign.scss:412-426` `4px 0 16px rgba(0,0,0,.12)` | `sidebar-legacy.css:189-199` same on `.lms-mobile-sidebar[data-slot=drawer]` | Match (previous shared right drawer cast wrong-direction -4px shadow) |
+| Mobile long labels | `components___antddesign.scss:383-389` `word-break:break-word`, `overflow-wrap:break-word`, 15px readable text | `sidebar-legacy.css:232-239` same, with `white-space:normal`, no desktop ellipsis | Match source intent |
+| Item icon/label gutter | `components___antddesign.scss:374-389`: 10px nav padding and 10px text offset | `sidebar-legacy.css:225-230`: padding10px, flex gap10px | Match spacing |
+| Mobile group divider margins | `components___antddesign.scss:403-405`: 6px 8px | `sidebar-legacy.css:268-273`: 6px 8px | Match (previous 14px/10px vertical, 12px horizontal) |
+| Collapsed desktop ellipsis remains | Old desktop `old-lms-shell.css:14,33` hides labels in rail, shows on hover | `sidebar-legacy.css:147-154` desktop overflow ellipsis; override only in mobile Drawer | No desktop regression |
+| Breakpoints | `old-lms-shell.css:23` and mobile SCSS max767px | `sidebar-legacy.css:6,189` desktop ≥768px, mobile ≤767px | Match |
+| Original mobile touch scroll | `components___antddesign.scss:348-359` touch inertia, no scrollbar | `sidebar-legacy.css:216-223` same | Match |
+
+**Responsive/grep source proof:** At phone widths 320, 360 and 390px,
+a long menu label wraps instead of overflowing its native 82vw/max300px
+drawer; group dividers use 8px inline and 6px block margins.
+At 768/1024/1280px, only the original desktop ellipsis and flex rail
+apply; `@media (max-width:767px)` keeps new drawer values out of tablet.
+The changed CSS introduces **zero** opening raw HTML control tags and
+**zero** additional `lms-desktop-sidebar|fl-d-panel-l|lms-sidebar-item`
+occurrences relative to the earlier 41-file source scan.
+`tests/unit/chat19-shell-sidebar-clone.test.ts` now contains source
+guards for these SCSS values. Tests and browser screenshots were not run.
+
+**Strict tick:** B3 remains `[ ]` until the executed checkout grep,
+hover/collapsed icon screenshot, keyboard interaction, and tablet/phone
+viewport proof are attached. These source-value fixes do not justify a
+false whole-category tick. B4 remains `[ ]` for the non-legacy route bar
+and remaining loader pixel comparisons.
