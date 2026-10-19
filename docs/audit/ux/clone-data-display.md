@@ -235,3 +235,28 @@ grep -nE '<(Pagination|Tabs|FilterChip|SegmentedControl)([[:space:]]|>)|</Filter
 - **No regression limitation:** no browser, TypeScript, CI, interaction automation, exact computed-style audit or full repo grep run under the requested dev-only/no-CI constraint. The strict category checkboxes E1–E5 and E8 stay **[ ]**; the completed list here records **source-file migration**, not finished pixel parity.
 
 **Remaining work queue:** other dynamic tabs and pills across portals; E4 computed-state and padding equality; scroll/cascade and mobile disclosure comparisons; exhaustive repo-wide greps; AG Grid dependency and visual check. Exact next candidate: `src/components/placements/learner-applications-browse.tsx` for any remaining custom tab/filter state, then `src/components/placements/tpo-drive-cancel-form.tsx` UI capture in the later browser verification phase.
+
+## 2026-10-19 replacement-lane source migration — bounded continuation
+
+Starting point was `origin/chatgpt/chat-14-b` (`f6e1af3`), which was 1,409 commits behind `origin/main` and two commits ahead. Rebased by replaying the branch-only 48 audit lines onto the inspected `main` head (`12ee0a5`), with lease-protected branch update; main was **not** modified. Existing `scripts/codemods/chat14-tables-tabs.cjs` is already committed and must be run by the orchestrator (dry-run first); this lane did **not** run it.
+
+### Complete source-level conversions in this continuation
+
+| File | Old local pattern | Shared component/behavior preserved | Source grep / static responsive proof |
+|---|---|---|---|
+| `src/components/admin/super-admin-placement-oversight-nav.tsx` | Two custom `<Link>` nav groups with `border-b-2`, no route-active underline | Two shared `Tabs` navigation strips retaining all primary and disclosure destinations, now matching exact and nested paths via `usePathname` | In this file: hand-rolled `border-b-2` occurrences **0**. `Tabs` uses horizontal ScrollCue; legacy tab underline 3px / 200ms; 20px gap until 1600px, 40px afterward (`src/components/ui/tabs.tsx:71-91`; legacy `components___common.scss:365-410,443-475`) |
+| `src/components/tpo/recruiter-lead-detail-workspace.tsx` | Raw pressed activity-type and call-outcome `<button>` groups with variable color classes | `FilterChip` retains both group labels, all four activity types/five call outcomes, `aria-pressed`, state reset and handlers | **2** source `<FilterChip>` pairs in map expressions, opening and closing tags matched; shared phone touch 44px through 767px, compact at 768px (`filter-chip.tsx:28-34`; legacy `components___antddesign.scss:1092-1100`); file's unrelated raw buttons still open |
+| `src/components/courses/learner-course-list.tsx` | `Continue learning only` pressed primary/secondary Button | Shared `FilterChip` retaining pressed state and `PAGE_SIZE` reset | **1** balanced FilterChip pair; chip geometry shared, but exact per-state computed legacy paint unverified |
+| `src/components/verification/VerificationFilterPanel.tsx` | Three large custom waiting-age shortcut Buttons | Shared `FilterChip` for Today, This week, Over a week, preserving IST date presets, applied query and validation | **3** balanced FilterChip pairs; no selection claim because each shortcut applies an immediate action |
+| `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx` | Hand-rolled offer status `border-b-2` tabs with counts and hand-rolled Previous/Next pager | Shared `Tabs` with count property and `Pagination`; all existing `status`, search and joining/kind/expiry/pay query filters retained in generated hrefs; server authorization and rows untouched | Hand-rolled `border-b-2` occurrences **0**, one shared Tabs navigation, one shared Pagination; phone pager 44px, hides non-active numbers, retains Previous/Next (`pagination.tsx:52-84`, legacy `components___antddesign.scss:242-280`) |
+
+The five committed source files were fetched back from GitHub after writes. JSX chips in the three files have equal opening/closing tag counts; the navigation and pager replacements use self-closing `<Tabs />`/`<Pagination />`. No app, browser, CI, TypeScript compiler, or local codemod was run. Source-level inspection alone is insufficient to tick a category.
+
+### Next exact files and documented exemptions
+
+- [ ] `src/components/placements/placement-calendar-workspace.tsx`: linked event-type pills with colored dot labels require a shared chip/link representation preserving each href, indicator dot and active route/filter state; do not swap them for non-link FilterChip buttons.
+- [ ] `src/components/placements/learner-applications-browse.tsx`: already uses shared Tabs and SegmentedControl; its custom pager uses `router.push(...,{scroll:false})`. Shared Pagination's ordinary links may change scroll behavior, so **defer** until that semantic can be retained. This is a file-specific navigation exemption, not an E2 tick.
+- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`: remaining dynamic raw controls require a deliberate Button/control codemod or manual behavior review, not blind JSX rewriting.
+- [ ] Native AG Grid Quartz E8: component and client-only TPO call sites exist on main, but the inspected main `package.json` still has no `ag-grid-community` or `ag-grid-react` entries; `legacy-grid/TpoGrid.jsx.txt` was not available in the inspected tree. With the user prohibition on manifest changes and app/CI execution, do not claim build/visual parity.
+
+**STRICT TICK RULE:** E1, E2, E3, E4, E5 and E8 remain **unchecked**. This batch proves narrow component replacement and static responsive rules, not an exhaustive repo-wide grep or browser/state/value equivalence.
