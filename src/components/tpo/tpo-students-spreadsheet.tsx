@@ -238,7 +238,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
       initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none"}}
       available={afterCollegeAvailable} />
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
-      aria-label={"Placement history for "+row.displayName} className="underline text-link px-0">Placement history</Link>
+      aria-label={"Placement history for "+row.displayName} className="underline text-link lms-inline-link px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Placement history</Link>
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
       aria-label={"Change participation for "+row.displayName} className="underline text-link px-0">Change participation</Link>
    </div>}/>
