@@ -63,7 +63,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/components/projects/college-project-summary-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/learner-board-interactive.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/learner-board-task-detail-dialog.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/learner-board-task-index.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/learner-board-task-index.tsx` (greps: complete source raw/hex/native-overlay/manual-tabs=0; values: 20 board skin/interaction rows match legacy; responsive: 320px desktop lane / 82% mobile snap through767; details below)
 - [ ] `src/components/projects/learner-own-task-controls.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/learner-project-activity.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/learner-project-board-search.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -842,3 +842,34 @@ To reproduce: rg -n '<(button|input|select|textarea)\b|#[[:xdigit:]]{3,8}|window
 | Focus/hover/disabled/load | no interactive control or local mutation | all four local state sets empty; no overlays/buttons | n/a |
 
 At 320px/767px and up to 991px each grid is one column and every variable-length text field wraps; at >=992px both switch to two columns while retaining min-w-0. The legacy project SCSS at 42Students/lms2-fe prod-2026 src/styles/components/_learn-projects.scss:1125-1152 verifies deliverables should be sentence lists, not narrow pill chips. No page content, props or semantics were modified beyond visual overflow, density and fluid grid classes. This is source proof; browser/CI/screenshot verification remains the orchestrator's section J.
+
+## Completed — learner saved-task Board lane index
+
+Source: 43-line src/components/projects/learner-board-task-index.tsx, now using the already source-proven legacy-project-board.module.css (124 lines) rather than generic BoardColumn geometry. Same task URLs, status, sprint detail, labels and empty messages. CSS reference: 42Students/lms2-fe@prod-2026 src/styles/components/_learn-projects.scss:3953-3993,4159-4184,4193-4259,4299-4335,5662-5697.
+
+Full-file source checks: raw button/input/select/textarea=0; hardcoded hex=0; homemade dialog/native confirm=0; manually drawn tabs or aria-pressed=0. Shared components: one BoardColumn element rendered per persisted lane, one Badge element for count, one EmptyState in empty lanes, one Link element per task. Repeat in orchestrator: rg -n '<(button|input|select|textarea)\b|#[[:xdigit:]]{3,8}|window.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' src/components/projects/learner-board-task-index.tsx => source count 0. This scan used full GitHub file strings rather than local runtime.
+
+| Property/state (20) | Legacy reference | Present scoped CSS/shared source | Match |
+|---|---|---|---|
+| Outer canvas | old-lms-shell-spec.md:18-20 one white canvas | semantic section only, no extra canvas | yes |
+| Horizontal overflow | old project SCSS:5662-5697 X scroll | legacy-project-board.module.css:88-100 overflow-x auto | yes |
+| Board track | project SCSS:3953-3993 flex gap12 | module.css:7-13 same | yes |
+| Desktop lane width | project SCSS:3953-3993 320px | module.css:14-19 width and flex-basis320 !important | yes |
+| Desktop lane min height | old project 260px | module.css:20 260px | yes |
+| Lane radius | old project 20px | module.css:25 20px | yes |
+| Lane border | old project rgba(38,186,199,.16) | module.css:24 same | yes |
+| Lane background | old teal4%-to-white gradient | module.css:26 same | yes |
+| Lane resting shadow | old project double elevation2 | module.css:27 two-layer matching | yes |
+| Lane hover | old translateY(-1px), teal28% and elev3 | module.css:30-34 matching | yes |
+| Lane heading | old 14px/600 and hairline | module.css:44-54 matching | yes |
+| Count | old-lms-pages.md:11 small count badge | shared Badge neutral, tabular numbers | delegated |
+| Internal task gap | old project 8px | module.css:55-64 flex gap8 | yes |
+| Task scroll ceiling | old min(62vh,720px), phone58vh | module.css:55-64,112-122 | yes |
+| Task radius | old project card16px | module.css:65-73 card radius16 !important | yes |
+| Task card border/surface | old white surface and neutral-200 .85 | module.css:65-75 same | yes |
+| Card hover/focus | old hover elevation, teal 2px focus | module.css:77-93, Link focus-outline2 | yes |
+| Touch target | variables.scss:139 >=44px on phones | task Link min-h-11 md:min-h-9, plus card padding | yes |
+| Mobile width and snap | old project SCSS:5662-5697 82% lane, snap at <=767 | module.css:104-121 82%, scroll snap start | yes |
+| Reduced motion | old project accessibility no hover animation | module.css:123-124 transition none | yes |
+
+Desktop >=768px: horizontal lane strip uses 320px lanes, board items remain wrapped without horizontal clipping. Phone 320–767px: parent scroll region enables horizontal scroll and each lane is 82% width with snap; task list max-height58vh, and clickable task cards stay >=44px tall. The scroll region is focusable/labelled and already owned by its component. Empty task lane shows shared EmptyState. The old CSS module is shared by the other project boards and contains legacy-sourced values, so no src/components/ui/board-column.tsx edits were necessary. No content, routing or underlying task action behavior changed. Browser screenshot/computed CSS verification remains separate.
