@@ -26,6 +26,9 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
 import {TpoStudentsDriveVisibility} from "@/components/tpo/tpo-students-drive-visibility";
@@ -258,10 +261,7 @@ export default async function TpoStudentsPage({
           title={TPO_OWNER_PAGE_COPY.students}
           description="Everyone in placements, from the batches you made eligible."
         />
-        <section
-          role="alert"
-          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6"
-        >
+        <Alert tone="error">
           <h2 className="text-lg font-semibold text-foreground">
             Invalid Students filters
           </h2>
@@ -274,7 +274,7 @@ export default async function TpoStudentsPage({
           >
             Clear filters
           </Link>
-        </section>
+        </Alert>
       </div>
     );
   }
@@ -604,43 +604,35 @@ export default async function TpoStudentsPage({
       </nav>
 
       {!data.definitions.registrationsAvailable ? (
-        <section
-          role="status"
-          className="border-b border-border py-5"
-        >
+        <Alert tone="warning">
           <h2 className="text-base font-semibold text-warning">
             Placement registration data unavailable
           </h2>
           <p className="mt-2 text-sm leading-6 text-body">
             Placement registration information is unavailable. Registration counts may be incomplete.
           </p>
-        </section>
+        </Alert>
       ) : null}
 
-      {query.profileStatus&&!data.definitions.verificationAvailable?<section role="status"
-        className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm text-warning-text">
+      {query.profileStatus&&!data.definitions.verificationAvailable?<Alert tone="warning">
         Profile-verification records are unavailable. A missing source must not be mistaken for Not verified.
         <Link href="/tpo/students" className="ml-2 text-link underline">Clear profile filter</Link>
-      </section>:null}
-      {query.afterCollege&&!data.definitions.afterCollegeAvailable?<section role="status"
-        className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm text-warning-text">
+      </Alert>:null}
+      {query.afterCollege&&!data.definitions.afterCollegeAvailable?<Alert tone="warning">
         Saved after-college outcome records are unavailable. The selected outcome cannot be filtered until its registered table is available.
         <Link href="/tpo/students" className="ml-2 text-link underline">Clear outcome filter</Link>
-      </section>:null}
+      </Alert>:null}
       {!data.definitions.externalOffersAvailable ? (
-        <section
-          role="status"
-          className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm leading-6 text-body"
-        >
+        <Alert tone="warning">
           External offer information is unavailable. Placed counts may be incomplete.
-        </section>
+        </Alert>
       ) : null}
 
-      {!data.debarmentAvailable?<p role="status" className="text-sm text-warning-text">Timed debarment records are not available right now. Debarment filters and counts may be incomplete.</p>:null}
-      {(data.uninvitedCount??0)>0?<section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm">
+      {!data.debarmentAvailable?<InlineNotice tone="info" message="Timed debarment records are not available right now. Debarment filters and counts may be incomplete."/>:null}
+      {(data.uninvitedCount??0)>0?<Alert tone="warning">
         Registration is not open for {data.uninvitedCount} students: their batch has not been invited, so they cannot register.
         <Link href="/tpo/batches" className="ml-2 font-semibold text-link underline">Open Placement eligibility</Link>
-      </section>:null}
+      </Alert>:null}
       <section className="border-b border-border py-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -956,7 +948,7 @@ export default async function TpoStudentsPage({
          scopeKey={context.membership.id+":"+JSON.stringify({...currentFilters,page:undefined,pageSize:undefined,columns:undefined})}
          allowedIds={roster.total<=5000?(data.exportRows??[]).map(item=>item.membershipId):roster.items.map(item=>item.membershipId)}
          totalCount={roster.total}>
-        <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
+        <Suspense fallback={<Skeleton label="Loading spreadsheet grid…" variant="row" count={5}/>}>
           <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}
             canManageViews={manageAllowed}/>
