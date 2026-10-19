@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -11,18 +12,18 @@ export function CollegeArchivedPrograms({ programs }: {
   const [busy, start] = useTransition();
   const [error, setError] = useState("");
   return <section className="border-t border-border pt-4">
-    <button type="button" onClick={() => setOpen(value => !value)}
+    <Button variant="ghost" type="button" onClick={() => setOpen(value => !value)}
       className="font-semibold text-primary-text">
       {open ? "Hide archived programs" : "Show archived programs"} ({programs.length}{programs.length === 100 ? "+" : ""})
-    </button>
+    </Button>
     {open ? <div className="mt-3 space-y-3">
       {programs.length === 0 ? <p className="text-sm text-body">
         No archived programs are available for restoration in active departments.
       </p> : programs.map(program => <div key={program.id}
         className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
         <p className="text-sm text-body">{program.name} ({program.code}) · {program.departmentName}</p>
-        <button type="button" disabled={busy}
-          className="rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm font-semibold text-primary-text"
+        <Button variant="secondary" type="button" disabled={busy}
+          className="text-primary-text"
           onClick={() => {
             if (!window.confirm(`Restore ${program.name}? Its active name and code must remain unique.`)) return;
             setError("");
@@ -39,7 +40,7 @@ export function CollegeArchivedPrograms({ programs }: {
                 setError(reason instanceof Error ? reason.message : "Restore failed");
               }
             });
-          }}>Restore</button>
+          }}>Restore</Button>
       </div>)}
       {programs.length === 100 ? <p className="text-xs text-muted-foreground">
         Showing the first 100 archived programs. More may exist.
