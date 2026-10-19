@@ -99,7 +99,7 @@ export function MobileNavigation({
               <div className="inline-flex h-10 w-10 items-center justify-center" aria-label="42Students LMS">
                 <ShellLogoMark />
               </div>
-              <button
+              <Button variant="secondary" size="icon"
                 type="button"
                 aria-label="Close navigation"
                 onClick={() => setOpen(false)}
@@ -109,7 +109,7 @@ export function MobileNavigation({
                   fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                   <path d="M5 5l14 14 M19 5L5 19" />
                 </svg>
-              </button>
+              </Button>
             </div>
             <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pt-2 pb-[calc(24px+env(safe-area-inset-bottom,0px))]">
               <SidebarNav
