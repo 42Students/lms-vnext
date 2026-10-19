@@ -49,7 +49,9 @@ Public and people: `src/components/placements/tpo-recruiter-grant-controls.tsx`,
 - Migrated textual, search, date and select fields to shared `Input`, `Select` and `Textarea`; checkboxes and radios use the shared accessible primitives. Converted primary operational actions to `Button` while preserving handler, confirmation, and disabled props.
 - Tokenized arbitrary 9px/bare radii and noncanonical 20px card paddings; converted redundant row/stat-card backgrounds into thin dividers inside the inherited white page canvas. Left real list/table boundaries and distinct operational panels intact.
 - Post-edit source scans of the selected routes and supporting components found no raw hex colours or unskinned primary button text, and no unapproved `rounded-md/lg/xl` or palette utility classes in the checked source. Remaining native outlined/tertiary buttons use existing shared token classes; raw file inputs were upgraded to the shared input primitive.
-- Static review only; **no** Next.js app, syntax compiler, typecheck, tests, screenshots, CI or deployment executed. Runtime exact pixel parity and TypeScript verification are still for the orchestrator/owner.
+- Static post-edit JSX sanity inspection across all 32 changed TSX files: no malformed shared-control closing tags, unmatched capitalized Button/Select pairs, or missing imports detected. This is **not** a TypeScript parse or typecheck.
+- While this lane ran, main progressed by 216 commits beyond the merge base. The sole overlapping file, `src/components/placements/tpo-round-results-import.tsx`, was reconciled to the latest main preview radius. The newer main history is **not merged** into the lane branch: the available connector lacks a safe non-PR branch merge operation; orchestrator integration remains required.
+- **No** Next.js app, syntax compiler, typecheck, tests, screenshots, CI or deployment executed. Runtime exact pixel parity and TypeScript verification are still for the orchestrator/owner.
 
 ## Progress
 - [x] Brought `chatgpt/chat-2-b` up to then-current `main` via fast-forward (branch had no unique commits).
