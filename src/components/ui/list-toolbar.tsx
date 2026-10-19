@@ -47,7 +47,7 @@ export function ListToolbar({
     <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
       {search ? <div className="flex min-w-0 w-full flex-1 basis-[220px] items-center gap-[var(--lms-space-2)] sm:max-w-[380px]"><div className="min-w-0 flex-1">{search}</div>{searchAction}</div> : searchAction ?? null}
       {filterControl || viewControl || columnControl || exportControl ? <div role="toolbar" aria-label={`${label} actions`}
-        className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] [&_[data-slot=button]]:rounded-[var(--lms-control-radius)] [&_[data-slot=button]]:border-[var(--lms-canvas-border)] [&_[data-slot=button]]:bg-white [&_[data-slot=button]]:text-[var(--lms-body-text)]">
+        className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         {filterControl}{viewControl}{columnControl}{exportControl}
       </div> : null}
     </div>
