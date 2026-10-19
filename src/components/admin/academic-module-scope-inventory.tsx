@@ -45,24 +45,24 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
  return <section aria-label="Academic scope inventory" className="mt-4 space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
    <h3 className="font-semibold text-foreground">Academic hierarchy</h3>
-   <div className="flex gap-2 text-sm">
-    <Button type="button" variant="ghost" className="min-h-11 min-[768px]:min-h-9 underline" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</Button>
-    <Button type="button" variant="ghost" className="min-h-11 min-[768px]:min-h-9 underline" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</Button>
+   <div className="flex gap-2 text-sm print:hidden">
+    <Button type="button" variant="ghost" className="min-h-11 md:min-h-9 underline" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</Button>
+    <Button type="button" variant="ghost" className="min-h-11 md:min-h-9 underline" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</Button>
    </div>
   </div>
   <p className="text-xs text-muted-foreground">{scopes.length} academic scopes loaded (including inheriting scopes). Effective values trace the configured scope hierarchy and locks; an individual learner still needs active enrollment and participation. Student counts include active learners with current enrollment in this college.</p>
-  <div className="max-h-96 overflow-auto">
+  <div className="max-h-96 overflow-auto print:max-h-none print:overflow-visible">
    <DataTable columns={columns} rows={visible}
     getRowKey={scope=>scope.scopeType+":"+scope.scopeId}
     caption="Academic hierarchy and effective module rules"
     empty={<p>No academic scopes found.</p>}/>
   </div>
-  {showPageStatus?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm">
+  {showPageStatus?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm print:hidden">
    <span>Academic hierarchy page {safePage} · {scopes.length} nodes on this page</span>
    {prevHref?<Link href={prevHref}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Previous hierarchy page</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous hierarchy page</Link>:null}
    {nextHref?<Link href={nextHref}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Next hierarchy page</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next hierarchy page</Link>:null}
   </nav>:null}
  </section>;
 }
