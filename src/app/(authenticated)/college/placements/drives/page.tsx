@@ -1,6 +1,4 @@
 import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -54,49 +52,49 @@ export default async function CollegeDrivesPage({ searchParams }: {
     <PageHeader eyebrow="College Admin · Placements" title="Drives"
       description="College-owned placement drives. This list is independent of cross-college recruiter access."
       actions={<Link href="/college/placements" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Operations workspace</Link>} />
-    <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3 lg:grid-cols-6">
+    <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 rounded-[8px] border border-border p-4 sm:grid-cols-3 lg:grid-cols-6">
       <label className="grid gap-1 text-sm">Title or company
-        <Input name="q" defaultValue={query.q} maxLength={100}
-           />
+        <input name="q" defaultValue={query.q} maxLength={100}
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm">Status
-        <Select name="status" defaultValue={query.status} >
+        <Select name="status" defaultValue={query.status} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           {["PUBLISHED","DRAFT","CLOSED","ARCHIVED","ALL"].map(s=><option key={s} value={s}>{s==="PUBLISHED"?"Active":s}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Season
-        <Select name="seasonId" defaultValue={query.seasonId ?? ""} >
+        <Select name="seasonId" defaultValue={query.seasonId ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           <option value="">All seasons</option>
           {data.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Company
         <Select name="relationshipId" defaultValue={query.relationshipId ?? ""}
-          >
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           <option value="">All companies</option>
           {data.companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Deadline from
-        <Input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
-          />
+        <input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
       </label>
       <label className="grid gap-1 text-sm">Deadline on or before
-        <Input type="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
-          />
+        <input type="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
       </label>
       <label className="grid gap-1 text-sm">At least N applicants
-        <Input type="number" name="minimumApplicants" min={0} max={100000}
+        <input type="number" name="minimumApplicants" min={0} max={100000}
           defaultValue={query.minimumApplicants??""}
-          />
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
       </label>
       <label className="grid gap-1 text-sm">Sort
-        <Select name="sort" defaultValue={query.sort} >
+        <Select name="sort" defaultValue={query.sort} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           <option value="TITLE">Title A–Z</option><option value="DEADLINE">Deadline first</option>
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
         </Select>
       </label>
-      <Button variant="primary" type="submit" className="self-end">Filter</Button>
+      <button type="submit" className="min-h-[var(--lms-control-height)] self-end rounded-[var(--lms-control-radius)] bg-primary px-3 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
     </form>
     <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="space-y-2" aria-label="Persisted drives">

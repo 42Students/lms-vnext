@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
-import { StatTile } from "@/components/ui/stat-tile";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -115,7 +114,10 @@ export default async function LearnerAttendanceCalendarPage({
         ["Not marked",data.summary.unmarked],
         ["Scheduled",data.summary.scheduled],
       ] as const).map(([label,value])=>
-        <StatTile key={label} label={label} value={value} className="p-4 sm:p-4" />)}
+        <section key={label} className="rounded-xl border border-border bg-surface p-4">
+          <h2 className="text-xs font-semibold uppercase text-muted-foreground">{label}</h2>
+          <p className="mt-2 text-xl font-semibold tabular-nums">{value}</p>
+        </section>)}
     </div>
     <p className="text-sm text-body">
       {data.summary.total} recorded class{data.summary.total===1?"":"es"} match the filters.

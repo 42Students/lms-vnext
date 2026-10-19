@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Tabs } from "@/components/ui/tabs";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
@@ -79,11 +78,13 @@ export default async function IndependentFindingsPage({searchParams}:{
     </p>:null}
    </section>:null}
   </section>
-  <Tabs ariaLabel="Finding views" renderPanel={false} value={parsed.view}
-    items={(["OPEN","RELEASE","ALL"] as const).map(value=>({
-      value,label:value==="OPEN"?"Open":value==="RELEASE"?"Release (critical & high)":"All",
-      href:independentFindingHref({...parsed,view:value,page:1}),
-    }))} />
+  <nav aria-label="Finding views" className="flex flex-wrap gap-3 border-b border-border">
+   {(["OPEN","RELEASE","ALL"] as const).map(value=><Link key={value} aria-current={parsed.view===value?"page":undefined}
+     href={independentFindingHref({...parsed,view:value,page:1})}
+     className={parsed.view===value ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
+      {value==="OPEN"?"Open":value==="RELEASE"?"Release (critical & high)":"All"}
+    </Link>)}
+  </nav>
   <section aria-label="Finding status counts" className="flex flex-wrap items-center gap-2 text-sm">
    <p className="font-semibold">Critical open: {data.criticalOpen}</p>
    {FINDING_STATUSES.map(status=><Link key={status}

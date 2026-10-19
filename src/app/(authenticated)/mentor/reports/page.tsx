@@ -1,4 +1,3 @@
-import { StatTile } from "@/components/ui/stat-tile";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -53,7 +52,10 @@ export default async function MentorReportsPage({searchParams}:{
         <h2 className="font-semibold">Registered project status</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {statusMetrics.map(([label,count])=>
-            <StatTile key={label} label={label} value={count} className="p-4 sm:p-4" />)}
+            <article key={label} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+              <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
+              <p className="mt-2 text-2xl font-bold tabular-nums">{count}</p>
+            </article>)}
         </div>
         <p className="text-xs text-muted-foreground">
           {data.projectCount} currently assigned projects; primary Mentor recorded on
@@ -64,7 +66,10 @@ export default async function MentorReportsPage({searchParams}:{
         <h2 className="font-semibold">Recorded project attention</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {attentionMetrics.map(([label,count])=>
-            <StatTile key={label} label={label} value={count} className="p-4 sm:p-4" />)}
+            <article key={label} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+              <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
+              <p className="mt-2 text-xl font-bold tabular-nums">{count}</p>
+            </article>)}
         </div>
         <p className="text-xs text-muted-foreground">
           Each category counts projects with a registered signal, not event volume.

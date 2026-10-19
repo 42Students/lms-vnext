@@ -2,8 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { getCollegeStudentDetail } from "@/modules/people/college-student-detail-service";
 import { CollegePersonNotFoundError } from "@/modules/people/college-person-detail-model";
 
@@ -39,15 +37,15 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
         action={`/college/students/${encodeURIComponent(membershipId)}`}>
         <label className="grid gap-2 text-sm font-semibold text-body">
           Enrollment lifecycle
-          <Select name="status" defaultValue={data.filter.status}
-            >
+          <select name="status" defaultValue={data.filter.status}
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
             <option value="ALL">All enrollments</option>
             <option value="ACTIVE">Active</option>
             <option value="COMPLETED">Completed</option>
             <option value="WITHDRAWN">Withdrawn</option>
-          </Select>
+          </select>
         </label>
-        <Button variant="primary" type="submit">Filter</Button>
+        <button type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
       </form>
       <p className="mt-2 text-xs text-muted-foreground">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>
       {data.enrollments.length === 0 ? <p className="mt-3 text-sm text-body">No program enrollment matches the selected lifecycle status.</p> :

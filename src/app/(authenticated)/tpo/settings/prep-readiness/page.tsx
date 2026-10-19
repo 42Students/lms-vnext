@@ -19,7 +19,7 @@ export default async function PrepSettings(){
  const parsed=tpoPrepConfigSchema.safeParse(data.config??{courseIds:[],minimumCompleted:0});
  const initial=parsed.success?parsed.data:{courseIds:[],minimumCompleted:0};
  return <div className="min-w-0 space-y-4"><TpoSettingsNav active="prep-readiness"/>
-  <PageHeader title="Prep readiness" />
+  <PageHeader eyebrow="TPO · Settings" title="Prep readiness" />
   {communication.ready?<TpoPrepPercentageEditor key={context.membership?.collegeId??"unscoped"} initial={communication.prepThresholdPct} version={communication.version}/>:
    <p role="status">Readiness percentage storage is unavailable.</p>}
   {!data.ready?<p role="status" className="rounded border border-border p-4">Readiness settings storage is pending migration registration.</p>:

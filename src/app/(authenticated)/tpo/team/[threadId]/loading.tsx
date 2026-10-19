@@ -1,5 +1,1 @@
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
-
-export default function Loading() {
-  return <GracefulPageLoading label="Loading team conversation" shape="directory" />;
-}
+export default function Loading(){return <section aria-busy="true" className="space-y-3"><div className="h-9 w-56 animate-pulse rounded-[var(--lms-control-radius)] bg-surface-secondary"/><div className="h-24 animate-pulse rounded-[var(--lms-canvas-radius)] bg-surface-secondary"/></section>;}

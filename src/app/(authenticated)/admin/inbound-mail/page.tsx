@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Tabs } from "@/components/ui/tabs";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Input} from "@/components/ui/input";
@@ -45,12 +44,12 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  const tabs=[{value:"NEW",label:"To read",count:data.toReadCount},{value:"TRIAGED",label:"Being handled",count:null},
   {value:"RESOLVED",label:"Done",count:null},{value:"ALL",label:"All",count:null}] as const;
  return <div className="min-w-0 space-y-6">{header}
-  <Tabs ariaLabel="Inbound mail views" renderPanel={false} value={parsed.data.status}
-     items={tabs.map(tab=>{
-       const url=new URLSearchParams(base);url.set("status",tab.value);
-       return {value:tab.value,label:tab.label,count:tab.count??undefined,
-         href:"/admin/inbound-mail?"+url.toString()};
-     })} />
+  <nav aria-label="Inbound mail views" className="flex flex-wrap gap-2">{tabs.map(tab=>{
+   const url=new URLSearchParams(base);url.set("status",tab.value);
+   return <Link key={tab.value} href={"/admin/inbound-mail?"+url.toString()} aria-current={parsed.data.status===tab.value?"page":undefined}
+    className={parsed.data.status===tab.value?"min-h-9 border-b-2 border-primary px-4 py-2 text-sm font-semibold text-primary-text":"min-h-9 border-b-2 border-transparent px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-primary-text"}>
+    {tab.label}{tab.count!==null&&tab.count!==undefined?" ("+tab.count+")":""}
+   </Link>})}</nav>
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="min-w-0 flex-1 text-sm">Search
     <Input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-w-0" placeholder="Sender, subject or message body"/></label>

@@ -1,5 +1,1 @@
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
-
-export default function Loading() {
-  return <GracefulPageLoading label="Loading placement hiring" shape="directory" />;
-}
+export default function Loading(){return <div role="status" aria-label="Loading hiring metrics" className="animate-pulse space-y-3"><div className="h-12 rounded bg-muted"/><div className="h-40 rounded bg-muted"/></div>;}

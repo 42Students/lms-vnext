@@ -220,7 +220,7 @@ export default async function LearnerOffersPage({
       ) : null}
       {!requestRead.available ? <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
-        <section role="status" className="border-b border-border py-6">
+        <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
           <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
           <p className="mt-2 text-sm text-body">{emptyState.description}</p>
           {offers.counts.all > 0 ? (
@@ -273,7 +273,7 @@ export default async function LearnerOffersPage({
         <span aria-current="page">Page {paginated.page} of {paginated.pages}</span>
         {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Next</Link> : null}
       </nav> : null}
-      <section aria-label="How offers work at your college" className="border-b border-border py-5">
+      <section aria-label="How offers work at your college" className="rounded-xl border border-border bg-surface p-5">
         <h2 className="font-semibold text-foreground">How offers work at your college</h2>
         <p className="mt-2 text-sm text-body">Check the offer response deadline and official terms before replying. Accepting a letter of intent is not the same as confirmed joining. College rules may affect how many offers you can hold.</p>
         <div className="mt-3 flex flex-wrap gap-4">

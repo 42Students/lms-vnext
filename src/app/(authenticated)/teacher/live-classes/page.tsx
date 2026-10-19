@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
@@ -50,7 +49,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
       {c.courseName} · {c.sectionName}
      </option>)}
     </Select></label>
-   <Button type="submit">Filter</Button>
+   <button type="submit" className="min-h-9 rounded bg-primary px-4 py-2 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-on-primary">Filter</button>
    <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
   </form>
   <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching registered live session{data.total===1?"":"s"}</p>

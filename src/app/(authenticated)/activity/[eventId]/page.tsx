@@ -113,7 +113,7 @@ export default async function ActivityDetailPage({
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Event context</h2>
         {Object.keys(event.metadata).length === 0 ? (
-          <p className="border-b border-border py-5 text-sm text-muted-foreground">
+          <p className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
             This event has no structured context.
           </p>
         ) : (

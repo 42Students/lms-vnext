@@ -74,6 +74,7 @@ export default async function TpoNotificationsPage({
     <div className="space-y-6">
       <TpoNotificationRefresh/>
       <PageHeader
+        eyebrow="TPO"
         title="Notifications"
         description="A clean history of what happened across placements. Actionable work stays on Home under Needs you."
       />

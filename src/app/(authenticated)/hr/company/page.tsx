@@ -1,4 +1,3 @@
-import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -137,12 +136,10 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         </div>
       ) : null}
 
-      <Tabs ariaLabel="Company and team sections" renderPanel={false} value={tab}
-        items={[
-          {value:"company",label:"Company",href:base+"&tab=company"},
+      <Tabs renderPanel={false} ariaLabel="Company and team sections" value={tab}
+        items={[{value:"company",label:"Company",href:base+"&tab=company"},
           {value:"team",label:"Team",href:base+"&tab=team"},
-          {value:"reports",label:"Reports",href:"/hr/company/reports?collegeId="+encodeURIComponent(result.grant.collegeId)},
-        ]} />
+          {value:"reports",label:"Reports",href:"/hr/company/reports?collegeId="+encodeURIComponent(result.grant.collegeId)}]}/>
 
       {tab === "company" ? (
         <section className="border-b border-border pb-5">
@@ -208,8 +205,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             Colleagues from your company who work with this college. To add one, ask the placement cell to invite them with their work email; the placement cell decides who gets access.
           </p>
           <form action="/hr/company" method="get" className="mt-3 flex flex-wrap gap-2">
-            <Input type="hidden" name="collegeId" value={result.grant.collegeId}/>
-            <Input type="hidden" name="tab" value="team"/>
+            <input type="hidden" name="collegeId" value={result.grant.collegeId}/>
+            <input type="hidden" name="tab" value="team"/>
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <Input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"

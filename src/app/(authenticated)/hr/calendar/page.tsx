@@ -1,7 +1,6 @@
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
-import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -386,17 +385,14 @@ export default async function HrCalendarPage({
                 </p>
               </div>
 
-              <Tabs ariaLabel="Calendar event types" renderPanel={false} value={category}
-                items={HR_CALENDAR_CATEGORIES.map(option=>({
-                  value:option,
+              <Tabs renderPanel={false} ariaLabel="Calendar event types" value={category}
+                items={HR_CALENDAR_CATEGORIES.map(option=>({value:option,
                   label:option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
                     option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds",
-                  href:calendarHref(anchor,view,option),
-                }))} />
-              <Tabs ariaLabel="Calendar views" renderPanel={false} value={view}
-                items={VIEWS.map(option=>({
-                  value:option,label:option,href:calendarHref(anchor,option,category),
-                }))} />
+                  href:calendarHref(anchor,view,option)}))}/>
+              <Tabs renderPanel={false} ariaLabel="Calendar views" value={view}
+                items={VIEWS.map(option=>({value:option,label:option.charAt(0).toUpperCase()+option.slice(1),
+                  href:calendarHref(anchor,option,category)}))}/>
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-2">

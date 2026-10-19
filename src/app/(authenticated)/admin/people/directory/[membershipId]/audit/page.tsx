@@ -1,4 +1,4 @@
-import { PageBackLink } from "@/components/ui/page-back-link";
+import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {listSuperAdminPersonAudit} from "@/modules/people/super-admin-person-audit-service";
@@ -11,7 +11,7 @@ export default async function MembershipAuditPage({params}:{params:Promise<{memb
  return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · People" title={"Audit trail · "+(data.membership.name??"Unnamed person")}
    description={"Recorded events for this exact membership in the selected college: "+data.membership.collegeName}/>
-  <PageBackLink href={"/admin/people/directory/"+encodeURIComponent(membershipId)} label="Membership profile" />
+  <Link href={"/admin/people/directory/"+encodeURIComponent(membershipId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Membership profile</Link>
   <p role="status" className="text-sm text-body">Showing latest {data.events.length} recorded events. This is not an authentication-session or cross-college activity audit.</p>
   <ol className="divide-y divide-border border-y border-border">{data.events.map(event=><li key={event.id} className="py-4">
     <div className="flex flex-wrap items-center justify-between gap-3">

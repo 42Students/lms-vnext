@@ -2,12 +2,14 @@
 
 import { MetricBar } from "@/components/ui/metric-bar";
 import { Badge } from "@/components/ui/badge";
-import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
 import Link from "next/link";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { LearnerCourseCardImage } from "./learner-course-card-image";
 import {learnerCourseImageResetKey} from "@/modules/courses/learner-course-image-reset-key-model";
 import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card-due-label-model";
@@ -305,14 +307,15 @@ export function LearnerCourseList({
           ) : null}
         </div>
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
-          <Disclosure title="Semester Details" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+          <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+            <summary className="cursor-pointer font-semibold">Semester Details</summary>
             <dl className="mt-2 space-y-1 text-body">
               <div>Program: {periodRows[0]?.course.programName??"Not recorded"}</div>
               <div>Batch: {periodRows[0]?.course.cohortName??"Not recorded"}</div>
               <div>Academic Year: {selectedPeriod?.startDate?.slice(0,4)??"Not recorded"}</div>
               <div>Semester: {selectedPeriod?.name??"Not recorded"}</div>
             </dl>
-          </Disclosure>
+          </details>
           <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
             <summary className="cursor-pointer font-semibold">All Courses</summary>
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
@@ -320,8 +323,9 @@ export function LearnerCourseList({
               <li key={row.course.deliveryId+"-"+i}>{row.course.courseName}</li>)}</ul>
             {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for more courses.</p>:null}
             {periodRows.length>100?<p>Showing first 100; search the full list below.</p>:null}
-          </Disclosure>
-          {creditSummary.recordedCount>0?<Disclosure title="Credits Breakdown" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+          </details>
+          {creditSummary.recordedCount>0?<details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+            <summary className="cursor-pointer font-semibold">Credits Breakdown</summary>
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
               className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               {periodRows.map((row,i)=><li key={row.course.deliveryId+"-"+i}>
@@ -330,7 +334,7 @@ export function LearnerCourseList({
             </ul>
             {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for the full credits breakdown.</p>:null}
             <p className="mt-2 font-semibold">Total {creditSummary.credits} Credits</p>
-          </Disclosure>:null}
+          </details>:null}
         </div>
       </section>
 

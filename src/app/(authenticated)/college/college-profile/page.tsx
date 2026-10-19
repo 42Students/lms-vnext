@@ -12,6 +12,7 @@ export default async function CollegeContactProfilePage() {
   const profile = await getOwnCollegeContactProfile(context);
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader
+      eyebrow="College Admin · My College"
       title="College contact profile"
       description="Manage the college display name, public support contacts and policy links."
       actions={<Link href="/college/branding"

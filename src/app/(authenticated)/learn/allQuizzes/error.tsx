@@ -1,5 +1,4 @@
 "use client";
-import { PageHeader } from "@/components/ui/page-header";
 import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 
 import Link from "next/link";
@@ -13,7 +12,7 @@ export default function LearnerAssessmentsError({
 }) {
   return (
     <div className="py-8 text-center">
-      <PageHeader title={"Could not load this page"} />
+      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Could not load this page</h1>
       <p className="mt-2 text-sm text-body">
         The assessment list failed to load. This is not treated as an empty list.
       </p>
@@ -21,6 +20,8 @@ export default function LearnerAssessmentsError({
         <Button onClick={reset}>Try again</Button>
         <Link href="/learn/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text sm:min-h-9">
           {LEARNER_BACK_TO_COURSES}
-        </Link></div>} />
+        </Link>
+      </div>
+    </div>
   );
 }

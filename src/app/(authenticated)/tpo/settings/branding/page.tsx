@@ -94,6 +94,7 @@ export default async function TpoPlacementBrandingPage() {
       <TpoSettingsNav active="branding" />
 
       <PageHeader
+        eyebrow="TPO · Settings"
         title="Placement Branding"
         description="Review your college's existing name, public logo and brand colours. Manage your placement email signature."
       />

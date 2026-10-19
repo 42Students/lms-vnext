@@ -11,9 +11,6 @@ import { listCollegeTeachingOptions } from "@/modules/courses/college-teaching-o
 import {CollegeFacultyReassignAction} from "@/components/college/college-faculty-reassign-action";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { facultyAssignmentQuerySchema, collegeMappingHref } from "@/modules/academics/college-mapping-model";
 import { listCollegeFacultyAssignments } from "@/modules/academics/college-mapping-service";
 import { facultyAssignmentCsvHref } from "@/modules/academics/college-faculty-assignment-export-model";
@@ -70,52 +67,52 @@ export default async function CollegeFacultyAssignmentPage({
         <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 sm:min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Faculty, course or class
-            <Input name="q" type="search" defaultValue={query.q} maxLength={100}
-               />
+            <input name="q" type="search" defaultValue={query.q} maxLength={100}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
           </label>
           <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
             Exact course code
-            <Input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}
-               />
+            <input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
           </label>
           <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
             Class
-            <Select name="sectionCode" defaultValue={query.sectionCode ?? ""}
-              >
+            <select name="sectionCode" defaultValue={query.sectionCode ?? ""}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
               <option value="">All classes</option>
               {query.sectionCode&&!classChoices.some(item=>item.code===query.sectionCode)?
                 <option value={query.sectionCode}>Selected class ({query.sectionCode})</option>:null}
               {classChoices.map(item=><option key={item.code} value={item.code}>{item.name} ({item.code})</option>)}
-            </Select>
+            </select>
             {options.deliveriesTruncated?<span className="text-xs font-normal text-muted-foreground">
               First 200 active deliveries shown; a selected class outside this list is retained.
             </span>:null}
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Assignment lifecycle
-            <Select name="status" defaultValue={query.status}
-              >
+            <select name="status" defaultValue={query.status}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
               <option value="ACTIVE">Active</option>
               <option value="ENDED">Ended</option>
               <option value="ALL">All</option>
-            </Select>
+            </select>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             {FACULTY_ASSIGNMENT_COPY.roleLabel}
-            <Select name="role" defaultValue={query.role}
-              >
+            <select name="role" defaultValue={query.role}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
               <option value="ALL">All roles</option>
               <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
               <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS.CO_TEACHER}</option>
               <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
-            </Select>
+            </select>
           </label>
-          <Button variant="primary" type="submit">Filter</Button>
+          <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
           <Link href="/college/faculty-assignment"
             className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Clear</Link>
         </form>
       </section>
-      <section className="min-w-0" aria-label="Teaching assignment roster">
+      <section className="min-w-0 rounded-[8px] border border-border bg-surface" aria-label="Teaching assignment roster">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {total} matching teaching assignment{total === 1 ? "" : "s"}
         </p>

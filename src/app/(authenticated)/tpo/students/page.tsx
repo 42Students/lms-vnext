@@ -9,6 +9,7 @@ import {placementTableExists} from "@/modules/placements/staged-tables";
 import {TpoDebouncedStudentSearch} from "@/components/tpo/tpo-debounced-student-search";
 import {TpoStudentsBulkDebar} from "@/components/tpo/tpo-students-bulk-debar";
 import {TpoStudentsSelectionProvider,TpoStudentsSelectionSummary} from "@/components/tpo/tpo-students-selection";
+import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
 import { TpoAcademicImportWorkspace } from "@/components/tpo/tpo-academic-import-workspace";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verification-bulk";
@@ -410,6 +411,7 @@ export default async function TpoStudentsPage({
       <details className="border-b border-border pb-3">
        <summary className="min-h-11 cursor-pointer text-sm font-semibold">More student tools</summary>
        <nav aria-label="Student roster tools" className="mt-3 flex flex-wrap items-center gap-2">
+        {manageAllowed?<TpoStudentSavedViews />:null}
         <Link href="/tpo/students/requests" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Student Requests</Link>
         <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Preparation support</Link>
         <TpoSafeCsvDownload href={exportHref} filename="tpo-students.csv" label="Export filtered CSV" />
@@ -958,8 +960,7 @@ export default async function TpoStudentsPage({
          totalCount={roster.total}>
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
           <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
-            afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}
-            canManageViews={manageAllowed}/>
+            afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
         <TpoStudentsSelectionSummary visibleIds={roster.items.map(student=>student.membershipId)} totalCount={roster.total}/>
 

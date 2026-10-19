@@ -34,7 +34,7 @@ export default async function HrRoundsEditorPage({params}:{
   <section className="space-y-4 border-b border-border pb-4">
    <h2 className="font-semibold text-foreground">Add a round</h2>
    <form action={endpoint} method="post" className="grid gap-3 sm:grid-cols-2">
-    <Input type="hidden" name="action" value="CREATE"/>
+    <input type="hidden" name="action" value="CREATE"/>
     <label className="grid gap-1 text-sm text-body">Round name
      <Input name="name" required maxLength={100} className="w-full"/>
     </label>
@@ -63,8 +63,8 @@ export default async function HrRoundsEditorPage({params}:{
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
      <span className="text-sm text-body">{round.kind} · {round.status}</span></div>
     {round.editable?<form action={endpoint} method="post" className="grid gap-3 sm:grid-cols-2">
-      <Input type="hidden" name="action" value="UPDATE"/><Input type="hidden" name="roundId" value={round.id}/>
-      <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
+      <input type="hidden" name="action" value="UPDATE"/><input type="hidden" name="roundId" value={round.id}/>
+      <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
       <label className="grid gap-1 text-sm text-body">Name
        <Input name="name" required defaultValue={round.name} maxLength={100} className="w-full"/>
       </label>
