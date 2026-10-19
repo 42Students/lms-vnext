@@ -23,14 +23,16 @@ export function BottomSheet({ open, onOpenChange, title, description, children, 
   const titleId = useId();
   const descriptionId = useId();
   const { availableHeight, viewportTop, viewportBottom } = useOverlayWebview({ open, dismissible, onDismiss: () => onOpenChange(false) });
+  const visualCenter = availableHeight && viewportTop
+    ? `${Number.parseFloat(viewportTop) + Number.parseFloat(availableHeight) / 2}px` : "50dvh";
   useOverlayExit(ref, opener, open, 180);
   return (
     <dialog data-slot="bottom-sheet" ref={ref} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
       onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
       onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
       onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
-      style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px", "--lms-visual-bottom": viewportBottom ?? "0px" } as CSSProperties}
-      className="fixed inset-x-0 bottom-[var(--lms-visual-bottom)] top-auto m-0 max-h-[var(--lms-visual-height)] min-h-0 w-full max-w-none rounded-t-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-0 text-foreground shadow-[var(--lms-elevation-4)] backdrop:bg-[#1e363f]/10 md:inset-auto md:left-1/2 md:top-1/2 md:w-[min(36rem,calc(100%_-_2rem))] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[var(--lms-canvas-radius)]">
+      style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px", "--lms-visual-bottom": viewportBottom ?? "0px", "--lms-visual-center": visualCenter } as CSSProperties}
+      className="fixed inset-x-0 bottom-[var(--lms-visual-bottom)] top-auto m-0 max-h-[var(--lms-visual-height)] min-h-0 w-full max-w-none rounded-t-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-0 text-foreground shadow-[var(--lms-elevation-4)] backdrop:bg-[#1e363f]/10 md:inset-auto md:left-1/2 md:top-[var(--lms-visual-center)] md:w-[min(36rem,calc(100%_-_2rem))] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[var(--lms-canvas-radius)]">
       <div className="flex max-h-[var(--lms-visual-height)] min-h-0 flex-col overflow-hidden pt-[env(safe-area-inset-top)]">
         <header data-slot="bottom-sheet-header" className="flex shrink-0 items-start justify-between gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] p-[var(--lms-space-4)]">
           <div className="min-w-0"><h2 id={titleId} className="m-0 text-[var(--lms-font-lg)] font-semibold leading-[1.35] text-[var(--lms-heading)]">{title}</h2>
