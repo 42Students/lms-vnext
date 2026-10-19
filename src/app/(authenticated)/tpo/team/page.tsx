@@ -93,7 +93,7 @@ export default async function TpoTeamPage({searchParams}:{
       {([["WORK","Most assigned duties"],["OVERDUE","Overdue first"],["NAME","Name"]] as const).map(([value,label])=>
        <Link key={value} href={"/tpo/team?tab=people&sort="+value}
         aria-current={peopleSort===value?"page":undefined}
-        className={peopleSort===value?"rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-on-primary":"rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-body"}>
+        className={(peopleSort===value?"rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-on-primary":"rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-body")+" focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"}>
         {label}
        </Link>)}
       {!workload?.ready?<span className="text-xs text-muted-foreground">Ask workload is not available yet.</span>:null}
