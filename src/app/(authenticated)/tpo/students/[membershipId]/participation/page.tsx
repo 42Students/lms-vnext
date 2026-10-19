@@ -80,8 +80,8 @@ export default async function TpoLearnerParticipationPage({
       </section>
 
       <nav aria-label="Student placement journey" className="flex flex-wrap gap-3">
-        <Link href={journey.history} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link">View placement history and round outcomes →</Link>
-        <Link href={journey.roster} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link">Student roster</Link>
+        <Link href={journey.history} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link">View placement history and round outcomes →</Link>
+        <Link href={journey.roster} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link">Student roster</Link>
       </nav>
 
       <TpoDebarControl
