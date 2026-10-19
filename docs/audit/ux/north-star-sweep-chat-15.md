@@ -113,3 +113,20 @@ The original source sweep was rechecked after chat-17 shared skin and canvas cha
 **Intentionally unchanged:** per-job portfolio objects, per-candidate editor/offer cards, avatars, status pills, warning banners, notification dropdown overlays, and modal layers retain distinct contained surfaces. Recruiter route aliases still delegate to canonical HR pages. Shared UI, shell, and global CSS remain with their owning lanes. Page content, labels, form behavior, and route handlers were not deliberately changed.
 
 **Verification boundary:** textual source checks and specific follow-up inspections only. Actual 1280×800 desktop and narrow/mobile screenshot comparison is still outstanding; no successful typecheck, visual diff, CI, or runtime certification is claimed.
+
+## 2026-10-19 follow-up: tracker portal and component parity
+
+The lane assignment includes tracker pages, which are a separate authenticated `/tracker` route tree and were omitted from the earlier HR/recruiter-only inventory. They have now received **25 additional `[chat-15]` file commits across 23 distinct tracker implementation files**. The edits use inherited `PageCanvas` rather than nested page cards, 36px/9px controls, 14px input/button text, `text-primary-text` links, white text on teal actions, and 13px/3px active underline navigation. Status pills, genuine recurring issue and attachment objects, logs, modal dialogs and behavior are preserved.
+
+| Surface | Paths updated |
+|---|---|
+| Landing and report history | `src/app/(authenticated)/tracker/page.tsx`, `mine/page.tsx`, `mine/[publicId]/page.tsx` |
+| Admin issue directory and detail | `src/app/(authenticated)/tracker/issues/page.tsx`, `issues/[publicId]/page.tsx` |
+| Logs | `src/app/(authenticated)/tracker/logs/page.tsx` |
+| Independent audit list and detail | `src/app/(authenticated)/tracker/audit-findings/page.tsx`, `audit-findings/[publicId]/page.tsx` |
+| Tracker shell nav, page theme and quick report | `src/components/tracker/tracker-admin-nav.tsx`, `tracker-theme-toggle.tsx`, `tracker-quick-report-launcher.tsx` |
+| User report and issue actions | `src/components/tracker/tracker-report-form.tsx`, `tracker-issue-bulk-actions.tsx`, `tracker-issue-saved-views.tsx`, `tracker-issue-copy-actions.tsx`, `tracker-issue-logs-panel.tsx`, `tracker-workflow-panel.tsx` |
+| Logs, Known Errors and alerts | `src/components/tracker/tracker-live-logs-explorer.tsx`, `known-errors-workspace.tsx`, `tracker-telegram-manual-panel.tsx` |
+| Independent finding controls | `src/components/tracker/independent-finding-actions.tsx`, `audit-finding-status-action.tsx`, `independent-finding-copy-action.tsx` |
+
+The filter-memory and persistence helpers contain no competing visual styling and remain unchanged. Source-only verification; browser screenshots, runtime/typecheck and CI are intentionally not run. Any remaining pixel deviations must be resolved against authenticated desktop/mobile screenshots by the later visual verification owner.
