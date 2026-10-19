@@ -68,7 +68,7 @@ export default async function SuperAdminLectureHallsPage({
   return <div className="space-y-6">
     <PageHeader  title="Lecture Halls"
       description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`} />
-    <section aria-label="Lecture hall filters" className="space-y-4 rounded-xl border border-border bg-surface p-4">
+    <section aria-label="Lecture hall filters" className="space-y-4 border-b border-border pb-4">
       <form action="/admin/lecture-halls" method="get" className="flex flex-wrap items-end gap-3">
         <label className="grid gap-1 text-sm font-semibold">Room name
           <Input type="search" name="q" maxLength={100} defaultValue={query.q}
