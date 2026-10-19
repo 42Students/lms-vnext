@@ -54,12 +54,12 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
      setKind("ALL");setStatus("ALL");setMode("ALL");setDepartment("ALL");setConflictsOnly(false);setSort("DATE");
    }}>Clear filters</Button>
   </div>
-  <p role="status" aria-live="polite">{filtered.length} matching candidate interview bookings. Department filter uses the applicant’s currently active academic program; historical departments may be unrecorded.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
+  <p role="status" aria-live="polite" className="text-sm text-body">{filtered.length} matching candidate interview bookings. Department filter uses the applicant’s currently active academic program; historical departments may be unrecorded.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
   <a download="interviews.csv" href={filtered.length?"data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv):undefined}
    onClick={e=>{if(!filtered.length){e.preventDefault();setExportError("No interviews match the selected filters. Clear filters to export.");}else setExportError("");}}
    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Export interviews.csv</a>
   {filtered.length>500?<p role="status" className="text-sm text-muted-foreground">Export includes the first 500 visible rounds. Narrow filters for the remaining records.</p>:null}
-  {exportError?<p role="alert">{exportError}</p>:null}
+  {exportError?<p role="alert" className="border-l-2 border-error bg-error-subtle px-4 py-3 text-sm text-error">{exportError}</p>:null}
   {!filtered.length?<p className="border-b border-border py-4">No interviews match these filters. Clear filters to see all rounds.</p>:
    <DataTable<SuperAdminCalendarRound>
     rows={filtered} getRowKey={row=>row.id}

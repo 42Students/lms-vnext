@@ -177,3 +177,22 @@ The reporting routes below now inherit the white page canvas instead of wrapping
 - [x] `/tpo/reports/placement-summary`: shared company/work-mode/pay-category filters and Apply action; flat placement statistics
 
 **Source inspection only:** every TSX closing tag in the changed sections was re-read after push, especially full `</Select>` and `</Button>`; the next final source scan checks imports and pair counts across this full continuation. No application execution, CI, lint, TypeScript compiler, unit tests or screenshot checks. Owner verification is still needed.
+
+## North Star — TPO controls and remaining report filters (2026-10-19)
+
+Source of truth reconfirmed from latest `main`: `docs/orchestrator/queues/master-queue.md` OWNER GOAL, the measured `docs/design/old-lms-shell-spec.md` and `docs/design/legacy-styles/components___button.scss`. Fast-forwarded lane from `336e8847` to then-current `main` `3de148112368b7201378f721841a5d4348ec9f6d` before edits. The shared UI implementations from the live branch, rather than copied hard-coded styles, now own field, button and focus styling.
+
+- [x] `src/components/placements/tpo-interview-slot-planner.tsx`: replace six operational native buttons with shared outlined `Button`, retain confirmation flows, preserve displayed meeting data and booking controls, tokenized primary text, flatten only per-slot list rows, let shared `Input` and `Select` skins control their surfaces
+- [x] `src/components/placements/tpo-round-results-import.tsx`: shared outlined preview action
+- [x] `src/components/tpo/tpo-campaign-compose.tsx`: shared ghost retry action; remove redundant hard-coded field/CTA styling to inherit LMS skin
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`: shared outlined close/cancel and primary add-follow-up actions; keep native custom positioned hourly grid/event hit targets that need absolute dimensions, drag/drop and specialized event rendering; add checked `Button` import
+- [x] `src/components/tpo/tpo-due-followup-workspace.tsx`: native selects, input, textarea and review actions converted to shared controls; preserved confirmation, validation and data operations; corrected duplicate variant attributes found during source review
+- [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`: shared quick-reply/secondary/primary buttons and textarea, white-on-teal send action
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`: shared secondary selection, bulk-matching and CSV action buttons
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`: shared outlined round cancellation
+- [x] `src/components/placements/tpo-joining-update-form.tsx`: shared `Select`, `Input`, `Textarea` and primary action; remove field-level colors and radii overriding shared skins
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx`: shared secondary opener/cancel and primary confirmation buttons
+- [x] `/tpo/reports/joining-followups`, `/tpo/reports/offers-expiry`, `/tpo/reports/placed-branch`, `/tpo/reports/season-pipeline`, `/tpo/reports/unplaced`: visible native filters/actions converted to shared `Select` and `Button`, preserving hidden native form inputs, query names and selectors
+- [x] `/tpo/drive-day`, `/tpo/drive-day/[roundId]/no-shows`, `/tpo/placements/schedule-conflicts`: primary-action label colors normalized to legacy `text-on-primary` (white)
+
+**Source validation, not execution:** All 18 edited TSX files were fetched again from the pushed chat-2 branch. Source-level JSX opening and closing checks found matching `Button` and `Select` pairs, complete `</Button>` and `</Select>` closers, and no duplicate `variant` attributes. Shared component import inspection caught an omitted `Button` import in the weekly calendar, which was added in a follow-up commit and re-read. No application run, TypeScript compiler, tests, CI or screenshot comparison. Precise visual pixel parity awaits integrated owner verification.

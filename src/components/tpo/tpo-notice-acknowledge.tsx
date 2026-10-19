@@ -6,7 +6,7 @@ export function TpoNoticeAcknowledge({id}:{id:string}){
  const [error,setError]=useState("");
  return <div className="mt-3 space-y-1">
   <Button variant="secondary" type="button" disabled={read||busy}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-60"
+   className="min-h-11 sm:min-h-9 text-sm"
    onClick={async()=>{
     setBusy(true);setError("");
     try{
