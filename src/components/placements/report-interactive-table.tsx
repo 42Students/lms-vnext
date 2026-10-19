@@ -117,7 +117,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
    <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
-   <div className="flex flex-wrap items-center gap-2 sm:hidden">
+   <div data-report-toolbar className="flex flex-wrap items-center gap-2 sm:hidden">
     <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Sort rows by
      <Select value={sort??""} onChange={event=>{
        setSort(event.target.value===""?null:Number(event.target.value));
