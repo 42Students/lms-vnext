@@ -41,9 +41,11 @@ export default async function HrMessagesPage({searchParams}:{
    </Link>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
-   {result.choices.map(grant=><Link key={grant.id}
-    href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
-    className="block rounded-[var(--lms-control-radius)] border border-border p-3 text-primary-text transition-colors duration-200 hover:border-primary hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 sm:min-h-9">{grant.collegeName}</Link>)}
+   <NeedsDoingChips label="Authorized colleges:"
+     items={result.choices.map(grant=>({
+       key:grant.collegeId,label:grant.collegeName,
+       href:"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId),
+     }))}/>
   </section>:<>
    {result.choices.length>1?<NeedsDoingChips label="College:"
      selectedKey={result.collegeId}
