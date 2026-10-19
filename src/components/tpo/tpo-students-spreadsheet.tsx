@@ -17,10 +17,14 @@ import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
-import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
-import type {TpoFilterField} from "./tpo-grid-filter-panel";
-import {GridWorkspace} from "./grid/grid-workspace";
-import {TpoStudentSavedViews} from "./tpo-student-saved-views";
+import dynamic from "next/dynamic";
+import type { TpoGrid } from "./grid/tpo-grid";
+
+const TpoGridClient = dynamic(
+  () => import("./grid/tpo-grid").then(module => module.TpoGrid),
+  { ssr: false },
+) as unknown as typeof TpoGrid;
+import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
@@ -211,12 +215,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>
    </Select>
   </label>
-  <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
-   selection={{selected:noteSelection,onChange:setNoteSelection}}
-   filters={filters} rollOf={row=>row.rollNumber??row.registrationNumber}
-   filterTitle="Filter students" exportName="tpo-students" xlsxHref={xlsxHref}
-   savedViews={canManageViews?<TpoStudentSavedViews/>:undefined}>
-  <TpoSpreadsheetGrid showColumnChooser={false} mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoGridFilterPanel fields={filters} mobileSheet/>
+  <TpoGridClient mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
