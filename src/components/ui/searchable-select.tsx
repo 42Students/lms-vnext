@@ -5,12 +5,14 @@ import {
   type ChangeEvent, type ComponentPropsWithRef, type FocusEvent, type KeyboardEvent,
 } from "react";
 import { Input } from "./input";
+import { Button } from "./button";
 import { cx } from "@/lib/class-names";
 
 export type SearchableSelectProps = Omit<ComponentPropsWithRef<"input">, "list" | "type"> & {
   options: ReadonlyArray<{ value: string; label?: string; disabled?: boolean }>;
   creatable?: boolean;
   error?: boolean;
+  clearable?: boolean;
   onValueChange?: (value: string) => void;
 };
 
@@ -19,7 +21,7 @@ export type SearchableSelectProps = Omit<ComponentPropsWithRef<"input">, "list" 
  * The text input remains a real input for autofill, validation and forms.
  */
 export function SearchableSelect({
-  options, creatable = true, error = false, id, className, onChange, onBlur,
+  options, creatable = true, error = false, clearable = false, id, className, onChange, onBlur,
   onFocus, onKeyDown, onValueChange, value, defaultValue, disabled, readOnly,
   ref: forwardedRef, ...props
 }: SearchableSelectProps) {
@@ -100,7 +102,7 @@ export function SearchableSelect({
   function keyDown(event: KeyboardEvent<HTMLInputElement>) {
     onKeyDown?.(event);
     if (event.defaultPrevented || disabled || readOnly) return;
-    if (event.key === "Escape") { setOpen(false); setActiveIndex(-1); return; }
+    if (event.key === "Escape") { event.preventDefault(); setOpen(false); setActiveIndex(-1); return; }
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();
       setOpen(true);
@@ -115,6 +117,7 @@ export function SearchableSelect({
       event.preventDefault();
       select(matches[activeIndex].value);
     }
+    if (event.key === "Enter" && !creatable && activeIndex < 0) validate(event.currentTarget.value);
     if (event.key === "Tab") { setOpen(false); validate(event.currentTarget.value); }
   }
 
@@ -124,16 +127,21 @@ export function SearchableSelect({
       error={error || Boolean(selectionError)} aria-invalid={error || Boolean(selectionError) || props["aria-invalid"]}
       aria-describedby={describedBy} aria-errormessage={selectionError ? validationId : undefined}
       role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
-      aria-controls={listId} aria-expanded={open && !disabled && !readOnly}
+      aria-controls={open && !disabled && !readOnly ? listId : undefined} aria-expanded={open && !disabled && !readOnly}
       aria-activedescendant={open && activeIndex >= 0 ? `${listId}-option-${activeIndex}` : undefined}
-      className={className} onChange={change} onFocus={focus} onBlur={blur} onKeyDown={keyDown} />
+      className={cx(clearable ? "pr-12" : "", className)} onChange={change} onFocus={focus} onBlur={blur} onKeyDown={keyDown} />
+    {clearable && Boolean(visibleQuery) && !disabled && !readOnly
+      ? <Button type="button" variant="ghost" size="icon-sm" aria-label="Clear selection"
+          className="absolute right-1 top-0 z-[1] !h-9 !w-9 !min-w-9 max-[767px]:!h-11 max-[767px]:!w-11"
+          onClick={() => select("")}>×</Button> : null}
     {open && !disabled && !readOnly
       ? <div id={listId} role="listbox" aria-label={props["aria-label"] ?? "Available options"}
           className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[44px] w-full min-w-0 overflow-y-auto rounded-[12px] border border-[var(--lms-neutral-200)] bg-white pt-[5px] shadow-[var(--lms-search-dropdown-shadow)]">
           {matches.length
             ? matches.map((option, index) =>
               <button key={option.value} id={`${listId}-option-${index}`} type="button" role="option"
-                aria-selected={index === activeIndex} disabled={option.disabled} tabIndex={-1}
+                aria-selected={option.value === visibleQuery} disabled={option.disabled} tabIndex={-1}
+                onPointerEnter={() => { if (!option.disabled) setActiveIndex(index); }}
                 className={cx("flex min-h-11 w-full items-center px-[10px] py-[5px] text-left text-[14px] leading-5 text-[var(--lms-body-text)] transition-colors duration-200 hover:bg-[#d1f1f1] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50", index === activeIndex ? "bg-[#d1f1f1]" : "")}
                 onPointerDown={event => event.preventDefault()} onClick={() => select(option.value)}>
                 {option.label ?? option.value}
