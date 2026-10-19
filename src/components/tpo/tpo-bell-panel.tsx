@@ -177,7 +177,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
        description="Most recent notifications from your own college." footer={panelFooter}>
        {panelBody}
      </Drawer>
-   : open ? <PopoverPanel label="Notifications"
+   : open ? <PopoverPanel data-slot="notification-popover" label="Notifications"
        className="absolute right-0 top-[calc(100%_+_8px)] z-[70] w-[min(420px,calc(100vw_-_24px))] max-h-[min(520px,calc(100dvh_-_120px))] overflow-y-auto p-4">
        <div className="mb-3 border-b border-border pb-3">
         <h2 className="text-lg font-semibold text-foreground">Notifications</h2>
