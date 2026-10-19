@@ -23,11 +23,11 @@ export function TpoBatchInstantSearch({value}:{value:string}){
   <span className="mt-1 flex min-w-0 items-center gap-2">
    <Input type="search" name="q" value={draft} maxLength={100}
     onChange={event=>setDraft(event.target.value)} autoComplete="off"
-    className="min-h-9 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
+    className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9"
     aria-label="Search batches"/>
    {draft?<Button variant="secondary" type="button" onClick={()=>setDraft("")}
     
-    aria-label="Clear batch search">Clear</Button>:null}
+    className="min-h-11 md:min-h-9" aria-label="Clear batch search">Clear</Button>:null}
   </span>
  </label>;
 }
