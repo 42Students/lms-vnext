@@ -2,6 +2,7 @@
 import { PageHeader } from "@/components/ui/page-header";
 import {useMemo,useState} from "react";
 import {Button} from "@/components/ui/button";
+import {Tabs} from "@/components/ui/tabs";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -45,13 +46,21 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
         ? collegeVerificationLegacyCopy.subtitle
         : "Review learner education and identity submissions. Submitted updates to verified details remain in Waiting until decided."}
   />
-  <nav aria-label="Verification status" className="flex flex-wrap gap-2">
-   {(["WAITING","SENT_BACK","VERIFIED"] as const).map(t=>
-    <Button variant={tab===t?"primary":"secondary"} type="button" key={t} aria-pressed={tab===t} onClick={()=>onTabChange?onTabChange(t):setTab(t)}
-     className="min-h-[var(--lms-control-height)] ">
-     {t==="SENT_BACK"?"Sent back":t==="WAITING"?"Waiting":"Verified"}{showTabCounts?` (${counts[t]})`:""}
-    </Button>)}
-  </nav>
+  <Tabs
+   ariaLabel="Verification status"
+   value={tab}
+   renderPanel={false}
+   controlledOnly
+   onValueChange={next=>{
+    const selectedTab=next as VerificationTab;
+    if(onTabChange)onTabChange(selectedTab);else setTab(selectedTab);
+   }}
+   items={(["WAITING","SENT_BACK","VERIFIED"] as const).map(t=>({
+    value:t,
+    label:t==="SENT_BACK"?"Sent back":t==="WAITING"?"Waiting":"Verified",
+    count:showTabCounts?counts[t]:undefined,
+   }))}
+  />
   <div className="flex flex-wrap gap-2">
    {!disableLocalSearch&&<label className="min-w-0 flex-1 text-sm">Search learners
     <Input aria-label="Search learners" className="mt-1 w-full"
