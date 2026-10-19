@@ -4,6 +4,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { Dropdown } from "@/components/ui/dropdown";
 
 import Link from "next/link";
+import Image from "next/image";
 import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
 import {filterEngageRoster,type EngageRosterFilters} from "@/modules/placements/tpo-engage-filter-model";
 import {recruiterTableExportCsv,recruiterTableExportGrid,recruiterTableExportTsv} from "@/modules/placements/tpo-recruiter-export-model";
@@ -641,6 +642,7 @@ export function RecruiterLeadsWorkspace({
           <RecruiterLeadCsvImport onImported={() => void load()} />
           <button ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase !== "ready"}
             onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null);setReviewingCreate(false); }}>
+            <Image src="/assets/images/common/plus.svg" width={16} height={16} alt="" aria-hidden="true" className="mr-2 inline-block"/>
             Add recruiter lead
           </button>
         </div>
@@ -725,10 +727,10 @@ export function RecruiterLeadsWorkspace({
               }}/>
           </div>
           <div className="space-y-3">
-            <button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
+            {view!=="table"?<button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
               aria-expanded={filterOpen} aria-controls="engage-filter-panel">
               Filters{filterChips.length?" ("+filterChips.length+")":""}
-            </button>
+            </button>:null}
             {filterChips.length?<div role="group" aria-label="Active recruiter filters"
               className="flex flex-wrap gap-2">
               {filterChips.map(chip=><Button type="button" key={chip.key}
@@ -971,7 +973,7 @@ export function RecruiterLeadsWorkspace({
                       </Select>},
                     {key:"People",header:"People",mobilePriority:"secondary",cell:company=><div className="flex flex-wrap gap-2">
                       {company.people?.length?company.people.map(person=>
-                        <Link key={person.id} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline"
+                        <Link key={person.id} className="inline-flex min-h-11 items-center text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                           href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>):
                         <button type="button" className="min-h-11 text-[var(--lms-teal-deep)] underline"
                           onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</button>}
@@ -990,12 +992,15 @@ export function RecruiterLeadsWorkspace({
               onColumnKeysChange={keys=>changeVisibleColumns(normalizeEngageColumns(
                keys.filter(key=>ENGAGE_COLUMNS.includes(key as EngageColumn))))}
               searchMode="hidden" exportName="recruiter-leads"
+              externalFilters={{count:filterChips.length,open:filterOpen,controlsId:"engage-filter-panel",
+               onToggle:()=>setFilterOpen(previous=>!previous)}}
               savedViews={<RecruiterSavedViewControls columns={visibleColumns}/>}
               onExportCsv={selected=>exportRows(selected?"selected":"shown","csv")}
               onExportXlsx={selected=>exportRows(selected?"selected":"shown","xlsx")}
               onCopyRows={()=>void copyRows()}>
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
-                sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}/>
+                sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}
+                 showColumns={false}/>
               <label className="inline-flex min-h-11 items-center gap-2 text-sm">
                 <input type="checkbox" aria-label="Select all visible recruiters"
                   checked={visible.length>0&&visible.every(row=>selectedIds.includes(row.id))}
@@ -1025,7 +1030,7 @@ export function RecruiterLeadsWorkspace({
                         <span className="sm:hidden">Select</span>
                       </label>},
                     {key:"Contact",header:"Contact",mobilePriority:"primary",cell:lead=><div className="min-w-0">
-                      <Link className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline"
+                      <Link className="inline-flex min-h-11 items-center break-words font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>{lead.name||"Unnamed contact"}</Link>
                       {lead.designation?<p className="text-xs text-muted-foreground">{lead.designation}</p>:null}
                     </div>},
@@ -1087,7 +1092,7 @@ export function RecruiterLeadsWorkspace({
                         onDragEnd={()=>setDraggedBoardId(null)}
                         title={lead.manualStage==="NEW"?"Drag to Contacted, or use Move to… below":undefined}>
                         <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
-                          className="block text-[var(--lms-teal-deep)] underline-offset-2 hover:underline">
+                          className="block text-link lms-inline-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                         <span className="block font-medium">{lead.name||"Unnamed contact"}</span>
                          {lead.designation?<span className="block text-xs text-muted-foreground">{lead.designation}</span>:null}
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>

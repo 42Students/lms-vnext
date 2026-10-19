@@ -20,7 +20,7 @@ export default async function HrMessagesPage({searchParams}:{
   collegeId:raw.collegeId,unreadOnly:raw.unreadOnly,page:raw.page,q:raw.q,
  });
  if(!query.success)return <div className="min-w-0 max-w-full space-y-4">
-  <PageHeader eyebrow="Recruiter" title="Notifications"/>
+  <PageHeader title="Notifications"/>
   <Link href="/hr/conversations" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter conversations</Link>
   <p role="alert">Invalid inbox filter.</p><Link href="/hr/notifications" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>
  </div>;
@@ -29,7 +29,7 @@ export default async function HrMessagesPage({searchParams}:{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(d);
  return <div className="min-w-0 max-w-full space-y-6">
-  <PageHeader eyebrow="Recruiter" title="Notifications"
+  <PageHeader title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."/>
   <Link href="/hr/conversations" className="inline-flex min-h-9 max-sm:min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
    Open recruiter conversations

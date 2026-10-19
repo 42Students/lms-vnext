@@ -59,13 +59,14 @@ export function AcademicsOverview({
   >[] = [
     {
       key: "program",
+      mobilePriority: "primary",
       header: "Program",
       cell: (program) => (
         <div>
           <p className="m-0 font-semibold text-foreground">
             {program.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-primary-text">
+          <p className="mt-1 text-xs font-semibold text-[var(--lms-primary-text)]">
             {program.code}
           </p>
         </div>
@@ -84,6 +85,7 @@ export function AcademicsOverview({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (program) => (
@@ -104,13 +106,14 @@ export function AcademicsOverview({
   >[] = [
     {
       key: "period",
+      mobilePriority: "primary",
       header: "Academic period",
       cell: (period) => (
         <div>
           <p className="m-0 font-semibold text-foreground">
             {period.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-primary-text">
+          <p className="mt-1 text-xs font-semibold text-[var(--lms-primary-text)]">
             {period.code}
           </p>
         </div>
@@ -124,6 +127,7 @@ export function AcademicsOverview({
     },
     {
       key: "status",
+      mobilePriority: "secondary",
       header: "Status",
       cell: (period) => (
         <StatusBadge
@@ -135,6 +139,7 @@ export function AcademicsOverview({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (period) => (
@@ -157,13 +162,14 @@ export function AcademicsOverview({
   >[] = [
     {
       key: "cohort",
+      mobilePriority: "primary",
       header: "Cohort",
       cell: (cohort) => (
         <div>
           <p className="m-0 font-semibold text-foreground">
             {cohort.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-primary-text">
+          <p className="mt-1 text-xs font-semibold text-[var(--lms-primary-text)]">
             {cohort.code}
           </p>
         </div>
@@ -187,6 +193,7 @@ export function AcademicsOverview({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (cohort) => (
@@ -216,13 +223,14 @@ export function AcademicsOverview({
   >[] = [
     {
       key: "section",
+      mobilePriority: "primary",
       header: "Section",
       cell: (section) => (
         <div>
           <p className="m-0 font-semibold text-foreground">
             {section.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-primary-text">
+          <p className="mt-1 text-xs font-semibold text-[var(--lms-primary-text)]">
             {section.code}
           </p>
         </div>
@@ -230,6 +238,7 @@ export function AcademicsOverview({
     },
     {
       key: "cohort",
+      mobilePriority: "secondary",
       header: "Cohort / Program",
       cell: (section) => (
         <div>
@@ -259,11 +268,13 @@ export function AcademicsOverview({
     {
       key: "capacity",
       header: "Capacity",
-      cell: (section) =>
-        section.capacity ?? "Unlimited",
+      cell: (section) => (
+        <span className="tabular-nums text-[var(--lms-body-text)]">{section.capacity ?? "Unlimited"}</span>
+      ),
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (section) => (
@@ -281,7 +292,7 @@ export function AcademicsOverview({
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-[var(--lms-space-5)]">
       <AcademicsCreatePanel
         collegeId={collegeId}
         departments={workspace.departments.map(
@@ -350,9 +361,9 @@ export function AcademicsOverview({
         />
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="admin-academic-cohorts-title">
         <div>
-          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <h2 id="admin-academic-cohorts-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Cohorts / batches
           </h2>
           <p className="mt-1 text-sm text-body">
@@ -366,9 +377,9 @@ export function AcademicsOverview({
         />
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="admin-academic-sections-title">
         <div>
-          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <h2 id="admin-academic-sections-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Sections
           </h2>
           <p className="mt-1 text-sm text-body">

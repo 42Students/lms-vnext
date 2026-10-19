@@ -10,7 +10,7 @@ export type PageBackLinkProps = {
 };
 
 /**
- * Legacy page back affordance: 44px touch target, muted text / teal hover,
+ * Legacy page back affordance (learn-layout.scss:361-383): 44px touch target, muted text / #26bac7 hover,
  * and an icon-only presentation below 768px. The label remains accessible.
  */
 export function PageBackLink({ href, label, className }: PageBackLinkProps) {
@@ -20,7 +20,7 @@ export function PageBackLink({ href, label, className }: PageBackLinkProps) {
       aria-label={label}
       data-slot="page-back-link"
       className={cx(
-        "inline-flex min-h-11 min-w-11 shrink-0 self-start items-center justify-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-muted-text)] transition-colors duration-150 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]",
+        "inline-flex min-h-11 min-w-11 shrink-0 self-start items-center justify-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-muted-text)] transition-colors duration-150 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]",
         className,
       )}
     >
