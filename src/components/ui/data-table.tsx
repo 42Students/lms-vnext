@@ -105,7 +105,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
               const phoneVisible=visibleOnPhone.has(col.key);
               const content=cell(item,col);
               return <td key={col.key} className={cx(
-                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-[var(--lms-canvas-border)] sm:px-[var(--lms-space-4)] sm:py-[10px] sm:align-middle sm:first:sticky sm:first:left-0 sm:first:z-10 sm:first:bg-inherit",
+                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-[var(--lms-canvas-border)] sm:px-[var(--lms-space-4)] sm:py-[12px] sm:align-middle sm:first:sticky sm:first:left-0 sm:first:z-10 sm:first:bg-inherit",
                 phoneVisible?"block":"hidden",col.className,
               )}>
                 {phoneVisible && col.mobilePriority!=="action" ?
