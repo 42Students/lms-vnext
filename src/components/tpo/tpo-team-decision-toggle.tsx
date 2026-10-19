@@ -23,8 +23,8 @@ export function TpoTeamDecisionToggle({threadId,messageId,marked}:{
   finally{pending.current=false;setBusy(false);}
  }
  return <span className="inline-flex flex-wrap items-center gap-2">
-  <FilterChip type="button" aria-pressed={marked} disabled={busy} onClick={()=>void toggle()}
-   className="min-h-11 md:min-h-8">
+  <Button variant={marked?"primary":"secondary"} type="button" aria-pressed={marked} disabled={busy} onClick={()=>void toggle()}
+   className="min-h-11 rounded-[var(--lms-control-radius)] px-3 text-sm font-medium md:min-h-9">
    {busy?"Saving…":marked?"Unmark decision":"Mark as decision"}
   </FilterChip>
   {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
