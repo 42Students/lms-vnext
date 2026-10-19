@@ -390,3 +390,41 @@ All updated feedback mounts only shared `Alert` / `InlineNotice` / `EmptyState` 
 - [ ] **F5 empty/error/system states** (missing whole-repo census including 403/404/500/maintenance/offline/session, responsive browser proofs and visual parity).
 
 **Next exact source:** `src/components/placements/tpo-sequential-request-review.tsx` (unreviewed response/error statuses); after that `src/components/placements/tpo-recruiter-grant-controls.tsx`. Do not tick entire F3–F5 or route inventory just because the source component was updated.
+
+
+### Next 12 TPO state sources after the 36-file table — 2026-10-19
+
+This continuation extends the same chat-5 lane source-migration evidence to twelve more distinct `src/components/placements/tpo-*.tsx` files. All twelve were fetched from the written lane branch and reviewed for Alert/InlineNotice/EmptyState use, role semantics and mobile source tokens. No `src/components/ui/*` changes, build, tests, CI, runtime or screenshots.
+
+| Updated source file | Alert pairs | EmptyState | InlineNotice | Remaining raw status | Styled raw | Source line(s) | Responsive/exemption check |
+| --- | ---: | ---: | ---: | ---: | ---: | --- | --- |
+| `src/components/placements/tpo-sequential-request-review.tsx` | 0/0 | 0 | 2 | 1 | 0 | 53,57 | status-counter kept; shared notices wrap |
+| `src/components/placements/tpo-public-placement-toggle.tsx` | 0/0 | 0 | 1 | 0 | 0 | 41 | original button unchanged |
+| `src/components/placements/tpo-company-lifecycle-editor.tsx` | 0/0 | 0 | 3 | 0 | 0 | 107-109 | existing action wrap intact |
+| `src/components/placements/tpo-round-result-recorder.tsx` | 0/0 | 0 | 1 | 0 | 0 | 232 | result form unchanged |
+| `src/components/placements/tpo-request-page-clipboard.tsx` | 0/0 | 1 | 1 | 1 | 0 | 98,129 | mobile table selection unchanged |
+| `src/components/placements/tpo-recruiter-grant-controls.tsx` | 0/0 | 1 | 9 | 0 | 0 | 50,78-85,120-126,163-169 | sm:grid-cols-3; min-h-11 buttons |
+| `src/components/placements/tpo-college-rules-control.tsx` | 0/0 | 0 | 2 | 1 | 1 | 84,114 | policy explanatory section kept as role=status |
+| `src/components/placements/tpo-outside-participants-editor.tsx` | 1/1 | 0 | 1 | 0 | 0 | 38,59 | availability gate and flex-wrap preserved |
+| `src/components/placements/tpo-company-person-editor.tsx` | 1/1 | 0 | 1 | 0 | 0 | 109,119 | review Button no longer nested inside a paragraph |
+| `src/components/placements/tpo-season-controls.tsx` | 1/1 | 0 | 1 | 0 | 0 | 71,102 | sm:grid-cols-2, mobile action wrap |
+| `src/components/placements/tpo-public-placement-content-editor.tsx` | 1/1 | 0 | 2 | 0 | 0 | 81-82,86 | 44px touch targets and flex items unchanged |
+| `src/components/placements/tpo-drive-act-on-panel.tsx` | 0/0 | 0 | 1 | 1 | 0 | 132 | count/status report retained, feedback shared |
+| **Scoped total** | **4/4** | **2** | **25** | **4** | **1** | — | Re-fetched source, not browser proof |
+
+**Incremental source-regex proof:** Alert openings and closings each **4**; `<EmptyState` **2**; `<InlineNotice` **25**; raw `role="status"/"alert"` **4**; one styled retained `role="status"` explanatory policy-summary section (`tpo-college-rules-control.tsx:104`), not an actionable alert. Other raw statuses are per-page counts / sequencing and bulk action summaries with intentionally preserved live reporting. New UI imports are named and matched, with no mismatched `<Alert>`/closing pairs. The parent 36-file table plus this table covers **48** distinct source files in this turn (excluding the two audit files).
+
+**Value and responsive cross-check carried forward:** `docs/design/legacy-styles/components___variables.scss:67-74` semantic status colors match `src/app/globals.css:47-57` for success/warning/error/info base colors. Rendered warning fill still differs (`globals.css:1077` is `#fef6e7` versus SCSS's `rgba(217,119,6,.10)`), control radius is still 9px vs legacy 6px (`globals.css:343` vs `variables.scss:133`), and focus outline offset in `inline-notice.tsx:35-36` is 2px versus legacy 3px (`components___accessibility.scss:19-23`). `Alert.tsx:18` and `InlineNotice.tsx:32-34` ensure `min-w-0` and message breaks, with old responsive selectors at `components___antddesign.scss:21-23` max-width 767px and modern `sm:` 640px requiring side-by-side comparison. All discrepancies remain **OPEN** and were not silently normalized to unverified values.
+
+To reproduce the **scoped** source counts locally (commands NOT run):
+```sh
+rg -n '<Alert|</Alert>|<InlineNotice|<EmptyState|role="(alert|status)"' src/components/placements/tpo-*.tsx
+rg -n 'max-w-full|min-w-0|break-words|flex-wrap|sm:|md:|lg:' src/components/placements/tpo-*.tsx
+```
+These commands, if run against the entire glob, will include files outside the 48 modified-source scope; the counts above are from fetched individual source files only, not purported whole-repository results.
+
+- [ ] F3 **OPEN** — full legacy property/state match, whole-repo zero hand-rolled count, 320/767/tablet actual visuals.
+- [ ] F4 **OPEN** — route loaders, spinner timing and reduced-motion broad proof not completed by this batch.
+- [ ] F5 **OPEN** — complete 403/404/500, maintenance, offline, session, error and empty inventory plus responsive checks.
+
+**Next exact file:** `src/components/placements/tpo-report-presentation.tsx` (error/status fallbacks), followed by `src/components/placements/tpo-report-record-links.tsx`.
