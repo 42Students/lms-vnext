@@ -101,13 +101,13 @@ export function GridWorkspace<Row>({
  };
  useEffect(()=>{setTyped(querySearch);},[querySearch]);
  useEffect(()=>{
-  if(typed.trim()===querySearch)return;
+  if(searchMode!=="url"||typed.trim()===querySearch)return;
   const timer=window.setTimeout(()=>{
    const next=updateTpoGridQuery(new URLSearchParams(searchKey),{[searchParam]:typed.trim()});
    router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
   },200);
   return ()=>window.clearTimeout(timer);
- },[typed,querySearch,searchKey,pathname,router,searchParam]);
+ },[typed,querySearch,searchKey,pathname,router,searchParam,searchMode]);
  const changeColumns=(keys:string[])=>{
   if(columnScope==="local"){
    setLocalKeys(keys);
