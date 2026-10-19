@@ -2,6 +2,8 @@
 import { Select } from "@/components/ui/select";
 
 
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {facultyIstTimeParts,facultyIstWallTime,FACULTY_IST_QUARTER_MINUTES}
  from "@/modules/courses/faculty-ist-quarter-hour-model";
 
@@ -19,7 +21,7 @@ export function FacultyIstQuarterHourPicker({label,value,onChange,disabled=false
   <legend className="mb-1 text-sm font-semibold text-body">{label} (IST)</legend>
   <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto] gap-2">
    <label className="grid min-w-0 gap-1 text-xs">Date
-    <input type="date" required aria-label={label+" date"} value={parts.date}
+    <Input type="date" required aria-label={label+" date"} value={parts.date}
      onChange={event=>emit(event.target.value)}
      className="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:min-h-9"/>
    </label>
