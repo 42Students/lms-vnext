@@ -264,7 +264,7 @@ export function LearnerPlacementOffers({
       </div>
 
       <button type="button" onClick={downloadOwnOffers}
-        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
         Export displayed offers CSV
       </button>
       {sortedOffers.length>LEARNER_OFFER_CSV_LIMIT ? (
