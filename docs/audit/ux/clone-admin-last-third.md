@@ -63,7 +63,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/admin/students/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/admin/tenants/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx` — source patch applied: setup warnings use shared Banner, empty college uses EmptyState; missing full grep/computed values/phone-tablet proof
 - [ ] `src/app/(authenticated)/admin/verification/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/admin/videos/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 
@@ -114,7 +114,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/components/projects/super-admin-template-plan-editor.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/super-admin-template-resource-editor.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/super-admin-template-rollback-control.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/super-admin-template-subview-page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/super-admin-template-subview-page.tsx` — source patch applied: template version pagination uses shared Pagination; missing complete tab/status/keyboard/responsive proof
 - [ ] `src/components/projects/super-admin-template-tabs.tsx` — value/state/responsive/hand-rolled-element audit pending
 
 ## Value comparisons and findings (no item falsely certified)
@@ -266,3 +266,15 @@ Seven further distinct owner files changed and re-read. These replace hand-rolle
 
 ### Next exact file (after this commit)
 - [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx` — check remaining custom no-college status, numbered setup pills and 375px/768px grid behaviour. Then continue `src/app/(authenticated)/admin/tenants/page.tsx` and other unticked Projects template views.
+
+
+### Additional source-backed changes: tenant setup and template version pagination
+| File and re-read lines | Legacy visual/behaviour property | vNext source proof | Remaining before tick |
+| --- | --- | --- | --- |
+| `src/app/(authenticated)/admin/tenants/setup/page.tsx:8,107,112,137,144-146` | `docs/design/old-lms-pages.md:10` slim role-aware warning/info strip; one continuous canvas; shared empty and error states | Scoped permission fallbacks and persisted readiness use `Banner`; no-college empty uses `EmptyState`. Tabs and two-column responsive structure retained | Exact computed warning/success/error colors and 375px/768px layout + full greps |
+| `src/components/projects/super-admin-template-subview-page.tsx:12,681-686` | `docs/design/old-lms-pages.md:9` shared styled pagination and focus targets; shared `src/components/ui/pagination.tsx:49-91` supports bounds, disabled and mobile behaviour | Replaced hand-built Previous/Next nav in version history with shared `Pagination`, preserving `templateVersionHistoryHref(templateId,page)`; added 25/page copy | TypeScript, full JSX/behavior scan and old-vNext mobile/tablet screenshot |
+
+**No strict queue checkboxes were ticked**: only remote source reads and edits, no executable checks. Codemods remain dry-run files for the orchestrator, and no app/test/CI was run.
+
+### Next source file
+- [ ] `src/app/(authenticated)/admin/tenants/page.tsx` — audit tenant object-card vs list/table geometry and responsive header action row, then `src/components/projects/super-admin-template-college-bulk.tsx`.
