@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useCallback,useEffect,useRef,useState} from "react";
@@ -10,7 +11,6 @@ type DrawerResponse={status:string;unread:number;collegeId?:string;
 export function RecruiterNotificationBell(){
  const [isOpen,setIsOpen]=useState(false);
  const triggerRef=useRef<HTMLButtonElement>(null);
- const popoverRef=useRef<HTMLElement>(null);
  const requestGate=useRef(createRecruiterBellRequestGate());
  const [data,setData]=useState<DrawerResponse|null>(null);
  const [collegeId,setCollegeId]=useState("");
@@ -40,27 +40,7 @@ export function RecruiterNotificationBell(){
   const interval=window.setInterval(()=>{if(document.visibilityState==="visible")void load();},30000);
   return ()=>{window.clearInterval(interval);requestGate.current.invalidate();};
  },[load]);
- useEffect(()=>{
-  if(!isOpen)return;
-  const keyDown=(event:KeyboardEvent)=>{
-   if(event.key!=="Escape")return;
-   event.preventDefault();
-   setIsOpen(false);
-   triggerRef.current?.focus();
-  };
-  const pointerDown=(event:PointerEvent)=>{
-   const target=event.target;
-   if(!(target instanceof Node))return;
-   if(triggerRef.current?.contains(target)||popoverRef.current?.contains(target))return;
-   setIsOpen(false);
-  };
-  document.addEventListener("keydown",keyDown);
-  document.addEventListener("pointerdown",pointerDown);
-  return ()=>{
-   document.removeEventListener("keydown",keyDown);
-   document.removeEventListener("pointerdown",pointerDown);
-  };
- },[isOpen]);
+
  const href="/hr/notifications"+(data?.collegeId?"?collegeId="+encodeURIComponent(data.collegeId):"");
  return <div className="relative">
   <Button ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
@@ -72,13 +52,7 @@ export function RecruiterNotificationBell(){
       className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-error)] px-1 text-[10px] leading-3 text-white">
       {data.unread>99?"99+":data.unread}</span>:null}
   </Button>
-  {isOpen?<section ref={popoverRef} role="dialog" aria-modal="false" aria-label="Notifications"
-    className="absolute right-0 top-full z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,94vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
-   <div className="flex items-center justify-between gap-3">
-    <h2 className="font-semibold text-foreground">Notifications</h2>
-    <Button type="button" onClick={()=>setIsOpen(false)}
-     aria-label="Close notifications" variant="ghost">Close</Button>
-   </div>
+  <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications">
    {error?<div role="alert" className="mt-3 text-sm text-error">{error}
     <Button type="button" onClick={()=>void load()} variant="ghost" className="ml-2 underline">Retry</Button>
    </div>:null}
@@ -102,6 +76,6 @@ export function RecruiterNotificationBell(){
     </ul></ScrollCue>:null}
    <Link href={href} onClick={()=>setIsOpen(false)}
     className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
-  </section>:null}
+  </Drawer>
  </div>;
 }
