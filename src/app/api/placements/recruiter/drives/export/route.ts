@@ -1,4 +1,3 @@
-import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -34,7 +33,7 @@ export async function GET(request:Request){
   const output=buildHrDrivesCsv(result.rows,result.total>HR_DRIVE_CSV_CAP);
   return new Response(output.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiter-drives", "csv") + '"',
+   "Content-Disposition":'attachment; filename="recruiter-drives.csv"',
    "Cache-Control":"private, no-store","X-Export-Capped":output.truncated?"true":"false",
   }});
  }catch(error){return apiErrorResponse(error);}

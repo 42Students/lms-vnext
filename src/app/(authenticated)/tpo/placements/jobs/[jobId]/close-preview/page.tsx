@@ -2,7 +2,6 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
-import {Banner} from "@/components/ui/banner";
 import {TpoDriveClosePreviewForm} from "@/components/placements/tpo-drive-close-preview-form";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
@@ -21,7 +20,7 @@ export default async function TpoDriveClosePreviewPage({params}:{params:Promise<
   <PageHeader eyebrow="TPO · Drive lifecycle" title={preview.title+" · Close preview"}
    description="Review persisted application, round and offer counts before an audited closure."/>
   {preview.canClose?<TpoDriveClosePreviewForm preview={preview}/>:
-   <Banner tone="warning">
+   <p role="status" className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
     {preview.pendingPromotions>0?
       "A waitlisted learner's reserved offer is still pending. Finish the waitlist offer before closing this drive.":
      preview.pendingSelections>0?
@@ -29,6 +28,6 @@ export default async function TpoDriveClosePreviewPage({params}:{params:Promise<
      preview.issuedOffers>0?
       "Release or withdraw outstanding offers before closing this drive.":
       "Closure is available only for published drives with a recorded season. To cancel instead, use the Cancel drive preview."}
-   </Banner>}
+   </p>}
  </div>;
 }
