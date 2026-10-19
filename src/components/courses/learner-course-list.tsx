@@ -274,7 +274,7 @@ export function LearnerCourseList({
         </div>
         {learnerCourseHasActiveFilters({query,typeFilter:effectiveTypeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
           <button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
-            className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+            className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
             Clear Course filters
           </button>
         ) : null}
@@ -304,7 +304,7 @@ export function LearnerCourseList({
           ) : null}
         </div>
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
-          <details className="rounded-lg border border-border bg-surface px-3 py-2">
+          <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
             <summary className="cursor-pointer font-semibold">Semester Details</summary>
             <dl className="mt-2 space-y-1 text-body">
               <div>Program: {periodRows[0]?.course.programName??"Not recorded"}</div>
@@ -313,7 +313,7 @@ export function LearnerCourseList({
               <div>Semester: {selectedPeriod?.name??"Not recorded"}</div>
             </dl>
           </details>
-          <details className="rounded-lg border border-border bg-surface px-3 py-2">
+          <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
             <summary className="cursor-pointer font-semibold">All Courses</summary>
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
               className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{periodRows.slice(0,100).map((row,i)=>
@@ -321,7 +321,7 @@ export function LearnerCourseList({
             {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for more courses.</p>:null}
             {periodRows.length>100?<p>Showing first 100; search the full list below.</p>:null}
           </details>
-          {creditSummary.recordedCount>0?<details className="rounded-lg border border-border bg-surface px-3 py-2">
+          {creditSummary.recordedCount>0?<details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
             <summary className="cursor-pointer font-semibold">Credits Breakdown</summary>
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
               className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
