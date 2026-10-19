@@ -4,6 +4,7 @@ import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-m
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 
 export default function LearnerAssessmentsError({
   reset,
@@ -12,14 +13,14 @@ export default function LearnerAssessmentsError({
   reset: () => void;
 }) {
   return (
-    <div className="py-8 text-center">
+    <div className="min-w-0 space-y-4">
       <PageHeader title={"Assignments could not be loaded"} />
-      <p className="mt-2 text-sm text-body">
+      <Alert tone="error">
         This is a loading problem, not an empty list. Check your connection and try again.
-      </p>
-      <div className="mt-5 flex flex-wrap justify-center gap-3">
-        <Button onClick={reset}>Retry</Button>
-        <Link href="/learn/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text sm:min-h-9">
+      </Alert>
+      <div className="flex flex-wrap items-center gap-3">
+        <Button className="min-h-11 md:min-h-9" onClick={reset}>Retry</Button>
+        <Link href="/learn/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">
           {LEARNER_BACK_TO_COURSES}
         </Link>
       </div>
