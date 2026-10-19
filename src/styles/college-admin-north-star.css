@@ -3,6 +3,8 @@
 .lms-college-portal {
   display: contents;
   --college-control-radius: var(--lms-control-radius, 9px);
+  /* Legacy admin list cards are 8px, while the single page canvas is 12px. */
+  --college-card-radius: 8px;
   --college-title-ink: var(--lms-page-title-color, #172033);
 }
 .lms-college-portal h1 {
