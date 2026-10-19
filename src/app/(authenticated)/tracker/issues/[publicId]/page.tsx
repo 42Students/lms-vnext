@@ -129,7 +129,7 @@ export default async function TrackerIssueDetailPage({
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Screenshots</h2>
         {detail.attachments.length === 0 ? (
-          <p className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">No screenshot metadata.</p>
+          <p className="border-y border-border py-5 text-sm text-muted-foreground">No screenshot metadata.</p>
         ) : (
           <div className="grid gap-2">
             {detail.attachments.map((attachment) => (
@@ -158,7 +158,7 @@ export default async function TrackerIssueDetailPage({
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Activity</h2>
         {detail.activities.length === 0 ? (
-          <p className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">No workflow history yet.</p>
+          <p className="border-y border-border py-5 text-sm text-muted-foreground">No workflow history yet.</p>
         ) : (
           <ol className="grid gap-3">
             {detail.activities.map((activity) => (
