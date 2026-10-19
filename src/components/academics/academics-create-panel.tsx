@@ -240,7 +240,7 @@ export function AcademicsCreatePanel({
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Create the College calendar window before placing Cohorts or Sections.
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
           <div>
             <FieldLabel htmlFor="academic-period-name">
               Name
@@ -322,8 +322,8 @@ export function AcademicsCreatePanel({
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Programs are owned by Departments; duration is measured in academic terms.
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <div className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="program-department">
               Department
             </FieldLabel>
@@ -418,8 +418,8 @@ export function AcademicsCreatePanel({
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Cohorts are long-lived Program intakes; learner term progression is stored separately.
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <div className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="cohort-program">
               Program
             </FieldLabel>
@@ -558,8 +558,8 @@ export function AcademicsCreatePanel({
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Sections are period-specific. Rosters and movement history attach here.
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <div className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="section-cohort">
               Cohort
             </FieldLabel>
@@ -585,7 +585,7 @@ export function AcademicsCreatePanel({
               ))}
             </Select>
           </div>
-          <div className="sm:col-span-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="section-period">
               Academic period
             </FieldLabel>
