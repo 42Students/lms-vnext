@@ -108,7 +108,7 @@ export function TpoCompanyPersonEditor({
       </p>:null}
       <button type="button" onClick={() => void save()}
         disabled={busy || !name.trim() || !email.trim()}
-        className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">
+        className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50 text-primary-foreground">
         {busy ? "Saving..." : reviewing?"Confirm contact save":current ? "Review and save changes" : "Review and add contact"}
       </button>
       {message ? <p role="status" className="text-sm text-body">{message}</p> : null}
