@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 "use client";
 
 import {useState} from "react";
@@ -35,17 +37,17 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     <form method="get" action={route} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-5">
       <input type="hidden" name="tab" value="activity" />
       <label className="text-sm font-semibold text-foreground">Activity type
-        <select name="activityCategory" defaultValue={category}
+        <Select name="activityCategory" defaultValue={category}
           className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal">
           {learnerProjectActivityCategories.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="text-sm font-semibold text-foreground">From (IST)
-        <input type="date" name="activityFrom" defaultValue={parsed.success ? parsed.data.from : ""}
+        <Input type="date" name="activityFrom" defaultValue={parsed.success ? parsed.data.from : ""}
           className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
       </label>
       <label className="text-sm font-semibold text-foreground">Through (IST)
-        <input type="date" name="activityTo" defaultValue={parsed.success ? parsed.data.to : ""}
+        <Input type="date" name="activityTo" defaultValue={parsed.success ? parsed.data.to : ""}
           className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
       </label>
       <button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply</button>
@@ -54,7 +56,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     {parsed.success && pageRows.length > 0 ? (
       <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="min-w-0 flex-1 text-sm font-semibold text-foreground">Find in this activity page
-          <input type="search" maxLength={100} value={textQuery}
+          <Input type="search" maxLength={100} value={textQuery}
             onChange={event=>setTextQuery(event.target.value)}
             placeholder="Search summary, subject or actor"
             className="mt-1.5 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
