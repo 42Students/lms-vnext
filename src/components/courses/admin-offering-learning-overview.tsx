@@ -381,7 +381,7 @@ export function AdminOfferingLearningOverview({
             />
           </div>
         </div>
-        <div className="mt-4 rounded-lg bg-[var(--lms-neutral-50)] px-3 py-2 text-xs leading-5 text-muted-foreground">
+        <div className="mt-4 border-l-2 border-border bg-surface-subtle px-3 py-2 text-xs leading-5 text-muted-foreground">
           Items created here are shared across
           every active Section Delivery in this
           Offering. Faculty can add separate
@@ -488,7 +488,7 @@ export function AdminOfferingLearningOverview({
                   />
 
                   {itemCount === 0 ? (
-                    <div className="mt-3 rounded-lg border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
+                    <div className="mt-3 border-y border-dashed border-border py-4 text-sm text-muted-foreground">
                       No shared learning items in
                       this Lesson yet.
                     </div>

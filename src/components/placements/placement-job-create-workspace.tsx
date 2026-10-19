@@ -98,7 +98,7 @@ export async function PlacementJobCreateWorkspace({
         title="Create drive"
         description="Build the opportunity students will see"
       />
-      {pastDrives.length>0?<details className="rounded-xl border border-border bg-surface p-4">
+      {pastDrives.length>0?<details className="border-y border-border py-4">
         <summary className="min-h-11 cursor-pointer text-sm font-semibold text-foreground md:min-h-9">Clone a past drive</summary>
         <p className="my-2 text-xs text-body">Shows up to 20 recent completed drives. Cloning makes a new draft; dates, learners, rounds, outcomes, offers and external links are never carried over.</p>
         <ul className="grid gap-2 sm:grid-cols-2">

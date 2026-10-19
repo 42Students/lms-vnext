@@ -74,10 +74,10 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
         <StatusBadge>{results.round.status}</StatusBadge>
       </div>
       {results.round.kind==="TALK"?<p className="text-sm text-muted-foreground">Informational rounds do not collect outcomes.</p>:<>
-       <nav aria-label="Outcome" className="flex flex-wrap gap-2">{filters.map(filter=>
+       <nav aria-label="Outcome" className="flex flex-wrap gap-3 border-b border-border">{filters.map(filter=>
         <Link key={filter} href={recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:filter})}
           aria-current={query.data.outcome===filter?"page":undefined}
-          className={query.data.outcome===filter?"inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]":"inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
+          className={query.data.outcome===filter?"inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]":"inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
           {filter.replaceAll("_"," ")} ({countValues[filter]})</Link>)}</nav>
        {results.rows.length?<div className="grid gap-3 md:grid-cols-2">
          {results.rows.map(row=><article key={row.key} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">

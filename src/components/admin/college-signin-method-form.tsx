@@ -59,7 +59,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
    </label>)}
   </fieldset>
   <Button type="button" disabled={!ready||saving||selection===savedMethod} onClick={()=>setConfirmOpen(true)}
-   className="disabled:opacity-50">
+   className="min-h-11 sm:min-h-9">
    {saving?"Saving…":"Save sign-in settings"}
   </Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Change allowed sign-in methods for this college?" description="Current sessions stay signed in." confirmLabel="Save sign-in settings" pending={saving} onConfirm={()=>void save()}/>
