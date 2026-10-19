@@ -1,11 +1,11 @@
 import Link from "next/link";
+import { ErrorState } from "@/components/ui/error-state";
+
 /** A failed secondary College Admin query never masquerades as an empty result. */
 export function CollegeDashboardSectionFailure({title}:{title:string}){
- return <section role="alert" aria-label={title} className="space-y-3 border-t border-border pt-5">
-  <h2 className="font-semibold text-foreground">{title}</h2>
-  <p className="text-sm text-body">Could not load this right now. Try again.</p>
-  <Link href="/college" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
-   Retry
-  </Link>
- </section>;
+ return <div className="min-w-0 border-t border-border pt-4">
+  <ErrorState title={title}
+   description="Could not load this right now. Try again."
+   action={<Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry</Link>}/>
+ </div>;
 }
