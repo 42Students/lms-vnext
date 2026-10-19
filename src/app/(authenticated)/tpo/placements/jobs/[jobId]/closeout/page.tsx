@@ -33,19 +33,19 @@ export default async function TpoDriveCloseoutPage({
     <Link className="text-sm font-semibold text-[var(--lms-teal-deep)]"
       href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}>← Back to drive</Link>
     <header>
-      <h1 className="font-semibold text-[30px] text-[#172033]">{data.job.title} · Close-out summary</h1>
+      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">{data.job.title} · Close-out summary</h1>
       <p className="mt-2 text-sm text-body">
         Current persisted facts for a {data.job.status.toLowerCase()} drive.
         These numbers are not a finalized, immutable historical snapshot.
       </p>
     </header>
     <a href={"/api/placements/tpo/drives/" + encodeURIComponent(data.job.id) + "/closeout/export"}
-      className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">
       Export CSV
     </a>
     <section aria-label="Close-out metrics" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {cells.map(([label, value]) => <div key={label}
-        className="rounded-xl border border-border bg-surface p-5">
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
         <p className="text-sm font-medium text-body">{label}</p>
         <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
           {value === null ? "Unavailable" : value}
@@ -53,7 +53,7 @@ export default async function TpoDriveCloseoutPage({
       </div>)}
     </section>
     {counts.applied === 0 ? <p role="status"
-      className="text-sm text-body rounded-[9px] border border-border bg-muted p-3">
+      className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
       No applications are persisted for this drive. Other zero counts reflect that
       source, not an assumption about off-platform recruiting.
     </p> : null}
