@@ -1,6 +1,7 @@
 import type {listOfferingSectionPreview} from "@/modules/courses/college-offering-section-preview-service";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 
 type Preview=Awaited<ReturnType<typeof listOfferingSectionPreview>>;
 function ItemList({items}:{items:readonly {
@@ -37,8 +38,8 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
    </label>
    <Button variant="primary" type="submit" className="justify-center">View Section</Button>
   </form>
-  {data.invalid?<p role="alert" className="text-sm text-error">The selected Section is unavailable for this Course Offering.</p>:null}
-  {data.truncated?<p role="status" className="text-xs text-muted-foreground">Only the first 200 active Sections are listed. Use the Section management page for the full directory.</p>:null}
+  {data.invalid?<Alert tone="error">The selected Section is unavailable for this Course Offering.</Alert>:null}
+  {data.truncated?<Alert tone="info">Only the first 200 active Sections are listed. Use the Section management page for the full directory.</Alert>:null}
   {data.selected?<div className="space-y-3">
    <p className="text-sm font-semibold">Viewing {data.selected.sectionName} ({data.selected.sectionCode})</p>
    <p className="text-xs text-muted-foreground">This is a metadata-only view of shared and Section-specific content. It does not reveal private video, file or meeting links. Visibility indicators reflect publication and lesson flags, not an individual learner&apos;s enrolment or progress.</p>

@@ -2,6 +2,7 @@
 import { StatTile } from "@/components/ui/stat-tile";
 import { Input } from "@/components/ui/input";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
+import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
 
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
@@ -635,10 +636,10 @@ export function LearnerClassSchedule({
           <>
             {view === "month" ? (
               <div className="mt-5 space-y-4" aria-label="Monthly class schedule">
-                <CalendarGrid variant="hairline" className="overflow-hidden"
+                <CalendarGrid variant="hairline" className={"overflow-hidden "+calendarStyles.calendarHairline}
                   role="group" aria-label="42 day month grid">
-                  {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day=>(
-                    <span key={day} className="bg-surface p-1 text-center text-[10px] font-semibold text-muted-foreground sm:p-2 sm:text-xs">
+                  {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>(
+                    <span key={day} className={"bg-surface p-1 text-center text-[10px] font-semibold text-muted-foreground sm:p-2 sm:text-xs "+(index===0?calendarStyles.calendarSunday:"")}>
                       {day}
                     </span>
                   ))}

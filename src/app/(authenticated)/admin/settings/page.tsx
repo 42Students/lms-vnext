@@ -126,7 +126,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
       <Link href="/admin/settings/auth"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">
         Authentication and privileged access checklist →
       </Link>
 
@@ -140,7 +140,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           </Select>
         </label>
         <Button type="submit">Filter</Button>
-        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
+        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       {sections.length===0 ? <p role="status" className="border-l-2 border-border bg-muted px-3 py-2 text-sm text-body">No visible settings match the selected filters.</p> : null}
       <nav
@@ -215,7 +215,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           ) : null}
 
           {section.note ? (
-            <p className="rounded-[var(--lms-control-radius,9px)] bg-surface-subtle px-4 py-3 text-xs leading-6 text-body">
+            <p className="rounded-[var(--lms-control-radius)] bg-surface-subtle px-4 py-3 text-xs leading-6 text-body">
               {section.note}
             </p>
           ) : null}

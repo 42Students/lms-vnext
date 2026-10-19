@@ -26,7 +26,7 @@ export function chosenTpoGridColumns<Row>(columns: readonly TpoGridColumn<Row>[]
 /**
  * Match the legacy TpoGrid.table() contract: all displayed columns plus
  * explicit exportAlways columns even when a saved layout hides them.
- * When there are no extra columns, preserve the displayed/reordered order.
+ * Preserve the underlying grid column order even when a saved view hides fields.
  * Legacy source: lms2-fe/src/components/tpo/grid/TpoGrid.jsx, table().
  */
 export function tpoGridExportColumns<Row>(
@@ -34,13 +34,10 @@ export function tpoGridExportColumns<Row>(
   visible: readonly TpoGridColumn<Row>[] = columns.filter(column=>!column.exportOnly),
 ): TpoGridColumn<Row>[] {
   const permitted = columns.filter(column=>!column.exportOnly);
-  const displayed = visible.filter(column=>permitted.some(item=>item.key===column.key));
-  const displayedKeys = new Set(displayed.map(column=>column.key));
-  const hiddenRequired = permitted.filter(column=>column.exportAlways&&!displayedKeys.has(column.key));
-  if(hiddenRequired.length===0)return [...displayed];
-  const exported = new Set([...displayedKeys,...hiddenRequired.map(column=>column.key)]);
-  // Hidden always-export columns retain their source positions among shown headers.
-  return permitted.filter(column=>exported.has(column.key));
+  const displayedKeys = new Set(visible.map(column=>column.key));
+  // Legacy getColumns() enumerates the grid's canonical ordered columns and
+  // includes hidden columns only when context.exportAlways is true.
+  return permitted.filter(column=>displayedKeys.has(column.key)||column.exportAlways);
 }
 export function parseTpoGridColumns(raw: string | undefined, allowed: readonly string[]) {
   if (!raw) return [];

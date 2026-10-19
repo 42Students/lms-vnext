@@ -4,6 +4,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
@@ -147,12 +148,12 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}
    title="Create assignment as a draft?" description="Learners cannot submit until published."
    confirmLabel="Create draft" pending={pending} confirmDisabled={!chosen||!title.trim()} onConfirm={()=>void create()}>
-   {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+   {error?<Alert tone="error">{error}</Alert>:null}
   </ConfirmDialog>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard} title="Discard unsaved assignment changes?"
    description="Unsaved assignment details will be discarded." confirmLabel="Discard draft"
    confirmVariant="danger" pending={pending} onConfirm={discardDraft}/>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {message?<p role="status" className="text-sm text-success">{message}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {message?<Alert tone="success">{message}</Alert>:null}
  </section>;
 }
