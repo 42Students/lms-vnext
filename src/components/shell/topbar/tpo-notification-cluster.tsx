@@ -44,7 +44,7 @@ export function TpoNotificationCluster() {
   }, [refresh]);
 
   const count = state?.value.messages ?? null;
-  return <div className={style.actions} aria-label="Messages and notifications">
+  return <div role="group" className={style.actions} aria-label="Messages and notifications">
     <Link href="/tpo/messages" className={style.iconButton}
       aria-label={"Messages" + (count !== null ? ", " + count + " unread" : "")}
       title="Messages">
