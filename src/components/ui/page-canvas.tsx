@@ -19,7 +19,7 @@ export function PageCanvas({ children, className, style, ...props }: PageCanvasP
       )}
       // The legacy canvas stays at 24px even where older global mobile rules
       // otherwise reset [data-slot="page-canvas"] to 16px.
-      style={{ padding: "var(--lms-canvas-padding)", ...style }}
+      style={{ ...style, padding: "var(--lms-canvas-padding)" }}
     >
       {children}
     </div>
