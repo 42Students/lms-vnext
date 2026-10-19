@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { COLLEGE_COURSE_TAB_COPY, collegeAudienceLabel, collegeResultsLabel, collegeStatusLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
@@ -169,8 +167,8 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
               <option value="ARCHIVED">Archived</option>
             </Select>
           </label>
-          <Button type="submit"
-            className="min-h-11 px-5">
+          <Button variant="primary" type="submit"
+            >
             Filter
           </Button>
           <Link href={collegeAssessmentHref(data.kind, { q: "", scope: "ALL", results: "ALL", duePresence: "ALL", dueWindow: "ALL", status: "ALL", page: 1 })}
