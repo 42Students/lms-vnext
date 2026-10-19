@@ -49,7 +49,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
     encodeURIComponent("\uFEFF" + studentImportReportCsv(report.results)) : null;
 
   return <div className="space-y-6">
-    <section className="sm: border-t border-border pt-4">
+    <section className="border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">Upload or paste CSV</h2>
       <p className="mt-2 text-sm text-body">
         Maximum 500 learner rows and 1 MB. Use the exact header order below.
@@ -60,14 +60,14 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
       <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{TEMPLATE}</p>
       <a download="student-import-template.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent(TEMPLATE+"\n")}
-        className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Download CSV template
       </a>
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
         <label className="grid gap-1 text-sm font-semibold">Program
           <select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
-            className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">Choose program</option>
             {choices.programs.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
           </select>
@@ -75,7 +75,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Batch
           <select required value={cohortId}
             onChange={event=>{setCohortId(event.target.value);setSectionId("");setReport(null);}}
-            className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">Choose batch</option>
             {choices.batches.filter(option=>option.programId===programId).map(option=>
               <option key={option.id} value={option.id}>{option.name}</option>)}
@@ -84,7 +84,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Class/Section
           <select value={sectionId}
             onChange={event=>{setSectionId(event.target.value);setReport(null);}}
-            className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">No class placement</option>
             {choices.classes.filter(option=>option.cohortId===cohortId).map(option=>
               <option key={option.id} value={option.id}>{option.name} · capacity {option.capacity??"unlimited"}</option>)}
@@ -119,7 +119,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
     </section>
 
     {report ? <section aria-label="CSV validation and result report"
-      className="space-y-4 - sm: border-t border-border pt-4">
+      className="space-y-4 - border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">
         {report.preview ? "Dry-run report" : "Import result"}
       </h2>

@@ -60,7 +60,7 @@ export function CollegeContactProfileForm({ initial }: {
   }
 
   return <form onSubmit={submit}
-    className="grid max-w-3xl gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
+    className="grid max-w-3xl gap-4 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-5 sm:grid-cols-2">
     <label className="grid gap-2 text-sm font-semibold text-body sm:col-span-2">
       Public college display name
       <input required maxLength={160} className={inputClass} value={name}
