@@ -176,7 +176,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
    {result.items.length?<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
-    {visibleRows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] px-2 py-4 transition-colors hover:bg-[var(--lms-neutral-50)] first:pt-3 last:pb-3">
+    {visibleRows.map(row=><li key={row.id} className="rounded-[8px] px-4 py-3 transition-colors duration-200 hover:bg-[var(--lms-neutral-50)]">
      <Link href={"/hr/conversations/"+row.id}
       className="block min-h-9 max-sm:min-h-11 break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="mt-2">{row.unread} new</Badge>:null}
