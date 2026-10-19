@@ -144,9 +144,11 @@ export default async function SuperAdminPeoplePage({
         eyebrow="Super Admin"
         title="People"
         description="Canonical people and memberships inside the selected college safety scope."
-        actions={<PersonOnboardDialog collegeId={collegeId} />}
+        actions={<div className="flex flex-wrap items-center gap-[var(--lms-space-2)]">
+          <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
+          <PersonOnboardDialog collegeId={collegeId} />
+        </div>}
       />
-      <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
       <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-4">
        <label className="grid gap-1 text-sm font-semibold">Search contacts
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-9 w-full"/>
