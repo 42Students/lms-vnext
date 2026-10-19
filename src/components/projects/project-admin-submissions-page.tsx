@@ -181,7 +181,7 @@ export async function ProjectAdminSubmissionsPage({
           ["Reviewed", summary.reviewed, queuePath+"?submissionStatus=APPROVED"],
         ] as const).map(([name, value, href]) => {
           return <Link key={name} href={href}
-            className="rounded-xl border border-border bg-surface p-4 hover:border-primary">
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 hover:border-primary">
             <p className="text-xs font-semibold text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>;
