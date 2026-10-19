@@ -70,7 +70,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download CSV template
       </a>
-      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+      <div className="mt-3 grid gap-3 sm:grid-cols-3 print:hidden">
         <label className="grid gap-1 text-sm font-semibold">Program
           <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
