@@ -22,17 +22,17 @@ export default async function FacultyProfilePage() {
         title="Profile"
       />
       <nav aria-label="Profile shortcuts" className="flex flex-wrap items-center gap-3">
-        <Link href="/teacher/profile/details" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Edit About &amp; profile sections →</Link>
+        <Link href="/teacher/profile/details" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Edit About &amp; profile sections →</Link>
         <Link href="/teacher/profile/teaching"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
         Current teaching assignments →
         </Link>
         <Link href="/teacher/profile/contacts"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Contact details and editing availability
         </Link>
       </nav>
-      <section aria-label="Faculty profile details" className="rounded-xl border border-border bg-surface p-6">
+      <section aria-label="Faculty profile details" className="border-b border-border py-5">
         <h2 className="text-base font-semibold text-foreground">About</h2>
         <dl className="mt-5 grid gap-5 sm:grid-cols-2">
           {fields.map(({ label, value }) => (
