@@ -44,10 +44,10 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
      onChange={event=>setNote(event.target.value)} className="w-full"/>
    </label>:null}
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-   <Button variant="primary" type="button" disabled={busy} onClick={()=>void submit()} className="min-h-11 min-[768px]:min-h-9"
+   <Button variant="primary" type="button" disabled={busy} onClick={()=>void submit()} className="min-h-11 md:min-h-9"
     >
     {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}</Button>
-   <Button variant="ghost" className="min-h-11 underline min-[768px]:min-h-9" type="button" disabled={busy} onClick={()=>{setConfirmation(null);setError("");}}
+   <Button variant="ghost" className="lms-inline-link min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" type="button" disabled={busy} onClick={()=>{setConfirmation(null);setError("");}}
     >{confirmation==="CANCEL"?"Keep it":"Not now"}</Button>
   </Dialog>}
  </div>;
@@ -84,25 +84,25 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
  return <section aria-label="Asks here" className="space-y-3 border-t border-border pt-4">
   <h2 className="font-semibold">Asks here</h2>
   <p className="text-xs text-muted-foreground">Ask one teammate to do something, with an optional due date.</p>
-  <form onSubmit={event=>void create(event)} className="grid gap-3">
+  <form onSubmit={event=>void create(event)} className="grid min-w-0 gap-3">
    <p className="text-sm">Ask {recipientName}</p>
    {recipientAwayLabel?<p role="status" className="text-xs text-warning-text">{recipientName.split(" ")[0]} is away until {recipientAwayLabel}.</p>:null}
    <label className="grid gap-1 text-sm">What needs doing?
     <Input required maxLength={200} disabled={busy} value={title}
      onChange={event=>{setTitle(event.target.value);key.current=null;}}
-     className="min-h-11 min-[768px]:min-h-9 w-full"/>
+     className="min-h-11 md:min-h-9 w-full"/>
    </label>
    <label className="grid gap-1 text-sm">By (optional, IST)
     <Input type="datetime-local" disabled={busy} value={due}
      onChange={event=>{setDue(event.target.value);key.current=null;}}
-     className="min-h-11 min-[768px]:min-h-9 w-full"/>
+     className="min-h-11 md:min-h-9 w-full"/>
    </label>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
    <Button type="submit" disabled={busy||!title.trim()||!recipientId}
     >
     {busy?"Sending…":"Ask someone"}</Button>
   </form>
-  <ul className="space-y-2">{items.map(ask=>{
+  <ul className="divide-y divide-border">{items.map(ask=>{
    const overdue=ask.status==="OPEN"&&ask.dueAt&&new Date(ask.dueAt).getTime()<serverNowMs;
    const label=ask.status==="OPEN"&&overdue?"Overdue":ask.status==="OPEN"?"Open":ask.status==="DONE"?"Done":"Cancelled";
    return <li key={ask.id} id={"team-ask-"+ask.id} className="border-b border-border py-3 text-sm">
