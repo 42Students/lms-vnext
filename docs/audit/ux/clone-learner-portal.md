@@ -8,7 +8,7 @@ Scope: `src/app/(authenticated)/learn/**` except `courses/**` (chat-7), learner 
 - [ ] LRN-01: **source fix delivered** in `my-placements/{applications,jobs,placement,schedule}/page.tsx`: four `PageHeader`s, two preserved destination/action links and schedule shared `Tabs` (4 file commits, 2026-10-19). Existing `scripts/codemods/chat1-learner-page-headings.cjs` authored for repeatable 4-file migration; GitHub edits applied its planned JSX transformations without running Node. Strict tick blocked by computed title values, full markup grep and phone/tablet screenshot proof.
 - [ ] LRN-02: **partial**: Announcements (8) and My offers (5) filter link instances now share exact learner SCSS pill dimensions, active/hover/focus selectors and 767px horizontal scroll rules; applied on 2026-10-19. Dynamic route checks, actual computed values and other placement routes remain. Remaining placement pages `my-placements/{announcements,assessments,calendar,interviews,notification-preferences,offers,preparation,rules,schedule,support}/page.tsx`, main `my-placements/page.tsx`: titles, tab order, filters, links, notices, single canvas.
 - [ ] LRN-03: `src/components/placements/learner-{applications,jobs}-browse.tsx`: **partial**: removed hand-rolled `aria-pressed` controls in these two files; shared `SegmentedControl` uses native radio states with 44px min mobile target and `Tabs` supplies underline for application views. Verify keyboard, routing and remaining components before tick.
-- [ ] LRN-04: **partial**: `learner-placements-tabs.tsx` source-read confirms shared `Tabs`/scroll cue, seven preserved routes and unread count; `learner-placements-dashboard.tsx` source changes preserve 44px mobile/36px desktop tap targets and prevent a narrow Waiting on you row from forcing horizontal overflow. Need source-value/state review of remaining learner placement components and rendered phone/tablet proof; leave unticked.
+- [ ] LRN-04: **9 learner source files swept in total; three more components source-complete this batch** (`learner-placement-{jobs,offers,alerts}.tsx`), plus `learner-placements-dashboard.tsx` and shared `learner-placements-tabs.tsx` inspection. New batch removes the remaining two raw buttons, fixes three card/empty layouts and matches <=767px responsive rules. The other `learner-*` components, full visual/proof checks, and parity of real interactions remain OPEN; see the value table and exact source counts below.
 - [ ] LRN-05: **partial**: `learn/attendance/page.tsx` and `learn/calendar/page.tsx` now put their existing action link in the same `PageHeader` row (2026-10-19); learner project detail already renders `PageHeader` for audit and invalid-board-filter states, while regular project workspace keeps its own header. `learn/{attendance,calendar,profile,projects,notifications,placements}/page.tsx` plus nested pages, `src/components/attendance/learner-attendance-workspace.tsx`: PageHeader, responsive titles and controls.
 - [ ] LRN-06: `loading.tsx`/`error.tsx`/`not-found.tsx` in learner trees: shared UI, retry, mobile and tablet states.
 - [ ] LRN-07: `allAssignments`, `allQuizzes`, `assignments`, `quizzes` potentially overlap chat-7's COURSES ownership. No edits before ownership check.
@@ -19,7 +19,7 @@ Scope: `src/app/(authenticated)/learn/**` except `courses/**` (chat-7), learner 
 | Listing title | `docs/design/legacy-styles/components___listing-page-header.scss:52-60`: 28px, weight 600, 1.3 line-height | `src/components/ui/page-header.tsx:28-37`: desktop 30px, weight 600 | Open: legacy TPO page header vs learner listing reference differ; do not edit shared component |
 | Mobile title | `docs/design/legacy-styles/components___listing-page-header.scss:131-143`: 20px title and stacked layout | `src/components/ui/page-header.tsx:21-29`: stacked mobile with 20px | Open: visual + computed-value comparison missing |
 | Learner mobile spacing | `docs/design/legacy-styles/components___learn-layout.scss:152-163`: 16px mobile / 24px desktop content inset | `src/components/ui/page-canvas.tsx`: global owner; not yet inspected | Open: avoid double padding |
-| Notice filter touch height | `docs/design/legacy-styles/components___learn-notifications.scss:82-109`: min-height 44px, teal active state | `src/app/(authenticated)/learn/my-placements/announcements/page.tsx:119-139`: filter links use min-height 36px | Open: candidate mismatch pending per-state comparison |
+| Notice filter touch height | `docs/design/legacy-styles/components___learn-notifications.scss:82-109`: min-height 44px, teal active state | `src/app/(authenticated)/learn/my-placements/announcements/page.tsx:119-139`: `min-h-11` (44px) | Source-corrected in prior batch; rendered states remain open |
 
 ## Strict tick rule
 No items ticked. Value tables, full zero-instance greps, responsive phone/tablet proof, no-regression review and side-by-side screenshots have not been completed. Never treat merely writing a codemod as migrating pages.
@@ -62,9 +62,64 @@ Source reread: after write, checked placement filter components' tag boundaries 
 
 Static source proof on modified files (GitHub fetch inspection; **not** local exhaustive grep): four new `PageHeader` occurrences, one route using `Tabs`, and zero old `aria-[current=page]:hover:bg-[var(--lms-button-primary)]` filter link class blocks in the two filtered route files. `learn/attendance` and `learn/calendar` preserve one action link each. No TypeScript parser, application runtime, CI, or screenshot executed. The strict tick rule therefore keeps all queue items OPEN.
 
-**Next file:** `src/components/placements/learner-placement-jobs.tsx` (LRN-04, then `learner-placement-offers.tsx`).
+**Next file:** `src/components/placements/learner-placement-journey.tsx` (LRN-04), then `learner-placement-job-detail.tsx`.
 
 ### LRN-04 subsequent source inspection
 
 - `src/components/placements/learner-placements-tabs.tsx:1-53`: vNext already uses shared `Tabs`, seven stable legacy labels/routes and unread notice count; no edit needed. `Tabs` uses its own horizontal `ScrollCue` to prevent mobile overflow; real-device swipe gesture remains unverified.
 - `src/components/placements/learner-placements-dashboard.tsx`: four responsive fixes (44px mobile/36px desktop for two schedule action links, 44px target for pending-offers navigation, `min-w-0 flex-1` for flexible to-do text). Legacy touch minimum `components___learn-notifications.scss:10,88-90`; mobile breakpoint `components___learn-layout.scss:152-163`. No source-wide zero-instance or computed-style claim.
+
+## Chat-1 replacement continuation — drive, offer and personal alert components (2026-10-19)
+
+**Source-completed files** (not full pixel parity): 
+`src/components/placements/learner-placement-jobs.tsx`,
+`src/components/placements/learner-placement-offers.tsx`,
+`src/components/placements/learner-placement-alerts.tsx`.
+The two action components preserve fetch/confirmation, disabled-while-pending, toast, dialog, offer-decline/extension and download flows. The notices component retains its alert sort order, status, link and dates. No functionality/wording was removed.
+
+### Value-by-value source comparison
+Legacy references: `docs/design/legacy-styles/components___learn-notifications.scss:10-29,178-222,263-294,304-330`, `components___accessibility.scss:19-38`, `components___learn-layout.scss:151-192`, and `components___variables.scss:7-36`. When no precise placement-specific SCSS is present, the legacy row-card analogue is identified rather than asserting visual equivalence.
+
+| Item / value | Legacy expected | vNext source and value | Source status |
+|---|---|---|---|
+| Jobs/Offers cards: neutral border | `$neutral-200: #e5e9f0`, 1px (variables:35; notifications:185) | `learner-placement-jobs.tsx:535`, `learner-placement-offers.tsx:282`: `border border-border` using global token | Matches variable definition; computed colour unverified |
+| Jobs/Offers cards: background | `$white: #fff` (notifications:184) | Same lines: `bg-surface` = `--lms-surface: var(--lms-white)` (`globals.css:68-72`) | Source match |
+| Jobs/Offers cards: corner radius | `$radius-lg: 12px` (notifications:22,186) | Same lines: `rounded-xl` (12px) | Source match |
+| Jobs/Offers cards: body inset | `$s2:16px` at <=767px, `$s3:24px` above (notifications:214-221) | `p-4 md:p-6` on both articles | Source match; mobile/tablet static only |
+| Jobs/Offers cards: hover | `rgba(#26bac7,.25)` border, `0 2px 6px rgba(0,0,0,.06)` shadow, `0.2s ease` (notifications:189-194) | Both articles: `hover:border-[rgba(38,186,199,0.25)]`, `hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)]`, `duration-200` | Source-level analogue; default shadow and ease still require rendered comparison |
+| Jobs/Offers controls | Legacy learner minimum touch 44px <=767px (notifications:10,88-90) | `max-md:min-h-11` on 10 drive + 11 offer shared `Button`s; destinations `min-h-11 md:min-h-9` | Breakpoint + min size source match |
+| Jobs/Offers keyboard focus | `2px` teal, offset 2-3px (accessibility:19-38) | Shared `Button` focus ring; link focus styling; raw toggles now `Button variant="link"` | Source-level; runtime focus order unverified |
+| Jobs/Offers layouts at 640-767px | Legacy mobile until <=767px (notifications:10,219) | `md:grid-cols-2/3`, `md:flex-row`, `md:p-6` (not Tailwind `sm` at 640px) | Breakpoint proof via classes, not screenshots |
+| Job data overflow | Legacy row `min-width:0` and word wrapping (notifications:243-267) | Job article and grid `min-w-0`; company, job role, descriptions and metadata `break-words` | Static source match |
+| Offers data overflow | Legacy row `min-width:0`, wrap long content (notifications:243-267) | Offer article/header/grid `min-w-0`, title/company/job `break-words` | Static source match |
+| Alert list | Legacy `16px` row separation and hairline list structure (notifications:166-177) | `learner-placement-alerts.tsx:33-51`: `divide-y`, `py-4`, single continuous canvas | Structural match; exact list padding not asserted |
+| Alert title | 16px/600 desktop; 14px <=767px; line-height 1.35 (notifications:258-275) | `learner-placement-alerts.tsx:37` `text-[14px] font-semibold leading-[1.35] md:text-[16px]` | Source match |
+| Alert snippet | 14px, 1.5 line-height desktop; 13px <=767px (notifications:276-288, mobile overrides) | `learner-placement-alerts.tsx:41` `text-[13px] leading-[1.5] md:text-[14px]`; keeps full body text | Source match |
+| Alert empty content | `min-height:180px`, padding 48px vertical/24px horizontal; centered (notifications:310-330) | `learner-placement-alerts.tsx:27`: `min-h-[180px] px-6 py-12 text-center` | Source match |
+| Alert history link | Learner mobile target min-height 44px, desktop controls 36px (notifications:10,89) | `learner-placement-alerts.tsx:18`: `min-h-11 md:min-h-9` | Source match |
+
+### Coverage scan (actual full-file text inspection of GitHub branch; not local shell grep)
+
+The entire text of each target was fetched after the changes, scanned using literal-equivalent regular expressions. Counts:
+
+| File | Raw button / input / select / textarea | Hardcoded 6-digit hex | Shared Button opens/closes | Shared Dialog opens/closes | Old `sm:min-h-9` + `max-sm:min-h-11` | Responsive target tokens |
+|---|---|---|---|---|---|---|
+| `learner-placement-jobs.tsx` | 0 / 0 / 0 / 0 | 0 | 10 / 10 | 3 / 3 | 0 | 14 |
+| `learner-placement-offers.tsx` | 0 / 0 / 0 / 0 | 0 | 11 / 11 | 3 / 3 | 0 | 16 |
+| `learner-placement-alerts.tsx` | 0 / 0 / 0 / 0 | 0 | 0 / 0 | 0 / 0 | 0 | 1 |
+
+Reproduction on checkout (not run in this connector-only turn):
+```bash
+for f in src/components/placements/learner-placement-{jobs,offers,alerts}.tsx; do
+  printf '%s\n' "$f"
+  grep -En '<(button|input|select|textarea)([ >])|#[[:xdigit:]]{6}|max-sm:min-h-11|sm:min-h-9' "$f" || true
+done
+```
+
+Responsive source proof: from viewport widths 320–767px the `max-md:min-h-11` and `min-h-11` utilities enforce 44px minimum on actions, one-column grids, 16px article padding and vertically stacked offer/alert headers. From 768px the `md:` utilities switch to 24px article padding, 36px destination links and multi-column information. The exact breakpoint corresponds to legacy `$learn-mobile-bp:767px`; no running browser / computed styles / snapshots were inspected. Reduced-motion is explicitly excluded from card transitions via `motion-reduce:transition-none`.
+
+**Repeating pattern codemod:** `scripts/codemods/chat1-learner-placement-breakpoints.cjs` documents/applies the three-file 640→768 responsive conversion and is dry-run by default. Target files already contain the conversions; the script itself was not executed.
+
+**Strict-tick decision:** keep LRN-04 open: these **three files are source-complete for the targeted visual elements**, but one global LRN-04 checklist item encompasses other uninspected learner components. Real phone/tablet screenshots, computed interactions, keyboard navigation and full all-files grep are still required. Do not claim pixel-level completion from static evidence alone.
+
+**Exact next file:** `src/components/placements/learner-placement-journey.tsx`, then `src/components/placements/learner-placement-job-detail.tsx`.
