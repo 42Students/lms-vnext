@@ -134,7 +134,7 @@ export function LearnerNotificationBell(){
   <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" unread":"Notifications, no unread items"}
     aria-haspopup="dialog" aria-expanded={open} aria-controls={open?(mobile?"lms-learner-mobile-notifications":"lms-learner-notifications"):undefined}
     onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
-    className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
+    className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
     <span aria-hidden="true">🔔</span>
     {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-topbar-unread)] px-1 text-[10px] font-bold leading-none text-white">
      {count>99?"99+":count}</span>:null}
