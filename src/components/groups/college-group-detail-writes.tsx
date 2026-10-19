@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/selection-controls";
 import { Textarea } from "@/components/ui/textarea";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -80,10 +80,8 @@ export function CollegeGroupDetailWrites({
         <Textarea rows={9} spellCheck={false} value={ruleJson} onChange={e=>setRuleJson(e.target.value)}
           className="w-full font-mono text-xs" />
       </label>
-      <label className="flex items-center gap-2 text-sm text-body">
-        <Checkbox checked={autoRefresh} onChange={e=>setAutoRefresh(e.target.checked)}/>
-        Enable rule auto-refresh setting (does not execute a refresh now)
-      </label>
+      <Switch label="Enable rule auto-refresh setting (does not execute a refresh now)"
+        checked={autoRefresh} disabled={busy} onChange={e=>setAutoRefresh(e.target.checked)}/>
       <Button variant="primary" type="button" disabled={busy} onClick={saveRule}
         >
         {busy?"Saving…":"Confirm rule update"}
