@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
 
@@ -44,7 +45,7 @@ export function FacultyQuizLearnerPreview({quizId,deliveryId}:{
    {loading?<p role="status" className="text-sm">Loading quiz…</p>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    {preview?<><label className="flex items-center gap-2 text-sm">
-    <input type="checkbox" checked={answers} onChange={e=>setAnswers(e.target.checked)}/>
+    <Checkbox checked={answers} onChange={e=>setAnswers(e.target.checked)}/>
     Show answer key (faculty only)
    </label>
    {preview.questions.map((q,i)=><fieldset key={q.id} className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
