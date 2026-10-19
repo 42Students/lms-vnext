@@ -13,33 +13,6 @@ import {tpoHeaderSnapshotSchema} from "@/modules/activity/tpo-header-snapshot-mo
 export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null;createdAt:string};
 export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{initialUnread:number;items:readonly BellItem[];revision?:number;compact?:boolean}){
  const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
- const [mobile,setMobile]=useState(false);
- const root=useRef<HTMLDivElement>(null);
- const trigger=useRef<HTMLButtonElement>(null);
- const [allReadRevision,setAllReadRevision]=useState<number|null>(null);
- const [readIds,setReadIds]=useState<string[]>([]);
- const [latest,setLatest]=useState<{items:BellItem[];unread:number}|null>(null);
- const [refreshing,setRefreshing]=useState(false);
- useEffect(()=>{
-  const media=window.matchMedia("(max-width: 767px)");
-  const update=()=>setMobile(media.matches);
-  update();
-  media.addEventListener("change",update);
-  return ()=>media.removeEventListener("change",update);
- },[]);
- useEffect(()=>{
-  if(!open||mobile)return;
-  const onPointer=(event:PointerEvent)=>{
-   if(root.current&&event.target instanceof Node&&!root.current.contains(event.target))setOpen(false);
-  };
-  const onKey=(event:globalThis.KeyboardEvent)=>{
-   if(event.defaultPrevented||event.key!=="Escape")return;
-   event.preventDefault();setOpen(false);trigger.current?.focus();
-  };
-  document.addEventListener("pointerdown",onPointer);
-  document.addEventListener("keydown",onKey);
-  return ()=>{document.removeEventListener("pointerdown",onPointer);document.removeEventListener("keydown",onKey);};
- },[open,mobile]);
  const refreshInFlight=useRef(false);
  const root=useRef<HTMLDivElement>(null);
  const trigger=useRef<HTMLButtonElement>(null);
