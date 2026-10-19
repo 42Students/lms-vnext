@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 
 export type MentorMeetingHistoryItem={
@@ -24,10 +25,10 @@ export function MentorMeetingHistory({meetings}:{meetings:readonly MentorMeeting
         <span className="block text-xs text-muted-foreground">{when(item.startsAt)} · {item.status}</span>
       </li>)}
     </ul>}
-  {meetings.length>PREVIEW?<button type="button"
+  {meetings.length>PREVIEW?<Button variant="secondary" type="button"
     aria-expanded={expanded} onClick={()=>setExpanded(value=>!value)}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    className="min-h-9 px-3">
     {expanded?"Show fewer":"View all "+meetings.length}
-  </button>:null}
+  </Button>:null}
  </section>;
 }
