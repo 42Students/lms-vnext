@@ -265,12 +265,8 @@ export function FacultyCourseHomeSignals({
                 <span className="text-body">
                   {bucket.label}
                 </span>
-                <span className="h-2 overflow-hidden rounded-full bg-muted">
-                  <span
-                    className="block h-full rounded-full bg-primary"
-                    style={{ width: `${width}%` }}
-                  />
-                </span>
+                <MetricBar label={bucket.label+" grade distribution"}
+                  value={width} maximum={100} unit="percent" />
                 <strong className="text-right text-foreground">{bucket.count}</strong>
                 </summary>
                 {bucket.count>0?<ul className="mt-2 space-y-1 border-t border-border pt-2">

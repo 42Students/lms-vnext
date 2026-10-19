@@ -66,11 +66,11 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
    <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold">Search table
      <Input type="search" value={search} onChange={e=>{setSearch(e.target.value);setLimit(100);}}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm" placeholder="Search shown report rows"/>
+      className="min-h-11" placeholder="Search shown report rows"/>
     </label>
     <label className="grid gap-1 text-xs font-semibold">Rows shown
      <Select value={limit} onChange={e=>setLimit(Number(e.target.value))}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">
+      className="min-h-11">
       {[25,50,100,500,1000].map(n=><option key={n} value={n}>{n}</option>)}
      </Select>
     </label>
@@ -87,7 +87,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
        {col.heading}
        <Input type="search" maxLength={100} value={columnFilters[col.index]??""}
         onChange={event=>{setColumnFilters(current=>({...current,[col.index]:event.target.value}));setLimit(100);}}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-2 text-sm"/>
+        />
       </label>)}
      </div>
     </Dropdown>
@@ -121,13 +121,13 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
      <Select value={sort??""} onChange={event=>{
        setSort(event.target.value===""?null:Number(event.target.value));
        setDescending(false);
-     }} className="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+     }} className="min-w-0">
       <option value="">Original order</option>
       {displayedColumns.map(col=><option key={col.index} value={col.index}>{col.heading}</option>)}
      </Select>
     </label>
     <Button variant="secondary" type="button" disabled={sort===null} aria-label="Reverse sort direction"
-     onClick={()=>setDescending(value=>!value)} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold disabled:opacity-50">
+     onClick={()=>setDescending(value=>!value)} >
      {descending?"Descending":"Ascending"}
     </Button>
    </div>

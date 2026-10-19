@@ -1,7 +1,8 @@
 "use client";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { BoardColumn } from "@/components/ui/board-column";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
+import { Disclosure } from "@/components/ui/disclosure";
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import {useRouter,useSearchParams} from "next/navigation";
@@ -159,22 +160,19 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    <Button variant="ghost" type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");["priority","assignee","sprint","release","lane","scope"].forEach(k=>remember(k,""));}}
     className="min-h-11">Clear all</Button>
   </div>
-  <div className="flex flex-wrap items-center gap-2" aria-label="Board lane filters">
-    {[{value:"",label:"All lanes"},{value:"BACKLOG",label:"Backlog"},
-      {value:"TODO",label:"To Do"},{value:"IN_PROGRESS",label:"In Progress"},
-      {value:"IN_REVIEW",label:"In Review"},{value:"BLOCKED",label:"Blocked"},
-      {value:"DONE",label:"Completed"}].map(option=>
-      <button key={option.value||"all"} type="button"
-        aria-pressed={statusFilter===option.value}
-        onClick={()=>{setStatusFilter(option.value);remember("lane",option.value);}}
-        className={"min-h-9 rounded-full border px-3 text-xs font-semibold "+
-          (statusFilter===option.value?"border-primary bg-primary text-primary-foreground":
-          "border-border bg-surface text-body")}>
-        {option.label}
-      </button>)}
-    {activeFilterCount>0?<Badge  tone="neutral">
+  <div className="flex flex-wrap items-center gap-2">
+    <NeedsDoingChips label="Board lane filters:" selectedKey={statusFilter} onSelect={value=>{
+      setStatusFilter(value);
+      remember("lane", value);
+    }} items={[
+      {key:"",label:"All lanes"},{key:"BACKLOG",label:"Backlog"},
+      {key:"TODO",label:"To Do"},{key:"IN_PROGRESS",label:"In Progress"},
+      {key:"IN_REVIEW",label:"In Review"},{key:"BLOCKED",label:"Blocked"},
+      {key:"DONE",label:"Completed"},
+    ]} />
+    {activeFilterCount > 0 ? <Badge tone="neutral">
       {activeFilterCount} active {activeFilterCount===1?"filter":"filters"}
-    </Badge>:null}
+    </Badge> : null}
   </div>
   <p role="status" className="text-xs text-body">
     {matching.length} matching {matching.length===1?"task":"tasks"} · {tasks.length} total in this project&apos;s full history.
@@ -223,8 +221,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       {!readOnly?<ProjectTaskAssigneeControl projectId={projectId} taskId={task.id} taskTitle={task.title}
        assigneeMembershipId={task.assigneeMembershipId}
        updatedAt={new Date(task.updatedAt).toISOString()} learners={learnerChoices}/>:null}
-      <details className="rounded-[var(--lms-control-radius)] border border-border p-2">
-       <summary className="cursor-pointer font-semibold text-link">Task details</summary>
+      <Disclosure title="Task details" className="rounded-[var(--lms-control-radius)] border border-border p-2">
        <p className="mt-2 whitespace-pre-wrap text-xs">{task.description||"No description"}</p>
        <p className="mt-2 text-xs font-semibold">Approach</p>
        <p className="whitespace-pre-wrap text-xs">{task.approach||"Not recorded"}</p>
@@ -249,7 +246,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        )}</ul>
        <ProjectTaskComments projectId={projectId} taskId={task.id}
         updatedAt={new Date(task.updatedAt).toISOString()} canPost={!readOnly}/>
-      </details>
+      </Disclosure>
      </li>;
     })}
     {!lane.tasks.length?<li className="py-4 text-center text-xs text-muted-foreground">No tasks</li>:null}

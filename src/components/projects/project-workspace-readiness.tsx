@@ -10,6 +10,8 @@ import {formatProjectAdminActivityDateIst} from "@/modules/projects/project-admi
 import {z} from "zod";
 import Link from "next/link";
 import {ProjectAdminNav} from "./project-admin-nav";
+import { Tabs } from "@/components/ui/tabs";
+import { StatusBadge } from "@/components/ui/status-badge";
 export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:string;basePath:string}){
   // A forged project UUID, expired role or interrupted DB read must never
   // produce a raw server error or expose another college's readiness values.
@@ -39,26 +41,21 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <PageHeader title={copy.title} eyebrow="Projects"
       description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side."
-      actions={<PageBackLink href={basePath} label="Back to workspaces" />} />
-    <nav aria-label="Workspace sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border">
-      {([
+      actions={<Link href={basePath} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Back to workspaces</Link>} />
+    <Tabs ariaLabel="Workspace sections" renderPanel={false} value="readiness"
+      items={([
         ["summary","Summary"], ["overview","Overview"], ["team","Team"], ["sprints","Sprints"],
         ["tasks","Tasks"], ["resources","Resources"], ["meetings","Meetings"],
         ["readiness","Readiness"], ["delivery","Delivery"], ["audit","Audit"],
-      ] as const).map(([segment, title]) => (
-        <Link key={segment} href={basePath+"/"+projectId+"/"+segment}
-          aria-current={segment==="readiness"?"page":undefined}
-          className={"inline-flex min-h-11 items-center border-b-[3px] px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+(segment==="readiness"?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
-          {title}
-        </Link>
-      ))}
-    </nav>
+      ] as const).map(([segment,label]) => ({
+        value: segment, label, href: basePath+"/"+projectId+"/"+segment,
+      }))} />
     <section className="border-b border-border py-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-semibold">Current readiness</h2>
-        <span className={readiness.finalSubmission.canSubmitDraft?"font-semibold text-success":"font-semibold text-warning-text"}>
+        <StatusBadge tone={readiness.finalSubmission.canSubmitDraft?"success":"warning"}>
           {readiness.finalSubmission.canSubmitDraft?"Ready":"Not ready"}
-        </span>
+        </StatusBadge>
       </div>
       <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
         <div><dt className="font-semibold">State</dt><dd>{readiness.readinessOverride.state??"Automatic"}</dd></div>

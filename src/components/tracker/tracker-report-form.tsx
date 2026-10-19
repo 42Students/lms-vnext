@@ -111,18 +111,18 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   }
 
   if (created) return (
-    <section className="space-y-4 rounded-xl border border-border bg-surface p-6" aria-live="polite">
+    <section className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6" aria-live="polite">
       <p className="text-sm font-semibold text-success">Issue reported</p>
       <h2 className="text-xl font-semibold">{created}</h2>
       <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
       {linkIssueError?<p role="alert" className="text-sm text-body">{linkIssueError}</p>:null}
       {knownErrorId&&linkIssueError?<Button type="button"
-        className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold"
+        variant="secondary"
         onClick={()=>void linkCreatedIssue(created)}>Retry linking Known Error</Button>:null}
 
       <div className="flex flex-wrap gap-3">
         <Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
-        <Button className="rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 py-2 text-sm font-[650] text-[var(--lms-on-primary)]"
+        <Button 
           onClick={() => {setCreated("");setDraft(initial);clearDraft();setError("");}}
           type="button">Report another</Button>
       </div>
@@ -133,7 +133,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
     <form onSubmit={submit} onKeyDown={onFormKeyDown}
       className="space-y-5">
       {restored?<div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
-        <span>Unsaved report restored.</span><Button type="button" onClick={()=>{setDraft(initial);clearDraft();}} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Discard draft</Button>
+        <span>Unsaved report restored.</span><Button type="button" variant="secondary" onClick={()=>{setDraft(initial);clearDraft();}}>Discard draft</Button>
       </div>:null}
       {dirty?<p className="text-xs text-muted-foreground">Unsaved changes are kept on this device until your report is submitted.</p>:null}
       <div className="grid gap-4 md:grid-cols-3">
@@ -156,7 +156,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           </Select>
         </label>
       </div>
-      <fieldset className="grid gap-3 rounded-lg border border-border p-4">
+      <fieldset className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-4">
         <legend className="px-1 text-sm font-semibold">Where did this happen?</legend>
         <div className="grid gap-3 md:grid-cols-3">
           <label className={label}>Page
@@ -211,7 +211,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         </span>
       </label>
       {canSearchSimilar ? <>
-      <section aria-label="Similar issues" className="rounded-lg border border-border p-4">
+      <section aria-label="Similar issues" className="rounded-[var(--lms-control-radius)] border border-border p-4">
         <h2 className="text-sm font-semibold text-foreground">Similar issues</h2>
         <p className="mt-1 text-xs text-muted-foreground">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -221,7 +221,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             className={field+" min-w-48 flex-1"}/>
           <Button type="button" onClick={()=>void checkSimilar()}
             disabled={similarLoading||similarQuery.trim().length<3}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+            variant="secondary">
             {similarLoading?"Searching…":"Find similar issues"}
           </Button>
         </div>
@@ -241,7 +241,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
         <Button disabled={pending} type="submit"
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 py-2 text-sm font-[650] text-[var(--lms-on-primary)] disabled:opacity-60">
+          >
           {pending ? "Reporting…" : "Report issue"}
         </Button>
       </div>

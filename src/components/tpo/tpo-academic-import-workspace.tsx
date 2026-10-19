@@ -5,6 +5,7 @@ import {DataTable} from "@/components/ui/data-table";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {FileUpload} from "@/components/ui/file-upload";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 import { useId, useState } from "react";
@@ -114,10 +115,8 @@ export function TpoAcademicImportWorkspace() {
         className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
         Download template
       </a>
-      <label className="block text-sm font-semibold">Choose CSV file
-        <input type="file" accept=".csv,text/csv" onChange={event => void upload(event.target.files?.[0] ?? null)}
-          className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm" />
-      </label>
+      <FileUpload label="Choose CSV file" accept=".csv,text/csv" maxBytes={200_000}
+         disabled={busy} onFiles={files => void upload(files?.[0] ?? null)}/>
       <label className="block text-sm font-semibold">Or paste CSV rows
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setPreview(null); setError(""); setNotice("");

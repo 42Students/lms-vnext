@@ -269,7 +269,7 @@ export function PersonMembershipActions({
             return (
               <label
                 key={role}
-                className="flex min-h-11 cursor-pointer items-center justify-between gap-4 px-3 py-2 hover:bg-primary-subtle"
+                className="flex min-h-[var(--lms-control-height)] cursor-pointer items-center justify-between gap-4 px-3 py-2 hover:bg-primary-subtle"
               >
                 <span className="text-sm font-semibold text-body">
                   {roleLabel(role)}

@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -132,9 +133,11 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         </Link>)}
       </div>
     </section>:null}
-    <Tabs renderPanel={false} ariaLabel="Drive lifecycle" value={query.data.view}
-      items={viewOptions.map(option => ({value:option.view,label:option.label,count:option.count,
-        href:recruiterDrivesHref({...query.data,collegeId:selectedCollege,view:option.view,page:1})}))}/>
+    <Tabs ariaLabel="Drive lifecycle" renderPanel={false} value={query.data.view}
+      items={viewOptions.map(option=>({
+        value:option.view, label:option.label, count:option.count,
+        href:recruiterDrivesHref({...query.data,collegeId:selectedCollege,view:option.view,page:1}),
+      }))} />
     {query.data.view!=="WAITING"?<div className="flex justify-end">
       <Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:1})
         .replace("/recruiter/drives","/api/placements/recruiter/drives/export")}
