@@ -44,10 +44,10 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
      onChange={event=>setNote(event.target.value)} className="w-full"/>
    </label>:null}
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-   <Button variant="primary" type="button" disabled={busy} onClick={()=>void submit()}
+   <Button variant="primary" type="button" disabled={busy} onClick={()=>void submit()} className="min-h-11 min-[768px]:min-h-9"
     >
     {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}</Button>
-   <Button variant="ghost" className="underline" type="button" disabled={busy} onClick={()=>{setConfirmation(null);setError("");}}
+   <Button variant="ghost" className="min-h-11 underline min-[768px]:min-h-9" type="button" disabled={busy} onClick={()=>{setConfirmation(null);setError("");}}
     >{confirmation==="CANCEL"?"Keep it":"Not now"}</Button>
   </Dialog>}
  </div>;
