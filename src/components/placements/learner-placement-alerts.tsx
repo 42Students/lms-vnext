@@ -15,7 +15,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
           Your placement alerts
         </h2>
         <Link href={learnerAlertsHistoryHref(unreadOnly)}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline sm:min-h-9">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
           Personal notification history →
         </Link>
       </div>
@@ -32,9 +32,9 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
         <ol className="mt-4 divide-y divide-border">
           {alerts.map((alert) => (
             <li key={alert.id} className="min-w-0 py-4 first:pt-0 last:pb-0">
-              <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
-                  <p className="break-words text-[14px] font-semibold leading-[1.35] text-foreground sm:text-[16px]">
+                  <p className="break-words text-[14px] font-semibold leading-[1.35] text-foreground md:text-[16px]">
                     {alert.title}
 
                   </p>
