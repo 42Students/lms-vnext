@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { courseApiError } from "./learner-course-api";
 import {
@@ -201,8 +202,8 @@ export function FacultyQuizReview({
 
   return (
     <>
-      {notice?<Alert tone="success" className="mt-2">{notice}</Alert>:null}
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      {notice?<Alert tone="success" className="mt-[var(--lms-space-2)]">{notice}</Alert>:null}
+      <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         <Button
           size="sm"
           className="min-h-11 md:min-h-[var(--lms-control-height)]"
@@ -320,12 +321,7 @@ export function FacultyQuizReview({
       ) : null}
 
       {error ? (
-        <p
-          role="alert"
-          className="mt-3 text-sm font-semibold text-error"
-        >
-          {error}
-        </p>
+        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
       ) : null}
 
       {!loading &&
