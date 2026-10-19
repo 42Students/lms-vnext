@@ -16,7 +16,7 @@ export default async function AdminPlacementsPage({searchParams}:{searchParams:P
   const policy = await listPlatformPlacementPolicy(context);
   if (!collegeId) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           eyebrow="Super Admin"
           title="Placement Drives"
@@ -35,7 +35,7 @@ export default async function AdminPlacementsPage({searchParams}:{searchParams:P
     );
   }
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="Super Admin"
         title="Placement Drives"

@@ -136,7 +136,7 @@ export async function ProjectAdminReadinessPage({
               getRowKey={release=>release.id}
               columns={[
                 {key:"release",header:"Release",mobilePriority:"primary",cell:release=>release.title},
-                {key:"status",header:"Status",mobilePriority:"secondary",cell:release=>release.status==="SHIPPED"?"Shipped":release.status==="IN_PROGRESS"?"In progress":"Planned"},
+                {key:"status",header:"Status",mobilePriority:"secondary",cell:release=><StatusBadge tone={release.status==="SHIPPED"?"success":release.status==="IN_PROGRESS"?"info":"neutral"}>{release.status==="SHIPPED"?"Shipped":release.status==="IN_PROGRESS"?"In progress":"Planned"}</StatusBadge>},
                 {key:"sprints",header:"Sprints",mobilePriority:"secondary",cell:release=>release.completedSprints+"/"+release.sprintCount},
                 {key:"points",header:"Points",mobilePriority:"secondary",cell:release=>release.points},
                 {key:"target",header:"Target date",mobilePriority:"secondary",cell:release=>release.targetDate??"—"},

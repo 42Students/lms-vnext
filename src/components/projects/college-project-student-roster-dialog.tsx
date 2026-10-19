@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
+import {Checkbox} from "@/components/ui/checkbox";
 import {useToast} from "@/components/ui/toast";
 
 type Candidate={membershipId:string;displayName:string|null;email:string|null};
@@ -95,7 +96,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
     {loaded?<fieldset disabled={busy} className="max-h-64 space-y-2 overflow-y-auto rounded-lg border border-border p-3">
      <legend className="text-sm font-semibold">Learners ({selected.length} selected)</legend>
      {options.map(option=><label key={option.membershipId} className="flex min-h-10 items-center gap-2 text-sm">
-      <input type="checkbox" className="size-4 accent-[var(--lms-button-primary)]" checked={selected.includes(option.membershipId)}
+      <Checkbox className="size-4" checked={selected.includes(option.membershipId)}
        onChange={event=>setSelected(previous=>event.target.checked?
         [...previous,option.membershipId]:previous.filter(id=>id!==option.membershipId))}/>
       <span>{option.displayName??option.email??"Learner"}</span>

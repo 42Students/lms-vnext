@@ -5,7 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Tabs} from "@/components/ui/tabs";
 import {ErrorState} from "@/components/ui/error-state";
-import {Alert} from "@/components/ui/alert";
+import {Banner} from "@/components/ui/banner";
 import {Card} from "@/components/ui/card";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getSuperAdminTenantLifecycleDetail,getSuperAdminTenantLifecycleDirectory} from "@/modules/colleges/admin-tenant-lifecycle-service";
@@ -104,12 +104,12 @@ export default async function SuperAdminTenantSetup({
     <div className="min-w-0 space-y-3 border-b border-border pb-5">
      <h2 className="font-semibold text-foreground">Create an organization</h2>
      {orgCreate?<OrganizationCreateForm/>:
-      <Alert tone="warning">Organization creation is not permitted in your selected administrative scope.</Alert>}
+      <Banner tone="warning">Organization creation is not permitted in your selected administrative scope.</Banner>}
     </div>
     <div className="min-w-0 space-y-3 border-b border-border pb-5">
      <h2 className="font-semibold text-foreground">Create a college</h2>
      {creatable.length?<CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
-      <Alert tone="warning">No authorized active organization is available. Create one or change the Super Admin scope.</Alert>}
+      <Banner tone="warning">No authorized active organization is available. Create one or change the Super Admin scope.</Banner>}
     </div>
    </section>
    <section aria-label="Existing organizations and colleges" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
@@ -134,16 +134,16 @@ export default async function SuperAdminTenantSetup({
        {" · "}{item.code} · {item.status}
       </li>)}
      </ul>
-     {!list?.items.length?<p role="status" className="text-sm text-body">No colleges in the current scope.</p>:null}
+     {!list?.items.length?<EmptyState title="No colleges in the current scope" description="No colleges in the current scope."/>:null}
      <p className="mt-2 text-xs text-muted-foreground">First page only. Archived colleges remain marked; no implicit restoration.</p>
     </div>
    </section>
    <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 min-[768px]:min-h-9  items-center font-semibold text-primary-text underline">Continue to launch setup →</Link>
   </>:college?<>
    <h2 className="text-lg font-semibold">{college.name} · Launch setup</h2>
-   <Alert tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
+   <Banner tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
     Persisted readiness: {summary.label}. {summary.detail}
-   </Alert>
+   </Banner>
    <div className="grid min-w-0 gap-3 md:grid-cols-3">
     {[
      {label:"Web address",href:"/subdomain",description:"Configure and verify the college login domain."},

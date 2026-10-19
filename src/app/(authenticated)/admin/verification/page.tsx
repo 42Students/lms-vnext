@@ -6,6 +6,7 @@ import { PageBackLink } from "@/components/ui/page-back-link";
 import {can} from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {ErrorState} from "@/components/ui/error-state";
+import {EmptyState} from "@/components/ui/empty-state";
 
 /**
  * Safe Super Admin entry point for the college-scoped verification workspace.
@@ -33,13 +34,8 @@ export default async function AdminVerificationEntry() {
         description="Students' education and identity, checked against their documents."
         actions={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Browse colleges</Link>}
       />
-      <section role="status" className="border-b border-border py-5">
-        <h2 className="text-base font-semibold text-foreground">Choose a college first</h2>
-        <p className="mt-2 text-sm text-body">
-          Choose a college at the top to see its students waiting for verification.
-          A global or organization-only scope cannot authorize a college review.
-        </p>
-      </section>
+      <EmptyState title="Choose a college first"
+        description="Choose a college at the top to see its students waiting for verification. A global or organization-only scope cannot authorize a college review." />
     </div>
   );
 }

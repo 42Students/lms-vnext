@@ -8,7 +8,7 @@ import {OrganizationCreateForm} from "@/components/admin/organization-create-for
 import {CollegeCreateForm} from "@/components/admin/college-create-form";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
-import {Alert} from "@/components/ui/alert";
+import {Banner} from "@/components/ui/banner";
 import {preferredNewTenantOrganization} from "@/modules/colleges/admin-tenant-organization-step";
 export const dynamic="force-dynamic";
 export default async function SuperAdminTenantCreateStage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
@@ -42,13 +42,13 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
   <section className="min-w-0 space-y-3 border-b border-border pb-5" aria-label="Create organization">
    <h2 className="text-lg font-semibold">Create an organization and its colleges</h2>
    {orgCreate?<OrganizationCreateForm advanceToCollege/>:
-    <p role="status" className="text-sm text-body">Organization creation is unavailable in your selected administrative scope.</p>}
+    <Banner tone="warning">Organization creation is unavailable in your selected administrative scope.</Banner>}
    <Link href="/admin/organizations" className="inline-flex min-h-11 min-[768px]:min-h-9  items-center text-sm font-semibold text-primary-text underline">Review organizations</Link>
   </section>
   <section className="min-w-0 space-y-3 border-b border-border pb-5" aria-label="Create college">
    <h2 className="text-lg font-semibold">2. College</h2>
    {creatable.length?<CollegeCreateForm key={preferredId ?? "default"} preferredOrganizationId={preferredId ?? undefined} advanceToSetup organizations={creatable.map(item=>({id:item.id,name:item.name}))}/>:
-    <p role="status" className="text-sm text-body">No organization in the current safety scope can receive a college. Create or select an authorized organization first.</p>}
+    <Banner tone="warning">No organization in the current safety scope can receive a college. Create or select an authorized organization first.</Banner>}
    <Link href="/admin/colleges" className="inline-flex min-h-11 min-[768px]:min-h-9  items-center text-sm font-semibold text-primary-text underline">Review colleges</Link>
   </section>
   <section className="min-w-0 space-y-2 border-b border-border pb-5">
