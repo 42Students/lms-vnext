@@ -111,7 +111,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   }
 
   if (created) return (
-    <section className="space-y-4 rounded-xl border border-border bg-surface p-6" aria-live="polite">
+    <section className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6" aria-live="polite">
       <p className="text-sm font-semibold text-success">Issue reported</p>
       <h2 className="text-xl font-semibold">{created}</h2>
       <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
@@ -156,7 +156,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           </Select>
         </label>
       </div>
-      <fieldset className="grid gap-3 rounded-lg border border-border p-4">
+      <fieldset className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-4">
         <legend className="px-1 text-sm font-semibold">Where did this happen?</legend>
         <div className="grid gap-3 md:grid-cols-3">
           <label className={label}>Page
@@ -211,7 +211,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         </span>
       </label>
       {canSearchSimilar ? <>
-      <section aria-label="Similar issues" className="rounded-lg border border-border p-4">
+      <section aria-label="Similar issues" className="rounded-[var(--lms-control-radius)] border border-border p-4">
         <h2 className="text-sm font-semibold text-foreground">Similar issues</h2>
         <p className="mt-1 text-xs text-muted-foreground">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
         <div className="mt-3 flex flex-wrap gap-2">
