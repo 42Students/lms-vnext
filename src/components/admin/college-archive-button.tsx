@@ -116,7 +116,7 @@ export function CollegeArchiveButton({
       <Button
         variant="danger"
         size="sm"
-        className="min-h-11 md:min-h-9"
+        className="min-h-11 md:min-h-9 print:hidden"
         onClick={() => setOpen(true)}
       >
         Archive
@@ -130,7 +130,7 @@ export function CollegeArchiveButton({
           <>
             <Button
               variant="secondary"
-              className="min-h-11 md:min-h-9"
+              className="min-h-11 md:min-h-9 print:hidden"
               disabled={pending}
               onClick={() => setOpen(false)}
             >
@@ -138,7 +138,7 @@ export function CollegeArchiveButton({
             </Button>
             <Button
               variant="danger"
-              className="min-h-11 md:min-h-9"
+              className="min-h-11 md:min-h-9 print:hidden"
               disabled={pending}
               loading={pending}
               onClick={archive}
