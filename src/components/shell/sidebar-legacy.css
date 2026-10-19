@@ -195,6 +195,8 @@
   max-height:var(--lms-visual-height,100dvh);
   border-right:0;
  }
+ /* Old Ant drawer mask: components___antddesign.scss:143-146. */
+ .lms-mobile-sidebar::backdrop {background:rgba(30,54,63,.1);box-shadow:0 4px 4px #00000040;}
  .lms-mobile-sidebar [data-slot="drawer-header"] {
   flex-direction:row;
   align-items:center;
