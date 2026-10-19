@@ -24,8 +24,8 @@ export default async function CollegeDriveOverviewPage({ params }: {
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={drive.title}
       description={drive.companyName + " · " + drive.seasonName}
-      actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/placements/drives" className="text-link underline">All drives</Link><Link href={`/college/placements/jobs/${jobId}/applications`} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link">Applications</Link>
-        <Link href={`/college/placements/jobs/${jobId}/settings`} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link">Edit</Link>
+      actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/placements/drives" className="text-link underline lms-inline-link">All drives</Link><Link href={`/college/placements/jobs/${jobId}/applications`} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link lms-inline-link">Applications</Link>
+        <Link href={`/college/placements/jobs/${jobId}/settings`} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link lms-inline-link">Edit</Link>
         <CollegeDriveDuplicateAction jobId={jobId}/></div>} />
     <div className="flex flex-wrap gap-3 text-sm text-body">
       <span>Status: {drive.status}</span><span>Type: {drive.employmentType}</span>
@@ -45,7 +45,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
       </article>
     </section>
     <CollegeDrivePipelineOverview jobId={jobId} data={funnel} attention={attention}/>
-    <Link href={`/college/placements/jobs/${drive.id}/shortlisted`} className="text-sm font-semibold text-link underline">Shortlisted</Link>
+    <Link href={`/college/placements/jobs/${drive.id}/shortlisted`} className="text-sm font-semibold text-link underline lms-inline-link">Shortlisted</Link>
     <p className="text-xs text-muted-foreground">These are persisted operational counts, not a sequential funnel. No missing selection data is inferred.</p>
   </div>;
 }
