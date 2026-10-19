@@ -284,7 +284,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                       query.membershipId,
                   },
                 )}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
               >
                 ← Previous
               </Link>
@@ -302,7 +302,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                       query.membershipId,
                   },
                 )}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
               >
                 Next →
               </Link>
@@ -398,7 +398,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           {selected.modules.map((module) => (
             <article
               key={module.module}
-              className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
+              className="min-w-0 space-y-4 border-t border-border pt-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
