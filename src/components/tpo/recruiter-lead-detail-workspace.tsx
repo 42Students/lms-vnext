@@ -62,9 +62,8 @@ type EditValues = {
   companyName: string;
   source: string;
 };
-const input = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
-const button = "inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium hover:bg-surface-secondary disabled:opacity-50";
-const primary = "inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50";
+// Anchor and Link destinations retain native navigation while adopting the shared secondary-button skin.
+const button = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-3 text-[13px] font-[650] leading-5 text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
 const SOURCES = [
   ["", "Added by hand / Imported"], ["ALUMNI", "Alumni"],
   ["REFERRAL", "Referral"], ["LINKEDIN", "LinkedIn"],
