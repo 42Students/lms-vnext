@@ -99,7 +99,7 @@ export function FacultyAssessmentOverview({
             </li>)}
         </ul>
       </Disclosure>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-3">
         <label className="text-sm font-semibold text-body">
           Course / Section
           <Select
