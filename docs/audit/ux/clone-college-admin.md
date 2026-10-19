@@ -374,14 +374,14 @@
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/create/error.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/create/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/admin/tenants/error.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/layout.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/page.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/app/(authenticated)/admin/tenants/setup/error.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/setup/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/admin/verification/error.tsx`
 - [ ] `src/app/(authenticated)/admin/verification/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/verification/page.tsx`
@@ -417,22 +417,23 @@
 - [ ] `src/components/admin/college-branding-preview.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Embedded branding preview)
 - [ ] `src/components/admin/college-bulk-import.tsx`
 - [ ] `src/components/admin/college-closing-quizzes-card.tsx`
-- [ ] `src/components/admin/college-create-form.tsx`
+- [ ] `src/components/admin/college-create-form.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/admin/organization-create-form.tsx` — **SOURCE PASS, strict parity open (replacement chat-4)**
 - [ ] `src/components/admin/college-dashboard-cards.tsx`
 - [ ] `src/components/admin/college-dashboard-section-failure.tsx`
 - [ ] `src/components/admin/college-edit-dialog.tsx`
-- [ ] `src/components/admin/college-feature-rule-editor.tsx`
+- [ ] `src/components/admin/college-feature-rule-editor.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/college-setup-checklist.tsx`
+- [ ] `src/components/admin/college-setup-checklist.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-signin-method-form.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Sign-in method controls)
 - [ ] `src/components/admin/managed-college-subdomain.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/components/admin/super-admin-college-company-actions.tsx`
 - [ ] `src/components/admin/super-admin-company-verification.tsx`
 - [ ] `src/components/admin/tenant-directory-csv-control.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
+- [ ] `src/components/admin/tenant-domain-manager.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/tenant-restore-action.tsx`
-- [ ] `src/components/admin/tenant-settings-editor.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
+- [ ] `src/components/admin/tenant-settings-editor.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/admin/tenant-settings-other-keys.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 
 ## Baseline and work plan
 - Source snapshot: synced `main` at `ca5572f28bd815ac394180d4269df3db5889e19f` into lane history before this sweep. Shared UI, globals, shell and cross-lane layout files are **not owned by chat-4**.
@@ -673,3 +674,141 @@ Regex family applied to the complete source text of each named file:
 **Strict tick outcome:** **0 ticks**. All 11 work entries remain unchecked because global zero-grep, exact value table for every state, 767px breakpoint comparison, interactions and responsive viewport proof are incomplete. No app execution, TypeScript compilation, tests, screenshots, or CI were performed. This is progress on shared-component migration, **not certified pixel parity**.
 
 **Next exact file:** `src/app/(authenticated)/admin/tenants/create/page.tsx` followed by `src/app/(authenticated)/admin/tenants/setup/page.tsx`, then remaining Tenant Admin components and College Admin Work queue entries.
+
+
+### Replacement chat-4 continued tenant setup/settings/domain source sweep — 2026-10-19
+
+**Work done:** seven scoped files received complete source-pattern refactors, with original submission, permission, confirmation, navigation and server actions left in place. The previously unlisted organization creation component was added to this Work queue. No shared UI code was edited; no app, tests, CI, typecheck, browser, or screenshots were run. No strict checkboxes are ticked.
+
+#### Bounded full-file source grep proof (fetched all seven current branch blobs)
+
+Regexes applied independently to each full file: `/<(button|input|select|textarea|table)\b/g` (lowercase native controls), `/#[a-f0-9]{3,8}\b/gi` (colour literals), `/fixed inset-0|role=["']dialog["']/g`, and `/<h1\b/g`; compared closing-tag counts against opening-tag counts for the scoped JSX tag families. `md:`/`sm:` report source breakpoint tokens, **not** measured browser rendering.
+
+| Full file | Native controls | Hex literals | Hand-rolled overlays | Native h1 | Orphan closing tag families | Responsive source tokens |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| `src/app/(authenticated)/admin/tenants/create/page.tsx` | 0 | 0 | 0 | 0 | 0 found | `md:` 3, `sm:` 0 |
+| `src/app/(authenticated)/admin/tenants/setup/page.tsx` | 0 | 0 | 0 | 0 | 0 found | `md:` 4, `sm:` 0 |
+| `src/components/admin/organization-create-form.tsx` | 0 | 0 | 0 | 0 | 0 found | `md:` 5, `sm:` 0 |
+| `src/components/admin/college-create-form.tsx` | 0 | 0 | 0 | 0 | 0 found | `md:` 2, `sm:` 0 |
+| `src/components/admin/tenant-settings-editor.tsx` | 0 | 0 | 0 | 0 | 0 found | `md:` 2, `sm:` 0 |
+| `src/components/admin/tenant-settings-other-keys.tsx` | 0 | 0 | 0 | 0 | 0 found | `md:` 2, `sm:` 0 |
+| `src/components/admin/tenant-domain-manager.tsx` | 0 | 0 | 0 | 0 | 0 found | `md:` 6, `sm:` 0 |
+
+#### Tenant creation route — `src/app/(authenticated)/admin/tenants/create/page.tsx`
+
+| Property/state | Legacy source:value | Current vNext source:value | Result |
+| --- | --- | --- | --- |
+| Shell and heading | old-lms-pages.md:6-7: one canvas, title/subtitle/action row; listing-page-header.scss:33-35: 1px divider, 16px bottom padding | create/page.tsx:18 and page-canvas.tsx:15-22: one inherited canvas, PageHeader actions | **SHARED STRUCTURE; desktop heading mismatch below** |
+| Denied/failed reads | old-lms-pages.md:6: error content remains inside canvas | create/page.tsx:17-31: PageHeader + ErrorState + safe back navigation, no extra canvas | **SHARED COMPONENT; legacy state visuals not sourced** |
+| Warning banner | old-lms-pages.md:11: slim pale-yellow warning strip | create/page.tsx:45; ui/alert.tsx:10-19 tokenised warning strip | **STATE INCLUDED; exact warning shade/spacing unverified** |
+| Creation forms | components___form.scss:22-36: focus-visible keyboard outline retained; old-lms-shell-spec.md:4: primary CTA 36px high, radius 9px | create/page.tsx:44,50 delegates to shared OrganizationCreateForm / CollegeCreateForm; button.tsx:25-29 uses 36px token | **MATCH desktop control family, mobile exceptions tracked below** |
+| Mobile/tablet | listing-page-header.scss:130-153: <=767px stacked actions; 20px title | create/page.tsx:46,52,57 md:min-h-9 (44px through 767px); shared PageHeader md breakpoint at 768px | **MATCH breakpoint for links; tenant form layout-specific comparison open** |
+
+#### Tenant setup route — `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+
+| Property/state | Legacy source:value | Current vNext source:value | Result |
+| --- | --- | --- | --- |
+| Canvas and tabs | old-lms-pages.md:6-7: one canvas with tabs on surface, teal underline | setup/page.tsx:97 uses shared Tabs; page-canvas.tsx:15-22 inherits canvas | **SHARED structure; exact active underline dimensions not confirmed** |
+| Workflow warnings/readiness | old-lms-pages.md:11: slim status banner within canvas | setup/page.tsx:107, 144; ui/alert.tsx:10-19 | **SHARED, tone mapped success/error/warning; colour proof open** |
+| Launch shortcuts | old-lms-pages.md:6,9: cards only for independent objects | setup/page.tsx:152 + ui/card.tsx:11-22: shared border/background/radius; three separate navigational shortcuts | **SHARED; hover and focus use tokens, rendered proof open** |
+| Checklist rows | old-lms-pages.md:6,9: continuous surface with hairline dividers | setup/page.tsx:165: line items border-b, rather than nested cards | **MATCH hairline design intent; line-height/spacing not fully measured** |
+| Empty selection | old-lms-pages.md:6: normal content on canvas; no nested page canvas | setup/page.tsx:175 uses ui/empty-state.tsx:6-10 and original scoped action link | **SHARED; precise empty-state metrics open** |
+| Phone/tablet | listing-page-header.scss:130-153: <=767px stack, >=768px row | setup/page.tsx:83 overview/shortcuts at md, checklist md:grid-cols-2, creation sections lg:grid-cols-2 | **MATCH mobile stacking; tablet-specific legacy grid not sourced** |
+
+#### Organization creation form — `src/components/admin/organization-create-form.tsx`
+
+| Property/state | Legacy source:value | Current vNext source:value | Result |
+| --- | --- | --- | --- |
+| Text input | components___form.scss:22-36: keyboard focus remains visible; globals.css:344 field radius 10px | organization-create-form.tsx:68 delegates to ui/input.tsx:6-8 with focus-visible 2px | **Shared component; old form variant incomplete** |
+| CTA | old-lms-shell-spec.md:4: teal/white 36px/radius 9 primary | organization-create-form.tsx:77 and ui/button.tsx:10-29 tokenised primary CTA | **MATCH desktop token family** |
+| Draft/error feedback | old-lms-pages.md:7,11: inline status strips rather than nested page canvas | organization-create-form.tsx:80 + 82: shared alerts retain copy and aria role | **SHARED; legacy colour/spacing not sourced** |
+| Mobile/tablet layout | listing-page-header.scss:130-153: <=767px stacked page actions | organization-create-form.tsx:59: mobile stacked, >=768px inline; CTA 44px up to 767px, 36px thereafter | **MATCH breakpoint at source level** |
+| Loading/disabled | old-lms-shell-spec.md:4: primary button visual contract; components___button.scss:49-51 disabled | organization-create-form.tsx:77: pending disables and swaps label; ui/button.tsx:25-29 retains disabled state | **BEHAVIOUR retained; exact loading affordance unverified** |
+
+#### College creation form — `src/components/admin/college-create-form.tsx`
+
+| Property/state | Legacy source:value | Current vNext source:value | Result |
+| --- | --- | --- | --- |
+| Input/select | components___form.scss:22-36: keyboard focus visible; legacy field radius from globals.css:344 | college-create-form.tsx:104 / 125 use shared Select/Input, preserve min/max and error contracts | **SHARED components, validation intact** |
+| Optional address | old-lms-pages.md:6: no ordinary nested canvas; keyboard affordances expected | college-create-form.tsx:156 uses ui/disclosure.tsx:9-20 native summary/keyboard focus with no extra page canvas | **SHARED structure; exact address disclosure not in legacy** |
+| Error/draft | old-lms-pages.md:11: compact statuses and alerts | college-create-form.tsx:184, 186 uses shared Alert | **SHARED, status tones preserved** |
+| Phone/tablet columns | listing-page-header.scss:130-153: <=767px stacked page controls | college-create-form.tsx:95: 1-column below 1024; optional address 2-col >=768, 3-col >=1024; submit CTA 44px below 768 | **MATCH mobile stack; tablet-specific forms proof open** |
+| Disabled/loading | components___button.scss:49-51: disabled CTA states, old-lms-shell-spec.md:4 height/radius | college-create-form.tsx:171 uses disabled and loading shared Button; `aria-busy` form remains | **Shared state, visual comparison pending** |
+
+#### Tenant settings editor — `src/components/admin/tenant-settings-editor.tsx`
+
+| Property/state | Legacy source:value | Current vNext source:value | Result |
+| --- | --- | --- | --- |
+| Controls | components___form.scss:22-36: keyboard focus; globals.css:341-345 control height/radius | tenant-settings-editor.tsx:59 / 62 use shared controls, no native styled fields | **SHARED components, per-property values elsewhere** |
+| Warning/error | old-lms-pages.md:11: inline warning strip, no extra cards | tenant-settings-editor.tsx:52 and 80 use ui/alert.tsx token variants | **STATE included; shade/spacing unverified** |
+| Per-row save result | old-lms-pages.md:6,11: hairline list rows, small status pills | tenant-settings-editor.tsx:98: status badges and divide-y hairline rows | **MATCH anatomy; exact pill metrics owned by shared UI** |
+| Impact confirmation | old-lms-pages.md:6: no inline full-page modal wrappers | tenant-settings-editor.tsx:81 uses shared dialog, scoped high-impact acknowledgement preserved | **SHARED, modal overlay source detail open** |
+| Phone/tablet | listing-page-header.scss:130-153: stacked phone actions | tenant-settings-editor.tsx:55 two settings columns >=768px, single below; CTA explicit 44px below 768px | **MATCH mobile breakpoint; legacy settings form grid not measured** |
+
+#### Other tenant settings — `src/components/admin/tenant-settings-other-keys.tsx`
+
+| Property/state | Legacy source:value | Current vNext source:value | Result |
+| --- | --- | --- | --- |
+| Edit fields | components___form.scss:22-36: keyboard focus, old-lms-shell-spec.md:4 control geometry | tenant-settings-other-keys.tsx:67 and 72 shared Input/Textarea with native constraints | **SHARED, legacy exact field metrics open** |
+| List rows | old-lms-pages.md:6,11: hairline separated rows | tenant-settings-other-keys.tsx:52 row uses border-b and tokenised hover | **MATCH row intent; legacy hover shade unverified** |
+| Save state | old-lms-pages.md:11: compact status alerts | tenant-settings-other-keys.tsx:80 feedback mapped explicit error/success, text retained | **SHARED; exact hue unverified** |
+| Delete confirmation | old-lms-pages.md:6: no hand-rolled overlay | tenant-settings-other-keys.tsx:81 uses ConfirmDialog with retained confirmation | **SHARED, exact overlay metrics not measured** |
+| Phone/tablet | listing-page-header.scss:130-153: 767px mobile breakpoint | tenant-settings-other-keys.tsx:59 buttons 44px below 768; fields single column and wrap | **MATCH mobile target; tablet row width unverified** |
+
+#### Tenant domain manager — `src/components/admin/tenant-domain-manager.tsx`
+
+| Property/state | Legacy source:value | Current vNext source:value | Result |
+| --- | --- | --- | --- |
+| Host entry | components___form.scss:22-36: keyboard focus; old-lms-shell-spec.md:4 control geometry | tenant-domain-manager.tsx:192 shared Input, CTA shared Button and 44px mobile | **SHARED; exact field/hover proofs pending** |
+| Zero domains | old-lms-pages.md:6: empty content within canvas, not separate page canvas | tenant-domain-manager.tsx:218 + ui/empty-state.tsx:6-10 shared empty state | **SHARED; legacy domain empty not observed** |
+| DNS proof block | old-lms-pages.md:6,9: distinct object panel may have card border | tenant-domain-manager.tsx:320 uses shared Card title and retained TXT name/value | **SHARED; exact DNS panel legacy unknown** |
+| Status actions | old-lms-pages.md:11: compact coloured pills, action buttons | tenant-domain-manager.tsx:243 badges and shared Button; ConfirmDialog remains shared | **MATCH component family; precise colours/hover unknown** |
+| Responsive | listing-page-header.scss:130-153: mobile <=767px stacked | tenant-domain-manager.tsx:184 single-col host/actions below 768; 44px phone buttons, 36px >=768; rows flex-wrap | **MATCH source mobile break, tablet-specific DNS layout unverified** |
+
+#### Shared dependency and strict-tick reconciliation
+
+- **Desktop heading difference:** `legacy-styles/components___listing-page-header.scss:52-58` specifies 28px/600/line-height 1.3, while shared `src/components/ui/page-header.tsx:28-35` specifies 30px/600/1.35. College portal skin `src/styles/college-admin-north-star.css:10-15` also sets line-height 1.25 and letter-spacing -0.025em; comparison with the old LMS's 30px shell measurement (`old-lms-shell-spec.md:5`) remains unresolved. This is outside the seven touched files and cannot be certified in isolation.
+- **Mobile text difference:** legacy `listing-page-header.scss:130-153` uses 20px title through 767px. Shared PageHeader encodes 20px below md, but `college-admin-north-star.css:38-42` also encodes `clamp(24px, 6vw, 30px)` for portal h1. CSS cascade and computed mobile typography need owner reconciliation.
+- **Control and interaction proof:** shared Input/Select/Button/Alert/Card/EmptyState/Disclosure carry default, hover, focus, disabled and loading variants, but these were inspected as **source only**; exact legacy warning surfaces, dialog geometry, textarea error treatment, tablet grids and focus shadows were not measured live. `legacy-styles/components___form.scss:22-36` confirms the keyboard-visible focus rule, `components___button.scss:1-24` documents button variants, and `old-lms-shell-spec.md:4` documents the newer measured 36px primary CTA.
+- **Coverage limitation:** seven fetched scoped files each have zero native control/hex/overlay matches, but this is **not** a whole-portal Git grep; 434 Work queue entries and other scoped files have not been exhaustively scanned or compared. No unverified checkbox was marked done.
+
+**Next exact file:** `src/components/admin/college-setup-checklist.tsx` (then `src/components/admin/college-feature-rule-editor.tsx` and remaining tenant/College Admin components), prioritizing source-complete migration, token/hover state comparison and mobile source proof.
+
+
+### Replacement chat-4 College Admin setup and feature-rule continuation — 2026-10-19
+
+**Two further source-refactored files:** `src/components/admin/college-setup-checklist.tsx` and `src/components/admin/college-feature-rule-editor.tsx`. Both were fetched and re-read after their commits. Shared `Disclosure`, `ListRow`, `EmptyState`, `Alert`, `Select`, `Switch`, `Checkbox`, `Button`, `ConfirmDialog` are reused; no edit was made under `src/components/ui`. Existing navigation, server decisions, confirmations and audit logic retained. No CI/build/browser/typecheck ran.
+
+#### Scoped grep and JSX scan
+
+Complete fetched-file expressions: `/<(button|input|select|textarea|table)\b/g`; `/#[a-f\d]{3,8}\b/gi`; `/fixed inset-0|role=["']dialog["']/g`; `/<h1\b/g`. Paired opening/closing name families (`Alert`,`EmptyState`,`Disclosure`,`Select`,`Switch`,`Checkbox`,`Button`,`ConfirmDialog`,`ListRow`,`div`,`section`,`label`,`p`,`h2`,`h3`,`li`,`ul`) had **zero orphan closing tags**. This does not substitute for TSX parser/typecheck.
+
+| File | Raw controls | Literal hex | Overlays | Native h1 | Breakpoint tokens |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `src/components/admin/college-setup-checklist.tsx` | 0 | 0 | 0 | 0 | md 2 / sm 0 |
+| `src/components/admin/college-feature-rule-editor.tsx` | 0 | 0 | 0 | 0 | md 2 / sm 0 |
+
+#### Value and responsive comparison — `college-setup-checklist.tsx`
+
+| Property/state | Legacy source:value | Current value/source | Result |
+| --- | --- | --- | --- |
+| Main canvas | `old-lms-pages.md:6`: one white 12px canvas, padding 24px; `listing-page-header.scss:33-35`: hairline dividers | `college-setup-checklist.tsx:13` shared Disclosure uses `border-t border-border`; `PageCanvas` remains outer wrapper | Source layout matches; rendered exactness open |
+| Row contents | `old-lms-pages.md:6,11`: compact hairline list rows on canvas | `college-setup-checklist.tsx:30`: shared `ListRow` retains labels/counts/actions | Shared anatomy; old setup-list-specific heights unverified |
+| Empty state | `old-lms-pages.md:6`: empty content should not add nested canvas | `college-setup-checklist.tsx:24`: shared empty state when `phases.length===0` | Source-only; precise empty state dimensions open |
+| Phone and tablet | `listing-page-header.scss:130-153`: <=767px stacked layout, 20px page heading | `college-setup-checklist.tsx:25`: single-column <=767px, two columns >=768px; action target `min-h-11 md:min-h-9` | Breakpoint and 44px phone target match; tablet real viewport unverified |
+| Focus, collapse, hover | `components___form.scss:22-36`: :focus-visible keyboard focus retained | `ui/disclosure.tsx:9-20` native details + summary, focus ring and reduced-motion treatment; `college-setup-checklist.tsx:13` uses it | Source keyboard contract shared; no interaction replay |
+
+#### Value and responsive comparison — `college-feature-rule-editor.tsx`
+
+| Property/state | Legacy source:value | Current value/source | Result |
+| --- | --- | --- | --- |
+| Select and toggle | `components___form.scss:22-36`: focus-visible keyboard outline, legacy select font inherited | `college-feature-rule-editor.tsx:75` shared Select and `Switch` for locked policy | Shared; exact select control font/height subject to skin review |
+| Locked/disabled | `old-lms-pages.md:11`: slim warning statuses, `components___button.scss:49-51`: disabled action state | `college-feature-rule-editor.tsx:73` uses shared warning; `disabled` guards on choices and Button are unchanged | Source state matched; precise warning palette unverified |
+| Save, error and success | `old-lms-pages.md:11`: statuses on same canvas | `college-feature-rule-editor.tsx:81` uses shared error/success; all seven outcome paths explicitly select tone | Shared states; no server replay |
+| Confirmation warnings | `old-lms-pages.md:6`: overlay should be centralized; do not nest page canvas | `college-feature-rule-editor.tsx:82`: shared ConfirmDialog; lock, unknown student count and impact warnings use shared Alert | Source-only; exact modal metrics unverified |
+| Phone and tablet controls | `listing-page-header.scss:130-153`: <=767px stacked actions and 44px targets | `college-feature-rule-editor.tsx:80`: Button targets 44px up to 767px/36px >=768px; wrapped action row | Breakpoint source matched, exact legacy mobile dialog unverified |
+| Hover/focus/loader | `components___form.scss:22-36`: visible keyboard focus; `old-lms-shell-spec.md:4` CTA height/radius | `ui/button.tsx:10-29`, `ui/select.tsx:6-8`, `ui/confirm-dialog.tsx` delegated variants; busy state disables action and retains loading wording | Source contract kept; browser proof open |
+
+**Strict completion:** 0 checkboxes ticked for these two; previous seven also remain unticked. Shared PageHeader mobile/desktop typography conflicts and missing old-LMS exact value sources, whole-portal grep and responsive interaction/render evidence prevent all-match strict proof. The current Work queue is a source-migration ledger, not a claim of pixel completion.
+
+**Exact next file:** `src/components/admin/college-logo-uploader.tsx` (then `src/components/admin/college-branding-form.tsx` and other remaining College Admin/Super Admin controls).
