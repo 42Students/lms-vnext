@@ -1,5 +1,6 @@
 "use client";
 import { Tabs } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {FileUpload} from "@/components/ui/file-upload";
