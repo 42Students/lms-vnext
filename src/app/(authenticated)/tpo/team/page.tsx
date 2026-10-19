@@ -76,7 +76,7 @@ export default async function TpoTeamPage({searchParams}:{
  const visibleConversations=conversations?.status==="READY"?filterTpoTeamConversations(conversations.items,filter):[];
  return <div className="space-y-6">
   <TpoLiveRefresh intervalMs={30000}/>
-  <PageHeader eyebrow="TPO · Internal" title={TPO_OWNER_PAGE_COPY.team}
+  <PageHeader title={TPO_OWNER_PAGE_COPY.team}
    description="Who does what, and what you decided. Recruiters and students never see this." />
   <Tabs ariaLabel="Team tabs" renderPanel={false} value={tab}
    items={(["conversations","people"] as const).map(item=>({
@@ -98,7 +98,7 @@ export default async function TpoTeamPage({searchParams}:{
        </Link>)}
       {!workload?.ready?<span className="text-xs text-muted-foreground">Ask workload is not available yet.</span>:null}
     </nav>
-    {people.length?<ul className="grid gap-3 sm:grid-cols-2">
+    {people.length?<ul className="grid gap-3 min-[768px]:grid-cols-2">
       {people.map(member=><li key={member.membershipId} className="min-w-0 border-b border-border py-4">
        <div className="flex items-center gap-3">
         <Avatar name={member.displayName} size="sm" className="!h-[38px] !w-[38px] !rounded-[10px] [&_img]:!rounded-[10px]"/>
@@ -116,7 +116,7 @@ export default async function TpoTeamPage({searchParams}:{
        {workload?.ready?<p className="mt-2 text-xs text-muted-foreground">
         {member.openAsks} open {member.openAsks===1?"ask":"asks"} · {member.overdueAsks} overdue
        </p>:null}
-       {ownerWorkload?.ready?<dl aria-label="Placement workload" className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-3">
+       {ownerWorkload?.ready?<dl aria-label="Placement workload" className="mt-3 grid grid-cols-2 gap-2 text-xs min-[768px]:grid-cols-3">
         {([["Live drives",member.liveDrives,"/tpo/placements"],
           ["Draft drives",member.draftDrives,"/tpo/placements"],
           ["Companies",member.companies,"/tpo/recruiters?view=companies"],
@@ -181,18 +181,18 @@ export default async function TpoTeamPage({searchParams}:{
         {conversations?.status==="READY"&&conversations.asksReady&&row.openAsks>0?<p className="mt-1 text-xs text-body">{row.openAsks} open {row.openAsks===1?"ask":"asks"}{row.asksForMe>0?" · "+row.asksForMe+" assigned to you":""}</p>:null}
         <p className="mt-1 text-xs text-muted-foreground">Last activity · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.lastActivityAt)} IST</p>
        </li>)}</ul>:
-       <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-9 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>:null}</div>}
+       <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>:null}</div>}
     {conversations?.status==="READY" && (conversations.page>1||conversations.hasMore)?
      <nav aria-label="Team conversation pages" className="mt-4 flex flex-wrap items-center gap-3">
       <span className="text-sm text-body">Page {conversations.page}</span>
-      {conversations.page>1?<Link className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link lms-inline-link"
+      {conversations.page>1?<Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link lms-inline-link"
        href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
         ...(search?{q:search}:{}),page:String(conversations.page-1)}).toString()}>Previous</Link>:null}
-      {conversations.hasMore?<Link className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link lms-inline-link"
+      {conversations.hasMore?<Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link lms-inline-link"
        href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
         ...(search?{q:search}:{}),page:String(conversations.page+1)}).toString()}>Show older</Link>:null}
      </nav>:null}
-    <Link href="/tpo/messages" className="mt-3 inline-flex min-h-9 items-center text-link lms-inline-link">
+    <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link lms-inline-link">
       Open existing recruiter communications
     </Link>
   </section>}
