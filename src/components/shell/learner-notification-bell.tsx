@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
+import {PopoverPanel} from "@/components/ui/popover";
+import style from "./topbar/topbar.module.css";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
@@ -18,6 +20,7 @@ export function LearnerNotificationBell(){
  const [loading,setLoading]=useState(true);
  const [everLoaded,setEverLoaded]=useState(false);
  const root=useRef<HTMLDivElement|null>(null);
+ const refreshInFlight=useRef(false);
  const trigger=useRef<HTMLButtonElement|null>(null);
  const [count,setCount]=useState(0);
  const refreshDue=useCallback(async()=>{
@@ -27,6 +30,9 @@ export function LearnerNotificationBell(){
   }catch{ /* Existing personal notification inbox remains available. */ }
  },[]);
  const refresh=useCallback(async()=>{
+  if(refreshInFlight.current)return;
+  refreshInFlight.current=true;
+  setLoading(true);
   try{
    const body=await apiFetch<{notifications?:Row[]}>("/api/notifications?limit=40",{cache:"no-store"});
    if(!Array.isArray(body.notifications))throw new Error("Invalid notification response");
@@ -34,13 +40,16 @@ export function LearnerNotificationBell(){
    setCount(body.notifications.filter(item=>item.notification.readAt===null).length);
    setError("");setEverLoaded(true);
   }catch{setError("Notifications could not be loaded. Retry without leaving this page.");}
-  finally{setLoading(false);}
+  finally{setLoading(false);refreshInFlight.current=false;}
  },[]);
  useEffect(()=>{
   // eslint-disable-next-line react-hooks/set-state-in-effect -- initial and 30s polling load.
   void refresh();
-  const interval=window.setInterval(()=>{if(document.visibilityState==="visible")void refresh();},30000);
-  return ()=>window.clearInterval(interval);
+  const check=()=>{if(document.visibilityState==="visible")void refresh();};
+  const interval=window.setInterval(check,30000);
+  window.addEventListener("focus",check);
+  document.addEventListener("visibilitychange",check);
+  return ()=>{window.clearInterval(interval);window.removeEventListener("focus",check);document.removeEventListener("visibilitychange",check);};
  },[refresh]);
  useEffect(()=>{
   function clickOutside(event:PointerEvent){
@@ -61,27 +70,27 @@ export function LearnerNotificationBell(){
   return ()=>document.removeEventListener("keydown",escape);
  },[open]);
  return <div className="relative shrink-0" ref={root}>
-  <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" new":"Notifications"}
-    aria-haspopup="dialog" aria-expanded={open}
+  <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" unread":"Notifications, no unread items"}
+    aria-haspopup="dialog" aria-expanded={open} aria-controls={open?"lms-learner-notifications":undefined}
     onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
     className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
     <span aria-hidden="true">🔔</span>
-    {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
+    {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-notification-unread,#ff7576)] px-1 text-[10px] font-bold leading-none text-white">
      {count>99?"99+":count}</span>:null}
   </Button>
-  {open?<section data-slot="notification-popover" role="dialog" aria-modal="false" aria-label="Notifications"
-   className="absolute right-0 top-full z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,92vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
+  {open?<PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}>
    <div className="flex items-center justify-between">
-    <h2 className="font-semibold text-foreground">Notifications</h2>
+    <h2 id="learner-notification-title" className="m-0 text-lg font-semibold leading-[1.3] text-foreground">Notifications</h2>
     <Button variant="ghost" type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
       className="min-h-11 px-2 text-sm text-primary-text">Close</Button>
    </div>
    {error?<div className="mt-2 space-y-2"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
-    <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center text-sm text-primary-text underline" onClick={()=>void refresh()}>Retry notifications</Button>
+    <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center text-sm text-primary-text underline" loading={loading} disabled={loading} onClick={()=>void refresh()}>Retry notifications</Button>
    </div>:null}
-   {loading&&!everLoaded?<GracefulPageLoading/>:null}
+   {loading&&!everLoaded?<div data-learner-notification-state="" role="status"><GracefulPageLoading/></div>:null}
    {error&&everLoaded?<p className="mt-2 text-xs text-muted-foreground">Showing the last successful notifications.</p>:null}
-   {items.length===0&&!error&&!loading?<p role="status" className="mt-3 text-sm text-muted-foreground">No notifications yet</p>:null}
+   {loading&&everLoaded?<p role="status" className="px-4 py-2 text-xs text-muted-foreground">Refreshing notifications…</p>:null}
+   {items.length===0&&!error&&!loading?<p data-learner-notification-state="" role="status" className="text-muted-foreground">No notifications yet</p>:null}
    {due.length>0?<section aria-label="Assignments due soon" className="mt-3">
     <h3 className="text-sm font-semibold text-foreground">Assignments due within 48 hours</h3>
     <ul className="mt-2 space-y-2">
@@ -95,15 +104,16 @@ export function LearnerNotificationBell(){
      Live Course deadlines, not emailed or marked as read.
     </p>
    </section>:null}
-   <ScrollCue axis="y" label="Learner notifications" className="mt-3" viewportClassName="max-h-[55vh]"><ul className="space-y-2">
+   <ScrollCue axis="y" label="Learner notifications" className="mt-3" viewportClassName="max-h-[55vh]"><ul role="list" aria-label="Recent learner notifications" className="space-y-1.5">
     {items.slice(0,8).map(row=>{
      const target=learnerNotificationTarget(row.notification.actionHref)??"/learn/notifications";
      return <li key={row.notification.id}>
       <Link href={target} onClick={()=>setOpen(false)}
-        className="block min-h-11 rounded-lg border border-border p-3 text-sm text-body">
+        className="block min-h-11 rounded-[8px] border border-border bg-surface px-4 py-3 text-sm text-body hover:bg-[var(--lms-neutral-50)]">
        <span className="block font-semibold text-foreground">{row.notification.title}
         {row.notification.readAt===null?" · New":""}</span>
-       <span className="mt-1 block line-clamp-2">{row.notification.body}</span>
+       <span className="mt-1 block line-clamp-2 leading-[1.5] text-muted-foreground">{row.notification.body}</span>
+       <time dateTime={row.notification.createdAt} className="mt-1 block text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(row.notification.createdAt))}</time>
       </Link>
      </li>;
     })}
@@ -112,6 +122,6 @@ export function LearnerNotificationBell(){
      className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
      See all notifications
    </Link>
-  </section>:null}
+  </PopoverPanel>:null}
  </div>;
 }
