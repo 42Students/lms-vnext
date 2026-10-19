@@ -5,6 +5,8 @@ import {PageHeader} from "@/components/ui/page-header";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
+import {EmptyState} from "@/components/ui/empty-state";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrDriveProposalHistoryQuerySchema} from "@/modules/placements/hr-drive-proposal-history-model";
 import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-history-service";
@@ -32,13 +34,14 @@ export default async function RecruiterDriveProposalHistory({
   </nav>
   {data.status==="CHOOSE_COLLEGE"?<section className="space-y-3">
    <h2 className="font-semibold">Choose a college</h2>
-   {data.choices.map(grant=><Link key={grant.id}
-    className="block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9"
-    href={"/hr/drives/proposals?collegeId="+grant.collegeId}>{grant.collegeName}</Link>)}
-  </section>:data.status==="NO_ACCESS"?<p role="status">No active recruiter college access.</p>:<>
+   <NeedsDoingChips label="Authorized colleges:" items={data.choices.map(grant=>({
+    key:grant.collegeId,label:grant.collegeName,
+    href:"/hr/drives/proposals?collegeId="+encodeURIComponent(grant.collegeId),
+   }))}/>
+  </section>:data.status==="NO_ACCESS"?<EmptyState title="No active college access" description="No active recruiter college access."/>:<>
    <form action="/hr/drives/proposals" method="get" className="flex flex-wrap items-end gap-3">
     <input type="hidden" name="collegeId" value={data.collegeId??""}/>
-    <label className="min-w-48 flex-1 text-sm text-body">Search by role title
+    <label className="min-w-0 flex-[1_1_12rem] text-sm text-body">Search by role title
      <Input name="q" maxLength={100} defaultValue={input.data.q}
        className="mt-1 w-full" placeholder="Role title" />
     </label>
@@ -75,9 +78,7 @@ export default async function RecruiterDriveProposalHistory({
      </p>
      <p className="mt-2 text-xs text-body">No approval or drive publication is implied.</p>
     </li>)}
-   </ol>:<p role="status" className="py-5 text-sm text-body">
-    No persisted drive proposals for this college. Draft a proposal to start a discussion.
-   </p>}
+   </ol>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."/>}
    <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-3">
     {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}
       className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer proposals</Link>:null}
