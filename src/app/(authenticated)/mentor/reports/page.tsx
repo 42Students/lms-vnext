@@ -42,14 +42,14 @@ export default async function MentorReportsPage({searchParams}:{
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Projects list
       </Link>}/>
-    {!data.enabled?<section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+    {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects are disabled for this membership. Project report data was not loaded.
     </section>:<>
       <section aria-label="Project status totals" className="space-y-3">
         <h2 className="font-semibold">Registered project status</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {statusMetrics.map(([label,count])=>
-            <article key={label} className="rounded-xl border border-border bg-surface p-4">
+            <article key={label} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
               <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
               <p className="mt-2 text-2xl font-bold tabular-nums">{count}</p>
             </article>)}
@@ -63,7 +63,7 @@ export default async function MentorReportsPage({searchParams}:{
         <h2 className="font-semibold">Recorded project attention</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {attentionMetrics.map(([label,count])=>
-            <article key={label} className="rounded-xl border border-border bg-surface p-4">
+            <article key={label} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
               <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
               <p className="mt-2 text-xl font-bold tabular-nums">{count}</p>
             </article>)}
