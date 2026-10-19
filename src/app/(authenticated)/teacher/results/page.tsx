@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 
@@ -42,7 +44,7 @@ export default async function FacultyAssessmentResultsPage({
     <form method="get" action="/teacher/results"
       className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
-        <input name="search" type="search" maxLength={120} defaultValue={data.query.search}
+        <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           placeholder="Assessment, course code or Section" />
       </label>
@@ -95,9 +97,9 @@ export default async function FacultyAssessmentResultsPage({
           <option value="5">5</option><option value="10">10</option>
         </Select>
       </label>
-      <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+      <Button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
         Filter
-      </button>
+      </Button>
       <Link href="/teacher/results" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Clear
       </Link>
@@ -114,7 +116,7 @@ export default async function FacultyAssessmentResultsPage({
       : <div className="grid gap-3">
         {data.items.map(item =>
           <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
-            className="rounded-xl border border-border bg-surface p-4">
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <h2 className="font-semibold text-foreground">{item.title}</h2>
