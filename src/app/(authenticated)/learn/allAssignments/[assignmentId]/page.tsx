@@ -28,11 +28,11 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   const resolution = resolveLearnerOfferingDelivery(overview.assignments, path.assignmentId, query.deliveryId);
   if (resolution.kind === "none") notFound();
   if (resolution.kind === "choose") return <div className="min-w-0 space-y-6">
-    <Link href="/learn/allAssignments" className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>
+    <Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>
     <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." />
-    <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
+    <ul className="divide-y divide-border border-y border-border">
       {resolution.options.map(option => <li key={option.deliveryId} className="p-4">
-        <Link className="font-semibold text-primary-text underline"
+        <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9"
           href={"/learn/allAssignments/" + encodeURIComponent(path.assignmentId) + "?deliveryId=" + encodeURIComponent(option.deliveryId)}>
           {option.courseName}
         </Link>
@@ -45,9 +45,9 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   if (!item) notFound();
   const materials=await listOwnLearnerAssignmentMaterialLinks(await getCurrentRequestContext(),item.id,item.deliveryId);
   return <div className="space-y-6">
-    <Link href="/learn/allAssignments" className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>
+    <Link href="/learn/allAssignments" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>
     <PageHeader title={item.title} />
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-2">
       <section className="border-b border-border py-4">
         <h2 className="text-xs font-semibold text-muted-foreground">Due</h2>
         <p className="mt-2 text-foreground">{formatDate(item.dueAt)}</p>
@@ -57,7 +57,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         <p className="mt-2 text-foreground">{item.maxPoints}</p>
       </section>
     </div>
-    <section className="border-b border-border py-4 sm:py-6">
+    <section className="border-b border-border py-4 md:py-6">
       <h2 className="font-semibold text-foreground">Instructions & resources</h2>
       <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">
         {item.description || "Your faculty hasn't added any resources to this assignment yet."}
@@ -68,13 +68,13 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       {materials.links.length>0 ? <ul className="mt-3 space-y-2" aria-label="Instructor resources">
         {materials.links.map(link=><li key={link.id} className="text-sm">
           <a href={link.href} rel="noopener noreferrer"
-            className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">
+            className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
             Open link: {link.title}
           </a>
         </li>)}
       </ul> : null}
     </section>
-    <section className="border-b border-border py-4 sm:py-6">
+    <section className="border-b border-border py-4 md:py-6">
       <h2 className="font-semibold text-foreground">Your submission</h2>
       {item.submissionId ? <div className="mt-3 space-y-3 text-sm text-body">
         <p role="status">Submitted {formatDate(item.submittedAt)}</p>
@@ -83,7 +83,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         ) : item.submissionType === "LINK" && item.submissionUrl ? (
           learnerAssessmentSubmittedLinkHref(item.submissionUrl) ? (
             <a href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} 
-              className="block break-all text-primary-text underline">{item.submissionUrl}</a>
+              className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-primary-hover md:min-h-9">{item.submissionUrl}</a>
           ) : (
             <p role="status" className="break-all text-body">Saved link unavailable. Open the original submission from a trusted HTTPS source.</p>
           )
@@ -104,7 +104,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         ) : <div className="mt-2 space-y-2">
           <p className="text-sm text-body">{item.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}</p>
           <Button type="button" variant="secondary" disabled aria-disabled="true"
-            className="min-h-11">
+            className="min-h-11 md:min-h-9">
             {item.dueAt?"Submission closed":"Unavailable"}
           </Button>
         </div>}
