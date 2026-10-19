@@ -1,5 +1,6 @@
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
@@ -42,7 +43,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const context = await getCurrentRequestContext();
   if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) redirect("/dashboard");
   const parsed = querySchema.safeParse({collegeId:(await searchParams).collegeId});
-  if (!parsed.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Today" />
+  if (!parsed.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Today" />
     <ErrorState title="Invalid college selection" description="The selected college ID is invalid."
       action={<Link href="/hr/home" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose again</Link>} /></div>;
   const recruiter = context.recruiter;
@@ -54,9 +55,9 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     const byId=new Map(access.grants.map(item=>[item.id,item]));
     const visible=grants.filter(item=>byId.has(item.id));
     return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader eyebrow="Recruiter" title="Today" description={"College access for " + recruiter.companyName} />
+    <PageHeader title="Today" description={"College access for " + recruiter.companyName} />
     {visible.length === 0 ? <EmptyState title="Open this on your college&apos;s placement address" description="Your recruiter account works inside one college&apos;s placement site. Ask the placement cell that invited you to restore access." /> :
-    <section className="grid gap-3 sm:grid-cols-2">{visible.map(grant => {
+    <section className="grid gap-3 md:grid-cols-2">{visible.map(grant => {
       const detail=byId.get(grant.id)!;
       return <article key={grant.id} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-5">
         <h2 className="font-semibold text-foreground">{detail.collegeName}</h2>
@@ -140,29 +141,30 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         key:grant.collegeId,label:grant.collegeName,
         href:"/hr/home?collegeId="+encodeURIComponent(grant.collegeId),
       }))}/> : null}
-    {recentJobCapReached?<aside role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-surface p-3 text-sm text-body">
+    {recentJobCapReached?<Alert tone="warning">
       Today is displaying the 500 most recently created employer drives for this college.
       Older drives may not appear in these quick summaries. Open Drives for full history.
-    </aside>:null}
-    {summaryPartiallyUnavailable?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-surface p-4 text-sm text-body">
+    </Alert>:null}
+    {summaryPartiallyUnavailable?<Alert tone="warning">
       <p className="font-semibold">Drive summary is partially unavailable.</p>
       <p className="mt-1">Your available drive information is shown below. Some notifications or calendar events may be missing.</p>
       <Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
         className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry</Link>
-    </div>:null}
-    <section aria-label="Recruiter tasks" className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-2 xl:grid-cols-5">{actions.map(action=>
-      <Link key={action.label} href={action.url} className="border-b border-border p-5 last:border-b-0 hover:bg-primary-subtle sm:border-b-0 sm:border-r sm:last:border-r-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    </Alert>:null}
+    <section aria-label="Recruiter tasks" className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border md:grid-cols-2 xl:grid-cols-5">{actions.map(action=>
+      <Link key={action.label} href={action.url} className="border-b border-border p-5 last:border-b-0 hover:bg-primary-subtle md:border-b-0 md:border-r md:last:border-r-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
       </Link>)}</section>
-    <section aria-label="Next recruiter actions" className="space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 sm:p-5">
+    <section aria-label="Next recruiter actions" className="space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 md:p-5">
       <h2 className="text-lg font-semibold text-foreground">Next up</h2>
       <p className="text-xs text-muted-foreground">Only active drives belonging to your selected college and company appear here.</p>
-      {actionQueue.length ? <ul className="grid gap-3 sm:grid-cols-2">
+      {actionQueue.length ? <ul className="grid gap-3 md:grid-cols-2">
         {actionQueue.map(task => <li key={task.key}>
           <Link href={task.href} className="block min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
             <span className="inline-flex items-center gap-2 text-xs font-semibold text-body">
-              <span aria-hidden="true" className={task.tone==="URGENT"?"size-2 rounded-full bg-error":task.tone==="SOON"?"size-2 rounded-full bg-warning":"size-2 rounded-full bg-primary"}/>
-              {task.tone==="URGENT"?"Urgent":task.tone==="SOON"?"Soon":"When you can"}
+              <Badge tone={task.tone==="URGENT"?"error":task.tone==="SOON"?"warning":"info"}>
+                {task.tone==="URGENT"?"Urgent":task.tone==="SOON"?"Soon":"When you can"}
+              </Badge>
             </span>
             <span className="mt-2 block break-words font-semibold text-primary-text">{task.label}</span>
             <span className="mt-1 block text-xs text-body">{task.description}</span>
@@ -199,7 +201,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         <h2 className="font-semibold text-foreground">This week</h2>
         <Link href={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)} className="text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Full calendar</Link>
       </div>
-      {weekEvents.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
+      {weekEvents.length?<ul className="mt-4 grid gap-3 md:grid-cols-2">
         {weekEvents.map(item=><li key={item.id}>
           <Link href={item.href} className="block rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
             <span className="block text-xs font-semibold text-muted-foreground">{item.kind.replaceAll("_"," ")}</span>
@@ -219,7 +221,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           className="text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all live drives</Link>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">Applied counts here mean applicants the placement cell has explicitly shared with you; private/unshared submissions are not visible.</p>
-      {liveDrives.length?<div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      {liveDrives.length?<div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {liveDrives.map(row=><Link key={row.job.id}
           href={"/recruiter/drives/"+encodeURIComponent(row.job.id)}
           className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -239,7 +241,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </section>
     <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-foreground">Actionable deadlines</h2>
-      {today.dueSoon.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.dueSoon.map(item =>
+      {today.dueSoon.length ? <div className="mt-4 grid gap-3 md:grid-cols-2">{today.dueSoon.map(item =>
         <Link key={item.job.id} href={"/recruiter/drives/" + item.job.id}
           className="rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"><span className="block font-medium text-foreground">{item.job.title}</span>
           <span className="mt-1 block text-sm text-body">Applications close {when(item.job.applicationDeadline!)}</span></Link>)}</div> :
@@ -247,7 +249,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </section>
     <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-foreground">This week · upcoming rounds</h2>
-      {today.upcomingRounds.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.upcomingRounds.map(event =>
+      {today.upcomingRounds.length ? <div className="mt-4 grid gap-3 md:grid-cols-2">{today.upcomingRounds.map(event =>
         <Link key={event.id} href={"/recruiter/drives/" + event.jobId + "?tab=rounds"}
           className="rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"><span className="block font-medium text-foreground">{event.title}</span>
           <span className="mt-1 block text-sm text-body">{event.jobTitle} · {when(event.startsAt)}</span></Link>)}</div> :
@@ -256,7 +258,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-foreground">Results due this week</h2>
       <p className="mt-1 text-sm text-body">Recorded result deadlines on authorized employer rounds. A past timestamp alone does not establish that results remain outstanding.</p>
-      {dueResults.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{dueResults.map(item =>
+      {dueResults.length ? <div className="mt-4 grid gap-3 md:grid-cols-2">{dueResults.map(item =>
         <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
           className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           <span className="block break-words font-medium text-foreground">{item.roundName}</span>
@@ -276,7 +278,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <p className="mt-1 text-xs text-muted-foreground">
         Only employer-owned threads from your selected college. No message bodies appear on Today.
       </p>
-      {conversationSignals?.unread.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
+      {conversationSignals?.unread.length?<ul className="mt-4 grid gap-3 md:grid-cols-2">
         {conversationSignals.unread.map(row=><li key={row.id}>
           <Link href={row.href} className="block rounded-[var(--lms-control-radius)] border border-border p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
             <span className="block break-words font-semibold text-primary-text">{row.label}</span>
@@ -290,7 +292,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-foreground">With the placement cell</h2>
       <p className="mt-2 text-sm text-body">Formal requests awaiting a college decision. Results and selections require recorded submissions.</p>
-      {waitingRequests.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
+      {waitingRequests.length?<ul className="mt-4 grid gap-3 md:grid-cols-2">
         {waitingRequests.map(request=><li key={request.id}>
           <Link href={"/recruiter/drives/new?collegeId="+encodeURIComponent(selectedId)+(request.status==="SENT_BACK"?"&fix=":"&edit=")+encodeURIComponent(request.id)}
             className="block rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
@@ -305,7 +307,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       </p>}
       <h3 className="mt-4 font-semibold text-foreground">Conversations waiting for a reply</h3>
       <p className="mt-1 text-sm text-body">These conversations were last updated by you. This does not prove a reply is due.</p>
-      {conversationSignals?.waiting.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
+      {conversationSignals?.waiting.length?<ul className="mt-4 grid gap-3 md:grid-cols-2">
         {conversationSignals.waiting.map(row=><li key={row.id}>
           <Link href={row.href} className="block rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
             {row.label} · Last message from you
