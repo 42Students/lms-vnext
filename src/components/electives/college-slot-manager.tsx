@@ -1,6 +1,7 @@
+"use client";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-"use client";
+
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
