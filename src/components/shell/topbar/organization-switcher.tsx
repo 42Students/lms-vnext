@@ -59,7 +59,8 @@ export function TopbarOrganizationSwitcher({
       <span className={style.orgName}>{organizationName}</span>
       <ChevronIcon/>
     </Button>
-    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+organizationName} className={style.orgPopover}>
+    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+organizationName} aria-describedby="lms-org-switcher-context" className={style.orgPopover}>
+      <span id="lms-org-switcher-context" className="sr-only">Current workspace: {organizationName}</span>
       <p className={style.accountSectionHeading}>Switch workspace</p>
       {choices?<AdminScopeSwitcher choices={choices} scope={scope}/>:
         <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId}/>}
