@@ -139,7 +139,7 @@ export function CollegeBrandingForm({
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <form
         onSubmit={save}
-        className="space-y-5 - border-t border-border pt-6"
+        className="space-y-5 border-t border-border pt-6"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           {(["primaryColor", "secondaryColor"] as const).map((key) => (
