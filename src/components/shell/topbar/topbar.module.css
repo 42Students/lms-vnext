@@ -464,3 +464,9 @@
 
 .orgPopover label { color:#334155; }
 .orgPopover [role="alert"] { padding:8px 0; font-size:12px; }
+
+.orgPopover :global(select):focus-visible,
+.orgPopover :global(input):focus-visible {
+  outline:2px solid var(--lms-button-primary);
+  outline-offset:2px;
+}
