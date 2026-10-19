@@ -67,22 +67,7 @@ export function LearnerNotificationBell(){
   document.addEventListener("keydown",escape);
   return ()=>document.removeEventListener("keydown",escape);
  },[open]);
- return <div className="relative shrink-0" ref={root}>
-  <button ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" new":"Notifications"}
-    aria-haspopup="dialog" aria-expanded={open}
-    onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
-    className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
-    <span aria-hidden="true">🔔</span>
-    {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
-     {count>99?"99+":count}</span>:null}
-  </button>
-  {open?<PopoverPanel data-slot="notification-popover" label="Notifications"
-   className="absolute right-0 top-full z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,92vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
-   <div className="flex items-center justify-between">
-    <h2 className="font-semibold text-foreground">Notifications</h2>
-    <button type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
-      className="min-h-11 px-2 text-sm text-primary-text">Close</button>
-   </div>
+ const panelContent = <>
    {error?<div className="mt-2 space-y-2"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
     <button type="button" className="inline-flex min-h-11 items-center text-sm text-primary-text underline" onClick={()=>void refresh()}>Retry notifications</button>
    </div>:null}
@@ -119,6 +104,27 @@ export function LearnerNotificationBell(){
      className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
      See all notifications
    </Link>
-  </PopoverPanel>:null}
+ </>;
+ return <div className="relative shrink-0" ref={root}>
+  <button ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" new":"Notifications"}
+    aria-haspopup="dialog" aria-expanded={open}
+    onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
+    className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
+    <span aria-hidden="true">🔔</span>
+    {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
+     {count>99?"99+":count}</span>:null}
+  </button>
+  {mobile ? <Drawer open={open} onOpenChange={setOpen} title="Notifications" bodyClassName="!p-4">
+    {panelContent}
+  </Drawer> : open ? <PopoverPanel data-slot="notification-popover" label="Notifications"
+   className="absolute right-0 top-full z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,92vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
+
+   <div className="flex items-center justify-between">
+    <h2 className="font-semibold text-foreground">Notifications</h2>
+    <button type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
+      className="min-h-11 px-2 text-sm text-primary-text">Close</button>
+   </div>
+   {panelContent}
+  </PopoverPanel> : null}
  </div>;
 }
