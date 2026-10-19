@@ -570,8 +570,9 @@ export default async function HrPlacementJobPage({
               {focusedNavigation ? <nav aria-label="Step through shortlisted applicants" className="mt-4 flex flex-wrap items-center gap-3 text-sm">
                 <label className="flex min-w-40 flex-1 items-center gap-3">
                   <span className="shrink-0 text-body">{focusedNavigation.index+1} of {focusedNavigation.total} shared applicants on this page</span>
-                  <progress aria-label="Focused review progress" value={focusedNavigation.index+1} max={focusedNavigation.total}
-                    className="h-2 min-w-20 flex-1 accent-primary"/>
+                  <MetricBar role="progressbar" label="Focused review progress"
+                    value={focusedNavigation.index+1} maximum={focusedNavigation.total} unit="applicants"
+                    className={funnelStyles.reviewTrack} />
                 </label>
                 {focusedNavigation.previous ? <Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
                 {focusedNavigation.next ? <Link className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
