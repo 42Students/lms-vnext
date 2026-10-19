@@ -23,6 +23,7 @@
  * Row heights and cell padding are deliberately left to the existing page/table
  * layout: the skin cannot change geometry under the SMARTER PLAN contract.
  */
+/* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(table):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-700) !important;
@@ -36,12 +37,14 @@
 /* Legacy: components___common.scss:831-837 (muted column headings),
  * components___variables.scss:28,30,32 (#a9a7ae, #e5e9f0, #fafbfc).
  */
+/* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(thead, thead tr, thead th):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-400) !important;
   background-color: var(--lms-neutral-50) !important;
   border-bottom-color: var(--lms-neutral-200) !important;
 }
+/* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(th):not(:where([data-unskin], [data-unskin] *)) {
   font-size: 12px !important;
@@ -53,12 +56,14 @@
  * last row borderless); components___antddesign.scss:658-680 shows the
  * special borderless filter table, which can set [data-unskin].
  */
+/* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(tbody tr):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-white) !important;
   box-shadow: inset 0 -1px 0 var(--lms-neutral-200);
   transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
+/* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(tbody td):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-700) !important;
@@ -72,10 +77,12 @@
  * components___common.scss:700-713 (row tracking by hairline);
  * old-lms-shell.css:45-48 (rgba teal hover language).
  */
+/* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(tbody tr:hover):not(:where([data-unskin], [data-unskin] *)) {
   background-color: rgba(38, 186, 199, 0.045) !important;
 }
+/* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(tbody tr:focus-within):not(:where([data-unskin], [data-unskin] *)) {
   background-color: rgba(38, 186, 199, 0.045) !important;
@@ -83,6 +90,7 @@
 /* Legacy: components___common.scss:711-713 (last row without separator).
  * Inset paint rather than border-width avoids moving any table row.
  */
+/* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(tbody tr:last-child):not(:where([data-unskin], [data-unskin] *)) {
   box-shadow: none;
@@ -95,6 +103,7 @@
  * padding and appearance. Range, file, check/radio, color and hidden controls
  * have separate, explicitly owned semantics and must not be bulk-skinned.
  */
+/* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(
     input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]),
@@ -116,6 +125,7 @@
  * components___antddesign.scss:511-523 (10px select radius and 14px
  * font). Native select options keep their OS and assistive semantics.
  */
+/* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(select:not([multiple])):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-form-bg) !important;
@@ -130,6 +140,7 @@
  * components___variables.scss:10,71 and components___accessibility.scss:13-23.
  * This preserves keyboard focus outlines supplied by shared components.
  */
+/* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(
     input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]),
@@ -138,12 +149,14 @@
   border-color: var(--lms-primary) !important;
   box-shadow: 0 0 0 2px rgba(38, 186, 199, 0.15) !important;
 }
+/* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea)[aria-invalid="true"]:not(:where([data-unskin], [data-unskin] *)) {
   border-color: var(--lms-error) !important;
   background-color: rgba(239, 68, 68, 0.06) !important;
 }
 /* Legacy: components___form.scss:136-143 (red invalid focus). */
+/* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea)[aria-invalid="true"]:not(:where([data-unskin], [data-unskin] *)):focus-visible {
   border-color: var(--lms-error) !important;
@@ -156,6 +169,7 @@
  * components___form.scss:117-143 (field error/focus surface).
  * Do not change native disabled state or pointer/keyboard handling.
  */
+/* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea):not(:where([data-unskin], [data-unskin] *)):disabled {
   color: var(--lms-neutral-400) !important;
@@ -166,6 +180,7 @@
 /* Legacy: components___variables.scss:28,32 and
  * components___form.scss:119-120 (quiet non-editable fill/radius).
  */
+/* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]), textarea):not(:where([data-unskin], [data-unskin] *)):read-only {
   background-color: var(--lms-neutral-50) !important;
@@ -178,6 +193,7 @@
  * #0a7c88, white, 9px, 14px/650, 36px shell height (height untouched here).
  * Source states: components___antddesign.scss:153-169; 150ms ease.
  */
+/* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-button-primary) !important;
@@ -197,6 +213,7 @@
 /* Legacy primary hover: components___antddesign.scss:160-163;
  * old-lms-shell-spec.md:23 and globals.css:18 (measured darker #086873).
  */
+/* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled) {
   background-color: var(--lms-button-primary-hover) !important;
@@ -208,6 +225,7 @@
  * #6b7280); legacy focus: components___antddesign.scss:171-174
  * (3px teal 35% / 2px offset). Use halo paint, not geometric outline offsets.
  */
+/* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):disabled {
   background-color: var(--lms-neutral-200) !important;
@@ -215,12 +233,14 @@
   color: var(--lms-neutral-500) !important;
   box-shadow: none !important;
 }
+/* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   box-shadow: 0 0 0 3px rgba(38, 186, 199, 0.35) !important;
 }
 /* Legacy reduced motion: components___antddesign.scss:184-189. */
 @media (prefers-reduced-motion: reduce) {
+  /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
     transition: none !important;
@@ -233,6 +253,7 @@
  * Legacy tokens: components___variables.scss:176-190 (weights and type scale).
  * Font only; existing page spacing, line boxes and structure remain untouched.
  */
+/* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(h1):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-heading) !important;
@@ -243,6 +264,7 @@
 /* Legacy: components___typo.scss:13-25 (.h2 sizes 20/22/30);
  * components___variables.scss:24,178 (heading ink and semibold).
  */
+/* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(h2):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-900) !important;
@@ -253,6 +275,7 @@
 /* Legacy: components___typo.scss:28-40 (.h3 sizes 16/18/20);
  * components___variables.scss:24,178.
  */
+/* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(h3):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-900) !important;
@@ -263,18 +286,21 @@
 /* Legacy: components___variables.scss:24,176-189
  * (default text hierarchy 16/14/13; all headings semibold).
  */
+/* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(h4):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-900) !important;
   font-size: 16px !important;
   font-weight: 600 !important;
 }
+/* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(h5):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-900) !important;
   font-size: 14px !important;
   font-weight: 600 !important;
 }
+/* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(h6):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-700) !important;
@@ -289,26 +315,31 @@
  * components___variables.scss:148-157 (767/768/992px breakpoints).
  */
 @media (max-width: 767px) {
+  /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h1):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 24px !important;
   }
 }
 @media (min-width: 768px) {
+  /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h2):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 22px !important;
   }
+  /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h3):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 18px !important;
   }
 }
 @media (min-width: 992px) {
+  /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h2):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 30px !important;
   }
+  /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h3):not(:where([data-unskin], [data-unskin] *)) {
     font-size: 20px !important;
@@ -320,12 +351,14 @@
  * weight 500, teal on hover with underline); components___variables.scss:10.
  * Shared button-like anchors and tabs keep their dedicated component skins.
  */
+/* Legacy refs: components___common.scss:68-75; components___accessibility.scss:19-23 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(a:not([data-slot="button"]):not([role="tab"])):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-primary) !important;
   font-weight: 500 !important;
   transition: color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
+/* Legacy refs: components___common.scss:68-75; components___accessibility.scss:19-23 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(a:not([data-slot="button"]):not([role="tab"])):not(:where([data-unskin], [data-unskin] *)):hover {
   color: var(--lms-primary) !important;
@@ -335,6 +368,7 @@
 /* Legacy: components___accessibility.scss:19-23 (brand keyboard focus);
  * components___variables.scss:12 (#1a95a1 accessible focus teal).
  */
+/* Legacy refs: components___common.scss:68-75; components___accessibility.scss:19-23 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(a:not([data-slot="button"]):not([role="tab"])):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   box-shadow: 0 0 0 2px rgba(26, 149, 161, 0.12) !important;
@@ -345,6 +379,7 @@
  * 13px/600), components___variables.scss:28,183,178.
  * Field spacing and mandatory-star placement remain with page components.
  */
+/* Legacy refs: components___form.scss:110-115; components___global.scss:60-69 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(label):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-400) !important;
@@ -355,6 +390,7 @@
 /* Legacy: components___global.scss:60-69 (.ln-required-asterisk
  * and .ln-form-error), components___variables.scss:71.
  */
+/* Legacy refs: components___form.scss:110-115; components___global.scss:60-69 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(label [aria-hidden="true"].text-red-500,
     label .ln-required-asterisk):not(:where([data-unskin], [data-unskin] *)) {
@@ -368,6 +404,7 @@
  * The owner of dialog placement, sizing, close controls and animation remains
  * chat-16; this rule never touches those concerns.
  */
+/* Legacy refs: components___antddesign.scss:1033-1061,143-146; components___variables.scss:224-232 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(dialog, [role="dialog"], [role="alertdialog"]):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-white) !important;
@@ -380,6 +417,7 @@
 /* Legacy: components___common.scss:1093-1102 (modal header division),
  * components___variables.scss:30 (#e5e9f0 borders).
  */
+/* Legacy refs: components___antddesign.scss:1033-1061,143-146; components___variables.scss:224-232 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(dialog, [role="dialog"], [role="alertdialog"])
   :where(header, footer):not(:where([data-unskin], [data-unskin] *)) {
@@ -392,6 +430,7 @@
  * components___common.scss:1322-1326 (AntD collapse section family).
  * Keep native details/summary toggling and layout completely unchanged.
  */
+/* Legacy refs: components___common.scss:1322-1326; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(details:not([data-slot="dropdown-root"])):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-700) !important;
@@ -400,6 +439,7 @@
   border-radius: 10px !important;
   transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
+/* Legacy refs: components___common.scss:1322-1326; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(details:not([data-slot="dropdown-root"]) > summary):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-700) !important;
@@ -413,6 +453,7 @@
 /* Legacy: components___variables.scss:10-13 (#eff8fa hover fill,
  * #1a95a1 accessible teal); old-lms-shell.css:45-48 (soft active/hover).
  */
+/* Legacy refs: components___common.scss:1322-1326; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(details:not([data-slot="dropdown-root"]) > summary:hover, details:not([data-slot="dropdown-root"])[open] > summary):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-primary-text) !important;
@@ -424,6 +465,7 @@
  * components___common.scss:118-120 (quiet hairline divisions).
  * Existing border widths and element flow remain as authored.
  */
+/* Legacy refs: components___common.scss:118-120; components___variables.scss:30 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(hr):not(:where([data-unskin], [data-unskin] *)) {
   border-color: var(--lms-neutral-200) !important;
@@ -435,6 +477,7 @@
  * Legacy: components___form.scss:57-60 (14px neutral-400 placeholder),
  * components___variables.scss:28,184 (#a9a7ae / 14px).
  */
+/* Legacy refs: components___form.scss:57-60; components___variables.scss:28 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input, textarea):not(:where([data-unskin], [data-unskin] *))::placeholder {
   color: var(--lms-neutral-400) !important;
@@ -446,6 +489,7 @@
  * (#26bac7 primary, #eff8fa soft teal); old-lms-shell.css:45-48
  * (same active-item fill). Pure selection paint, no text metrics.
  */
+/* Legacy refs: components___variables.scss:10-13 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(*):not(:where([data-unskin], [data-unskin] *))::selection {
   color: var(--lms-neutral-900) !important;
@@ -458,10 +502,12 @@
  * Existing global overflow and scrollbar visibility policies are untouched.
  * Explicit .lms-scrollbar-thin areas still decide whether a thumb is shown.
  */
+/* Legacy refs: components___variables.scss:10-32,176-190; components___accessibility.scss:19-35 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(*):not(:where([data-unskin], [data-unskin] *)) {
   scrollbar-color: var(--lms-scrollbar-thumb) transparent;
 }
+/* Legacy refs: components___common.scss:294-311; components___variables.scss:48 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(*):not(:where([data-unskin], [data-unskin] *))::-webkit-scrollbar-thumb {
   background-color: var(--lms-scrollbar-thumb) !important;
@@ -475,6 +521,7 @@
  * Native outlines are deliberately preserved for accessibility.
  * Shared button/field components have their own focus systems.
  */
+/* Legacy refs: components___common.scss:1322-1326; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(summary, [role="button"]:not(button)):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   box-shadow: 0 0 0 4px rgba(26, 149, 161, 0.12) !important;
@@ -483,6 +530,7 @@
  * components___form.scss:23-36 (pointer focus reset, keyboard kept).
  * Do not remove native outlines on click: existing global focus rules handle it.
  */
+/* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input, select, textarea, summary):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1),
@@ -494,6 +542,7 @@
  * components___form.scss:117-143 (quiet resting form border, teal on focus).
  * Read-only and disabled controls retain their own neutral border styling.
  */
+/* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), textarea):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled):not(:read-only):not([aria-invalid="true"]) {
   border-color: var(--lms-field-hover-border) !important;
@@ -501,6 +550,7 @@
 /* Legacy: components___antddesign.scss:511-523 (select hover/focus theme),
  * components___variables.scss:91 (muted hover border).
  */
+/* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(select):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled):not([aria-invalid="true"]) {
   border-color: var(--lms-field-hover-border) !important;
@@ -510,6 +560,7 @@
  * Legacy: components___antddesign.scss:165-169 (pressed uses darkened
  * teal; translation is a layout transform so intentionally not reproduced).
  */
+/* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):active:not(:disabled) {
   background-color: var(--lms-button-primary-hover) !important;
@@ -520,6 +571,7 @@
  * Legacy: components___variables.scss:10-13 (subtle teal active surface),
  * old-lms-shell.css:45-48 (same active/hover visual family).
  */
+/* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(tbody tr[aria-selected="true"]):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-primary-subtle) !important;
@@ -530,6 +582,7 @@
  * rgba(30,54,63,.10)); role dialogs use their own chat-16 overlay/backdrop
  * mechanisms and are intentionally unaffected.
  */
+/* Legacy refs: components___antddesign.scss:1033-1061,143-146; components___variables.scss:224-232 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(dialog):not(:where([data-unskin], [data-unskin] *))::backdrop {
   background-color: rgba(30, 54, 63, 0.1) !important;
