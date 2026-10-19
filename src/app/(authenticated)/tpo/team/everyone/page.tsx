@@ -19,14 +19,14 @@ export default async function TpoEveryonePage({searchParams}:{
   return {status:"FAILED" as const};
  });
  return <div className="space-y-5">
-  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-9 sm:min-h-9 items-center text-link">← Team conversations</Link>
+  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-9 sm:min-h-9 items-center text-link lms-inline-link">← Team conversations</Link>
   <header className="space-y-2">
    <h1 className="text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">{TPO_EVERYONE_TITLE}</h1>
    <p className="text-sm text-body">{TPO_EVERYONE_DESCRIPTION}</p>
   </header>
   {result.status==="FAILED"?<section role="alert" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
    <p>Could not load Everyone right now. Your messages were not changed.</p>
-   <Link href="/tpo/team/everyone" className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-link underline">Retry Everyone</Link>
+   <Link href="/tpo/team/everyone" className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-link underline lms-inline-link">Retry Everyone</Link>
   </section>:result.status==="NOT_REGISTERED"?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
    Everyone is not available until its database migration is registered. No team messages were loaded.
   </p>:<>
@@ -40,8 +40,8 @@ export default async function TpoEveryonePage({searchParams}:{
       </li>)}
      </ol>:<p role="status" className="text-sm">{TPO_EVERYONE_WELCOME}</p>}
     <nav aria-label="Everyone message pages" className="flex gap-3 text-sm">
-     {result.page>1?<Link href={"/tpo/team/everyone?page="+(result.page-1)} className="text-link underline">Newer messages</Link>:null}
-     {result.page<result.pages?<Link href={"/tpo/team/everyone?page="+(result.page+1)} className="text-link underline">Older messages</Link>:null}
+     {result.page>1?<Link href={"/tpo/team/everyone?page="+(result.page-1)} className="text-link underline lms-inline-link">Newer messages</Link>:null}
+     {result.page<result.pages?<Link href={"/tpo/team/everyone?page="+(result.page+1)} className="text-link underline lms-inline-link">Older messages</Link>:null}
     </nav>
    </section>
    <TpoEveryoneControls muted={result.muted} actorUserId={context.user.id}/>
