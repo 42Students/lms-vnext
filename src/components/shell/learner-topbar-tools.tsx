@@ -36,13 +36,13 @@ export function LearnerTopbarTools() {
   }, []);
 
   useEffect(() => {
-    function onPointerDown(event: MouseEvent) {
+    function onPointerDown(event: PointerEvent) {
       if (!rootRef.current?.contains(event.target as Node)) {
         setOpen(false);
       }
     }
-    document.addEventListener("mousedown", onPointerDown);
-    return () => document.removeEventListener("mousedown", onPointerDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
   }, []);
 
   const matches = useMemo(() => {
@@ -57,7 +57,10 @@ export function LearnerTopbarTools() {
   }, [courses, query]);
 
   return (
-    <div className="flex min-w-0 items-center gap-2" ref={rootRef}>
+    <div className="flex min-w-0 items-center gap-2" ref={rootRef}
+      onBlur={event => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}>
       <div className="relative hidden min-w-0 sm:block">
         <label className="sr-only" htmlFor="learner-global-course-search">
           Search Courses
@@ -65,13 +68,15 @@ export function LearnerTopbarTools() {
         <Input
           id="learner-global-course-search"
           value={query}
+          role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
+          aria-expanded={open} aria-controls={open ? "learner-topbar-course-results" : undefined}
           onFocus={() => setOpen(true)}
           onChange={(event) => {
             setQuery(event.target.value);
             setOpen(true);
           }}
           onKeyDown={(event) => {
-            if (event.key === "Escape") { setOpen(false); return; }
+            if (event.key === "Escape") { event.preventDefault(); setOpen(false); return; }
             if (open && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
               const links = Array.from(event.currentTarget.parentElement?.querySelectorAll<HTMLElement>('[data-slot="popover-listbox"] a[href]') ?? []);
               if (links.length) {
@@ -85,7 +90,7 @@ export function LearnerTopbarTools() {
           autoComplete="off"
         />
         {open ? (
-          <PopoverListbox label="Course search results" onDismiss={() => setOpen(false)}
+          <PopoverListbox id="learner-topbar-course-results" label="Course search results" onDismiss={() => setOpen(false)}
             className="absolute left-0 top-[calc(100%+0.5rem)] z-50 max-h-96 w-[min(26rem,80vw)] overflow-y-auto rounded-xl border border-border bg-surface p-2 shadow-xl"
           >
             {loadFailed?<div className="p-2"><InlineNotice tone="error" message="Could not load courses. Please try again." onDismiss={()=>setLoadFailed(false)}/></div>:null}
@@ -98,7 +103,7 @@ export function LearnerTopbarTools() {
                     setOpen(false);
                     setQuery("");
                   }}
-                  className="block rounded-lg px-3 py-2.5 hover:bg-primary-subtle"
+                  className="block min-h-11 rounded-lg px-3 py-2.5 hover:bg-[#d1f1f1] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)]"
                 >
                   <p className="m-0 text-sm font-semibold text-foreground">
                     {course.courseName}
