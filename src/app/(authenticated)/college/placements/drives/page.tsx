@@ -20,7 +20,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   if (!context.membership) redirect("/dashboard");
   const query = driveQueryFromSearch(await searchParams);
   if (!query) return <div className="space-y-4">
-    <PageHeader eyebrow="College Admin · Placements" title="Drives" />
+    <PageHeader title="Drives" />
     <ErrorState title="Invalid drive filters" description="Search, status, season, company or page is invalid."
       action={<Link href="/college/placements/drives">Clear filters</Link>} />
   </div>;
@@ -51,7 +51,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   ];
 
   return <div className="space-y-6">
-    <PageHeader eyebrow="College Admin · Placements" title="Drives"
+    <PageHeader title="Drives"
       description="College-owned placement drives. This list is independent of cross-college recruiter access."
       actions={<Link href="/college/placements" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Operations workspace</Link>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3 lg:grid-cols-6">

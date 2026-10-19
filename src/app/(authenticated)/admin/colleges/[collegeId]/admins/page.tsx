@@ -15,7 +15,7 @@ export default async function CollegeAdministratorsPage({params}:{
  const data=await listCollegeAdminSessionTargets(context,collegeId);
  return <div className="min-w-0 space-y-5">
   <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-3 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">← College setup</Link>
-  <PageHeader eyebrow="Super Admin · Tenant" title={data.college.name+" · Admins"}
+  <PageHeader title={data.college.name+" · Admins"}
    description="Manage college administrators and placement-cell officers in this college. New accounts use the canonical college membership workflow."/>
   <div className="flex flex-wrap gap-3">
    <PersonOnboardDialog collegeId={collegeId} forcedRole="COLLEGE_ADMIN"/>

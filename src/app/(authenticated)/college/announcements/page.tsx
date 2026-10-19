@@ -32,7 +32,6 @@ export default async function AnnouncementsPage({
     return (
       <div className="min-w-0 overflow-x-clip space-y-6">
         <PageHeader
-          eyebrow="College Admin"
           title="Announcements"
           description="Scheduling and audience management are staged, but DB10 announcement migrations are not verified yet."
         />
@@ -123,7 +122,6 @@ export default async function AnnouncementsPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="College Admin"
         title="Announcements"
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
         actions={
