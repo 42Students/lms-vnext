@@ -24,7 +24,6 @@ export default async function CollegeBrandingPage() {
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
-        eyebrow="College Admin"
         title="Branding"
         description="Logo, colours and support details shown on your college's sign-in page."
       />
