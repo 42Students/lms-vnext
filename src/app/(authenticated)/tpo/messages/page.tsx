@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import {DataTable} from "@/components/ui/data-table";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
@@ -80,6 +81,7 @@ export default async function TpoMessagesPage({
     return (
       <div className="space-y-6">
         <PageHeader
+          eyebrow="TPO · Communication"
           title="Messages"
           description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         />
@@ -126,7 +128,7 @@ export default async function TpoMessagesPage({
   // TPO-inbox-team-11: do not disguise notification deliveries as messages
   // when the recruiter-thread tables are not available.
   if(!isRecruiterInbox)return <div className="space-y-6">
-   <PageHeader title="Messages"
+   <PageHeader eyebrow="TPO · Communication" title="Messages"
     description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
    <ErrorState title="Recruiter conversations are temporarily unavailable"
     description="Your placement notifications remain available separately. No recruiter messages were loaded."
@@ -159,6 +161,7 @@ export default async function TpoMessagesPage({
     <div className="space-y-6">
       <TpoLiveRefresh intervalMs={4000}/>
       <PageHeader
+        eyebrow="TPO · Communication"
         title="Messages"
         description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         actions={
@@ -244,17 +247,7 @@ export default async function TpoMessagesPage({
               : "Not applicable",
           },
         ].map((metric) => (
-          <article
-            key={metric.label}
-            className="border-b border-border px-1 py-4"
-          >
-            <p className="text-xs font-semibold text-muted-foreground">
-              {metric.label}
-            </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {metric.value}
-            </p>
-          </article>
+          <StatTile key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </section>
 
