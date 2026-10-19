@@ -18,13 +18,13 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
       Session, lesson or course
       <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-        className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        className="min-h-11 min-w-0"/>
     </label>
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
       Course code (exact)
       <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
         placeholder="e.g. CS101"
-        className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        className="min-h-11 min-w-0"/>
     </label>
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
       Publication
@@ -59,14 +59,14 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">From (IST)
       <DateInput mode="date" name="from" defaultValue={data.from??""}
-        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        className="min-h-11"/>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Through (IST)
       <DateInput mode="date" name="to" defaultValue={data.to??""}
-        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        className="min-h-11"/>
     </label>
     <Button type="submit" className="min-h-11">Filter</Button>
-    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
+    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Clear</Link>
   </form>
   <CollegeContentCsvExport filename={"live-classes-page-"+data.query.page+".csv"}
    rows={data.items.map(item=>({title:item.title,course:item.courseName+" ("+item.courseCode+")",
@@ -96,9 +96,9 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
     <div className="flex gap-2">
       {data.query.page>1?<Link href={collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page:data.query.page-1})}
-        className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link>:null}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Previous</Link>:null}
       {data.query.page<data.totalPages?<Link href={collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page:data.query.page+1})}
-        className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Next</Link>:null}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Next</Link>:null}
     </div>
   </nav>
  </div>;
