@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useState, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
+import { Button } from "@/components/ui/button";
 
 type ToastTone = "success" | "error" | "info";
 export type ToastItem = { id: string; title: string; description?: string; tone: ToastTone };
@@ -75,9 +76,9 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
           <p className="m-0 break-words text-[13px] leading-5 font-semibold text-[var(--lms-heading)]">{toast.title}</p>
           {toast.description ? <p className="mt-1 break-words text-[13px] leading-5 text-[var(--lms-body-text)]">{toast.description}</p> : null}
         </div>
-        <button type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
+        <Button variant="ghost" type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
           onClick={() => onDismiss(toast.id)}
-          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[8px] text-lg font-semibold text-[var(--lms-muted-text)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">×</button>
+          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)]"><span aria-hidden="true">×</span></Button>
       </div>
     </section>)}
   </div>;
