@@ -407,7 +407,7 @@ export function FacultyCourseWorkspace({
         deliveryId={course.deliveryId}
       />
 
-      <section aria-label="In this Course" className="flex flex-wrap items-center gap-3 border-b border-border pb-4">
+      <section aria-label="In this Course" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
         <Badge  tone="neutral">
           {course.credits===null?"Credits not configured":course.credits+" Credits"}
         </Badge>
