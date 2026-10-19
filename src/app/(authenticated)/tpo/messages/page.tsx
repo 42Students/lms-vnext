@@ -404,8 +404,8 @@ export default async function TpoMessagesPage({
                cell:item=><div className="min-w-0">
                 <strong className="break-words text-foreground">{item.participantName}</strong>
                 {item.companyName?<p className="mt-1 text-xs text-muted-foreground">{item.companyName}</p>:null}
-                {item.waitingForYou?<span className="mr-2 rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-1 text-xs">Waiting for you</span>:null}
-                {item.accessEnded?<span className="rounded border border-border px-2 py-1 text-xs">Access ended</span>:null}
+                {item.waitingForYou?<StatusBadge tone="warning" className="mr-2">Waiting for you</StatusBadge>:null}
+                {item.accessEnded?<StatusBadge tone="neutral">Access ended</StatusBadge>:null}
                </div>},
               {key:"subject",header:"Subject",mobileLabel:"Subject",mobilePriority:"action",
                cell:item=><div className="min-w-0">
