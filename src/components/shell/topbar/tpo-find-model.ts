@@ -1,0 +1,15 @@
+/** Only trusted, same-portal paths from the authenticated TPO suggestions
+ * service may become navigable command items. No external or protocol URL.
+ */
+export type TpoFindResult = { group: string; label: string; href: string };
+
+export function safeTpoFindResult(value: unknown): value is TpoFindResult {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const row = value as Record<string, unknown>;
+  if (typeof row.group !== "string" || !row.group.trim() || row.group.length > 80 ||
+      typeof row.label !== "string" || !row.label.trim() || row.label.length > 240 ||
+      typeof row.href !== "string" || row.href.length > 2048) return false;
+  // A protocol-relative URL or a backslash can be normalized by a browser
+  // into an external navigation; escaped and control-character paths fail closed.
+  return /^\/tpo\/(?!\/)[^\\\u0000-\u001f\u007f]*$/.test(row.href);
+}
