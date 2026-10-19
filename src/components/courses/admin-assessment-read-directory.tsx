@@ -51,7 +51,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
          <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
         </select>
       </label>:null}
-      <button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 self-end rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">Filter</button>
     </form>
     <p className="text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
     {data.items.length ? <div className="divide-y divide-border border-y border-border">
@@ -92,7 +92,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
               deadlineReached={item.resultsReleaseReady}/>:null}
         </div>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}#lesson-authoring`}
-          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
           Open offering builder / submissions →
         </Link>
       </article>)}
@@ -101,12 +101,12 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
       <span className="text-muted-foreground">Page {data.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.page > 1 ? <Link href={adminAssessmentHref(data.kind, { ...data.query, page: data.page - 1 })}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : null}
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link> : null}
         {data.page < data.totalPages ? <Link href={adminAssessmentHref(data.kind, { ...data.query, page: data.page + 1 })}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Next</Link> : null}
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
-    <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
   </div>;
 }
