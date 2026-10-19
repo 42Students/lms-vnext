@@ -69,7 +69,8 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain("@media (min-width:768px)");
   const nav=source("src/components/shell/sidebar-nav.tsx");
   expect(nav).toContain("scopedShellNavigation(items,pathname)");
-  expect(nav).toContain('aria-label={item.label}');
+  expect(nav).toContain('aria-label={badge&&count!==null?');
+  expect(nav).toContain('${item.label}, ${count} pending');
   expect(nav).toContain("ShellNavGlyph");
   expect(nav).toContain("lms-sidebar-badge");
   expect(nav).toContain("legacySidebarItemActive");
