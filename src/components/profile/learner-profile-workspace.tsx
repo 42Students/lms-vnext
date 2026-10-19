@@ -537,7 +537,7 @@ export function LearnerProfileWorkspace(props: {
         {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
           {mobileQuickLinks.map(item=><Link key={item.section}
             href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-11 sm:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
+            className="flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
             {item.label}
           </Link>)}
         </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
@@ -583,7 +583,7 @@ export function LearnerProfileWorkspace(props: {
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
             Profile completion checklist
           </h2>
-          <Link href="/learn/profile/completeness" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+          <Link href="/learn/profile/completeness" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             Review full checklist
           </Link>
           <div className="flex items-center gap-3" aria-label={percent+" percent complete"}>
@@ -626,7 +626,7 @@ export function LearnerProfileWorkspace(props: {
             <li key={item.section}>
               <Link
                 href={"/learn/profile?section=" + encodeURIComponent(item.section)}
-                className="flex min-h-11 sm:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                className="flex min-h-11 min-[768px]:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 onClick={() => {
                   if (props.initialSection === item.section) {
                     window.document.getElementById(item.section)?.scrollIntoView({
@@ -934,7 +934,7 @@ export function LearnerProfileWorkspace(props: {
               placeholder="e.g. Software Engineer, Data Analyst"
               onChange={event=>setJobPrefsDraft(current=>({...current,
                 rolePreferences:event.target.value.split(",").map(x=>x.trim()).filter(Boolean)}))}
-              className="mt-1 min-h-11 sm:min-h-9 w-full"/>
+              className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
           </label>
           <label className="text-sm font-semibold text-body">Specific Role Preference
             <Input className="mt-1" value={jobPrefsDraft.specificRolePreference} maxLength={200}
@@ -984,7 +984,7 @@ export function LearnerProfileWorkspace(props: {
                 </label>;
               if(collection==="education"&&field.key==="qualifyingExam")
                 return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
-                  <Input className="mt-1.5 min-h-11 sm:min-h-9 w-full"
+                  <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full"
                     list="learner-qualifying-exams" value={value} maxLength={120}
                     onChange={event=>setItemDraft({...itemDraft,[field.key]:event.target.value})}/>
                   <datalist id="learner-qualifying-exams">
