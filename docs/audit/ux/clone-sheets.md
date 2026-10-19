@@ -295,4 +295,122 @@ Completed source-level item: src/components/tpo/tpo-spreadsheet-grid.tsx (the ph
 
 Fetched-file grep-equivalent: src/components/tpo/tpo-spreadsheet-grid.tsx has exactly 1 opening <FilterChip and 1 closing </FilterChip>, 0 native <button> tags, and 2 exact width:48,minWidth:48,maxWidth:48 occurrences. Its original sort, row actions and selection callbacks were not changed. This is a source inspection, NOT an executed shell grep or browser/CI run. E8 remains [ ]: legacy-grid/TpoGrid.jsx.txt was not retrievable via GitHub connector (404); package.json still lacks declared ag-grid-community and ag-grid-react despite imported AG Grid 36 source. Under the explicit manifest prohibition, do not modify package.json or falsely claim installed dependency or build.
 
+All ten files fetched from GitHub and scanned for raw control opening elements matching /<(button|input|select|textarea)(?:\s|>)/g, inline SVG matching /<svg(?:\s|>)/g and six-digit literal colors matching /#[a-f0-9]{6}\b/gi. Equivalent local shell: grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' each scoped file. Nothing repo-wide is claimed.
+
+| File | Raw controls | Inline svg | Literal hex | JSX opening/closing; balanced braces | Responsive source |
+|---|---:|---:|---:|---|---|
+| recruiter-lead-csv-import.tsx | 0 | 0 | 0 | Button 7/7, Link 2/2, braces 132/132 | sm 0, md 9 |
+| tpo-audit-grid.tsx | 0 | 0 | 0 | Button 2/2, Link 2/2, braces 53/53 | sm 0, md 3 |
+| tpo-company-memory-workspace.tsx | 0 | 0 | 0 | Button 1/1, Link 10/10, braces 122/122 | sm 0, md 3 |
+| tpo-students-spreadsheet.tsx | 0 | 0 | 0 | Button 3/3, Link 2/2, braces 212/212 | sm 0, md 1 |
+| tpo-applications-spreadsheet.tsx | 0 | 0 | 0 | Link 1/1, braces 65/65 | sm 0, md 1 |
+| tpo-audit-saved-views.tsx | 0 | 0 | 0 | Button 5/5, braces 76/76 | sm 0, md 5 |
+| tpo-company-create-form.tsx | 0 | 0 | 0 | Button 3/3, braces 56/56 | sm 0, md 4 |
+| tpo-debounced-student-search.tsx | 0 | 0 | 0 | braces 13/13, shared Input only | sm 0, md 1 |
+| tpo-company-team-conversation.tsx | 0 | 0 | 0 | Button 10/10, Link 4/4, braces 180/180 | sm 0, md 12 |
+| recruiter-lead-detail-workspace.tsx | 0 | 0 | 0 | Button 18/18, Link 7/7, braces 304/304 | sm 0, md 34 |
+
+Responsive source proof: no sm: (<768px mismatches) in any of these ten edited components. md: uses Tailwind's 768px boundary from old-lms-shell.css:68-85. Source cannot substitute for actual phone/tablet screenshots, browser click/focus checks, runtime/CI or integration tests; leave global E8 unchecked.
+
+Exact next scope: TPO remaining Team/Companies links and buttons and detailed icon review, starting with src/components/tpo/tpo-team-search.tsx and src/components/tpo/tpo-team-handover.tsx (coordinate with chat-11 if scope already claimed).
+
+
+## chat-12 continued — inline/bulk recruiter and student action controls (2026-10-19)
+
+Queue source-file status (the global E8 checkbox is still open; no app/browser/CI executed):
+
+- [x] src/components/tpo/recruiter-bulk-stage-controls.tsx — retained 100-lead scoped selection, optimistic stage check, review/signature, undo and audit; converted five raw buttons, four native input/select controls to shared components, flattened ordinary stage panel and warning review.
+- [x] src/components/tpo/recruiter-bulk-owner-controls.tsx — retained eligible owner lookup, selection/revision guards, undo/copy/retry; migrated seven raw buttons, select and checkbox to shared, flattened panel and warnings.
+- [x] src/components/tpo/recruiter-bulk-invite-controls.tsx — retained preview/confirm/retry, one-time invite URLs and email-delivery disclaimer; converted raw Cancel action to shared Button, flattened panel and improved focus.
+- [x] src/components/tpo/recruiter-inline-stage.tsx — retained original API, stage reason guard and mutation; shared reason input/select/buttons source-styled to legacy control radius and 44px phone/36px tablet.
+- [x] src/components/tpo/recruiter-inline-owner.tsx — retained scoped owner loader/mutation; matching legacy select and 44px phone/36px tablet actions.
+- [x] src/components/tpo/tpo-student-clipboard-actions.tsx — preserved CSV-safe TSV paste/copy and missing-roll notice; clipboard controls now sit on a plain border-separated section rather than a nested white card.
+- [x] src/components/tpo/tpo-student-note-editor.tsx — retained guarded permanent-note API and Ctrl+Enter; nested card removed, multiline input has min-height 128px and width 100%.
+- [x] src/components/tpo/tpo-student-nudge-panel.tsx — preserved message selection cap (25), template, dialog, confirmation, optimistic lock and audit; flat separator and 44px selection target.
+
+### Value table (legacy source vs current source, each file)
+
+| File | Legacy measured/source value | Current vNext source | Source comparison |
+|---|---|---|---|
+| recruiter-bulk-stage-controls.tsx | old-lms-pages.md:5 ordinary controls on one canvas; legacy-styles/components___form.scss:117-143 radius 10px, teal focus; shell.css:68-85 44px phone, md 768px | :26 fieldClass min-h-11 md:min-h-9, control radius token, :158 border-y, :177 44px selection row, :242 warning left-strip, shared Input/Select/Checkbox/Button | Matched source |
+| recruiter-bulk-owner-controls.tsx | same SCSS field and white canvas rules, old-lms-pages.md:9 compact bulk/list | :25 fieldClass, :163 border-y, :174/180 shared buttons, :192 Select, :214 Checkbox labels, :229 slim review warning | Matched source |
+| recruiter-bulk-invite-controls.tsx | old-lms-pages.md:5,7 no ordinary nested cards and pale-yellow notification | :56 border-y, :72 warning strip, :74 shared ghost link-style Cancel, :83 read-only results field, immutable invite guards untouched | Matched source |
+| recruiter-inline-stage.tsx | old-lms-shell-spec.md:24-25: radius 9px buttons, 36px desktop; shell.css:68-85 phone min 44px | :33-45 Select/Input (radius token), Button primary/ghost, min-h-11 md:min-h-9, source stage mutation untouched | Matched source |
+| recruiter-inline-owner.tsx | same 9px/36px desktop, 44px touch and shared form | :48-57 shared Select and primary/ghost Button, min-h-11 md:min-h-9; source-scoped owner request unchanged | Matched source |
+| tpo-student-clipboard-actions.tsx | old-lms-pages.md:5,9 toolbar and advanced actions inside single canvas | :26-46 flat border-y section with shared Textarea/Buttons and raw roll-number matching unchanged | Matched source |
+| tpo-student-note-editor.tsx | old-lms-pages.md:5 ordinary content no embedded card, form.scss:117-143 typed field | :31-45 flat border-t, :34 text area min-h-32, original locked save paths and keyboard handler | Matched source |
+| tpo-student-nudge-panel.tsx | old-lms-pages.md:5,7 slim sections and confirmation, shell.css:31-32 44px touch | :50-94 flat border-y, :54/60 min-h-11 checkbox labels, original accessible Dialog and template action | Matched source |
+
+### Scoped grep and JSX integrity
+
+Full current branch files were individually fetched and inspected with source equivalents of:
+grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE
+and grep -nE 'sm:|md:' FILE.
+All eight returned raw native form tags **0**, inline svg **0** and literal six-digit colors **0**. JSX and braces verified as follows:
+
+| File | Shared Button open/close | Shared Select open/close | Curly braces | Responsive source |
+|---|---|---|---|---|
+| recruiter-bulk-stage-controls.tsx | 6/6 | 1/1 | 109/109 | sm 0; md 2 |
+| recruiter-bulk-owner-controls.tsx | 8/8 | 1/1 | 106/106 | sm 0; md 1 |
+| recruiter-bulk-invite-controls.tsx | 6/6 | 0/0 | 68/68 | sm 0; flex-wrapped content |
+| recruiter-inline-stage.tsx | 3/3 | 1/1 | 38/38 | sm 0; md 4 |
+| recruiter-inline-owner.tsx | 3/3 | 1/1 | 41/41 | sm 0; md 3 |
+| tpo-student-clipboard-actions.tsx | 3/3 | 0/0 | 28/28 | sm 0; wrapping flex |
+| tpo-student-note-editor.tsx | 1/1 | 0/0 | 32/32 | sm 0; 100%-width textarea |
+| tpo-student-nudge-panel.tsx | 3/3 | 1/1 | 69/69 | sm 0; one-column mobile |
+
+Source-only breakpoint basis: old-lms-shell.css:68-85 uses max-width 767px, whereas Tailwind md is min-width 768px; every edited explicit breakpoint uses md not sm. Exact rendered viewport, pointer, keyboard focus and end-to-end mutation verification remain unperformed; no tests/CI/app run. Shared Quartz 44px header versus legacy 40px and DataTable 640px fallback vs 768px remain unowned mismatches. Never globally tick A5/A6/A7/E8 for these scoped checks.
+
+**Next queued area:** remaining TPO company/learner controls, legacy link/icon families and batch/team support components; begin with src/components/tpo/tpo-student-quick-panel.tsx.
+
+
+## 2026-10-19 chat-14 E8 fallback pin-control static parity
+
+Completed source-level item: src/components/tpo/tpo-spreadsheet-grid.tsx (the phone fallback of src/components/tpo/grid/tpo-grid.tsx). The per-column Pin/Unpin pressed Button was migrated to FilterChip while retaining updateLayout(col.key,{pinned:...}), aria-pressed, the localized column name in aria-label, and existing selected state.
+
+| Property | Legacy value / reference | Current source value and proof | Result |
+|---|---|---|---|
+| Selection column width | E8 owner requirement ui-clone-checklist.md:57 — 48px pinned selection | tpo-spreadsheet-grid.tsx:186,209 contains sticky left-0 with inline width/minWidth/maxWidth each 48px (2 occurrences) | Exact width preserved in phone fallback |
+| Interactive pin chip on phone | components___antddesign.scss:1092-1100 — min-height 44px; padding 0 12px | tpo-spreadsheet-grid.tsx:200-202 FilterChip; ui/filter-chip.tsx:27-36 44px and 12px | Static touch/padding match |
+| Interactive chip on tablet | No authoritative legacy pin-control measurement supplied; E8 needs live legacy viewport source | ui/filter-chip.tsx:27-36 md:min-h-8 (32px), md:px-[15px] | Unverified legacy parity |
+| Selection/sort and copy | E8 owner requirements include filtered select-all, Shift/Ctrl selection, numeric/date sort only and TSV copying | tpo-spreadsheet-grid.tsx:183-210 retains filtered checkbox, sort indicator + aria-sort, CSV/TSV handler, original helpers; ag-grid source keeps numeric/date comparator | Source contracts preserved, behavior not executed |
+| AG Grid integration | Quartz, 48px pinned select, column layout persistence, mobile fallback | tpo-grid.tsx desktop AG Grid; tpo-students-spreadsheet and tpo-applications-spreadsheet both use next/dynamic with ssr:false and responsive fallback | Source wired, compile still blocked |
+
+Fetched-file grep-equivalent: src/components/tpo/tpo-spreadsheet-grid.tsx has exactly 1 opening <FilterChip and 1 closing </FilterChip>, 0 native <button> tags, and 2 exact width:48,minWidth:48,maxWidth:48 occurrences. Its original sort, row actions and selection callbacks were not changed. This is a source inspection, NOT an executed shell grep or browser/CI run. E8 remains [ ]: legacy-grid/TpoGrid.jsx.txt was not retrievable via GitHub connector (404); package.json still lacks declared ag-grid-community and ag-grid-react despite imported AG Grid 36 source. Under the explicit manifest prohibition, do not modify package.json or falsely claim installed dependency or build.
+
 Next exact E8 file: src/components/tpo/grid/tpo-grid.tsx; require legacy source and dependency verification before ticking E8.
+
+
+## 2026-10-19 chat-14 — Quartz grid sorting, export, chooser and status-chip evidence
+
+This batch reviewed the native `src/components/tpo/grid/tpo-grid.tsx` and its `src/components/tpo/grid/grid-export.ts` helper without touching `package.json`. Work was committed only to `chatgpt/chat-14-b`; when `main` advanced, upstream audit additions were retained and the prior chat-14 E8 ledger was replayed after them.
+
+| Property / state | Legacy value (source) | Current vNext (source:line) | Source verdict |
+| --- | --- | --- | --- |
+| Accent / active emphasis | Owner primary control #0a7c88 (`docs/design/ui-clone-checklist.md:47`, `globals.css:24`) | `tpo-grid.tsx:32` `accentColor:var(--lms-button-primary)` = #0a7c88 | Exact token |
+| Canvas and header | White, hairline #e5e9f0 (`old-lms-pages.md:5,11`) | `tpo-grid.tsx:33-40` white background/header/hover, border `--lms-canvas-border`; globals.css maps #e5e9f0 | Exact mapped tokens; computed CSS untested |
+| Text and header label | `globals.css:35,37` neutral-700 #54505d, neutral-400 #a9a7ae | `tpo-grid.tsx:34,37` foreground/header text use corresponding CSS variables | Exact token |
+| Row / header heights | Existing Quartz local grid 44px; old TPO table described as compact, no verified exact height in legacy-grid source | `tpo-grid.tsx:41-42,238` both 44px | Source retained; legacy numerical equality **unverified** |
+| Pinned select | E8 owner requirement `ui-clone-checklist.md:57` pinned 48px | `tpo-grid.tsx:193` `width:minWidth:maxWidth:48`, locked pinned left; fallback `tpo-spreadsheet-grid.tsx:186,209` 48px | Exact owner contract |
+| Numeric/date sorting only | `ui-clone-checklist.md:57` numbers/dates only | `tpo-grid.tsx:206-210` `sortable:Boolean(col.sortKind)`, `compareNumberDate`; string columns lack sortKind | Source match |
+| Shift/Ctrl selection | `ui-clone-checklist.md:57` shift/control range and multi-select | `tpo-grid.tsx:143-172` delegates `gridSelectionCheckbox`/`gridSelectionClick` with modifiers; copy of authorized visible IDs only | Source behavior preserved; interaction untested |
+| Clipboard and formula safety | TSV copy, never widen authorized export | `tpo-grid.tsx:174-188` now follows `forEachNodeAfterFilterAndSort` order, then joins only authorized Row map; `grid-export.ts:4-6` strips ASCII C0/DEL and neutralizes spreadsheet formula prefixes | Stronger output safety, source only |
+| Layout memory | Per-storageKey, permitted keys, 100-500px widths (`ui-clone-checklist.md:57`) | `tpo-grid.tsx:120-140,240-253` uses `GRID_LAYOUT_SUFFIX` and allowed-column filters; `view-memory.ts` rounds/clamps 100-500 | Static contract matched |
+| Responsive phone/tablet | Legacy mobile breakpoint max-width 767px (`components___antddesign.scss:243`) | `tpo-grid.tsx:228,262` AG Grid `hidden md:block`, fallback `md:hidden`: 768px handoff | Exact breakpoint; rendered parity unverified |
+| Chooser controls | Legacy phone interactive action floor 44px (`components___antddesign.scss:1081-1100`) | `tpo-grid-column-chooser.tsx:39-53` four actionable order/show/reset buttons `min-h-11 md:min-h-9`; labels already `min-h-11` | Phone touch match; desktop height uses 36px |
+
+**Whole-file source grep equivalents after GitHub re-fetch:** `tpo-grid.tsx` has 0 literal six-digit hex values and 0 raw `<button>` nodes; the Quartz theme retains 1 `AgGridReact<Row>` and pinned selection definition. `grid-export.ts` contains one C0/DEL sanitizer, one formula-prefix safeguard, and the same CRLF TSV serializer. `tpo-grid-column-chooser.tsx` retains **4 opening/4 closing** shared Button tags, **1** self-closing Checkbox, and **0** raw buttons. The `tpo-students-spreadsheet.tsx` and `tpo-applications-spreadsheet.tsx` callers both retain `next/dynamic` `ssr:false` and their loading placeholders. These counts were derived from full-file GitHub source reads, **not shell grep executed in a checkout**.
+
+Reproduce grep (not executed):
+```sh
+grep -nE 'accentColor|backgroundColor|headerHeight|rowHeight|width:48|minWidth:48|maxWidth:48|md:hidden|md:block|forEachNodeAfterFilterAndSort|onColumn' src/components/tpo/grid/tpo-grid.tsx
+grep -nE 'replaceAll|safeGridClipboardCell|gridClipboardTsv' src/components/tpo/grid/grid-export.ts
+grep -nE '<Button|</Button>|min-h-11|md:min-h-9' src/components/tpo/tpo-grid-column-chooser.tsx
+grep -nE 'ssr:false|TpoGrid' src/components/tpo/tpo-students-spreadsheet.tsx src/components/tpo/tpo-applications-spreadsheet.tsx
+```
+
+**State/responsive proof:** phone uses the established table/card fallback and original selection access, tablet/wide use Quartz within the existing 520px-height bounded sheet. Buttons remain disabled at movement boundaries, filter-scoped selection and on-screen sorting are preserved, clipboard shows status/error text, and malformed layout storage fails safely. No source claims browser parity or measured focus/hover/error/loading screenshots.
+
+**E8 remains [ ]**: `docs/design/legacy-grid/TpoGrid.jsx.txt` was not retrievable through the connected repository (404), and `package.json` still does not declare `ag-grid-community`/`ag-grid-react`. User prohibits manifest changes; no app, test or CI was executed. E8 full pixel and runtime parity cannot be certified.
+
+Next E8 file after scoped source audit: `src/components/tpo/grid/grid-selection.ts` for visible versus authorized selection and hidden-filter behavior.
