@@ -197,11 +197,11 @@ export function FacultyCourseRoster({
             columns={[
               {key:"student",header:"Student",mobilePriority:"primary" as const,
                 cell:(learner)=><div className="flex min-w-0 items-center gap-3">
-                  <button type="button" onClick={()=>setPreview(learner)}
+                  <Button type="button" variant="ghost" onClick={()=>setPreview(learner)}
                     aria-label={"Preview avatar for "+nameOf(learner)}
                     className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
                     {initials(nameOf(learner))}
-                  </button>
+                  </Button>
                   <div className="min-w-0">
                     <p className="m-0 break-words font-semibold text-foreground">{nameOf(learner)}</p>
                     <StatusBadge tone={learner.rollNumber?"info":"warning"}>
