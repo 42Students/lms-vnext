@@ -88,7 +88,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
  it("uses unique stroke glyphs rather than the shared Layers fallback for legacy AntD icon families",()=>{
   const glyphs=source("src/components/shell/shell-nav-icons.tsx");
   for(const name of ["solution","usergroup-add","bank","appstore","partition","apartment"]){
-   expect(glyphs).toContain(name+":");
+   expect(glyphs).toContain(name==="usergroup-add" ? '"usergroup-add":' : name+":");
   }
  });
  it("shows one active workspace for multi-role memberships without mixing all portal rows",()=>{
