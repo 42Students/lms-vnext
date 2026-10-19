@@ -67,14 +67,14 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
       <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{TEMPLATE}</p>
       <a download="student-import-template.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent(TEMPLATE+"\n")}
-        className="mt-2 inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download CSV template
       </a>
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
         <label className="grid gap-1 text-sm font-semibold">Program
           <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
-            className="text-base sm:text-sm">
+            className="min-h-11 text-base md:min-h-9 sm:text-sm">
             <option value="">Choose program</option>
             {choices.programs.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
           </Select>
@@ -82,7 +82,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Batch
           <Select required value={cohortId}
             onChange={event=>{setCohortId(event.target.value);setSectionId("");setReport(null);}}
-            className="text-base sm:text-sm">
+            className="min-h-11 text-base md:min-h-9 sm:text-sm">
             <option value="">Choose batch</option>
             {choices.batches.filter(option=>option.programId===programId).map(option=>
               <option key={option.id} value={option.id}>{option.name}</option>)}
@@ -91,21 +91,21 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Class/Section
           <Select value={sectionId}
             onChange={event=>{setSectionId(event.target.value);setReport(null);}}
-            className="text-base sm:text-sm">
+            className="min-h-11 text-base md:min-h-9 sm:text-sm">
             <option value="">No class placement</option>
             {choices.classes.filter(option=>option.cohortId===cohortId).map(option=>
               <option key={option.id} value={option.id}>{option.name} · capacity {option.capacity??"unlimited"}</option>)}
           </Select>
         </label>
       </div>
-      <FileUpload className="mt-4" label="Choose local CSV file" maxBytes={1_000_000} accept=".csv,text/csv"
+      <FileUpload className="mt-4 print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Choose local CSV file" maxBytes={1_000_000} accept=".csv,text/csv"
           disabled={pending} onFiles={async files => {
             const file = files?.[0];
             if (!file) return;
             if (file.size > 1000000) { setError("File exceeds 1 MB"); return; }
             setCsv(await file.text()); setReport(null); setConfirm(false); setError(null);
           }} />
-      <label className="mt-4 grid gap-2 text-sm font-semibold text-body">
+      <label className="mt-4 grid gap-2 text-sm font-semibold text-body print:hidden">
         CSV contents
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setReport(null); setConfirm(false);
@@ -116,7 +116,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         try { await submit("PREVIEW"); } catch (reason) {
           setError(reason instanceof Error ? reason.message : "Validation failed");
         }
-      })} className="mt-4">
+      })} className="mt-4 min-h-11 md:min-h-9 print:hidden">
         {pending ? "Validating..." : "Preview validation"}
       </Button>
       {error ? <p role="alert" className="mt-3 text-sm text-error">{error}</p> : null}
@@ -134,7 +134,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         {report.structuralErrors.join(", ")}
       </p> : null}
       {csvDownload ? <a href={csvDownload} download="student-import-result.csv"
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Export neutralized result CSV
       </a> : null}
       <DataTable<StudentCsvResult> caption="Student CSV validation and import results"
@@ -147,7 +147,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         empty={<p className="text-sm text-body">No row-level results are available.</p>}/>
 
       {report.preview && report.valid > 0 && report.invalid === 0 && report.structuralErrors.length === 0 ? <div className="space-y-3">
-        <label className="flex items-start gap-2 text-sm text-body">
+        <label className="flex min-h-11 items-start gap-2 text-sm text-body print:hidden">
           <Checkbox checked={confirm} onChange={event => setConfirm(event.target.checked)} className="mt-1" />
           I understand that importing creates real identities and memberships, successful rows are not rolled back,
           and any partial onboarding requires manual enrollment recovery.
@@ -158,7 +158,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
               setError(reason instanceof Error ? reason.message : "Import failed");
             }
           })}
-          className="min-h-[var(--lms-control-height)]">
+          className="min-h-11 md:min-h-9 print:hidden">
           {pending ? "Importing..." : "Confirm import of validated rows"}
         </Button>
       </div> : null}
