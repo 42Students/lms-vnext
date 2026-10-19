@@ -96,7 +96,7 @@ export default async function CollegeLectureHallsPage({
       />
 
       <Link prefetch={false} download href={lectureHallsCsvHref(query)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
         Export CSV
       </Link>
       <section aria-label="Lecture hall filters" className="border-t border-border pt-4">
@@ -161,7 +161,7 @@ export default async function CollegeLectureHallsPage({
               Filter
             </button>
             <Link href="/college/lecture-halls"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
+              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
               Clear
             </Link>
           </div>
@@ -198,13 +198,13 @@ export default async function CollegeLectureHallsPage({
         <div className="flex gap-2">
           {query.page > 1 ? (
             <Link href={collegeLectureHallHref({ ...query, page: query.page - 1 })}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link">
+              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link">
               Previous
             </Link>
           ) : null}
           {query.page < totalPages ? (
             <Link href={collegeLectureHallHref({ ...query, page: query.page + 1 })}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link">
+              className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link">
               Next
             </Link>
           ) : null}
