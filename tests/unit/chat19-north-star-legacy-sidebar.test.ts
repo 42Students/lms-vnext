@@ -75,6 +75,24 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(scopedShellNavigation([college,collegeMore,faculty],"/teacher/courses")).toEqual([faculty]);
   expect(scopedShellNavigation([college,collegeMore,faculty],"/college/courses")).toEqual([college,collegeMore]);
  });
+ it("keeps the College Admin menu on its sole Placement cell crossover route",()=>{
+  const items:ShellNavItem[]=[
+   college,
+   {href:"/college/courses",label:"Courses & Content",shortLabel:"C",group:"coordinate"},
+   {href:"/tpo/home",label:"Placement cell",shortLabel:"P",group:"insights"},
+  ];
+  expect(scopedShellNavigation(items,"/college").map(item=>item.href))
+   .toEqual(["/college","/college/courses","/tpo/home"]);
+  expect(scopedShellNavigation(items,"/tpo/home").map(item=>item.href))
+   .toEqual(["/college","/college/courses","/tpo/home"]);
+  const fullTpo:ShellNavItem[]=[
+   college,
+   {href:"/tpo/home",label:"Home",shortLabel:"H",group:"operate"},
+   {href:"/tpo/students",label:"Students",shortLabel:"S",group:"coordinate"},
+  ];
+  expect(scopedShellNavigation(fullTpo,"/tpo/home").map(item=>item.href))
+   .toEqual(["/tpo/home","/tpo/students"]);
+ });
  it("restores the exact unqualified legacy labels after role filtering",()=>{
   const items:ShellNavItem[]=[
    {href:"/learn/courses",label:"Courses · Learning",shortLabel:"C"},
@@ -93,6 +111,8 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(nav).toContain('!item.href.startsWith("/tpo/")');
   expect(nav).toContain('portal!=="tpo"');
   expect(nav).toContain("sectionLabel(item,sidebarPortal)");
+  expect(nav).toContain("const collegeSelected=visibleItems.some(item=>");
+  expect(nav).toContain('const sidebarPortal=collegeSelected?"other":');
   expect(nav).toContain('(item.href==="/tpo/home"&&item.label==="Placement cell")');
   expect(nav).toContain('className="lms-nav-group-rule"');
   expect(css).toContain(".lms-nav-group-rule");
