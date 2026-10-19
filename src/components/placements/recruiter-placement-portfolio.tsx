@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Card } from "@/components/ui/card";
 import type { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 
 type RecruiterJobs = Awaited<
@@ -44,7 +45,7 @@ export function RecruiterPlacementPortfolio({
   return (
     <div className="grid gap-4">
       {[...jobs].sort((a,b)=>Number((unansweredRequests[b.job.id]??0)>0)-Number((unansweredRequests[a.job.id]??0)>0)).map((item) => (
-        <article
+        <Card as="article"
           key={item.job.id}
           className={(unansweredRequests[item.job.id]??0)>0 ? "rounded-[var(--lms-radius-card)] border border-warning bg-muted p-5" : "rounded-[var(--lms-radius-card)] border border-border bg-surface p-5"}
         >
@@ -138,7 +139,7 @@ export function RecruiterPlacementPortfolio({
               Answer
             </Link>
           </nav>
-        </article>
+        </Card>
       ))}
     </div>
   );
