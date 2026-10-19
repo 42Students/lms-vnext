@@ -1,6 +1,6 @@
 import { Select } from "@/components/ui/select";
 "use client";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import {useRouter,useSearchParams} from "next/navigation";
@@ -155,8 +155,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <option value="IN_REVIEW">In review</option><option value="DONE">Completed</option>
     </Select>
    </label>
-   <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");["priority","assignee","sprint","release","lane","scope"].forEach(k=>remember(k,""));}}
-    className="min-h-11 text-sm font-semibold text-link underline">Clear all</button>
+   <Button variant="ghost" type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");["priority","assignee","sprint","release","lane","scope"].forEach(k=>remember(k,""));}}
+    className="min-h-11">Clear all</Button>
   </div>
   <div className="flex flex-wrap items-center gap-2" aria-label="Board lane filters">
     {[{value:"",label:"All lanes"},{value:"BACKLOG",label:"Backlog"},
@@ -184,8 +184,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       "No tasks match these filters. Clear all to see the board."}
   </p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {undo?<button type="button" disabled={busy} className="text-sm font-semibold text-link underline"
-    onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</button>:null}
+  {undo?<Button variant="ghost" type="button" disabled={busy} 
+    onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
   <div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0}
     className="overflow-x-auto overscroll-x-contain pb-3 [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"><div className="flex min-w-max gap-3">
    {lanes.map(lane=><section key={lane.id} aria-label={lane.label}
@@ -200,8 +200,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      return <li key={task.id} draggable={canMove}
       onDragStart={e=>e.dataTransfer.setData("text/plain",task.id)}
       className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
-      <button type="button" onClick={()=>setSelected(task.id)}
-        className="min-h-11 text-left font-semibold text-link underline">{task.title}</button>
+      <Button variant="ghost" type="button" onClick={()=>setSelected(task.id)}
+        className="min-h-11 text-left">{task.title}</Button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
       <p className="text-xs text-body">Assignee: {members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"} ·
         {" "}Estimate: {task.estimatePoints??"Unsized"} · {task.taskType??"Task"}</p>
@@ -256,9 +256,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </ul>
    </section>)}
   </div></div>
-  {matching.length>visible.length?<button type="button"
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link"
-    onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</button>:null}
+  {matching.length>visible.length?<Button variant="secondary" type="button"
+    className="min-h-11 px-4"
+    onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</Button>:null}
   {selected&&tasks.find(task=>task.id===selected)?<MentorBoardTaskDetailDialog
     projectId={projectId} task={tasks.find(task=>task.id===selected)!}
     sprintTitle={sprints.find(s=>s.id===tasks.find(task=>task.id===selected)?.sprintId)?.title??null}
