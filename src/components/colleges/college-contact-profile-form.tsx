@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export type CollegeContactProfileView = {
   collegeName: string;
@@ -12,7 +14,7 @@ export type CollegeContactProfileView = {
   version: number;
 };
 
-const inputClass = "min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground";
+const inputClass = "min-h-11 sm:min-h-9 w-full";
 
 export function CollegeContactProfileForm({ initial }: {
   initial: CollegeContactProfileView;
@@ -60,57 +62,57 @@ export function CollegeContactProfileForm({ initial }: {
   }
 
   return <form onSubmit={submit}
-    className="grid max-w-3xl gap-4 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-5 sm:grid-cols-2">
+    className="grid max-w-3xl gap-4 border-t border-border pt-5 sm:grid-cols-2">
     <label className="grid gap-2 text-sm font-semibold text-body sm:col-span-2">
       Public college display name
-      <input required maxLength={160} className={inputClass} value={name}
+      <Input required maxLength={160} className={inputClass} value={name}
         onChange={event => setName(event.target.value)} />
     </label>
     <label className="grid gap-2 text-sm font-semibold text-body">
       Support email
-      <input type="email" maxLength={320} className={inputClass}
+      <Input type="email" maxLength={320} className={inputClass}
         value={email} onChange={event => setEmail(event.target.value)}
         placeholder="help@example.edu" />
     </label>
     <label className="grid gap-2 text-sm font-semibold text-body">
       Support phone
-      <input type="tel" maxLength={32} className={inputClass}
+      <Input type="tel" maxLength={32} className={inputClass}
         value={phone} onChange={event => setPhone(event.target.value)}
         placeholder="+91 98765 43210" />
     </label>
     <label className="grid gap-2 text-sm font-semibold text-body">
       Terms of use URL (HTTPS)
-      <input type="url" maxLength={2048} className={inputClass}
+      <Input type="url" maxLength={2048} className={inputClass}
         value={terms} onChange={event => setTerms(event.target.value)}
         placeholder="https://college.example.edu/terms" />
     </label>
     <label className="grid gap-2 text-sm font-semibold text-body">
       Privacy policy URL (HTTPS)
-      <input type="url" maxLength={2048} className={inputClass}
+      <Input type="url" maxLength={2048} className={inputClass}
         value={privacy} onChange={event => setPrivacy(event.target.value)}
         placeholder="https://college.example.edu/privacy" />
     </label>
-    {error ? <p role="alert" className="text-sm text-red-700 sm:col-span-2">
+    {error ? <p role="alert" className="text-sm text-error sm:col-span-2">
       {error}. If this profile changed elsewhere, refresh before retrying.
     </p> : null}
-    {success ? <p role="status" className="text-sm text-green-700 sm:col-span-2">
+    {success ? <p role="status" className="text-sm text-success sm:col-span-2">
       {success}
     </p> : null}
     <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
-      <button disabled={pending} type="submit"
-        className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-60">
+      <Button disabled={pending} type="submit"
+        className="min-h-11 sm:min-h-9">
         {pending ? "Saving…" : "Confirm and save changes"}
-      </button>
-      <button disabled={pending} type="button" onClick={() => {
+      </Button>
+      <Button disabled={pending} type="button" onClick={() => {
         setName(initial.collegeName);
         setEmail(initial.supportEmail ?? "");
         setPhone(initial.supportPhone ?? "");
         setTerms(initial.termsUrl ?? "");
         setPrivacy(initial.privacyUrl ?? "");
         setError(null);
-      }} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-5 text-sm font-semibold">
+      }} variant="secondary" className="min-h-11 sm:min-h-9">
         Reset
-      </button>
+      </Button>
     </div>
     <p className="text-xs leading-5 text-muted-foreground sm:col-span-2">
       Only display name and public support/policy fields are editable here.
