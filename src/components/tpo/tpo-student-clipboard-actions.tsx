@@ -23,21 +23,21 @@ export function TpoStudentClipboardActions({rows,selected,onSelect}:{
   setMissing(result.missing);
   setMessage("Matched "+result.found.length+" of "+result.requested+" roll number(s) on this page.");
  }
- return <section className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ return <section className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 print:hidden">
   <div className="flex flex-wrap items-center gap-2">
-   <Button variant="secondary" type="button" onClick={()=>void copy()} >
+   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" onClick={()=>void copy()} >
     Copy {selected.length?"selected":"visible"} rows
    </Button>
-   <Button variant="secondary" type="button" aria-expanded={open} onClick={()=>setOpen(v=>!v)}
+   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" aria-expanded={open} onClick={()=>setOpen(v=>!v)}
     >
     Paste roll numbers
    </Button>
   </div>
   {open?<div className="space-y-2">
    <label className="grid gap-2 text-sm font-semibold">Roll numbers (one per line, space or comma separated)
-    <Textarea rows={3} maxLength={15000} value={text} onChange={e=>setText(e.target.value)}
+    <Textarea rows={3} maxLength={15000} value={text} className="min-h-11" onChange={e=>setText(e.target.value)}
      /></label>
-   <Button variant="primary" type="button" disabled={!text.trim()} onClick={paste}
+   <Button variant="primary" type="button" className="min-h-11 md:min-h-9" disabled={!text.trim()} onClick={paste}
     >
     Select matching students on this page
    </Button>
