@@ -1,0 +1,44 @@
+/*
+ * Original learner/course dashboard neutral progress treatment, reused for
+ * faculty course signals to keep course statistics inside the old LMS palette.
+ * Source lms2-fe@prod-2026/src/styles/components/_learn-courses.scss:
+ * 2447-2462 (flat white surfaces), 2486-2500 (track & fill colours).
+ */
+.track {
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f1f4f9 !important;
+}
+.track > div {
+  border-radius: inherit;
+  background: #6b7280 !important;
+}
+.distribution {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr) 2rem;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.distributionLabel {
+  color: #54505d;
+  font-size: 12px;
+  font-weight: 600;
+}
+.distributionCount {
+  color: #1a1d21;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+@media (max-width: 767px) {
+  .distribution {
+    grid-template-columns: minmax(70px, 6rem) minmax(0,1fr) 2rem;
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track > div { transition: none; }
+}
