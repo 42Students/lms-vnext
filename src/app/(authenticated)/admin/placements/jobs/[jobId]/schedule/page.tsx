@@ -1,4 +1,3 @@
-import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -47,7 +46,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     {key:"slots",header:"Candidate slots",mobilePriority:"secondary",cell:()=> "See candidate interviews above"},
   ];
   return <div className="min-w-0 space-y-6">
-    <SuperAdminDriveTabs jobId={jobId} active="Schedule"/>
+    
     <PageHeader title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
