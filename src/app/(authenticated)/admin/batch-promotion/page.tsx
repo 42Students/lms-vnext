@@ -49,31 +49,31 @@ export default async function SuperAdminBatchPromotionPage({
   return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion"
       description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Class moves are managed separately in the batch roster." />
-    <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
+    <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Program
         <Select name="programId" defaultValue={input.data.programId ?? ""}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="">All programs</option>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Batch
         <Select name="cohortId" defaultValue={input.data.cohortId ?? ""}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="">Select a batch</option>
           {visibleCohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Academic year start override
         <Input name="yearStart" type="number" min={1900} max={9998} step={1}
-          defaultValue={input.data.yearStart ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          defaultValue={input.data.yearStart ?? ""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
       </label>
       <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
         <input name="showCompleted" type="checkbox" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
-      <Button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Preview</Button>
+      <Button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Preview</Button>
     </form>
-    <section aria-label="Batch promotion queue" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
+    <section aria-label="Batch promotion queue" className="min-w-0 space-y-3 pt-2">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">Batches</h2>
         <p role="status" className="text-sm text-muted-foreground">{visibleCohorts.length} shown of {options.cohorts.length} batches</p>
@@ -112,7 +112,7 @@ export default async function SuperAdminBatchPromotionPage({
           {([
             ["Action", summary.action], ["Target term", summary.targetTerm ?? "Unavailable"],
             ["Learners checked", summary.learnersChecked], ["Learners with blockers", summary.blockedLearners],
-          ] as const).map(([label, value]) => <div key={label} className="rounded-lg border border-border bg-surface-subtle p-3">
+          ] as const).map(([label, value]) => <div key={label} className="rounded-lg border border-border bg-muted p-3">
             <dt className="text-xs text-muted-foreground">{label}</dt>
             <dd className="mt-1 font-semibold text-foreground">{value}</dd>
           </div>)}

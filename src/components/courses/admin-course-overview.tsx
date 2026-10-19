@@ -490,25 +490,25 @@ export function AdminCourseOverview({
           </h2>
         </div>
         {catalogue&&catalogueQuery?<form method="get" action={courseBasePath}
-         className="flex flex-wrap items-end gap-3 rounded border border-border bg-surface p-3">
+         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
          <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-sm font-semibold">Search courses
           <input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
            placeholder="Name, code or department" className="min-h-11 sm:min-h-9 min-w-0 w-full rounded border border-border bg-surface p-2"/>
          </label>
          <label className="grid gap-1 text-sm font-semibold">Sort
           <select name="sort" defaultValue={catalogueQuery.sort}
-           className="min-h-11 rounded border border-border bg-background p-2">
+           className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9">
            <option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option>
            <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
           </select>
          </label>
          {courseBasePath.startsWith("/admin/")?<label className="grid gap-1 text-sm font-semibold">Per page
           <select name="pageSize" defaultValue={catalogueQuery.pageSize??"25"}
-           className="min-h-11 rounded border border-border bg-background p-2">
+           className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9">
            <option value="25">25</option><option value="50">50</option><option value="100">100</option>
           </select>
          </label>:null}
-         <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+         <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] sm:min-h-9">Filter</button>
          <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
           className="inline-flex min-h-11 sm:min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
           Export CSV

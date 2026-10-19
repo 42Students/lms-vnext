@@ -47,6 +47,7 @@ export default async function SuperAdminAssignmentsPage({
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 space-y-4">
+    <PageHeader eyebrow="Super Admin · Courses" title="Assignments" />
     <a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export assignments.csv</a>
     {lessonsResult.status==="fulfilled"

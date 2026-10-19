@@ -127,7 +127,7 @@ function initials(name: string | null) {
 
 function Card({ id, title, action, children }: { id?: string; title: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <section id={id} className="min-w-0 scroll-mt-24 rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <section id={id} className="min-w-0 scroll-mt-24 border-b border-border pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{title}</h2>
         {action}
@@ -552,7 +552,7 @@ export function LearnerProfileWorkspace(props: {
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">Learner profile</p>
-            <h1 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[30px] leading-9">{props.displayName || "Learner"}</h1>
+            <h1 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[30px] leading-10">{props.displayName || "Learner"}</h1>
             <p className="mt-1 break-words text-sm text-body">{document.headline || "Add a headline to introduce yourself."}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {props.rollNumber ? <StatusBadge>Roll {props.rollNumber}</StatusBadge> : null}
@@ -1000,7 +1000,7 @@ export function LearnerProfileWorkspace(props: {
               Currently Pursuing
             </label>:null}
             {collection==="education"&&String(itemDraft.qualifyingExam??"").trim()?
-              <fieldset className="grid gap-3 rounded-md border border-border p-3 sm:col-span-2 sm:grid-cols-2">
+              <fieldset className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:col-span-2 sm:grid-cols-2">
                 <legend className="text-sm font-semibold text-foreground">Qualifying exam details (optional)</legend>
                 <p className="text-xs text-body sm:col-span-2">
                   Record details from your exam result. These fields are learner-entered and are not an official verification.

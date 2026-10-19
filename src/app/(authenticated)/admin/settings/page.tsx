@@ -109,13 +109,13 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       {editorData?<TenantSettingsEditor key={editorScope+":"+(context.adminScope?.collegeId??"GLOBAL")} scopeType={editorScope}
        collegeId={context.adminScope?.collegeId??undefined}
        ready={editorData.ready} entries={editorData.entries}/>:(
-       <p role="status" className="rounded-xl border border-border p-4 text-sm text-body">
+       <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm text-body">
         {editorResult&&!editorResult.ok
           ?"Tenant settings editor is temporarily unavailable. Existing settings were not changed."
           :"Clear the Super Admin safety scope to access global setting overrides, or select an individual college to edit its scoped settings."}
        </p>)}
       {attendanceResult&&!attendanceResult.ok?
-        <p role="status" className="rounded-xl border border-border p-4 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm text-body">
           Attendance policy is temporarily unavailable. Existing settings were not changed.
         </p>:null}
       {attendancePolicy?<SuperAdminAttendanceSettingsEditor
@@ -124,7 +124,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
       <Link href="/admin/settings/auth"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Authentication and privileged access checklist →
       </Link>
 
@@ -140,7 +140,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         <Button type="submit">Filter</Button>
         <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
       </form>
-      {sections.length===0 ? <p role="status" className="rounded-lg border border-border p-4 text-sm text-body">No visible settings match the selected filters.</p> : null}
+      {sections.length===0 ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">No visible settings match the selected filters.</p> : null}
       <nav
         aria-label="Settings sections"
         className="flex flex-wrap gap-2"
@@ -149,7 +149,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
           >
             {section.title}
           </a>
@@ -213,7 +213,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           ) : null}
 
           {section.note ? (
-            <p className="rounded-lg bg-surface-subtle px-4 py-3 text-xs leading-6 text-body">
+            <p className="rounded-[var(--lms-control-radius)] bg-surface-subtle px-4 py-3 text-xs leading-6 text-body">
               {section.note}
             </p>
           ) : null}

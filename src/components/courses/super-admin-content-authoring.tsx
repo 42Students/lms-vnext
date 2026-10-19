@@ -12,7 +12,7 @@ export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=true}:
  // A changed acting-college scope can replace all lesson IDs without remounting this client panel.
  // Never leave a foreign/stale ID selected or silently hide the current college authoring control.
  const selected=resolveSuperAdminAuthoringLesson(lessons,lessonId);
- return <section aria-label="Create lesson content" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Create lesson content" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold">Add {kind==="VIDEOS"?"video":kind==="LIVE_CLASSES"?"live class":"resource"}</h2>
   {!lessons.length?<p className="text-sm text-muted-foreground">Create a course offering, learning path and lesson before adding content.</p>:<>
    <label className="grid gap-1 text-sm font-semibold text-body">Lesson

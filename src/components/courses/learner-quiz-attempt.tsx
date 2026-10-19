@@ -356,11 +356,11 @@ export function LearnerQuizAttempt() {
 
   if (review || !attemptable) {
     return (
-      <section className="rounded-xl border border-border bg-surface p-5 sm:p-7">
+      <section className="min-w-0 space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">Quiz review</p>
-            <h1 className="mt-2 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">{quiz.quiz.title}</h1>
+            <h1 className="mt-2 font-semibold text-[var(--lms-heading)] text-[30px] leading-10">{quiz.quiz.title}</h1>
             <p className="mt-2 text-sm text-body">
               {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
                 ? learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
@@ -429,7 +429,7 @@ export function LearnerQuizAttempt() {
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
+    <section className="min-w-0">
       <ConfirmDialog open={leaveOpen} onOpenChange={setLeaveOpen}
         title="Cancel quiz?" description="Are you sure you want to cancel this quiz? Your unsent answers will remain in this browser, but this attempt has not been submitted."
         confirmVariant="danger" confirmLabel="Leave quiz" onConfirm={() => {
@@ -442,13 +442,13 @@ export function LearnerQuizAttempt() {
           ? `You have ${answerProgress.total-answerProgress.answered} unanswered question${answerProgress.total-answerProgress.answered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
           : "Submit this quiz attempt? You cannot edit this attempt after submission."}
         confirmLabel="Submit" onConfirm={() => void submit()} />
-      <header className="border-b border-border p-4 sm:p-5">
+      <header className="border-b border-border pb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="m-0 text-xs font-semibold text-muted-foreground">
               Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
             </p>
-            <h1 className="mt-1 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">{quiz.quiz.title}</h1>
+            <h1 className="mt-1 font-semibold text-[var(--lms-heading)] text-[30px] leading-10">{quiz.quiz.title}</h1>
             <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
             {learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable) ? (
               <p role="status" className="mt-2 rounded-md border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>

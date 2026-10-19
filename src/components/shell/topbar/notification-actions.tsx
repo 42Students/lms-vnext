@@ -5,7 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import { HrRecruiterBell } from "@/components/hr/hr-recruiter-bell";
 import { LearnerNotificationBell } from "../learner-notification-bell";
-import { safeTpoShellCounters, shellUnreadBadge, type TpoShellCounters } from "../shell-counts-model";
+import { shellUnreadBadge } from "../shell-counts-model";
+import { TpoNotificationCluster } from "./tpo-notification-cluster";
 import type { TopbarConfig } from "./portal-config";
 import { BellIcon, MessageIcon } from "./icons";
 import style from "./topbar.module.css";
@@ -36,21 +37,11 @@ function ExistingBell({ portal }: { portal: "hr" | "learn" }) {
 }
 
 export function TopbarNotifications({ config }: { config: TopbarConfig }) {
-  const [tpo, setTpo] = useState<TpoShellCounters | null>(null);
   const [general, setGeneral] = useState<number | null>(null);
 
   const update = useCallback(async () => {
     if (document.visibilityState === "hidden") return;
-    if (config.portal === "tpo") {
-      try {
-        const next = safeTpoShellCounters(await apiFetch<unknown>(
-          "/api/tpo/shell-counts", { cache: "no-store", credentials: "same-origin" },
-        ));
-        if (next) setTpo(next);
-      } catch { /* Unknown is not zero; preserve the last confirmed count. */ }
-      return;
-    }
-    if (config.portal === "hr" || config.portal === "learn") return;
+    if (config.portal === "hr" || config.portal === "learn" || config.portal === "tpo") return;
     try {
       const next = await apiFetch<unknown>("/api/notifications?limit=40", {
         cache: "no-store", credentials: "same-origin",
@@ -79,12 +70,13 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
     };
   }, [update]);
 
+  if (config.portal === "tpo") return <TpoNotificationCluster/>;
   return <div className={style.actions} aria-label="Messages and notifications">
     {config.messagesHref ? <IconLink href={config.messagesHref} label="Messages"
-      count={config.portal === "tpo" ? tpo?.messages ?? null : null} message /> : null}
+      count={null} message /> : null}
     {config.portal === "learn" || config.portal === "hr"
       ? <ExistingBell portal={config.portal}/>
       : <IconLink href={config.notificationsHref} label="Notifications"
-          count={config.portal === "tpo" ? tpo?.notifications ?? null : general} />}
+          count={general} />}
   </div>;
 }

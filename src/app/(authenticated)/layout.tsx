@@ -144,7 +144,7 @@ export default async function AuthenticatedLayout({
       adminScopeChoices={shellData.adminScopeChoices}
     >
       <SessionResponseGuard />
-      <PageCanvas>
+      <PageCanvas className="lms-authenticated-canvas">
         <Suspense fallback={null}><PortalAccessNotice /></Suspense>
         <ConnectionFailureNotice />
         {children}
