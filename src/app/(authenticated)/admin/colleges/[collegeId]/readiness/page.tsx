@@ -147,12 +147,12 @@ export default async function CollegeReadinessPage({
         }
       />
 
-      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Export all persisted readiness checks (CSV) →</Link>
+      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export all persisted readiness checks (CSV) →</Link>
       <p className="text-xs text-muted-foreground">Export includes all ten persisted checks even when the page filter hides some; runtime verification is not certified.</p>
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
         >
           Recheck persisted readiness →
         </Link>
@@ -255,7 +255,7 @@ export default async function CollegeReadinessPage({
         </p>
 
         {shownChecks.length===0 ? (
-          <p role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 text-sm text-body">
+          <p role="status" className="mt-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4 text-sm text-body">
             No readiness checks match the selected status and area. The overall tenant readiness verdict above still uses all ten checks.
           </p>
         ) : null}
@@ -264,7 +264,7 @@ export default async function CollegeReadinessPage({
             (check, index) => (
               <li
                 key={check.id}
-                className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-4"
+                className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
