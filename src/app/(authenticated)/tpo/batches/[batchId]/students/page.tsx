@@ -78,7 +78,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    <strong>Suggested: make them eligible</strong>
    <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
    <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
-     className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline">Show me</Link>
+     className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Show me</Link>
  </aside>:null}
  <div className="flex flex-wrap items-center justify-between gap-2">
   <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
