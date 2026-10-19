@@ -111,7 +111,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         </label>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Button size="sm" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
           onClick={()=>void navigator.clipboard.writeText(knownErrorSafeSummary({
             signatureHash:item.signatureHash,environment:item.environment,fixStatus:item.fixStatus,
             occurrences:item.occurrenceCount,affectedAccounts:item.affectedAccounts,
@@ -121,7 +121,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
             .catch(()=>showToast({tone:"error",title:"Could not copy diagnostic summary"}))}>
           Copy for Claude
         </Button>
-        <Button size="sm" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
           onClick={()=>{const sql=knownErrorSafeSql({
             signatureHash:item.signatureHash,environment:item.environment,
           });
@@ -138,14 +138,14 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           firstSeen:formatInstant(item.firstSeenAt),lastSeen:formatInstant(item.lastSeenAt),
           issuePublicId:item.issuePublicId,
         }).slice(0,450))+"&knownErrorId="+encodeURIComponent(item.id)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">
           Create tracker issue
         </Link>
-        <Button size="sm" variant="secondary" disabled={pending || Boolean(item.acknowledgedAt)}
+        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending || Boolean(item.acknowledgedAt)}
           onClick={() => update({ action: "ACKNOWLEDGE" })}>
           {item.acknowledgedAt ? "Acknowledged" : "Acknowledge"}
         </Button>
-        <Button size="sm" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
           aria-expanded={item.muted ? undefined : confirmMute}
           onClick={() => {
             if (item.muted) void update({ action: "MUTE", muted: false });
@@ -153,14 +153,14 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           }}>
           {item.muted ? "Unmute" : "Mute"}
         </Button>
-        <Button size="sm" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
           onClick={() => update({
             action: "STATUS", status: "EXPECTED",
             ...(note.trim() ? { note } : {}),
           })}>
           Mark expected
         </Button>
-        <Button size="sm" variant="secondary"
+        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary"
           disabled={pending || (commit.trim() !== "" && !/^[0-9a-f]{7,64}$/i.test(commit.trim()))}
           onClick={() => update({
             action: "STATUS", status: "FIXED",
@@ -169,11 +169,11 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           })}>
           Mark fixed
         </Button>
-        <Button size="sm" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
           onClick={() => update({ action: "STATUS", status: "OPEN" })}>
           Reopen
         </Button>
-        <Button size="sm" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
           onClick={() => update({
             action: "LINK_ISSUE", issuePublicId: issuePublicId.trim() || null,
           })}>
@@ -193,15 +193,15 @@ function KnownErrorCard({ item }: { item: KnownError }) {
               placeholder="Why this error is expected"
             />
           </label>
-          <div className="flex flex-wrap justify-end gap-2">
-            <Button size="sm" disabled={pending} loading={pending}
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" className="min-h-11 md:min-h-9" disabled={pending}
               onClick={() => void update({
                 action: "MUTE", muted: true,
                 ...(muteReason.trim() ? { reason: muteReason.trim() } : {}),
               })}>
               Mute
             </Button>
-            <Button size="sm" variant="secondary" disabled={pending}
+            <Button size="sm" className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
               onClick={() => setConfirmMute(false)}>
               Cancel
             </Button>
