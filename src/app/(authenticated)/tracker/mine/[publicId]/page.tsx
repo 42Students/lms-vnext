@@ -29,8 +29,8 @@ export default async function MyTrackerReportDetail({
   if(!report)notFound();
   return <article className="space-y-4">
     <PageHeader title={report.publicId} description={report.issueType}/>
-    <Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to my reports</Link>
-    <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
+    <Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Back to my reports</Link>
+    <section className="border-b border-border pb-5">
       <p className="text-sm font-semibold">Status: {report.status} · Severity: {report.severity}</p>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{report.description}</p>
       <p className="mt-2 text-xs text-muted-foreground">Reported: {report.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>

@@ -21,16 +21,16 @@ export default async function MyTrackerReportsPage(){
   catch{return <div className="space-y-4">
     <PageHeader title="My reports" description="See the issues you have reported."/>
     <ErrorState title="Could not load reports" description="We could not load your reports."
-      action={<Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry</Link>} />
+      action={<Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>} />
   </div>;}
   return <section className="space-y-5">
     <PageHeader title="My reports" description="See the issues you have reported."/>
-    <Link href="/tracker" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Report an issue</Link>
+    <Link href="/tracker" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Report an issue</Link>
     {!reports.length?<EmptyState title="No reports yet" description="You have not reported any issues yet." />:
       <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{reports.map(item=><li key={item.publicId}
         className="py-[var(--lms-space-3)]">
         <Link href={"/tracker/mine/"+encodeURIComponent(item.publicId)}
-          className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{item.publicId}</Link>
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">{item.publicId}</Link>
         <p className="mt-1 text-sm text-body">{item.issueType} · {item.status}</p>
         <p className="mt-1 break-words text-sm text-body">{item.description}</p>
       </li>)}</ul>}

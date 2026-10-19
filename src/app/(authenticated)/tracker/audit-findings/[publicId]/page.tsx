@@ -24,7 +24,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   ["Actual",finding.actual],["Evidence",finding.evidence],["Suggested fix",finding.suggestedFix],
  ];
  return <div className="min-w-0 space-y-5">
-  <Link href="/tracker/audit-findings" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Back to audit findings</Link>
+  <Link href="/tracker/audit-findings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Back to audit findings</Link>
   <PageHeader title={finding.title} description={finding.externalId+" · "+finding.area+" · "+finding.kind}/>
   <div className="flex flex-wrap gap-2"><StatusBadge tone={finding.severity==="CRITICAL"?"error":finding.severity==="HIGH"?"warning":"neutral"}>{finding.severity}</StatusBadge><StatusBadge tone={finding.status==="VERIFIED"||finding.status==="RELEASED_PROD"?"success":finding.status==="NEW"||finding.status==="NEEDS_INFO"?"warning":"info"}>{finding.status}</StatusBadge>
    <StatusBadge>{finding.assignee??"Unassigned"}</StatusBadge></div>
@@ -39,7 +39,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
      <ul className="list-disc pl-5 text-sm">{values.map(value=><li key={value} className="break-all">{value}</li>)}</ul></div>)}
   </section>
   <Link href={"/tracker/audit-findings?q="+encodeURIComponent(finding.title.slice(0,100))}
-   className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Looks similar</Link>
+   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Looks similar</Link>
   <IndependentFindingCopyAction finding={{
    id:finding.externalId,title:finding.title,summary:finding.summary,steps:finding.steps,
    expected:finding.expected,actual:finding.actual,sourceRepo:finding.sourceRepo,
