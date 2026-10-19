@@ -138,7 +138,7 @@ export function OrganizationActions({
       >
         <label
           htmlFor={`organization-name-${organizationId}`}
-          className="mb-1.5 block text-xs font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold text-body"
         >
           Organization name
         </label>
