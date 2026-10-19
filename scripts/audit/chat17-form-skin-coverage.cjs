@@ -31,11 +31,16 @@ walk(srcDir);
 const rawControls = Object.fromEntries(["button", "input", "select", "textarea"].map(name => [name, []]));
 const inlineHex = [];
 const grid = [];
+const syntaxDiagnostics = [];
 for (const absolute of paths) {
   const source = fs.readFileSync(absolute, "utf8");
   const relative = path.relative(root, absolute).replaceAll(path.sep, "/");
   if (absolute.endsWith(".tsx")) {
     const node = ts.createSourceFile(relative, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    for (const diagnostic of node.parseDiagnostics) {
+      const line = node.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line + 1;
+      syntaxDiagnostics.push(`${relative}:${line}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, " ")}`);
+    }
     function visit(part) {
       if (ts.isJsxOpeningElement(part) || ts.isJsxSelfClosingElement(part)) {
         const tag = part.tagName.getText(node);
@@ -72,6 +77,8 @@ const report = {
   totalSourceFiles: paths.length,
   exactRawJsxCounts: Object.fromEntries(Object.entries(rawControls).map(([name, values]) => [name, values.length])),
   rawControls,
+  syntaxDiagnosticCount: syntaxDiagnostics.length,
+  syntaxDiagnostics,
   hardcodedHexCount: inlineHex.length,
   hardcodedHexLocations: inlineHex,
   responsiveSourceReferences: grid,
@@ -85,6 +92,8 @@ else {
     process.stdout.write(`Raw <${key}> nodes: ${values.length}\n`);
     for (const value of values) process.stdout.write(`  ${value}\n`);
   }
+  process.stdout.write(`JSX syntax diagnostics: ${syntaxDiagnostics.length}\n`);
+  for (const value of syntaxDiagnostics) process.stdout.write(`  ${value}\n`);
   process.stdout.write(`Hard-coded hex matches: ${inlineHex.length}\n`);
   for (const value of inlineHex) process.stdout.write(`  ${value}\n`);
   process.stdout.write(`Skin imports: ${imports}; scoped rules (pre-CSS parse): ${selectorCount}\n`);
