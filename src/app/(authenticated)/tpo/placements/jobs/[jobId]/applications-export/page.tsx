@@ -2,6 +2,8 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Banner} from "@/components/ui/banner";
+import {EmptyState} from "@/components/ui/empty-state";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveApplicationsExport} from "@/modules/placements/tpo-drive-applications-export-service";
@@ -62,13 +64,12 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
     </Select></label>
    <Button type="submit" >Preview filters</Button>
   </form>
-  <p className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
+  <Banner tone="info">
    {result.rows.length} application records shown in this preview.
    {result.truncated?" More records exist; only the first 500 are shown in this preview. The download includes every match.":""}
    {" "}Each row represents an application, not necessarily a distinct learner.
-  </p>
-  {result.rows.length===0?<p role="status" className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
-   No persisted applications match these filters.</p>:
+  </Banner>
+  {result.rows.length===0?<EmptyState title="No persisted applications match these filters."/>:
    <section aria-label="Applicant export preview" className="grid gap-3">
     {result.rows.map(row=><article key={row.applicationId} className="border-b border-border py-4">
      <h2 className="font-semibold text-foreground">{row.studentName??"Name unavailable"}</h2>
