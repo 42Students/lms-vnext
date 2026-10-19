@@ -112,10 +112,10 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
       <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
        <label className="flex min-w-48 flex-1 flex-col gap-1 text-sm font-semibold text-body">Search organizations
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
-         className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground" />
+         className="min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
        </label>
        <label className="flex flex-col gap-1 text-sm font-semibold text-body">Rows per page
-        <Select name="pageSize" defaultValue={String(pageSize)} className="min-h-9 rounded-[9px] border border-border bg-surface px-3">
+        <Select name="pageSize" defaultValue={String(pageSize)} className="min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3">
          {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </Select>
        </label>
