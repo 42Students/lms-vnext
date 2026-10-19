@@ -86,7 +86,7 @@ export function MentorTaskCreate({
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint
           <select data-slot="select" value={selectedSprintId} disabled={busy} onChange={event=>{
             setSelectedSprintId(event.target.value);setStatus("TODO");
-          }} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          }} className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="">Leave blank for the backlog</option>
             {choices.map(item=><option key={item.id} value={item.id}>
               {item.title} ({item.status.replaceAll("_"," ").toLowerCase()})
@@ -107,7 +107,7 @@ export function MentorTaskCreate({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Priority
           <select data-slot="select" value={priority} onChange={e=>setPriority(e.target.value as typeof priority)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </select>
@@ -115,7 +115,7 @@ export function MentorTaskCreate({
         <label className="grid gap-1 text-sm font-semibold text-body">Status
           <select data-slot="select" value={status} disabled={busy||!selectedSprintId}
             onChange={event=>setStatus(event.target.value as typeof status)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="TODO">To Do</option>
             {chosenSprint?.status==="ACTIVE"?<>
               <option value="IN_PROGRESS">In Progress</option>
@@ -125,7 +125,7 @@ export function MentorTaskCreate({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Estimate ({mentorEstimateLabel(1,estimationUnit).replace(/^1 /,"")})
           <select data-slot="select" value={estimate} onChange={e=>setEstimate(e.target.value)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="">Not estimated</option>
             {mentorEstimateOptions(estimationUnit).map(value=>
               <option key={value} value={String(value)}>{mentorEstimateLabel(value,estimationUnit)}</option>)}
@@ -133,7 +133,7 @@ export function MentorTaskCreate({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Type
           <select data-slot="select" value={taskType} onChange={e=>setTaskType(e.target.value)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="">Not specified</option><option value="STORY">Story</option>
             <option value="BUG">Bug</option><option value="CHORE">Chore</option>
             <option value="SPIKE">Spike</option>
@@ -142,7 +142,7 @@ export function MentorTaskCreate({
         <label className="grid gap-1 text-sm font-semibold text-body">Assignee
           <select data-slot="select" value={assigneeMembershipId} disabled={busy}
             onChange={event=>setAssigneeMembershipId(event.target.value)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="">Unassigned</option>
             {learners.map(member=><option key={member.membershipId} value={member.membershipId}>
               {member.displayName??"Learner"}
