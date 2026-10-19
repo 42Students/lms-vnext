@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -24,7 +26,7 @@ export default async function FacultyCalendarPage({
   }:{invalid:true});
   if(!input.success)return <section role="alert" className="space-y-3">
     <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid month or Section filter</h1>
-    <Link href="/teacher/calendar" className="font-semibold text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Clear filters
     </Link>
   </section>;
@@ -44,11 +46,11 @@ export default async function FacultyCalendarPage({
     <PageHeader title="Class Schedule" />
     <div className="flex justify-end">
       <Link href="/teacher/live-classes"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         View live classes
       </Link>
     </div>
-    <section className="rounded-xl border border-border bg-surface p-4">
+    <section className="space-y-4 border-b border-border pb-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-foreground">
           {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",month:"long",year:"numeric"})
@@ -56,27 +58,27 @@ export default async function FacultyCalendarPage({
         </h2>
         <div className="flex flex-wrap gap-3 text-sm font-semibold">
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
-            className="inline-flex min-h-11 items-center rounded-md px-2 text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous month</Link>
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous month</Link>
           <Link href={facultyMonthHref({...grid.query,month:currentIstMonth(new Date())})}
-            className="inline-flex min-h-11 items-center rounded-md px-2 text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Current month</Link>
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Current month</Link>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,1)})}
-            className="inline-flex min-h-11 items-center rounded-md px-2 text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next month</Link>
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next month</Link>
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className="mt-4 flex flex-wrap items-end gap-3">
         <label className="grid gap-1 text-sm font-semibold text-body">Month (IST)
-          <input type="month" name="month" required defaultValue={grid.query.month}
+          <Input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
+            className="w-full" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
-          <select name="deliveryId" defaultValue={selected??""}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          <Select name="deliveryId" defaultValue={selected??""}
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
               {course.courseCode} · {course.courseName}
             </option>)}
-          </select>
+          </Select>
         </label>
         <Button type="submit" variant="primary">
           Apply
@@ -87,8 +89,8 @@ export default async function FacultyCalendarPage({
       </p>:grid.days.every(day=>day.events.length===0)?<p className="mt-5 text-sm text-body">
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </p>:null}
-      <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className="mt-4 rounded-lg">
-        <div className="grid min-w-[44rem] grid-cols-7 gap-px rounded-lg border border-border bg-border">
+      <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className="mt-4 rounded-[var(--lms-control-radius)]">
+        <div className="grid min-w-[44rem] grid-cols-7 gap-px rounded-[var(--lms-control-radius)] border border-border bg-border">
           {names.map(name=><div key={name} className="bg-surface-subtle p-2 text-center text-xs font-semibold">{name}</div>)}
           {grid.days.map(day=><section key={day.key}
             aria-label={day.key+" IST"} className={"min-h-28 p-2 "+(day.inMonth?"bg-surface":"bg-surface-subtle")}>
@@ -97,7 +99,7 @@ export default async function FacultyCalendarPage({
             </time>
             <div className="mt-2 space-y-2">
               {day.events.map(event=><article key={event.id}
-                className="rounded-md border border-border bg-background px-2 py-1">
+                className="rounded-[var(--lms-control-radius)] border border-border bg-background px-2 py-1">
                 <p className="text-xs font-semibold text-foreground">{event.title}</p>
                 <p className="text-xs text-body">
                   {new Intl.DateTimeFormat("en-IN",{
@@ -106,7 +108,7 @@ export default async function FacultyCalendarPage({
                 </p>
                 {event.deliveryId?<Link
                   href={"/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/home"}
-                  className="text-xs font-semibold text-[var(--lms-teal-deep)] hover:underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Course Section</Link>
+                  className="text-xs font-semibold text-primary-text hover:underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Course Section</Link>
                 :<span className="text-xs text-muted-foreground">Section-wide session</span>}
               </article>)}
             </div>

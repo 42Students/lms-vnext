@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -30,9 +31,9 @@ export default async function DriveDayForOneDrive({
           return <article key={round.id} className="border-b border-border py-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-foreground">{round.name}</h2>
-              <span className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-body">
+              <Badge  tone="neutral">
                 {done ? "Done" : round.status}
-              </span>
+              </Badge>
             </div>
             <p className="mt-2 text-sm text-body">{round.mode} · {round.scheduledAt
               ? new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(round.scheduledAt) + " IST"

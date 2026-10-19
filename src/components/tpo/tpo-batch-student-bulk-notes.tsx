@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {useState} from "react";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 
@@ -11,13 +12,13 @@ export function TpoBatchStudentBulkNotes({rows}:{rows:readonly {id:string;label:
   <h3 className="font-semibold">Add a note</h3>
   <p className="text-xs text-body">Select up to 100 learners on this current batch page. Notes remain private to authorized placement staff.</p>
   <label className="flex min-h-10 items-center gap-2 text-sm">
-   <input type="checkbox" checked={rows.length<=100&&valid.length===rows.length}
+   <Checkbox  checked={rows.length<=100&&valid.length===rows.length}
     onChange={e=>setSelected(e.target.checked?rows.slice(0,100).map(row=>row.id):[])}/>
    Select visible page
   </label>
   <div className="max-h-44 space-y-1 overflow-auto">{rows.map(row=>
    <label key={row.id} className="flex min-h-9 items-center gap-2 text-sm">
-    <input type="checkbox" checked={valid.includes(row.id)}
+    <Checkbox  checked={valid.includes(row.id)}
      disabled={!valid.includes(row.id)&&valid.length>=100}
      onChange={e=>setSelected(ids=>e.target.checked?[...ids,row.id]:ids.filter(id=>id!==row.id))}/>
     {row.label}

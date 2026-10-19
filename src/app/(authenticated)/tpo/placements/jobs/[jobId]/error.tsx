@@ -9,7 +9,7 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-xl border border-border bg-surface p-6">
+    <section role="alert" className="border-b border-border bg-transparent py-6">
       <h1 className="text-lg font-semibold text-foreground">
         Couldn&apos;t load Placements · Jobs
       </h1>

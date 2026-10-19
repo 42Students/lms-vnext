@@ -1,1 +1,1 @@
-export default function Loading(){return <div aria-busy="true" className="space-y-4"><div className="h-16 animate-pulse rounded bg-muted"/><div className="h-52 animate-pulse rounded bg-muted"/></div>}
+export default function Loading(){return <div aria-busy="true" aria-label="Loading task feedback" className="space-y-4"><div className="h-9 w-60 max-w-full animate-pulse rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-100)]"/><div className="h-52 animate-pulse rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-100)]"/></div>}

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 
@@ -58,8 +59,8 @@ export function TpoHomeReturnRefresh(){
   {busy?<p role="status" className="text-xs text-muted-foreground">Refreshing placement home…</p>:null}
   {failed?<div role="alert" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
     <span>Home refresh failed. Showing the last successful snapshot.</span>
-    <button type="button" disabled={busy} onClick={()=>void refresh()}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Retry</button>
+    <Button variant="secondary" type="button" disabled={busy} onClick={()=>void refresh()}
+      className="min-h-9">Retry</Button>
   </div>:null}
  </div>;
 }

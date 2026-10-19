@@ -8,6 +8,9 @@ import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { PlacementBulkOfferWithdraw } from "./placement-bulk-offer-withdraw";
@@ -825,17 +828,16 @@ export function PlacementOfferControls({
           })}
         </div>
       )}
-      {withdrawTarget?.offer?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div role="dialog" aria-modal="true" aria-label="Withdraw offer confirmation"
-          className="w-full max-w-lg space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
-          <h3 className="font-semibold">Withdraw offer for {withdrawTarget.displayName??"learner"}?</h3>
+      {withdrawTarget?.offer?<Dialog open={Boolean(withdrawTarget.offer)} onOpenChange={next=>{if(!next&&pendingKey===null)setWithdrawTarget(null);}}
+        dismissible={pendingKey===null} title={"Withdraw offer for "+(withdrawTarget.displayName??"learner")+"?"} className="max-w-lg">
+        <div className="space-y-4">
           <p className="text-sm text-body">This notifies the learner and recalculates held-offer eligibility. History is retained.</p>
-          <label className="grid gap-2 text-sm">Reason<select className={inputClass} value={withdrawReason}
+          <label className="grid gap-2 text-sm">Reason<Select className={inputClass} value={withdrawReason}
             onChange={e=>setWithdrawReason(e.target.value)}>
             {["Company withdrew the offer","Hiring freeze","Duplicate offer issued","Offer details were incorrect","Other"].map(v=><option key={v}>{v}</option>)}
-          </select></label>
+          </Select></label>
           <label className="grid gap-2 text-sm">Additional details
-           <textarea className={inputClass} maxLength={500} value={withdrawDetail} onChange={e=>setWithdrawDetail(e.target.value)}/>
+           <Textarea className={inputClass} maxLength={500} value={withdrawDetail} onChange={e=>setWithdrawDetail(e.target.value)}/>
           </label>
           <div className="flex gap-3">
             <Button variant="danger" disabled={pendingKey!==null||(withdrawReason==="Other"&&withdrawDetail.trim().length<3)}
@@ -843,7 +845,7 @@ export function PlacementOfferControls({
             <Button variant="secondary" disabled={pendingKey!==null} onClick={()=>setWithdrawTarget(null)}>Keep offer</Button>
           </div>
         </div>
-      </div>:null}
+      </Dialog>:null}
     </section>
   );
 }

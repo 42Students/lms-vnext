@@ -49,7 +49,7 @@ export function TrackerThemeToggle() {
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       aria-pressed={theme === "dark"}
       onClick={toggleTheme}
-      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+      className="min-h-9 px-4"
     >
       {theme === "dark" ? "Light mode" : "Dark mode"}
     </Button>

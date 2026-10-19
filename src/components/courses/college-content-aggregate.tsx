@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content-order-readiness";
 import { COLLEGE_COURSE_TAB_COPY } from "@/modules/courses/college-course-tabs-copy";
@@ -62,12 +63,12 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Learning path status
-            <select name="pathStatus" defaultValue={data.query.pathStatus??"ALL"}
+            <Select name="pathStatus" defaultValue={data.query.pathStatus??"ALL"}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All learning paths</option>
               <option value="DRAFT">Draft</option><option value="PUBLISHED">Published</option>
               <option value="ARCHIVED">Archived</option>
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Course department name
@@ -76,65 +77,65 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Course offering type
-            <select name="offeringType" defaultValue={data.query.offeringType??"ALL"}
+            <Select name="offeringType" defaultValue={data.query.offeringType??"ALL"}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All offering types</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Owning lesson state
-            <select name="lessonStatus" defaultValue={data.query.lessonStatus??"ALL"}
+            <Select name="lessonStatus" defaultValue={data.query.lessonStatus??"ALL"}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All lessons</option><option value="ACTIVE">Active lesson</option><option value="ARCHIVED">Archived lesson</option>
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Content status
-            <select name="status" defaultValue={data.query.status}
+            <Select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All statuses</option>
               <option value="DRAFT">Draft</option>
               <option value="PUBLISHED">Published</option>
               <option value="ARCHIVED">Archived</option>
-            </select>
+            </Select>
           </label>
           {videos ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Video format
-              <select name="format" defaultValue={data.query.format}
+              <Select name="format" defaultValue={data.query.format}
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All video formats</option>
                 <option value="VIDEO">Stored video</option>
                 <option value="YOUTUBE">YouTube</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Visible to students
-            <select name="visibility" defaultValue={data.query.visibility}
+            <Select name="visibility" defaultValue={data.query.visibility}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All visibility settings</option>
               <option value="VISIBLE">Visible</option>
               <option value="HIDDEN">Hidden</option>
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Owning offering status
-            <select name="offeringStatus" defaultValue={data.query.offeringStatus??"ALL"}
+            <Select name="offeringStatus" defaultValue={data.query.offeringStatus??"ALL"}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All offerings</option><option value="ACTIVE">Active</option>
               <option value="ARCHIVED">Archived</option>
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">
             Section
-            <select name="deliveryId" defaultValue={data.query.deliveryId??""}
+            <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">Showing every section&apos;s content together</option>
               {data.sectionOptions.map(option=><option key={option.deliveryId} value={option.deliveryId}>
                 {option.courseCode} · {option.courseName} · {option.sectionName} ({option.sectionCode})
               </option>)}
-            </select>
+            </Select>
             <span className="text-xs font-normal text-muted-foreground">
               {lessonContentOrderRuntimeEnabled()?
                 "Choose a Section to inspect its shared and Section-specific content. Section ordering is edited in the offering workspace.":
@@ -143,11 +144,11 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Audience scope
-            <select name="scope" defaultValue={data.query.scope}
+            <Select name="scope" defaultValue={data.query.scope}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
               <option value="SECTION">Section-specific</option>
-            </select>
+            </Select>
           </label>
           <button type="submit"
             className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

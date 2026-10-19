@@ -27,15 +27,15 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
   </div>
   <form method="get" className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold">Section
-    <select className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
+    <Select className="min-h-11"
      name="deliveryId" defaultValue={data.selected?.deliveryId??""}>
      <option value="">Showing every section&apos;s content together</option>
      {data.options.map(item=><option value={item.deliveryId} key={item.deliveryId}>
       {item.sectionName} ({item.sectionCode})
      </option>)}
-    </select>
+    </Select>
    </label>
-   <button type="submit" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">View Section</button>
+   <Button type="submit" className="min-h-11">View Section</Button>
   </form>
   {data.invalid?<p role="alert" className="text-sm text-error">The selected Section is unavailable for this Course Offering.</p>:null}
   {data.truncated?<p role="status" className="text-xs text-muted-foreground">Only the first 200 active Sections are listed. Use the Section management page for the full directory.</p>:null}

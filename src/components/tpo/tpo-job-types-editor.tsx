@@ -43,26 +43,26 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
    void send("/api/placements/tpo/settings/job-types","POST",{label:label.trim(),countsAsPlaced});
   }}>
    <label className="min-w-0 flex-1 text-sm">New job type
-    <Input className="mt-1 min-h-9 w-full"
+    <Input className="mt-1 min-h-11 sm:min-h-9 w-full"
      maxLength={40} minLength={2} value={label} disabled={busy} onChange={event=>setLabel(event.target.value)}/>
    </label>
    <fieldset className="space-x-3 text-sm"><legend>Does an offer of this type count as placed?</legend>
     <label><Radio name="placed" checked={countsAsPlaced===true} onChange={()=>setCountsAsPlaced(true)}/> Yes</label>
     <label><Radio name="placed" checked={countsAsPlaced===false} onChange={()=>setCountsAsPlaced(false)}/> No</label>
    </fieldset>
-   <Button type="submit" disabled={label.trim().length<2||countsAsPlaced===null||atLimit||busy} className="min-h-9">Add job type</Button>
+   <Button type="submit" disabled={label.trim().length<2||countsAsPlaced===null||atLimit||busy} className="min-h-11 sm:min-h-9">Add job type</Button>
   </form>
   <p className="text-sm text-muted-foreground">Custom job types are college-local configuration only; drive forms and reports use their own registered employment types until the integration is completed.</p>
   <p className="text-sm text-muted-foreground">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
   <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Find job type
       <Input type="search" value={search} maxLength={100} onChange={event=>setSearch(event.target.value)}
-        className="min-h-9 w-full"
+        className="min-h-11 sm:min-h-9 w-full"
         placeholder="Filter by name"/>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Status
       <Select value={status} onChange={event=>setStatus(event.target.value as TpoJobTypeStatusFilter)}
-        className="min-h-9">
+        className="min-h-11 sm:min-h-9">
         <option value="ALL">All types</option><option value="ACTIVE">Active</option>
         <option value="INACTIVE">Inactive</option>
       </Select>
@@ -77,7 +77,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
     </div>
     <Button type="button" variant="secondary" disabled={busy} onClick={()=>void send("/api/placements/tpo/settings/job-types/"+item.id,"PATCH",{
       active:!item.active,expectedVersion:item.updatedAt,
-    })} className="min-h-9">
+    })} className="min-h-11 sm:min-h-9">
       {item.active?"Switch off":"Reactivate"}
     </Button></li>)}</ul>}
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}

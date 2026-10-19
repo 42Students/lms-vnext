@@ -452,7 +452,7 @@ export async function PlacementDriveWorkspace({
             <div className="mt-4 grid gap-2 sm:grid-cols-3">
               {nextStep.more.map(step => (
                 <Link key={step.href} href={step.href}
-                  className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-[var(--lms-link-text)] hover:underline">
+                  className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-[var(--lms-link-text)] hover:border-primary hover:underline">
                   <span className="block font-semibold">{step.label}</span>
                   <span className="mt-1 block text-xs text-body">{step.description}</span>
                 </Link>

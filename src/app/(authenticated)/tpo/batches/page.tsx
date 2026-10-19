@@ -111,7 +111,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    <label className="text-sm">Page size<Select name="pageSize" defaultValue={String(pageParsed.data.pageSize)} className="mt-1 block"><option value="12">12</option><option value="24">24</option><option value="48">48</option></Select></label>
    <Button type="submit" className="self-end px-4">Search</Button>
   </form>
-  {unassigned!==null&&unassigned>0?<p role="status" className="rounded-[var(--radius)] border border-warning bg-surface p-3 text-sm text-warning">
+  {unassigned!==null&&unassigned>0?<p role="status" className="border-l-[3px] border-[var(--lms-warning)] bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm text-warning">
     {unassigned} {unassigned===1?"student is":"students are"} not in any active class. Assign their academic classes before deciding placement eligibility.
   </p>:null}
   {unassigned===null?<p role="status" className="text-sm">Class assignment counts could not load. The batch list is still available. Try again later.</p>:null}

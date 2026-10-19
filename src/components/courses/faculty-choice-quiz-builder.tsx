@@ -235,14 +235,14 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <Input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,maxAttempts,Number(e.target.value)));setDirtyDraft(true);setMaxAttempts(Number(e.target.value));}}
     className="min-h-11 sm:min-h-9 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base sm:text-sm"/></label>
-  <fieldset disabled={!editable} className="space-y-2 rounded-md border border-border p-3">
+  <fieldset disabled={!editable} className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
     <legend className="text-sm font-semibold">Quiz order</legend>
     <Checkbox label="Shuffle question order per learner" checked={shuffleQuestions}
          onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleQuestions(e.target.checked);}}/>
     <Checkbox label="Shuffle answer options per learner" checked={shuffleOptions}
          onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleOptions(e.target.checked);}}/>
   </fieldset>
-  <section aria-label="Quiz preview" className="rounded-lg border border-border bg-surface-subtle p-3">
+  <section aria-label="Quiz preview" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
    <div className="flex flex-wrap items-center justify-between gap-3">
     <div>
      <h3 className="text-sm font-semibold text-foreground">Preview Quiz</h3>
@@ -259,7 +259,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
        onChange={e=>setPreviewAnswers(e.target.checked)}/>
     {!questions.length?<p role="status" className="text-sm">No questions yet.</p>:null}
     {questions.map((question,index)=><fieldset key={index}
-     className="space-y-2 rounded-lg border border-border bg-surface p-3">
+     className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
      <legend className="text-sm font-semibold">Question {index+1} · {question.points} point(s)</legend>
      <p className="whitespace-pre-wrap break-words text-sm text-body">{question.prompt||"Question prompt not entered"}</p>
      {question.options.map((option,i)=><label key={i}
@@ -280,7 +280,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      onChange={e=>setInvalidOnly(e.target.checked)}/>
   {matchingQuestions.length===0?<p role="status" className="text-sm text-body">No questions match these review filters. Clear the search or invalid-only filter to view the entire bank.</p>:null}
   {matchingQuestions.map(({q,i})=><fieldset key={i} disabled={!editable}
-   className="min-w-0 max-w-full space-y-3 rounded-lg border border-border p-4">
+   className="min-w-0 max-w-full space-y-3 rounded-[var(--lms-control-radius)] border border-border p-4">
    <legend className="text-sm font-semibold">Question {i+1}</legend>
    {facultyQuizQuestionIssue(q)?<p role="status" className="text-xs text-error">Review question {i+1}: {facultyQuizQuestionIssue(q)}</p>:
     <p className="text-xs text-body">Question {i+1} is ready to save.</p>}

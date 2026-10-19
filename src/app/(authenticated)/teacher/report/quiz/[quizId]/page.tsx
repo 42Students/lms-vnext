@@ -44,32 +44,32 @@ export default async function FacultyQuizReportPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      <Link href="/teacher/allQuizzes" className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Back
       </Link>
       <PageHeader title={quiz.title} />
       <div className="flex flex-wrap justify-end gap-3">
         <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Individual attempts &amp; question accuracy →
         </Link>
       </div>
       <nav aria-label="Quiz CSV response filters" className="flex flex-wrap gap-3 text-sm">
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-primary-text">
           Export attempted only
         </Link>
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"NOT_ATTEMPTED"})}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-primary-text">
           Export not attempted only
         </Link>
       </nav>
       <div className="flex flex-wrap items-center gap-3">
         <Link href={"/api/courses/faculty/reports/quiz/"+encodeURIComponent(quiz.id)+
           "/question-csv?deliveryId="+encodeURIComponent(quiz.deliveryId)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
           Download question accuracy CSV
         </Link>
         <p className="text-xs text-muted-foreground">Question export includes aggregate accuracy only, capped at 500 questions.</p>
@@ -115,7 +115,7 @@ export default async function FacultyQuizReportPage({
           ["Questions", metrics.questionCount],
           ["Due date", quiz.dueAt ? facultyReportIstTimestamp(quiz.dueAt) : "—"],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-xl border border-border bg-surface p-4">
+          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </div>
@@ -133,7 +133,7 @@ export default async function FacultyQuizReportPage({
         </span>
       </div>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border py-4">
         <h2 className="text-lg font-semibold text-foreground">
           Score distribution
         </h2>
@@ -150,7 +150,7 @@ export default async function FacultyQuizReportPage({
             const width = Math.round((bucket.count / total) * 100);
             return (
               <details key={bucket.label} className="rounded-md border border-border p-2 text-sm">
-                <summary className="grid min-h-11 cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                <summary className="grid min-h-9 cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <span className="text-body">{bucket.label}</span>
                 <span className="h-2 overflow-hidden rounded-full bg-muted">
                   <span
@@ -176,7 +176,7 @@ export default async function FacultyQuizReportPage({
         </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border py-4">
         <h2 className="text-lg font-semibold text-foreground">
           Question accuracy
         </h2>
@@ -192,7 +192,7 @@ export default async function FacultyQuizReportPage({
             {questions.map((question, index) => (
               <li
                 key={question.id}
-                className="rounded-lg bg-surface-subtle p-4"
+                className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -237,7 +237,7 @@ export default async function FacultyQuizReportPage({
         note: "Attempt " + attempt.attemptNumber,
       }))} />
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border py-4">
         <h2 className="text-lg font-semibold text-foreground">
           Not attempted
         </h2>
@@ -250,7 +250,7 @@ export default async function FacultyQuizReportPage({
             {notAttemptedLearners.map((learner) => (
               <li
                 key={learner.membershipId}
-                className="rounded-lg bg-surface-subtle p-3"
+                className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3"
               >
                 <p className="m-0 text-sm font-semibold text-foreground">
                   {facultyReportLearnerName(learner.displayName)}
@@ -261,7 +261,7 @@ export default async function FacultyQuizReportPage({
         )}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border py-4">
         <h2 className="text-lg font-semibold text-foreground">Review individual attempts</h2>
         <p className="mt-1 text-sm text-body">Inspect submitted answers and manage results visibility for this Section.</p>
         <FacultyQuizReview

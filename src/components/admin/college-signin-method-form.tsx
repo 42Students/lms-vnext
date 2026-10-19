@@ -53,14 +53,14 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
   <h2 className="font-semibold">Sign-in method</h2>
   <fieldset disabled={!ready||saving} className="grid gap-3">
    <legend className="sr-only">Sign-in method</legend>
-   {choices.map(choice=><label key={choice.value} className="flex min-h-14 cursor-pointer items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
-    <Radio name="signin-method" value={choice.value}
+   {choices.map(choice=><label key={choice.value} className="flex min-h-14 cursor-pointer items-center gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+    <Radio className="size-5" name="signin-method" value={choice.value}
      checked={selection===choice.value} onChange={()=>setSelection(choice.value)}/>
     <span><strong className="block text-sm">{choice.label}</strong><span className="text-xs text-muted-foreground">{choice.hint}</span></span>
    </label>)}
   </fieldset>
   <Button type="button" disabled={!ready||saving||selection===savedMethod} onClick={()=>setConfirmOpen(true)}
-   className="min-h-[var(--lms-control-height)] ">
+   className="min-h-11 sm:min-h-9">
    {saving?"Saving…":"Save sign-in settings"}
   </Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Change allowed sign-in methods for this college?" description="Current sessions stay signed in." confirmLabel="Save sign-in settings" pending={saving} onConfirm={()=>void save()}/>
