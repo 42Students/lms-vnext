@@ -44,19 +44,19 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const raw=await searchParams;
  const scalarKeys=["q","state","sort","program","department","deadline","page","pageSize","showOlder"] as const;
  if(scalarKeys.some(key=>Array.isArray(raw[key])))
-  return <Alert tone="error">Invalid batch filters. <Link href="/tpo/batches">Clear filters</Link></Alert>;
+  return <div role="alert">Invalid batch filters. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/tpo/batches">Clear filters</Link></div>;
  const parsed=batchDirectoryFilterSchema.safeParse({q:raw.q,state:raw.state});
  const sortParsed=tpoBatchSortSchema.safeParse(Array.isArray(raw.sort)?raw.sort[0]:raw.sort);
  const programParsed=tpoBatchProgramSchema.safeParse(Array.isArray(raw.program)?raw.program[0]:raw.program);
  const departmentParsed=tpoBatchDepartmentSchema.safeParse(Array.isArray(raw.department)?raw.department[0]:raw.department);
  const deadlineParsed=tpoBatchDeadlineFilterSchema.safeParse(Array.isArray(raw.deadline)?raw.deadline[0]:raw.deadline);
  const pageParsed=tpoBatchPageSchema.safeParse({page:Array.isArray(raw.page)?raw.page[0]:raw.page,pageSize:Array.isArray(raw.pageSize)?raw.pageSize[0]:raw.pageSize});
- if(!pageParsed.success)return <Alert tone="error">Invalid batch page. <Link href="/tpo/batches">Clear filters</Link></Alert>;
- if(!deadlineParsed.success)return <Alert tone="error">Invalid deadline filter. <Link href="/tpo/batches">Clear filters</Link></Alert>;
- if(!departmentParsed.success)return <Alert tone="error">Invalid department filter. <Link href="/tpo/batches">Clear filters</Link></Alert>;
- if(!programParsed.success)return <Alert tone="error">Invalid program filter. <Link href="/tpo/batches">Clear filters</Link></Alert>;
- if(!sortParsed.success)return <Alert tone="error">Invalid batch sorting. <Link href="/tpo/batches">Clear filters</Link></Alert>;
- if(!parsed.success)return <Alert tone="error">Invalid search. <Link href="/tpo/batches">Clear search</Link></Alert>;
+ if(!pageParsed.success)return <div role="alert">Invalid batch page. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/tpo/batches">Clear filters</Link></div>;
+ if(!deadlineParsed.success)return <div role="alert">Invalid deadline filter. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/tpo/batches">Clear filters</Link></div>;
+ if(!departmentParsed.success)return <div role="alert">Invalid department filter. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/tpo/batches">Clear filters</Link></div>;
+ if(!programParsed.success)return <div role="alert">Invalid program filter. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/tpo/batches">Clear filters</Link></div>;
+ if(!sortParsed.success)return <div role="alert">Invalid batch sorting. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/tpo/batches">Clear filters</Link></div>;
+ if(!parsed.success)return <div role="alert">Invalid search. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/tpo/batches">Clear search</Link></div>;
  const [data,unassigned]=await Promise.all([listTpoBatches(context),countTpoLearnersWithoutClass(context).catch(()=>null)]);
  const eligibility=await listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id)).catch(()=>null);
  const selected=filterTpoBatchDepartment(filterTpoBatchProgram(
@@ -67,7 +67,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  },parsed.data.state));
  const candidates=data.ready?filterTpoBatchDeadline(stateFiltered,deadlineParsed.data,new Date()):stateFiltered;
  const facetResult=parseTpoBatchFacetQuery(raw,data.batches);
- if(!facetResult.success)return <Alert tone="error">Invalid batch checklist filters. <Link href="/tpo/batches">Clear all</Link></Alert>;
+ if(!facetResult.success)return <div role="alert">Invalid batch checklist filters. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/tpo/batches">Clear all</Link></div>;
  const facets=facetResult.data;
  const facetRows=candidates.map(batch=>({...batch,placementState:tpoBatchPlacementState({
   finishedAt:batch.finishedAt,eligible:eligibility?.get(batch.id)?.eligible??null,
@@ -106,44 +106,48 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {eligibility===null&&facets.states.length>0?<Alert tone="warning">State checklist filtering is unavailable until eligibility data loads; other filters remain applied.</Alert>:null}
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
    <TpoBatchInstantSearch key={parsed.data.q??""} value={parsed.data.q??""}/>
-   <label className="text-sm">State<Select name="state" defaultValue={parsed.data.state} className="mt-1 block"><option value="ALL">All</option><option value="IN_PLACEMENTS">In placements</option><option value="NOT_STARTED">Not started</option><option value="FINISHED">Finished</option></Select></label>
-   <label className="text-sm">Program<Select name="program" defaultValue={programParsed.data} className="mt-1 block"><option value="">All programs</option>{programs.map(p=><option key={p} value={p}>{p}</option>)}</Select></label>
-   <label className="text-sm">Department<Select name="department" defaultValue={departmentParsed.data} className="mt-1 block"><option value="">All departments</option>{departments.map(d=><option key={d} value={d}>{d}</option>)}</Select></label>
-   <label className="text-sm">Deadline<Select name="deadline" defaultValue={deadlineParsed.data} className="mt-1 block"><option value="ALL">All deadlines</option><option value="NEXT_7_DAYS">Due in next 7 days</option><option value="PAST_DUE">Past due</option><option value="NO_DEADLINE">No deadline recorded</option></Select></label>
-   <label className="text-sm">Sort<Select name="sort" defaultValue={sortParsed.data} className="mt-1 block"><option value="WORKING_SET">Recommended order</option><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="DEADLINE_ASC">Deadline earliest</option><option value="DEADLINE_DESC">Deadline latest</option></Select></label>
-   <label className="text-sm">Page size<Select name="pageSize" defaultValue={String(pageParsed.data.pageSize)} className="mt-1 block"><option value="12">12</option><option value="24">24</option><option value="48">48</option></Select></label>
-   <Button type="submit" className="self-end px-4">Search</Button>
+   <label className="text-sm">State<Select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 w-full md:min-h-11 md:min-h-9"><option value="ALL">All</option><option value="IN_PLACEMENTS">In placements</option><option value="NOT_STARTED">Not started</option><option value="FINISHED">Finished</option></Select></label>
+   <label className="text-sm">Program<Select name="program" defaultValue={programParsed.data} className="mt-1 block min-h-11 w-full md:min-h-11 md:min-h-9"><option value="">All programs</option>{programs.map(p=><option key={p} value={p}>{p}</option>)}</Select></label>
+   <label className="text-sm">Department<Select name="department" defaultValue={departmentParsed.data} className="mt-1 block min-h-11 w-full md:min-h-11 md:min-h-9"><option value="">All departments</option>{departments.map(d=><option key={d} value={d}>{d}</option>)}</Select></label>
+   <label className="text-sm">Deadline<Select name="deadline" defaultValue={deadlineParsed.data} className="mt-1 block min-h-11 w-full md:min-h-11 md:min-h-9"><option value="ALL">All deadlines</option><option value="NEXT_7_DAYS">Due in next 7 days</option><option value="PAST_DUE">Past due</option><option value="NO_DEADLINE">No deadline recorded</option></Select></label>
+   <label className="text-sm">Sort<Select name="sort" defaultValue={sortParsed.data} className="mt-1 block min-h-11 w-full md:min-h-11 md:min-h-9"><option value="WORKING_SET">Recommended order</option><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="DEADLINE_ASC">Deadline earliest</option><option value="DEADLINE_DESC">Deadline latest</option></Select></label>
+   <label className="text-sm">Page size<Select name="pageSize" defaultValue={String(pageParsed.data.pageSize)} className="mt-1 block min-h-11 w-full md:min-h-11 md:min-h-9"><option value="12">12</option><option value="24">24</option><option value="48">48</option></Select></label>
+   <Button type="submit" className="min-h-11 self-end px-4 md:min-h-11 md:min-h-9">Search</Button>
   </form>
-  {unassigned!==null&&unassigned>0?<Banner tone="warning">{unassigned} {unassigned===1?"student is":"students are"} not in any active class. Assign their academic classes before deciding placement eligibility.</Banner>:null}
-  {unassigned===null?<InlineNotice tone="info" message="Class assignment counts could not load. The batch list is still available. Try again later."/>:null}
-  {eligibility===null?<InlineNotice tone="info" message="Eligibility counts could not load. The batch list is still available. Try again later."/>:null}
-  {journey===null?<InlineNotice tone="info" message="Placement journey counts could not load. Other batch details are still available."/>:null}
-  {recent===null?<InlineNotice tone="info" message="Recent decisions could not load. Open a batch to view its history."/>:null}
-  {!data.ready&&deadlineParsed.data!=="ALL"?<InlineNotice tone="info" message="Deadline details are temporarily unavailable. All matching batches are still shown."/>:null}
-  {!data.ready&&parsed.data.state!=="ALL"?<InlineNotice tone="info" message="Batch state details are temporarily unavailable. All matching batches are still shown."/>:null}
-  {!data.ready?<Alert tone="warning">Some batch details are temporarily unavailable. Academic batches remain visible; try again later.</Alert>:null}
-  <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[
+  {unassigned!==null&&unassigned>0?<p role="status" className="border-l-[3px] border-[var(--lms-warning)] bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm text-warning">
+    {unassigned} {unassigned===1?"student is":"students are"} not in any active class. Assign their academic classes before deciding placement eligibility.
+  </p>:null}
+  {unassigned===null?<p role="status" className="text-sm">Class assignment counts could not load. The batch list is still available. Try again later.</p>:null}
+  {eligibility===null?<p role="status" className="text-sm">Eligibility counts could not load. The batch list is still available. Try again later.</p>:null}
+  {journey===null?<p role="status" className="text-sm">Placement journey counts could not load. Other batch details are still available.</p>:null}
+  {recent===null?<p role="status" className="text-sm">Recent decisions could not load. Open a batch to view its history.</p>:null}
+  {!data.ready&&deadlineParsed.data!=="ALL"?<p role="status" className="text-sm">Deadline details are temporarily unavailable. All matching batches are still shown.</p>:null}
+  {!data.ready&&parsed.data.state!=="ALL"?<p role="status" className="text-sm">Batch state details are temporarily unavailable. All matching batches are still shown.</p>:null}
+  {!data.ready?<p role="status" className="rounded border border-border p-3">Some batch details are temporarily unavailable. Academic batches remain visible; try again later.</p>:null}
+  <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-4">{[
   ["Open for placements",activeCount],["Students eligible",eligibleCount],["Not decided yet",pendingCount],["Placed (offer evidence)",placedCount],
-  ].map(([label,value])=><div key={label} className="rounded-[var(--radius)] border border-border p-3"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready&&value!==null?value:"—"}</dd></div>)}</dl>
-  {workingSet.hidden>0?<Alert tone="info" className="flex-row flex-wrap items-center gap-2">
+  ].map(([label,value])=><div key={label} className="min-w-0 border-b border-r border-border p-3 last:border-r-0"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready&&value!==null?value:"—"}</dd></div>)}</dl>
+  {workingSet.hidden>0?<p role="status" className="flex flex-wrap items-center gap-2 rounded-[var(--radius)] border border-border p-3 text-sm">
     {workingSet.hidden} older {workingSet.hidden===1?"batch is":"batches are"} hidden from your working set.
     <Link href={tpoBatchPageHref({...pageFilters,showOlder:"1"},1,pageParsed.data.pageSize)}
-      className="font-semibold text-link underline">Show older batches</Link>
-   </Alert>:showOlder?<Link href={tpoBatchPageHref({...pageFilters,showOlder:""},1,pageParsed.data.pageSize)}
-      className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Hide older batches</Link>:null}
+      className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show older batches</Link>
+   </p>:showOlder?<Link href={tpoBatchPageHref({...pageFilters,showOlder:""},1,pageParsed.data.pageSize)}
+      className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Hide older batches</Link>:null}
   <p role="status" className="text-sm text-muted-foreground">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to} · Page {batchPage.page} of {batchPage.totalPages}</p>
   {pageParsed.data.page!==batchPage.page?<Alert tone="warning">The requested batch page no longer exists for these filters. Showing the last available page.</Alert>:null}
   <nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
-   {batchPage.hasPrev?<Link className="min-h-9 inline-flex items-center rounded-[var(--radius)] border border-border px-3 text-link lms-inline-link" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
-   {batchPage.hasNext?<Link className="min-h-9 inline-flex items-center rounded-[var(--radius)] border border-border px-3 text-link lms-inline-link" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
+   {batchPage.hasPrev?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
+   {batchPage.hasNext?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
 
   </nav>
-  {batches.length===0?<EmptyState
-   title={tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?
-     "No placement batches or academic cohorts are available to list yet.":"No batches match these filters."}
-   action={data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
-      className="inline-flex min-h-11 items-center text-link underline">Clear batch filters</Link>:undefined}/>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-    <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id+"?returnTo="+encodeURIComponent(tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize))} className="text-link underline lms-inline-link">{b.name}</Link></h2>
+  {batches.length===0?<section role="status" className="space-y-2 rounded-[var(--radius)] border border-border p-4">
+   <p>{tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?
+     "No placement batches or academic cohorts are available to list yet.":
+     "No batches match these filters."}</p>
+   {data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
+      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear batch filters</Link>:null}
+  </section>:<ul className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id+"?returnTo="+encodeURIComponent(tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize))} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{b.name}</Link></h2>
     <p className="text-sm">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
     <p className="text-xs text-muted-foreground">{data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:eligibility?.get(b.id)?.eligible??null}):"Status unavailable"}</p>
     {tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))?<p className="text-xs text-muted-foreground">{tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))}</p>:null}
@@ -186,7 +190,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
      <p className="text-muted-foreground">By {recent?.get(b.id)!.actor} · {new Date(recent?.get(b.id)!.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
      {recent?.get(b.id)!.canUndo&&!b.finishedAt?<TpoBatchUndoControl batchId={b.id} actionId={recent?.get(b.id)!.actionId}/>:null}
     </section>:null}
-    <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,eligibility?.get(b.id),journey?.get(b.id))} className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready,eligibility?.get(b.id),journey?.get(b.id))}</Link>
+    <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,eligibility?.get(b.id),journey?.get(b.id))} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{tpoBatchNextAction(b,data.ready,eligibility?.get(b.id),journey?.get(b.id))}</Link>
    </li>)}</ul>}
  </div>;
 }
