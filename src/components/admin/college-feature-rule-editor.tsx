@@ -1,5 +1,6 @@
 "use client";
 import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/checkbox";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
