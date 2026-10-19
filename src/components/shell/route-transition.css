@@ -21,5 +21,6 @@
  .lms-shell-route-content {animation:lms-route-slide-in 250ms ease-out;}
 }
 @media (prefers-reduced-motion:reduce) {
- .lms-shell-route-content {animation:none;transform:none;}
+ .lms-shell-route-content {animation:none;transition:none;transform:none;}
+ .lms-shell-route-content[data-route-transitioning="true"] {opacity:1;transform:none;will-change:auto;}
 }
