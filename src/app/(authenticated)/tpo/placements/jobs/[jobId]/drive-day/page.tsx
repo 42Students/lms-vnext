@@ -27,7 +27,7 @@ export default async function DriveDayForOneDrive({
       <section aria-label="Drive day rounds" className="grid gap-3 sm:grid-cols-2">
         {drive.rounds.map((round) => {
           const done = round.status === "COMPLETED" || round.status === "CANCELLED";
-          return <article key={round.id} className="rounded-xl border border-border bg-surface p-4">
+          return <article key={round.id} className="border-b border-border py-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-foreground">{round.name}</h2>
               <span className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-body">
@@ -46,7 +46,7 @@ export default async function DriveDayForOneDrive({
           </article>;
         })}
       </section>
-    ) : <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">No rounds planned for this drive day yet.</p>}
+    ) : <p className="text-sm text-body rounded-[9px] border border-border bg-muted p-3">No rounds planned for this drive day yet.</p>}
     <PlacementDriveDayOverview driveDay={drive} />
   </div>;
 }
