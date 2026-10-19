@@ -46,7 +46,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
   <Button type="button" variant="secondary"
    aria-expanded={open} aria-controls={open?"admin-college-bulk-import-panel":undefined}
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
-  {open?<div className="space-y-3">
+  {open?<div id="admin-college-bulk-import-panel" className="space-y-3">
    <label className="grid gap-1 text-sm">Organization
     <Select value={organizationId}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);}}>
