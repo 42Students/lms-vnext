@@ -84,7 +84,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       </div>
       {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." /></div> :
         <div className="divide-y divide-border">{operations.workQueue.map((item, index) =>
-          <div key={item.jobId + item.code + index} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div key={item.jobId + item.code + index} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={priorityTone(item.priority)}>{item.priority}</StatusBadge><span className="text-xs font-semibold text-muted-foreground">{item.count} {item.count === 1 ? "item" : "items"}</span></div>
               <p className="mt-2 font-semibold text-foreground">{item.jobTitle}</p>
