@@ -50,7 +50,7 @@ describe("NORTH-STAR-CHAT19-POLISH: measured legacy sidebar and HR control token
   }
  });
  it("keeps HR cards and controls on semantic legacy radii, not Tailwind defaults",()=>{
-  const unmeasured=/\\brounded-(?:md|lg|xl|2xl)\\b/;
+  const unmeasured=/\brounded-(?:md|lg|xl|2xl)\b/;
   for(const route of routes){
    expect(read(route),route).not.toMatch(unmeasured);
   }
