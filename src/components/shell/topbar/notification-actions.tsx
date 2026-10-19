@@ -44,7 +44,7 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
     if (config.portal === "hr" || config.portal === "learn" || config.portal === "tpo") return;
     try {
       const next = await apiFetch<unknown>("/api/notifications?limit=40", {
-        cache: "no-store", credentials: "same-origin",
+        cache: "no-store", credentials: "same-origin", timeoutMs: 12000,
       });
       if (!next || typeof next !== "object" || !("notifications" in next)) return;
       const records = (next as { notifications: unknown }).notifications;
