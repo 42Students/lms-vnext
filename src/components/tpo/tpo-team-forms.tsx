@@ -80,14 +80,14 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   <h3 className="font-semibold text-foreground">Start a private placement team conversation</h3>
   <label className="grid gap-1 text-sm text-body">Team member
    <Select required value={recipient} onChange={event=>updateDraft(event.target.value,topic)} disabled={busy}
-    className="min-h-11 min-[768px]:min-h-9">
+    className="min-h-11 md:min-h-9">
     <option value="">Choose an active placement team colleague</option>
     {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </Select>
   </label>
   <label className="grid gap-1 text-sm text-body">Topic
    <Input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
-    className="min-h-11 min-[768px]:min-h-9" placeholder="Drive coordination"/>
+    className="min-h-11 md:min-h-9" placeholder="Drive coordination"/>
   </label>
   <label className="grid gap-1 text-sm text-body">First message (optional)
    <Textarea value={firstMessage} maxLength={4000} rows={3} disabled={busy}
@@ -97,7 +97,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   <p className="text-xs text-muted-foreground">Only named active placement team members can take part.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <Button type="submit" disabled={busy||!recipient||!topic.trim()}
-   className="min-h-11 min-[768px]:min-h-9">
+   className="min-h-11 md:min-h-9">
    {busy?"Starting…":"Start conversation"}
   </Button>
  </form>;
@@ -156,7 +156,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
     }}
     className="w-full" placeholder="Share a private team update"/>
   </label>
-  <label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[8px] px-3 py-2 text-sm transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
+  <label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
    <Checkbox checked={markDecision} disabled={busy}
     onChange={event=>{setMarkDecision(event.target.checked);sendKey.current=null;}}/>
    Mark as decision
@@ -166,7 +166,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <Button type="submit" disabled={busy||!body.trim()}
-   className="min-h-11 min-[768px]:min-h-9">
+   className="min-h-11 md:min-h-9">
    {busy?"Sending…":"Send"}
   </Button>
  </form>;
