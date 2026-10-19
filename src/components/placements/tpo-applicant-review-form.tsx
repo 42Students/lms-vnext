@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -69,9 +70,9 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
       <legend className="font-semibold">Common not-selected reasons</legend>
       <div className="flex flex-wrap gap-2">
         {["Did not meet criteria","Application incomplete","Company screening decision","Other"].map(preset=>
-          <button type="button" key={preset} disabled={pending||saved}
+          <Button variant="secondary" type="button" key={preset} disabled={pending||saved}
             onClick={()=>{setInternalReason(preset==="Other"?"":preset);setReviewed(false);}}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text">{preset}</button>)}
+            className="min-h-11 md:min-h-9 px-3">{preset}</Button>)}
       </div>
       <label className="block text-sm">Internal not-selected reason (not shown to the learner)
         <textarea value={internalReason} maxLength={500} rows={2}
@@ -89,9 +90,9 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
     <p className="text-xs text-body">Only pending or held submitted applicants can be reviewed. Refresh if another TPO made a decision.</p>
     {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
     {saved ? <p role="status" className="text-sm text-body">Decision saved. Refresh the applicant list to see its current stage.</p> : null}
-    <button type="submit" disabled={pending || saved || !reviewed || note.trim().length<10}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-primary-foreground disabled:opacity-50">
+    <Button variant="primary" type="submit" disabled={pending || saved || !reviewed || note.trim().length<10}
+      className="min-h-11 md:min-h-9 px-4">
       {pending ? "Saving…" : saved ? "Decision saved" : "Review and confirm decision"}
-    </button>
+    </Button>
   </form>;
 }
