@@ -802,7 +802,7 @@ export function SectionOperations({
           </p>
         </div>
 
-        <div className="grid gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-6">
+        <div className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)] md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
           <div>
             <label
               htmlFor="schedule-title"
