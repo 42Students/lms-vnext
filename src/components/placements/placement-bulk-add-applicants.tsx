@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import type { BulkDriveResult } from "@/modules/placements/bulk-drive-model";
 
@@ -116,28 +118,28 @@ export function PlacementBulkAddApplicants({
         <>
           <label className="block max-w-md text-sm font-semibold text-foreground">
             Apply learners to role
-            <select
+            <Select
               value={roleOptionId}
               onChange={(event) => setRoleOptionId(event.target.value)}
               disabled={busy}
-              className="mt-2 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground md:min-h-9"
+              className="mt-2 min-h-11 w-full md:min-h-9"
             >
               {roles.map((role) => (
                 <option key={role.id} value={role.id}>{role.title}</option>
               ))}
-            </select>
+            </Select>
           </label>
 
           <div className="flex flex-wrap items-end gap-2">
             <label className="flex-1 text-sm font-semibold text-foreground">
               Find learners by name
-              <input
+              <Input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 maxLength={80}
                 disabled={busy}
                 placeholder="Search names"
-                className="mt-2 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground md:min-h-9"
+                className="mt-2 min-h-11 w-full md:min-h-9"
               />
             </label>
             <button
@@ -155,11 +157,11 @@ export function PlacementBulkAddApplicants({
               No active learners match this roster filter. Nothing has been selected or added.
             </p>
           ) : (
-            <div className="space-y-2">
+            <div className="divide-y divide-border border-y border-border">
               {candidates.learners.map((candidate) => (
                 <label
                   key={candidate.membershipId}
-                  className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-muted px-3 py-2"
+                  className="flex min-h-11 cursor-pointer items-center gap-3 px-3 py-2 hover:bg-primary-subtle"
                 >
                   <input
                     type="checkbox"
@@ -198,7 +200,7 @@ export function PlacementBulkAddApplicants({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-3">
             <span className="text-sm font-semibold text-foreground">
               {selected.size} / 200 selected
             </span>
