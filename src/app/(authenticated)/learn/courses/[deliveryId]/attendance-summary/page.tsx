@@ -1,4 +1,6 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import { Tabs } from "@/components/ui/tabs";
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -67,30 +69,22 @@ export default async function LearnerCourseAttendanceSummaryPage({
           sessions only; unmarked or future classes are not treated as absences.
         </p>
       </section>
-      <nav aria-label="Attendance month filter" className="flex flex-wrap gap-2">
-        <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendance-summary"}
-          aria-current={selectedMonth === null ? "page" : undefined}
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
-          All months
-        </Link>
-        {available.map((entry) => (
-          <Link key={entry.month}
-            href={"/learn/courses/" + encodeURIComponent(deliveryId) +
-              "/attendance-summary?month=" + entry.month}
-            aria-current={selectedMonth === entry.month ? "page" : undefined}
-            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
-            {entry.month}
-          </Link>
-        ))}
-      </nav>
+      <Tabs ariaLabel="Attendance month filter" value={selectedMonth ?? "all"}
+        renderPanel={false}
+        items={[
+          { value: "all", label: "All months",
+            href: "/learn/courses/" + encodeURIComponent(deliveryId) + "/attendance-summary" },
+          ...available.map(entry => ({
+            value: entry.month,
+            label: entry.month,
+            href: "/learn/courses/" + encodeURIComponent(deliveryId) +
+              "/attendance-summary?month=" + encodeURIComponent(entry.month),
+          })),
+        ]}
+      />
       {filtered.length === 0 ? (
-        <section role="status" className="border-b border-border py-4">
-          <h2 className="font-semibold text-foreground">No attendance sessions for this selection</h2>
-          <p className="mt-2 text-sm text-body">
-            No recorded or scheduled classes were found for this course and month. A missing
-            attendance record is not counted as an absence.
-          </p>
-        </section>
+        <EmptyState title="No attendance sessions for this selection"
+          description="No recorded or scheduled classes were found for this course and month. A missing attendance record is not counted as an absence." />
       ) : (
         <section aria-label="Course attendance by month" className="space-y-4">
           {filtered.map((month) => (
