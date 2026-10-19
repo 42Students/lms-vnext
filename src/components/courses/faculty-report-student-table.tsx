@@ -24,10 +24,10 @@ export function FacultyReportStudentTable({
   const formatDate = facultyReportIstTimestamp;
 
   return (
-    <section aria-label={title} className="rounded-xl border border-border bg-surface p-5">
+    <section aria-label={title} className="space-y-3">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+          <h2 className="text-xl font-semibold text-[var(--lms-heading)]">{title}</h2>
           <p aria-live="polite" className="mt-1 text-xs text-muted-foreground">
             {result.count} of {rows.length} learners · Highest scores first
           </p>
@@ -81,7 +81,7 @@ export function FacultyReportStudentTable({
             type="button"
             disabled={result.page === 1}
             onClick={() => setRequestedPage(result.page - 1)}
-            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50"
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9"
           >
             Previous
           </button>
@@ -90,7 +90,7 @@ export function FacultyReportStudentTable({
             type="button"
             disabled={result.page >= result.pages}
             onClick={() => setRequestedPage(result.page + 1)}
-            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50"
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9"
           >
             Next
           </button>
