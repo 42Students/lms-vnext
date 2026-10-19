@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
@@ -48,7 +49,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
   <p className="text-sm">Switch off what your students do not need. The in-app notice always shows; these control only the email.</p>
   {fields.map(([key,label,help])=><label key={key} className="flex min-h-12 items-center justify-between gap-4 border-b border-border py-2 text-sm">
    <span><span className="font-medium">{label}</span><span className="block text-xs text-muted-foreground">{help}</span></span>
-   <input type="checkbox" aria-label={label} checked={value[key]} disabled={busy}
+   <Checkbox aria-label={label} checked={value[key]} disabled={busy}
     onChange={e=>setValue(current=>({...current,[key]:e.target.checked}))}/>
   </label>)}
   <p className="text-xs text-muted-foreground">These are college preferences; sending requires verified mail templates and an enabled delivery provider.</p>
