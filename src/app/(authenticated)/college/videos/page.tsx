@@ -25,7 +25,7 @@ export default async function CollegeVideosPage({
         <PageHeader eyebrow="College Admin · Courses & Content" title="Video" />
         <ErrorState title="Invalid video filters"
           description="The title, status or page filter is invalid. No content was loaded."
-          action={<Link href="/college/videos" className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>} />
+          action={<Link href="/college/videos" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>} />
       </div>
     );
   }
