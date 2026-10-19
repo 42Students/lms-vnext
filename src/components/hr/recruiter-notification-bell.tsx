@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
-import {Button} from "@/components/ui/button";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {recruiterBellAriaLabel,recruiterBellPreview,createRecruiterBellRequestGate,type RecruiterBellItem}
  from "@/modules/placements/recruiter-bell-model";
