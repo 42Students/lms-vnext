@@ -137,14 +137,22 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       {open ? <div id="lms-topbar-command-results" role="listbox"
         aria-label="Workspace commands" className={style.dropdown}
         onKeyDown={event => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            input.current?.focus();
+            setOpen(false);
+            setMobileOpen(false);
+            return;
+          }
           if (event.defaultPrevented ||
-              (event.key !== "ArrowDown" && event.key !== "ArrowUp")) return;
+              !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
           const options = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('[role="option"]'));
           const index = options.findIndex(option => option === event.target);
           if (index < 0 || options.length === 0) return;
           event.preventDefault();
-          const next = event.key === "ArrowDown"
-            ? (index + 1) % options.length
+          const next = event.key === "Home" ? 0
+            : event.key === "End" ? options.length - 1
+            : event.key === "ArrowDown" ? (index + 1) % options.length
             : (index - 1 + options.length) % options.length;
           options[next]?.focus();
         }}>
