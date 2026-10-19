@@ -151,37 +151,37 @@ export default async function SuperAdminFeaturesPage({
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Sort colleges
-            <Select name="sort" defaultValue={result.sort} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            <Select name="sort" defaultValue={result.sort} className="min-h-11 sm:min-h-9">
               <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="CODE">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Explicit college rule for
-            <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 sm:min-h-9">
               <option value="">Any college</option><option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored college value
-            <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 sm:min-h-9">
               <option value="ALL">Any value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">College rule lock
-            <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 sm:min-h-9">
               <option value="ALL">Any lock</option><option value="LOCKED">Stored locked only</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">College rule presence
-            <Select name="presence" defaultValue={result.presenceFilter} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            <Select name="presence" defaultValue={result.presenceFilter} className="min-h-11 sm:min-h-9">
               <option value="ANY">Any college</option><option value="HAS_RULE">Has stored rule</option><option value="NO_RULE">No stored rule</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored rule last updated
-            <Select name="recent" defaultValue={result.recentFilter} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            <Select name="recent" defaultValue={result.recentFilter} className="min-h-11 sm:min-h-9">
               <option value="ALL">Any date</option><option value="7D">Last 7 days</option><option value="30D">Last 30 days</option><option value="90D">Last 90 days</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Search in
-            <Select name="searchField" defaultValue={result.searchField} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            <Select name="searchField" defaultValue={result.searchField} className="min-h-11 sm:min-h-9">
               <option value="ALL">Name and code</option><option value="NAME">College name</option><option value="CODE">College code</option>
             </Select>
           </label>

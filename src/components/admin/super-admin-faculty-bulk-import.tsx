@@ -78,13 +78,13 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   element.href=url;element.download="bulk_faculty_sample.csv";element.click();
   URL.revokeObjectURL(url);
  };
- return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section className="space-y-3 border-t border-border pt-4">
   {dialog}
   <h2 className="font-semibold">Bulk register faculty</h2>
   <p className="text-sm text-body">Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional). Existing identities are verified by the server.</p>
   <div className="flex flex-wrap items-center gap-3">
    <button type="button" onClick={downloadSample}
-    className="min-h-9 rounded border border-border px-3 text-sm font-semibold text-primary-text">Download sample CSV</button>
+    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Download sample CSV</button>
    <label className="text-sm font-semibold">Choose CSV
     <input type="file" accept=".csv,text/csv" disabled={busy}
       onChange={event=>void fileSelected(event.target.files?.[0]??null)}
@@ -95,7 +95,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   {count>0?<p role="status" className="text-sm">{count} rows validated locally; review before creating.</p>:null}
   {(issue||error)?<p role="alert" className="text-sm text-error">{error||issue}</p>:null}
   <button type="button" onClick={()=>void submit()} disabled={busy||!count||Boolean(issue||error)||!filename}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50">
     {busy?"Importing…":"Validate and Create"}
   </button>
   {results.length>0?<div className="space-y-2">

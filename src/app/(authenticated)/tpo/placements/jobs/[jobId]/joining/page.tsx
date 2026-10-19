@@ -50,14 +50,14 @@ export default async function TpoDriveJoiningPage({
       />
       <section aria-label="Joining summary" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {labels.map(([name, value]) => (
-          <div key={name} className="rounded-xl border border-border bg-surface p-4">
+          <div key={name} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
         ))}
       </section>
       {tracker.items.length === 0 ? (
-        <p role="status" className="text-sm text-body rounded-[9px] border border-border bg-muted p-3">
+        <p role="status" className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
           No currently accepted offers are recorded for this drive. Issued,
           declined and withdrawn offers cannot be assigned a joining outcome.
         </p>
@@ -76,7 +76,7 @@ export default async function TpoDriveJoiningPage({
                     Learner placement history →
                   </Link>
                 </div>
-                <span className="rounded-md border border-border px-3 py-1 text-sm font-semibold text-foreground">
+                <span className="rounded-[var(--lms-control-radius)] border border-border px-3 py-1 text-sm font-semibold text-foreground">
                   {item.joiningStatus.replaceAll("_", " ")}
                 </span>
               </div>

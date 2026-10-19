@@ -13,7 +13,7 @@
 .page :global([data-slot="card"]) {
   border-color: var(--lms-border, #e5e9f0);
   background: var(--lms-surface, #fff);
-  border-radius: var(--lms-card-radius, 12px);
+  border-radius: var(--lms-canvas-radius, 12px);
 }
 .page :global(a:focus-visible), .page :global(button:focus-visible) {
   outline-color: var(--lms-link-text, #0a7c88);

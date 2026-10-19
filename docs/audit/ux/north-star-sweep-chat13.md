@@ -72,3 +72,13 @@ The adjacent completed `docs/audit/ux/north-star-sweep-chat-15.md` was read and 
 ### Test and release caveat
 
 `chat13-legacy-topbar-accessibility-contract.test.ts` now asserts the migrated TPO drawer, inbox actions, new menu, dynamic records and removal of the duplicate strip. `chat13-legacy-topbar-portal-contract.test.ts` covers actual route/alias separation and directory search mappings. No automated checks were executed. The browser/mobile visual comparison, service authorization/tenant tests and deployment acceptance remain the orchestrator's work.
+
+### Follow-up safety and parity (same date)
+
+- The avatar dropdown now preserves the existing `accountActionCopy` role matrix rather than adding an unplanned Super Admin profile link. The documented legacy Super Admin variant remains **Logout-only**; other roles retain their `My Account` destination.
+- The command search is keyed by the active pathname, and unread controls by portal, so an unfinished query or stale private badge cannot persist visibly after navigating into a different portal.
+- TPO record result href validation was extracted into `src/components/shell/topbar/tpo-find-model.ts`: only bounded `/tpo/...` paths without protocol-relative syntax, backslashes or controls are navigable. `tests/unit/chat13-topbar-safe-tpo-record-hrefs.test.ts` covers ordinary results, malformed API payloads and malicious/path-length edges (authored but not executed).
+- `/admin/{batches,classes,batch-promotion,companies}` received a further shared-kit pass: redundant colors, borders and radii were removed from existing `Input`, `Select` and `Button` controls while retaining the phone tap-height and desktop 36px size. Their authored form semantics, filter names and events were not changed.
+- Next-portal HR `drives`, `conversations`, `notifications` form inputs/actions were converted to shared primitives; original query names and POST/GET forms remain unchanged. A static JSX-tag balance review found matching `Select` and `Button` pairs across these three files. This is not a substitute for TypeScript compilation or UI testing.
+
+**Open acceptance** remains exact old-LMS screenshot/pixel comparison, mobile keyboard/overlay navigation, authenticated permission checks, and CI. None was executed per the owner's current no-CI directive.
