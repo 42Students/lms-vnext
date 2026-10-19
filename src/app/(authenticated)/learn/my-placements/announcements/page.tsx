@@ -91,7 +91,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           <input type="search" name="q" maxLength={100} defaultValue={queryText}
             placeholder="Title or message" className="min-h-11 sm:min-h-9 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Search</button>
+        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Search</button>
         {queryText ? <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey,alertQ,source})}
           className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
@@ -109,7 +109,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
             <option value="oldest">Oldest first</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Apply sort</button>
+        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Apply sort</button>
       </form>
       <nav aria-label="Notice filter" className="flex flex-wrap gap-3 text-sm">
         <Link href={learnerNoticeFilterHref({pinned:false,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-primary-text">All notices</Link>
