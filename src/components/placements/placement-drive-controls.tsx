@@ -7,6 +7,9 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -151,8 +154,8 @@ type ResultDraft = {
   internalComment: string;
 };
 
-const inputClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
-const textareaClass = "min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "w-full";
+const textareaClass = "min-h-20 w-full";
 
 function humanize(value: string) {
   return value
@@ -974,7 +977,7 @@ export function PlacementDriveControls({
                           ) : null}
 
                           <div className="mt-3 grid gap-2">
-                            <input
+                            <Input
                               className={inputClass}
                               maxLength={1000}
                               value={
@@ -1088,7 +1091,7 @@ export function PlacementDriveControls({
                         <FieldLabel>
                           Candidate message
                         </FieldLabel>
-                        <textarea
+                        <Textarea
                           className={
                             textareaClass
                           }
@@ -1117,7 +1120,7 @@ export function PlacementDriveControls({
                         <FieldLabel>
                           Internal reason
                         </FieldLabel>
-                        <textarea
+                        <Textarea
                           className={
                             textareaClass
                           }
@@ -1231,7 +1234,7 @@ export function PlacementDriveControls({
                 <div className="flex min-h-10 items-center text-sm font-semibold text-muted-foreground">
                   Round {index + 1}
                 </div>
-                <select
+                <Select
                   className={inputClass}
                   disabled={
                     !data.evaluation.editable
@@ -1270,8 +1273,8 @@ export function PlacementDriveControls({
                   <option value="INTERVIEW">
                     Interview
                   </option>
-                </select>
-                <input
+                </Select>
+                <Input
                   className={inputClass}
                   disabled={
                     !data.evaluation.editable
@@ -1297,7 +1300,7 @@ export function PlacementDriveControls({
                   }
                   placeholder="Round name"
                 />
-                <input
+                <Input
                   className={inputClass}
                   disabled={
                     !data.evaluation.editable
@@ -1535,7 +1538,7 @@ export function PlacementDriveControls({
                       <FieldLabel>
                         Date & time
                       </FieldLabel>
-                      <input
+                      <Input
                         className={
                           inputClass
                         }
@@ -1562,7 +1565,7 @@ export function PlacementDriveControls({
                       <FieldLabel>
                         Mode
                       </FieldLabel>
-                      <select
+                      <Select
                         className={
                           inputClass
                         }
@@ -1587,13 +1590,13 @@ export function PlacementDriveControls({
                         <option value="VIRTUAL">
                           Virtual
                         </option>
-                      </select>
+                      </Select>
                     </label>
                     <label>
                       <FieldLabel>
                         Results due
                       </FieldLabel>
-                      <input
+                      <Input
                         className={
                           inputClass
                         }
@@ -1620,7 +1623,7 @@ export function PlacementDriveControls({
                       <FieldLabel>
                         Venue
                       </FieldLabel>
-                      <input
+                      <Input
                         className={
                           inputClass
                         }
@@ -1645,7 +1648,7 @@ export function PlacementDriveControls({
                       <FieldLabel>
                         Meeting URL
                       </FieldLabel>
-                      <input
+                      <Input
                         className={
                           inputClass
                         }
@@ -1673,7 +1676,7 @@ export function PlacementDriveControls({
                       <FieldLabel>
                         Cancellation reason
                       </FieldLabel>
-                      <input
+                      <Input
                         className={
                           inputClass
                         }
@@ -1835,7 +1838,7 @@ export function PlacementDriveControls({
                                   <FieldLabel>
                                     Outcome
                                   </FieldLabel>
-                                  <select
+                                  <Select
                                     className={
                                       inputClass
                                     }
@@ -1873,13 +1876,13 @@ export function PlacementDriveControls({
                                     <option value="ABSENT">
                                       Absent
                                     </option>
-                                  </select>
+                                  </Select>
                                 </label>
                                 <label>
                                   <FieldLabel>
                                     Score %
                                   </FieldLabel>
-                                  <input
+                                  <Input
                                     className={
                                       inputClass
                                     }
@@ -1913,7 +1916,7 @@ export function PlacementDriveControls({
                                   <FieldLabel>
                                     Waitlist rank
                                   </FieldLabel>
-                                  <input
+                                  <Input
                                     className={
                                       inputClass
                                     }
@@ -1950,7 +1953,7 @@ export function PlacementDriveControls({
                                   <FieldLabel>
                                     Reason category
                                   </FieldLabel>
-                                  <select
+                                  <Select
                                     className={
                                       inputClass
                                     }
@@ -1991,13 +1994,13 @@ export function PlacementDriveControls({
                                     <option value="OTHER">
                                       Other
                                     </option>
-                                  </select>
+                                  </Select>
                                 </label>
                                 <label className="md:col-span-2">
                                   <FieldLabel>
                                     Candidate message
                                   </FieldLabel>
-                                  <input
+                                  <Input
                                     className={
                                       inputClass
                                     }
@@ -2030,7 +2033,7 @@ export function PlacementDriveControls({
                                   <FieldLabel>
                                     Internal comment
                                   </FieldLabel>
-                                  <input
+                                  <Input
                                     className={
                                       inputClass
                                     }
