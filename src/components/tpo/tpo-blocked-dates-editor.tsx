@@ -36,7 +36,7 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
     e instanceof Error?e.message:"Blocked dates could not be updated.");}finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-4">
-  <form className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_2fr_auto]"
+  <form className="grid min-w-0 gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 xl:grid-cols-[1fr_1fr_2fr_auto]"
    onSubmit={e=>{e.preventDefault();if(!validRange||busy)return;
     void request("/api/placements/tpo/settings/blocked-dates","POST",{startDay,endDay,reason:reason.trim()||"Blocked"});}}>
    <label className="text-sm">From
@@ -54,7 +54,7 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
    <Button type="submit" className="min-h-11 min-[768px]:min-h-9 self-end"
     disabled={busy||!validRange||(reason.trim().length>0&&reason.trim().length<3)}>Block dates</Button>
   </form>
-  <div className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2">
+  <div className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Filter by month
       <Input type="month" value={month} onChange={e=>setMonth(e.target.value)}
         className="min-h-11 min-[768px]:min-h-9 w-full"/>
@@ -69,7 +69,7 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
   {pastCount>0?<Button type="button" variant="secondary" onClick={()=>setShowPast(value=>!value)}
    className="min-h-11 min-[768px]:min-h-9">{showPast?"Hide past blocked dates":`Show past blocked dates (${pastCount})`}</Button>:null}
   {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{!showPast&&pastCount>0?"No upcoming blocked dates.":tpoBlockedDatesEmptyMessage(items.length)}</p>:
-   <ul className="grid min-w-0 gap-2 sm:grid-cols-2">{ranges.map(range=><li key={range.items[0].id}
+   <ul className="grid min-w-0 gap-2 min-[768px]:grid-cols-2">{ranges.map(range=><li key={range.items[0].id}
     className="flex min-w-0 flex-wrap justify-between gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
     <div className="min-w-0"><strong>{range.startDay===range.endDay?range.startDay:range.startDay+" – "+range.endDay}</strong><p className="break-words text-sm">{range.reason}</p><p className="text-xs text-muted-foreground">{range.items.length} day(s) · Individual day removal below</p></div>
     {range.items.length>1?<Button type="button" variant="secondary" disabled={busy} onClick={()=>{
