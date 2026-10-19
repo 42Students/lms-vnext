@@ -93,7 +93,7 @@ export function PlacementBulkOfferWithdraw({
 
   if (choices.length === 0) return null;
   return (
-    <section className="space-y-4 border-b border-border pb-6" aria-label="Bulk offer withdrawal">
+    <section className="space-y-4 border-b border-border p-5" aria-label="Bulk offer withdrawal">
       <div>
         <h3 className="text-base font-semibold text-foreground">
           Bulk withdraw offers
@@ -141,7 +141,7 @@ export function PlacementBulkOfferWithdraw({
               type="button"
               onClick={() => void submit()}
               disabled={busy || selected.length === 0 || reason.trim().length < 8}
-              className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-50 md:min-h-9"
+              className="min-h-10 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50"
             >
               {busy ? "Applying withdrawal..." : "Review and confirm withdrawals"}
             </button>

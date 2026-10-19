@@ -1,5 +1,7 @@
 "use client";
 import {useState} from "react";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 export function TpoNoticeScheduleControls({count,enabled,minDateTime}:{
  count:number|null;enabled:boolean;minDateTime?:string;
@@ -16,12 +18,12 @@ export function TpoNoticeScheduleControls({count,enabled,minDateTime}:{
    </div>
   </fieldset>
   {mode==="LATER"?<label className="grid gap-1 text-sm">Schedule for (IST)
-    <input type="datetime-local" name="sendAt" required min={minDateTime}
-      className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"/>
+    <Input type="datetime-local" name="sendAt" required min={minDateTime}
+      className="min-h-11 sm:min-h-9"/>
    </label>:null}
-  <button type="submit" disabled={!enabled}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+  <Button type="submit" disabled={!enabled}
+   className="min-h-11 sm:min-h-9">
    {mode==="LATER"?"Schedule":"Send"} {count===null?"announcement":"to "+count+" members"}
-  </button>
+  </Button>
  </div>;
 }

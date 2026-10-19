@@ -1,7 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {
- SHELL_NAV_ICON_KEYS,SHELL_SECTION_LABELS,superAdminItems,collegeAdminItems,
+ SHELL_NAV_ICON_KEYS,SHELL_SECTION_LABELS,TPO_SECTION_LABELS,superAdminItems,collegeAdminItems,
  shellNavIconKey,scopedShellNavigation,type ShellNavItem,
 } from "@/components/shell/shell-model";
 
@@ -31,6 +31,38 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
    .toEqual(["/tpo/home","/college"]);
   expect(scopedShellNavigation([faculty,college],"/teacher/courses"))
    .toEqual([faculty,college]);
+ });
+ it("keeps visible group headings exclusive to TPO and hairlines elsewhere",()=>{
+  const nav=source("src/components/shell/sidebar-nav.tsx");
+  const css=source("src/components/shell/sidebar-legacy.css");
+  expect(nav).toContain('!item.href.startsWith("/tpo/")');
+  expect(nav).toContain('className="lms-nav-group-rule"');
+  expect(css).toContain(".lms-nav-group-rule");
+  expect(TPO_SECTION_LABELS.operate).toBe("Operate");
+  expect(TPO_SECTION_LABELS.administration).toBe("Administration");
+ });
+ it("keeps the original recruiter and TPO icon identities",()=>{
+  expect(SHELL_NAV_ICON_KEYS["/hr/home"]).toBe("dashboard");
+  expect(SHELL_NAV_ICON_KEYS["/hr/company"]).toBe("users");
+  expect(SHELL_NAV_ICON_KEYS["/tpo/requests"]).toBe("check-circle");
+  expect(SHELL_NAV_ICON_KEYS["/tpo/reports"]).toBe("file-text");
+  expect(SHELL_NAV_ICON_KEYS["/tpo/settings"]).toBe("wrench");
+ });
+ it("shows one active workspace for multi-role memberships without mixing all portal rows",()=>{
+  const learn:ShellNavItem={href:"/learn/courses",label:"Courses",shortLabel:"C",group:"learning"};
+  const mentor:ShellNavItem={href:"/mentor/projects",label:"Projects",shortLabel:"P",group:"learning"};
+  const teacherMore:ShellNavItem={href:"/teacher/calendar",label:"Class Schedule",shortLabel:"S",group:"tracking"};
+  const learnMore:ShellNavItem={href:"/learn/attendance",label:"Attendance",shortLabel:"A",group:"tracking"};
+  const combined=[learn,learnMore,faculty,teacherMore,mentor,college];
+  expect(scopedShellNavigation(combined,"/teacher/courses").map(item=>item.href))
+   .toEqual(["/teacher/courses","/teacher/calendar","/college"]);
+  expect(scopedShellNavigation(combined,"/learn/attendance").map(item=>item.href))
+   .toEqual(["/learn/courses","/learn/attendance","/college"]);
+  // College Admin's legacy Placement cell access is not a second full TPO account.
+  expect(scopedShellNavigation([college,{
+   href:"/college/courses",label:"Courses",shortLabel:"C"
+  },{href:"/tpo/home",label:"Placement cell",shortLabel:"P"}],"/college"))
+   .toHaveLength(3);
  });
  it("preserves legacy group names and all distinct route/icon choices",()=>{
   expect(SHELL_SECTION_LABELS.operate).toBe("Operate");

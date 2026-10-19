@@ -21,7 +21,7 @@ export function RecordedOutsideForm({collegeId,choices}:{
   <label className="grid gap-1 text-sm text-body sm:col-span-2">Private staff notes, no learner details
    <textarea name="notes" maxLength={1000} rows={3} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
   </label>
-  <button type="submit" disabled={!choices.length} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-50 md:min-h-9 sm:col-span-2">
+  <button type="submit" disabled={!choices.length} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 sm:col-span-2">
    Record outside-platform drive
   </button>
   <p className="text-xs text-muted-foreground sm:col-span-2">

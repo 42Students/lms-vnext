@@ -1,6 +1,10 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 
 type Path={id:string;courseName:string;cohortName:string;periodName:string};
@@ -31,28 +35,27 @@ export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
   finally{setPending(false);}
  }
  if(!paths.length)return <p className="text-sm text-body">Open a course offering to create its first lesson.</p>;
- return <form aria-label="Add lesson" onSubmit={event=>void submit(event)} className="grid gap-3 rounded border border-border p-4">
+ return <form aria-label="Add lesson" onSubmit={event=>void submit(event)} className="grid gap-3 border-b border-border pb-5">
   <h2 className="font-semibold text-foreground">Add Lesson</h2>
   <label className="grid gap-1 text-sm font-semibold">Course / Offering
-   <select required value={pathId} onChange={event=>setPathId(event.target.value)}
-    className="min-h-9 rounded-[9px] border border-border bg-surface px-3">
+   <Select required value={pathId} onChange={event=>setPathId(event.target.value)}
+    className="w-full">
     {paths.map(path=><option key={path.id} value={path.id}>
      {path.courseName} · {path.cohortName} · {path.periodName}
     </option>)}
-   </select>
+   </Select>
   </label>
   <label className="grid gap-1 text-sm font-semibold">Lesson name
-   <input required maxLength={255} value={name} onChange={event=>setName(event.target.value)}
-    className="min-h-9 rounded-[9px] border border-border bg-surface px-3"/>
+   <Input required maxLength={255} value={name} onChange={event=>setName(event.target.value)}
+    className="w-full"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold">Description (optional)
-   <textarea maxLength={5000} rows={2} value={description}
+   <Textarea maxLength={5000} rows={2} value={description}
     onChange={event=>setDescription(event.target.value)}
-    className="rounded-[9px] border border-border bg-surface p-3"/>
+    className="w-full"/>
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <button type="submit" disabled={pending||!name.trim()||!pathId}
-   className="min-h-9 rounded-[9px] border border-border px-4 font-semibold disabled:opacity-50">
-   {pending?"Saving…":"Add Lesson"}</button>
+  <Button type="submit" disabled={pending||!name.trim()||!pathId}>
+   {pending?"Saving…":"Add Lesson"}</Button>
  </form>;
 }

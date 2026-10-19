@@ -346,7 +346,7 @@ export default async function HrPlacementJobPage({
                 {driveOverview.deadlineState==="DUE_SOON"?"Applications close soon":driveOverview.deadlineState==="PASSED"?"Application deadline passed":driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
           </div>
-          <section aria-label="What students see" className="rounded-lg border border-border bg-surface-secondary p-4">
+          <section aria-label="What students see" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
             <h3 className="font-semibold text-foreground">What students see</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Student-facing draft facts are shown for reference. Exact publication and application access are controlled by the placement cell.
@@ -373,7 +373,7 @@ export default async function HrPlacementJobPage({
             </dl>
           </section>
           <section aria-labelledby="recruiter-shared-funnel-title"
-            className="rounded-lg border border-border bg-surface p-4">
+            className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
             <h3 id="recruiter-shared-funnel-title" className="font-semibold text-foreground">Hiring pipeline</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Only applicants shared by the placement cell are counted. Earlier or unshared applications are not visible to your employer account.
@@ -384,7 +384,7 @@ export default async function HrPlacementJobPage({
                 shared:applicants.counts.all,shortlisted:applicants.counts.shortlisted,
                 rounds:workspace.rounds,
                 offered:offerSummary.distinctOffered,hired:offerSummary.distinctHired,
-              }).map(stage=><li key={stage.label} className="rounded-lg border border-border bg-surface-subtle p-3">
+              }).map(stage=><li key={stage.label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
                 <p className="text-xs font-semibold text-body">{stage.label}</p>
                 <p className="mt-1 text-xl font-bold tabular-nums text-foreground">{stage.count??"—"}</p>
                 <div role="img" aria-label={stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage"}
@@ -399,13 +399,13 @@ export default async function HrPlacementJobPage({
             {recruiterDriveProgressSteps(driveOverview).map(step=><li key={step.label}
               aria-current={step.state==="CURRENT"?"step":undefined}
               className={step.state==="CURRENT"
-                ?"rounded-lg border border-primary bg-primary-subtle px-3 py-3 text-sm font-semibold text-primary-text"
-                :"rounded-lg border border-border bg-surface-secondary px-3 py-3 text-sm text-body"}>
+                ?"rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 py-3 text-sm font-semibold text-primary-text"
+                :"rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary px-3 py-3 text-sm text-body"}>
               <span className="block text-xs">{step.state==="COMPLETE"?"Done":step.state==="CURRENT"?"Current":"Upcoming"}</span>
               <span className="mt-1 block">{step.label}</span>
             </li>)}
           </ol>
-          <div className="rounded-lg border border-border bg-surface-secondary p-4">
+          <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
             <h3 className="font-semibold text-foreground">Next</h3>
             <p className="mt-1 text-sm text-body">{recruiterDriveNextAction(driveOverview).detail}</p>
             <Link href={recruiterDriveNextAction(driveOverview).tab
@@ -445,23 +445,23 @@ export default async function HrPlacementJobPage({
           Request another drive
         </Link>
       </div>
-      <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-2">
+      <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-3 border-b border-border">
         {(["overview", "applicants", "rounds", "offers"] as const).map(tab => (
           <Link key={tab} href={`/recruiter/drives/${workspace.job.id}?tab=${tab}${returnQuery}`}
             aria-current={filters.tab === tab ? "page" : undefined}
-            className={`inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold capitalize ${filters.tab === tab ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
+            className={`inline-flex min-h-9 items-center border-b-[3px] px-3 py-2 text-[13px] font-semibold capitalize ${filters.tab === tab ? "border-primary text-foreground" : "border-transparent text-body hover:text-primary-text"}`}>
             {tab==="overview"?"Overview":tab==="applicants"?"Applicants ("+applicants.counts.all+")":
               tab==="rounds"?"Rounds & interviews":"Offers ("+offersTotal+")"}
           </Link>
         ))}
         <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
           aria-current={requestsTab?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className={requestsTab ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text"}>
           Requests{requestData?" ("+requestData.requests.length+")":""}
         </Link>
         <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery}
           aria-current={discussionTab?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className={discussionTab ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text"}>
           Discussion
         </Link>
         <Link href={hrDriveMessagesHref(workspace.job.id)}
@@ -469,12 +469,12 @@ export default async function HrPlacementJobPage({
           Messages
         </Link>
       </nav>
-      {discussionTab?<section aria-label="Drive discussion" className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      {discussionTab?<section aria-label="Drive discussion" className="space-y-4 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 sm:p-5">
         <RecruiterConversationLiveRefresh/>
         <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
         <p className="text-sm text-body">Private hiring-drive conversation with the placement cell. The company cannot read other recruiters&apos; conversations.</p>
         {requestData?.party==="COMPANY"&&requestData.requests.length>0?
-          <div className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
+          <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-sm">
             <p className="font-semibold text-foreground">Change-request activity · {requestData.requests.length} recorded</p>
             <p className="mt-1 text-body">Review submitted requests, college decisions and replies in the Requests tab.</p>
             <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
@@ -484,7 +484,7 @@ export default async function HrPlacementJobPage({
           <p className="text-xs text-muted-foreground">{threadMessages.total} recorded messages</p>
           <ScrollCue axis="y" label="Drive discussion history" viewportClassName="max-h-[36rem]"><ol aria-label="Drive discussion history" className="space-y-2">
             {[...threadMessages.messages].reverse().map(message=><li key={message.id}
-              className="rounded-lg border border-border bg-surface-subtle p-3">
+              className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
               <p className="text-xs font-semibold text-muted-foreground">
                 {message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} ·
                 {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}).format(message.createdAt)} IST
@@ -507,7 +507,7 @@ export default async function HrPlacementJobPage({
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
         {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
           userId={context.user.id} requests={requestData.requests}/> :
-         <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{requestData.pendingMessage}</p>}
+         <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">{requestData.pendingMessage}</p>}
       </section>:null}
       {filters.tab === "applicants" ? (
         <section className="space-y-4 border-b border-border pb-4 sm:pb-5">
@@ -536,7 +536,7 @@ export default async function HrPlacementJobPage({
           <p className="text-xs text-muted-foreground">These milestones reflect only applicants the placement cell has shared. A candidate may appear in multiple historical stages; unshared or privately rejected applicants remain hidden.</p>
           {applicants.rows.length ? <div className="grid gap-3 md:grid-cols-2">
             {applicants.rows.map(applicant => (
-              <article key={applicant.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
+              <article key={applicant.id} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
                 <p className="m-0 break-words font-semibold text-foreground">{applicant.name || "Unnamed applicant"}</p>
                 <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
                 {applicant.rollNumber?<p className="mt-1 text-xs text-body">Roll no. {applicant.rollNumber}</p>:null}
@@ -658,7 +658,7 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xl font-bold text-foreground">{item.value}</p>
             </div>)}
           </div>
-          <section className="space-y-2 rounded-lg border border-border bg-surface-secondary p-4">
+          <section className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
             <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
             {driveOverview.readOnly ? <p role="status" className="text-sm text-body">
               This drive is finished, so a selection list can no longer be sent.
@@ -679,7 +679,7 @@ export default async function HrPlacementJobPage({
             ))}
           </nav>
           {(filters.offerState==="ALL"||["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState))?
-            <section aria-label="Placement-cell selection history" className="space-y-3 rounded-lg border border-border bg-surface-secondary p-4">
+            <section aria-label="Placement-cell selection history" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
               <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
               <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
                             <DataTable
@@ -784,7 +784,7 @@ export default async function HrPlacementJobPage({
             }))}/>
           <ul aria-label="Hiring rounds and statuses" className="mt-3 grid gap-2 sm:grid-cols-2">
             {workspace.rounds.map(round=><li key={round.id}
-             className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
+             className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-sm">
               <p className="font-semibold text-foreground">{round.sequence}. {round.name}</p>
               <p className="text-body">{round.status==="COMPLETED"?"Completed":
                 round.status==="SCHEDULED"?"Scheduled":"Not scheduled"}
@@ -806,7 +806,7 @@ export default async function HrPlacementJobPage({
             </li>)}
           </ul>
           {roundSchedule.length?<div className="grid gap-3 sm:grid-cols-2">
-            {roundSchedule.map(round=><article key={round.id} className="rounded-lg border border-border bg-surface-secondary p-4">
+            {roundSchedule.map(round=><article key={round.id} className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
               <h4 className="font-semibold text-foreground">{round.sequence}. {round.name}</h4>
               <p className="mt-1 text-sm text-body">{formatRoundTime(round.startsAt)} IST</p>
               <p className="text-xs text-muted-foreground">{round.endsAt?"Ends "+formatRoundTime(round.endsAt)+" IST":"Duration not recorded"}</p>
@@ -865,7 +865,7 @@ export default async function HrPlacementJobPage({
                 {inlineResults.rows.length
                   ? <div className="grid gap-3 md:grid-cols-2">
                       {inlineResults.rows.map(candidate => (
-                        <article key={candidate.key} className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4">
+                        <article key={candidate.key} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
                           <p className="break-words font-semibold text-foreground">{candidate.name}</p>
                           <div className="mt-2 flex flex-wrap gap-2">
                             <StatusBadge>{candidate.outcome ?? "UNRECORDED"}</StatusBadge>

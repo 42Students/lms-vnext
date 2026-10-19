@@ -221,11 +221,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm md:min-h-9"
        href="/tpo/placements/lifecycle?view=REQUESTS">Waiting for your review</Link>
     </nav>
-    <nav aria-label="Drive status tabs" className="flex flex-wrap gap-1 border-b border-border">
+    <nav aria-label="Drive status tabs" className="flex flex-wrap gap-2">
       {([["REQUESTS","Requests",data.needsReviewCount],["LIVE","Live",data.statusCounts.live],["DRAFT","Drafts",data.statusCounts.drafts],["CLOSED","Closed",data.statusCounts.closed],["ALL","All jobs",data.statusCounts.all]] as const).map(([view,label,total])=>
         <Link key={view} href={{pathname:"/tpo/placements/lifecycle",query:{view,search:"",page:1}}}
           aria-current={data.view===view?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary "+(data.view===view?"border-primary text-[var(--lms-teal-deep)]":"border-transparent text-body hover:border-border hover:text-foreground")}>
+          className={"inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary "+(data.view===view?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border")}>
           {label}<span className={"rounded-full px-2 py-0.5 tabular-nums "+(view==="REQUESTS"&&total>0?"bg-warning-subtle text-[var(--lms-gold-accent)]":"bg-muted text-body")}>{total}</span>
         </Link>)}
     </nav>

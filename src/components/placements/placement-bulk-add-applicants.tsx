@@ -159,7 +159,7 @@ export function PlacementBulkAddApplicants({
               {candidates.learners.map((candidate) => (
                 <label
                   key={candidate.membershipId}
-                  className="flex min-h-11 cursor-pointer items-center gap-3 border-b border-border px-3 py-2 hover:bg-muted"
+                  className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-muted px-3 py-2"
                 >
                   <input
                     type="checkbox"
@@ -215,7 +215,7 @@ export function PlacementBulkAddApplicants({
                 type="button"
                 disabled={busy || selected.size === 0 || !roleOptionId}
                 onClick={() => void submit()}
-                className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50 md:min-h-9"
+                className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50 md:min-h-9"
               >
                 {busy ? "Working..." : "Review and confirm Add-to-Drive"}
               </button>

@@ -117,7 +117,7 @@ export default async function RecruiterCompanyReportsPage({
                   href={recruiterCompanyReportsHref({
                     collegeId: grant.collegeId,
                   })}
-                  className="rounded-lg border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                 >
                   <span className="font-semibold text-link">
                     {grant.collegeName}
@@ -194,8 +194,8 @@ export default async function RecruiterCompanyReportsPage({
               }
               className={
                 grant.collegeId === collegeId
-                  ? "rounded-full bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
-                  : "rounded-full border border-border bg-surface px-4 py-2 text-sm text-body hover:border-primary"
+                  ? "rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
+                  : "rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm text-body hover:border-primary"
               }
             >
               {grant.collegeName}
@@ -210,14 +210,14 @@ export default async function RecruiterCompanyReportsPage({
       >
         <Link
           href={`${companyBase}&tab=company`}
-          className="px-3 py-3 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="border-b-[3px] border-transparent px-3 py-3 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Company
         </Link>
 
         <Link
           href={`${companyBase}&tab=team`}
-          className="px-3 py-3 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="border-b-[3px] border-transparent px-3 py-3 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Team
         </Link>
@@ -227,7 +227,7 @@ export default async function RecruiterCompanyReportsPage({
             collegeId,
           })}
           aria-current="page"
-          className="border-b-2 border-primary px-3 py-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="border-b-[3px] border-primary px-3 py-3 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Reports
         </Link>
@@ -253,7 +253,7 @@ export default async function RecruiterCompanyReportsPage({
         ].map((metric) => (
           <article
             key={metric.label}
-            className="rounded-xl border border-border bg-surface p-5"
+            className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {metric.label}
@@ -266,7 +266,7 @@ export default async function RecruiterCompanyReportsPage({
         ))}
       </section>
 
-      <section aria-label="All your drives at this college" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label="All your drives at this college" className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 sm:p-5">
         <h2 className="font-semibold text-foreground">All your drives at this college</h2>
         <p className="mt-1 text-sm text-body">Hiring progress of applicants already shared by the placement cell, across all your authorized drives. Private applications are not counted.</p>
         <div className="mt-4 space-y-3">

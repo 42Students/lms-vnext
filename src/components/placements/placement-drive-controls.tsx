@@ -1463,7 +1463,7 @@ export function PlacementDriveControls({
           return (
             <article
               key={round.id}
-              className="border-b border-border py-5"
+              className="rounded-xl border border-border bg-surface p-5"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>

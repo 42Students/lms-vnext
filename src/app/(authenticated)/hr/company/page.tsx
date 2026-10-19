@@ -82,7 +82,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                 <Link
                   key={grant.id}
                   href={"/hr/company?collegeId=" + encodeURIComponent(grant.collegeId)}
-                  className="rounded-lg border border-border bg-muted p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                 >
                   <div className="font-medium text-foreground">{grant.collegeName}</div>
                   <div className="mt-1 text-xs text-muted-foreground">Open Company & Team</div>
@@ -123,9 +123,10 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <Link
               key={grant.id}
               href={"/hr/company?collegeId=" + encodeURIComponent(grant.collegeId) + "&tab=" + tab}
+              aria-current={grant.collegeId === result.grant.collegeId ? "page" : undefined}
               className={grant.collegeId === result.grant.collegeId
-                ? "inline-flex min-h-9 items-center rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                : "inline-flex min-h-9 items-center rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
+                ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-1.5 text-sm font-medium text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
             >
               {grant.collegeName}
             </Link>
@@ -137,16 +138,16 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         <Link
           href={base + "&tab=company"}
           className={tab === "company"
-            ? "inline-flex min-h-9 items-center border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-            : "inline-flex min-h-9 items-center px-3 py-2 text-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
+            ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
         >
           Company
         </Link>
         <Link
           href={base + "&tab=team"}
           className={tab === "team"
-            ? "inline-flex min-h-9 items-center border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-            : "inline-flex min-h-9 items-center px-3 py-2 text-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
+            ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
         >
           Team
         </Link>
@@ -163,7 +164,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
-                <span aria-hidden="true" className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg border border-border bg-muted font-bold text-foreground">
+                <span aria-hidden="true" className="inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-muted font-bold text-foreground">
                   {result.company.name.trim().charAt(0).toUpperCase()}
                 </span>
                 <h2 className="text-lg font-semibold text-foreground">{result.company.name}</h2>
@@ -194,7 +195,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                 {label: "All visible drives", value: overview.total},
                 {label: "Live drives", value: overview.active},
                 {label: "Closed drives", value: overview.closed},
-              ].map(item=><div key={item.label} className="rounded-lg border border-border bg-muted p-3">
+              ].map(item=><div key={item.label} className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
                 <span className="block text-xs text-muted-foreground">{item.label}</span>
                 <span className="mt-1 block text-xl font-bold tabular-nums text-foreground">{item.value}</span>
               </div>)}

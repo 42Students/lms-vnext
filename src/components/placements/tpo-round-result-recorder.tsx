@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -167,7 +171,7 @@ export function TpoRoundResultRecorder({
         <>
           <label className="block font-semibold text-body">
             Round outcome
-            <select
+            <Select
               aria-label={"Round outcome for " + row.displayName}
               value={outcome}
               disabled={busy}
@@ -177,12 +181,12 @@ export function TpoRoundResultRecorder({
               {Object.entries(TPO_RESULT_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
               ))}
-            </select>
+            </Select>
           </label>
           {outcome === "HOLD" ? (
             <label className="block font-semibold text-body">
               Waitlist rank
-              <input
+              <Input
                 type="number"
                 min={1}
                 max={100000}
@@ -195,7 +199,7 @@ export function TpoRoundResultRecorder({
           ) : null}
           <label className="block font-semibold text-body">
             Learner-facing message {outcome === "PASS" ? "(optional)" : "(required)"}
-            <textarea
+            <Textarea
               rows={2}
               maxLength={1000}
               value={message}
@@ -204,14 +208,14 @@ export function TpoRoundResultRecorder({
               className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-foreground"
             />
           </label>
-          <button
+          <Button variant="primary"
             type="button"
             disabled={busy}
             onClick={() => void submitStage()}
-            className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-3 font-semibold disabled:opacity-50 text-primary-foreground md:min-h-9"
+            className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 font-semibold text-on-primary disabled:opacity-50 text-primary-foreground"
           >
             {busy ? "Saving..." : "Confirm staged result"}
-          </button>
+          </Button>
         </>
       ) : null}
       {applicable ? (
@@ -219,7 +223,7 @@ export function TpoRoundResultRecorder({
           type="button"
           disabled={busy}
           onClick={() => void submitApply()}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-3 font-semibold text-primary-text disabled:opacity-50 md:min-h-9"
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-3 font-semibold text-primary-text disabled:opacity-50"
         >
           {busy ? "Applying..." : "Confirm and apply staged result"}
         </button>

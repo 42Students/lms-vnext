@@ -26,12 +26,12 @@ export function TrackerQuickReportLauncher(){
  },[open]);
  return <>
   <button type="button" aria-haspopup="dialog" onClick={()=>setOpen(true)}
-    className="fixed bottom-5 right-5 z-40 min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-lg">
+    className="fixed bottom-5 right-5 z-40 min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary shadow-[var(--lms-overlay-shadow)]">
     Report issue · Alt+B
   </button>
   <Drawer open={open} onOpenChange={setOpen} title="Report an issue">
-    <details className="mb-3 rounded border border-border p-3 text-xs text-body">
-      <summary className="min-h-11 cursor-pointer font-semibold">Captured page / browser / viewport</summary>
+    <details className="mb-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-xs text-body">
+      <summary className="min-h-9 cursor-pointer text-sm font-semibold">Captured page / browser / viewport</summary>
       <pre className="mt-2 whitespace-pre-wrap break-words">{context}</pre>
     </details>
     <TrackerReportForm contextPrefill={context}/>

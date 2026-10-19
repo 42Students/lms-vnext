@@ -52,9 +52,9 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
    Review and export all matching applicants
   </Link>
-  <section className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-4" aria-label="Applicant pipeline counts">
+  <section className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Applicant pipeline counts">
    {Object.entries(data.counts).map(([label,count])=>
-    <div className="border-b border-border p-3 sm:border-r sm:border-b-0 sm:last:border-r-0" key={label}>
+    <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3" key={label}>
       <p className="text-xs capitalize text-body">{label}</p>
       <p className="text-xl font-semibold tabular-nums text-foreground">{count}</p>
     </div>)}

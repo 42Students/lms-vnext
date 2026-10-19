@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {roundApplyPreviewCsv,roundApplyReportCsv} from "@/modules/placements/tpo-round-apply-csv-model";
@@ -42,7 +43,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
   <button type="button" disabled={busy} onClick={()=>void load()}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Working…":"Preview applying round results"}</button>
-  {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
+  {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-muted p-4">
    <h3 className="font-semibold">Consequence preview</h3>
    <p className="text-sm">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
    <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
@@ -64,9 +65,9 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    </button>
    {!preview.ready?<p role="alert" className="text-sm text-foreground">Complete this evaluation round before applying results.</p>:null}
    <div className="flex flex-wrap gap-3">
-    <button type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
+    <Button variant="primary" type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
-     Confirm and apply {preview.staged} result(s)</button>
+     Confirm and apply {preview.staged} result(s)</Button>
     <button type="button" disabled={busy} onClick={()=>setPreview(null)}
      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Not yet</button>
    </div>

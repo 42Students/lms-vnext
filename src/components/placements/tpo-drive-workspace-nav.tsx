@@ -14,7 +14,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
    .sort((a,b)=>b.href.length-a.href.length)[0]?.href??root;
   return (
     <nav aria-label="Drive workspace sections"
-      className="min-w-0 border-b border-border pb-2">
+      className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
       <label className="grid gap-1 text-sm font-semibold sm:hidden">Workspace section
         <select aria-label="Drive workspace section" value={selected}
           onChange={event=>router.push(event.target.value)}
@@ -22,7 +22,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
           {tabs.map(tab=><option key={tab.href} value={tab.href}>{tab.label}</option>)}
         </select>
       </label>
-      <div className="hidden min-w-0 flex-wrap items-center gap-1 sm:flex">
+      <div className="hidden min-w-0 flex-wrap gap-2 sm:flex">
       {tpoDriveTabs(jobId).map((tab) => {
         const active = tab.href === root
           ? pathname === root
@@ -33,9 +33,9 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
         return (
           <Link key={tab.href} href={tab.href}
             aria-current={active ? "page" : undefined}
-            className={`inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-semibold transition-colors md:min-h-9 ${active
-              ? "border-primary text-primary-text"
-              : "border-transparent text-body hover:border-border hover:text-primary-text"}`}>
+            className={`inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold transition-colors ${active
+              ? "border-primary bg-primary-subtle text-primary-text"
+              : "border-border text-primary-text hover:bg-primary-subtle"}`}>
             {tab.label}
           </Link>
         );

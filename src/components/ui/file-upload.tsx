@@ -80,14 +80,14 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
   }
   return <div className={cx("min-w-0 space-y-2", className)} data-slot="file-upload">
     <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</label>
-    {pickerUnavailable ? <p role="status" className="text-sm text-body">File selection is unavailable in this app view. {fallback ? "Use the alternative below." : "Open this form in a browser that supports file selection."}</p> :
+    {pickerUnavailable ? <p role="status" className="text-[13px] leading-5 text-[var(--lms-body-text)]">File selection is unavailable in this app view. {fallback ? "Use the alternative below." : "Open this form in a browser that supports file selection."}</p> :
       <input {...props} ref={bindInput} id={id} type="file" accept={accept} disabled={disabled} onChange={handleChange}
         aria-invalid={pickerUnavailable || disabled ? undefined : error ? true : props["aria-invalid"]}
         aria-describedby={describedBy}
-        className="block min-h-9 w-full min-w-0 rounded-[9px] border border-border bg-surface px-3 py-2 text-[14px] text-foreground file:mr-3 file:rounded-[6px] file:border-0 file:bg-[var(--lms-primary-subtle)] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#1a95a1] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7] disabled:opacity-50" />}
+        className="block min-h-9 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px] text-foreground file:mr-3 file:rounded-[var(--lms-radius-control)] file:border-0 file:bg-[var(--lms-primary-subtle)] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50" />}
     {helper ? <p id={`${id}-help`} className="text-[13px] leading-5 text-body">{helper}</p> : null}
-    {error ? <p id={`${id}-error`} role="alert" className="text-xs text-error">{error}</p> : null}
+    {error ? <p id={`${id}-error`} role="alert" className="text-[12px] leading-5 text-[var(--lms-error)]">{error}</p> : null}
     {fallback ? <div className="min-w-0 space-y-2">{fallback}</div> : null}
-    {(pickerUnavailable || disabled) ? <p id={`${id}-unavailable`} role="alert" className="text-sm text-body">This upload cannot continue with the file picker disabled. {fallback ? "Use the alternative provided." : "Enable file selection before continuing."}</p> : null}
+    {(pickerUnavailable || disabled) ? <p id={`${id}-unavailable`} role="alert" className="text-[13px] leading-5 text-[var(--lms-body-text)]">This upload cannot continue with the file picker disabled. {fallback ? "Use the alternative provided." : "Enable file selection before continuing."}</p> : null}
   </div>;
 }

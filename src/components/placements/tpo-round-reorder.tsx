@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {moveRound} from "@/modules/placements/tpo-round-reorder-model";
@@ -43,27 +44,27 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
    const round=roundsById.get(id);
    if(!round)return null;
    return <li key={id}
-    className="flex flex-wrap items-center gap-2 border-b border-border py-3"
+    className="flex flex-wrap items-center gap-2 border-b border-border px-1 py-3"
     onDragOver={event=>{if(readiness.allowed)event.preventDefault();}}
     onDrop={event=>{event.preventDefault();if(!readiness.allowed||!dragged||busy)return;setIds(current=>moveRound(current,dragged,index));markDirty();setDragged(null);setSaved(false);}}>
     <span draggable={readiness.allowed&&!busy} onDragStart={()=>setDragged(id)} onDragEnd={()=>setDragged(null)}
      title="Drag to reorder" aria-label={"Drag "+round.name} className={readiness.allowed?"cursor-grab select-none font-semibold":"font-semibold"}>☰</span>
     <span className="flex-1 text-sm font-semibold text-foreground">{index+1}. {round.name}</span>
-    <button type="button" aria-label={"Move "+round.name+" up"} disabled={!readiness.allowed||busy||index===0}
+    <Button variant="secondary" type="button" aria-label={"Move "+round.name+" up"} disabled={!readiness.allowed||busy||index===0}
      onClick={()=>{setIds(current=>moveRound(current,id,index-1));markDirty();setSaved(false);}}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs disabled:opacity-50">Move up</button>
-    <button type="button" aria-label={"Move "+round.name+" down"} disabled={!readiness.allowed||busy||index===ids.length-1}
+     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs disabled:opacity-50">Move up</Button>
+    <Button variant="secondary" type="button" aria-label={"Move "+round.name+" down"} disabled={!readiness.allowed||busy||index===ids.length-1}
      onClick={()=>{setIds(current=>moveRound(current,id,index+1));markDirty();setSaved(false);}}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs disabled:opacity-50">Move down</button>
+     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs disabled:opacity-50">Move down</Button>
    </li>;
   })}</ol>
   {changed?<p role="status" className="mt-2 text-sm text-[var(--lms-gold-accent)]">Unsaved round order changes. Save or undo before leaving this page.</p>:null}
   <div className="mt-3 flex flex-wrap gap-2">
-   <button type="button" disabled={!readiness.allowed||busy||!changed} onClick={()=>void save()}
+   <Button type="button" disabled={!readiness.allowed||busy||!changed} onClick={()=>void save()}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
-    {busy?"Saving…":"Save round order"}</button>
-   <button type="button" disabled={busy||!changed} onClick={()=>{setIds(readiness.rounds.map(round=>round.id));clearDirty();setError(null);}}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm disabled:opacity-50">Undo</button>
+    {busy?"Saving…":"Save round order"}</Button>
+   <Button variant="secondary" type="button" disabled={busy||!changed} onClick={()=>{setIds(readiness.rounds.map(round=>round.id));clearDirty();setError(null);}}
+    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm disabled:opacity-50">Undo</Button>
   </div>
   {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}
   {saved?<p role="status" className="mt-3 text-sm text-body">Round order saved.</p>:null}
