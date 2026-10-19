@@ -45,9 +45,9 @@ function list(
   }
 
   return (
-    <ul className="m-0 space-y-1 pl-5 text-sm text-body">
+    <ul className="m-0 min-w-0 space-y-1 pl-5 text-sm text-body break-words">
       {value.map((item, index) => (
-        <li key={index}>{item}</li>
+        <li key={index} className="break-words">{item}</li>
       ))}
     </ul>
   );
@@ -65,16 +65,16 @@ export function ProjectTemplateView({
       : {};
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <section className="border-b border-border pb-5">
         <h2 className="m-0 text-lg font-semibold text-foreground">
           Overview
         </h2>
-        <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
+        <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">
           {data.overview?.goal?.trim() ||
             "No project goal recorded."}
         </p>
-        <div className="mt-4 grid gap-4 min-[992px]:grid-cols-2">
+        <div className="mt-4 grid min-w-0 grid-cols-1 gap-4 min-[992px]:grid-cols-2">
           <div>
             <h3 className="mb-2 text-sm font-semibold text-foreground">
               Deliverables
@@ -90,7 +90,7 @@ export function ProjectTemplateView({
         </div>
       </section>
 
-      <section className="grid gap-4 min-[992px]:grid-cols-2">
+      <section className="grid min-w-0 grid-cols-1 gap-4 min-[992px]:grid-cols-2">
         <TemplateRows
           title="Releases"
           rows={data.releases}
@@ -142,11 +142,11 @@ function TemplateRows({
           None configured.
         </p>
       ) : (
-        <div className="mt-3 divide-y divide-border border-y border-border">
+        <div className="mt-3 min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
           {rows.map((row, index) => (
             <article
               key={row.key ?? index}
-              className="min-w-0 py-3"
+              className="min-w-0 py-[var(--lms-space-3)]"
             >
               <p className="m-0 break-words text-sm font-semibold text-foreground">
                 {row.title?.trim() ||
