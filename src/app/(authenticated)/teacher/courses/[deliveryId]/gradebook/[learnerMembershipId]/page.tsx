@@ -24,13 +24,13 @@ export default async function FacultyLearnerGradebookPage({
   }
   const root="/teacher/courses/"+encodeURIComponent(query.deliveryId)+"/gradebook";
   return <div className="min-w-0 max-w-full space-y-6">
-    <Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       ← Published gradebook
     </Link>
     <PageHeader eyebrow="Faculty · Published learner scores"
       title={data.learner.displayName||data.learner.email||"Unnamed learner"}
       description={data.delivery.courseName+" · "+data.delivery.sectionName}/>
-    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4" aria-label="Recorded score totals">
+    <section className="border-b border-border pb-5" aria-label="Recorded score totals">
       <div className="grid gap-3 sm:grid-cols-3">
         <p className="text-sm text-body">Published scores: {data.learner.gradedCount}/{data.learner.publishedAssessments}</p>
         <p className="text-sm text-body">Recorded points: {data.learner.earned===null?
