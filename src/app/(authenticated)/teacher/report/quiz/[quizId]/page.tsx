@@ -115,7 +115,7 @@ export default async function FacultyQuizReportPage({
           ["Questions", metrics.questionCount],
           ["Due date", quiz.dueAt ? facultyReportIstTimestamp(quiz.dueAt) : "—"],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-xl border border-border bg-surface p-4">
+          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </div>
@@ -133,7 +133,7 @@ export default async function FacultyQuizReportPage({
         </span>
       </div>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">
           Score distribution
         </h2>
@@ -149,7 +149,7 @@ export default async function FacultyQuizReportPage({
             const total = Math.max(metrics.submittedLearners, 1);
             const width = Math.round((bucket.count / total) * 100);
             return (
-              <details key={bucket.label} className="rounded-md border border-border p-2 text-sm">
+              <details key={bucket.label} className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
                 <summary className="grid min-h-11 cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                 <span className="text-body">{bucket.label}</span>
                 <span className="h-2 overflow-hidden rounded-full bg-muted">
@@ -176,7 +176,7 @@ export default async function FacultyQuizReportPage({
         </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">
           Question accuracy
         </h2>
@@ -192,7 +192,7 @@ export default async function FacultyQuizReportPage({
             {questions.map((question, index) => (
               <li
                 key={question.id}
-                className="rounded-lg bg-surface-subtle p-4"
+                className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -237,7 +237,7 @@ export default async function FacultyQuizReportPage({
         note: "Attempt " + attempt.attemptNumber,
       }))} />
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">
           Not attempted
         </h2>
@@ -250,7 +250,7 @@ export default async function FacultyQuizReportPage({
             {notAttemptedLearners.map((learner) => (
               <li
                 key={learner.membershipId}
-                className="rounded-lg bg-surface-subtle p-3"
+                className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3"
               >
                 <p className="m-0 text-sm font-semibold text-foreground">
                   {facultyReportLearnerName(learner.displayName)}
@@ -261,7 +261,7 @@ export default async function FacultyQuizReportPage({
         )}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">Review individual attempts</h2>
         <p className="mt-1 text-sm text-body">Inspect submitted answers and manage results visibility for this Section.</p>
         <FacultyQuizReview
