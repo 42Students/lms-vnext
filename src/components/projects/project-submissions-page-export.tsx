@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { projectAdminCsv } from "@/modules/projects/project-admin-csv-model";
 
 type SubmissionRow = {
@@ -28,8 +29,8 @@ export function ProjectSubmissionsPageExport({ rows }: { rows: readonly Submissi
     anchor.click();
     URL.revokeObjectURL(objectUrl);
   }
-  return <button type="button" onClick={exportPage} disabled={rows.length===0}
-    className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold disabled:opacity-50">
+  return <Button variant="secondary" type="button" onClick={exportPage} disabled={rows.length===0}
+    className="">
     Export CSV
-  </button>;
+  </Button>;
 }
