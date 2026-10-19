@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useEffect,useId,useRef,useState} from "react";
 
 type Item={id:string;name:string;displayName:string;category:string|null};
@@ -53,10 +54,10 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
   {status==="ready"&&items.length>0?<ul id={id+"-choices"} role="listbox"
     className="mt-2 max-h-48 space-y-1 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border bg-surface p-1">
     {items.map((item,index)=><li id={id+"-choice-"+index} key={item.id} role="option" aria-selected={activeIndex===index||item.displayName===value}>
-      <button type="button" className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-3 py-2 text-left text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary"
+      <Button variant="primary" type="button" className="w-full text-left"
        onClick={()=>{selectedSkill.current=item.displayName;onChange(item.displayName);setItems([]);setActiveIndex(-1);}}>
        {item.displayName}{item.category?<span className="ml-2 text-xs text-muted-foreground">{item.category}</span>:null}
-      </button>
+      </Button>
     </li>)}
   </ul>:null}
  </div>;
