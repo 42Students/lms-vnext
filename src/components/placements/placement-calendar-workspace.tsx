@@ -592,7 +592,7 @@ export async function PlacementCalendarWorkspace({
         }
       />
 
-      {partialCalendar?<section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warning-border bg-warning-subtle p-4 text-sm">
+      {partialCalendar?<section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-4 text-sm">
         <p className="font-semibold text-warning-text">Calendar summary is partially unavailable. The events shown are from the successful calendar read; unavailable counts are not shown as zero.</p>
         <Link href={calendarHref(basePath,audience,state,{})} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-[var(--lms-link-text)]">Retry</Link>
       </section>:null}
@@ -667,7 +667,7 @@ export async function PlacementCalendarWorkspace({
         ))}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -901,7 +901,7 @@ export async function PlacementCalendarWorkspace({
 
       <section
         aria-label="Next scheduled calendar event"
-        className="rounded-xl border border-border bg-surface p-4 sm:p-5"
+        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -939,7 +939,7 @@ export async function PlacementCalendarWorkspace({
       </section>
 
       {isTpo&&state.view==="week"&&blockedEvents.length>0?<section
-        aria-label="All-day blocked dates" className="rounded-xl border border-border bg-surface-subtle p-4">
+        aria-label="All-day blocked dates" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
         <h2 className="text-sm font-semibold text-foreground">Blocked (exam) dates · All day</h2>
         <ul className="mt-2 flex flex-wrap gap-2">{blockedEvents.map(event=>
          <li key={event.id} className="rounded-[var(--lms-control-radius)] border border-border bg-muted px-3 py-2 text-sm text-body">
@@ -958,7 +958,7 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`} tabIndex={0}
-          className="hidden overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface p-3 md:block md:[mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]"
+          className="hidden overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 md:block md:[mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]"
         >
           <div className="grid min-w-[56rem] grid-cols-7 gap-1">
             {[
@@ -997,7 +997,7 @@ export async function PlacementCalendarWorkspace({
                   key={day}
                   aria-label={`${dateLabel(day)}: ${dayEvents.length} events`}
                   className={
-                    "min-h-32 rounded-lg border border-border p-2 " +
+                    "min-h-32 rounded-[var(--lms-control-radius)] border border-border p-2 " +
                     (outsideMonth
                       ? "bg-muted/40"
                       : "bg-surface")
@@ -1067,7 +1067,7 @@ export async function PlacementCalendarWorkspace({
       ) : null}
 
       {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
-        {bookings?.failed ? <section role="alert" className="rounded-xl border border-border bg-surface p-5">
+        {bookings?.failed ? <section role="alert" className="border-l-2 border-error bg-error-subtle p-4">
           <p>Could not load candidate interviews right now. The calendar is still available.</p>
           <Link href={calendarHref(basePath,audience,state,{})}
            className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-link-text)] focus-visible:ring-2 focus-visible:ring-primary">Retry interviews</Link>
@@ -1098,7 +1098,7 @@ export async function PlacementCalendarWorkspace({
 
         {state.view!=="agenda"?<p className="text-xs text-muted-foreground md:hidden">Calendar events are listed below for a better fit on small screens.</p>:null}
         {groups.length === 0 ? (
-          <div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">
+          <div className="border-y border-border py-8 text-sm text-body">
             {state.view==="agenda"?TPO_EMPTY_AGENDA:
              "No calendar events match this date range and these filters. Try another date, company or event type."}
           </div>
