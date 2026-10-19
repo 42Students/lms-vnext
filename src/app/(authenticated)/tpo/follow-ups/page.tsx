@@ -54,12 +54,12 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
         <label className="min-w-0 flex-1 text-sm font-semibold text-body">Find recruiter or company
           <Input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
             className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
-        </label><Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Search</Button>
+        </label><Button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">Search</Button>
         {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>:null}
       </form>
       <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
       {data ? <><a href={tpoFollowupQueueExportHref({scope,window,q})}
-          className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground">
+          className="inline-flex min-h-11 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
           Export filtered follow-ups CSV
         </a><TpoDueFollowupWorkspace data={data} />
         <nav aria-label="Follow-up pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
