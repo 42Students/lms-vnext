@@ -39,7 +39,7 @@ export default async function TpoCandidateSchedulePage({
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
       className="text-sm font-semibold text-[var(--lms-link-text)]">← Back to drive</Link>
     <header>
-      <h1 className="text-[30px] font-semibold text-[#172033]">{drive.job.title} · Candidate round schedule</h1>
+      <h1 className="font-semibold text-[30px] text-[#172033]">{drive.job.title} · Candidate round schedule</h1>
       <p className="mt-2 text-sm text-body">
         Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes.
       </p>

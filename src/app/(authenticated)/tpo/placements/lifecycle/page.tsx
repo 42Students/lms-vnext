@@ -241,7 +241,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             <section aria-label="Recruiter contact" className="mt-2 space-y-1 rounded border border-border p-3 text-sm">
              <h3 className="font-semibold">Recruiter</h3>
              <p>Email: {item.recruiterEmail??"Not recorded"} · Phone: {item.recruiterPhone??"Not recorded"}</p>
-             {item.verificationStatus!=="VERIFIED"?<p className="text-warning-text">Unverified</p>:null}
+             {item.verificationStatus!=="VERIFIED"?<p className="text-[var(--lms-gold-accent)]">Unverified</p>:null}
              {item.accessEnded?<p role="alert">Recruiter access ended. Finish this drive yourself.</p>:null}
              <Link href={"/tpo/recruiters?search="+encodeURIComponent(item.recruiterEmail??"")}
               className="text-[var(--lms-teal-deep)] underline">Open recruiter</Link>
