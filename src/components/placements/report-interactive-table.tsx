@@ -156,7 +156,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
    />
    {ordered.length>limit?<Button variant="secondary" type="button" onClick={()=>setLimit(n=>Math.min(ordered.length,n+500))}
     size="sm">Show 500 more</Button>:null}
-   {message?<p role="status" className="text-xs">{message}</p>:null}
+   {message?<p role="status" aria-live="polite" className="text-xs text-body">{message}</p>:null}
   </>}
  </section>;
 }
