@@ -119,7 +119,7 @@ export default async function CollegeProjectsPage({
       <Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
 
       <Tabs ariaLabel="Workspace display and archive" renderPanel={false}
-        value={query.status==="ARCHIVED"?"archived":query.view}
+        value={query.status==="ARCHIVED"?"archived":query.view??"cards"}
         items={[
           {value:"cards",label:"Cards",href:viewHref("cards"),count:result.total},
           {value:"table",label:"List",href:viewHref("table"),count:result.total},
