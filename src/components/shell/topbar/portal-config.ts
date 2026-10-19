@@ -81,3 +81,24 @@ export function topbarInitials(identityUid: string): string {
   return (words.length > 1 ? words[0]![0]! + words[words.length - 1]![0]! :
     words[0]!.slice(0, 2)).toUpperCase();
 }
+
+/** Existing portal pages, not a cross-tenant search API. A command only
+ * opens an authorized route which applies its own college/role filters.
+ */
+export function topbarSearchDestinations(pathname: string, text: string) {
+  const query = text.trim().slice(0,100);
+  if (!query) return [] as {label:string;href:string}[];
+  const enc = encodeURIComponent(query);
+  switch (topbarConfigForPath(pathname).portal) {
+    case "tpo": return [
+      {label:"Search students",href:"/tpo/students?q="+enc},
+      {label:"Search recruiter leads",href:"/tpo/recruiters?q="+enc},
+      {label:"Search companies",href:"/tpo/companies?search="+enc},
+    ];
+    case "admin": return [
+      {label:"Search people",href:"/admin/people/directory?q="+enc},
+      {label:"Search companies",href:"/admin/companies?q="+enc},
+    ];
+    default: return [] as {label:string;href:string}[];
+  }
+}
