@@ -17,20 +17,20 @@ export default async function TpoRecruiterConversationPage({params}:{
   placementTableExists("placement_tpo_messages"),
  ]);
  if(!threadsReady||!messagesReady)return <div className="space-y-3">
-  <PageHeader eyebrow="TPO · Messages" title="Recruiter conversations unavailable"/>
+  <PageHeader title="Recruiter conversations unavailable"/>
   <p role="alert" className="text-sm text-body">
    Recruiter messaging tables are not registered. No messages were loaded.
   </p>
-  <Link href="/tpo/messages" className="text-[var(--lms-teal-deep)] underline">Back to messages</Link>
+  <Link href="/tpo/messages" className="text-primary-text underline">Back to messages</Link>
  </div>;
  const {threadId}=await params;
  const data=await getTpoRecruiterThreadDetail(context,threadId);
  if(!data)notFound();
  return <div className="space-y-5">
-  <Link href="/tpo/messages" className="text-sm font-semibold text-[var(--lms-teal-deep)]">
+  <Link href="/tpo/messages" className="text-sm font-semibold text-primary-text">
    ← All conversations
   </Link>
-  <PageHeader eyebrow="TPO · Messages" title="Recruiter conversation"/>
+  <PageHeader title="Recruiter conversation"/>
   <p className="text-sm text-body">{data.total} messages · Showing the latest 100</p>
   <section role="log" aria-live="polite" aria-busy={false} aria-label="Conversation messages" className="space-y-3">
    {data.messages.length===0?<p role="status">No messages yet.</p>:data.messages.map((item,index)=>
@@ -41,7 +41,7 @@ export default async function TpoRecruiterConversationPage({params}:{
       <p className="py-2 text-center text-xs font-semibold text-muted-foreground">
        {new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)}
       </p>:null}
-    <article className={"max-w-3xl rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 "+(item.senderType==="TPO"?"ml-auto":"mr-auto")}>
+    <article className={"max-w-full sm:max-w-3xl rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 min-[768px]:p-6 "+(item.senderType==="TPO"?"ml-auto":"mr-auto")}>
      <p className="text-xs text-muted-foreground">{item.senderType==="TPO"?"You":"Recruiter"}</p>
      <p className="text-xs font-semibold text-muted-foreground">
       {item.senderType==="RECRUITER"?"Recruiter":"Placement cell"} ·
