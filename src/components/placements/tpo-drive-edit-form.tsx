@@ -10,6 +10,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {Button} from "@/components/ui/button";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
@@ -117,7 +118,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   </div>
     <label className="block text-sm font-semibold text-body">Reason for edit (audited)<Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
   <p className="text-xs text-body">Active-season draft and live drives can be edited. Live changes are audited; choose whether to notify existing applicants. A changed version must be refreshed before another save.</p>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
   <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9 px-5">{pending?"Saving…":"Save changes"}</Button>
   <Link className="ml-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline"
    href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</Link>
