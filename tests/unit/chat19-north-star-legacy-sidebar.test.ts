@@ -120,6 +120,8 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain("scrollbar-width:thin;");
   expect(css).toContain("width:4px;");
   expect(css).toContain("scrollbar-color:rgba(107,114,128,.28) transparent;");
+  expect(css).toContain("line-height:1;");
+  expect(css).toContain(".lms-sidebar-item-icon svg {display:block;width:20px;height:20px;}");
  });
  it("hides expanded headings and labels in collapsed desktop mode, keeps mobile labels",()=>{
   const css=source("src/components/shell/sidebar-legacy.css");
