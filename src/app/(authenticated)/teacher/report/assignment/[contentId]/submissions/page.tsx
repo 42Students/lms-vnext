@@ -105,7 +105,7 @@ export default async function FacultyAssignmentSubmissionsPage({
         {data.items.map(row=>{
           const late=report.assignment.dueAt!==null&&
             row.submittedAt.getTime()>report.assignment.dueAt.getTime();
-          return <li key={row.id} className="rounded-xl border border-border bg-surface p-4">
+          return <li key={row.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <h2 className="font-semibold text-foreground">
               {row.learnerDisplayName||row.learnerEmail||"Learner"}
             </h2>

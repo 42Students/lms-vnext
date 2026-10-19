@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -171,7 +172,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               </div>
               <p className="mt-1 text-sm text-muted-foreground">{result.grant.collegeName}</p>
             </div>
-            <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">Linked by the placement cell</span>
+            <Badge  tone="neutral">Linked by the placement cell</Badge>
           </div>
           <dl className="mt-5 grid gap-4 sm:grid-cols-2">
             <div>

@@ -62,7 +62,7 @@ export default async function TpoReportsPage({
     return <div className="min-w-0 space-y-6">
       <PageHeader eyebrow="TPO · Reports" title="Reports"
         description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} />
-      <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-warning-border bg-warning-subtle p-6">
+      <section role="alert" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3">
         <h2 className="text-base font-semibold text-foreground">The headline numbers could not be loaded.</h2>
         <p className="mt-2 text-sm text-body">The report is temporarily unavailable. No placement totals are being inferred from missing data.</p>
         <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">Retry</Link>

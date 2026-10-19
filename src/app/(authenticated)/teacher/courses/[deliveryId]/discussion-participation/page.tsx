@@ -21,7 +21,7 @@ export default async function FacultyDiscussionParticipationPage({
       {([["Messages",data.counts.total],["Faculty messages",data.counts.faculty],
         ["Learner messages",data.counts.learner],["Pinned messages",data.counts.pinned]] as const)
         .map(([title,count])=><div key={title}
-          className="rounded-xl border border-border bg-surface p-4">
+          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <p className="text-xs text-muted-foreground">{title}</p>
           <p className="mt-2 text-xl font-semibold tabular-nums">{count}</p>
         </div>)}
@@ -31,7 +31,7 @@ export default async function FacultyDiscussionParticipationPage({
       {data.recent.length===0?<EmptyState title="No recorded discussions"
         description="This Section has no stored messages. Replies and deleted text cannot be reconstructed."/>:
         <ol className="grid gap-2">{data.recent.map(row=><li key={row.id}
-          className="rounded-xl border border-border bg-surface p-3">
+          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
           <p className="text-sm font-semibold">{row.senderRole}
             {row.pinned?" · Pinned":""}</p>
           <time dateTime={row.createdAt} className="text-xs text-muted-foreground">

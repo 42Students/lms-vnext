@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import Image from "next/image";
 import {FacultyCourseFilterAutoSubmit} from "./faculty-course-filter-auto-submit";
@@ -164,18 +165,18 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           </p>
 
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-            <span className="rounded-full bg-muted px-2.5 py-1">
+            <Badge  tone="neutral">
               {course.sectionName} ({course.cohortName})
-            </span>
-            <span className="rounded-full bg-muted px-2.5 py-1">
+            </Badge>
+            <Badge  tone="neutral">
               {course.academicPeriodName}
-            </span>
-            <span className="rounded-full bg-muted px-2.5 py-1" title="Academic year / period">
+            </Badge>
+            <Badge  title="Academic year / period" tone="neutral">
               {course.academicPeriodCode}
-            </span>
-            {course.teachingRole!=="PRIMARY"?<span className="rounded-full bg-muted px-2.5 py-1">
+            </Badge>
+            {course.teachingRole!=="PRIMARY"?<Badge  tone="neutral">
               Your role: {course.teachingRole.replaceAll("_"," ").toLowerCase()}
-            </span>:null}
+            </Badge>:null}
           </div>
 
           <div className="mt-auto pt-5">

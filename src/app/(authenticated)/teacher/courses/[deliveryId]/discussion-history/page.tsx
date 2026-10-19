@@ -46,7 +46,7 @@ export default async function FacultyDiscussionHistoryPage({
     {data.items.length===0?<EmptyState title="No registered moderation history"
       description="No persisted moderation or Faculty reply events match this Section and filter. Records before event tracking are unavailable, not reconstructed."/>:
       <ol className="grid gap-3">{data.items.map(item=>
-        <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+        <li key={item.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <p className="font-semibold text-foreground">{item.action}</p>
           <p className="mt-2 text-xs text-muted-foreground">
             {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.occurredAt)} IST

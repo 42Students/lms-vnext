@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
 import {learnerAssessmentSubmittedLinkHref} from "@/modules/courses/learner-assessment-submitted-link-model";
 import {learnerRoadmapHeadline} from "@/modules/courses/learner-roadmap-headline-model";
@@ -343,13 +343,13 @@ function ContentCard({
         <div className="mt-4 flex flex-wrap gap-2">
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file`}
-            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Open resource ↗
           </a>
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file?download=1`}
-            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Download
           </a>
@@ -507,7 +507,7 @@ function AssignmentCard({
         <div role="status" className="mt-3 space-y-2 text-sm text-warning">
           <p>{assignment.dueAt?"Submissions are closed":"Submission unavailable · deadline missing"}</p>
           <Button type="button" variant="secondary" disabled aria-disabled="true"
-            className="min-h-9">
+            className="min-h-11">
             {assignment.dueAt?"Submission closed":"Unavailable"}
           </Button>
         </div>:null}
@@ -813,8 +813,8 @@ export function LearnerCourseWorkspace({
               aria-current={activeFilter === item.key ? "page" : undefined}
               className={
                 activeFilter === item.key
-                  ? "inline-flex min-h-9 items-center rounded-lg bg-primary-subtle px-3 py-2 text-sm font-semibold text-primary-text"
-                  : "inline-flex min-h-9 items-center rounded-lg px-3 py-2 text-sm font-semibold text-body hover:bg-muted hover:text-primary-text"
+                  ? "inline-flex min-h-11 items-center rounded-lg bg-primary-subtle px-3 py-2 text-sm font-semibold text-primary-text"
+                  : "inline-flex min-h-11 items-center rounded-lg px-3 py-2 text-sm font-semibold text-body hover:bg-muted hover:text-primary-text"
               }
             >
               {item.label}{" "}
@@ -827,7 +827,7 @@ export function LearnerCourseWorkspace({
       </nav></ScrollCue>
 
       <details className="rounded-xl border border-border bg-surface sm:hidden">
-        <summary className="flex min-h-9 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">
+        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">
           Jump to lesson ({mobileOutline.length})
           <span aria-hidden="true">⌄</span>
         </summary>
@@ -838,7 +838,7 @@ export function LearnerCourseWorkspace({
                 <li key={lesson.id}>
                   <Link
                     href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${activeFilter}&lesson=${encodeURIComponent(lesson.id)}#lesson-${encodeURIComponent(lesson.id)}`}
-                    className="flex min-h-9 sm:min-h-9 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-muted">
+                    className="flex min-h-11 sm:min-h-9 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-muted">
                     <span className="min-w-0 break-words">{index+1}. {lesson.name}</span>
                     <span className="shrink-0 text-xs text-muted-foreground">{lesson.count} items</span>
                   </Link>
@@ -922,28 +922,28 @@ export function LearnerCourseWorkspace({
                     ) : (
                       <StatusBadge tone="neutral">Not started</StatusBadge>
                     )}
-                    <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                    <Badge  tone="neutral">
                       {lessonProgress.completed} of {lessonProgress.total} complete
-                    </span>
+                    </Badge>
                     {contentCounts.lectures > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.lectures} lecture{contentCounts.lectures === 1 ? "" : "s"}
-                      </span>
+                      </Badge>
                     ) : null}
                     {contentCounts.resources > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.resources} resource{contentCounts.resources === 1 ? "" : "s"}
-                      </span>
+                      </Badge>
                     ) : null}
                     {contentCounts.assessments > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.assessments} assessment{contentCounts.assessments === 1 ? "" : "s"}
-                      </span>
+                      </Badge>
                     ) : null}
                     {contentCounts.liveSessions > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.liveSessions} live
-                      </span>
+                      </Badge>
                     ) : null}
                     <span aria-hidden="true" className="text-primary-text group-open:rotate-90">
                       ›

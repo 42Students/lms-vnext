@@ -89,8 +89,8 @@ export default async function FacultyCalendarPage({
       </p>:grid.days.every(day=>day.events.length===0)?<p className="mt-5 text-sm text-body">
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </p>:null}
-      <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className="mt-4 rounded-lg">
-        <div className="grid min-w-[44rem] grid-cols-7 gap-px rounded-lg border border-border bg-border">
+      <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className="mt-4 rounded-[var(--lms-control-radius)]">
+        <div className="grid min-w-[44rem] grid-cols-7 gap-px rounded-[var(--lms-control-radius)] border border-border bg-border">
           {names.map(name=><div key={name} className="bg-surface-subtle p-2 text-center text-xs font-semibold">{name}</div>)}
           {grid.days.map(day=><section key={day.key}
             aria-label={day.key+" IST"} className={"min-h-28 p-2 "+(day.inMonth?"bg-surface":"bg-surface-subtle")}>
@@ -99,7 +99,7 @@ export default async function FacultyCalendarPage({
             </time>
             <div className="mt-2 space-y-2">
               {day.events.map(event=><article key={event.id}
-                className="rounded-md border border-border bg-background px-2 py-1">
+                className="rounded-[var(--lms-control-radius)] border border-border bg-background px-2 py-1">
                 <p className="text-xs font-semibold text-foreground">{event.title}</p>
                 <p className="text-xs text-body">
                   {new Intl.DateTimeFormat("en-IN",{

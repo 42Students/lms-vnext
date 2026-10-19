@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -248,7 +249,7 @@ export default async function TpoStudentRequestsPage({
       >
         <label className="flex flex-col gap-1 text-sm font-semibold text-body">
           Status
-          <select
+          <Select
             name="status"
             defaultValue={query.status ?? ""}
             className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
@@ -259,7 +260,7 @@ export default async function TpoStudentRequestsPage({
                 {humanize(status)}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
 
         <label className="flex flex-col gap-1 text-sm font-semibold text-body">
@@ -276,7 +277,7 @@ export default async function TpoStudentRequestsPage({
 
         <label className="flex flex-col gap-1 text-sm font-semibold text-body">
           Page size
-          <select
+          <Select
             name="pageSize"
             defaultValue={String(query.pageSize)}
             className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
@@ -284,16 +285,16 @@ export default async function TpoStudentRequestsPage({
             <option value="25">25 requests</option>
             <option value="50">50 requests</option>
             <option value="100">100 requests</option>
-          </select>
+          </Select>
         </label>
 
         <div className="sm:col-span-3">
-          <button
+          <Button variant="primary"
             type="submit"
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+            className="min-h-9 px-5"
           >
             Apply filters
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -365,8 +366,8 @@ export default async function TpoStudentRequestsPage({
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-border bg-surface md:block">
-            <table className="w-full min-w-[65rem] text-left text-sm">
+          <div className="hidden md:block">
+            <Table scrollLabel="Student requests" className="min-w-[65rem]">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-4 py-3">Student</th>
@@ -448,7 +449,7 @@ export default async function TpoStudentRequestsPage({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
           </>
         )}

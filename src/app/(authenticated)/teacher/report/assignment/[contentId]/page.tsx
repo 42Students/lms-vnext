@@ -94,7 +94,7 @@ export default async function FacultyAssignmentReportPage({
           ["Graded", `${metrics.graded}/${metrics.submitted}`],
           ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(assignment.dueAt) : "—"],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-xl border border-border bg-surface p-4">
+          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </div>
@@ -155,7 +155,7 @@ export default async function FacultyAssignmentReportPage({
           ].map(([label, value]) => (
             <div
               key={label}
-              className="rounded-lg bg-surface-subtle p-4"
+              className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4"
             >
               <p className="text-xs font-semibold uppercase text-muted-foreground">
                 {label}
@@ -196,7 +196,7 @@ export default async function FacultyAssignmentReportPage({
             {missingLearners.map((learner) => (
               <li
                 key={learner.membershipId}
-                className="rounded-lg bg-surface-subtle p-3"
+                className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3"
               >
                 <p className="m-0 text-sm font-semibold text-foreground">
                   {facultyReportLearnerName(learner.displayName)}

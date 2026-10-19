@@ -65,7 +65,7 @@ export default async function FacultyTeachingProfilePage({
     {data.items.length===0 ? <EmptyState title="No current teaching assignments"
       description="No persisted active teaching deliveries match this search. Expired, revoked or unassigned teaching roles are not reconstructed." />
       : <div className="grid gap-3">{data.items.map(row=>
-        <article key={row.deliveryId} className="rounded-xl border border-border bg-surface p-4">
+        <article key={row.deliveryId} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-semibold text-foreground">{row.courseName}</h2>
             <span className="text-xs font-semibold text-body">{row.teachingRole}</span>

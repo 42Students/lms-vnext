@@ -1,4 +1,7 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
 
 import { useState } from "react";
@@ -65,30 +68,30 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
       </a>
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
         <label className="grid gap-1 text-sm font-semibold">Program
-          <select required value={programId}
+          <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">Choose program</option>
             {choices.programs.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Batch
-          <select required value={cohortId}
+          <Select required value={cohortId}
             onChange={event=>{setCohortId(event.target.value);setSectionId("");setReport(null);}}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">Choose batch</option>
             {choices.batches.filter(option=>option.programId===programId).map(option=>
               <option key={option.id} value={option.id}>{option.name}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Class/Section
-          <select value={sectionId}
+          <Select value={sectionId}
             onChange={event=>{setSectionId(event.target.value);setReport(null);}}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">No class placement</option>
             {choices.classes.filter(option=>option.cohortId===cohortId).map(option=>
               <option key={option.id} value={option.id}>{option.name} · capacity {option.capacity??"unlimited"}</option>)}
-          </select>
+          </Select>
         </label>
       </div>
       <label className="mt-4 grid gap-2 text-sm font-semibold text-body">
@@ -103,18 +106,18 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
       </label>
       <label className="mt-4 grid gap-2 text-sm font-semibold text-body">
         CSV contents
-        <textarea value={csv} onChange={event => {
+        <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setReport(null); setConfirm(false);
         }} rows={8} spellCheck={false}
           className="w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 font-mono text-xs text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm" />
       </label>
-      <button type="button" disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => guardRun(async () => {
+      <Button variant="primary" type="button" disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => guardRun(async () => {
         try { await submit("PREVIEW"); } catch (reason) {
           setError(reason instanceof Error ? reason.message : "Validation failed");
         }
-      })} className="mt-4 min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      })} className="mt-4 min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         {pending ? "Validating..." : "Preview validation"}
-      </button>
+      </Button>
       {error ? <p role="alert" className="mt-3 text-sm text-error">{error}</p> : null}
     </section>
 
@@ -149,15 +152,15 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
           I understand that importing creates real identities and memberships, successful rows are not rolled back,
           and any partial onboarding requires manual enrollment recovery.
         </label>
-        <button type="button" disabled={!confirm || pending}
+        <Button variant="primary" type="button" disabled={!confirm || pending}
           onClick={() => guardRun(async () => {
             try { await submit("IMPORT"); } catch (reason) {
               setError(reason instanceof Error ? reason.message : "Import failed");
             }
           })}
-          className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           {pending ? "Importing..." : "Confirm import of validated rows"}
-        </button>
+        </Button>
       </div> : null}
     </section> : null}
   </div>;

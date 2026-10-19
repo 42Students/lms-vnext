@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import Link from "next/link";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -97,10 +95,10 @@ export default async function FacultyAssessmentResultsPage({
           <option value="5">5</option><option value="10">10</option>
         </Select>
       </label>
-      <Button type="submit" variant="primary">
+      <Button variant="primary" type="submit" className="min-h-9 px-4">
         Filter
       </Button>
-      <Link href="/teacher/results" className="inline-flex min-h-9 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      <Link href="/teacher/results" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Clear
       </Link>
     </form>
@@ -116,7 +114,7 @@ export default async function FacultyAssessmentResultsPage({
       : <div className="grid gap-3">
         {data.items.map(item =>
           <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
-            className="rounded-xl border border-border bg-surface p-4">
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <h2 className="font-semibold text-foreground">{item.title}</h2>
