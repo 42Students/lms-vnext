@@ -38,28 +38,28 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       <nav aria-label="Follow-up ownership" className="flex flex-wrap gap-3">
         {FOLLOWUP_SCOPES.map(view=><Link key={view} href={tpoFollowupQueueHref({scope:view,window,q})}
           aria-current={view===scope?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           {view==="MINE"?"My Work":"Placement Team"}
         </Link>)}
       </nav>
       <nav aria-label="Follow-up date window" className="flex flex-wrap gap-3">
         {FOLLOWUP_WINDOWS.map(view=><Link key={view} href={tpoFollowupQueueHref({scope,window:view,q})}
           aria-current={view===window?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           {view==="DUE"?"Due now":"Next 7 days"}
         </Link>)}
       </nav>
-      <form action="/tpo/follow-ups" method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <form action="/tpo/follow-ups" method="get" className="flex flex-wrap items-end gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <input type="hidden" name="scope" value={scope}/><input type="hidden" name="window" value={window}/>
         <label className="min-w-0 flex-1 text-sm font-semibold text-body">Find recruiter or company
           <Input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
-            className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
-        </label><Button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">Search</Button>
+            className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+        </label><Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Search</Button>
         {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>:null}
       </form>
       <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
       {data ? <><a href={tpoFollowupQueueExportHref({scope,window,q})}
-          className="inline-flex min-h-11 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
           Export filtered follow-ups CSV
         </a><TpoDueFollowupWorkspace data={data} />
         <nav aria-label="Follow-up pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
@@ -67,7 +67,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
           <div className="flex gap-4">{data.page>1?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page-1})} className="font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>:null}
             {data.page<data.totalPages?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page+1})} className="font-semibold text-[var(--lms-teal-deep)]">Next →</Link>:null}</div>
         </nav></> : (
-        <section role="status" className="rounded-xl border border-border bg-surface p-6">
+        <section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
           <h2 className="font-semibold text-foreground">Recruiter follow-ups unavailable</h2>
           <p className="mt-2 text-sm text-body">
             DB09 must be verified before recruiter follow-ups can be loaded or changed.
