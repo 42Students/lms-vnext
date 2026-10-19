@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { TpoRoundCheckIn } from "./tpo-round-check-in";
 import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
 
 import {
   PageHeader,
@@ -254,9 +255,7 @@ export function TpoRoundDriveDayReadOnly({
           caption="Applicants in this round"
           rows={data.rows}
           getRowKey={student=>student.applicationId}
-          empty={<div role="status" className="p-3 text-sm text-body">
-            No eligible applicants currently appear in this round&apos;s roster.
-          </div>}
+          empty={<EmptyState title="No eligible applicants currently appear in this round’s roster."/>}
           columns={[
             {key:"student",header:"Student",mobilePriority:"primary" as const,
               cell:(student:(typeof data.rows)[number])=>student.displayName},
