@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
@@ -84,11 +85,11 @@ export function CollegeSlotManager({ options, row }: {
   }
 
   return <div className="min-w-0">
-    <button type="button" disabled={pending || (!editing && options.programs.length === 0)}
+    <Button variant="secondary" type="button" disabled={pending || (!editing && options.programs.length === 0)}
       onClick={() => setOpen(!open)}
-      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+      className="text-primary-text">
       {row ? "Edit slot" : "New elective slot"}
-    </button>
+    </Button>
     {open ? <form onSubmit={submit} className="mt-3 grid max-w-3xl gap-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:grid-cols-2">
       {row?<p role="note" className="sm:col-span-2 text-xs text-muted-foreground">Academic identity is locked after creation. Changing existing learner picks, credits or choice limits is checked by the server before saving.</p>:null}
       {!row ? <>
@@ -119,14 +120,14 @@ export function CollegeSlotManager({ options, row }: {
         className={fieldClass} value={maxPick} onChange={event => setMaxPick(event.target.value)} /></Field>
       {error ? <p role="alert" className="sm:col-span-2 text-sm text-red-700">{error}</p> : null}
       <div className="flex gap-3 sm:col-span-2">
-        <button type="submit" disabled={pending}
-          className="min-h-10 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">
+        <Button variant="primary" type="submit" disabled={pending}
+          >
           {pending ? "Saving…" : editing ? "Confirm update" : "Confirm create"}
-        </button>
-        <button type="button" disabled={pending} onClick={() => setOpen(false)}
-          className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold">
+        </Button>
+        <Button variant="secondary" type="button" disabled={pending} onClick={() => setOpen(false)}
+          >
           Cancel
-        </button>
+        </Button>
       </div>
     </form> : null}
   </div>;
