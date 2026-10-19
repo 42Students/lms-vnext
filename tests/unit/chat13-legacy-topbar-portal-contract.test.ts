@@ -52,6 +52,14 @@ describe("chat-13 legacy header portal navigation and measured shell values",()=
      {label:"Search people",href:"/admin/people/directory?q=Acme"},
      {label:"Search companies",href:"/admin/companies?q=Acme"},
    ]);
+   expect(topbarSearchDestinations("/hr/drives","Jobs")).toEqual([
+     {label:"Search drives",href:"/hr/drives?q=Jobs"},
+     {label:"Search conversations",href:"/hr/conversations?q=Jobs"},
+   ]);
+   expect(topbarSearchDestinations("/college/courses","Mathematics")).toEqual([
+     {label:"Search students",href:"/college/students?q=Mathematics"},
+     {label:"Search courses",href:"/college/courses?q=Mathematics"},
+   ]);
    expect(topbarSearchDestinations("/teacher/courses","Acme")).toEqual([]);
    expect(topbarSearchDestinations("/tpo/home","  ")).toEqual([]);
  });
