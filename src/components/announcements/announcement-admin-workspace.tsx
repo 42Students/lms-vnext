@@ -204,7 +204,7 @@ export function AnnouncementAdminWorkspace({
 
   return (
     <div className="space-y-6">
-      <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+      <section className="space-y-4 border-b border-border pb-5">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">Create announcement</h2>
           <p className="mt-1 text-sm text-body">
