@@ -371,3 +371,25 @@ compiler or browser visual test.
 **Static source review:** fetched changed TSX files after editing, reviewed matching JSX closing tags (especially `</Select>`, `</Button>`, `</Link>`, `</section>`, `</div>`) and checked for incomplete closing tags and isolated `as` casts. The touched markup did not show truncated or excess closing tags. This is manual/static review, **not** compile/typecheck, CI, browser or screenshot verification. No code or CI was run, as requested.
 
 **Outstanding visual acceptance:** verify real 320–390px viewport wrapping for long Super Admin labels and the legacy reference screenshots. Other page/portal owners continue to own their individual global control skins, sidebar and top bar. The Super Admin group strip is still rendered by its admin layout ahead of route-specific PageHeader; do not claim full screenshot parity until the app is visually inspected.
+
+
+## Chat-9 fourth pass — shared controls, header/canvas and remaining admin pages (2026-10-19)
+
+**Pull-first integration:** before modifying files, inspected the upstream divergence and reconciled the new `origin/main` commit `0a542bfcf587fd23955883a7a98a33dc011d7023` in a two-parent Git merge commit on `chatgpt/chat-9-b`. New upstream work outside this lane's 17 outstanding blobs was kept from `main`, with chat-9's source-level old-LMS edits retained. No force push or push to `main`. The comparison immediately after the merge confirmed `0 behind`.
+
+**Additional shared-control conversions:**
+- Template resource editor: required and pinned flags now use `Checkbox` rather than raw checkbox inputs.
+- Template metadata edit: immutable-version acknowledgement now uses `Checkbox`.
+- Project resources list: pinned-only filter now uses `Checkbox`.
+- Super Admin person onboarding: mentor and membership-role checkboxes use `Checkbox`.
+- Super Admin recruiter HR dialog: new-company and college-relationship checkboxes use `Checkbox`.
+- Tenant college logo uploader: file picker uses shared `Input` without changing its selected-file callback. Native `type="range"` sliders remain intentionally native since the shared UI package has no slider component; hidden form-state inputs remain native and unstyled.
+
+**Remaining legacy page-head alignment:**
+- Tenant Settings: authentication/privileged-access link relocated from the body into `PageHeader.actions`.
+- Super Admin Programs and Semesters: academic setup and semester–course mapping shortcuts relocated into `PageHeader.actions`.
+- Projects mentor reassignment: back-to-workspaces action moved into `PageHeader.actions`.
+- Projects at-risk: page-scoped CSV export moved into `PageHeader.actions`, while retaining the scope disclaimer below.
+- `PageCanvas` explicitly gives its 24px padding precedence over any caller-supplied inline padding; existing media-query resets cannot shrink the authenticated canvas.
+
+**Static source review:** re-read all newly modified TSX files and inspected `Checkbox`, `Input`, `Select`, `Button`, `Link` and `PageHeader` closing tag names. No incomplete `</Select>`, `</Button>`, `</Link>` or other truncated touched closing tags were detected. Visible raw controls in the previously scanned last-third Super Admin routes have been replaced with shared controls where suitable; hidden inputs and native crop sliders are intentionally exempt. **No runtime execution, build, lint, typecheck, screenshot tests or CI.** Browser visual parity still needs checking.
