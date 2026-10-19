@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import {useEffect,useState} from "react";
 import {TrackerReportForm} from "./tracker-report-form";
 import {Drawer} from "@/components/ui/drawer";
@@ -31,10 +32,9 @@ export function TrackerQuickReportLauncher(){
     Report issue · Alt+B
   </Button>
   <Drawer open={open} onOpenChange={setOpen} title="Report an issue">
-    <details className="mb-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-xs text-body">
-      <summary className="min-h-9 cursor-pointer text-sm font-semibold">Captured page / browser / viewport</summary>
+    <Disclosure title={"Captured page / browser / viewport"} className="mb-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-xs text-body">
       <pre className="mt-2 whitespace-pre-wrap break-words">{context}</pre>
-    </details>
+    </Disclosure>
     <TrackerReportForm contextPrefill={context}/>
   </Drawer>
  </>;

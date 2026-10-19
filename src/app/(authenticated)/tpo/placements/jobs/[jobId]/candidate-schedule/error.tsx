@@ -1,5 +1,5 @@
-import {Button} from "@/components/ui/button";
 "use client";
+import {Button} from "@/components/ui/button";
 export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return <section role="alert" className="rounded-xl border border-border p-6">
     Candidate round schedules could not be loaded; this is not an empty schedule.

@@ -1,6 +1,6 @@
 "use client";
 import { Select } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/selection-controls";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState, useTransition, type FormEvent } from "react";
@@ -194,11 +194,11 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
           </label>
           <p className="text-xs text-body">Credits come from mapped courses and cannot be edited here.</p>
-          <label className="flex items-center gap-2 text-xs text-body">
-            {SEMESTER_COPY.statusLabel}
-            <Checkbox role="switch" checked={isActive} onChange={e => setIsActive(e.target.checked)} />
-            {isActive ? SEMESTER_COPY.statusActive : SEMESTER_COPY.statusInactive}
-          </label>
+          <div className="flex flex-wrap items-center gap-2 text-xs text-body">
+            <Switch label={SEMESTER_COPY.statusLabel} checked={isActive}
+              disabled={pending} onChange={e => setIsActive(e.target.checked)} />
+            <span role="status">{isActive ? SEMESTER_COPY.statusActive : SEMESTER_COPY.statusInactive}</span>
+          </div>
           <div className="flex flex-wrap gap-2">
             <Button variant="primary" type="submit" disabled={pending} >
               {pending ? "Saving…" : SEMESTER_COPY.saveButton}

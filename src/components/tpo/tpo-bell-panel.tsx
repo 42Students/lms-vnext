@@ -18,6 +18,15 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
  const [refreshing,setRefreshing]=useState(false);
  const refreshInFlight=useRef(false);
  const displayedItems=latest?.items??items;
+ const groupedItems=displayedItems.slice(0,20).reduce<{day:string;items:BellItem[]}[]>((groups,item)=>{
+  const day=new Intl.DateTimeFormat("en-IN",{
+   day:"numeric",month:"long",year:"numeric",timeZone:"Asia/Kolkata",
+  }).format(new Date(item.createdAt));
+  const last=groups[groups.length-1];
+  if(last?.day===day)last.items.push(item);
+  else groups.push({day,items:[item]});
+  return groups;
+ },[]);
  const unread=allReadRevision===revision?0:Math.max(0,(latest?.unread??initialUnread)-
   readIds.filter(id=>displayedItems.some(item=>item.id===id&&!item.readAt)).length);
  const router=useRouter();
@@ -97,11 +106,16 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   </Button>
   <Drawer open={open} onOpenChange={changeOpen} className={compact ? style.topbarNotificationDrawer : undefined}
    bodyClassName={compact ? style.topbarNotificationBody : undefined} title="Notifications"
-   description="Most recent notifications from your own college.">
+   description="Most recent notifications from your own college."
+   footer={<div role="group" aria-label="Notification inbox actions" className="flex flex-wrap gap-3"><Button variant="secondary" type="button" disabled={refreshing||pending} loading={refreshing} onClick={()=>void refresh()} className="min-h-11">Refresh</Button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</Link>
+    {unread>0?<Button variant="secondary" type="button" className="min-h-11" onClick={()=>void markAll()} disabled={pending} loading={pending}>{pending?"Saving…":"Mark all read"}</Button>:null}</div>}>
 
    {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
    {!refreshing&&displayedItems.length===0&&!error?<div role="status" className={style.topbarNotificationState}><p className="font-medium">Nothing yet</p><p className="text-sm text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="space-y-0">
-    {displayedItems.slice(0,20).map(item=><li key={item.id} className="mb-1.5 overflow-hidden rounded-[8px] text-sm">
+    {groupedItems.map((group,index)=><li key={group.day+"-"+index} className="list-none">
+    <p className="px-3 pb-2 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.day}</p>
+    <ul role="list" aria-label={"Notifications for "+group.day} className="space-y-0">
+    {group.items.map(item=><li key={item.id} className="mb-1.5 overflow-hidden rounded-[8px] text-sm">
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
       className="w-full min-h-11 flex-col items-start justify-start gap-1 rounded-[8px] border border-border bg-surface px-4 py-3 text-left hover:bg-[var(--lms-neutral-50)]">
      <span className="block text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-notification-unread,#ff7576)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
@@ -111,10 +125,8 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
      </time>
      <span className="mt-1 inline-block text-xs font-semibold text-primary-text">{!item.readAt&&!readIds.includes(item.id)?"New  →":"→"}</span>
      </Button>
-    </li>)}</ul>:null}
-   <div className="flex flex-wrap gap-3"><Button variant="secondary" type="button" disabled={refreshing||pending} onClick={()=>void refresh()} className="min-h-11">Refresh</Button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
-    {unread>0?<Button variant="secondary" type="button" className="min-h-11" onClick={()=>void markAll()} disabled={pending}>{pending?"Saving…":"Mark all read"}</Button>:null}</div>
-   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+    </li>)}</ul></li>)}</ul>:null}
+   {error?<p role="alert" className={style.topbarNotificationError}>{error}</p>:null}
   </Drawer>
  </div>;
 }

@@ -305,7 +305,7 @@
 }
 .topbarNotificationBody::-webkit-scrollbar { display:none; }
 
-.topbarNotificationBody > ul {
+.topbarNotificationBody ul[aria-label="Recent placement notifications"] {
   list-style:none;
   margin:0;
   padding:0 12px;
@@ -467,3 +467,14 @@
 .topbarNotificationState > p + p { max-width:260px; color:var(--lms-muted-text); }
 
 @media (max-width:767px) { .topbarNotificationState { min-height:88px; padding:32px 16px; } }
+
+.topbarNotificationDrawer [data-slot="drawer-footer"] { padding:12px 20px; background:var(--lms-neutral-50); border-top:1px solid #e5e9f0; }
+
+@media (max-width:767px) { .topbarNotificationDrawer [data-slot="drawer-footer"] { padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px)); } }
+.topbarNotificationDrawer [data-slot="drawer-footer"] a { min-height:44px; display:inline-flex; align-items:center; }
+
+.topbarNotificationBody ul[aria-label^="Notifications for "] { padding:0; margin:0; list-style:none; }
+
+.topbarNotificationBody ul[aria-label="Recent placement notifications"] > li > p { margin:0; padding:12px 12px 8px; color:var(--lms-muted-text); font-size:12px; font-weight:600; }
+
+.topbarNotificationError { display:flex; align-items:center; justify-content:center; min-height:44px; padding:32px 20px; color:var(--lms-error-text); font-size:14px; text-align:center; }

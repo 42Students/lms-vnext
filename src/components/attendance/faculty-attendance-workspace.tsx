@@ -499,30 +499,18 @@ export function FacultyAttendanceWorkspace({
           {workspace.course.courseName} · {workspace.course.academicPeriodName}
         </p>
 
-        <div className="mt-4 inline-flex rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-1">
-          <Button
-            size="sm"
-            variant={
-              mode === "REPORT"
-                ? "primary"
-                : "ghost"
+        <SegmentedControl
+          className="mt-4 w-full sm:w-auto"
+          label="Attendance view"
+          value={mode}
+          options={[{value:"REPORT",label:"Monthly Attendance"},{value:"MARK",label:"Mark attendance"}]}
+          onChange={(next) => {
+            if (next === "REPORT" || next === "MARK") {
+              confirmDiscardMarks(() => setMode(next));
             }
-            onClick={() => confirmDiscardMarks(()=>setMode("REPORT"))}
-          >
-            Monthly Attendance
-          </Button>
-          <Button
-            size="sm"
-            variant={
-              mode === "MARK"
-                ? "primary"
-                : "ghost"
-            }
-            onClick={() => confirmDiscardMarks(()=>setMode("MARK"))}
-          >
-            Mark attendance
-          </Button>
-        </div>
+          }}
+        />
+
       </section>
 
       {mode === "REPORT" ? (
@@ -965,6 +953,7 @@ export function FacultyAttendanceWorkspace({
                             <div className="flex gap-2">
                               <Button
                                 size="sm"
+                                className="min-h-11 sm:min-h-[var(--lms-control-height)]"
                                 variant={
                                   !isAbsent
                                     ? "primary"
@@ -985,6 +974,7 @@ export function FacultyAttendanceWorkspace({
                               </Button>
                               <Button
                                 size="sm"
+                                className="min-h-11 sm:min-h-[var(--lms-control-height)]"
                                 variant={
                                   isAbsent
                                     ? "danger"

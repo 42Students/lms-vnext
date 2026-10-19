@@ -1,5 +1,5 @@
-import {Button} from "@/components/ui/button";
 "use client";
+import {Button} from "@/components/ui/button";
 
 export default function Error({ reset }: { error: Error; reset: () => void }) {
   return <main role="alert" className="py-5">
