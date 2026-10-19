@@ -1,3 +1,4 @@
+import { Banner } from "@/components/ui/banner";
 "use client";
 
 import {
@@ -263,9 +264,9 @@ export function FacultyAssessmentEditor({
           onSubmit={save}
           className="space-y-4"
         >
-          {titleOnly?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+          {titleOnly?<Banner tone="info">
             Learner submissions exist. Deadline, points, audience, resources and submission methods are locked. You can still correct the title.
-          </p>:null}
+          </Banner>:null}
           <label className="block text-sm font-semibold text-body">
             Title
             <Input
