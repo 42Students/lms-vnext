@@ -21,6 +21,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const [query, setQuery] = useState("");
   const [courses, setCourses] = useState<LearnerCourse[]>([]);
   const [courseError, setCourseError] = useState(false);
+  const [courseLoading, setCourseLoading] = useState(config.portal === "learn");
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const input = useRef<HTMLInputElement>(null);
@@ -44,8 +45,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           typeof row.sectionName === "string",
         ));
         setCourseError(false);
+        setCourseLoading(false);
       })
-      .catch(() => { if (!cancelled) setCourseError(true); });
+      .catch(() => { if (!cancelled) { setCourseError(true); setCourseLoading(false); } });
     return () => { cancelled = true; };
   }, [config.portal]);
   const courseMatches = useMemo(() => {
@@ -173,6 +175,8 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           options[next]?.focus();
         }}>
         <p className="px-2 py-1 text-[11px] font-semibold uppercase tracking-[.08em] text-muted-foreground">Go to</p>
+        {config.portal === "learn" && courseLoading ?
+          <p role="status" className="px-2 py-2 text-xs text-muted-foreground">Loading your courses…</p> : null}
         {config.portal === "learn" && courseError ?
           <p role="status" className="px-2 py-2 text-xs text-error">Could not load courses. Search shortcuts remain available.</p> : null}
         {courseMatches.length > 0 ? <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Courses</p> : null}
@@ -203,7 +207,8 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
           <SearchIcon /> {command.label}
         </Link>)}
-        {matches.length === 0 && destinations.length === 0 && courseMatches.length === 0 ? <p className="p-2 text-xs text-muted-foreground">
+        {matches.length === 0 && destinations.length === 0 && courseMatches.length === 0 &&
+          !(config.portal === "tpo" && query.trim().length >= 2) && !courseLoading ? <p role="status" className="p-2 text-xs text-muted-foreground">
           No matching shortcuts. Press Enter to search this portal.
         </p> : null}
       </div> : null}
