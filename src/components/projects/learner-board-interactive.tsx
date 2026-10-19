@@ -122,7 +122,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
             Pull into sprint
             <select defaultValue="" disabled={busy||!sprints.some(s=>s.status==="ACTIVE")}
               onChange={event=>{if(event.target.value)void pull(task,event.target.value);}}
-              className="mt-1 min-h-11 w-full rounded border border-border bg-background px-2">
+              className="mt-1 min-h-11 sm:min-h-9 w-full rounded border border-border bg-surface px-2">
               <option value="">Choose active sprint</option>
               {sprints.filter(s=>s.status==="ACTIVE").map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
             </select>
@@ -133,7 +133,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
           Move {task.title}
           <select aria-label={"Move "+task.title} value={task.status} disabled={busy}
            onChange={event=>void move(task.id,event.target.value as EditableStatus)}
-           className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2 text-sm">
+           className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
             {statuses.filter(status=>status===task.status||canLearnerMoveOwnTask(task.status,status))
               .map(status=><option key={status} value={status} disabled={status===task.status}>
                {status==="TODO"?"To Do":status==="IN_PROGRESS"?"In Progress":"Blocked"}</option>)}
