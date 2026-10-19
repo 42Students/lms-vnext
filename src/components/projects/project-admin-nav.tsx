@@ -1,4 +1,5 @@
 import { Tabs } from "@/components/ui/tabs";
+import styles from "./legacy-project-tabs.module.css";
 
 const PROJECT_ADMIN_LINKS = [
   ["", "Workspaces"],
@@ -31,7 +32,7 @@ export function ProjectAdminNav({
       ? ""
       : "/" + active;
 
-  return <Tabs ariaLabel="Projects" renderPanel={false} value={activePath}
+  return <Tabs className={styles.legacy} ariaLabel="Projects" renderPanel={false} value={activePath}
     items={PROJECT_ADMIN_LINKS.map(([suffix,label])=>({
       value:suffix,
       label,

@@ -43,13 +43,13 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
   finally{setBusy(false);setPendingRemoval(null);}
  }
  return <section aria-label="Other stored keys" className="space-y-3 border-b border-border pb-5">
-  <h3 className="font-semibold">Other stored keys</h3>
+  <h3 className="font-semibold text-foreground">Other stored keys</h3>
   <p className="text-sm text-body">These values are stored for reference. No runtime reader is activated by adding a key. Never enter passwords, credentials, tokens or secrets.</p>
   {others.length===0?<p className="text-sm text-body">No other stored keys at this scope.</p>:
    <ul className="space-y-2">
     {others.map(entry=>{
      const documented=LEGACY_TENANT_SETTING_MAP.get(entry.key);
-     return <li key={entry.key} className="flex min-w-0 flex-wrap items-start justify-between gap-3 rounded-[8px] border-b border-border px-3 py-3 text-sm transition-colors duration-200 hover:bg-surface-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
+     return <li key={entry.key} className="flex min-w-0 flex-wrap items-start justify-between gap-3 rounded-[var(--lms-control-radius)] border-b border-border px-3 py-3 text-sm transition-colors duration-200 hover:bg-surface-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
       <div className="min-w-0 flex-1">
        <strong className="break-all">{entry.key}</strong>
        {documented?<p className="text-xs text-warning-text">Never read here — this key is read at {documented.scope} scope.</p>:null}
@@ -62,13 +62,13 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
     })}
    </ul>}
   <fieldset disabled={!ready||busy} className="space-y-2">
-   <legend className="font-semibold">Add setting</legend>
-   <label className="grid gap-1 text-sm">Key
+   <legend className="font-semibold text-foreground">Add setting</legend>
+   <label className="grid gap-1 text-[13px] font-semibold text-body">Key
     <Input value={key} onChange={event=>setKey(event.target.value)} maxLength={120}
      placeholder="custom.settingName" autoComplete="off"
      className="min-h-11 min-[768px]:min-h-9 w-full"/>
    </label>
-   <label className="grid gap-1 text-sm">Value
+   <label className="grid gap-1 text-[13px] font-semibold text-body">Value
     <Textarea rows={2} value={value} onChange={event=>setValue(event.target.value)}
      maxLength={4096} className="min-h-11 min-[768px]:min-h-9 w-full"/>
    </label>

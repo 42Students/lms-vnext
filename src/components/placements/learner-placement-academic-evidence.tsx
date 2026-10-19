@@ -6,6 +6,8 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -23,8 +25,7 @@ export type PlacementAcademicEvidenceValue = {
   source: "SELF" | "VERIFIED" | null;
 };
 
-const inputClass =
-  "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:bg-muted disabled:text-muted-foreground sm:min-h-9";
+const inputClass = "min-h-11 md:min-h-9";
 
 function numberOrNull(value: string) {
   if (!value.trim()) return null;
@@ -172,7 +173,7 @@ export function LearnerPlacementAcademicEvidence({
 
   return (
     <section id="placement-academic-evidence" className="scroll-mt-24 border-b border-border pb-5">
-      <div className="flex flex-col gap-3 border-b border-border py-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex min-w-0 flex-col gap-3 border-b border-border py-4 md:flex-row md:items-start md:justify-between">
         <div>
           <h2 className="m-0 text-base font-semibold text-foreground">
             Academic eligibility evidence
@@ -199,7 +200,7 @@ export function LearnerPlacementAcademicEvidence({
       </div>
       <form
         onSubmit={save}
-        className="grid gap-4 py-5 sm:grid-cols-2 lg:grid-cols-4"
+        className="grid min-w-0 gap-4 py-5 md:grid-cols-2 lg:grid-cols-4"
       >
         {[
           ["cgpa", "CGPA", evidence.cgpa, "0.01", "10"],
@@ -257,7 +258,7 @@ export function LearnerPlacementAcademicEvidence({
               <span className="mb-1.5 block text-xs font-semibold text-body">
                 {label}
               </span>
-              <input
+              <Input
                 className={inputClass}
                 name={String(name)}
                 type="number"
@@ -275,9 +276,8 @@ export function LearnerPlacementAcademicEvidence({
           ),
         )}
 
-        <label className="flex items-center gap-2 self-end pb-2 text-sm font-semibold text-body">
-          <input
-            type="checkbox"
+        <label className="flex min-h-11 min-w-0 items-center gap-2 self-end py-2 text-sm font-semibold text-body">
+          <Checkbox
             checked={lateralEntry}
             disabled={locked}
             onChange={(event) =>
@@ -294,7 +294,7 @@ export function LearnerPlacementAcademicEvidence({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Diploma %
             </span>
-            <input
+            <Input
               className={inputClass}
               name="diplomaPercentage"
               type="number"
@@ -313,7 +313,7 @@ export function LearnerPlacementAcademicEvidence({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               12th %
             </span>
-            <input
+            <Input
               className={inputClass}
               name="twelfthPercentage"
               type="number"
@@ -329,13 +329,13 @@ export function LearnerPlacementAcademicEvidence({
           </label>
         )}
 
-        <div className="sm:col-span-2 lg:col-span-4">
+        <div className="md:col-span-2 lg:col-span-4">
           {locked ? (
             <p className="m-0 text-sm text-muted-foreground">
               This evidence was verified by your college and cannot be overwritten by self-service.
             </p>
           ) : (
-            <Button
+            <Button className="max-md:min-h-11"
               type="submit"
               size="sm"
               disabled={pending}

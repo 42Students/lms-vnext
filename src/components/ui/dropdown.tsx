@@ -125,6 +125,8 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
     <div ref={panelRef} data-slot="dropdown"
       className={cx("z-40 min-w-[100px] max-w-[calc(100vw_-_1.5rem)] overflow-y-auto overscroll-contain border border-[var(--lms-canvas-border)] bg-white text-[14px] leading-5 text-[var(--lms-body-text)] shadow-[var(--lms-dropdown-shadow)]", mobileSheet ? "fixed inset-x-0 bottom-0 max-h-[70dvh] w-full rounded-t-[12px] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:absolute md:inset-x-auto md:bottom-auto md:top-[calc(100%_+_5px)] md:max-h-72 md:w-72 md:rounded-[6px] md:p-3" : "absolute top-[calc(100%_+_5px)] max-h-[min(32rem,calc(100dvh_-_2rem))] rounded-[6px] px-6 py-4", inlineDesktop ? "md:!static md:!inset-auto md:!max-h-none md:!w-full md:!max-w-none md:!overflow-visible md:!border-0 md:!bg-transparent md:!p-0 md:!shadow-none" : "", align === "end" ? "right-0" : "left-0")}
       onKeyDown={event => {
+        // A nested Menu or listbox already owns roving focus when it consumed this key.
+        if (event.defaultPrevented) return;
         if (event.target instanceof Element && event.target.closest('input, select, textarea, dialog, [contenteditable="true"]')) return;
         if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
         const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(

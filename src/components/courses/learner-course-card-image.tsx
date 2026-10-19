@@ -12,7 +12,7 @@ export function LearnerCourseCardImage({thumbnailUrl}:{thumbnailUrl:string|null}
    className="pointer-events-none absolute right-2 top-1 h-20 w-20 opacity-20" />
  );
  return <Image src={media.src} alt="" fill unoptimized
-  sizes="(max-width: 768px) 100vw, 33vw"
+  sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
   onError={()=>setFailed(true)}
   className="pointer-events-none object-cover opacity-20" />;
 }

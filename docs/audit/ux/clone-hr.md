@@ -458,3 +458,19 @@ Legacy back-link reference is `docs/design/legacy-styles/learn-layout.scss:361-3
 Fetched post-edit source scan: 0 raw `button/input/select/textarea/table` tags and 0 inline hex in each of the three files. The scan is source-equivalent and not a local CLI grep. No TypeScript, CI, app, or browser execution; no shared UI or package manifest edits. **Work queue and E8 remain unticked.**
 
 **Exact next unticked visible file:** `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` for applicant/offer/round column and action parity.
+
+
+## 2026-10-19 chat-15 — authorized applicant sheet continuation
+
+The new `src/components/hr/hr-job-applicants-grid.tsx` displays only the existing employer-scoped `applicants.rows` from `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`. Its columns include Applicant, Role, Roll no., Branch, three academic percentage fields, Application, Placement-cell screening and Applied; `Review applicant` links retain the original scoped applicant route and drawer. The stage, CSV export, focused reviewer, notes and server pagination were not changed. The AG Grid column preference storage key includes user ID, job ID and selected stage; no applicant data is persisted by this component.
+
+| Legacy property and file:line | vNext value/source | Verification |
+| --- | --- | --- |
+| `docs/design/old-lms-pages.md:6,10`: table on one white canvas | `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` includes shared TpoGrid without new canvas | Source structure only; actual paint pending |
+| `docs/design/legacy-styles/components___listing-page-header.scss:131-158`: phone max 767px | Shared applicant sheet in `hidden md:block`, original review cards in `md:hidden` | Source breakpoint exact; mobile screenshot pending |
+| `docs/design/old-lms-pages.md:8-11`: filter/tab/export and row actions | Existing stage Tabs and `Export shared applicants CSV` unchanged, action still `Review applicant` | Content routes preserved; filename/hover/focus pending |
+| `docs/design/old-lms-pages.md:11-12`: status badges and compact separators | Shared TpoGrid text states plus original mobile status badges | Not an exact colour/row-state match; do not tick |
+
+The updated applicant page was re-fetched: 0 native control/table tags, 0 hex literals, 0 raw `h1`, matching 53/53 div open-close and 3/3 fragment open-close counts. New `hr-job-applicants-grid.tsx` similarly has zero raw controls, zero hex, and zero custom overlays. No local app, TS/CI, viewport screenshot or live tenant verification was run. E8 and the job page stay [ ] under the strict tick rule.
+
+**Exact next file:** `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`.

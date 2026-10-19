@@ -71,20 +71,21 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
   }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-4 border-t border-border pt-5">
-  <label className="block text-sm font-semibold">Email signature
+  <h2 className="hidden font-semibold print:block">Email signature preview</h2>
+  <label className="block text-sm font-semibold print:hidden">Email signature
    <Textarea rows={3} maxLength={300} value={value} disabled={busy}
     placeholder={"Training and Placement Cell\nYour college's name"}
     onChange={event=>setValue(event.target.value)}
     className="mt-2 w-full"/>
   </label>
-  <p className="text-right text-xs text-muted-foreground">{value.length}/300</p>
+  <p className="text-right text-xs text-muted-foreground print:hidden">{value.length}/300</p>
   <div className="rounded-[var(--lms-canvas-radius)] border border-dashed border-border p-4">
    <p className="mb-2 text-sm text-muted-foreground">How the end of an invite looks</p>
    <p className="whitespace-pre-line text-sm text-body">{value.trim()||"No signature yet"}</p>
   </div>
-  <p className="text-xs text-muted-foreground">Saved signature is available for future invite and placement email templates. Sending requires configured email delivery.</p>
+  <p className="text-xs text-muted-foreground print:hidden">Saved signature is available for future invite and placement email templates. Sending requires configured email delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value}
-   className="min-h-11 min-[768px]:min-h-9">Save</Button>
+   className="min-h-11 md:min-h-9 print:hidden">Save</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;

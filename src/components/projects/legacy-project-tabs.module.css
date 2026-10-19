@@ -2,8 +2,8 @@
  * Scoped project-section tabs: legacy common.scss:359-416,443-508.
  * 13px / 600 / 16px, 20px gap (40px at >=1600px), 3px teal ink
  * and 200ms underline motion are inherited from shared Tabs.
- * The current global Tabs skin paints active/hover text #1a95a1,
- * while the legacy .ant-tabs-tab-active and hover are #26bac7.
+ * The global Tabs skin uses the muted primary-text token for active/hover,
+ * while legacy .ant-tabs-tab-active and hover use the interactive teal token.
  * Override only that paint; leave hit areas, scroll, focus, nav and DOM
  * entirely owned by the shared Tabs component.
  */

@@ -395,16 +395,16 @@ export function RecruiterLeadDetailWorkspace({
 
   return (
     <section className="space-y-6">
-      <Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="text-sm font-medium text-primary-text hover:underline">
+      <Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         ← Recruiter leads
       </Link>
       {phase === "loading" ? (
-        <p role="status" className="rounded-lg border border-border bg-surface p-6">Loading recruiter details…</p>
+        <p role="status" className="border-y border-border py-6">Loading recruiter details…</p>
       ) : phase === "error" || !lead ? (
         <div role="alert" className="space-y-3 border-b border-border pb-5">
           <PageHeader title="This recruiter isn’t in Engage" />
           <p>{error || "The recruiter contact could not be found or loaded."}</p>
-          <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-primary-text underline">
+          <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Go to Engage
           </Link>
           <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => void load()}>Retry</Button>
@@ -441,17 +441,17 @@ export function RecruiterLeadDetailWorkspace({
 
           </div>
           {lead.unsubscribedAt?<div role="alert"
-             className="rounded-lg border border-warning bg-surface p-3 text-sm text-body">
+             className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
              Asked not to be contacted. Invitations and outreach are unavailable.
            </div>:null}
            {lead.manualStage === "NOT_NOW" ? (
-            <div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+            <div role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm">
               Not now: {lead.notNowReason || "No reason recorded"}.
               {lead.notNowUntil ? " Revisit on " + new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(lead.notNowUntil+"T12:00:00+05:30")) : ""}
             </div>
           ) : null}
-          {actionToast?<p role="status" className="rounded-md border border-border p-3 text-sm">{actionToast}</p>:null}
-          {actionError ? <p role="alert" className="rounded-md border border-border p-3 text-sm text-destructive">{actionError}</p> : null}
+          {actionToast?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm">{actionToast}</p>:null}
+          {actionError ? <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-destructive">{actionError}</p> : null}
 
           {lead.companyName?<section aria-label="Company" className="border-b border-border py-5">
              <h2 className="font-semibold text-foreground">Company</h2>
@@ -461,7 +461,7 @@ export function RecruiterLeadDetailWorkspace({
                <p className="text-xs text-muted-foreground">Applied and offers below are stored drive counts, not verified placements.</p>
                <ul className="space-y-1">
                  {companySummary.drives.slice(0,5).map(drive=><li key={drive.id}>
-                   <Link className="text-primary-text underline" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>
+                   <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>
                    {" · "+drive.applied+" applied · "+drive.offers+" offers"}
                  </li>)}
                </ul>
@@ -471,7 +471,7 @@ export function RecruiterLeadDetailWorkspace({
                See company drives, applicant counts, offers and recruiter contacts in Company Memory.
              </p>
              <Link href={"/tpo/companies?name="+encodeURIComponent(lead.companyName)}
-               className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+               className="lms-inline-link mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                Open company memory
              </Link>
            </section>:null}
@@ -480,10 +480,10 @@ export function RecruiterLeadDetailWorkspace({
               <h2 className="text-lg font-semibold">Contact</h2>
               <dl className="space-y-2 text-sm">
                 <div><dt className="text-muted-foreground">Email</dt>
-                  <dd>{lead.emailNorm ? lead.unsubscribedAt?<span>{lead.emailNorm} · opted out</span>:<a href={"mailto:" + lead.emailNorm} className="text-primary-text underline">{lead.emailNorm}</a>
+                  <dd>{lead.emailNorm ? lead.unsubscribedAt?<span>{lead.emailNorm} · opted out</span>:<a href={"mailto:" + lead.emailNorm} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{lead.emailNorm}</a>
                     : <Button type="button" variant="link" className="min-h-11 md:min-h-9" onClick={openEdit}>Add email</Button>}</dd></div>
                 <div><dt className="text-muted-foreground">Phone</dt>
-                  <dd>{lead.phoneNorm ? lead.unsubscribedAt?<span>{lead.phoneNorm} · opted out</span>:<a href={"tel:" + lead.phoneNorm} className="text-primary-text underline">{lead.phoneNorm}</a>
+                  <dd>{lead.phoneNorm ? lead.unsubscribedAt?<span>{lead.phoneNorm} · opted out</span>:<a href={"tel:" + lead.phoneNorm} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{lead.phoneNorm}</a>
                     : <Button type="button" variant="link" className="min-h-11 md:min-h-9" onClick={openEdit}>Add phone</Button>}</dd></div>
                 <div><dt className="text-muted-foreground">Source</dt><dd>{lead.source || "Added by hand"}</dd></div>
               </dl>
@@ -646,9 +646,9 @@ export function RecruiterLeadDetailWorkspace({
               </Button>
             </form>
             {followups.length ? (
-              <ul className="space-y-2">
+              <ul className="divide-y divide-border">
                 {followups.map(f => (
-                  <li key={f.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border p-3 text-sm">
+                  <li key={f.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
                     <div>
                       <time className="font-medium" dateTime={f.dueAt}>{formatDateTimeIst(f.dueAt)}</time>
                       {!f.doneAt && new Date(f.dueAt).getTime()<openedAt.getTime()?
@@ -687,7 +687,7 @@ export function RecruiterLeadDetailWorkspace({
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 {duplicateLead?<p role="status" className="text-sm">
                  Contact already exists: <Link href={"/tpo/recruiters/"+encodeURIComponent(duplicateLead.id)}
-                  className="font-semibold text-primary-text underline">Open {duplicateLead.name}</Link>
+                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open {duplicateLead.name}</Link>
                 </p>:null}
                 <div className="flex justify-end gap-2">
                   <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" disabled={saving} onClick={closeEdit}>Cancel</Button>
