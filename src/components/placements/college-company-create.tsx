@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
 "use client";
+import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
 import {useState,type FormEvent} from "react";

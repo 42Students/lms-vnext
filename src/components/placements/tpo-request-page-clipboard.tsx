@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/ui/checkbox";
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
 export type TpoRequestClipboardRow={id:string;student:string;number:string|null;
