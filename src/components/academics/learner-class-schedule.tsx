@@ -27,6 +27,7 @@ import {
   useState,
 } from "react";
 import { Button } from "@/components/ui/button";
+import { FilterChip } from "@/components/ui/filter-chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -541,13 +542,10 @@ export function LearnerClassSchedule({
                 <option value="SECTION">General section events</option>
               </Select>
             </label>
-            <button type="button" aria-pressed={upcomingOnly}
-              onClick={()=>setUpcomingOnly(value=>!value)}
-              className={upcomingOnly
-                ? "min-h-11 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text"
-                : "min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body"}>
+            <FilterChip type="button" aria-pressed={upcomingOnly}
+              onClick={()=>setUpcomingOnly(value=>!value)}>
               Upcoming sessions only
-            </button>
+            </FilterChip>
             <Button variant="secondary" type="button" onClick={() => {
               const reset = learnerScheduleResetFilters(courses);
               setSessionSearch(reset.search);setSessionKind(reset.kind);
@@ -599,27 +597,13 @@ export function LearnerClassSchedule({
                 All courses
               </Button>
               {courses.map((course) => (
-                <Button
+                <FilterChip
                   key={course.deliveryId}
-                  size="sm"
-                  variant={
-                    selected.has(
-                      course.deliveryId,
-                    )
-                      ? "primary"
-                      : "secondary"
-                  }
-                  aria-pressed={selected.has(
-                    course.deliveryId,
-                  )}
-                  onClick={() =>
-                    toggleCourse(
-                      course.deliveryId,
-                    )
-                  }
+                  aria-pressed={selected.has(course.deliveryId)}
+                  onClick={() => toggleCourse(course.deliveryId)}
                 >
                   {course.courseCode}
-                </Button>
+                </FilterChip>
               ))}
             </div>
           </div>

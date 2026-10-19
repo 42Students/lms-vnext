@@ -3,6 +3,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {Dialog} from "@/components/ui/dialog";
@@ -60,13 +61,13 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
     title="Mark learner ineligible"><div className="space-y-3">
     <p className="text-sm">Pick the reason. Students never see this. You can undo it straight after.</p>
     <div className="flex flex-wrap gap-2" role="group" aria-label="Common ineligibility reasons">
-     {LEGACY_INELIGIBLE_REASONS.map(preset=><Button variant="secondary" type="button" key={preset}
+     {LEGACY_INELIGIBLE_REASONS.map(preset=><FilterChip type="button" key={preset}
       aria-pressed={!other&&reason===preset} disabled={busy}
       onClick={()=>{setReason(preset);setOther(false);setReviewed(false);}}
-      >{preset}</Button>)}
-     <Button variant="secondary" type="button" aria-pressed={other} disabled={busy}
+      >{preset}</FilterChip>)}
+     <FilterChip type="button" aria-pressed={other} disabled={busy}
       onClick={()=>{setOther(true);setReason("");setReviewed(false);}}
-      >Other</Button>
+      >Other</FilterChip>
     </div>
     {other?<label className="block text-sm">Reason
      <Textarea className="mt-1" autoFocus aria-label="Reason for ineligibility" placeholder="Why are they not in placements?"
