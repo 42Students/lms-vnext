@@ -45,31 +45,31 @@ export function SuperAdminTemplateOverviewEditor({templateId,title,summary,versi
   }catch(e){setError(e instanceof Error?e.message:"Could not save overview");}
   finally{setPending(false);}
  }
- return <section className="space-y-3 border-b border-border pb-5">
+ return <section className="space-y-3 border-b border-border pb-5 text-body">
   <Button type="button" variant="secondary" onClick={()=>setOpen(x=>!x)}
    className="">
    {open?"Close Overview editor":"Edit Overview"}
   </Button>
   {open?<div className="grid gap-3 sm:grid-cols-2">
-   <label className="text-sm font-semibold">Course label
+   <label className="text-sm font-semibold text-body">Course label
     <Input className={field} maxLength={160} value={courseLabel} onChange={e=>setCourseLabel(e.target.value)}/></label>
-   <label className="text-sm font-semibold">Phase
+   <label className="text-sm font-semibold text-body">Phase
     <Input className={field} maxLength={120} value={phase} onChange={e=>setPhase(e.target.value)}/></label>
-   <label className="text-sm font-semibold sm:col-span-2">Goal
+   <label className="text-sm font-semibold text-body sm:col-span-2">Goal
     <Textarea className={field+" min-h-16"} maxLength={2000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
-   <label className="text-sm font-semibold sm:col-span-2">Description
+   <label className="text-sm font-semibold text-body sm:col-span-2">Description
     <Textarea className={field+" min-h-20"} maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></label>
    {([{label:"Deliverables (one per line)",value:deliverables,set:setDeliverables},
       {label:"Definition of done (one per line)",value:done,set:setDone},
       {label:"Personas (one per line)",value:personas,set:setPersonas}]).map(item=>
-    <label key={item.label} className="text-sm font-semibold sm:col-span-2">{item.label}
+    <label key={item.label} className="text-sm font-semibold text-body sm:col-span-2">{item.label}
      <Textarea className={field+" min-h-20"} value={item.value} onChange={e=>item.set(e.target.value)}/>
     </label>)}
-   <label className="text-sm font-semibold">Submission type
+   <label className="text-sm font-semibold text-body">Submission type
     <Select className={field} value={submissionType} onChange={e=>setSubmissionType(e.target.value as typeof submissionType)}>
      <option value="LINK">Link</option><option value="FILE">File upload</option><option value="TEXT">Text</option>
     </Select></label>
-   <label className="text-sm font-semibold sm:col-span-2">Submission instructions
+   <label className="text-sm font-semibold text-body sm:col-span-2">Submission instructions
     <Textarea className={field+" min-h-20"} maxLength={4000} value={instructions}
      onChange={e=>setInstructions(e.target.value)}/></label>
    <div className="sm:col-span-2"><Button type="button" variant="primary" disabled={pending}
