@@ -78,17 +78,17 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           "Course authoring and detailed review remain in their offering workspaces."
         }
         actions={
-          <div className="flex flex-wrap gap-2 print:hidden">
+          <div className="flex flex-wrap gap-2">
             <Link prefetch={false} download href={collegeAssessmentExportHref(data.kind,data.query)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Export CSV
             </Link>
             <Link href={isAssignment ? "/college/quizzes" : "/college/assignments"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               {isAssignment ? "View quizzes" : "View assignments"}
             </Link>
             <Link href="/college/courses"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Course catalogue
             </Link>
           </div>
@@ -96,7 +96,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
       />
 
       <section aria-label="Assessment directory filters"
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 print:hidden">
+        className="border-b border-border pb-5">
         <form method="get"
           action={isAssignment ? "/college/assignments" : "/college/quizzes"}
           className="flex flex-wrap items-end gap-3">
@@ -104,27 +104,27 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
             Search title
             <Input name="q" type="search" maxLength={100}
               defaultValue={data.query.q} placeholder="Assessment title"
-              className="min-h-11 md:min-h-9" />
+              className="min-h-11" />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Exact course code
             <Input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
-              className="min-h-11 md:min-h-9" />
+              className="min-h-11" />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Batch / cohort code (exact)
             <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
-              className="min-h-11 md:min-h-9"/>
+              className="min-h-11"/>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Program code (exact)
             <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode??""}
-              className="min-h-11 md:min-h-9"/>
+              className="min-h-11"/>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Audience scope
             <Select name="scope" defaultValue={data.query.scope}
-              className="min-h-11 md:min-h-9">
+              className="min-h-11">
               <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
               <option value="SECTION">Section-specific</option>
             </Select>
@@ -132,7 +132,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           {!isAssignment?<label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Quiz results
             <Select name="results" defaultValue={data.query.results}
-              className="min-h-11 md:min-h-9">
+              className="min-h-11">
               <option value="ALL">Any visibility</option><option value="PUBLISHED">Results published</option>
               <option value="HIDDEN">Results hidden</option>
             </Select>
@@ -140,7 +140,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Due-date configuration
             <Select name="duePresence" defaultValue={data.query.duePresence}
-              className="min-h-11 md:min-h-9">
+              className="min-h-11">
               <option value="ALL">All deadlines</option><option value="SCHEDULED">Deadline configured</option>
               <option value="UNSCHEDULED">No deadline</option>
             </Select>
@@ -148,7 +148,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Deadline window
             <Select name="dueWindow" defaultValue={data.query.dueWindow}
-              className="min-h-11 md:min-h-9">
+              className="min-h-11">
               <option value="ALL">Any deadline</option><option value="PAST">Deadline passed</option>
               <option value="FUTURE">Deadline upcoming</option>
             </Select>
@@ -156,12 +156,12 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Academic period code
             <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode??""}
-              className="min-h-11 md:min-h-9"/>
+              className="min-h-11"/>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Status
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11 md:min-h-9">
+              className="min-h-11">
               <option value="ALL">All statuses</option>
               <option value="DRAFT">Draft</option>
               <option value="PUBLISHED">Published</option>
@@ -170,17 +170,17 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
             </Select>
           </label>
           <Button type="submit"
-            className="min-h-11 px-5 md:min-h-9">
+            className="min-h-11 md:min-h-9">
             Filter
           </Button>
           <Link href={collegeAssessmentHref(data.kind, { q: "", scope: "ALL", results: "ALL", duePresence: "ALL", dueWindow: "ALL", status: "ALL", page: 1 })}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
             Clear
           </Link>
         </form>
       </section>
 
-      <section aria-label="Displayed assessment summary" className="grid gap-3 sm:grid-cols-3">
+      <section aria-label="Displayed assessment summary" className="grid gap-3 md:grid-cols-3">
         {[
           ["Matching records", data.total],
           ["Published on this page", summary.published],
@@ -193,7 +193,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         ))}
       </section>
 
-      <section aria-label={name + " records"} className="min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface print:overflow-visible">
+      <section aria-label={name + " records"} className="min-w-0 overflow-hidden border-y border-border">
         {data.items.length === 0 ? (
           <p className="p-6 text-sm text-body">
             {data.total === 0
@@ -202,7 +202,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           </p>
         ) : (
           <>
-            <div className="divide-y divide-border sm:hidden print:hidden">
+            <div className="divide-y divide-border md:hidden">
               {data.items.map(item=><article key={item.id} className="min-w-0 space-y-3 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <h2 className="min-w-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
@@ -232,7 +232,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                  filesEnabled={assignmentFilesEnabled}/>:null}
               </article>)}
             </div>
-            <div className="hidden min-w-0 sm:block print:block">
+            <div className="hidden min-w-0 md:block">
               <DataTable
                 caption={name+" records"}
                 rows={data.items}
@@ -285,20 +285,20 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
       </section>
 
       <nav aria-label={name + " pagination"}
-        className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+        className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
           Page {data.page} of {data.totalPages} · {data.total} records · 25/page
         </p>
         <div className="flex gap-2">
           {data.page > 1 ? (
             <Link href={collegeAssessmentHref(data.kind, { ...data.query, page: data.page - 1 })}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Previous
             </Link>
           ) : null}
           {data.page < data.totalPages ? (
             <Link href={collegeAssessmentHref(data.kind, { ...data.query, page: data.page + 1 })}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Next
             </Link>
           ) : null}

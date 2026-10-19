@@ -30,7 +30,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
         title={title}
         actions={
           <Link href="/college/lessons"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Lessons
           </Link>
         }
@@ -158,7 +158,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
             Filter
           </Button>
           <Link href={path}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Clear
           </Link>
         </form>
@@ -172,7 +172,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
         Materials counts cover registered additional materials only; a legacy Resource HTTPS link is stored separately.
         {data.materialCountsReady?"":" Counts require the verified DB05 Resource Materials runtime."}
       </p>:null}
-      <section aria-label={title + " catalogue"} className="min-w-0 overflow-x-auto border-y border-border">
+      <section aria-label={title + " catalogue"} className="min-w-0 overflow-x-auto border-y border-border print:overflow-visible">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {data.total} matching content {data.total === 1 ? "record" : "records"}
         </p>
@@ -184,7 +184,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           </p>
         ) : (
           <>
-            <div className="divide-y divide-border md:hidden">
+            <div className="divide-y divide-border md:hidden print:hidden">
               {data.items.map(item => (
                 <article key={item.id} className="min-w-0 space-y-2 p-4" aria-label={item.title}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -213,7 +213,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                 </article>
               ))}
             </div>
-            <div className="hidden min-w-0 md:block">
+            <div className="hidden min-w-0 md:block print:block">
               <DataTable
                 caption={title+" catalogue"}
                 rows={data.items}
