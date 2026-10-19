@@ -4,9 +4,6 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-import {Select} from "@/components/ui/select";
-import {Textarea} from "@/components/ui/textarea";
-import {Button} from "@/components/ui/button";
 import {parseRecruiterPrivateReviewReceipt,isConfirmedRecruiterPrivateReview,
  type RecruiterPrivateReviewReceipt} from "@/modules/placements/recruiter-private-rating-receipt-model";
 type Review=RecruiterPrivateReviewReceipt;
