@@ -75,8 +75,9 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
   const data=result.value;
   return <div className="min-w-0 space-y-6">
       <AcademicSetupSteps step={3} />
-    <PageHeader  title="Semesters"
-      description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —." />
+    <PageHeader title="Semesters"
+      description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —."
+      actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Semester–Course Mapping</Link>} />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="border-b border-border pb-4" aria-label="Semester filters">
       <form method="get" action="/admin/semesters" className="flex flex-wrap items-end gap-3">
@@ -143,6 +144,5 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     </section>
     <Pagination label="Semester pages" page={data.query.page} pageCount={data.totalPages}
       hrefForPage={page=>pageHref({...data.query,page})} />
-    <Link href="/admin/semester-courses" className="font-semibold text-primary-text">Semester–Course Mapping</Link>
   </div>;
 }
