@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -135,30 +136,10 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         </div>
       ) : null}
 
-      <nav className="flex gap-2 border-b border-border" aria-label="Company and team sections">
-        <Link
-          href={base + "&tab=company"}
-          className={tab === "company"
-            ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-            : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
-        >
-          Company
-        </Link>
-        <Link
-          href={base + "&tab=team"}
-          className={tab === "team"
-            ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-            : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
-        >
-          Team
-        </Link>
-        <Link
-          href={"/hr/company/reports?collegeId=" + encodeURIComponent(result.grant.collegeId)}
-          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-muted-foreground hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-        >
-          Reports
-        </Link>
-      </nav>
+      <Tabs renderPanel={false} ariaLabel="Company and team sections" value={tab}
+        items={[{value:"company",label:"Company",href:base+"&tab=company"},
+          {value:"team",label:"Team",href:base+"&tab=team"},
+          {value:"reports",label:"Reports",href:"/hr/company/reports?collegeId="+encodeURIComponent(result.grant.collegeId)}]}/>
 
       {tab === "company" ? (
         <section className="border-b border-border pb-5">
