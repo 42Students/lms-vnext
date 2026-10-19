@@ -247,7 +247,7 @@ export function CollegeBrandingForm({
             <span className="py-2 text-center text-body">Email</span>
           </div>
           <div className="mt-3 h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface" />
-          <div className="mt-3 flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary text-sm font-semibold text-on-primary">
+          <div className="mt-3 flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] bg-primary text-sm font-semibold text-on-primary">
             Send code
           </div>
           <p className="mb-0 mt-3 text-xs text-link">Resend code</p>
