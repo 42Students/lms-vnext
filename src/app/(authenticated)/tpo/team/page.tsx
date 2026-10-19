@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Tabs } from "@/components/ui/tabs";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-service";
 import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
@@ -76,13 +77,10 @@ export default async function TpoTeamPage({searchParams}:{
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Internal" title={TPO_OWNER_PAGE_COPY.team}
    description="Who does what, and what you decided. Recruiters and students never see this." />
-  <nav aria-label="Team tabs" className="flex flex-wrap gap-2">
-   {(["conversations","people"] as const).map(item=><Link key={item} href={"/tpo/team?tab="+item}
-     aria-current={tab===item?"page":undefined}
-     className={tab===item?"border-b-[3px] border-[var(--lms-primary)] px-4 py-3 text-sm font-semibold text-[var(--lms-primary-text)]":"border-b-[3px] border-transparent px-4 py-3 text-sm text-body"}>
-    {item==="people"?"People":"Conversations"}
-   </Link>)}
-  </nav>
+  <Tabs ariaLabel="Team tabs" renderPanel={false} value={tab}
+   items={(["conversations","people"] as const).map(item=>({
+     value:item, label:item==="people"?"People":"Conversations", href:"/tpo/team?tab="+item,
+   }))} />
   {tab==="people"?<section className="space-y-4">
     <p role="status" className="text-sm text-body">{people.length} people</p>
     {unowned?.ready?<TpoTeamAssignUnowned drives={unowned.drives} companies={unowned.companies}
