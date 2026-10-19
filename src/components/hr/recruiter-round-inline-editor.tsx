@@ -7,6 +7,8 @@ import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {Dialog} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import {isVerifiedHrRoundMutation,hrRoundEditorHasUnsavedChanges} from "@/modules/placements/hr-round-editor-model";
 
 type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
@@ -98,14 +100,14 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
     <form onSubmit={(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();void submit(active?"UPDATE":"CREATE");}}
      className="space-y-3">
      <label className="grid gap-1 text-sm text-body">Type
-      <Select value={kind} onChange={e=>setKind(e.target.value as Kind)}>
+      <Select value={kind} onChange={e=>setKind(e.target.value as Kind)} className="w-full">
        {kinds.map(([id,label])=><option value={id} key={id}>{label}</option>)}
       </Select></label>
      <label className="grid gap-1 text-sm text-body">Name
-      <Input required maxLength={100} value={name} onChange={e=>setName(e.target.value)}/>
+      <Input required maxLength={100} value={name} onChange={e=>setName(e.target.value)} className="w-full"/>
      </label>
      <label className="grid gap-1 text-sm text-body">Where
-      <Select value={mode} onChange={e=>setMode(e.target.value)}>
+      <Select value={mode} onChange={e=>setMode(e.target.value)} className="w-full">
        <option value="">Date to be decided</option>
        <option value="ON_CAMPUS">On campus</option>
        <option value="VIRTUAL">Online</option>
