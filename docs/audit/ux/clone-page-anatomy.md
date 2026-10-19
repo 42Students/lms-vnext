@@ -499,3 +499,72 @@ Each line below means a connector fetch *after the write* confirmed **0** litera
 **Strict category status:** B5 page canvas/header/breadcrumb universal coverage **[ ]**; B6 actual viewport and all-portal overflow/hover validation **[ ]**; E6 repository-wide remaining nested-card inventory **[ ]**. This batch is *file-scoped source completion* only, not a declaration of whole-area pixel parity. GitHub connector does not provide a checked-out worktree; no compiler, test runner, CI, browser, screenshot, actual recursive grep, or pixel measurements were executed.
 
 **Next exact file:** `src/components/projects/project-admin-readiness-page.tsx` — classify its summary `Metric` presentation in the workspaces table and retained status states; then `src/components/projects/project-admin-audit-page.tsx`, and the remaining Super Admin last-third delegated components.
+
+## Next bounded chat-9 B5/B6/E6 batch — Projects readiness and routes, 2026-10-19
+
+**Scope:** 11 edited and post-commit source-inspected files; 8 additional route files already compliant and inspected without changes. All committed changes on `chatgpt/chat-9-b` tagged `[chat-9]`. A two-parent upstream integration (branch-only) incorporated `main` at `2808e32a641e1e35f513755b840b6ef892c61163` before editing; no `main` write and no local checked-out `git pull`/rebase. Source checks are not compiler or browser validation.
+
+### Work queue — 11 changed files (source complete)
+
+| Checked file | Current path:line proof | E6/B5 result | B6 responsive source rule |
+| --- | --- | --- | --- |
+| [x] `src/components/projects/project-admin-readiness-page.tsx` | `src/components/projects/project-admin-readiness-page.tsx:201,265` | Four per-workspace numbers on one hairline grid; semantic StatusBadges + links retained | phone 1 col; >=768 2; >=1366 4 |
+| [x] `src/components/projects/project-admin-audit-page.tsx` | `src/components/projects/project-admin-audit-page.tsx:195,273,289` | Filter toolbar and three-part summary directly on canvas | phone 1 col; >=768 2 filter / 3 summary; >=1366 5 filter |
+| [x] `src/components/projects/project-admin-workspace-list.tsx` | `src/components/projects/project-admin-workspace-list.tsx:107,134,170` | Genuine workspace object cards kept, nested metrics converted to hairlines, mobile Open target 44px | 320/390 1 metric col; >=425 3; >=992 2 cards; >=1366 3 |
+| [x] `src/app/(authenticated)/admin/projects/readiness/page.tsx` | `src/app/(authenticated)/admin/projects/readiness/page.tsx:1-9,23-29` | Denied-scope back action uses PageBackLink, PageHeader preserved | 44px icon at <=767; text visible >=768 |
+| [x] `src/app/(authenticated)/admin/projects/submissions/page.tsx` | `src/app/(authenticated)/admin/projects/submissions/page.tsx:1-9,23-29` | Denied-scope back action uses PageBackLink, PageHeader preserved | 44px icon at <=767; text visible >=768 |
+| [x] `src/app/(authenticated)/admin/projects/at-risk/page.tsx` | `src/app/(authenticated)/admin/projects/at-risk/page.tsx:1-10,22-30` | Denied-scope back action uses PageBackLink, PageHeader preserved | 44px icon at <=767; text visible >=768 |
+| [x] `src/app/(authenticated)/admin/projects/audit/page.tsx` | `src/app/(authenticated)/admin/projects/audit/page.tsx:1-11,23-30` | Denied-scope back action uses PageBackLink, PageHeader preserved | 44px icon at <=767; text visible >=768 |
+| [x] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx` | `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx:1-11,47-55` | Scope-denied back action uses PageBackLink; permission check unchanged | 44px icon at <=767; text visible >=768 |
+| [x] `src/app/(authenticated)/admin/projects/page.tsx` | `src/app/(authenticated)/admin/projects/page.tsx:1-16,39-45,143-150` | Denied-scope back action shared; two header actions use 768px control-height reset | 44px back/action on phone; 36px header actions >=768 |
+| [x] `src/app/(authenticated)/admin/projects/templates/page.tsx` | `src/app/(authenticated)/admin/projects/templates/page.tsx:1-7,33-42,65-75` | Access-denied back action shared; directory form 768px column breakpoint | phone single filter stack; >=768 search/status/button row |
+| [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx` | `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx:1-11,29-35,56-70` | Denied template back action shared, success header already shared | 44px icon at <=767; text visible >=768 |
+
+### Work queue — 8 inspected no-change canonical route delegates
+
+| Checked file | Proof from source at branch head | Result |
+| --- | --- | --- |
+| [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/overview/page.tsx` | no native `<h1>`, no `<main>` and no `<PageCanvas>`; redirect to canonical overview; no local canvas/head | No edit needed |
+| [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/resources/page.tsx` | no native `<h1>`, no `<main>` and no `<PageCanvas>`; shared SuperAdminTemplateSubviewPage owns header | No edit needed |
+| [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/sprints/page.tsx` | no native `<h1>`, no `<main>` and no `<PageCanvas>`; shared SuperAdminTemplateSubviewPage owns header | No edit needed |
+| [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/page.tsx` | no native `<h1>`, no `<main>` and no `<PageCanvas>`; shared SuperAdminTemplateSubviewPage owns header | No edit needed |
+| [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` | no native `<h1>`, no `<main>` and no `<PageCanvas>`; shared SuperAdminTemplateSubviewPage owns header and history query | No edit needed |
+| [x] `src/app/(authenticated)/admin/projects/[projectId]/page.tsx` | no native `<h1>`, no `<main>` and no `<PageCanvas>`; permission-checked redirect to canonical summary; no duplicate canvas | No edit needed |
+| [x] `src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx` | no native `<h1>`, no `<main>` and no `<PageCanvas>`; AdminProjectSectionPage delegates the shared workspace header | No edit needed |
+| [x] `src/app/(authenticated)/admin/projects/[projectId]/readiness/page.tsx` | no native `<h1>`, no `<main>` and no `<PageCanvas>`; ProjectWorkspaceReadiness already owns PageHeader | No edit needed |
+
+### Value-by-value legacy source table
+
+| Property | Old LMS file:line / value | Scoped vNext file:line / rule | Result |
+| --- | --- | --- | --- |
+| One canvas without subcards | `docs/design/old-lms-shell-spec.md:18-20` #fff, 1px solid #e5e9f0, radius12px, padding24, no shadow on #f1f4f9 | Authenticated `layout.tsx:147-156` and `page-canvas.tsx:13-23`; 19 inspected files introduce **zero** new `<PageCanvas>`/`<main>` | Inherited once, no new outer card |
+| Plain read-only metric sections | `old-lms-pages.md:5,10,13` continuous surface, thin #e5e9f0 separators, distinct object cards only | `project-admin-readiness-page.tsx:201,265` plain 1px `border-t/border-b` and `border-border`; no `bg-muted rounded-lg` child card | Fixed E6 nested presentation metrics |
+| Row/figure grid responsiveness | `legacy-styles/components___variables.scss:148-159` 425, 767, 768, 991, 1365 breakpoints | `project-admin-workspace-list.tsx:134` 1-column to 425px then 3; `project-admin-readiness-page.tsx:201` 1, 2 at 768, 4 at 1366 | Static breakpoint matches |
+| Explicit independent object cards | `old-lms-pages.md:13` cards for genuinely separate items; `variables.scss:30,134` neutral border #e5e9f0, radius12px | `project-admin-workspace-list.tsx:111` one workspace per card, no nested metric card | Legitimate E6 exception |
+| Page head title and inline subtitle | `old-lms-shell-spec.md:26-28` measured 30px /600 / #172033; `legacy-styles/components___listing-page-header.scss:26-35,45-60` title row, gap16, divider1px, with alternate 28px title | All eight edited routes use existing shared `PageHeader`; `src/components/ui/page-header.tsx:26-49` title 30px desktop and 20px mobile | Title and action anatomy source-aligned; alternate 28px listing variant still unresolved |
+| Page back touch and hover | `legacy-styles/components___learn-layout.scss:361-383` 44x44 min, text hidden max767, teal hover 150ms | `src/components/ui/page-back-link.tsx:18-29`, eight replaced back actions; original destinations retained | Matches source rule with accessible label |
+| Page header action height | `old-lms-shell-spec.md:23-25` 36px desktop buttons; `variables.scss:140` phone minimum44px | `admin/projects/page.tsx` actions `min-h-11 md:min-h-9`; template directory matching | 44 phone /36 desktop |
+| Audit filters layout | `legacy-styles/components___variables.scss:148-159`: max767 phone, min768 desktop; min1366 wide | `project-admin-audit-page.tsx:195,273` single column mobile, 2 at 768, 5 at1366; summary `:289` three columns at768 | Correct source breakpoints; form control components unchanged |
+| Directory search + status controls | Same `variables.scss:148-159` breakpoints; `old-lms-pages.md:8-10` toolbar directly on canvas | `admin/projects/templates/page.tsx`: `md:grid-cols-[minmax(0,1fr)_auto_auto]`; border-b form on canvas | No extra filter card |
+| Empty/error/denied states | `old-lms-pages.md:5` one canvas across content; shared page header | Eight edited permission/recovery route variants retain `PageHeader`, `ErrorState`, permission conditions, exact navigation URLs, and existing error copy | Source semantics intact; not runtime-tested |
+
+### Scoped source-grep and markup proof
+
+- Re-fetched 11 edited source files *after* writing from `chatgpt/chat-9-b`. Their direct native `/<h1(?:\\s|>)/g` count is **0**, additional `<PageCanvas` **0**, additional `<main` **0**. The three Projects components retain exact counts of element opening/closing tags versus main. The eight edited routes replace exactly **one** `<Link>…</Link>` pair with exactly **one** self-closing `<PageBackLink />` each; other JSX element counts and links remain unchanged.
+- Re-fetched eight small canonical alias/delegate files. All eight have native h1=0, native main=0, local PageCanvas=0; two are validated/authorized redirects, six delegate header ownership to a shared Projects view.
+- The source grep was implemented by connector-backed file-content scans; **no recursive checkout `git grep` or complete repository inventory was executed**. Exact full-repository clone parity remains **unverified**.
+- User forbids runtime, tests and CI. No TypeScript compiler, application run, browser, Playwright, screenshots, focus observation or pixel measurement performed; responsive proof here is *class-selection* at breakpoints rather than visual proof.
+
+### Responsive proof — inherited canvas and changed elements
+
+| Width band | Header and back affordance | Content and controls |
+| --- | --- | --- |
+| 320px /390px /767px | 20px PageHeader, actions stack; PageBackLink 44px and hides visible text but retains aria-label | Readiness metrics stack 1 col; workspace card metrics stack below425; audit/template filters remain single column |
+| 768–991px | Header switches to 30px title/inline subtitle, back text visible, action min-height36px | Readiness metrics 2 cols; audit filters 2 cols, summary 3; template directory row |
+| 992–1199px | Same header row (flex-wrap for long title) | Workspace cards 2 cols and 425px internal metrics 3 |
+| 1200–1365px | Same header | Audit filters still 2; metrics 2; all remain on one page canvas |
+| >=1366px | Same header | Audit filter 5 columns; readiness metrics 4; workspace cards 3 |
+
+**B5/B6/E6 parent gates remain [ ]**: all-portal/dynamic h1 inventory, universal breadcrumb values, full nested-card exception audit, visual/pixel/keyboard proof, and unresolved 28px listing-vs-measured-30px header variant.
+
+**Next exact file:** `src/components/projects/super-admin-template-subview-page.tsx` — audit conditional status/header/action variants and responsive collection rows; then `src/app/(authenticated)/admin/settings/page.tsx` and `src/app/(authenticated)/admin/tenants/page.tsx` for B5/B6/E6 back/canvas states.
