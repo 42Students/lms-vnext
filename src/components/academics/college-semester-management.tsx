@@ -1,5 +1,7 @@
 "use client";
 
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -73,30 +75,30 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
         <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <label className="grid gap-1 text-sm font-medium text-body">
             {SEMESTER_COPY.programLabel}
-            <select required value={programId} onChange={e => setProgramId(e.target.value)}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            <Select required value={programId} onChange={e => setProgramId(e.target.value)}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               {programs.map(program => <option key={program.id} value={program.id}>
                 {program.name} ({program.code})
               </option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-medium text-body">
             {SEMESTER_COPY.numberLabel}
-            <input required type="number" min={1} max={12} step={1} value={termNumber} placeholder={SEMESTER_COPY.numberPlaceholder}
+            <Input required type="number" min={1} max={12} step={1} value={termNumber} placeholder={SEMESTER_COPY.numberPlaceholder}
               onChange={e => setTermNumber(e.target.value)}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid gap-1 text-sm font-medium text-body">
             {SEMESTER_COPY.nameLabel}
-            <input required maxLength={255} value={name} onChange={e => setName(e.target.value)} placeholder={SEMESTER_COPY.namePlaceholder}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+            <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)} placeholder={SEMESTER_COPY.namePlaceholder}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
           <p className="self-center text-xs text-body">
             Total credits are calculated from courses mapped to this semester.
           </p>
           <div className="flex items-end">
             <Button variant="primary" type="submit" disabled={pending}
-              className="min-h-11 px-4">
+              className="min-h-[var(--lms-control-height)] px-4">
               {pending ? "Saving…" : SEMESTER_COPY.createButton}
             </Button>
           </div>
@@ -188,7 +190,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
           <p className="text-xs text-muted-foreground">{SEMESTER_COPY.promotionNote}</p>
           <label className="grid gap-1 text-xs font-semibold text-body">
             {SEMESTER_COPY.nameLabel}
-            <input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
+            <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
               className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
           </label>
           <p className="text-xs text-body">Credits come from mapped courses and cannot be edited here.</p>
