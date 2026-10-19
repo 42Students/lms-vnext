@@ -31,7 +31,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
   <PageHeader eyebrow="TPO · Joining" title="Joining follow-ups"
    description="Accepted-offer joining evidence, pending confirmations and deferred dates."
    actions={report.season?<a href={"/api/placements/reports/joining-followups?"+params.toString()}
-    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
     Export CSV</a>:null}/>
   <Link href="/tpo/reports/joining-status" className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline">← Joining outcomes</Link>
   <form action="/tpo/reports/joining-followups" method="get"
@@ -50,7 +50,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
       <option value="DATE_MISSING">Missing joining date</option>
       <option value="UPCOMING_7_DAYS">Joining next 7 days</option>
      </select></label>
-    <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary">Apply</button>
+    <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-[650] text-on-primary">Apply</button>
   </form>
   {!report.season?<EmptyState title="No placement season" description="Joining follow-ups require a persisted placement season."/>:<>
    <section className="grid grid-cols-2 gap-3 sm:grid-cols-3" aria-label="Joining evidence">

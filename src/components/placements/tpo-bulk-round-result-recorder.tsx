@@ -244,7 +244,7 @@ export function TpoBulkRoundResultRecorder({
               ((outcome !== "PASS" || failUnselected) && !message.trim()) ||
               pendingTotal > 25 ||
               (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1))}
-            className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+            className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50"
           >
             {busy ? "Staging..." : "Review and confirm staged results"}
           </button>

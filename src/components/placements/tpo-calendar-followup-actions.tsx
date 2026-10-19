@@ -128,7 +128,7 @@ export function TpoCalendarCreateFollowup({
             <input name="note" maxLength={500} className={inputClass} />
           </label>
           <div className="flex items-end">
-            <button type="submit" disabled={busy || !leadId} className="min-h-10 w-full rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+            <button type="submit" disabled={busy || !leadId} className="min-h-10 w-full rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
               {busy ? "Saving…" : "Create follow-up"}
             </button>
           </div>

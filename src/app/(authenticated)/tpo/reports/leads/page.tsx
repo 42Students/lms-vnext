@@ -136,7 +136,7 @@ export default async function TpoLeadsReportPage({
            <option key={row.companyId!} value={row.companyId!}>{row.companyName}</option>)}
          </select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">Filter</button>
         {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
          className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Clear company</Link>:null}
        </form>

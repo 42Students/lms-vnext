@@ -171,7 +171,7 @@ export function TpoPublicJoinLinkCard({
           <button
             type="button" disabled={busy || (isCompany && !status.domain)}
             onClick={()=>{if(status.link)setReplaceOpen(true);else void makeLink();}}
-            className="mt-4 min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-4 min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:cursor-not-allowed disabled:opacity-50"
           >
             {status.link ? PUBLIC_JOIN_LINK_COPY.replace :
               isCompany ? PUBLIC_JOIN_LINK_COPY.initial : PUBLIC_JOIN_LINK_COPY.publicInitial}

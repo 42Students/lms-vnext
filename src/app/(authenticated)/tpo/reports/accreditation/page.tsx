@@ -70,7 +70,7 @@ export default async function TpoAccreditationReportPage({
         description={TPO_LEGACY_REPORT_COPY["/tpo/reports/accreditation"].description}
         actions={selectedBatch&&studentReport&&studentReport.rows.length>0?
           <a href={"/api/placements/reports?"+query.toString()}
-           className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-white">
+           className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-white">
            Export student list CSV
           </a>:
           <span aria-disabled="true" role="status" className="inline-flex min-h-11 sm:min-h-9 cursor-not-allowed items-center rounded-[9px] border border-border bg-surface-subtle px-4 text-sm font-semibold text-muted-foreground">

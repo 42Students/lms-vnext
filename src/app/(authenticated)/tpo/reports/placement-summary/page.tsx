@@ -177,7 +177,7 @@ export default async function TpoPlacementSummaryPage({
               <option value="NOT_RECORDED">Not recorded</option>
              </select>
             </label>
-            <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
+            <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</button>
             {(companyId||workMode||payCategory)?<a href={"/tpo/reports/placement-summary?"+
              new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
