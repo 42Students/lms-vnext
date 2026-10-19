@@ -8,6 +8,8 @@ import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-mod
 import {mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { ProjectAdminSubmissionReview } from "./project-admin-submission-review";
 import {CollegeProjectSummaryEditorFull} from "./college-project-summary-editor-full";
@@ -304,17 +306,14 @@ export function ProjectWorkspace({
 
   return (
     <div className="space-y-6">
-      <Link
-        href={backHref}
-        className="inline-flex text-sm font-semibold text-link hover:text-primary-hover"
-      >
-        {backLabel === "Projects" ? "Back to projects" : backLabel}
-      </Link>
+      <PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />
 
-      {mode === "ADMIN" ? <nav aria-label="Workspace breadcrumb" className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-        <Link href={backHref}>Projects</Link><span aria-hidden="true">/</span>
-        <span aria-current="page">{workspace.project.title}</span>
-      </nav> : null}
+      {mode === "ADMIN" ? (
+        <Breadcrumbs items={[
+          { label: "Projects", href: backHref },
+          { label: workspace.project.title },
+        ]} />
+      ) : null}
       {sectionBaseHref ? (
         <Tabs ariaLabel="Project workspace sections" renderPanel={false} value={activeSection}
           items={PROJECT_WORKSPACE_SECTIONS.map(section=>({
