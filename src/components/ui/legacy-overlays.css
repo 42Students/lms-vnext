@@ -79,6 +79,10 @@
   border-radius: 6px;
   border-color: var(--lms-canvas-border);
 }
+[data-slot="menu"] [role="menuitem"]:not(:disabled):hover {
+  background: rgba(0, 0, 0, .035);
+  color: var(--lms-neutral-900);
+}
 [role="dialog"][aria-modal="false"]:not([data-slot]) {
   border: 1px solid var(--lms-canvas-border);
   border-radius: 12px;
