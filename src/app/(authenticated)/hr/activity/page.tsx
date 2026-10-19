@@ -50,8 +50,8 @@ export default async function HrJobActivityPage({searchParams}:{
        href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind+"&q="+encodeURIComponent(input.data.q)}
        aria-current={kind===input.data.kind?"page":undefined}
        className={kind===input.data.kind
-         ? "inline-flex min-h-9 items-center border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-         : "inline-flex min-h-9 items-center border-b-2 border-transparent px-3 py-2 text-sm text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
+         ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+         : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
        {kind==="ALL"?"All events":kind==="PUBLISHED"?"Published":"Closed"}
      </Link>)}
    </nav>
