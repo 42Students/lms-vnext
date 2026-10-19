@@ -167,19 +167,19 @@ export default async function LearnerCourseTabPage({
           <div className="flex flex-wrap gap-2">
             <Link
               href="/learn/courses"
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle"
             >
               {LEARNER_BACK_TO_COURSES}
             </Link>
             <Link
               href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
             >
               Detailed progress
             </Link>
             <Link
               href={`/learn/courses/${encodeURIComponent(deliveryId)}/attendance-summary`}
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
             >
               Attendance history
             </Link>
