@@ -80,7 +80,7 @@ export function CollegeDepartmentInsights({
             className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
-        <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Clear</Link>
+        <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Clear</Link>
       </form>
     </section>
     <section aria-label="Department evidence results" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface">
