@@ -383,3 +383,12 @@
   border-color:#e5e9f0;
   box-shadow:0 1px 3px rgba(0,0,0,.04);
 }
+
+.topbarNotificationBody li button:active {
+  background:rgba(0,0,0,.06);
+  box-shadow:none;
+}
+.topbarNotificationBody li button:focus-visible {
+  outline:1px solid #6b7280;
+  outline-offset:1px;
+}
