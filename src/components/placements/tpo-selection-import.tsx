@@ -77,8 +77,15 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     onConfirm={()=>void confirm()}/>
   {unmatched.length?<details className="rounded-[var(--lms-control-radius)] border border-border p-3" open>
    <summary className="cursor-pointer text-sm font-semibold">{unmatched.length} unmatched or unusable rows</summary>
-   <ul tabIndex={0} aria-label="Unmatched selection import rows, scroll for more" className="mt-2 max-h-40 min-h-0 list-disc overflow-y-auto overscroll-contain pl-6 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">{unmatched.map(x=>
-    <li key={x.line}>Row {x.line}: {x.value||"Empty identifier"} — {x.reason}</li>)}</ul>
+   <div className="mt-2 max-h-40 min-w-0 overflow-auto">
+    <DataTable caption="Unmatched selection import rows" rows={unmatched}
+      getRowKey={item=>String(item.line)} empty={<p>No unmatched rows.</p>}
+      columns={[
+       {key:"line",header:"Row",cell:item=>item.line,mobilePriority:"primary"},
+       {key:"identity",header:"Identifier",cell:item=>item.value||"Empty identifier",mobilePriority:"secondary"},
+       {key:"reason",header:"Reason",cell:item=>item.reason,mobilePriority:"secondary"},
+      ]}/>
+   </div>
   </details>:null}
   {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
   {done?<p role="status" className="text-sm text-body">{done}</p>:null}
