@@ -30,12 +30,12 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   catch(error){setError(error instanceof Error?error.message:"Invalid metadata");}
  }
  return <form id={facultyProfileAnchor("metadata")} aria-label="Additional metadata" onSubmit={submit}
-  className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:p-6">
+  className="space-y-4 border-b border-border pb-5">
   <h2 className="text-lg font-semibold text-foreground">Additional metadata</h2>
   <p className="text-sm text-muted-foreground">Edit optional text fields. Existing non-text metadata is preserved unchanged. Never enter passwords or identity numbers.</p>
   {rows.length>5?<label className="block text-sm text-body">Find metadata
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-     className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-background p-3"/>
+     className="mt-1 min-h-11 w-full min-[768px]:min-h-9"/>
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>

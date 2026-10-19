@@ -172,7 +172,7 @@ Each checked file was re-read for remaining hand-built popup wrappers and paired
 - [x] `src/components/shell/topbar/account-menu.tsx` — existing shared PopoverPanel; focus/outside/Escape handlers reviewed, no unshared modal.
 - [x] `src/components/shell/topbar/organization-switcher.tsx` — existing shared PopoverPanel; workspace permissions/controls remain intact.
 - [x] `src/components/shell/learner-notification-bell.tsx` — one notification-content subtree now uses desktop PopoverPanel and native mobile Drawer (kept mounted through exit), with existing InlineNotice and controls.
-- [x] `src/components/tpo/tpo-bell-panel.tsx` — current main uses shared PopoverPanel for compact desktop topbar notifications and shared Drawer for mobile/noncompact views, with one content and footer subtree.
+- [x] `src/components/tpo/tpo-bell-panel.tsx` — one notification list and action footer use legacy desktop notification PopoverPanel (12px source styling) or native mobile Drawer.
 - [x] `src/components/hr/hr-recruiter-bell.tsx` — desktop PopoverPanel and now persistently mounted mobile Drawer for the exit animation.
 - [x] `src/components/hr/recruiter-notification-bell.tsx` — existing shared native Drawer; no handcrafted overlay found.
 - [x] `src/components/tpo/tpo-mobile-footer.tsx` — existing shared BottomSheet for mobile destinations.

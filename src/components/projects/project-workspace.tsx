@@ -807,14 +807,14 @@ export function ProjectWorkspace({
               <MentorReleaseEditor projectId={workspace.project.id}/>
             </div>:null}
           {mode==="MENTOR"&&workspace.releases.length===0?
-            <div role="status" className="mt-2 rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
-              <p>No sprints yet. Add the sprints this project should be measured against.</p>
-              {readOnly?
-                <p className="mt-2">This workspace is read-only, so sprints cannot be added.</p>:
-                <p className="mt-2">First <a href="#mentor-project-add-release"
+            <EmptyState title="No sprints yet"
+              description="Add the sprints this project should be measured against."
+              action={readOnly?
+                <p className="text-sm text-body">This workspace is read-only, so sprints cannot be added.</p>:
+                <p className="text-sm text-body">First <a href="#mentor-project-add-release"
                   className="font-semibold text-link underline">add a release</a>,
                   then use Add sprint inside that release. The Board and Task Allocation will appear here.</p>}
-            </div>:null}
+            />:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
