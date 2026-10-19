@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 
 import {facultyIstTimeParts,facultyIstWallTime,FACULTY_IST_QUARTER_MINUTES}
@@ -22,26 +23,26 @@ export function FacultyIstQuarterHourPicker({label,value,onChange,disabled=false
      className="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:min-h-9"/>
    </label>
    <label className="grid gap-1 text-xs">Hour
-    <select aria-label={label+" hour (12-hour clock)"} value={hour}
+    <Select aria-label={label+" hour (12-hour clock)"} value={hour}
      onChange={event=>emit(parts.date,event.target.value)}
      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-1 sm:min-h-9">
      {Array.from({length:12},(_,i)=>String(i+1)).map(h=>
       <option key={h} value={h}>{h}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-xs">Minute
-    <select aria-label={label+" minute (15-minute steps)"} value={minute}
+    <Select aria-label={label+" minute (15-minute steps)"} value={minute}
      onChange={event=>emit(parts.date,hour,event.target.value)}
      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-1 sm:min-h-9">
      {FACULTY_IST_QUARTER_MINUTES.map(m=><option key={m} value={m}>{m}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-xs">AM/PM
-    <select aria-label={label+" AM or PM"} value={parts.period}
+    <Select aria-label={label+" AM or PM"} value={parts.period}
      onChange={event=>emit(parts.date,hour,minute,event.target.value as "AM"|"PM")}
      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-1 sm:min-h-9">
      <option value="AM">AM</option><option value="PM">PM</option>
-    </select>
+    </Select>
    </label>
   </div>
   {parts.minute&&!(FACULTY_IST_QUARTER_MINUTES as readonly string[]).includes(parts.minute)?
