@@ -5,6 +5,8 @@ import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import {splitHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
 import {hrProfileSaveErrorFeedback,hrProfileDetailsSaveReceiptSchema} from "@/modules/placements/recruiter-profile-details-model";
 export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialPhone,
@@ -78,15 +80,15 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
      <Input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
       value={form[key]} disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?14:key==="title"?160:100}
       onChange={e=>update(key,e.target.value)}
-     />
+      className="w-full"/>
     </label>)}
   </div>
   {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}
-  {dirty?<p role="status" className="text-sm font-semibold text-body">Unsaved changes</p>:null}
-  <Button variant="primary" type="submit" disabled={busy||!dirty}
-  >
+  {dirty?<p role="status" className="text-sm font-semibold">Unsaved changes</p>:null}
+  <Button type="submit" disabled={busy||!dirty}
+   >
    {busy?"Saving…":"Save changes"}</Button>
-  {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className="text-sm text-body">{feedback}</p>:null}
+  {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className="text-sm">{feedback}</p>:null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
    consequence="Your changes have not been saved." confirmLabel="Discard"
    onCancel={()=>setLeaveHref(null)} onConfirm={()=>{
