@@ -6,9 +6,6 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
 import Link from "next/link";
-import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { LearnerCourseCardImage } from "./learner-course-card-image";
 import {learnerCourseImageResetKey} from "@/modules/courses/learner-course-image-reset-key-model";
 import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card-due-label-model";
