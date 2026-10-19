@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,7 @@ export default function LearnerProfileError({
 }) {
   return (
     <section role="alert" className="px-3 py-10 text-center">
-      <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
-        Unable to load your profile
-      </h1>
+      <PageHeader title={"Unable to load your profile"} />
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         Your saved profile could not be retrieved. No empty profile or successful save has been assumed. Retry to reload your profile.
       </p>
