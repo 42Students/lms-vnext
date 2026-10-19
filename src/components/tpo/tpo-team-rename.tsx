@@ -4,8 +4,6 @@ import { Input } from "@/components/ui/input";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
 export function TpoTeamRename({threadId,currentTopic}:{threadId:string;currentTopic:string}){
  const router=useRouter();
  const busyRef=useRef(false);
