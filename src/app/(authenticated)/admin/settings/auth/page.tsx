@@ -5,6 +5,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {can} from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {ErrorState} from "@/components/ui/error-state";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {platformAuthPostureItems} from "@/modules/platform-settings/auth-posture-model";
 import {LEGACY_TENANT_SETTING_SPECS} from "@/modules/platform-settings/legacy-setting-specs";
 export default async function SuperAdminAuthSettings(){
@@ -38,7 +39,7 @@ export default async function SuperAdminAuthSettings(){
    <ul className="space-y-2 text-sm">{LEGACY_TENANT_SETTING_SPECS.filter(spec=>spec.group==="Platform & auth").map(spec=><li key={spec.key} className="border-b border-border py-3">
     <strong className="block">{spec.label}</strong>
     <code className="break-all text-xs">{spec.key}</code>
-    {spec.dangerous?<span className="ml-2 text-warning-text">High impact · deployment gated</span>:null}
+    {spec.dangerous?<StatusBadge tone="warning" className="ml-2">High impact · deployment gated</StatusBadge>:null}
    </li>)}</ul>
    <Link href="/admin/settings" className="inline-flex min-h-11 items-center text-primary-text underline">Open Global Tenant Settings editor</Link>
   </section>
