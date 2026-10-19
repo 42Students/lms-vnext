@@ -53,7 +53,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
     </Select></label>
    <label className="grid gap-1 text-sm">CSV (name, code, city, state, country)
-    <Textarea rows={5} maxLength={150000} value={csv}
+    <Textarea rows={5} maxLength={150000} value={csv} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
      className="font-mono"
      placeholder="name,code,city,state,country"/>
