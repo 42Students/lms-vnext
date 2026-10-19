@@ -7,6 +7,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
@@ -393,20 +394,20 @@ export function HrDriveDraftForm({
       <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Hiring rounds</h2>
-          <button type="button" disabled={draft.rounds.length >= 12}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link disabled:opacity-50"
+          <Button type="button" disabled={draft.rounds.length >= 12}
+            variant="secondary"
             onClick={() => setDraft((current) => ({
               ...current, rounds: [...current.rounds, { kind: "INTERVIEW", name: "Interview" }],
             }))}>
             Add round
-          </button>
+          </Button>
         </div>
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
-          {HR_DRIVE_ROUND_PRESETS.map(preset=><button key={preset.id}
-            type="button" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link"
+          {HR_DRIVE_ROUND_PRESETS.map(preset=><Button key={preset.id}
+            type="button" variant="secondary"
             onClick={()=>{setDraft(current=>applyHrRoundPreset(current,preset.id));setShowPreview(false);}}>
             {preset.label}
-          </button>)}
+          </Button>)}
         </div>
         <p className="mt-2 text-xs text-muted-foreground">Preset replaces the round list in this unsent draft only; edit each step afterward.</p>
         <div className="mt-4 space-y-3">
@@ -431,24 +432,24 @@ export function HrDriveDraftForm({
                   }))} />
               </label>
               <div className="flex items-end gap-2">
-                <button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
-                  className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link disabled:opacity-50"
-                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</button>
-                <button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
-                  className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link disabled:opacity-50"
-                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</button>
+                <Button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
+                  variant="secondary"
+                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</Button>
+                <Button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
+                  variant="secondary"
+                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</Button>
               </div>
-              <button type="button" disabled={draft.rounds.length>=12}
+              <Button type="button" disabled={draft.rounds.length>=12}
                 aria-label={"Duplicate "+round.name}
-                className="self-end rounded-[var(--lms-control-radius)] border border-border px-3 py-3 text-sm text-link disabled:opacity-50"
+                variant="secondary" className="self-end"
                 onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
                 Duplicate
-              </button>
-              <button type="button" disabled={draft.rounds.length <= 1}
-                className="self-end rounded-[var(--lms-control-radius)] border border-border px-3 py-3 text-sm text-body disabled:opacity-50"
+              </Button>
+              <Button type="button" disabled={draft.rounds.length <= 1}
+                variant="secondary" className="self-end"
                 onClick={() => setDraft((current) => ({
                   ...current, rounds: current.rounds.filter((_, i) => i !== index),
-                }))}>Remove</button>
+                }))}>Remove</Button>
             </div>
           ))}
         </div>
@@ -459,28 +460,28 @@ export function HrDriveDraftForm({
           Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
-          <button type="button" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary"
-            onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</button>
-          <button type="button" disabled={!result.success||submitting}
+          <Button type="button" 
+            onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</Button>
+          <Button type="button" disabled={!result.success||submitting}
             aria-busy={submitting}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link disabled:opacity-50"
+            variant="secondary"
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
-          </button>
-          <button type="button" disabled={!result.success}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link disabled:opacity-50"
-            onClick={() => void copyPreview()}>Copy validated draft</button>
-          <button type="button" disabled={submitting}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link disabled:opacity-50"
-            onClick={saveForThisTab}>Save unsent draft</button>
-          <button type="button" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link"
-            onClick={()=>restoreFromThisTab()}>Restore saved draft</button>
-          <button type="button" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-body"
+          </Button>
+          <Button type="button" disabled={!result.success}
+            variant="secondary"
+            onClick={() => void copyPreview()}>Copy validated draft</Button>
+          <Button type="button" disabled={submitting}
+            variant="secondary"
+            onClick={saveForThisTab}>Save unsent draft</Button>
+          <Button type="button" variant="secondary"
+            onClick={()=>restoreFromThisTab()}>Restore saved draft</Button>
+          <Button type="button" variant="secondary"
             onClick={() => {
               if(hrDraftContainsWork(draft)){setDraftDecision("CLEAR");return;}
               try{window.sessionStorage.removeItem(storageKey);window.localStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
               setDraft(emptyHrDriveDraft());setBranchInput("");setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
-            }}>Start over</button>
+            }}>Start over</Button>
         </div>
         {showPreview && !result.success ? (
           <div role="alert" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
