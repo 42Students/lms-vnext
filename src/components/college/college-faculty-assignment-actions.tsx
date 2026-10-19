@@ -90,7 +90,7 @@ export function CollegeFacultyAssignmentCreate({
       setError(academicSetupErrorMessage(cause, FACULTY_ASSIGNMENT_COPY.createFailed));
     } finally { setSaving(false); }
   }
-  const fieldClass = "min-h-[var(--lms-control-height)] min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+  const fieldClass = "min-w-0";
   return <>{confirmation}<section aria-label="Assign Faculty to multiple courses"
     className="border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
@@ -206,13 +206,13 @@ export function CollegeFacultyAssignmentEnd({
   }
   return <div className="space-y-1">
     <Button variant="secondary" type="button" disabled={saving} onClick={()=>{setConfirming(true);setError(null);}}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link disabled:opacity-60">
+     >
       {saving ? "Ending…" : "End assignment"}
     </Button>
     {confirming?<div role="group" aria-label="Confirm end assignment" className="mt-2 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-xs">
       <p>End {role} assignment for {facultyName} in {courseName}? This cannot be undone. Teaching history is retained.</p>
-      <Button variant="primary" type="button" disabled={saving} onClick={()=>void end()} className="rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 font-semibold text-on-primary">Confirm end</Button>
-      <Button variant="secondary" type="button" disabled={saving} onClick={()=>setConfirming(false)} className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2">Cancel</Button>
+      <Button variant="primary" type="button" disabled={saving} onClick={()=>void end()}>Confirm end</Button>
+      <Button variant="secondary" type="button" disabled={saving} onClick={()=>setConfirming(false)} className="ml-2">Cancel</Button>
     </div>:null}
     {success?<p role="status" className="text-xs">{success}</p>:null}
     {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}
