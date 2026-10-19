@@ -1,13 +1,15 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 export function TpoCustomJobTypePlaced({id,label,version,value}:{id:string;label:string;version:string;value:boolean|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const {askConfirm,dialog}=useConfirmFlow();
  async function update(next:boolean){
   if(busy||next===value)return;
-  if(!window.confirm("Change what counts as placed? Offers from "+label+
-   " may change placement numbers once the drive and report consumers are connected."))return;
+  if(!(await askConfirm("Change what counts as placed? Offers from "+label+
+   " may change placement numbers once the drive and report consumers are connected.")))return;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/settings/job-types/"+encodeURIComponent(id)+"/placed",{
@@ -31,5 +33,6 @@ export function TpoCustomJobTypePlaced({id,label,version,value}:{id:string;label
   </div>
   {value===null?<p className="text-xs text-muted-foreground">Not decided</p>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  {dialog}
  </div>;
 }
