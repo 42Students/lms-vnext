@@ -65,7 +65,7 @@ export default async function TpoCompanyContactLogPage({
         description="Read-only CRM interaction history for contacts explicitly linked to this college-company relationship."
       />
       {!log.available ? (
-        <section role="status" className="rounded-[12px] border border-border bg-surface p-5 text-sm text-body">
+        <section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
           Contact-activity tables are not available in this database. No zero
           activity count is inferred.
         </section>
@@ -78,12 +78,12 @@ export default async function TpoCompanyContactLogPage({
               contacts={log.contacts}
             />
           ) : log.contacts.length === 0 ? (
-            <p role="status" className="rounded-[12px] border border-border bg-surface p-5 text-sm text-body">
+            <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
               No active, explicitly linked recruiter contacts are available
               for a new activity. Link a contact before recording one.
             </p>
           ) : (
-            <p role="status" className="rounded-[12px] border border-border bg-surface p-5 text-sm text-body">
+            <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
               The CRM write gate is unavailable for this company. Existing
               activity remains read-only.
             </p>
@@ -94,7 +94,7 @@ export default async function TpoCompanyContactLogPage({
               <Select
                 name="type"
                 defaultValue={log.type}
-                className="mt-2 block min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
+                className="mt-2 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
               >
                 {["ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM"].map((type) => (
                   <option key={type} value={type}>{type === "ALL" ? "All types" : type}</option>
@@ -103,7 +103,7 @@ export default async function TpoCompanyContactLogPage({
             </label>
             <Button
               type="submit"
-              className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-link"
+              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link"
             >
               Filter
             </Button>
