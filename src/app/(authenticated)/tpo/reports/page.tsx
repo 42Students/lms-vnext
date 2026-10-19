@@ -1,3 +1,6 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {legacyTpoReportCard,TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} from "@/modules/placements/tpo-legacy-report-copy";
@@ -40,7 +43,7 @@ export default async function TpoReportsPage({
   const parsedSearch=tpoReportGallerySearchSchema.safeParse(first(query.q)??"");
   const parsedGroup=tpoReportGalleryGroupSchema.safeParse(first(query.group)??"ALL");
   if(!parsedSearch.success||!parsedGroup.success)return <section role="alert"
-    className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+    className="border-t border-border py-6">
     <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Invalid report search</h1>
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
     <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-link underline">
@@ -196,7 +199,7 @@ export default async function TpoReportsPage({
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports" />
       <ReportMetrics metrics={workspace.report.metrics} />
       <ReportScopeNote note={workspace.registrationScopeNote} />
-      <nav aria-label="Placement journey" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+      <nav aria-label="Placement journey" className="space-y-2 border-t border-border pt-5">
        <h2 className="font-semibold">Placement journey</h2>
        <p className="text-sm text-body">{workspace.report.metrics.offers} offers made across the selected season and drive scope.</p>
        <div className="grid gap-3 sm:grid-cols-3">
@@ -230,19 +233,19 @@ export default async function TpoReportsPage({
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-0 flex-1 gap-2 text-sm font-semibold text-body">
           Find a report
-          <input type="search" name="q" maxLength={80} defaultValue={parsedSearch.data}
+          <Input type="search" name="q" maxLength={80} defaultValue={parsedSearch.data}
             placeholder="Report name or purpose"
             className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-2 text-sm font-semibold text-body">Report category
-          <select name="group" defaultValue={parsedGroup.data}
+          <Select name="group" defaultValue={parsedGroup.data}
             className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             {TPO_REPORT_GALLERY_GROUPS.map(group=><option key={group} value={group}>
               {group==="ALL"?"All report categories":group}
             </option>)}
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-white">Search</button>
+        <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-white">Search</Button>
         <Link href={reportHref("/tpo/reports",workspace)}
           className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">
           Clear
@@ -268,7 +271,7 @@ export default async function TpoReportsPage({
                 <Link
                   key={card.path}
                   href={reportHref(card.path, workspace)}
-                  className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle"
+                  className="block border-b border-border py-5 transition hover:border-primary hover:bg-primary-subtle"
                 >
                   <h3 className="font-semibold text-link">
                     {card.title}
