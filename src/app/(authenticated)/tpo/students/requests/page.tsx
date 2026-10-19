@@ -1,4 +1,4 @@
-import {Select} from "@/components/ui/select";
+import { Table } from "@/components/ui/table";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -366,8 +366,8 @@ export default async function TpoStudentRequestsPage({
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-border bg-surface md:block">
-            <table className="w-full min-w-[65rem] text-left text-sm">
+          <div className="hidden md:block">
+            <Table scrollLabel="Student requests" className="min-w-[65rem]">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-4 py-3">Student</th>
@@ -449,7 +449,7 @@ export default async function TpoStudentRequestsPage({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
           </>
         )}
