@@ -25,9 +25,9 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
   finally{pending.current=false;setBusy(false);}
  }
  return <div className="mt-2 flex flex-wrap items-center gap-2">
-  {canEdit?<Button type="button" variant="ghost" className="min-h-11 sm:min-h-9 text-xs underline"
+  {canEdit?<Button variant="ghost" type="button" 
    onClick={()=>{setMode("EDIT");setError("");}}>Edit</Button>:null}
-  <Button type="button" variant="ghost" className="min-h-11 sm:min-h-9 text-xs underline"
+  <Button variant="ghost" type="button" 
    onClick={()=>{setMode("DELETE");setError("");}}>Delete</Button>
   {mode==="EDIT"?<form onSubmit={event=>{event.preventDefault();void submit("EDIT");}}
    className="w-full space-y-2">
@@ -36,16 +36,16 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
      onChange={event=>setDraft(event.target.value)} className="mt-1 w-full"/>
    </label>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-   <Button type="submit" disabled={busy||!draft.trim()} className="min-h-11 sm:min-h-9 text-xs">{busy?"Saving…":"Save edit"}</Button>
-   <Button type="button" disabled={busy} onClick={()=>setMode(null)} variant="ghost" className="ml-2 min-h-11 sm:min-h-9 text-xs underline">Cancel</Button>
+   <Button variant="primary" type="submit" disabled={busy||!draft.trim()} >{busy?"Saving…":"Save edit"}</Button>
+   <Button variant="ghost" type="button" disabled={busy} onClick={()=>setMode(null)} >Cancel</Button>
   </form>:null}
   {mode==="DELETE"?<div role="alertdialog" aria-modal="false" aria-label="Delete this message?"
    className="w-full space-y-2 border-t border-border pt-3 text-xs">
    <p>Delete this message? Other team members will see Message removed.</p>
    {error?<p role="alert" className="text-error">{error}</p>:null}
-   <Button type="button" disabled={busy} className="min-h-11 sm:min-h-9"
+   <Button variant="danger" type="button" disabled={busy}
     onClick={()=>void submit("DELETE")}>{busy?"Removing…":"Delete message"}</Button>
-   <Button type="button" disabled={busy} onClick={()=>setMode(null)} variant="ghost" className="ml-2 min-h-11 sm:min-h-9 underline">Cancel</Button>
+   <Button variant="ghost" type="button" disabled={busy} onClick={()=>setMode(null)} >Cancel</Button>
   </div>:null}
  </div>;
 }
