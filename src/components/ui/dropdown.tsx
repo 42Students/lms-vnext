@@ -24,8 +24,13 @@ export function Dropdown({ trigger, children, label, align = "start", className,
       panel.style.bottom = "auto";
       panel.style.transform = "none";
       const anchor = root.getBoundingClientRect();
-      const below = Math.max(1, window.innerHeight - anchor.bottom - 12);
-      const above = Math.max(1, anchor.top - 12);
+      const visual = window.visualViewport;
+      const visibleTop = (visual?.offsetTop ?? 0) + 12;
+      const visibleBottom = (visual?.offsetTop ?? 0) + (visual?.height ?? window.innerHeight) - 12;
+      const visibleLeft = (visual?.offsetLeft ?? 0) + 12;
+      const visibleRight = (visual?.offsetLeft ?? 0) + (visual?.width ?? window.innerWidth) - 12;
+      const below = Math.max(1, visibleBottom - anchor.bottom);
+      const above = Math.max(1, anchor.top - visibleTop);
       const needsFlip = below < Math.min(panel.scrollHeight, 200) && above > below;
       panel.style.maxHeight = `${Math.floor(needsFlip ? above : below)}px`;
       if (needsFlip) {
@@ -33,12 +38,14 @@ export function Dropdown({ trigger, children, label, align = "start", className,
         panel.style.bottom = "calc(100% + 5px)";
       }
       const bounds = panel.getBoundingClientRect();
-      const correction = Math.max(0, 12 - bounds.left) - Math.max(0, bounds.right - window.innerWidth + 12);
+      const correction = Math.max(0, visibleLeft - bounds.left) - Math.max(0, bounds.right - visibleRight);
       if (correction) panel.style.transform = `translateX(${correction}px)`;
     };
     root.addEventListener("toggle", positionPanel);
     window.addEventListener("resize", positionPanel);
     window.addEventListener("scroll", positionPanel, true);
+    window.visualViewport?.addEventListener("resize", positionPanel);
+    window.visualViewport?.addEventListener("scroll", positionPanel);
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target;
       if (target instanceof Node && !rootRef.current?.contains(target) && rootRef.current) rootRef.current.open = false;
@@ -59,6 +66,8 @@ export function Dropdown({ trigger, children, label, align = "start", className,
       root.removeEventListener("toggle", positionPanel);
       window.removeEventListener("resize", positionPanel);
       window.removeEventListener("scroll", positionPanel, true);
+      window.visualViewport?.removeEventListener("resize", positionPanel);
+      window.visualViewport?.removeEventListener("scroll", positionPanel);
       document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("focusin", onFocusIn);
       document.removeEventListener("keydown", onKeyDown);
