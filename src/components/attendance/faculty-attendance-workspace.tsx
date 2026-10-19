@@ -680,14 +680,14 @@ export function FacultyAttendanceWorkspace({
                     const summary = monthSummary.learners.find((row) => row.membershipId === membershipId);
                     return (
                       <li key={membershipId} className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setSelectedLearnerId(membershipId)}
                           aria-label={`Inspect monthly attendance for ${learner ? learnerName(learner) : membershipId}`}
                           className="text-left text-sm font-semibold text-primary-text hover:underline"
                         >
                           {learner ? learnerName(learner) : "Learner"} · {summary?.percentage ?? "—"}%
-                        </button>
+                        </Button>
                       </li>
                     );
                   })}
@@ -741,14 +741,14 @@ export function FacultyAttendanceWorkspace({
                   {allLearners.map((learner) => (
                     <tr key={learner.membershipId}>
                       <td className="sticky left-0 z-10 bg-surface px-3 py-3">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setSelectedLearnerId(learner.membershipId)}
                           aria-label={`View attendance details for ${learnerName(learner)}`}
                           className="m-0 text-left font-semibold text-primary-text hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-primary"
                         >
                           {learnerName(learner)}
-                        </button>
+                        </Button>
                         <p className="mt-1 text-xs text-muted-foreground">
                           {[
                             learner.rollNumber
