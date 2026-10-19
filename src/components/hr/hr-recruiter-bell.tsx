@@ -109,15 +109,15 @@ export function HrRecruiterBell(){
    variant="secondary" className="relative">
    Notifications {unread>0?<span className="ml-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-topbar-unread)] px-1 text-[10px] font-bold leading-none text-white">{unread}</span>:null}
   </Button>
-  {open ? (mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} bodyClassName={style.hrNotificationDrawerBody} footer={panelFooter}>
+  {mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} bodyClassName={style.hrNotificationDrawerBody} footer={panelFooter}>
    {panelBody}
-  </Drawer> : <PopoverPanel id="hr-topbar-desktop-notifications" label="Recruiter notifications" className={style.hrNotificationPopover}>
+  </Drawer> : open ? <PopoverPanel id="hr-topbar-desktop-notifications" label="Recruiter notifications" className={style.hrNotificationPopover}>
    <div className={style.hrNotificationHeader}>
     <h2>Recruiter notifications</h2>
     <Button variant="ghost" size="sm" type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}>Close</Button>
    </div>
    <div className={style.hrNotificationBody}>{panelBody}</div>
    <div className={style.hrNotificationFooter}>{panelFooter}</div>
-  </PopoverPanel>) : null}
+  </PopoverPanel> : null}
  </div>;
 }
