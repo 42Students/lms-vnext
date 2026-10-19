@@ -30,10 +30,10 @@ export default async function TpoEveryonePage({searchParams}:{
   </section>:result.status==="NOT_REGISTERED"?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4">
    Everyone is not available until its database migration is registered. No team messages were loaded.
   </p>:<>
-   <section className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   <section className="space-y-3 border-t border-border pt-4">
     <h2 className="font-semibold">Everyone conversation</h2>
     {result.rows.length?<ol aria-label="Everyone messages" className="space-y-3">
-      {result.rows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+      {result.rows.map(row=><li key={row.id} className="border-b border-border py-3">
        <p className="text-xs font-medium text-muted-foreground">{row.authorMembershipId===context.membership?.id?"You":row.authorName} ·
         {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.createdAt)} IST</p>
        <p className="mt-2 whitespace-pre-wrap break-words text-sm">{row.body}</p>
