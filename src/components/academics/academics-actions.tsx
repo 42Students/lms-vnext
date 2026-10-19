@@ -350,7 +350,7 @@ export function AcademicPeriodActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         {period.status === "PLANNED" ? (
           <>
             <Button
