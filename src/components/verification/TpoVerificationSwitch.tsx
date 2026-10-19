@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -29,6 +30,6 @@ export function TpoVerificationSwitch({initialEnabled,collegeId}:{initialEnabled
   {busy?<p role="status" className="text-xs">Saving setting…</p>:null}
   {notice?<p role="status" className="text-xs text-success">{notice}</p>:null}
   {error?<div role="alert" className="space-y-1 text-sm"><p>{error}. Refresh to load the persisted setting before trying again.</p>
-   <button type="button" onClick={()=>window.location.reload()} className="rounded border px-3 py-1">Refresh setting</button></div>:null}
+   <Button variant="secondary" type="button" onClick={()=>window.location.reload()} className="rounded border px-3 py-1">Refresh setting</Button></div>:null}
  </section>;
 }
