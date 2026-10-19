@@ -19,7 +19,7 @@ export function TpoTopbarNewMenu({collegeId}:{collegeId:string}){
  }]:TPO_TOPBAR_QUICK_LINKS.filter(item=>item.label!=="Follow-up");
  return <Dropdown align="end" label="New placement work" trigger="+ New">
   <nav aria-label={companyName?"Create work for "+companyName:"Create placement work"}
-   className="absolute right-0 z-30 min-w-60 space-y-1 rounded-md border border-border bg-surface p-2 shadow-lg">
+   className="min-w-60 space-y-1">
    {links.map(item=><Link key={item.href} href={item.href} className={navClass}>{item.label}</Link>)}
    {companyName?<div role="separator" className="my-1 border-t border-border"/>:null}
    <div className={navClass}><TpoNewFollowupModal collegeId={collegeId}/></div>
