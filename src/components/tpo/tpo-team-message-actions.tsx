@@ -36,13 +36,13 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
      onChange={event=>setDraft(event.target.value)} className="mt-1 w-full"/>
    </label>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-   <Button variant="primary" type="submit" disabled={busy||!draft.trim()} >{busy?"Saving…":"Save edit"}</Button>
+   <Button variant="primary" type="submit" disabled={busy||!draft.trim()} className="min-h-11 sm:min-h-9">{busy?"Saving…":"Save edit"}</Button>
    <Button variant="ghost" className="min-h-11 sm:min-h-9" type="button" disabled={busy} onClick={()=>setMode(null)} >Cancel</Button>
   </form>:null}
   {<Dialog open={mode==="DELETE"} onOpenChange={next=>{if(!next&&!busy)setMode(null);}} dismissible={!busy} role="alertdialog"
     title="Delete this message?" description="Other team members will see Message removed." className="max-w-md">
    {error?<p role="alert" className="text-error">{error}</p>:null}
-   <Button variant="danger" type="button" disabled={busy}
+   <Button variant="danger" type="button" disabled={busy} className="min-h-11 sm:min-h-9"
     onClick={()=>void submit("DELETE")}>{busy?"Removing…":"Delete message"}</Button>
    <Button variant="ghost" className="min-h-11 sm:min-h-9" type="button" disabled={busy} onClick={()=>{setMode(null);setError("");}} >Cancel</Button>
   </Dialog>}
