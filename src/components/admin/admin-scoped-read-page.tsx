@@ -173,8 +173,8 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     : "Showing all application sources and stages for the selected college."}
   </p>:null}
   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
-  {data.items.length?<div className="grid min-w-0 gap-3 md:grid-cols-2">
-   {data.items.map(row=><article key={row.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
+  {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
+   {data.items.map(row=><article key={row.id} className="min-w-0 space-y-2 py-4">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
      <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{row.title}</h2>
      <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
