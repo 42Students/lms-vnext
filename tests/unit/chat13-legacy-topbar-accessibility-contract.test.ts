@@ -23,6 +23,7 @@ describe("chat-13 old LMS topbar keyboard, signed-out, and notification interact
   expect(s).toContain('window.localStorage.setItem("lms:signout"');
   expect(s).toContain("<AdminScopeSwitcher");
   expect(s).toContain("<MembershipSwitcher");
+  expect(s).toContain("{copy.accountHref ? <Link href={copy.accountHref}");
   expect(s).toContain("aria-expanded={open}");
   expect(s).toContain('event.key !== "Escape"');
  });
