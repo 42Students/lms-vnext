@@ -10,7 +10,7 @@ import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
 import Link from "next/link";
-import {ShellLogoMark} from "./shell-nav-icons";
+import {ShellLogoMark, ShellLogoWordmark} from "./shell-nav-icons";
 import { LegacyTopbar } from "./topbar/legacy-topbar";
 import { RouteAnnouncer } from "./route-announcer";
 import {ShellWidgetBoundary} from "./shell-widget-boundary";
@@ -74,8 +74,9 @@ export async function AppShell({
       <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar fixed inset-y-0 left-0 z-20 hidden flex-col md:flex">
         <div className="lms-sidebar-logo-row flex h-20 shrink-0 items-center justify-center border-b border-[var(--lms-sidebar-border)] px-2">
           <Link href="/dashboard" aria-label="42Students LMS home"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-            <ShellLogoMark />
+            className="lms-sidebar-brand-link inline-flex h-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            <span className="lms-sidebar-brand-mark"><ShellLogoMark /></span>
+             <span className="lms-sidebar-brand-wordmark"><ShellLogoWordmark /></span>
           </Link>
         </div>
         <div className="lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto pt-2 pb-4">
