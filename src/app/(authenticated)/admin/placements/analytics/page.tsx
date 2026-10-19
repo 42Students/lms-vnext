@@ -63,7 +63,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  ];
  const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
   <label className="grid gap-1 text-sm font-semibold">{label}<Select name={key} defaultValue={q[key]??""}
-   className="min-h-9 min-w-0 rounded-[9px] border border-border bg-surface px-2">
+   className="min-w-0">
    <option value="">All {label.toLowerCase()}</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</Select></label>
  );
  return <div className="min-w-0 space-y-5">
@@ -77,7 +77,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    {select("programId","Program",filters.programs)}
    {select("cohortId","Batch",filters.batches)}
    <label className="grid gap-1 text-sm font-semibold">Applied from
-    <Input type="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-h-9 rounded-[9px] border border-border bg-surface px-2"/></label>
+    <Input type="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-w-0"/></label>
    <label className="grid gap-1 text-sm font-semibold">Applied through
     <Input type="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-h-9 rounded-[9px] border border-border bg-surface px-2"/></label>
    <div className="flex flex-wrap items-end gap-3"><Button type="submit">Refresh</Button>
@@ -93,15 +93,15 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
   </p>:null}
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
-   <div key={key} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm capitalize text-muted-foreground">{hiringMetricLabel(key)}</dt>
+   <div key={key} className="min-w-0 border-b border-border px-1 py-3"><dt className="text-sm capitalize text-muted-foreground">{hiringMetricLabel(key)}</dt>
     <dd className="mt-1 text-2xl font-semibold tabular-nums">{totals[key]}</dd></div>)}</dl>
-  <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Hiring Funnel">
+  <section className="border-b border-border pb-5" aria-label="Hiring Funnel">
    <div className="flex flex-wrap items-start justify-between gap-3">
     <h2 className="text-lg font-semibold">Hiring Funnel</h2>
     <p className="text-sm text-muted-foreground">Current persisted stages · the percentage is relative to the previous stage.</p>
    </div>
    <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{funnel.map(step=>
-    <li key={step.key} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-3">
+    <li key={step.key} className="min-w-0 border-l-2 border-border pl-3 py-1">
      <span className="block text-sm font-semibold">{step.label}</span>
      <strong className="block text-2xl tabular-nums">{step.count.toLocaleString("en-IN")}</strong>
      <p className="text-xs text-muted-foreground">{step.percentPrevious===null?"No preceding stage":step.percentPrevious+"% of previous"}</p>
@@ -121,7 +121,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   {groups.length?<section aria-label="Company totals" className="space-y-3">
    <h2 className="text-lg font-semibold">Company totals</h2>
    <div className="grid min-w-0 gap-3 lg:grid-cols-2">{groups.map(group=>
-     <article key={group.companyName} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+     <article key={group.companyName} className="min-w-0 border-b border-border py-4">
       <h3 className="break-words text-base font-semibold">{group.companyName}</h3>
       <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
        {metricKeys.map(key=><div key={key} className="min-w-0">

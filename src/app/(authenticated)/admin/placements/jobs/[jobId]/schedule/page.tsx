@@ -50,14 +50,14 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <PageHeader eyebrow="Super Admin · Placements" title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Drive overview</Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-4 rounded-xl border border-border p-4">
+    <form method="get" className="flex flex-wrap items-end gap-4 border-b border-border pb-4">
       <label className="grid gap-1 text-sm">Round kind
-        <Select name="kind" defaultValue={query.kind} className="min-h-9 rounded-[9px] border border-border px-2">
+        <Select name="kind" defaultValue={query.kind} className="min-w-0">
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Status
-        <Select name="status" defaultValue={query.status} className="min-h-9 rounded-[9px] border border-border px-2">
+        <Select name="status" defaultValue={query.status} className="min-w-0">
           {["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"].map(status=>
             <option key={status} value={status}>{status}</option>)}
         </Select>
@@ -67,7 +67,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointments.interviews}
       preferredApplicationId={query.applicationId}/>
-    <section aria-label="Persisted interview rounds" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
+    <section aria-label="Persisted interview rounds" className="min-w-0 space-y-3 border-b border-border pb-5">
       <p className="text-sm text-muted-foreground">{data.total} matching interview/GD rounds</p>
       <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
         caption="Persisted interview rounds"

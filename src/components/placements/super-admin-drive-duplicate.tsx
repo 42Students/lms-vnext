@@ -1,6 +1,7 @@
 "use client";
 import {useRef,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 export function SuperAdminDriveDuplicate({jobId,title}:{jobId:string;title:string}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -23,9 +24,8 @@ export function SuperAdminDriveDuplicate({jobId,title}:{jobId:string;title:strin
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div className="space-y-2">
-  <button type="button" onClick={()=>setConfirmOpen(true)} disabled={busy}
-   className="min-h-9 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
-   {busy?"Creating draft…":"Duplicate as new drive"}</button>
+  <Button type="button" variant="secondary" onClick={()=>setConfirmOpen(true)} disabled={busy}>
+   {busy?"Creating draft…":"Duplicate as new drive"}</Button>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={open=>{if(!open&&!busy)setConfirmOpen(false);}}
    title={'Duplicate "'+title+'" as a new drive? Dates, applications, interview rounds, offers, and candidate decisions will not be copied.'}

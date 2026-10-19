@@ -179,3 +179,45 @@ After fast-forwarding `main` at `ee98b58c86df02c0513136baab6d35ef633fef59`, cont
 - `src/components/projects/learner-project-goals.tsx`
 - `src/components/projects/learner-project-mobile-filters.tsx`
 - `src/components/projects/learner-task-status-actions.tsx`
+
+## 2026-10-19 continuation — second-third Super Admin visual parity
+
+- Refreshed the lane branch to the latest observed `main` commit `8175bfbde69c2ffbec45f33ac08453dfe68a31e4` by safe fast-forward before edits. All subsequent commits targeted only `chatgpt/chat-6-b` and used `[chat-6]` prefixes.
+- **27 additional file-level commits across 27 source files** in three batches (10 + 10 + 7). The source pass covered placement overview, drive directory, job applications, interviews/schedule/settings, analytics and reports, module access, inbound mail, organizations, person audit, content directories, lesson visibility and authored lessons; it also addressed the directly rendered page controls in these workspaces.
+- Corrected the malformed `hover:bg-[var(--lms-button-primary)]-hover` and `hover:bg-[var(--lms-button-primary)]-subtle` utilities and removed a conflicting white-on-white `text-[var(--lms-on-primary)]` override from read-only secondary navigation.
+- Converted imperative page-level buttons, selects, inputs and textareas to shared visual controls where compatible; preserved action handlers, form names, validation, confirmed-danger states, audit semantics, and authorisation. Aligned primary actions to solid #0a7c88 with white text via the shared token, and secondary actions to bordered neutral buttons.
+- Removed redundant rounded white sub-canvases on existing white canvas pages; replaced archived records, reports, directory cards, pipeline counters and review trails with border-separated rows/strips. Retained genuinely separate confirmation dialogs, semantic alert regions, status badges, candidate selection controls and responsive grids.
+- Revisited handoff/session inventory: the handoff redirects, loading/error boundaries and response guard have no independent authenticated page chrome. The revoke-sessions action already inherits the shared Button and ConfirmDialog; no authentication, OTP, session, or permission functionality was changed in this pass.
+- **Static-only checks:** inspected updated JSX controls for open/close pairs and scanned selected changed files for malformed CSS variable utility suffixes. No app execution, TypeScript compiler, tests, CI, screenshots or runtime pixel-diff was performed as directed. Exact visual parity and strict compilation remain unverified.
+
+### Additional changed files in this continuation
+
+```text
+src/components/admin/super-admin-placement-detail-view.tsx
+src/app/(authenticated)/admin/placements/page.tsx
+src/components/placements/super-admin-drive-tabs.tsx
+src/components/placements/super-admin-drive-deadline.tsx
+src/components/admin/inbound-mail-list.tsx
+src/app/(authenticated)/admin/placements/drives/page.tsx
+src/app/(authenticated)/admin/placements/analytics/page.tsx
+src/app/(authenticated)/admin/organizations/page.tsx
+src/app/(authenticated)/admin/inbound-mail/page.tsx
+src/app/(authenticated)/admin/module-access/page.tsx
+src/components/placements/super-admin-platform-placement-policy.tsx
+src/components/placements/super-admin-drive-archive.tsx
+src/components/placements/super-admin-drive-duplicate.tsx
+src/components/placements/super-admin-bulk-drive-actions.tsx
+src/components/placements/super-admin-drive-pipeline.tsx
+src/components/placements/super-admin-published-drive-edit.tsx
+src/components/courses/super-admin-lesson-bulk-visibility.tsx
+src/components/courses/super-admin-lesson-create.tsx
+src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx
+src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx
+src/components/admin/super-admin-placement-oversight-nav.tsx
+src/components/courses/super-admin-content-directory-page.tsx
+src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx
+src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx
+src/components/placements/college-interview-appointments.tsx
+src/components/placements/college-application-pipeline-controls.tsx
+src/components/courses/college-lesson-visibility-controls.tsx
+```
