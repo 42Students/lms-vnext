@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
@@ -10,8 +11,7 @@ export default function TpoStudentsError({
   reset: () => void;
 }) {
   return (
-    <section
-      role="alert"
+    <Alert tone="error"
       className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-6 py-10 text-center"
     >
       <PageHeader title={"Could not load students"} />
@@ -23,6 +23,6 @@ export default function TpoStudentsError({
       <Button className="mt-5" onClick={reset}>
         Retry
       </Button>
-    </section>
+    </Alert>
   );
 }
