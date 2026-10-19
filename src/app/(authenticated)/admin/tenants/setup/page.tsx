@@ -93,11 +93,11 @@ export default async function SuperAdminTenantSetup({
   </section>
   <nav aria-label="Tenant Setup steps" className="flex flex-wrap gap-2">
    <Link href={tabLink("STRUCTURE")} aria-current={tab==="STRUCTURE"?"page":undefined}
-    className={"inline-flex min-h-9 items-center border-b-[3px] px-3 text-[14px] font-[650] "+(tab==="STRUCTURE"?active:inactive)}>
+    className={"inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] px-3 text-sm font-semibold "+ (tab==="STRUCTURE"?active:inactive)}>
     1. Tenant structure
    </Link>
    <Link href={tabLink("LAUNCH")} aria-current={tab==="LAUNCH"?"page":undefined}
-    className={"inline-flex min-h-9 items-center border-b-[3px] px-3 text-[14px] font-[650] "+(tab==="LAUNCH"?active:inactive)}>
+    className={"inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] px-4 text-sm font-semibold "+(tab==="LAUNCH"?active:inactive)}>
     2. Launch setup
    </Link>
   </nav>
@@ -152,7 +152,7 @@ export default async function SuperAdminTenantSetup({
      {label:"Sign-in",href:"/signin",description:"Review login methods and account access."},
      {label:"Look and feel",href:"/branding",description:"Set visible college branding and identity."},
     ].map(card=><Link key={card.label} href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
-     className="min-w-0 rounded-xl border border-border bg-surface p-4 hover:border-primary">
+     className="min-w-0 rounded-[8px] border border-border bg-surface p-4 hover:border-primary">
      <h3 className="font-semibold text-primary-text">{card.label}</h3>
      <p className="mt-2 text-sm text-body">{card.description}</p>
     </Link>)}
@@ -163,7 +163,7 @@ export default async function SuperAdminTenantSetup({
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="text-sm font-semibold text-primary-text underline">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-3 sm:grid-cols-2">
-     {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+     {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 rounded-[8px] border border-border bg-surface p-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <h3 className="mt-1 break-words font-semibold text-foreground">{step.title}</h3>
       <p className="mt-2 text-sm text-body">{step.description}</p>

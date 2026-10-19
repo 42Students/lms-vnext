@@ -322,7 +322,7 @@ export function AdminAttendanceWorkspace({
       {notice?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm font-semibold text-body">{notice}</p>:null}
       <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
       <section className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-border bg-surface p-4">
+        <div className="border-b border-border pb-4">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
             Retroactive marking window
           </p>
@@ -333,7 +333,7 @@ export function AdminAttendanceWorkspace({
             Read-only Faculty marking window. College Admin corrections may also be made outside this window.
           </p>
         </div>
-        <div className="rounded-xl border border-border bg-surface p-4">
+        <div className="border-b border-border pb-4">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
             Minimum attendance
           </p>
@@ -351,7 +351,7 @@ export function AdminAttendanceWorkspace({
           event.preventDefault();
           navigate();
         }}
-        className="grid gap-3 rounded-xl border border-border bg-surface p-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_auto]"
+        className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_auto]"
       >
         <label className="text-xs font-semibold text-body">
           Class
@@ -454,7 +454,7 @@ export function AdminAttendanceWorkspace({
         />
       ) : (
         <>
-          <section className="rounded-xl border border-border bg-surface p-4">
+          <section className="border-b border-border pb-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">

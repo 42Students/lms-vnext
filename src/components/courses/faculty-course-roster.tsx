@@ -129,7 +129,7 @@ export function FacultyCourseRoster({
         ].map(([label, value]) => (
           <section
             key={label}
-            className="rounded-xl border border-border bg-surface p-4"
+            className="border-b border-border pb-4"
           >
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
               {label}
@@ -141,7 +141,7 @@ export function FacultyCourseRoster({
         ))}
       </div>
 
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="border-b border-border pb-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">

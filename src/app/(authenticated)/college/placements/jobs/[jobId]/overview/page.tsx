@@ -36,7 +36,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
       {(["applications","shortlisted","selected","offered"] as const).map(name=>
         <StatTile key={name} label={name.charAt(0).toUpperCase()+name.slice(1)}
           value={displayDriveMetric(counts[name])} detail={describeDriveMetric(name)}/>)}
-      <article className="rounded-xl border border-border p-4">
+      <article className="rounded-[8px] border border-border p-4">
         <h2 className="text-sm font-semibold text-body">Hired</h2>
         <p className="mt-3 text-2xl font-semibold text-foreground">{funnel.totals.HIRED ?? 0}</p>
         <p className="mt-2 text-xs text-muted-foreground">Applications currently at the Hired stage, not inferred joining outcomes.</p>

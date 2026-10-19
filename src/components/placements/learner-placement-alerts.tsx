@@ -9,7 +9,7 @@ type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
 export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=false }: { alerts: Alerts; filtered?: boolean; unreadOnly?:boolean }) {
   return (
     <section aria-labelledby="learner-placement-alerts"
-      className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+      className="border-t border-border pt-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="learner-placement-alerts" className="text-base font-semibold text-foreground">
           Your placement alerts

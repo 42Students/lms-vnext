@@ -5,9 +5,9 @@ export default function RequestDemoPage(){
  return <MarketingLayout>
   <section className="mx-auto min-w-0 max-w-3xl space-y-6 py-6 sm:py-14">
    <p className="text-sm font-semibold uppercase tracking-wider text-primary-text">Talk to 42 LMS</p>
-   <h1 className="break-words text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">See 42 LMS in action</h1>
+   <h1 className="break-words text-[30px] font-semibold leading-10 tracking-tight text-[var(--lms-heading)]">See 42 LMS in action</h1>
    <p className="text-base leading-7 text-body sm:text-lg sm:leading-8">See how 42 LMS supports connected learning, practical projects and placement operations.</p>
-   <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
+   <section className="min-w-0 space-y-4 rounded-[12px] border border-border bg-surface p-4 sm:p-6">
     <h2 className="text-2xl font-semibold">What to expect</h2>
     <ul className="list-disc space-y-3 pl-6 text-body">
      <li>A walkthrough tailored to your institution or enterprise.</li>

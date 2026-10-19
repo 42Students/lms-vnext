@@ -37,7 +37,7 @@ export function LearnerInterviewWithdrawalRequest({target}:{target:LearnerInterv
     </p> : review ? <div className="space-y-3">
       <label className="block text-sm font-semibold text-body">Reason for requesting withdrawal
         <textarea value={reason} maxLength={2000} rows={3} disabled={pending} onChange={event=>setReason(event.target.value)}
-          className="mt-2 w-full rounded-md border border-border bg-surface p-3 font-normal text-foreground" />
+          className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-[14px] font-normal text-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
       </label>
       {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
       <div className="flex flex-wrap gap-2">
