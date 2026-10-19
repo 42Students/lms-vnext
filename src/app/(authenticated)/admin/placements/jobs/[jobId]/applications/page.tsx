@@ -1,4 +1,3 @@
-import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -37,7 +36,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     listCollegeDriveApplicationFilters(context),
   ]);
   return <div className="min-w-0 space-y-6">
-    <SuperAdminDriveTabs jobId={jobId} active="Applications"/>
+    
     <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
