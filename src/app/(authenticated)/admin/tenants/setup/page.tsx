@@ -144,16 +144,18 @@ export default async function SuperAdminTenantSetup({
    <Alert tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
     Persisted readiness: {summary.label}. {summary.detail}
    </Alert>
-   <div className="grid gap-3 sm:grid-cols-3">
+   <div className="grid min-w-0 gap-3 md:grid-cols-3">
     {[
      {label:"Web address",href:"/subdomain",description:"Configure and verify the college login domain."},
      {label:"Sign-in",href:"/signin",description:"Review login methods and account access."},
      {label:"Look and feel",href:"/branding",description:"Set visible college branding and identity."},
-    ].map(card=><Link key={card.label} href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
-     className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 hover:border-primary">
-     <h3 className="font-semibold text-primary-text">{card.label}</h3>
-     <p className="mt-2 text-sm text-body">{card.description}</p>
-    </Link>)}
+    ].map(card=><Card key={card.label} as="article" className="min-w-0 hover:border-[var(--lms-primary)]">
+     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
+      className="block min-h-11 rounded-[var(--lms-control-radius)] font-semibold text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <h3 className="font-semibold">{card.label}</h3>
+      <p className="mt-2 text-sm font-normal text-body">{card.description}</p>
+     </Link>
+    </Card>)}
    </div>
    <section aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -170,10 +172,8 @@ export default async function SuperAdminTenantSetup({
     </ol>
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
-  </>:<section role="status" className="border-b border-border py-5">
-    <h2 className="font-semibold">No college selected</h2>
-    <p className="mt-2 text-sm text-body">No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant.</p>
-    <Link href={tabLink("STRUCTURE")} className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9  items-center font-semibold text-primary-text underline">Create or select a college →</Link>
-  </section>}
+  </>:<EmptyState title="No college selected"
+   description="No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant."
+   action={<Link href={tabLink("STRUCTURE")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Create or select a college →</Link>}/>}
  </div>;
 }
