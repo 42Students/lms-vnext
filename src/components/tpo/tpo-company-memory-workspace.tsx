@@ -59,7 +59,7 @@ type CompanyMemory = {
 type Phase = "loading" | "ready" | "error" | "migration-pending" | "not-found";
 
 const buttonStyle =
-  "inline-flex min-h-11 items-center justify-center rounded-[var(--radius)] border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary";
+  "inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-primary-subtle";
 
 function dateLabel(value: string) {
   const date = new Date(value);
@@ -200,7 +200,7 @@ export function TpoCompanyMemoryWorkspace({
           <Link className="text-sm text-link hover:underline" href="/tpo/recruiters?view=companies">
             ← Companies
           </Link>
-          <h1 className="mt-1 text-2xl font-semibold text-foreground">{company.name}</h1>
+          <h1 className="mt-1 text-[30px] font-semibold leading-9 tracking-[-0.02em] text-[var(--lms-heading)]">{company.name}</h1>
           <p className="text-sm text-muted-foreground">
             {company.drivesRan>1||company.hiredPerYear.length>1?"Repeat hiring relationship":"Recruiter contacts, drives and hiring history"}
           </p>
@@ -214,7 +214,7 @@ export function TpoCompanyMemoryWorkspace({
           <details className="relative">
            <summary className={buttonStyle+" cursor-pointer"}>+ New</summary>
            <nav aria-label={"New work for "+company.name}
-            className="absolute right-0 z-20 mt-1 w-60 space-y-1 rounded-[var(--radius)] border border-border bg-surface p-2 shadow-lg">
+            className="absolute right-0 z-20 mt-1 w-60 space-y-1 rounded-[var(--radius)] border border-border bg-surface p-2 shadow-[var(--lms-dropdown-shadow)]">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
              className="block rounded-[var(--radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
