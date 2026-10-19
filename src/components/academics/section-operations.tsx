@@ -542,7 +542,7 @@ export function SectionOperations({
 
       <section className="space-y-4">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
             Learner progression
           </h2>
           <p className="mt-1 text-sm text-body">
@@ -676,7 +676,7 @@ export function SectionOperations({
         </div>
 
         <div className="space-y-3">
-          <h3 className="m-0 text-sm font-semibold text-foreground">
+          <h3 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Program enrollments
           </h3>
           <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
@@ -687,7 +687,7 @@ export function SectionOperations({
         </div>
 
         <div className="space-y-3">
-          <h3 id="section-roster" className="m-0 text-sm font-semibold text-foreground">
+          <h3 id="section-roster" className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Section roster history
           </h3>
           <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
@@ -700,7 +700,7 @@ export function SectionOperations({
 
       <section className="space-y-4">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
             Faculty responsibilities
           </h2>
           <p className="mt-1 text-sm text-body">
@@ -780,7 +780,7 @@ export function SectionOperations({
 
       <section className="space-y-4">
         <div>
-          <h2 id="section-schedule" className="m-0 text-lg font-semibold text-foreground">
+          <h2 id="section-schedule" className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
             Section schedule
           </h2>
           <p className="mt-1 text-sm text-body">

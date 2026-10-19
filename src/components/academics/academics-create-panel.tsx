@@ -234,7 +234,7 @@ export function AcademicsCreatePanel({
         onSubmit={createPeriod}
         className="border-t border-border pt-5"
       >
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New academic period
         </h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -316,7 +316,7 @@ export function AcademicsCreatePanel({
         onSubmit={createProgram}
         className="border-t border-border pt-5"
       >
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New program
         </h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -412,7 +412,7 @@ export function AcademicsCreatePanel({
         onSubmit={createCohort}
         className="border-t border-border pt-5"
       >
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New cohort / batch
         </h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -552,7 +552,7 @@ export function AcademicsCreatePanel({
         onSubmit={createSection}
         className="border-t border-border pt-5"
       >
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New section
         </h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">

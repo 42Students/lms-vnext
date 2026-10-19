@@ -129,7 +129,7 @@ function ContentItem({
               {audienceLabel(item.deliveryId)}
             </StatusBadge>
           </div>
-          <h3 className="mt-2 text-base font-semibold text-foreground">
+          <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
             {item.title}
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">{item.points} points</p>
@@ -207,7 +207,7 @@ function AssignmentItem({
               {audienceLabel(item.deliveryId)}
             </StatusBadge>
           </div>
-          <h3 className="mt-2 text-base font-semibold text-foreground">
+          <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
             {item.title}
           </h3>
         </div>
@@ -295,7 +295,7 @@ function QuizItem({
               {audienceLabel(item.deliveryId)}
             </StatusBadge>
           </div>
-          <h3 className="mt-2 text-base font-semibold text-foreground">
+          <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
             {item.title}
           </h3>
         </div>
@@ -441,7 +441,7 @@ export function FacultyCourseWorkspace({
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
               Your teaching class
             </p>
-            <h2 className="mt-2 text-xl font-semibold text-foreground">
+            <h2 className="mt-2 text-xl font-semibold text-[var(--lms-heading)]">
               {course.sectionName}
             </h2>
             <p className="mt-2 text-sm leading-6 text-body">
@@ -507,7 +507,7 @@ export function FacultyCourseWorkspace({
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   Learning path
                 </p>
-                <h2 className="mt-2 text-xl font-semibold text-foreground">
+                <h2 className="mt-2 text-xl font-semibold text-[var(--lms-heading)]">
                   {learningPath.title}
                 </h2>
                 {learningPath.description ? (
@@ -534,7 +534,7 @@ export function FacultyCourseWorkspace({
               href={facultyCourseTabHref(course.deliveryId,"blueprint")+
                 (value==="ALL"?"":"?filter="+value)}
               aria-current={contentFilter===value?"page":undefined}
-              className={"inline-flex min-h-11 items-center rounded-md border px-3 text-sm font-semibold "+
+              className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold "+
                 (contentFilter===value?"border-primary bg-primary-subtle text-primary-text":
                 "border-border bg-surface text-body")}>
               {label}
@@ -604,7 +604,7 @@ export function FacultyCourseWorkspace({
                             Lesson{" "}
                             {lessonIndex + 1}
                           </p>
-                          <h2 className="mt-1 text-lg font-semibold text-foreground">
+                          <h2 className="mt-1 text-lg font-semibold text-[var(--lms-heading)]">
                             {lesson.name}
                           </h2>
                           {lesson.description ? (
