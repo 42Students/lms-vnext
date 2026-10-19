@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 "use client";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -228,12 +229,12 @@ export function LearnerVideoPlayer({
       <span>Saved at {formatDuration(savedSeconds)} / {formatDuration(authoredDurationSeconds>0?authoredDurationSeconds:observedDuration)}</span>
     </div>
     {mediaError ? <div className="space-y-2">
-      <p role="alert" className="text-sm font-semibold text-error">{mediaError}</p>
+      <Alert tone="error">{mediaError}</Alert>
       <Button type="button" variant="secondary" onClick={() => { failureRefreshRef.current = 0; void start(); }}
         className="min-h-9">
         Retry video
       </Button>
     </div> : null}
-    {saveError ? <p role="alert" className="text-sm font-semibold text-error">{saveError}</p> : null}
+    {saveError ? <Alert tone="error">{saveError}</Alert> : null}
   </div>;
 }
