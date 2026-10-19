@@ -2,6 +2,7 @@
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import {Textarea} from "@/components/ui/textarea";
 type Props={threadId:string;messageId:string;body:string;expectedBodyHash:string;canEdit:boolean};
 export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,canEdit}:Props){
  const router=useRouter(),pending=useRef(false);
@@ -29,8 +30,8 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
   {mode==="EDIT"?<form onSubmit={event=>{event.preventDefault();void submit("EDIT");}}
    className="w-full space-y-2">
    <label className="block text-xs">Edit message
-    <textarea value={draft} maxLength={4000} required rows={3} disabled={busy}
-     onChange={event=>setDraft(event.target.value)} className="mt-1 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-2"/>
+    <Textarea value={draft} maxLength={4000} required rows={3} disabled={busy}
+     onChange={event=>setDraft(event.target.value)} className="mt-1 w-full"/>
    </label>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
    <button type="submit" disabled={busy||!draft.trim()} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-3 text-xs text-on-primary">{busy?"Saving…":"Save edit"}</button>
