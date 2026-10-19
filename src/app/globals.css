@@ -4,6 +4,9 @@
 @source not "../../tests";
 @import "../components/ui/legacy-overlays.css";
 @import "../styles/legacy-skin.css";
+/* CHAT-20 MICRO-DETAILS — pointer/focus/pressed, menu/table states and motion.
+ * Imported exactly once after the chat-17 skin, without changing component CSS. */
+@import "../styles/micro-details.css";
 
 /*
  * LMS vNext color source of truth.

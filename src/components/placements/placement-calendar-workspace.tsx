@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/page-header";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
+import calendarStyles from "./legacy-calendar-theme.module.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -961,7 +962,7 @@ export async function PlacementCalendarWorkspace({
           aria-label={`${state.view} placement calendar`} tabIndex={0}
           className="hidden overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 md:block md:[mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]"
         >
-          <CalendarGrid className="min-w-[56rem]">
+          <CalendarGrid variant="hairline" className={"min-w-[56rem] "+calendarStyles.calendarHairline}>
             {[
               "Mon",
               "Tue",
@@ -970,10 +971,10 @@ export async function PlacementCalendarWorkspace({
               "Fri",
               "Sat",
               "Sun",
-            ].map((label) => (
+            ].map((label, index) => (
               <div
                 key={label}
-                className="py-3 text-center text-xs font-bold uppercase text-muted-foreground"
+                className={"py-3 text-center text-xs font-bold uppercase text-muted-foreground "+calendarStyles.calendarWeekday+" "+(index===6?calendarStyles.calendarSunday:"")}
               >
                 {label}
               </div>
@@ -997,8 +998,11 @@ export async function PlacementCalendarWorkspace({
                 <div
                   key={day}
                   aria-label={`${dateLabel(day)}: ${dayEvents.length} events`}
+                  aria-current={day===today?"date":undefined}
                   className={
-                    "min-h-32 rounded-[var(--lms-control-radius)] border border-border p-2 " +
+                    "min-h-32 border p-2 " +calendarStyles.calendarDay+" "+
+                    (day===today?calendarStyles.calendarCurrentDay+" ":"")+
+                    (new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday+" ":"")+
                     (outsideMonth
                       ? "bg-muted/40"
                       : "bg-surface")
@@ -1006,9 +1010,10 @@ export async function PlacementCalendarWorkspace({
                 >
                   <p
                     className={
-                      day === today
+                      (day === today
                         ? "m-0 text-xs font-bold text-[var(--lms-link-text)]"
-                        : "m-0 text-xs font-semibold text-foreground"
+                        : "m-0 text-xs font-semibold text-foreground") +
+                      (day!==today&&new Date(day+"T12:00:00Z").getUTCDay()===0?" "+calendarStyles.calendarSunday:"")
                     }
                   >
                     {dayLabel(day)}

@@ -1,4 +1,5 @@
 import { CalendarGrid } from "@/components/ui/calendar-grid";
+import { Tabs } from "@/components/ui/tabs";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Input } from "@/components/ui/input";

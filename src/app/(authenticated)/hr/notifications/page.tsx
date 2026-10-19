@@ -24,7 +24,7 @@ export default async function HrMessagesPage({searchParams}:{
   collegeId:raw.collegeId,unreadOnly:raw.unreadOnly,page:raw.page,q:raw.q,
  });
  if(!query.success)return <div className="min-w-0 max-w-full space-y-4">
-  <PageHeader eyebrow="Recruiter" title="Notifications"/>
+  <PageHeader title="Notifications"/>
   <Link href="/hr/conversations" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter conversations</Link>
   <ErrorState title="Invalid inbox filter." description="Review the college, search and unread options."
    action={<Link href="/hr/notifications" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>}/>

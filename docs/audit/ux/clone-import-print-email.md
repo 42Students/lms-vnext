@@ -117,3 +117,31 @@ The user explicitly prohibited executing the app/tests/CI. A full cloned-reposit
 
 ## Next file and unverified work
 **Next:** `src/components/placements/report-interactive-table.tsx` — interactive report exports and keyboard/focus/dynamic filtering; then CSV download actions and G5 template evidence.
+
+**SMARTER PLAN repeat-pattern codemod (2026-10-19):** `scripts/codemods/chat6-report-export-links.cjs` targets static TPO report CSV/export `<a>` skin classes in eight explicitly enumerated report files (expected at least 3 candidates). `node scripts/codemods/chat6-report-export-links.cjs` reports a dry run; `node scripts/codemods/chat6-report-export-links.cjs --apply` applies only primary-button color tokens. It preserves anchor tags, hrefs, labels, downloads and layout. **Script committed but not run; orchestrator to apply and typecheck.** No G4 parity tick.
+
+## G5 email/template source inventory (2026-10-19, inspection only)
+
+| Template family | Code-side evidence | Actual legacy HTML available? | Open comparison |
+|---|---|---|---|
+| OTP email | `src/modules/notifications/zeptomail-email.ts:7-14,62-109` sends `otp`, `learnerName`, `email`, `mobile` and expiry variables via a provisioned ZeptoMail template key | **No** | Provider-hosted header, colors, spacing, footer, CTA and phone email-client rendering |
+| Notification/campaign email | `src/modules/messaging/providers.ts:10-24,40-56` resolves provisioned template keys and merge fields; OTP templates are excluded | **No** | Campaign-specific legacy HTML and all rendering states |
+| Recruiter message digest | `src/modules/placements/recruiter-message-email-provider.ts:13-29,41-46` selects a distinct digest template with sanitized merge data | **No** | Reply CTA, quoted digest blocks, notification hierarchy, responsive mail rendering |
+| Recruiter invitation | `src/modules/placements/tpo-recruiter-invite-email-delivery.ts:11-16,29-35` requires an explicitly verified template key | **No** | Invite body, branding, CTA and disabled/expired link presentation |
+| Faculty PDF report | `src/modules/courses/faculty-report-pdf.ts:43-90` assembles a PDF stream programmatically | No historical counterpart identified | Paper geometry, typography, page breaks, footer and actual PDF viewer rendering |
+| Learner offer letter | `src/modules/placements/learner-offer-letter-model.ts:2-17` validates an offer-letter URL; it does not define a printable letter design | **No** | Signed document/template source and actual offer-letter evidence |
+| Certificate/receipt templates | No complete legacy template was found in the checked-in design references | **No** | Require original HTML/PDF or pixel captures for both sides |
+
+This is a source inventory, **not** visual parity. Do not infer an email or letter design from `template_key` or a sanitized merge-field model. G5 remains `[ ]`.
+
+## G4/G5 judgement-case verification ledger — latest bounded turn
+
+- [x] **Scoped source inspection (not a checklist tick):** `src/components/placements/report-interactive-table.tsx` now offers all column filter inputs even when a column is hidden, resets sort when its column is hidden, disables exports for zero matching rows, retains post-"Show 500 more" selector values, announces row/export status, and gives the mobile sort direction a pressed state. Existing CSV escaping and secure download utilities were left untouched (`src/components/placements/report-interactive-table-{export,download}-model.ts`).
+- [x] **Scoped source inspection (not a checklist tick):** `src/components/placements/tpo-report-saved-filters.tsx` now uses an inline canvas section rather than a nested card; stale selected views clear on route/tenant change and the empty view selector is disabled.
+- [x] **Scoped source inspection (not a checklist tick):** `src/components/placements/placement-report-ui.tsx` primary CSV link inherits the exact `--lms-button-primary` and hover tokens from the owner's shell spec; it has a specific accessible export label and the report navigation retains visible keyboard focus.
+- [x] **Scoped source inspection (not a checklist tick):** authenticated paper output now disables decorative report controls and download links, makes `data-slot="scroll-cue"` overflow visible, hides scroll fades, restores table display on narrow screens, and removes sticky positioning so complete columns can appear on paper. No original printed output is available to compare against.
+- [ ] **Still missing for G4:** parity-report style mismatch pairs, runtime responsive screenshots at phone/tablet/desktop, repeated controls migrated by the orchestrator-run codemod, print and keyboard journey validation.
+- [ ] **Still missing for G5:** source PDF/offer/certificate/receipt/mail HTML samples, print device/browser output, computed print font/margins and email-client layout comparison.
+- **Next file:** `src/components/placements/report-interactive-table-export-model.ts`, checking exact export header names and ordering against the legacy grid/export documentation; do not conflate G4's report CSV with the E8 owner lane's AG Grid exporting.
+
+G4 and G5 remain unticked under the STRICT TICK RULE; no tests, parser, typecheck, runtime or CI were invoked in this lane.

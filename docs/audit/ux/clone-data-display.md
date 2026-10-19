@@ -116,3 +116,35 @@ grep -rnE '<(Pagination|Tabs|Table|DataTable|Badge|StatusBadge|Disclosure)' src 
 - **E1/E2:** TPO request sort and column reset use shared `Select`/`Button`; legacy-form styling and raw-usage exhaustive coverage are still open. Spreadsheet fallback remains a shared `Table`; selection checkbox is 48px and pinned data columns are offset past it (src/components/tpo/tpo-spreadsheet-grid.tsx:62).
 - **Static source inspection only:** 19 changed TSX files were fetched back from GitHub after updates. `<Disclosure>` opening/closing counts were equal in each inspected file; all new JSX count labels were checked for expression preservation and corresponding closing tags. This is **not** a repository-wide grep, a TypeScript compile, CI, or runtime comparison. Existing raw button/select and native-details instances outside the inspected scope remain unverified.
 - **Owner strict tick status:** E1–E5 all **[ ]**. Do not turn source-level incremental replacements into completion claims without the full legacy value matrix, responsive proof, exhaustive grep counts and regression verification. Next targeted audit: `src/components/courses/faculty-course-home-signals.tsx` remaining expandable learner-risk bucket, then `src/components/placements/learner-jobs-browse.tsx` raw filter pills and pagination.
+
+## Codemod inventory (chat-14, 2026-10-19)
+
+- Pattern: raw semantic `<table>` outside `src/components/ui` becomes shared `<Table>` only when not nested in a scroll/table context; explicit noninteractive `data-status` / `data-chip` rounded status spans with recognizable tone become `<Badge>`. Stateful hand-rolled `role="tablist"` strips and pagination navigation are **reported for manual review** (not blindly rewritten). Expected files: `src/**/*.tsx` excluding `src/components/ui/**`. Dry-run: `node scripts/codemods/chat14-tables-tabs.cjs`; orchestrator application: `node scripts/codemods/chat14-tables-tabs.cjs --apply`. The script uses the TypeScript TSX AST, changes both opening/closing tags, checks output parse diagnostics, and reports files/patterns for subsequent regression and responsive review. Not executed by this lane. E1–E5 remain unchecked pending required value/coverage proofs.
+- E8 blocker (verified on `main`, 2026-10-19): `package.json` does **not** list `ag-grid-community` or `ag-grid-react`; `docs/design/legacy-grid/TpoGrid.jsx.txt` is absent, whereas `src/components/tpo/grid/tpo-grid.tsx` is a shared-table fallback. The requested `next/dynamic` + native Quartz import cannot be strictly type-safe without those repository assets. Preserve authorized selection/export behavior and do not invent a passing native AG Grid migration; owner/orchestrator must restore those assets (do not edit package.json in this lane).
+
+## chat-14 incremental source value proof (bounded turn, 2026-10-19)
+
+These rows supersede the earlier **changed values only**; they do not close E1–E5, because full state matrices, repository-wide grep and phone/tablet render proofs remain outstanding.
+
+| Scope/property | Legacy source | vNext value now | Proof status |
+|---|---|---|---|
+| E1 normal \`.ln-table\` header fill | \`docs/design/legacy-styles/components___common.scss:858-860\`, white | \`src/components/ui/table.tsx:16\`, \`--lms-white\` = white | Source value matched; striped/exam variant still open |
+| E1 \`.ln-table\` row hover | \`components___common.scss:851-855\`, body cells reset to no hover fill on white base | \`table.tsx:16\`, white body cells on hover | Normal variant source intent matched; mixed zebra and global cascade open |
+| E2 phone control hitbox until 767px | \`components___antddesign.scss:242-256\`, 44px and 8px radius | \`page-size-select.tsx:17\`, \`min-h-11 md:min-h-9\`; \`pagination.tsx:52\` 44px / 8px | Breakpoint now aligned; selector visibility and focus remain open |
+| E3 active indicator height, position and motion | \`components___common.scss:381-390,403-410\`, centered 3px width/opacity transition 0.2s ease-in-out | \`src/components/ui/tabs.tsx:83-84,90-91\`, centered 3px \`::after\`, 200ms width/opacity easing, active full width | Source rule matched for active state; browser computed values not compared |
+| E3 wide gap | \`components___common.scss:465-475\`, 20px default / 40px from 1600px | \`tabs.tsx:71,88\`, tokenized 20px / \`min-[1600px]:gap-[40px]\` | Source breakpoints matched |
+| E4 neutral status fill/text | \`components___common.scss:995-1005\`, #fafbfc and #84828b | \`src/components/ui/status-badge.tsx:9\`, \`--lms-neutral-50\` (#fafbfc) and \`--lms-neutral-400\` (#a9a7ae) | **Text shade still differs**; do not tick |
+| E4 status radius, pad, min-width, weight | \`components___common.scss:996-1005\`, 6px / 2px 15px / 90px / 12px 700 | \`status-badge.tsx:17\`, 6px / 2px 15px / 90px / 12px 700 | These discrete source values match; custom variants still open |
+| E8 spreadsheet client rendering | Legacy reference \`legacy-grid/TpoGrid.jsx.txt\` absent; E8 requests dynamic \`ssr:false\` | \`tpo-students-spreadsheet.tsx:29-32\`; \`tpo-applications-spreadsheet.tsx:17-20\`; both typed and lazy client-only | Done only for dynamic boundary, **not AG Grid Quartz** |
+| E8 shared list toolbar | \`old-lms-pages.md:5-6\`, one Columns/Copy workflow | \`tpo-spreadsheet-grid.tsx:23,30,172-173\`; \`tpo-students-spreadsheet.tsx:226\`; \`tpo-applications-spreadsheet.tsx:60\` | Duplicate inline chooser/Copy button suppressed when workspace handles it; keyboard TSV remains |
+
+Updated explicit work queue:
+- [ ] Verify the E4 neutral status text shade (#84828b) against existing token options; do not add hard-coded hex outside globals.
+- [ ] Check E1 zebra/stripes, header/body CSS cascade, mobile layout and scroll; locate all \`<table>\` JSX before tick.
+- [ ] Run the committed codemod **dry-run first** and inspect candidate list; orchestrator owns \`--apply\`; manually migrate stateful tabs and pagination.
+- [ ] E8 native Quartz implementation after the missing AG Grid packages and legacy-grid sources are restored; keep fallback, authorized rows and server export intact.
+- [ ] Verify keyboard/focus/disabled and runtime responsive behavior before changing any checkboxes to [x].
+
+**Repository-wide grep counts:** not performed. **Compilation/app/CI:** not run. All edited TSX files were fetched again from the branch; the inspected changes showed matching opening/closing tags, no stray quote before className, and no newline-before-as cast in the edited files. This is static inspection, not typecheck.
+
+- E1 follow-up: `src/components/ui/data-table.tsx:97-103` now uses white desktop heading/cell-hover paint, matching the `.ln-table` normal variant (`docs/design/legacy-styles/components___common.scss:851-860`). Mobile card layout and `sm` breakpoint remain intentionally unchanged pending the responsive comparison; E1 **remains unticked**. No runtime verification.

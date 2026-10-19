@@ -263,6 +263,7 @@ No CI, typecheck, tests, local app or browser checks were executed. Source contr
 
 - [ ] HR/recruiter PageHeader role-label judgement case: `scripts/codemods/chat15-hr-header-eyebrows.cjs` targets static `eyebrow="Recruiter"` / `"Employer Recruiter"` only in the HR/recruiter route trees; dry-run: `node scripts/codemods/chat15-hr-header-eyebrows.cjs`; apply: `node scripts/codemods/chat15-hr-header-eyebrows.cjs --apply`. **Script committed but not run**; orchestrator owns local run and source/captured style verification. Keep dynamic eyebrow/description expressions unchanged.
 
+
 ## 2026-10-19 chat-15 continuation — HR source judgement cases
 
 Main at turn start: `5a2abb4bba7e3bcfcf7523ffde18a0346e3590ed`; lane was fast-forwarded before changes. The SMARTER PLAN block was read. The requested computed-style `docs/audit/ux/parity-report.md` was not present in the inspected repository, so the evidence below is **source-level only**.

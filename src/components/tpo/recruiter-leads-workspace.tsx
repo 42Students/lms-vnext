@@ -4,6 +4,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { Dropdown } from "@/components/ui/dropdown";
 
 import Link from "next/link";
+import Image from "next/image";
 import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
 import {filterEngageRoster,type EngageRosterFilters} from "@/modules/placements/tpo-engage-filter-model";
 import {recruiterTableExportCsv,recruiterTableExportGrid,recruiterTableExportTsv} from "@/modules/placements/tpo-recruiter-export-model";
@@ -33,6 +34,8 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {GridWorkspace} from "./grid/grid-workspace";
+import {gridExportFilename} from "@/modules/placements/grid-export-filename";
+import boardStyles from "./recruiter-board-theme.module.css";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 
 type Lead = {
@@ -420,7 +423,7 @@ export function RecruiterLeadsWorkspace({
       new Blob([recruiterTableExportCsv(chosen,visibleColumns)],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
-    link.href=url;link.download="recruiter-leads-"+view+"-"+selection+(filterChips.length?"-filtered":"")+"."+format;
+    link.href=url;link.download=gridExportFilename("recruiter-leads-"+view+"-"+selection+(filterChips.length?"-filtered":""),format);
     document.body.appendChild(link);link.click();link.remove();
     URL.revokeObjectURL(url);
     setExportFeedback(chosen.length+" recruiter leads exported to "+format.toUpperCase());
@@ -641,6 +644,7 @@ export function RecruiterLeadsWorkspace({
           <RecruiterLeadCsvImport onImported={() => void load()} />
           <button ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase !== "ready"}
             onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null);setReviewingCreate(false); }}>
+            <Image src="/assets/images/common/plus.svg" width={16} height={16} alt="" aria-hidden="true" className="mr-2 inline-block"/>
             Add recruiter lead
           </button>
         </div>
@@ -725,10 +729,10 @@ export function RecruiterLeadsWorkspace({
               }}/>
           </div>
           <div className="space-y-3">
-            <button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
+            {view!=="table"?<button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
               aria-expanded={filterOpen} aria-controls="engage-filter-panel">
               Filters{filterChips.length?" ("+filterChips.length+")":""}
-            </button>
+            </button>:null}
             {filterChips.length?<div role="group" aria-label="Active recruiter filters"
               className="flex flex-wrap gap-2">
               {filterChips.map(chip=><Button type="button" key={chip.key}
@@ -971,7 +975,7 @@ export function RecruiterLeadsWorkspace({
                       </Select>},
                     {key:"People",header:"People",mobilePriority:"secondary",cell:company=><div className="flex flex-wrap gap-2">
                       {company.people?.length?company.people.map(person=>
-                        <Link key={person.id} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline"
+                        <Link key={person.id} className="inline-flex min-h-11 items-center text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                           href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>):
                         <button type="button" className="min-h-11 text-[var(--lms-teal-deep)] underline"
                           onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</button>}
@@ -990,12 +994,15 @@ export function RecruiterLeadsWorkspace({
               onColumnKeysChange={keys=>changeVisibleColumns(normalizeEngageColumns(
                keys.filter(key=>ENGAGE_COLUMNS.includes(key as EngageColumn))))}
               searchMode="hidden" exportName="recruiter-leads"
+              externalFilters={{count:filterChips.length,open:filterOpen,controlsId:"engage-filter-panel",
+               onToggle:()=>setFilterOpen(previous=>!previous)}}
               savedViews={<RecruiterSavedViewControls columns={visibleColumns}/>}
               onExportCsv={selected=>exportRows(selected?"selected":"shown","csv")}
               onExportXlsx={selected=>exportRows(selected?"selected":"shown","xlsx")}
               onCopyRows={()=>void copyRows()}>
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
-                sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}/>
+                sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}
+                 showColumns={false}/>
               <label className="inline-flex min-h-11 items-center gap-2 text-sm">
                 <input type="checkbox" aria-label="Select all visible recruiters"
                   checked={visible.length>0&&visible.every(row=>selectedIds.includes(row.id))}
@@ -1025,7 +1032,7 @@ export function RecruiterLeadsWorkspace({
                         <span className="sm:hidden">Select</span>
                       </label>},
                     {key:"Contact",header:"Contact",mobilePriority:"primary",cell:lead=><div className="min-w-0">
-                      <Link className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline"
+                      <Link className="inline-flex min-h-11 items-center break-words font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>{lead.name||"Unnamed contact"}</Link>
                       {lead.designation?<p className="text-xs text-muted-foreground">{lead.designation}</p>:null}
                     </div>},
@@ -1061,7 +1068,7 @@ export function RecruiterLeadsWorkspace({
             <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
                 <section key={column} className={
-                  "w-64 min-w-64 shrink-0 rounded-lg border border-border bg-surface p-4 "+
+                  boardStyles.column+" "+
                   (draggedBoardId&&column==="CONTACTED"?"ring-2 ring-primary":"")
                  }
                   onDragOver={event=>{
@@ -1078,16 +1085,16 @@ export function RecruiterLeadsWorkspace({
                      column==="NOT_NOW"?"Requires a recorded reason":
                      "Automatically set by invitation and placement activity"}
                   </p>
-                  <h2 className="mb-3 font-semibold">{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
+                  <h2 className={"mb-3 font-semibold "+boardStyles.columnTitle}>{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
                   <div className="space-y-2">
                     {visible.filter(x => x.stage === column).slice(0, column==="RECRUITED"||column==="NOT_NOW"?5:50).map(lead => (
-                      <div key={lead.id} className="rounded-md border border-border p-3 hover:bg-surface-secondary"
+                      <div key={lead.id} className={"p-3 hover:bg-surface-secondary "+boardStyles.leadCard}
                         draggable={lead.manualStage==="NEW"&&!boardMoving}
                         onDragStart={event=>{if(lead.manualStage==="NEW"){event.dataTransfer.setData("text/plain",lead.id);event.dataTransfer.effectAllowed="move";setDraggedBoardId(lead.id);}}}
                         onDragEnd={()=>setDraggedBoardId(null)}
                         title={lead.manualStage==="NEW"?"Drag to Contacted, or use Move to… below":undefined}>
                         <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
-                          className="block text-[var(--lms-teal-deep)] underline-offset-2 hover:underline">
+                          className="block text-link lms-inline-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                         <span className="block font-medium">{lead.name||"Unnamed contact"}</span>
                          {lead.designation?<span className="block text-xs text-muted-foreground">{lead.designation}</span>:null}
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>

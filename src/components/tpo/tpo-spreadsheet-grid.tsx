@@ -19,13 +19,15 @@ export type TpoSpreadsheetGridProps<Row> = {
  rowKey:(row:Row)=>string;
  rowActions?:(row:Row)=>ReactNode;
  mobileActionsCollapsible?:boolean;
+ /** Hide duplicate columns/copy controls when GridWorkspace already owns them. */
+ integratedWorkspace?:boolean;
  mobilePrimaryKeys?:readonly string[];
  storageKey?:string;
  selection?:{selected:readonly string[];onChange:(ids:string[])=>void;allIds?:readonly string[]};
  openPrimary?:{columnKey:string;onOpen:(row:Row)=>void;ariaLabel:(row:Row)=>string};
 };
 export function TpoSpreadsheetGrid<Row>({
- rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,mobilePrimaryKeys,storageKey,selection,
+ rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,integratedWorkspace=false,mobilePrimaryKeys,storageKey,selection,
 }:TpoSpreadsheetGridProps<Row>){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const permitted=columns.filter(column=>!column.exportOnly).map(column=>column.key);
@@ -167,8 +169,8 @@ export function TpoSpreadsheetGrid<Row>({
     .catch(()=>setClipboardMessage("Clipboard unavailable. Use Export CSV instead."));
  }
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
-  <TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>
-  {rows.length>0?<Button variant="secondary" type="button" onClick={copyVisibleRows}>Copy visible TSV</Button>:null}
+  {!integratedWorkspace?<TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>:null}
+  {!integratedWorkspace&&rows.length>0?<Button variant="secondary" type="button" onClick={copyVisibleRows}>Copy visible TSV</Button>:null}
   {sort?<Button variant="ghost" type="button" onClick={()=>setSort(null)} aria-label="Clear grid sorting">Clear grid sort</Button>:null}
   {clipboardMessage?<p role="status" className="text-xs text-muted-foreground">{clipboardMessage}</p>:null}
   {rows.length===0?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-3">No matching records.</p>:<>
