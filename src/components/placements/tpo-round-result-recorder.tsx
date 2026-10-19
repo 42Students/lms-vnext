@@ -1,4 +1,7 @@
 "use client";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -167,7 +170,7 @@ export function TpoRoundResultRecorder({
         <>
           <label className="block font-semibold text-body">
             Round outcome
-            <select
+            <Select
               aria-label={"Round outcome for " + row.displayName}
               value={outcome}
               disabled={busy}
@@ -177,12 +180,12 @@ export function TpoRoundResultRecorder({
               {Object.entries(TPO_RESULT_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
               ))}
-            </select>
+            </Select
           </label>
           {outcome === "HOLD" ? (
             <label className="block font-semibold text-body">
               Waitlist rank
-              <input
+              <Input
                 type="number"
                 min={1}
                 max={100000}
@@ -195,7 +198,7 @@ export function TpoRoundResultRecorder({
           ) : null}
           <label className="block font-semibold text-body">
             Learner-facing message {outcome === "PASS" ? "(optional)" : "(required)"}
-            <textarea
+            <Textarea
               rows={2}
               maxLength={1000}
               value={message}
