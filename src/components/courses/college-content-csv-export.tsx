@@ -6,7 +6,7 @@ export function CollegeContentCsvExport({rows,filename}:{rows:readonly CollegeCo
   const url=URL.createObjectURL(new Blob([collegeContentCsv(rows)],{type:"text/csv;charset=utf-8"}));
   const a=document.createElement("a");a.href=url;a.download=filename;
   document.body.appendChild(a);a.click();a.remove();
-  window.setTimeout(()=>URL.revokeObjectURL(url),0);
+  window.setTimeout(()=>URL.revokeObjectURL(url),30_000);
  }
  return <Button type="button" variant="secondary" disabled={!rows.length} onClick={download} aria-label="Export college course content as CSV"
   className="min-h-11">Export CSV</Button>;
