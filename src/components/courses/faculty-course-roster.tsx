@@ -199,7 +199,7 @@ export function FacultyCourseRoster({
                 cell:(learner)=><div className="flex min-w-0 items-center gap-3">
                   <Button type="button" onClick={()=>setPreview(learner)}
                     aria-label={"Preview avatar for "+nameOf(learner)}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text">
                     {initials(nameOf(learner))}
                   </Button>
                   <div className="min-w-0">
