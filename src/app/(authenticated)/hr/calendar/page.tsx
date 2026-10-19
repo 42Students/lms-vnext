@@ -247,7 +247,7 @@ export default async function HrCalendarPage({
   if (Object.values(query).some(Array.isArray)) {
     return <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="Calendar" />
-      <p role="alert" className="border-b border-border py-4 text-sm text-body">
+      <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
         Invalid calendar filters.
       </p>
       <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text underline">
