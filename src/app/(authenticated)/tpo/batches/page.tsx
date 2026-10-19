@@ -13,7 +13,7 @@ import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-se
 import {countTpoLearnersWithoutClass} from "@/modules/placements/tpo-batch-unassigned-students-service";
 import { listTpoBatchCardEligibility } from "@/modules/placements/tpo-batch-directory-counts-service";
 import { listTpoBatchJourneyCounts } from "@/modules/placements/tpo-batch-journey-service";
-import { batchEligibilityShare } from "@/modules/placements/tpo-batch-eligibility-summary-model";
+import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { tpoBatchNextAction, tpoBatchNextActionLink } from "@/modules/placements/tpo-batch-next-action-model";
 import { tpoBatchCardDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
@@ -171,11 +171,14 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
             <dd className="font-semibold tabular-nums">{part.count}</dd>
           </div>)}
         </dl>
-        <div role="img" aria-label={split.map(part=>part.label+": "+part.count).join(", ")}
-          className="flex h-3 w-full overflow-hidden rounded-full bg-muted">
-          {split.map(part=><div key={part.key} className={part.color}
-            style={{width: batchEligibilityShare(part.count,summary.assessed)+"%"}} />)}
-        </div>
+        <StackedMetricBar className="w-full" maximum={summary.assessed}
+          label={split.map(part=>part.label+": "+part.count).join(", ")}
+          segments={split.map(part=>({
+            label:part.label,value:part.count,
+            tone:part.key==="eligible"?"success" as const:
+              part.key==="ineligible"?"error" as const:
+              part.key==="review"?"warning" as const:"muted" as const,
+          }))} />
         {summary.needsReview>0?<p className="text-xs text-warning">Ambiguous class membership requires review.</p>:null}
       </div>;
     })()}
