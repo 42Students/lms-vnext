@@ -75,7 +75,7 @@ export default async function TpoScheduleConflictsPage({
           ["Assessable rounds", data.assessedCount],
           ["Incomplete scheduling", data.unassessable.length],
         ].map(([name, value]) => (
-          <div key={name} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+          <div key={name} className="border-b border-border px-1 py-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
