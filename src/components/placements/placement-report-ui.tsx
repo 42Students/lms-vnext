@@ -4,6 +4,7 @@ import {ReportInteractiveTable} from "./report-interactive-table";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import type { PlacementReportMetrics } from "@/modules/placements/report-model";
 import type { getPlacementReportWorkspace } from "@/modules/placements/report-service";
 
@@ -77,13 +78,13 @@ export function ReportFilters({
             ))}
           </Select>
         </label>
-        <button
+        <Button variant="secondary"
           type="submit"
           disabled={workspace.seasons.length === 0}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50 md:min-h-9"
+          className="min-h-11 md:min-h-9"
         >
           Apply season
-        </button>
+        </Button>
       </form>
 
       <form action={path} method="get" className="flex flex-wrap items-end gap-3">
@@ -110,13 +111,13 @@ export function ReportFilters({
             ))}
           </Select>
         </label>
-        <button
+        <Button variant="secondary"
           type="submit"
           disabled={workspace.noSeason}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50 md:min-h-9"
+          className="min-h-11 md:min-h-9"
         >
           Apply drive
-        </button>
+        </Button>
       </form>
       <div className="lg:col-span-2"><TpoReportSavedFilters path={path} collegeId={workspace.collegeId} userId={userId}/></div>
       <p className="text-xs leading-5 text-muted-foreground lg:col-span-2">
@@ -136,7 +137,7 @@ export function ReportScopeNote({
   return (
     <section
       aria-label="Reporting methodology"
-      className="rounded-xl border border-border bg-muted p-4 text-sm leading-6 text-body"
+      className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm leading-6 text-body"
     >
       <p className="font-semibold text-foreground">Reporting methodology</p>
       <p className="mt-1">{note}</p>
@@ -184,7 +185,7 @@ export function ReportMetrics({
       {cards.map((card) => (
         <div
           key={card.label}
-          className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0"
+          className="border-b border-border py-4"
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-body">
             {card.label}
