@@ -32,7 +32,7 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
 
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader eyebrow="My Placements" title="Interviews"
+      <PageHeader title="Interviews"
         description="Your scheduled placement interview rounds and joining details." />
       <LearnerCareerRoundsWorkspace
         key={link.key ?? "all-interviews"}
