@@ -39,6 +39,8 @@
     position:static !important;
     white-space:normal !important; overflow-wrap:anywhere;
   }
+  .lms-shell-frame a[download],
+  .lms-shell-frame a[href*="/api/placements/reports"] { display:none !important; }
   .lms-shell-frame a[href] { text-decoration:underline; }
   .lms-shell-frame *, .lms-shell-frame *::before, .lms-shell-frame *::after {
     animation:none !important; transition:none !important;
