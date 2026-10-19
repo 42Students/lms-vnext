@@ -1486,12 +1486,11 @@ export function ProjectWorkspace({
                 {upcoming[0].meetingType?" · "+label(upcoming[0].meetingType):""}
               </p>:
                 <p className="mt-1 text-sm text-muted-foreground">No upcoming meeting.</p>}
-              {upcoming.length>1?<details className="mt-2 text-sm">
-                <summary className="cursor-pointer font-semibold text-link">Also scheduled ({upcoming.length-1})</summary>
+              {upcoming.length>1?<Disclosure title="Also scheduled ({upcoming.length-1})" className="mt-2 text-sm">
                 <ul className="mt-2 space-y-1">{upcoming.slice(1).map(m=>
                   <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}
                     {m.meetingType?" · "+label(m.meetingType):""}</li>)}</ul>
-              </details>:null}
+              </Disclosure>:null}
               <MentorMeetingHistory meetings={workspace.meetings
                 .filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
                   ((m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)<=renderTime))
