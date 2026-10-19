@@ -318,3 +318,56 @@ Rules were compared statically using `components___variables.scss:148-159` and `
 - [ ] E6 global card boundaries: these 18 root error wrappers are flattened; independent interactive object tiles and other portals still need classification.
 
 **Exact next file:** `src/app/(authenticated)/tpo/settings/recruiters/error.tsx` (confirmed native h1 present at last source inspection). Continue TPO settings error routes and adjacent learner/faculty recovery files; update individual source inventories before any global tick.
+
+## chat-9 scoped TPO page-head completion — 2026-10-19
+
+**Integration:** upstream `main` was merged into the lane preserving nonconflicting changes and the newer upstream HR error states. The previously owned `clone-page-anatomy.md` section was retained because the upstream copy was its exact prefix. All work below was committed exclusively to `chatgpt/chat-9-b`.
+
+### Completed files and source-grep output
+
+| File under `src/app/(authenticated)/` | PageHeader source line | Root section line | PageBackLink line | Per-file grep/markup result |
+| --- | ---: | ---: | ---: | --- |
+| `tpo/settings/recruiters/error.tsx` | 21 | 17 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/reports/unplaced/error.tsx` | 14 | 13 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/students/requests/error.tsx` | 17 | 13 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/reports/offers-expiry/error.tsx` | 6 | 5 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/reports/placed-branch/error.tsx` | 6 | 5 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/reports/joining-status/error.tsx` | 14 | 13 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/reports/season-pipeline/error.tsx` | 7 | 6 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/reports/placement-summary/error.tsx` | 14 | 13 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/reports/offers-acceptance/error.tsx` | 14 | 13 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/placements/jobs/[jobId]/edit/error.tsx` | 9 | 8 | 13 | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/students/[membershipId]/history/error.tsx` | 11 | 10 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/students/[membershipId]/participation/error.tsx` | 14 | 13 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/settings/see/error.tsx` | 17 | 13 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/settings/team/error.tsx` | 17 | 13 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/verification/error.tsx` | 7 | 6 | 11 | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+| `tpo/students/error.tsx` | 17 | 13 | — | [x] native h1=0, shared PageHeader=1, extra outer canvas=0 |
+
+**Connector-backed grep equivalent** (each of the 16 files fetched *after its last write* from the lane branch):
+
+- Pattern `/<h1(?:\\s|>)/g`: **0 matches across all 16 files**.
+- Pattern `/<PageHeader\\b/g`: **16 matches total, exactly 1 per file**.
+- Every file: `PageHeader` imported, `"use client"` directive first, `<section role="alert">` and its `</section>` retained, `onClick={reset}` retained.
+- Outer decorative rounded/bordered `<section>` wrappers: **0** in these 16 files after the pass; layout uses shared authenticated `PageCanvas` once (`src/app/(authenticated)/layout.tsx:147-156`).
+- Two recovery navigation destinations preserved: `/tpo/placements/lifecycle` and `/tpo/students`, now via the 44px shared `PageBackLink`.
+- No suspicious escaped apostrophe sequences or stray opening-tag quote markers in the scoped checks.
+- These are scoped file-content inspections; **not** a whole-tree `git grep`, executed typecheck, or browser screenshots.
+
+### Legacy and vNext value table
+
+| Property | Old LMS reference | vNext implementation | Outcome |
+| --- | --- | --- | --- |
+| One page canvas | `old-lms-shell-spec.md:18-20`: white #fff, border 1px #e5e9f0, radius 12px, padding 24px, no shadow | `src/app/(authenticated)/layout.tsx:147-156`; `src/components/ui/page-canvas.tsx:13-23` | [x] Inherited once for these 16 routes; no duplicate outer error card |
+| Heading desktop | `old-lms-shell-spec.md:26-28`: 30px, 600, #172033 | `src/components/ui/page-header.tsx:31-38`, heading token `src/app/globals.css:324` | [x] Shared source maps to measured legacy shell |
+| Header divider/space | `legacy-styles/components___listing-page-header.scss:26-35`: bottom 1px neutral200; padding16px/margin16px | `page-header.tsx:26-29`: 1px canvas-border, pb-4, md:mb-4 | [x] Single header separator, removal of redundant route section borders |
+| Phone header | `listing-page-header.scss:130-154`: max767px, 20px title, 8px gap, actions stack | `page-header.tsx:26-49`: mobile flex-col, 20px title via CSS variable, gap2 (8px), full-width actions | [x] Static breakpoint/value comparison |
+| Tablet title/subtitle | `listing-page-header.scss:45-49`: baseline, gap16px, wrap | `page-header.tsx:30-45`: md:items-baseline, md:gap-4, md:flex-wrap | [x] Static comparison; no truncation |
+| Back-link touch/focus | `components___learn-layout.scss:361-383`: 44px hit area, label hidden up to767px, muted to teal hover in .15s | `page-back-link.tsx:18-29`: min-h-11/min-w-11, hidden md:inline label, duration-150 teal hover, focus-visible outline | [x] Scoped source proof for two returned-link callers; no rendered a11y test |
+| Recovery behavior | Existing vNext errors | All 16 `error.tsx` files in table | [x] Retry `reset` handlers and warning copy retained |
+
+**Source responsive matrix:** at 320, 390 and 767px the header remains the mobile 20px stacked mode and back label hidden; at 768, 991, 1024 and 1199px the `md` row/30px heading and visible back label apply. This follows `legacy-styles/components___variables.scss:148-159` breakpoint sources; it is a **static rule trace**, not measured visual output. Exact browser geometry and cross-portal overflow testing are still open.
+
+**Strict tick scope:** 16 *file-level* source checks completed, but parent B5/B6/E6 audit checkboxes remain **[ ]** for global coverage, visual/interaction proof, other page variants and card-wrapper exemptions. Do not infer repo-wide zero counts.
+
+**Next batch:** `src/app/(authenticated)/tpo/settings/trusted/error.tsx` (verify whether shared `ErrorState` already owns title) followed by `src/app/(authenticated)/tpo/reports/*/error.tsx` leftovers and learner/mentor recovery surfaces that still have source-level nested wrappers.
