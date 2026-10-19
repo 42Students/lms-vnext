@@ -4,7 +4,8 @@ import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {applicantStage} from "@/modules/placements/tpo-applicant-pipeline-model";
 import {tpoGridTimeLabel} from "@/modules/placements/tpo-grid-time-label";
 import {TpoApplicantReviewDrawer} from "@/components/placements/tpo-applicant-review-drawer";
-import {TpoGrid} from "./grid/tpo-grid";
+import dynamic from "next/dynamic";
+import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import {GridWorkspace} from "./grid/grid-workspace";
 import type {TpoFilterField} from "./tpo-grid-filter-panel";
 
@@ -12,6 +13,12 @@ type Row={
  id:string;student:string|null;role:string;rollNumber:string|null;email:string|null;phone:string|null;batchName:string|null;branchName:string|null;cgpaHundredths:number|null;activeBacklogs:number|null;pastBacklogs:number|null;tenthPctBasisPoints:number|null;twelfthPctBasisPoints:number|null;lastRound:string|null;lastResult:string|null;applicationStatus:string;screeningStatus:string|null;
  screeningUpdatedAt:string|null;eligibilityStatus:string;channel:string;submittedAt:string;flags:string[];
 };
+/** Keep the authorized page snapshot unchanged across the client-only grid boundary. */
+const TpoGrid = dynamic<TpoSpreadsheetGridProps<Row>>(
+ () => import("./grid/tpo-grid").then(module => module.TpoGrid<Row>),
+ {ssr:false, loading:() => <div role="status" className="min-h-16 py-4 text-sm text-muted-foreground">Loading applicant spreadsheet…</div>},
+);
+
 const columns:readonly TpoGridColumn<Row>[]=[
  {key:"student",label:"Student",read:r=>r.student??"Name unavailable"},
  {key:"role",label:"Role",read:r=>r.role},
