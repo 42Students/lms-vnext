@@ -27,7 +27,7 @@ export function RecruiterDriveFocusRefresh(){
  return stale?<div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-warning bg-surface px-4 py-3 text-sm text-body">
   <span>Some drive information may be stale or unavailable.</span>
   <button type="button" onClick={()=>{setStale(false);router.refresh();}}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
    Refresh drive
   </button>
  </div>:null;
