@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 "use client";
 
 import { type FormEvent, useRef, useState } from "react";
@@ -156,7 +157,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
               </label>
             </div>
           ) : null}
-          {error ? <p role="alert" className="text-sm font-semibold text-error">{error}</p> : null}
+          {error ? <Alert tone="error">{error}</Alert> : null}
         </form>
       </Drawer>
     </>
