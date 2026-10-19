@@ -24,8 +24,8 @@
 .brand { display: inline-flex; align-items: center; gap: 11px; min-height: 44px; text-decoration: none; }
 .legacyLogo { display: block; width: 151px; height: 37px; object-fit: contain; }
 .center { display: flex; align-items: center; justify-content: center; padding: 12px 20px 52px; }
-.card { width: min(100%, 510px); padding: 40px 42px; border: 1px solid var(--lms-border, #e5e9f0); border-radius: 14px; background: var(--lms-surface, #fff); box-shadow: 0 18px 48px rgba(23,32,51,.07), 0 3px 10px rgba(23,32,51,.025); text-align: center; }
-.icon { display: grid; margin: 0 auto 18px; min-width: 54px; width: max-content; height: 54px; padding: 0 12px; align-items: center; justify-content: center; border: 1px solid #d6edf0; border-radius: 14px; background: var(--lms-primary-subtle, #eff8fa); color: var(--lms-link-text, #0a7c88); font-size: 22px; font-weight: 700; }
+.card { width: min(100%, 510px); padding: 40px 42px; border: 1px solid var(--lms-border, #e5e9f0); border-radius: var(--lms-canvas-radius, 12px); background: var(--lms-surface, #fff); box-shadow: 0 18px 48px rgba(23,32,51,.07), 0 3px 10px rgba(23,32,51,.025); text-align: center; }
+.icon { display: grid; margin: 0 auto 18px; min-width: 54px; width: max-content; height: 54px; padding: 0 12px; align-items: center; justify-content: center; border: 1px solid var(--lms-border, #e5e9f0); border-radius: var(--lms-canvas-radius, 12px); background: var(--lms-primary-subtle, #eff8fa); color: var(--lms-link-text, #0a7c88); font-size: 22px; font-weight: 700; }
 .heading { margin: 0; font-size: 30px; line-height: 40px; letter-spacing: -.035em; font-weight: 600; color: var(--lms-heading, #172033); }
 .message { margin: 12px auto 0; max-width: 390px; font-size: 14px; line-height: 24px; color: var(--lms-body-text, #54505d); }
 .reference { margin: 18px 0 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; font-size: 12px; color: var(--lms-muted-text, #6b7280); }
@@ -43,6 +43,7 @@
 .footerLinks a { color: var(--lms-body-text, #54505d); text-decoration: none; }
 .footerLinks a:hover { color: var(--lms-link-text, #0a7c88); text-decoration: underline; }
 .page a:focus-visible, .page button:focus-visible { outline: 2px solid var(--lms-link-text, #0a7c88); outline-offset: 3px; }
+.primary:disabled, .secondary:disabled, .copy:disabled { opacity: .55; cursor: not-allowed; }
 @media(max-width:640px) {
   .header { padding: 20px 22px; }
   .center { align-items: start; padding: 28px 14px 36px; }

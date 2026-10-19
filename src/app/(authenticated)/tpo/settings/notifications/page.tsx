@@ -310,7 +310,7 @@ export default async function TpoMyNotificationsPage({
       </section>
 
       <section className="border-t border-border">
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-5 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border py-4">
           <div>
             <h2 className="text-lg font-semibold text-foreground">
               My notification preferences
@@ -341,7 +341,7 @@ export default async function TpoMyNotificationsPage({
         {preferences.source === "UNAVAILABLE" ? (
           <div
             role="status"
-            className="p-5 text-sm leading-6 text-body"
+            className="py-4 text-sm leading-6 text-body"
           >
             The TPO notification-preference table is not
             registered in the current database. Saved
@@ -353,7 +353,7 @@ export default async function TpoMyNotificationsPage({
             {preferences.source === "SOURCE_DEFAULT" ? (
               <p
                 role="status"
-                className="border-b border-border px-5 py-4 text-sm leading-6 text-body"
+                className="border-b border-border py-4 text-sm leading-6 text-body"
               >
                 No saved preference row exists for your user
                 account in this college. The values below
