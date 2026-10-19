@@ -384,6 +384,7 @@ export function AcademicPeriodActions({
         ) : (
           <Button
             size="sm"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             variant="secondary"
             onClick={() => setCloseOpen(true)}
           >
@@ -609,6 +610,7 @@ export function CohortActions({
         ) : cohort.status === "ACTIVE" ? (
           <Button
             size="sm"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             variant="secondary"
             onClick={() =>
               setConfirmAction("COMPLETE")
@@ -619,6 +621,7 @@ export function CohortActions({
         ) : (
           <Button
             size="sm"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             variant="ghost"
             onClick={() =>
               setConfirmAction("ARCHIVE")
