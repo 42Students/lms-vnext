@@ -117,7 +117,7 @@ Continue `src/components/tpo/tpo-company-memory-workspace.tsx` header, `src/comp
 
 **Remaining discrepancy:** legacy listing SCSS specifies 28px/1.3 headings while measured TPO shell specifies 30px/1.35; the measured TPO value is used. The full visual/interaction contract is **not** certified. No app, tests, typecheck, screenshots or CI were run.
 
-### Converted from literal `<h1>` into shared `PageHeader` (24 files)
+### Converted from literal `<h1>` into shared `PageHeader` (27 files)
 
 The following are individually fetched and updated on the lane branch, with their original error/loading copy and control handlers left intact. They are *coverage progress*, not a completed global grep:
 
@@ -145,6 +145,9 @@ The following are individually fetched and updated on the lane branch, with thei
 - [x] `src/app/(authenticated)/mentor/task-reviews/error.tsx`
 - [x] `src/app/(authenticated)/activity/loading.tsx`
 - [x] `src/app/(authenticated)/college/verification/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/see/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/error.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/error.tsx`
 
 ### Open proof and next work
 
