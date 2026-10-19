@@ -37,3 +37,19 @@
 - **Account auth surfaces:** membership chooser, no-membership recovery and device list now use shared border, heading and radius values; the device list is bordered/divided rather than nested in an additional white card.
 
 **Ownership / verification:** TPO recruiter campaign composers are owned by chat-2/5/12 and are not changed in this lane; this lane covers the public email campaign unsubscribe workflow and HR recruiter message/notification surfaces. Visual screenshot comparison, mobile browser rendering and actual OTP/service journeys remain unverified because executing the application and CI/typecheck/tests were explicitly excluded. No claim of pixel-perfect runtime parity is made.
+
+## Continuation pass — after syncing main, 2026-10-19
+
+Synced the lane to newer `origin/main` and continued through previously unpolished files without touching shared shell, sidebar, top bar or global UI primitives.
+
+| Area | Additional source files and skin work |
+| --- | --- |
+| Sign-in and OTP | `src/app/login-shell.module.css`, `src/components/auth/login-form.tsx`: theme-aware CTA hover on college hosts, legacy input and shell tokens, Email/Phone segmented tabs, focus states, status notice radii, and accessible resend/email fallback controls |
+| Public error skin | `src/components/public/public-screen.module.css`, `public-auth-skin.module.css`: inherited legacy canvas radius, border colours, keyboard outlines and contrast on public invitation cards |
+| Recruiter verification | `src/components/tpo/recruiter-invite-landing.tsx`, `src/components/placements/public-recruiter-join-form.tsx`: 30px heading, 9px/36px controls, shared branded CTA and mobile spacing |
+| Public share and campaigns | `src/app/company-share/[token]/{page,error,not-found,loading}.tsx`, `src/app/campaign-unsubscribe/[token]/page.tsx`, `src/app/campaign-unsubscribe/confirmed/loading.tsx`: logo/grid skin and safe recovery, no changes to access-token verification or unsubscribe POST semantics |
+| Public loading/error routes | `src/app/{placements,recruiter-invite,hr-invite,college-join,company-join,campaign-unsubscribe}/**`: standardized loading shells with the original logo and branded footer; missing placement pages route back to /home, avoiding a retry loop |
+| HR/Recruiter notifications and messages | `src/app/(authenticated)/{hr,recruiter}/**/{error,not-found,loading}.tsx`, `hr/messages/**`, `hr/notifications/**`: remove redundant white cards around messaging errors, keep alerts and retry actions inside the shared authenticated canvas |
+| Logged error recovery | `src/components/public/graceful-error-boundary.tsx`: optional `insideShell` view renders existing safe recovery wording, error reference and retry action inside the authenticated canvas *without dropping the prior safe client-error reporting and stale-chunk handling* |
+
+**Intentional boundaries:** No changes to OTP delivery/verification, tenant scoping, company share access checks, messaging read receipts or campaign dispatch state; no changes to shared `src/components/ui`, the sidebar, top bar, or `src/app/globals.css`. All work is branch-only and committed in small batches. UI runtime/screenshot verification and CI/typecheck/lint/test execution were **not performed**, by owner direction. This is a source-level styling pass, not a claim of pixel-perfect browser parity.
