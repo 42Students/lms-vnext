@@ -193,8 +193,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       className="w-full max-w-lg border-b border-border pb-6">
       <h2 className="text-lg font-semibold">Move follow-up</h2>
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
-      <button type="button" onClick={()=>setMove(null)}
-        className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Close</button>
+      <Button variant="secondary" type="button" onClick={()=>setMove(null)}
+        className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Close</Button>
     </section>
    </div>:null}
   {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
@@ -219,10 +219,10 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
     {message?<p role="alert" className="text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
     <div className="flex justify-end gap-2">
-     <button type="button" disabled={saving} onClick={cancelDraft}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</button>
-     <button type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">{saving?"Saving…":"Add follow-up"}</button>
+     <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft}
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</Button>
+     <Button variant="secondary" type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary">{saving?"Saving…":"Add follow-up"}</Button>
     </div>
    </div>
   </div>:null}
