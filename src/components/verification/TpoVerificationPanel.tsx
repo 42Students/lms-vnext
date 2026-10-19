@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRouter,useSearchParams} from "next/navigation";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {useState} from "react";
@@ -47,12 +48,12 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
  }
  return <section className="min-w-0 space-y-3">
   <div className="flex flex-wrap gap-3">
-   <button type="button" className="rounded border px-3 py-2 text-sm" onClick={()=>router.refresh()}>Refresh</button>
-   {serverTab==="WAITING"&&waiting.length>0?<button type="button" className="rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text"
-    onClick={()=>{setSelected(null);setSequenceRows(waiting);setSequenceIndex(0);}}>Review one by one ({waiting.length})</button>:null}
+   <Button variant="secondary" type="button"  onClick={()=>router.refresh()}>Refresh</Button>
+   {serverTab==="WAITING"&&waiting.length>0?<Button variant="secondary" type="button" className="text-primary-text"
+    onClick={()=>{setSelected(null);setSequenceRows(waiting);setSequenceIndex(0);}}>Review one by one ({waiting.length})</Button>:null}
   </div>
-  {serverTab==="WAITING"?<button type="button" className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text"
-   onClick={()=>navigate({tab:"WAITING",waitingState:"UPDATE_PENDING",page:"1"})}>Updates to verified details</button>:null}
+  {serverTab==="WAITING"?<Button variant="secondary" type="button" className="text-primary-text"
+   onClick={()=>navigate({tab:"WAITING",waitingState:"UPDATE_PENDING",page:"1"})}>Updates to verified details</Button>:null}
   <section aria-label="Verification filters" className="grid gap-3 rounded-xl border border-border p-3 sm:grid-cols-2">
    <label className="text-sm font-semibold">Marksheets
     <select value={filters.marksheets} onChange={e=>update("marksheets",e.target.value as TpoVerificationLocalFilters["marksheets"])}
