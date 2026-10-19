@@ -31,8 +31,8 @@ export default async function MentorProjectTimelinePage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Release &amp; Sprint timeline"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no timeline was loaded."}
-      actions={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0">
+      actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Sprint workspace
       </Link>} />
     {!data.enabled?<section role="status"
