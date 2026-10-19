@@ -94,7 +94,7 @@ export default async function FacultyAssessmentResultsPage({
           <option value="5">5</option><option value="10">10</option>
         </select>
       </label>
-      <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-foreground text-on-primary">
+      <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
         Filter
       </button>
       <Link href="/teacher/results" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
