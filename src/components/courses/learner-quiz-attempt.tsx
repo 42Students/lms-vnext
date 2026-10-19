@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 "use client";
 
 import { MetricBar } from "@/components/ui/metric-bar";
@@ -345,8 +346,8 @@ export function LearnerQuizAttempt() {
 
   if (error && !quiz) {
     return (
-      <div className="rounded-xl border border-error/30 bg-surface p-8">
-        <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Something went wrong</h1>
+      <div className="min-w-0 space-y-3">
+        <PageHeader title="Something went wrong" />
         <p className="mt-2 text-sm text-body">{error}</p>
         <div className="mt-4 flex gap-2">
           <Button onClick={() => void load()}>Try Again</Button>
@@ -363,8 +364,7 @@ export function LearnerQuizAttempt() {
       <section className="min-w-0 space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">Quiz review</p>
-            <h1 className="mt-2 font-semibold text-[var(--lms-heading)] text-[30px] leading-10">{quiz.quiz.title}</h1>
+            <PageHeader eyebrow="Quiz review" title={quiz.quiz.title} />
             <p className="mt-2 text-sm text-body">
               {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
                 ? learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
@@ -446,13 +446,13 @@ export function LearnerQuizAttempt() {
           ? `You have ${answerProgress.total-answerProgress.answered} unanswered question${answerProgress.total-answerProgress.answered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
           : "Submit this quiz attempt? You cannot edit this attempt after submission."}
         confirmLabel="Submit" onConfirm={() => void submit()} />
-      <header className="border-b border-border pb-4">
+      <div className="border-b border-border pb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="m-0 text-xs font-semibold text-muted-foreground">
               Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
             </p>
-            <h1 className="mt-1 font-semibold text-[var(--lms-heading)] text-[30px] leading-10">{quiz.quiz.title}</h1>
+            <PageHeader title={quiz.quiz.title} />
             <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
             {learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable) ? (
               <p role="status" className="mt-2 rounded-md border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>
@@ -469,9 +469,10 @@ export function LearnerQuizAttempt() {
             </Button>
           ) : <span className="font-semibold text-success">All questions answered</span>}
         </div>
-        <MetricBar className="mt-4" role="progressbar" label="Quiz question position"
-          value={step + 1} maximum={questions.length} unit="questions" />
-      </header>
+        <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
+          <div className="h-full bg-primary transition-all" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
+        </div>
+      </div>
 
       <div className="grid lg:grid-cols-[220px_1fr]">
         <aside className="border-b border-border p-4 lg:border-b-0 lg:border-r">
