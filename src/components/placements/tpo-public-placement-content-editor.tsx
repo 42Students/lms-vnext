@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useRef,useState} from "react";
@@ -76,11 +78,11 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
       onClick={()=>move(index,1)} className="min-h-11 md:min-h-9 text-xs">Move down</Button></span>
    </li>)}
   </ol>
-  {dirty?<p role="status">Unsaved changes</p>:null}
-  {!initial.ready?<p role="status">Page content editing is temporarily unavailable until storage is ready.</p>:null}
+  {dirty?<InlineNotice tone="info" message="Unsaved changes"/>:null}
+  {!initial.ready?<Alert tone="warning">Page content editing is temporarily unavailable until storage is ready.</Alert>:null}
   <Button variant="primary" type="button" disabled={busy||!initial.ready||!dirty}
    className="min-h-11 md:min-h-9"
    onClick={()=>void save()}>{busy?"Saving…":"Save"}</Button>
-  {message?<p role="status" className="text-sm">{message}</p>:null}
+  {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message}/>:null}
  </section>;
 }
