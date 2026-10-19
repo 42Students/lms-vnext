@@ -153,6 +153,6 @@ export default async function SuperAdminBatchPromotionPage({
         </div> : <EmptyState title="No enrolled learners" description="No registered learner enrollments were present for this batch." />}
       </section>
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] hover:underline sm:min-h-9">← Academics</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline sm:min-h-9">← Academics</Link>
   </div>;
 }
