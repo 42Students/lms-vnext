@@ -51,43 +51,43 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
   }catch{setError(friendlyApiError({}));}
   finally{lock.current=false;setPending(false);setConfirmOpen(false);}
  }
- return <section className="space-y-3 rounded-xl border border-border bg-surface p-4" aria-label="Finding actions">
+ return <section className="space-y-3 border-b border-border pb-4" aria-label="Finding actions">
   <h2 className="font-semibold">Update finding</h2>
   <label className="grid gap-1 text-sm">Action
    <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as Action)}
-    className="text-base">
+    className="text-sm">
     {(["STATUS","SEVERITY","ASSIGNEE","DUPLICATE","FIX_COMMIT","COMMENT"] as const).map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
    </Select>
   </label>
   {action==="STATUS"?<label className="grid gap-1 text-sm">Status
-   <Select value={nextStatus} disabled={pending} onChange={e=>setNextStatus(e.target.value)} className="text-base">
+   <Select value={nextStatus} disabled={pending} onChange={e=>setNextStatus(e.target.value)} className="text-sm">
     {FINDING_STATUSES.map(value=><option key={value} value={value}
       disabled={!canTransitionIndependentFinding(status as IndependentFindingStatus,value,"Reason supplied")}>
       {value.replaceAll("_"," ")}</option>)}
    </Select></label>:null}
   {action==="SEVERITY"?<label className="grid gap-1 text-sm">Severity
-   <Select value={nextSeverity} disabled={pending} onChange={e=>setNextSeverity(e.target.value)} className="text-base">
+   <Select value={nextSeverity} disabled={pending} onChange={e=>setNextSeverity(e.target.value)} className="text-sm">
     {FINDING_SEVERITIES.map(value=><option key={value}>{value}</option>)}
    </Select></label>:null}
   {action==="ASSIGNEE"?<label className="grid gap-1 text-sm">Assignee
-   <Input value={assignee} disabled={pending} maxLength={150} onChange={e=>setAssignee(e.target.value)} className="text-base"/>
+   <Input value={assignee} disabled={pending} maxLength={150} onChange={e=>setAssignee(e.target.value)} className="text-sm"/>
    </label>:null}
   {action==="DUPLICATE"?<label className="grid gap-1 text-sm">Duplicate of finding UUID
    <Input value={duplicateOf} list="finding-duplicate-candidates" disabled={pending}
     onChange={e=>setDuplicateOf(e.target.value)}
     placeholder="Select a matching finding"
-    className="text-base"/>
+    className="text-sm"/>
    <datalist id="finding-duplicate-candidates">{candidates.map(item=><option key={item.id}
      value={item.id}>{item.externalId} · {item.title}</option>)}</datalist>
    </label>:null}
   {action==="FIX_COMMIT"?<div className="grid gap-2">
    <label className="grid gap-1 text-sm">Repository
-    <Input value={repo} disabled={pending} onChange={e=>setRepo(e.target.value)} className="text-base"/></label>
+    <Input value={repo} disabled={pending} onChange={e=>setRepo(e.target.value)} className="text-sm"/></label>
    <label className="grid gap-1 text-sm">Commit SHA
-    <Input value={sha} disabled={pending} maxLength={40} onChange={e=>setSha(e.target.value)} className="text-base"/></label>
+    <Input value={sha} disabled={pending} maxLength={40} onChange={e=>setSha(e.target.value)} className="text-sm"/></label>
    </div>:null}
   {(action==="COMMENT"||action==="STATUS")?<label className="grid gap-1 text-sm">Note or reason
-    <Textarea rows={3} maxLength={1000} value={note} disabled={pending} onChange={e=>setNote(e.target.value)} className="text-base"/>
+    <Textarea rows={3} maxLength={1000} value={note} disabled={pending} onChange={e=>setNote(e.target.value)} className="text-sm"/>
    </label>:null}
   <Button variant="primary" type="button" onClick={()=>void submit()} disabled={pending}
    >{pending?"Saving…":"Save details"}</Button>
