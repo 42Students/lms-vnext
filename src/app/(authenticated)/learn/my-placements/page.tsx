@@ -229,7 +229,6 @@ export default async function LearnerPlacementsPage({
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Learner"
         title="My Placements"
         description={LEARNER_PLACEMENTS_HOME_SUBTITLE}
       />
