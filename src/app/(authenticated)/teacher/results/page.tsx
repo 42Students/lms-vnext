@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -46,15 +47,15 @@ export default async function FacultyAssessmentResultsPage({
           placeholder="Assessment, course code or Section" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Type
-        <select name="kind" defaultValue={data.query.kind}
+        <Select name="kind" defaultValue={data.query.kind}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
-        <select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""}
+        <Select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="">All teaching sections</option>
           {data.sections.map(section => (
@@ -62,37 +63,37 @@ export default async function FacultyAssessmentResultsPage({
               {section.courseCode} · {section.courseName} · {section.sectionName}
             </option>
           ))}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <select name="status" defaultValue={data.query.status}
+        <Select name="status" defaultValue={data.query.status}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All</option>
           <option value="PUBLISHED">Published</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Due date
-        <select name="due" defaultValue={data.query.due}
+        <Select name="due" defaultValue={data.query.due}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All due dates</option>
           <option value="OVERDUE">Past due, published</option>
           <option value="UPCOMING">Upcoming due</option>
           <option value="UNDATED">No due date</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sort
-        <select name="sort" defaultValue={data.query.sort}
+        <Select name="sort" defaultValue={data.query.sort}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="DUE_DESC">Latest due date</option>
           <option value="DUE_ASC">Earliest due date</option>
           <option value="TITLE">Assessment title</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Records per page
-        <select name="pageSize" defaultValue={data.query.pageSize}
+        <Select name="pageSize" defaultValue={data.query.pageSize}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="5">5</option><option value="10">10</option>
-        </select>
+        </Select>
       </label>
       <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
         Filter

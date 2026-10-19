@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 import {useState} from "react";
 export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:string;manualStage:string;stage:string};onUpdated:()=>void}){
@@ -27,10 +28,10 @@ export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:stri
   </button>
   {open?<div className="space-y-2">
    <label className="block text-xs">Stage
-    <select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
+    <Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
      className="min-h-10 w-full rounded border border-border bg-surface">
      <option value="CONTACTED">Contacted</option><option value="NOT_NOW">Not now</option>
-    </select>
+    </Select>
    </label>
    {action==="NOT_NOW"?<label className="block text-xs">Reason
     <input value={reason} maxLength={255} onChange={e=>setReason(e.target.value)}
