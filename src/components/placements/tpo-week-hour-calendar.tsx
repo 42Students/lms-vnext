@@ -1,4 +1,7 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect,useMemo,useRef,useState} from "react";
@@ -120,12 +123,12 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   <div className="flex flex-wrap items-center justify-between gap-3">
    <h2 className="font-semibold">Week · 7 AM to 9 PM IST</h2>
    <label className="text-sm">Find an event
-    <input type="search" value={filter} onChange={e=>setFilter(e.target.value)} maxLength={100}
+    <Input type="search" value={filter} onChange={e=>setFilter(e.target.value)} maxLength={100}
      className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2" placeholder="Company or event"/>
    </label>
   </div>
   <p className="text-xs text-muted-foreground">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p>
-  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface [mask-image:linear-gradient(to_right,black_0%,black_95%,transparent_100%)]">
+  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className="overflow-x-auto overscroll-x-contain rounded-[var(--lms-canvas-radius)] border border-border bg-surface [mask-image:linear-gradient(to_right,black_0%,black_95%,transparent_100%)]">
    <div className="grid min-w-[63rem] grid-cols-[5rem_repeat(7,minmax(0,1fr))]">
     <div className="sticky left-0 z-10 border-b border-r border-border bg-surface p-2 text-xs">IST</div>
     {days.map(day=><div key={day} className="border-b border-r border-border p-3 text-center text-xs font-semibold">
@@ -196,23 +199,23 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    </div>:null}
   {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
   {slot?<div role="dialog" aria-modal="true" aria-label="New recruiter follow-up" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <div className="w-full max-w-md space-y-3 rounded-xl border border-border bg-surface p-5" onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();cancelDraft();}}}>
+   <div className="w-full max-w-md space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-[var(--lms-space-5)]" onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();cancelDraft();}}}>
     <h2 className="text-lg font-semibold">New recruiter follow-up</h2>
     {slot&&blocked.has(slot.slice(0,10))?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-warning px-3 py-2 text-sm text-[var(--lms-gold-accent)]">This day is blocked for placement scheduling. Choose another date if possible.</p>:null}
     {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}
     <label className="grid gap-1 text-sm">Date and time (IST)
-     <input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}
+     <Input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3"/></label>
     <label className="grid gap-1 text-sm">Search recruiter lead
-     <input value={leadQuery} onChange={e=>{setLeadQuery(e.target.value);setLeadId("");}}
+     <Input value={leadQuery} onChange={e=>{setLeadQuery(e.target.value);setLeadId("");}}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3" maxLength={120}/>
-     <select value={leadId} disabled={loadingLeads} required onChange={e=>setLeadId(e.target.value)}
+     <Select value={leadId} disabled={loadingLeads} required onChange={e=>setLeadId(e.target.value)}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3">
       <option value="">{loadingLeads?"Loading recruiters…":"Choose recruiter"}</option>
       {matches.map(lead=><option key={lead.id} value={lead.id}>{lead.name}{lead.companyName?" · "+lead.companyName:""}</option>)}
-     </select></label>
+     </Select></label>
     <label className="grid gap-1 text-sm">Note (optional)
-     <textarea value={note} maxLength={500} onChange={e=>setNote(e.target.value)}
+     <Textarea value={note} maxLength={500} onChange={e=>setNote(e.target.value)}
       className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
     {message?<p role="alert" className="text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
     <div className="flex justify-end gap-2">
