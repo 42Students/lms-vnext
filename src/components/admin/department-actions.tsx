@@ -225,7 +225,7 @@ export function DepartmentActions({
           </>
         }
       >
-        {archiveError ? <p role="alert" className="rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-sm text-error">{archiveError} <Button type="button" disabled={pending} onClick={archive} className="font-semibold underline focus-visible:ring-2 focus-visible:ring-primary">Retry delete</Button></p> : null}
+        {archiveError ? <p role="alert" className="rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-sm text-error">{archiveError} <Button type="button" disabled={pending} onClick={archive} className="underline focus-visible:ring-2 focus-visible:ring-primary">Retry delete</Button></p> : null}
         <p className="m-0 text-sm text-body">
           Existing dependencies are checked
           server-side immediately before the
