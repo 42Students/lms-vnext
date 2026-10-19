@@ -53,7 +53,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
   <h2 className="font-semibold">Sign-in method</h2>
   <fieldset disabled={!ready||saving} className="grid gap-3">
    <legend className="sr-only">Sign-in method</legend>
-   {choices.map(choice=><label key={choice.value} className="flex min-h-14 cursor-pointer items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+   {choices.map(choice=><label key={choice.value} className={"flex min-h-14 cursor-pointer items-center gap-3 rounded-[var(--lms-control-radius)] border p-3 transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(selection===choice.value?"border-primary bg-primary-subtle":"border-border bg-surface hover:border-primary")}>
     <Radio className="size-5" name="signin-method" value={choice.value}
      checked={selection===choice.value} onChange={()=>setSelection(choice.value)}/>
     <span><strong className="block text-sm">{choice.label}</strong><span className="text-xs text-muted-foreground">{choice.hint}</span></span>
