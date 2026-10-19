@@ -30,7 +30,7 @@ export default async function LearnerPlacementPreparationPage({
   if(!hasMembershipRole(context,"LEARNER")) redirect("/dashboard");
   const data=await getOwnLearnerPlacementPreparation(context,parsed.data);
   return <div className="min-w-0 space-y-6">
-    <PageHeader eyebrow="Learner · My Placements" title="Placement preparation"
+    <PageHeader title="Placement preparation"
       description="A checklist of information and activity actually recorded for your account."
       actions={<Link href="/learn/my-placements"
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
