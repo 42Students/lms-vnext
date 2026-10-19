@@ -55,7 +55,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 ### Project components (94 TSX)
 
 - [ ] `src/components/projects/admin-project-section-page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/admin-readiness-workspace-picker.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/admin-readiness-workspace-picker.tsx` (greps: complete file source raw/hex/manual-dialog/manual-tabs=0; values: 16 shared/legacy rows; responsive: 44px through767 and 36px >=768 with owned touch scope; cases below)
 - [ ] `src/components/projects/class-team-workspace-creator.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/college-project-mentor-dialog.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/college-project-student-roster-dialog.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -86,7 +86,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [x] `src/components/projects/mentor-project-tabs.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 12 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [x] `src/components/projects/mentor-projects-unavailable.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 10 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [ ] `src/components/projects/mentor-release-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/mentor-sprint-delete-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/mentor-sprint-delete-control.tsx` (greps: complete file source raw/hex/manual-dialog/manual-tabs=0; values: 16 shared/legacy rows; responsive: 44px through767 and 36px >=768 with owned touch scope; cases below)
 - [ ] `src/components/projects/mentor-sprint-details-edit.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-sprint-write.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-task-allocation.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -136,14 +136,14 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [x] `src/components/projects/project-workspace-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/project-workspace-readiness.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-workspace.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/super-admin-template-archive-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/super-admin-template-archive-control.tsx` (greps: complete file source raw/hex/manual-dialog/manual-tabs=0; values: 16 shared/legacy rows; responsive: 44px through767 and 36px >=768 with owned touch scope; cases below)
 - [ ] `src/components/projects/super-admin-template-college-bulk.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/super-admin-template-create-form.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/super-admin-template-overview-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/components/projects/super-admin-template-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/super-admin-template-plan-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/super-admin-template-resource-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/super-admin-template-rollback-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/super-admin-template-rollback-control.tsx` (greps: complete file source raw/hex/manual-dialog/manual-tabs=0; values: 16 shared/legacy rows; responsive: 44px through767 and 36px >=768 with owned touch scope; cases below)
 - [ ] `src/components/projects/super-admin-template-subview-page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/components/projects/super-admin-template-tabs.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 12 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [ ] `src/components/projects/template-metadata-edit-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -772,3 +772,44 @@ Grep equivalent (GitHub full-file source scan; no local command execution): rg -
 **Responsive / data-state proof:** 320px and 767px render one metadata column and a stacked PageHeader, with a 44px header action, text links capable of wrapping, and all dynamic note and attachment names using break-words/break-all. At 768px+ metadata becomes 2 columns and header action shrinks to the measured 36px. The attachment and event lists remain hairline rows at every viewport width and never create an extra canvas. Submitted/created/locked/reopened/reviewed timestamps render only when present, formatted with en-IN Asia/Kolkata; the empty history case remains an explicit message. No URLs bypass the existing safe-link function; existing project access and read-only review behavior preserved.
 
 The old LMS specific project overflow rule is in 42Students/lms2-fe, branch prod-2026, src/styles/components/_learn-projects.scss:1063-1079; the shared shell and tokens are grounded in the vNext docs/design legacy sources. No screenshot, local UI or CI execution was performed.
+
+## Completed — admin readiness selector, sprint deletion and template archive/rollback controls
+
+### Source coverage (GitHub complete-file scans)
+
+All four source files were re-read after changes. Native JSX buttons/input/select/textarea=0 in every file, hardcoded hex=0, browser window.confirm=0, homebuilt fixed-inset/role=dialog=0, hand-rolled tab/aria-pressed=0. The readiness picker uses precisely one shared Input, one shared Radio source node (rendered per filtered workspace) and three shared Buttons. Sprint delete and template archive/rollback each use one shared Button, one useConfirmFlow hook and one shared ConfirmDialog output, with no nested inline <span> hosting a dialog; each dialog renders as sibling of its action span or section. The picker status/empty state stays inside its existing fieldset; the three confirmation controls preserve pending, error and (rollback) success notice state.
+
+Repeat in orchestrator checkout: rg -n '<(button|input|select|textarea)\b|#[[:xdigit:]]{3,8}|window.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' src/components/projects/{admin-readiness-workspace-picker,mentor-sprint-delete-control,super-admin-template-archive-control,super-admin-template-rollback-control}.tsx => expected **0 source matches**. This turn inspected source via GitHub, not local rg, and did not execute app, CI or screenshots.
+
+### Shared legacy-vNext values — 16 checks for each file
+
+| Property/state | Legacy reference and exact value | Matching vNext source and value | Result |
+|---|---|---|---|
+| One page canvas; no overlay cards | old-lms-shell-spec.md:18-20 #fff, 1px #e5e9f0, radius12, padding24 | each component root is an unpainted form/section or display:contents fragment wrapper; inherits global canvas | match |
+| Action height desktop | old-lms-shell-spec.md:23-24 36px | globals.css:341,384-393 and shared Button.tsx:18-29 | match |
+| Action height on phone 320-767 | variables.scss:139,148 44px | styles in legacy-project-touch-actions.module.css:11-15 on all project-shared Buttons, plus MentorSprintDeleteControl min-h-11 | match |
+| Action radius | old-lms-shell-spec.md:23-24 9px | Button.tsx:28 --lms-control-radius, globals.css:343 | match |
+| Action font | old-lms-shell-spec.md:23-24 14px/650 | Button.tsx:19,25-28 default size and weight | match |
+| Primary control default | old-lms-shell-spec.md:23 #0a7c88 with white #fff | shared Button primary, globals.css:24-26,629-634 | match |
+| Primary hover | globals.css:25 and legacy measured shell hover #086873 | shared Button enabled hover/active style via globals.css:635-642 | match |
+| Secondary control face | variables.scss:25,91 #54505d on #fff with #bfc9da hairline | Button.tsx:12 and globals.css:649-653 | match |
+| Secondary hover | listing-page-header.scss:123-127 teal white | Button.tsx:12 / globals.css:654-658 | match |
+| Danger control | variables.scss:71-72 error #ef4444 | Button.tsx:15, globals.css:663-671 | match |
+| Field text/default (picker only) | components___form.scss:117-128, 14px/400, 10px radius, #fbfcfd | picker Input shared/ui input.tsx, globals.css:420-445 and legacy-skin.css:105-132 | match |
+| Focus ring | accessibility.scss:18-23 visible 2px teal + 3px offset | shared Button/Input/Radio focus styles and explicit focus-within labels, globals.css:399-409 | match |
+| Disabled/pending button | variables.scss:28-32 muted disabled; forms and controls inert | disabled props sourced from empty choice/page boundary, busy/eligibility guards on three confirmations | match |
+| Error/empty state | old-lms-pages.md:6-7,12 inline notice, no phantom content | picker empty text, archive/deletion role=alert, rollback role=alert/status; all plain inline text | match |
+| Border/hairline where relevant | common.scss:700-713 neutral-200 1px | picker fieldset border and template rollback border-b via border-border #e5e9f0 | match |
+| Responsive wrapping/scroll | listing-page-header.scss:130-165 phone full width, no horizontal overflow | picker rows min-w-0, max-h-64 overflow-y-auto, wrap paging buttons; sprint/archive display:contents wrapper leaves inline layout; rollback section min-w-0 | match |
+
+### Distinct state pathways and responsive source proof
+
+**AdminReadinessWorkspacePicker (45 lines):** uncontrolled source list is filtered by live title/ID search; 25 visible rows per page, Previous disabled at page1, Next disabled at final page, empty filtered list shows “No matching workspaces”, and View readiness disabled when no choice exists. Search resets pagination; changing a radio preserves existing action query submission. The single shared Input is min-h-11 md:min-h-9; native Radio is intentionally rendered through shared Radio for keyboard accessibility. Labels get min-height44 through767 and36 from768, long titles break, metadata sits in flexible content. Three shared Buttons inherit the owned wrapper's min44 up to767.
+
+**MentorSprintDeleteControl (35 lines):** danger Button initial/hover/disabled style from shared Button; min-h-11 md:min-h-9. Warning text, title and unlinked-task count preserved exactly in askConfirm. Cancel dismisses the shared ConfirmDialog without mutation, accept performs the existing DELETE with optimistic updatedAt and confirmUnlink, pending prevents duplicate actions, error shows role=alert, successful deletion refreshes. JSX span and ConfirmDialog are siblings inside an owned display:contents wrapper, so markup is valid and 44px confirmation footer buttons hold through767.
+
+**SuperAdminTemplateArchiveControl (29 lines):** Archived status returns plain muted caption without actions, current template renders secondary Button at 14px/650 (removed prior text-xs override). Shared confirm includes dynamic title warning and unchanged DELETE; decline stops mutation; busy disables and error prints inline. The standalone action span and shared dialog render siblings inside display:contents wrapper, preserving original visual layout; 44px phone/36px tablet desktop control buttons via scoped CSS.
+
+**SuperAdminTemplateRollbackControl (45 lines):** action disabled when selectedVersion is already current or template archived, with explanatory captions; allowed state displays 14px/650 secondary Button, shared confirm retains detailed version/snapshot warning; accept sends unchanged versionId/currentVersion and confirmed:true POST. Inline success notice, error and pending states stay unchanged. Root section uses min-w-0 touch scoped class: all action and confirmation footer Buttons stay min44 through767, normal36 from768; neutral hairline border remains. No raw overlay.
+
+Note: exact CSS values are from the old-LMS shell/SCSS and shared source; mobile/tablet proofs are source breakpoint comparisons. The app was not run, visual screenshots not taken; orchestrator section J handles final pixel acceptance.
