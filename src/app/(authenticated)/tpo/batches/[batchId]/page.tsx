@@ -97,7 +97,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    {[
     ["Eligible",summary.eligible],["Ineligible",summary.ineligible],
     ["Not decided",summary.undecided],["Needs review",summary.needsReview],
-   ].map(([label,value])=><div key={label} className="min-w-0 border-l-2 border-border px-3 py-2 text-sm">
+   ].map(([label,value])=><div key={label} className="min-w-0 border-l-2 border-border px-3 py-2 text-sm [overflow-wrap:anywhere]">
     <dt>{label}</dt><dd className="font-semibold tabular-nums">{value}</dd>
    </div>)}
   </dl>
