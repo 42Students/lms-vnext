@@ -1,9 +1,11 @@
+import { Skeleton } from "@/components/ui/skeleton";
+
 export default function Loading() {
   return (
     <section aria-busy="true" aria-label="Loading Reports · By Branch" className="space-y-4">
-      <div className="h-16 animate-pulse rounded-xl bg-muted" />
-      <div className="h-24 animate-pulse rounded-xl bg-muted" />
-      <div className="h-48 animate-pulse rounded-xl bg-muted" />
+      <Skeleton variant="row" height={64} label="Loading Reports · By Branch" />
+      <Skeleton variant="row" height={96} label="Loading Reports · By Branch" />
+      <Skeleton variant="row" height={192} label="Loading Reports · By Branch" />
     </section>
   );
 }
