@@ -112,6 +112,7 @@ export function GridWorkspace<Row>({
   return ()=>window.clearTimeout(timer);
  },[typed,querySearch,searchKey,pathname,router,searchParam,searchMode]);
  const changeColumns=(keys:string[])=>{
+  if(onColumnKeysChange){onColumnKeysChange(keys);return;}
   if(columnScope==="local"){
    setLocalKeys(keys);
    if(columnStorageKey){try{window.localStorage.setItem(columnStorageKey,keys.join(","));}
