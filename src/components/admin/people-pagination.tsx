@@ -16,7 +16,7 @@ export function PeoplePagination({
   const link = (target: number) => target === 1
     ? basePath : `${basePath}?page=${target}`;
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+    <div className="flex flex-wrap items-center justify-between gap-3 text-sm print:hidden">
       <p className="m-0 text-muted-foreground" aria-live="polite">
         {state.total === 0 ? "No people found" : `Showing ${state.first}–${state.last} of ${state.total} people`}
       </p>

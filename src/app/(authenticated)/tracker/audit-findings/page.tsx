@@ -33,7 +33,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  if(!parsed)return <div className="space-y-5">{header}
   <ErrorState title="Invalid audit findings filters." description="Independent findings imported from the audit repository, not user bug reports."
    action={<Link href="/tracker/audit-findings?view=OPEN"
-    className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Reset filters</Link>}/>
+    className="inline-flex min-h-11 items-center md:min-h-9 font-semibold text-primary-text underline">Reset filters</Link>}/>
  </div>;
  if(!independentAuditFindingsReady())return <div className="space-y-5">{header}
   <Banner tone="warning">
@@ -51,7 +51,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  const findingColumns:DataTableColumn<(typeof data.items)[number]>[]=[
   {key:"finding",header:"Finding",mobilePriority:"primary",cell:item=><div className="min-w-0">
     <Link href={"/tracker/audit-findings/"+encodeURIComponent(item.externalId)}
-      className="inline-flex min-h-9 items-center break-all font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.externalId}</Link>
+      className="inline-flex min-h-11 items-center md:min-h-9 break-all font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.externalId}</Link>
     <p className="mt-1 max-w-md break-words text-body">{item.title}</p>
    </div>},
   {key:"area",header:"Area / Kind",mobilePriority:"secondary",cell:item=><span>{item.area} · {item.kind}</span>},
@@ -95,7 +95,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     count:data.statusCounts[status]??0,
     href:independentFindingHref({...parsed,statuses:[status],page:1}),
    }))}/>
-  <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-3">
+  <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2 lg:grid-cols-3">
    <input type="hidden" name="view" value={parsed.view}/>
    <label className="text-sm font-semibold">Search
     <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="ID, title or summary"/></label>
@@ -114,8 +114,8 @@ export default async function IndependentFindingsPage({searchParams}:{
      {FINDING_KINDS.map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
    <div className="flex items-end gap-3">
-    <Button type="submit" variant="primary">Apply filters</Button>
-    <Link href="/tracker/audit-findings?view=OPEN" className="min-h-9 inline-flex items-center font-semibold text-primary-text">Clear</Link>
+    <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
+    <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-primary-text md:min-h-9">Clear</Link>
    </div>
   </form>
   <p role="status" className="text-sm text-body">
@@ -125,8 +125,8 @@ export default async function IndependentFindingsPage({searchParams}:{
    caption="Independent audit findings"
    empty={<EmptyState title="No matching audit findings" description="No independent audit findings match these filters."/>}/>
   <nav aria-label="Audit findings pages" className="flex justify-between gap-4">
-   {data.page>1?<Link href={independentFindingHref(parsed,data.page-1)} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:<span/>}
-   {data.page<data.pages?<Link href={independentFindingHref(parsed,data.page+1)} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+   {data.page>1?<Link href={independentFindingHref(parsed,data.page-1)} className="inline-flex min-h-11 items-center md:min-h-9 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:<span/>}
+   {data.page<data.pages?<Link href={independentFindingHref(parsed,data.page+1)} className="inline-flex min-h-11 items-center md:min-h-9 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
   </nav>
  </div>;
 }

@@ -90,7 +90,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [viewport, setViewport] = useState<ToastViewport | null>(null);
   const itemsRef = useRef<ToastItem[]>([]);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  // Store time remaining rather than restarting the full reading duration after a pause.
   const readingDurations = useRef<Map<string, number>>(new Map());
+  const timerStartedAt = useRef<Map<string, number>>(new Map());
   const interacting = useRef({ hover: false, focus: false });
   // Toast IDs are React keys, not credentials. Some embedded WebViews have no
   // crypto.randomUUID; a provider-scoped monotonic counter is collision-free
@@ -100,6 +102,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     const timer = timers.current.get(id);
     if (timer) clearTimeout(timer);
     timers.current.delete(id);
+    timerStartedAt.current.delete(id);
     readingDurations.current.delete(id);
     itemsRef.current = itemsRef.current.filter(toast => toast.id !== id);
     setToasts(itemsRef.current);
@@ -108,29 +111,46 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     const existing = timers.current.get(id);
     if (existing) clearTimeout(existing);
     timers.current.delete(id);
+    timerStartedAt.current.delete(id);
     if (!document.hidden && !interacting.current.hover && !interacting.current.focus) {
+      timerStartedAt.current.set(id, Date.now());
       timers.current.set(id, setTimeout(() => dismiss(id), duration));
     }
   }, [dismiss]);
+  const pauseTimedToasts = useCallback(() => {
+    const now = Date.now();
+    for (const [id, timer] of timers.current) {
+      clearTimeout(timer);
+      const started = timerStartedAt.current.get(id);
+      const remaining = readingDurations.current.get(id);
+      if (started !== undefined && remaining !== undefined) {
+        readingDurations.current.set(id, Math.max(0, remaining - Math.max(0, now - started)));
+      }
+    }
+    timers.current.clear();
+    timerStartedAt.current.clear();
+  }, []);
   const onInteractionChange = useCallback((kind: "hover" | "focus", active: boolean) => {
     const pausedBefore = interacting.current.hover || interacting.current.focus;
     interacting.current[kind] = active;
     const pausedNow = interacting.current.hover || interacting.current.focus;
     if (pausedBefore === pausedNow) return;
     if (pausedNow) {
-      timers.current.forEach(timer => clearTimeout(timer));
-      timers.current.clear();
+      pauseTimedToasts();
     } else {
       for (const [id, duration] of readingDurations.current) {
         if (itemsRef.current.some(toast => toast.id === id)) scheduleTimedToast(id, duration);
       }
     }
-  }, [scheduleTimedToast]);
+  }, [pauseTimedToasts, scheduleTimedToast]);
   const showToast = useCallback((input: ToastInput) => {
     const id = "toast-" + ++nextToastOrdinal.current;
     const { items, evictedIds } = enqueueToast(itemsRef.current, { ...input, id });
     clearEvictedToastTimers(evictedIds, timers.current);
-    for (const evictedId of evictedIds) readingDurations.current.delete(evictedId);
+    for (const evictedId of evictedIds) {
+      readingDurations.current.delete(evictedId);
+      timerStartedAt.current.delete(evictedId);
+    }
     itemsRef.current = items;
     setToasts(items);
     // Errors must remain readable/recoverable until explicitly dismissed.
@@ -146,8 +166,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     function visibilityChange() {
       if (document.hidden) {
-        timers.current.forEach(timer => clearTimeout(timer));
-        timers.current.clear();
+        pauseTimedToasts();
       } else {
         for (const [id, duration] of readingDurations.current) {
           if (itemsRef.current.some(toast => toast.id === id)) scheduleTimedToast(id, duration);
@@ -156,10 +175,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }
     document.addEventListener("visibilitychange", visibilityChange);
     return () => document.removeEventListener("visibilitychange", visibilityChange);
-  }, [scheduleTimedToast]);
+  }, [pauseTimedToasts, scheduleTimedToast]);
   useEffect(() => {
     const currentTimers = timers.current;
-    return () => { currentTimers.forEach(timer => clearTimeout(timer)); currentTimers.clear(); };
+    const currentStarted = timerStartedAt.current;
+    return () => { currentTimers.forEach(timer => clearTimeout(timer)); currentTimers.clear(); currentStarted.clear(); };
   }, []);
   useEffect(() => {
     const visual = window.visualViewport;
@@ -198,7 +218,7 @@ export function ToastAction({ title, children, tone = "info" }: {
   children: ReactNode;
   tone?: ToastTone;
 }) {
-  return <div data-slot="toast-action" role="status"
+  return <div data-slot="toast-action" role={tone === "error" ? "alert" : "status"}
     className={cx("flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius)] border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[tone])}>
     <div className="flex min-w-0 items-center gap-3">
       <span aria-hidden="true" className={cx("h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[tone])} />

@@ -82,14 +82,14 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  return <div className="mt-2 space-y-2">
   <div className="flex flex-wrap gap-2">
    <Button type="button" disabled={busy||loading} onClick={()=>void beginEdit()}
-    variant="secondary" size="sm">
+    variant="secondary" size="sm" className="min-h-11 md:min-h-9">
     {loading?"Loading…":"Edit metadata"}</Button>
    <Button type="button" disabled={busy} onClick={()=>void act("ARCHIVE")}
-    variant="danger" size="sm">
+    variant="danger" size="sm" className="min-h-11 md:min-h-9">
     Delete</Button>
   </div>
   {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
-  {editing?<div className="grid gap-2 rounded border border-border p-3">
+  {editing?<div className="grid gap-2 border-y border-border p-3">
    <label className="grid gap-1 text-xs font-semibold">Quiz title
     <Input required maxLength={255} value={title} disabled={busy}
      onChange={e=>setTitle(e.target.value)} className="min-h-11"/></label>
@@ -105,10 +105,10 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     <DateInput mode="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
      className="min-h-11"/></label>
    {quiz.status==="DRAFT"?<div className="grid gap-2 text-xs font-semibold">
-    <label className="flex items-center gap-2"><Checkbox checked={shuffleQuestions}
+    <label className="flex min-h-11 items-center gap-2"><Checkbox checked={shuffleQuestions}
      disabled={busy} onChange={e=>setShuffleQuestions(e.target.checked)}/>
      Shuffle question order per learner</label>
-    <label className="flex items-center gap-2"><Checkbox checked={shuffleOptions}
+    <label className="flex min-h-11 items-center gap-2"><Checkbox checked={shuffleOptions}
      disabled={busy} onChange={e=>setShuffleOptions(e.target.checked)}/>
      Shuffle answer options per learner</label>
    </div>:null}
@@ -117,7 +117,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     Other immutable quiz fields stay unchanged.
    </p>:null}
    <Button type="button" disabled={busy} onClick={()=>void act("EDIT")}
-    variant="primary" size="sm">
+    variant="primary" size="sm" className="min-h-11 md:min-h-9">
     {busy?"Saving…":"Save quiz"}</Button>
   </div>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
