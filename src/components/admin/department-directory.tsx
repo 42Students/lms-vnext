@@ -87,7 +87,7 @@ export function DepartmentDirectory({
             Rows per page
             <Select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
-              className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground">
+              className="min-h-10 px-2">
               {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
             </Select>
           </label>
@@ -122,7 +122,7 @@ export function DepartmentDirectory({
           ...column,
           header: <Button type="button" aria-label="Sort Department Name"
             onClick={() => { setNameOrder(nameOrder === "ASC" ? "DESC" : "ASC"); setPage(1); }}
-            className="gap-2">
+            className="inline-flex items-center gap-2">
             Department Name {nameOrder === "ASC" ? "↑" : "↓"}
           </Button>,
         } : column)}
