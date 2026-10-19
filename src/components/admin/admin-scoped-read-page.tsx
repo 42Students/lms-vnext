@@ -1,3 +1,6 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {AdminScopedCsvControl} from "@/components/admin/admin-scoped-csv-control";
@@ -75,77 +78,77 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
-  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
+  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-4">
    {!applicationFilters&&data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Status
-    <select name="status" defaultValue={data.query.status}
-     className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="status" defaultValue={data.query.status}
+     className="w-full">
      {statuses.map(status=><option key={status} value={status}>{status}</option>)}
-    </select>
+    </Select>
    </label>
    {applicationFilters?<>
     {(["jobId","departmentId","programId","cohortId"] as const).map(key=>{
       const rows=key==="jobId"?applicationFilters.jobs:key==="departmentId"?applicationFilters.departments:key==="programId"?applicationFilters.programs:applicationFilters.batches;
       const label=key==="jobId"?"Job":key==="departmentId"?"Department":key==="programId"?"Program":"Batch";
       return <label key={key} className="grid gap-1 text-sm font-semibold text-body">{label}
-        <select name={key} defaultValue={data.query[key]??""} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select name={key} defaultValue={data.query[key]??""} className="w-full">
           <option value="">All {label.toLowerCase()}s</option>{rows.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-        </select>
+        </Select>
       </label>;
     })}
     <label className="grid gap-1 text-sm font-semibold text-body">Source
-      <select name="source" defaultValue={data.query.source} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+      <Select name="source" defaultValue={data.query.source} className="w-full">
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
-      </select>
+      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Channel
-      <select name="channel" defaultValue={data.query.channel} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+      <Select name="channel" defaultValue={data.query.channel} className="w-full">
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
-      </select>
+      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Hiring stage
-     <select name="pipelineStage" defaultValue={data.query.pipelineStage} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+     <Select name="pipelineStage" defaultValue={data.query.pipelineStage} className="w-full">
        {["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"].map(stage=><option value={stage} key={stage}>{stage==="ALL"?"All hiring stages":stage}</option>)}
-     </select>
+     </Select>
     </label>
    </>:null}
    {peopleFilters ? <>
     <label className="grid gap-1 text-sm font-semibold text-body">Department
-     <select name="departmentId" defaultValue={data.query.departmentId??""} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+     <Select name="departmentId" defaultValue={data.query.departmentId??""} className="w-full">
       <option value="">All departments</option>{peopleFilters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-     </select>
+     </Select>
     </label>
     {peopleFilters.kind==="FACULTY"?<label className="grid gap-1 text-sm font-semibold text-body">Faculty type
-      <input name="employmentType" defaultValue={data.query.employmentType??""} placeholder="Professor, Mentor…" maxLength={128}
-       className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
+      <Input name="employmentType" defaultValue={data.query.employmentType??""} placeholder="Professor, Mentor…" maxLength={128}
+       className="w-full"/>
      </label>:<>
       {(["programId","cohortId","sectionId"] as const).map((key)=>{
         const values=key==="programId"?peopleFilters.programs:key==="cohortId"?peopleFilters.batches:peopleFilters.classes;
         const label=key==="programId"?"Program":key==="cohortId"?"Batch":"Class";
         return <label key={key} className="grid gap-1 text-sm font-semibold text-body">{label}
-         <select name={key} defaultValue={data.query[key]??""} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+         <Select name={key} defaultValue={data.query[key]??""} className="w-full">
           <option value="">All {label.toLowerCase()}s</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-         </select>
+         </Select>
         </label>;
       })}
      </>}
    </>:null}
    {classOptions?<label className="grid gap-1 text-sm font-semibold text-body">Class
-     <select name="sectionId" defaultValue={data.query.sectionId??""}
-      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+     <Select name="sectionId" defaultValue={data.query.sectionId??""}
+      className="w-full">
       <option value="">All classes</option>
       {classOptions.map(cls=><option key={cls.id} value={cls.id}>{cls.name}</option>)}
-     </select></label>:null}
+     </Select></label>:null}
    <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
-    <select name="pageSize" defaultValue={data.query.pageSize}
-     className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="pageSize" defaultValue={data.query.pageSize}
+     className="w-full">
      {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
-    </select>
+    </Select>
    </label>
-   <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+   <Button type="submit" variant="primary" className="self-end">Filter</Button>
   </form>
   <form method="get" action={path} aria-label="Refresh directory">
     {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
@@ -157,7 +160,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
     <input type="hidden" name="page" value={String(data.query.page)} />
     <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
-    <button type="submit" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Refresh</button>
+    <Button type="submit" variant="primary" variant="secondary" className="self-end">Refresh</Button>
   </form>
   {applicationFilters?<p role="status" className="text-sm text-body">
     {data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL"
