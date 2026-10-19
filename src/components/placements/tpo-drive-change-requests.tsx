@@ -63,7 +63,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
   <section className="space-y-3">
    <h2 className="text-lg font-semibold">Change requests · {requests.length}</h2>
    {!requests.length?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm">No change requests for this drive.</p>:requests.map(item=>
-    <article key={item.id} className="space-y-3 rounded-xl border border-border bg-surface p-5">
+    <article key={item.id} className="space-y-3 border-b border-border py-5">
      <div className="flex flex-wrap items-center justify-between gap-3">
       <h3 className="font-semibold">{item.field.replaceAll("_"," ")} · {item.mode.toLowerCase()}</h3>
       <strong className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">{item.status.replaceAll("_"," ")}</strong>
