@@ -2,6 +2,10 @@
 
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { studentSectionMoveMessage } from "@/modules/academics/college-student-section-move-model";
@@ -65,28 +69,27 @@ export function StudentClassMoveAction({ membershipId, name }: {
   }
   return <div className="text-left">
     <Button variant="secondary" type="button" onClick={load} disabled={busy}
-      className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-xs font-semibold text-primary-text">
+      className="min-h-11 md:min-h-9">
       Move class
     </Button>
-    {open ? <div className="mt-2 min-w-56 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
+    <Dialog open={open} onOpenChange={next=>{if(!busy)setOpen(next);}} title={"Move class for "+name} dismissible={!busy}>
       <p className="mb-2 text-xs text-body">Same batch and academic period only</p>
       {loaded && loaded.options.every(item => item.id === loaded.current.sectionId) ?
-        <p className="mb-2 text-xs text-muted-foreground">No other eligible class is available in the current batch and period.</p> : null}
+        <EmptyState title="No eligible classes" description="No other eligible class is available in the current batch and period."/> : null}
       {loaded ? <Select aria-label={"Destination class for " + name}
-        value={targetId} onChange={e => setTargetId(e.target.value)}
-        className="min-h-[var(--lms-control-height)] w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base sm:text-sm text-foreground">
+        value={targetId} disabled={busy} onChange={e => setTargetId(e.target.value)}>
         <option value="">Choose destination</option>
         {loaded.options.filter(item => item.id !== loaded.current.sectionId).map(item =>
           <option key={item.id} value={item.id}>{item.name} (capacity {item.capacity ?? "unlimited"})</option>)}
-      </Select> : <p className="text-xs text-muted-foreground">{busy ? "Loading classes..." : "No class data loaded"}</p>}
-      {error ? <p role="alert" className="my-2 text-xs text-red-700">{error}</p> : null}
-      {canMove?<p className="mt-2 text-sm text-body">{moveConfirmation}</p>:null}
+      </Select> : busy?<Skeleton variant="row" label="Loading classes"/>:<EmptyState title="No classes loaded" description="No class data loaded"/>}
+      {error ? <Alert tone="error" className="my-2">{error}</Alert> : null}
+      {canMove?<Alert tone="info" className="mt-2">{moveConfirmation}</Alert>:null}
       <div className="mt-3 flex flex-wrap gap-2">
         <Button variant="primary" type="button" disabled={!canMove || busy} onClick={submit}
-          className="rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-xs font-semibold text-on-primary">Confirm move</Button>
+          className="min-h-11 md:min-h-9" loading={busy}>Confirm move</Button>
         <Button variant="secondary" type="button" onClick={() => setOpen(false)}
-          className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-xs">Cancel</Button>
+          className="min-h-11 md:min-h-9" disabled={busy}>Cancel</Button>
       </div>
-    </div> : null}
+    </Dialog>
   </div>;
 }

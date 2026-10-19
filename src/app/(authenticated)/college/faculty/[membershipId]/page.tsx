@@ -2,6 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { getCollegeFacultyDetail } from "@/modules/people/college-faculty-detail-service";
 import { CollegePersonNotFoundError } from "@/modules/people/college-person-detail-model";
@@ -24,21 +27,21 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
     throw error;
   }
   return <div className="min-w-0 overflow-x-clip space-y-6">
-    <PageHeader eyebrow="College Admin · Faculty" title={data.person.name}
+    <PageHeader title={data.person.name}
       description="College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure."
       actions={<div className="flex flex-wrap gap-3">
         <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
-          className="text-sm font-semibold text-link">Lifecycle audit</Link>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Lifecycle audit</Link>
         <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
-        <Link href="/college/faculty" className="text-sm font-semibold text-link lms-inline-link">Back to faculty</Link>
+        <PageBackLink href="/college/faculty" label="Back to faculty"/>
       </div>} />
     <section className="border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Faculty record</h2>
-      <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
+      <dl className="mt-4 grid min-w-0 gap-4 text-sm md:grid-cols-2">
         <div><dt className="text-muted-foreground">Title</dt><dd>{data.person.academicTitle ?? "Not recorded"}</dd></div>
         <div><dt className="text-muted-foreground">Department</dt><dd>{data.person.departmentName ?? "Not recorded"}</dd></div>
         <div><dt className="text-muted-foreground">Employment type</dt><dd>{data.person.employmentType ?? "Not recorded"}</dd></div>
-        <div><dt className="text-muted-foreground">Membership</dt><dd>{data.person.status}</dd></div>
+        <div><dt className="text-muted-foreground">Membership</dt><dd><StatusBadge tone={data.person.status==="ACTIVE"?"success":"warning"}>{data.person.status}</StatusBadge></dd></div>
       </dl>
     </section>
     <section className="border-t border-border pt-5">
@@ -64,20 +67,20 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="TA">Teaching assistant</option>
           </Select>
         </label>
-        <Button type="submit" >Filter</Button>
+        <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
       </form>
       <p className="mt-2 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·
         {" "}{data.counts.distinctOfferings} distinct course offerings
       </p>
       {data.assignments.length === 0
-        ? <p className="mt-4 text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>
+        ? <EmptyState title="No teaching assignments" description="No college-scoped teaching assignments recorded."/>
         : <div className="mt-4">
           <DataTable
             caption="Persisted teaching assignments"
             rows={data.assignments}
             getRowKey={item => item.id}
-            empty={<p className="text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>}
+            empty={<EmptyState title="No teaching assignments" description="No college-scoped teaching assignments recorded."/>}
             columns={[
               { key: "course", header: "Course", mobilePriority: "primary",
                 cell: item => <Link href={`/college/courses/offerings/${encodeURIComponent(item.offeringId)}`}
@@ -87,7 +90,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
               { key: "class", header: "Class / cohort", mobilePriority: "secondary",
                 cell: item => item.sectionName + " · " + item.cohortName + " · " + item.periodName },
               { key: "role", header: "Role", mobilePriority: "secondary", cell: item => item.role },
-              { key: "status", header: "Status", mobilePriority: "secondary", cell: item => item.status },
+              { key: "status", header: "Status", mobilePriority: "secondary", cell: item => <StatusBadge tone={item.status==="ACTIVE"?"success":"neutral"}>{item.status}</StatusBadge> },
             ]}
           />
         </div>}

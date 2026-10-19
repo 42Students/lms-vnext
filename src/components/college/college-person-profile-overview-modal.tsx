@@ -1,6 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
+import {Skeleton} from "@/components/ui/skeleton";
 import {useState} from "react";
 type Overview={person:{name:string;kind:"FACULTY"|"LEARNER";gender:string;bio:string;
  academicTitle:string|null;employmentType:string|null;rollNumber:string|null};
@@ -26,31 +29,30 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
  }
  return <>
   <Button variant="secondary" type="button" onClick={()=>void show()}
-   className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text">Profile</Button>
+   className="min-h-11 md:min-h-9">Profile</Button>
   <Dialog open={open} onOpenChange={setOpen} title={"Profile for "+name}>
-    <div className="flex items-center justify-between gap-2">
-     <h2 className="text-lg font-semibold">Profile · {name}</h2>
+    <div className="flex justify-end">
      <Button variant="secondary" type="button" onClick={()=>setOpen(false)}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3">Close</Button>
+      className="min-h-11 md:min-h-9">Close</Button>
     </div>
-    {loading?<p role="status">Loading profile…</p>:null}
-    {error?<p role="alert" className="text-error">{error}</p>:null}
+    {loading?<Skeleton variant="row" count={3} label="Loading profile"/>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
     {data?<div className="space-y-4">
-     <dl className="grid gap-3 text-sm sm:grid-cols-2">
+     <dl className="grid min-w-0 gap-3 text-sm md:grid-cols-2">
       <div><dt className="text-muted-foreground">Gender</dt><dd>{data.person.gender||"Not recorded"}</dd></div>
       <div><dt className="text-muted-foreground">Role</dt><dd>{data.person.academicTitle||data.person.employmentType||data.person.kind}</dd></div>
-      <div className="sm:col-span-2"><dt className="text-muted-foreground">Bio</dt><dd>{data.person.bio||"Not recorded"}</dd></div>
+      <div className="md:col-span-2"><dt className="text-muted-foreground">Bio</dt><dd>{data.person.bio||"Not recorded"}</dd></div>
      </dl>
      <section><h3 className="font-semibold">Education</h3>
-      {!data.education.length?<p className="text-sm text-muted-foreground">No education records.</p>:
+      {!data.education.length?<EmptyState title="No education records" description="No education records."/>:
       <ul className="mt-2 space-y-2">{data.education.map((item,index)=>
-       <li key={index} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm"><strong>{item.title||"Education"}</strong>
+       <li key={index} className="border-b border-border py-3 text-sm"><strong>{item.title||"Education"}</strong>
         <p>{item.detail||"Institution not recorded"} · {item.year||"Year not recorded"}</p>
         {item.extra?<p className="text-muted-foreground">{item.extra}</p>:null}
        </li>)}</ul>}
      </section>
-     <div className="grid gap-4 sm:grid-cols-2">{sections.map(section=>
-      <section key={section} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+     <div className="grid min-w-0 gap-4 md:grid-cols-2">{sections.map(section=>
+      <section key={section} className="min-w-0 border-b border-border py-3">
        <h3 className="font-semibold capitalize">{section}</h3>
        {data[section].length?<ul className="mt-2 list-inside list-disc text-sm">
         {data[section].map((item,index)=><li key={index}>{item}</li>)}</ul>:
