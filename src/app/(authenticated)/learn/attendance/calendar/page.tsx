@@ -73,18 +73,18 @@ export default async function LearnerAttendanceCalendarPage({
 
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+      actions={<Link href={sourceLink} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
         Attendance detail
       </Link>} />
     <form action="/learn/attendance/calendar" method="get"
-      className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
+      className="grid gap-3 border-b border-border pb-4 md:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Month
         <Input name="month" type="month" defaultValue={data.query.month}
           className="min-h-11" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course
         <Select name="deliveryId" defaultValue={data.query.deliveryId}
-          className="min-h-11 w-full sm:min-h-9">
+          className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All accessible Courses</option>
           {data.courses.map(course=>
             <option key={course.deliveryId} value={course.deliveryId}>
@@ -94,13 +94,13 @@ export default async function LearnerAttendanceCalendarPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <Select name="status" defaultValue={data.query.status}
-          className="min-h-11 w-full sm:min-h-9">
+          className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All status types</option>
           {Object.entries(statusNames).map(([value,label])=>
             <option key={value} value={value}>{label}</option>)}
         </Select>
       </label>
-      <div className="flex flex-wrap items-center gap-3 sm:col-span-3">
+      <div className="flex flex-wrap items-center gap-3 md:col-span-3">
         <Button type="submit" className="min-h-11">
           Apply filters
         </Button>
@@ -108,7 +108,7 @@ export default async function LearnerAttendanceCalendarPage({
           className="text-sm font-semibold text-primary-text">Clear</Link>
       </div>
     </form>
-    <div className="grid gap-3 sm:grid-cols-4" aria-label="Filtered attendance totals">
+    <div className="grid gap-3 md:grid-cols-4" aria-label="Filtered attendance totals">
       {([
         ["Marked",data.summary.marked],
         ["Present",data.summary.present],
@@ -122,15 +122,15 @@ export default async function LearnerAttendanceCalendarPage({
       {" "}Attendance percentage: {data.summary.percentage===null
         ?"Unknown (no marked classes)" : data.summary.percentage+"%"}.
     </p>
-    <section aria-label={monthLabel+" attendance calendar"} className="rounded-xl border border-border bg-surface p-3 sm:p-5">
+    <section aria-label={monthLabel+" attendance calendar"} className="rounded-xl border border-border bg-surface p-3 md:p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <Link href={previous} aria-label="Previous month"
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">← Previous</Link>
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">← Previous</Link>
         <h2 className="text-lg font-semibold text-foreground">{monthLabel}</h2>
         <Link href={next} aria-label="Next month"
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Next →</Link>
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Next →</Link>
       </div>
-      <CalendarGrid className="text-center text-xs font-semibold text-muted-foreground sm:gap-2">
+      <CalendarGrid className="text-center text-xs font-semibold text-muted-foreground md:gap-2">
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>
           <span key={day} className={"py-1 "+(index===0?calendarStyles.calendarSunday:"")}>{day}</span>)}
         {days.map((day,index)=>{
@@ -139,12 +139,12 @@ export default async function LearnerAttendanceCalendarPage({
           const label=Number(day.slice(-2));
           return <div key={day}
             aria-label={day+": "+entries.length+" matching classes"}
-            className="min-h-14 rounded-[var(--lms-control-radius)] border border-border p-1 sm:min-h-20 sm:p-2">
+            className="min-h-14 rounded-[var(--lms-control-radius)] border border-border p-1 md:min-h-20 md:p-2">
             <div className={"text-right font-semibold text-foreground "+(new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:"")}>{label}</div>
             {entries.length>0?<div className="mt-1 rounded bg-primary-subtle px-1 py-0.5 text-center text-xs font-semibold text-primary-text">
               {entries.length} class{entries.length===1?"":"es"}
             </div>:null}
-            <div className="mt-1 hidden flex-wrap gap-1 sm:flex">
+            <div className="mt-1 hidden flex-wrap gap-1 md:flex">
               {entries.slice(0,3).map(row=>
                 <span key={row.id} title={row.courseCode+" · "+statusNames[row.status]}
                   className={"h-1.5 w-1.5 rounded-full "+(row.status==="PRESENT"?"bg-success":row.status==="ABSENT"?"bg-error":"bg-primary")}/>)}
@@ -160,7 +160,7 @@ export default async function LearnerAttendanceCalendarPage({
             description={data.hasAnyRecords
               ?"Try another month, Course or status. Missing records are not assumed absent."
               :"Your authorized Course sessions have no registered attendance records yet. This does not mean you were absent."} />
-        : <ol className="grid gap-3 sm:grid-cols-2">
+        : <ol className="grid gap-3 md:grid-cols-2">
           {data.rows.map(row=><li key={row.id}
             className="rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
@@ -178,7 +178,7 @@ export default async function LearnerAttendanceCalendarPage({
             <Link href={"/learn/attendance?"+new URLSearchParams({
               month:data.query.month,deliveryId:row.deliveryId,
             }).toString()}
-              className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               View Course attendance →
             </Link>
           </li>)}

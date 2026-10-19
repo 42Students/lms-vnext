@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import {notFound} from "next/navigation";
@@ -117,13 +118,13 @@ export default async function FacultyAssignmentReportPage({
             const total = Math.max(metrics.graded, 1);
             const width = Math.round((bucket.count / total) * 100);
             return (
-              <details key={bucket.label} className="rounded-md border border-border p-2 text-sm">
-                <summary className="grid min-h-9 cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <Disclosure key={bucket.label} title={<span className="grid min-w-0 flex-1 grid-cols-[6rem_minmax(0,1fr)_2rem] items-center gap-3">
                 <span className="text-body">{bucket.label}</span>
                 <MetricBar label={bucket.label+" grade distribution"}
                   value={width} maximum={100} unit="percent" />
                 <strong className="text-right text-foreground">{bucket.count}</strong>
-                </summary>
+                </span>}
+                 className="rounded-md border border-border p-2 text-sm [&>summary]:min-h-9 [&>summary]:px-0">
                 <ul className="mt-2 space-y-1 border-t border-border pt-2">
                   {submissions.filter(row=>{
                     if(row.gradingStatus!=="GRADED"||row.pointsAwarded===null||assignment.maxPoints<=0)return false;
@@ -134,7 +135,7 @@ export default async function FacultyAssignmentReportPage({
                     <span>{row.pointsAwarded}/{assignment.maxPoints}</span>
                   </li>)}
                 </ul>
-              </details>
+              </Disclosure>
             );
           })}
         </div>

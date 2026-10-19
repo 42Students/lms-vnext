@@ -136,3 +136,19 @@ The following two files were checked against the legacy page anatomy and link/to
 **Source scan:** the company directory, company drives and academic import workspace each contain **0** literal raw form control tags, inline SVG or six-digit color literals. Company directory JSX Link open/close **1/1**, curly braces **40/40**. Company drives JSX curly braces **35/35**. Academic import Button, Dialog, label and section counts are listed in clone-sheets.md. Native AG Grid rows use the existing `TpoGrid` with a phone fallback at `md` (768px); app-wide icon/visited hover, topbar avatar dimension and actual browser responsive proof remain **unverified**.
 
 **A5 / A6 / A7 remain [ ]** under strict tick rule; no claims of repo-wide zero mismatches or pixel-level screenshot verification. Next visual sweep is `src/components/tpo/recruiter-leads-workspace.tsx`, working only in chat-12-owned source and not `src/components/ui/*`.
+
+
+## chat-12 continuation — Engage and TPO import links/icons (2026-10-19)
+
+| A5–A7 property | Legacy measured/source value | Current vNext source | Result |
+|---|---|---|---|
+| Create recruiter icon | lms2-fe/public/assets/images/common/plus.svg:1-4 is original 16×16 white plus with 2px stroke | recruiter-leads-workspace.tsx:675-680 Image source /assets/images/common/plus.svg width=16 height=16, aria-hidden | Source asset matched; rendered baseline pending |
+| Nav/campaign actions | old-lms-pages.md:7 one-row action toolbar; old-lms-shell.css:31-32 44px interactive rail/tap and 2px teal focus | recruiter-leads-workspace.tsx:669-681 PageHeader actions preserve three Link routes, primary shared Button, responsive min-h-11 md:min-h-9 | Source sizing / breakpoints compared; final browser focus still open |
+| Company profile/people links | legacy-styles/components___common.scss:68-75 teal text, weight500, hover underline | recruiter-leads-workspace.tsx:978-1012 keeps people Link routes in Quartz action cells with text-link, lms-inline-link, underline, 2px teal focus outline and 44px target | Source aligns; visited and actual hover paint unmeasured |
+| Saved-view actions | old-lms-pages.md:9 outlined toolbar/Views; old-lms-shell-spec.md:24-25 9px radius 36px desktop | recruiter-saved-view-controls.tsx:85-137 uses 9 shared Button; min-h-11 phone, default shared size and focus, no custom raw button | Source aligns; disabled/hover browser proof pending |
+| Academic eligibility template | components___common.scss:68-75 teal hover-underline, old-lms-shell.css:31-32 2px teal focus | tpo-batch-eligibility-import.tsx:111 min-h-11, teal text-link, lms-inline-link and focus-visible outline | Source match |
+| Import controls | legacy-styles/components___form.scss:117-143 10px field, 14px font and focus halo | recruiter-leads-workspace.tsx has 10 Input + 16 Select shared controls; all 0 native raw controls in file-scoped regex | Shared implementation applied |
+
+**Source proof:** Full GitHub-fetched recruiter-leads-workspace.tsx: raw button/input/select/textarea **0**, inline svg **0**, 6-digit hex **0**, next Link opening/closing **8/8**. Saved-view controls: raw buttons **0**, inline svg **0**, 6-digit hex **0** and shared Button **9/9**. Phone source styles use min-h-11 and md:min-h-9 at 768px rather than 640px sm. Main shell/topbar and other lane components were not edited.
+
+**Global A5 / A6 / A7 stay [ ]**: shared topbar-avatar, logo/wordmark, browser tab format, full icon-family inventory, all portals' visited/external links, and phone/tablet rendered comparison are not proven here. Next after E8 queue: review any remaining TPO inline images and links without touching other owners' shell/shared UI.
