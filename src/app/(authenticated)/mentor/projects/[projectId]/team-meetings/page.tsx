@@ -27,8 +27,8 @@ export default async function MentorTeamMeetingsPage({
     normalized ? {projectId,...normalized} : null,
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <PageHeader title="Invalid meeting history filters" />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>
+    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid meeting history filters</h1>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Projects</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorTeamMeetings(context,parsed.data);
