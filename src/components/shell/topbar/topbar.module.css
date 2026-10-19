@@ -370,3 +370,10 @@
   margin:0;
   padding:0 12px;
 }
+
+.topbarNotificationBody [role="status"],
+.topbarNotificationBody [role="alert"] {
+  padding:20px;
+  font-size:14px;
+  line-height:1.5;
+}
