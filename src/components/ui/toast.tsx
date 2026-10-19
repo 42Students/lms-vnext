@@ -188,3 +188,20 @@ export function useToast() {
   if (!context) throw new Error("useToast must be used within ToastProvider");
   return context;
 }
+
+/** Persistent actionable feedback (for example, a short undo window).
+ * An inline form remains mounted and functional, unlike a timed status toast. */
+export function ToastAction({ title, children, tone = "info" }: {
+  title: string;
+  children: ReactNode;
+  tone?: ToastTone;
+}) {
+  return <div data-slot="toast-action" role="status"
+    className={cx("flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius)] border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[tone])}>
+    <div className="flex min-w-0 items-center gap-3">
+      <span aria-hidden="true" className={cx("h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[tone])} />
+      <p className="min-w-0 break-words text-sm text-[var(--lms-body-text)]">{title}</p>
+    </div>
+    <div className="shrink-0">{children}</div>
+  </div>;
+}
