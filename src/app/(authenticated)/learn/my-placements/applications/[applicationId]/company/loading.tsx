@@ -5,7 +5,6 @@ export default function LearnerApplicationSubpageLoading() {
   return (
     <div className="space-y-5">
       <PageHeader
-        eyebrow="My Placements"
         title="Employer details"
         description="Checking your own persisted application."
       />
