@@ -47,7 +47,7 @@ export default async function HrMessagesPage({searchParams}:{
      className={grant.collegeId===result.collegeId ? "inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>{grant.collegeName}</Link>):null}
     <Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+
       (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
-     className="inline-flex min-h-9 max-sm:min-h-11 items-center border-b-[3px] border-transparent px-3 py-2 text-sm text-primary-text hover:border-[var(--lms-primary)] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className={"inline-flex min-h-11 items-center border-b-[3px] px-3 py-2 text-sm font-semibold transition-colors duration-150 sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+(query.data.unreadOnly==="true"?"border-primary text-primary-text":"border-transparent text-body hover:border-primary hover:bg-primary-subtle")}>
      {query.data.unreadOnly==="true"?"Show all":"Unread only"}
     </Link>
    </nav>
