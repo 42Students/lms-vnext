@@ -544,12 +544,40 @@ This batch reviewed the native `src/components/tpo/grid/tpo-grid.tsx` and its `s
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`: desktop reads the shared grid; editable rounds retain the original server-post forms below with `expectedUpdatedAt`, round ID and all original fields. Mobile remains the exact existing per-round form/list at max 767px. Noneditable desktop rounds render only the sheet. No double editing surface in a single breakpoint.
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`: time blocks are **interactive forms**, not yet a sheet. They are flattened from per-object cards to hairline canvas rows and use existing `RecruiterInterviewSlotActions`. A grid cannot safely replace those actions without preserving multi-button layout and optimistic version semantics.
 
-| Legacy property | Legacy source | vNext value and source | Source verdict |
-| --- | --- | --- | --- |
-| One white canvas / no ordinary cards | `docs/design/old-lms-pages.md:6,10` | `hr/.../rounds/editor/page.tsx` now has an ordinary `article` with `border-b` and no Card; desktop shows shared native TpoGrid | Structural match only |
-| Sheet columns / actions | `old-lms-pages.md:10` sheet + row menu | `hr-round-editor-grid.tsx` read-only schema and in-page Edit + Review round removal links | Content-specific round columns; no exact legacy columns reference |
-| Mobile threshold | `components___listing-page-header.scss:131-158` max 767px | Editor: `hidden md:block`, `md:hidden` and `md:grid-cols-2` starting at 768px | Exact source threshold, not a screenshot |
-| Server-scope and mutation | Existing per-job recruiter permission and optimistic timestamp form token | `listHrRoundEditorRows` server check and unchanged POST endpoint/fields | No broader data access from client, source-only |
-| Native Quartz / keyboard / status pill / row height | Requires `legacy-grid/*.txt` and complete state inspection | `TpoGrid` reports Quartz engine; job page uses its native client view | Unticked; package declaration and runtime/pixel proof unavailable |
+Exact next optional audit: src/components/tpo/tpo-team-search.tsx, src/components/tpo/tpo-team-open-read.tsx and TPO page-level icon/link inventory.
 
-Post-edit GitHub source scans: `hr-round-editor-grid.tsx` and `hr/.../rounds/editor/page.tsx` both have native controls/hex/custom heading/overlay = 0/0/0/0. Editor JSX paired wrappers: `div` 3/3, `article` 1/1, `form` 2/2, `Button` 2/2. The TpoGrid is hidden below 768px and existing forms remain reachable there. No app execution, TypeScript/CI, screenshots or full computed-style property comparison. **E8 stays unticked**.
+## chat-12 bounded continuation, 2026-10-20 — batch 1
+
+- [x] src/components/tpo/tpo-team-open-read.tsx — Previously error text referred to missing retry button; now explicit shared Retry Button, 44px phone/36px md, slim warning strip; real same-origin POST remains.
+- [x] src/components/tpo/tpo-team-search.tsx — Shared search Input min-h-11/w-full/min-w-0; 36px md at 768px; original slash shortcut and 200ms URL filter retained.
+- [x] src/components/tpo/tpo-after-college-bulk-editor.tsx — One flat border-t workspace, 44px label/row targets and min-h-11/md:min-h-9 Select and confirm/undo; version-checked bulk mutations retained.
+- [x] src/components/tpo/tpo-batch-decision-control.tsx — No nested card, border-y action area, responsive min-h-11/md:min-h-9 Select/save, guarded optimistic API and undo intact.
+- [x] src/components/tpo/tpo-batch-instant-search.tsx — Search and Clear use 44px phone and 36px md; preserves q/page and 250ms debounce.
+- [x] src/components/tpo/tpo-batch-student-keyboard-actions.tsx — Compact border-b toolbar, original Ctrl/Cmd shortcuts, responsive 44px/36px copy, CSV link teal underline and 2px keyboard outline.
+- [x] src/components/tpo/tpo-participation-decision-form.tsx — Shared Select/Input/save at 44px phone/36px md; registration caveat appears in slim warning strip, guarded decision API unchanged.
+
+### Value comparison (legacy measured versus vNext source)
+Baseline: docs/design/old-lms-pages.md:6 one canvas not nested ordinary cards, lines 9 and 18-20 one compact toolbar; docs/design/old-lms-shell.css:23 and 73 specifies phone max 767px, tablet >=768px, min interactive 44px (lines 26-32); docs/design/old-lms-shell-spec.md:24-25 compact desktop 36px; legacy-styles/components___common.scss:68-75 teal underline. TPO changes use shared controls and original form actions.
+| File | VNext authored property, source line(s) and retained behavior | Result |
+|---|---|---|
+| tpo-team-open-read.tsx | tpo-team-open-read.tsx:25,27 — Previously error text referred to missing retry button; now explicit shared Retry Button, 44px phone/36px md, slim warning strip; real same-origin POST remains | Source-aligned, screenshot unverified |
+| tpo-team-search.tsx | tpo-team-search.tsx:29 — Shared search Input min-h-11/w-full/min-w-0; 36px md at 768px; original slash shortcut and 200ms URL filter retained | Source-aligned, screenshot unverified |
+| tpo-after-college-bulk-editor.tsx | tpo-after-college-bulk-editor.tsx:90,98,103 — One flat border-t workspace, 44px label/row targets and min-h-11/md:min-h-9 Select and confirm/undo; version-checked bulk mutations retained | Source-aligned, screenshot unverified |
+| tpo-batch-decision-control.tsx | tpo-batch-decision-control.tsx:39,43,53 — No nested card, border-y action area, responsive min-h-11/md:min-h-9 Select/save, guarded optimistic API and undo intact | Source-aligned, screenshot unverified |
+| tpo-batch-instant-search.tsx | tpo-batch-instant-search.tsx:26,30 — Search and Clear use 44px phone and 36px md; preserves q/page and 250ms debounce | Source-aligned, screenshot unverified |
+| tpo-batch-student-keyboard-actions.tsx | tpo-batch-student-keyboard-actions.tsx:36,40,44 — Compact border-b toolbar, original Ctrl/Cmd shortcuts, responsive 44px/36px copy, CSV link teal underline and 2px keyboard outline | Source-aligned, screenshot unverified |
+| tpo-participation-decision-form.tsx | tpo-participation-decision-form.tsx:81,108,155 — Shared Select/Input/save at 44px phone/36px md; registration caveat appears in slim warning strip, guarded decision API unchanged | Source-aligned, screenshot unverified |
+
+### File-scoped grep and responsive source proof
+Each fetched file was scanned for literal raw button/input/select/textarea opening tags, inline svg and six-digit hex, equivalent to `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE`, and for `sm:|md:` breakpoints. JSX Button/Link opening and closing tags plus raw curly counts were compared, not compiled.
+| File | Raw controls/SVG/hex | Button; Link open/close | Curly braces | Breakpoint source |
+|---|---|---|---|---|
+| tpo-team-open-read.tsx | 0/0/0 | 1/1; 0/0 | 16/16 | sm 0; md 1 |
+| tpo-team-search.tsx | 0/0/0 | 0/0; 0/0 | 16/16 | sm 0; md 1 |
+| tpo-after-college-bulk-editor.tsx | 0/0/0 | 4/4; 0/0 | 75/75 | sm 0; md 3 |
+| tpo-batch-decision-control.tsx | 0/0/0 | 1/1; 0/0 | 41/41 | sm 0; md 2 |
+| tpo-batch-instant-search.tsx | 0/0/0 | 1/1; 0/0 | 15/15 | sm 0; md 2 |
+| tpo-batch-student-keyboard-actions.tsx | 0/0/0 | 4/4; 0/0 | 38/38 | sm 0; md 5 |
+| tpo-participation-decision-form.tsx | 0/0/0 | 3/3; 0/0 | 55/55 | sm 0; md 3 |
+
+All entries are strictly **source-complete** only. No rendered phone/tablet screenshots, app execution, CI or browser focus/hover verification. A5/A6/A7/E8 remain unchecked; do not infer global parity.
