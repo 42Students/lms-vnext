@@ -27,7 +27,7 @@ export default async function LearnerCourseProgressPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/home"}
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Course overview
       </Link>
       <PageHeader title="Course progress by lesson" />
@@ -88,7 +88,7 @@ export default async function LearnerCourseProgressPage({
                 <ul className="mt-4 grid gap-2 sm:grid-cols-2">
                   {lesson.items.map((item) => (
                     <li key={item.kind + ":" + item.id}
-                      className="flex min-w-0 items-start justify-between gap-2 rounded-lg border border-border p-3">
+                      className="flex min-w-0 items-start justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
                       <div className="min-w-0">
                         <p className="break-words text-sm font-medium text-foreground">{item.title}</p>
                         <p className="mt-1 text-xs text-muted-foreground">
@@ -105,7 +105,7 @@ export default async function LearnerCourseProgressPage({
               <Link
                 href={"/learn/courses/" + encodeURIComponent(deliveryId) +
                   "/roadmap?lesson=" + encodeURIComponent(lesson.id)}
-                className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+                className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
                 Open in learning path →
               </Link>
             </article>
