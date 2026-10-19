@@ -1,3 +1,4 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -24,9 +25,7 @@ export default async function FacultyAssignmentSubmissionsPage({
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid Section submission filters"} />
-    <Link href="/teacher/allAssignments" className="text-primary-text underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-      Back to All Assignments
-    </Link>
+    <PageBackLink href="/teacher/allAssignments" label="Back to All Assignments" />
   </section>;
   const context=await getCurrentRequestContext();
   const query=parsed.data;
