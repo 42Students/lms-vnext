@@ -1,4 +1,6 @@
 "use client";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -78,26 +80,26 @@ export function TpoCompanyPersonEditor({
         once an email is provided. No messages are sent.
       </p>
       <label className="block text-sm font-medium">Contact
-        <select value={selected} onChange={event => select(event.target.value)}
+        <Select value={selected} onChange={event => select(event.target.value)}
           className="mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
           <option value="NEW">Add new person</option>
           {contacts.filter(item => item.editable).map(item => (
             <option key={item.id} value={item.id}>{item.name}</option>
           ))}
-        </select>
+        </Select>
       </label>
       <div className="grid gap-3 md:grid-cols-2">
         <label className="text-sm font-medium">Name
-          <input value={name} maxLength={150} onChange={event => {setReviewing(false);setName(event.target.value);}}
+          <Input value={name} maxLength={150} onChange={event => {setReviewing(false);setName(event.target.value);}}
             className="mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
         </label>
         <label className="text-sm font-medium">Email
-          <input type="email" value={email} maxLength={150}
+          <Input type="email" value={email} maxLength={150}
             onChange={event => {setReviewing(false);setEmail(event.target.value);}}
             className="mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
         </label>
         <label className="text-sm font-medium">Designation (optional)
-          <input value={designation} maxLength={100}
+          <Input value={designation} maxLength={100}
             onChange={event => {setReviewing(false);setDesignation(event.target.value);}}
             className="mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
         </label>
