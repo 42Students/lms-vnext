@@ -57,7 +57,15 @@ export function GridWorkspace<Row>({
  const [notice,setNotice]=useState("");
  const [localKeys,setLocalKeys]=useState<string[]>([]);
  const permitted=useMemo(()=>columns.filter(column=>!column.exportOnly).map(column=>column.key),[columns]);
- const activeKeys=parseTpoGridColumns(params.get("columns")??undefined,permitted);
+ const keySignature=permitted.join(",");
+ useEffect(()=>{
+  if(columnScope!=="local"||!columnStorageKey)return;
+  try{const raw=window.localStorage.getItem(columnStorageKey);
+   if(raw)setLocalKeys(parseTpoGridColumns(raw,permitted));
+  }catch{/* Local storage is optional; default columns remain available. */}
+ },[columnScope,columnStorageKey,keySignature]);
+ const urlKeys=parseTpoGridColumns(params.get("columns")??undefined,permitted);
+ const activeKeys=columnScope==="local"&&localKeys.length?localKeys:urlKeys.length&&columnScope==="url"?urlKeys:permitted;
  const chosen=chosenTpoGridColumns(columns,activeKeys.length?activeKeys:permitted)
    .filter(column=>!column.exportOnly);
  const pageIds=useMemo(()=>new Set(rows.map(rowKey)),[rows,rowKey]);
