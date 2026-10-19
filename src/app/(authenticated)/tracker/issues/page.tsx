@@ -148,9 +148,9 @@ export default async function TrackerIssuesPage({
         <EmptyState title="No matching issues." description="Review and triage reported LMS issues."
           action={<Link href="/tracker/issues" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Reset</Link>}/>
       ) : (
-        <div className="divide-y divide-border border-y border-border">
+        <div className="divide-y divide-[var(--lms-canvas-border)]">
           {page.items.map((issue) => (
-            <article key={issue.id} className="py-4">
+            <article key={issue.id} className="min-w-0 py-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap gap-2">
