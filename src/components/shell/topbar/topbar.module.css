@@ -325,3 +325,17 @@
   background:#fff;
   box-shadow:0 4px 24px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);
 }
+
+@media (min-width:768px) {
+  .topbarNotificationDrawer {
+    top:72px !important;
+    right:12px !important;
+    bottom:auto !important;
+    left:auto !important;
+    width:min(420px,calc(100vw - 24px)) !important;
+    max-height:min(520px,calc(100vh - 120px)) !important;
+    height:min(520px,calc(100vh - 120px)) !important;
+    margin:0 !important;
+    overflow:hidden;
+  }
+}
