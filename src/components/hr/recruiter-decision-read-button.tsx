@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 "use client";
 import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
@@ -31,6 +32,6 @@ export function RecruiterDecisionReadButton({id}:{id:string}){
   <Button type="button" variant="secondary" className="min-h-9 max-sm:min-h-11" disabled={busy||complete} loading={busy} onClick={()=>void read()}>
    {complete?"Marked as read":busy?"Saving…":"Mark as read"}
   </Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
  </div>;
 }
