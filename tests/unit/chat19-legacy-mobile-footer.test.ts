@@ -12,13 +12,15 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
     expect(legacy()).toContain("height: calc(64px + env(safe-area-inset-bottom, 0px))");
     expect(styles()).toContain("height:calc(64px + env(safe-area-inset-bottom,0px))");
     expect(styles()).toContain("bottom:0");
+    expect(styles()).toContain("border-top:1px solid #f1f4f9");
     expect(styles()).toContain("padding-bottom:env(safe-area-inset-bottom,0px)");
     expect(styles()).toContain("box-shadow:0 -2px 8px rgba(0,0,0,.04)");
   });
-  it("uses 30px original artwork, neutral inactive opacity and active opacity 1", () => {
+  it("uses production 24px artwork, neutral inactive opacity and active opacity 1", () => {
     expect(mobile()).toContain("width={24} height={24}");
-    expect(styles()).toContain("opacity:.5");
-    expect(styles()).toContain(".lms-legacy-mobile-footer-icon {opacity:1;}");
+    expect(styles()).toContain("width:24px;height:24px;object-fit:contain;opacity:.5");
+    expect(styles()).toContain("transition:opacity .15s ease");
+    expect(styles()).toContain(".lms-legacy-mobile-footer-items .active .lms-legacy-mobile-footer-icon {opacity:1;}");
   });
   it("retains learner and faculty icon order without mixing portal links", () => {
     const content = mobile();
