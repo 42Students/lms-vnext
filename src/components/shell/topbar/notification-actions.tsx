@@ -69,9 +69,11 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
     void update();
     const timer = window.setInterval(() => void update(), 30000);
     document.addEventListener("visibilitychange", update);
+    window.addEventListener("focus", update);
     return () => {
       window.clearInterval(timer);
       document.removeEventListener("visibilitychange", update);
+      window.removeEventListener("focus", update);
     };
   }, [update]);
 
