@@ -658,3 +658,7 @@ Full page list and reference measurements: `docs/audit/ux/north-star-sweep-chat-
 | NORTH-STAR-HR-03 | UX parity | Recruiter secondary components under `src/components/placements` and non-alias change requests route retained numeric 9px corners and old focus ring values; outside-platform recording wrapped its entire page form in another white bordered card; invalid conversation filters added redundant outer padding. | Reuse `--lms-control-radius`, measured 2px focus ring and `--lms-primary` outline; remove just duplicate outer canvas/card styling, keep all form fields and submit behavior. | `tests/unit/chat19-sidebar-hr-original-icons-and-secondary-surfaces.test.ts` |
 
 No runtime tests, CI, browser rendering or TypeScript compilation performed by this lane.
+
+### NORTH-STAR-HR-04 — imported styling regressions (2026-10-19)
+
+After latest main fast-forward, HR recruiter notification bell, recruiter bell, read button, unsent draft alert, conversation-read control, decision-read button, request feedback and a conversation inbox link again contained numeric `rounded-[9px]` or `focus-visible:outline-primary` even though the earlier pass had normalized them. Replaced only these classes with the measured shared radius and primary focus token; the existing source guards `tests/unit/chat19-north-star-hr-sweep.test.ts` and `tests/unit/chat19-sidebar-hr-value-parity.test.ts` cover the recurring drift. Tests authored but not executed, as directed.
