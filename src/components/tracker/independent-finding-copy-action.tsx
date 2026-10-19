@@ -18,7 +18,7 @@ export function IndependentFindingCopyAction({finding}:{finding:IndependentFindi
  }
  return <div className="space-y-1">
   <button type="button" onClick={()=>void copy()}
-   className="min-h-11 rounded-md border border-border bg-surface px-4 font-semibold text-primary-text">
+   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
    Copy for Claude
   </button>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
