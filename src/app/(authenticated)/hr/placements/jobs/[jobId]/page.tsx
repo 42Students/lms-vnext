@@ -351,7 +351,7 @@ export default async function HrPlacementJobPage({
                 {driveOverview.deadlineState==="DUE_SOON"?"Applications close soon":driveOverview.deadlineState==="PASSED"?"Application deadline passed":driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
           </div>
-          <section aria-label="What students see" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
+          <section aria-label="What students see" className="border-b border-border pb-4 sm:pb-5">
             <h3 className="font-semibold text-foreground">What students see</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Student-facing draft facts are shown for reference. Exact publication and application access are controlled by the placement cell.
