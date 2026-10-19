@@ -1,12 +1,13 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import {Button} from "@/components/ui/button";
 
 export default function Error({reset}: {
   error: Error & {digest?: string};
   reset: () => void;
 }) {
-  return <section role="alert" className="border-b border-border bg-transparent py-6">
-    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Unable to load assessment results</h1>
+  return <section role="alert" className="space-y-3">
+    <PageHeader title={"Unable to load assessment results"} />
     <p className="mt-2 text-sm text-body">
       The read failed; a missing display is not evidence that there are no records.
     </p>
