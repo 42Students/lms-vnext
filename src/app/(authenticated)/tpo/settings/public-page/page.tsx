@@ -29,7 +29,7 @@ export default async function PublicPlacementSettingsPage({
  return <div className="space-y-6">
   <TpoSettingsNav active="public-page"/>
   <section className="border-t border-border pt-5">
-   <h1 className="m-0 text-[26px] font-semibold leading-[1.35] tracking-[-0.02em] text-[#172033] sm:text-[30px]">Public placements</h1>
+   <h1 className="m-0 text-[26px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)] sm:text-[30px]">Public placements</h1>
    <p className="mt-2 text-sm text-body">{view.label}</p>
    {updated==="1"?<p role="status" className="mt-2 text-sm">{view.enabled?"Your placements page is live":"Your placements page is off"}</p>:null}
    <p className="mt-2 text-sm text-body">
@@ -40,7 +40,7 @@ export default async function PublicPlacementSettingsPage({
       Active consented placement cohort: {view.populationCount??"Unavailable"}
     </p>:null}
    {value.ready?<TpoPublicPlacementToggle enabled={view.enabled} canEnable={view.canEnable}/>:
-    <p role="status" className="mt-3 rounded-md border border-border p-3 text-sm text-warning-text">
+    <p role="status" className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-warning-text">
      Public placement settings storage is unavailable until the registered migration is ready. No publication preference was changed.
     </p>}
    {value.ready&&!view.canEnable&&!view.enabled?<p role="status" className="mt-3 text-sm text-muted-foreground">
@@ -65,7 +65,7 @@ export default async function PublicPlacementSettingsPage({
     </div>
    </section>
    <TpoPublicPlacementContentEditor initial={content}/>
-   <Link href="/placements" className="mt-4 inline-block text-sm text-[var(--lms-link-text)] underline">
+   <Link href="/placements" className="mt-4 inline-block text-sm text-link underline">
      Open public placements page
    </Link>
   </section>

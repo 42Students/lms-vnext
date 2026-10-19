@@ -9,6 +9,7 @@ import { apiFetch } from "@/lib/api-fetch";
 type LearnerCourse = { deliveryId: string; courseName: string; courseCode: string; sectionName: string };
 import { topbarCommands, topbarConfigForPath, topbarSearchDestinations } from "./portal-config";
 import { SearchIcon } from "./icons";
+import { TpoFindSuggestions } from "./tpo-find-suggestions";
 import style from "./topbar.module.css";
 
 export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] }) {
@@ -143,6 +144,13 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           <SearchIcon /> <span className="min-w-0"><span className="block truncate">{course.courseName}</span>
             <span className="block truncate text-[11px] text-[#64748b]">{course.courseCode} · {course.sectionName}</span></span>
         </Link>)}
+        {config.portal === "tpo" && query.trim().length >= 2
+          ? <TpoFindSuggestions query={query} onOpen={href => {
+              router.push(href);
+              setQuery("");
+              setOpen(false);
+              setMobileOpen(false);
+            }}/> : null}
         {destinations.length > 0 ? <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">Search within</p> : null}
         {destinations.map(destination => <Link key={destination.href}
           role="option" aria-selected={false} href={destination.href}

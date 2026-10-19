@@ -14,11 +14,12 @@ import { TopbarCommandSearch } from "./command-search";
 import { TopbarNotifications } from "./notification-actions";
 import { TopbarAccountMenu } from "./account-menu";
 import { PlusIcon } from "./icons";
+import { TpoQuickCreate } from "./tpo-quick-create";
 import style from "./topbar.module.css";
 
 export function LegacyTopbar({
   navigation, roleLabel, organizationName, identityUid, accountVariant,
-  memberships, activeMembershipId, adminScopeChoices, adminScope,
+  memberships, activeMembershipId, adminScopeChoices, adminScope, tpoCollegeId,
 }: {
   navigation: readonly ShellNavItem[];
   roleLabel: string;
@@ -29,21 +30,24 @@ export function LegacyTopbar({
   activeMembershipId: string | null;
   adminScopeChoices: AdminScopeChoices | null;
   adminScope: AdminScope | null | undefined;
+  tpoCollegeId: string | null;
 }) {
   const pathname = usePathname() ?? "/";
   const config = topbarConfigForPath(pathname);
   return <header className={style.bar} aria-label="Application top bar">
-    <div className="shrink-0 lg:hidden">
+    <div className="shrink-0 md:hidden">
       <ShellWidgetBoundary name="Mobile navigation" fallbackHref="/dashboard">
         <MobileNavigation items={navigation}/>
       </ShellWidgetBoundary>
     </div>
     <div className={style.command}>
       <TopbarCommandSearch items={navigation}/>
-      {config.newHref ? <Link href={config.newHref} title="Create new"
-        className={style.new} aria-label="New">
-        <PlusIcon/> <span className={style.newLabel}>New</span>
-      </Link> : null}
+      {config.portal === "tpo" && tpoCollegeId
+        ? <TpoQuickCreate collegeId={tpoCollegeId}/>
+        : config.newHref ? <Link href={config.newHref} title="Create new"
+            className={style.new} aria-label="New">
+            <PlusIcon/> <span className={style.newLabel}>New</span>
+          </Link> : null}
     </div>
     <ShellWidgetBoundary name="Header notifications" fallbackHref={config.notificationsHref}>
       <TopbarNotifications config={config}/>

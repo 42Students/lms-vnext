@@ -32,7 +32,7 @@ export default async function MentorProjectTimelinePage({
         Sprint workspace
       </Link>} />
     {!data.enabled?<section role="status"
-      className="rounded-xl border border-border bg-surface p-5">
+      className="border-b border-border pb-5">
       Projects access is disabled; no timeline was loaded.
     </section>:<>
       <nav aria-label="Release status filters" className="flex flex-wrap gap-2">
@@ -59,7 +59,7 @@ export default async function MentorProjectTimelinePage({
         description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed."/>
       :<ol className="relative space-y-5 border-l-2 border-border pl-5">
         {data.items.map(release=><li key={release.id}
-          className="rounded-xl border border-border bg-surface p-4">
+          className="border-b border-border py-4 last:border-b-0">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-semibold text-foreground">
               Release {release.sequence+1}: {release.title}
