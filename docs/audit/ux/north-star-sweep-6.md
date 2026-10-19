@@ -291,3 +291,9 @@ src/components/placements/tpo-drive-deadline-form.tsx
 - Pushed 10 further `[chat-6]` commits, all on `chatgpt/chat-6-b`, covering globally scoped company editing, identities, merge, restore, verification, college relationship/create forms, batch roster, faculty assignment and timetable reassignment, and placement role-option controls.
 - Converted raw input/select/textarea/button markup to the shared controls where compatible, kept exact async action handlers, FormData names, validation constraints, scope and confirmation gates; replaced redundant nested white cards with border-separated rows. Existing semantic dialogs, data tables, and branded global shell remained untouched.
 - Source-level re-read of all 10 modified files checked matched shared `</Button>`/`</Select>` pairs and did not find truncated JSX closing tags or malformed CSS-variable suffix utilities. Self-closing fields retained their input attributes. No TypeScript check, tests, CI, app run, pixel-diff or deployment.
+
+### Third follow-up batch after upstream merge
+
+- A further **10 source commits** on `chatgpt/chat-6-b` extended the Super Admin old-LMS skin through faculty CSV bulk import, batch graduation action, course setup wizard, course directory/canvas, offering teacher lists, offering lesson overview/section preview, assessment directory, duplicate-course link and placement offer summaries.
+- Reused the shared Button/Input/Select controls for form actions and filters; preserved the page's underlying data, labels, permission checks, validation, warning/disclosure semantics, and destructive offer-withdrawal modal. Converted only redundant secondary panels to border-divided rows, with the existing white authenticated page canvas.
+- Static source review checked shared Button/Select opening and closing tags across all 10 files and saw no incomplete closing tags. No tests, compiler, CI, app run, screenshots or deployment.
