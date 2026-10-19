@@ -87,3 +87,42 @@
   :where(tbody tr:last-child):not(:where([data-unskin], [data-unskin] *)) {
   box-shadow: none;
 }
+
+/* FORM FIELDS
+ * Legacy: components___form.scss:117-128 (.ln-in2: #fbfcfd, radius 10,
+ * 14px/400, tracking 0.2px) and components___variables.scss:30,46
+ * (neutral separator and field surface). Retain each field's native sizing,
+ * padding and appearance. Range, file, check/radio, color and hidden controls
+ * have separate, explicitly owned semantics and must not be bulk-skinned.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])
+         :not([type="file"]):not([type="range"]):not([type="color"])
+         :not([type="button"]):not([type="submit"]):not([type="reset"])
+         :not([type="image"]),
+    select, textarea
+  ):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-form-bg) !important;
+  color: var(--lms-form-ink) !important;
+  border-color: var(--lms-neutral-200) !important;
+  border-radius: 10px !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  box-shadow: none;
+  transition: background-color 200ms ease, border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+/* Legacy: components___form.scss:3-5 (select inherits app font);
+ * components___antddesign.scss:511-523 (10px select radius and 14px
+ * font). Native select options keep their OS and assistive semantics.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(select:not([multiple])):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-form-bg) !important;
+  color: var(--lms-form-ink) !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+}
