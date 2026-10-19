@@ -265,13 +265,13 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
         <div className="flex gap-2">
           {data.query.page > 1 ? (
             <Link href={collegeContentHref(data.kind, { ...data.query, page: data.query.page - 1 })}
-              className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
               Previous
             </Link>
           ) : null}
           {data.query.page < data.totalPages ? (
             <Link href={collegeContentHref(data.kind, { ...data.query, page: data.query.page + 1 })}
-              className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
               Next
             </Link>
           ) : null}
