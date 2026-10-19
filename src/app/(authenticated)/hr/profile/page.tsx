@@ -99,7 +99,7 @@ export default async function HrProfilePage() {
         aria-labelledby="recruiter-current-grants"
         className="rounded-[var(--lms-radius-card)] border border-border bg-surface"
       >
-        <div className="border-b border-border px-5 py-4">
+        <div className="border-b border-border pb-4">
           <h2
             id="recruiter-current-grants"
             className="text-base font-semibold text-foreground"
@@ -113,7 +113,7 @@ export default async function HrProfilePage() {
           </p>
         </div>
 
-        <div className="p-4 sm:p-5">
+        <div className="pt-4">
           <DataTable
             caption="Current college access"
             rows={overview.grants}
@@ -137,7 +137,7 @@ export default async function HrProfilePage() {
           />
         </div>
 
-        <p className="border-t border-border px-5 py-3 text-xs leading-5 text-muted-foreground">
+        <p className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
           This table does not change or revoke access.
           Existing access-management functionality below
           is separate from this read-only overview.

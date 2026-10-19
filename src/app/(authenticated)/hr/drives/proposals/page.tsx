@@ -37,17 +37,17 @@ export default async function RecruiterDriveProposalHistory({
     <input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-48 flex-1 text-sm text-body">Search by role title
      <input name="q" maxLength={100} defaultValue={input.data.q}
-       className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+       className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
        placeholder="Role title"/>
     </label>
     <label className="text-sm text-body">Order
       <select name="sort" defaultValue={input.data.sort}
-        className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         <option value="LATEST">Most recent</option>
         <option value="OLDEST">Oldest first</option>
       </select>
     </label>
-    <button type="submit" className="self-end min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Search</button>
+    <button type="submit" className="self-end min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Search</button>
    </form>
    {data.items.length?<Link
      href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
@@ -59,7 +59,7 @@ export default async function RecruiterDriveProposalHistory({
     {data.total} recorded discussion proposals · Page {data.page} of {data.pages}.
     These are not submitted approval requests.
    </p>
-   {data.items.length?<ol className="space-y-3">
+   {data.items.length?<ol className="divide-y divide-border border-y border-border">
     {data.items.map(row=><li key={row.id}
      className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
      <Link href={"/hr/conversations/"+row.threadId}

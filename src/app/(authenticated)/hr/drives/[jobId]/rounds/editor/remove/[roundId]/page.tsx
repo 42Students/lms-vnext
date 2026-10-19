@@ -32,7 +32,7 @@ export default async function HrRoundRemovalConfirm({params}:{
     <input type="hidden" name="action" value="REMOVE"/>
     <input type="hidden" name="roundId" value={round.id}/>
     <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
-    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      Confirm remove
     </button>
    </form>

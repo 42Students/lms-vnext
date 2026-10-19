@@ -74,8 +74,8 @@ export type PlacementDraftEditValue = {
   };
 };
 
-const inputClass = "min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
-const textareaClass = "min-h-28 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const textareaClass = "min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
 
 function splitList(value: string) {
   return value
@@ -537,7 +537,7 @@ export function PlacementDraftEditForm({
           </p>
 
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
-            <fieldset className="rounded-lg border border-border bg-muted p-4">
+            <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible programs
               </legend>
@@ -582,7 +582,7 @@ export function PlacementDraftEditForm({
               )}
             </fieldset>
 
-            <fieldset className="rounded-lg border border-border bg-muted p-4">
+            <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible cohorts
               </legend>

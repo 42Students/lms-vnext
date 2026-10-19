@@ -274,7 +274,7 @@ export function HrDriveDraftForm({
           </label>
           <label className="grid gap-1 text-sm text-body sm:col-span-2">
             Job description
-            <textarea className={inputClass} rows={5} value={draft.description} maxLength={5000}
+            <textarea className={inputClass+" h-auto min-h-28 py-2"} rows={5} value={draft.description} maxLength={5000}
               onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))} />
           </label>
           <label className="grid gap-1 text-sm text-body">

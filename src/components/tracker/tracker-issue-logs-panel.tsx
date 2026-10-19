@@ -24,21 +24,21 @@ export function TrackerIssueLogsPanel({publicId}:{publicId:string}){
         "Could not load nearby logs. Try again.");
     }finally{setBusy(false);}
   }
-  return <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+  return <section className="space-y-3 border-b border-border pb-5">
     <h2 className="text-lg font-semibold">Logs around this report</h2>
     <p className="text-sm text-body">Find warnings and errors from the ten minutes before and after the report.</p>
     <button type="button" disabled={busy} onClick={()=>void load()}
-      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
+      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold disabled:opacity-50">
       {busy?"Loading nearby logs…":"Load warnings and errors from that moment"}
     </button>
     {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
     {loaded&&!logs.length?<p className="text-sm text-body">No matching warnings or errors were found.</p>:null}
-    {logs.length?<ul className="space-y-2">{logs.map(entry=>
-      <li key={entry.id} className="rounded-lg border border-border p-3 text-sm">
+    {logs.length?<ul className="divide-y divide-border border-y border-border">{logs.map(entry=>
+      <li key={entry.id} className="py-3 text-sm">
         <p className="font-semibold">{entry.event} · {entry.time}</p>
         <p className="mt-1 text-body">{entry.message}</p>
         <p className="mt-1 text-xs text-muted-foreground">{entry.path}</p>
-        <Link className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+        <Link className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
           href={"/tracker/logs?query="+encodeURIComponent(entry.requestId??entry.event)}>
           Open in Logs
         </Link>

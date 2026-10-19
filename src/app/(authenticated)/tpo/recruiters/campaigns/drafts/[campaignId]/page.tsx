@@ -28,8 +28,8 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
   <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-link underline">
    ← Campaign history
   </Link>
-  {!ready?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-5">{CAMPAIGN_DRAFT_UNAVAILABLE}</p>:
-   draft?<article className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+  {!ready?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-5)]">{CAMPAIGN_DRAFT_UNAVAILABLE}</p>:
+   draft?<article className="space-y-4 border-t border-border pt-5">
     <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">{draft.title}</h1>
     <p className="text-sm text-body">{draft.sender_name} · {draft.status} · {draft.total_recipients} potential recipients · {draft.segment.replaceAll("_"," ")}</p>
     <dl className="grid grid-cols-3 gap-3 text-sm">
@@ -52,7 +52,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
       {recipients.rows.slice((page-1)*25,page*25).map(row=><li key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 p-3 text-sm">
        <Link href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
         className="inline-flex min-h-11 sm:min-h-9 min-w-0 items-center break-words font-semibold text-link underline">{row.name}</Link>
-       <span className="rounded border border-border px-2 py-1 text-xs">
+       <span className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">
         {({PENDING:"Not sent",QUEUED:"Queued · delivery not confirmed",SENT:"Provider accepted",FAILED:"Failed",
           SKIPPED_NO_EMAIL:"Skipped · no email",SKIPPED_UNSUBSCRIBED:"Skipped · opted out",
           UNSUBSCRIBED:"Unsubscribed"} as Record<string,string>)[row.status]??"Recorded"}

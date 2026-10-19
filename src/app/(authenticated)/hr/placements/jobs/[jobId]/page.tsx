@@ -445,23 +445,23 @@ export default async function HrPlacementJobPage({
           Request another drive
         </Link>
       </div>
-      <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-2">
+      <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-3 border-b border-border">
         {(["overview", "applicants", "rounds", "offers"] as const).map(tab => (
           <Link key={tab} href={`/recruiter/drives/${workspace.job.id}?tab=${tab}${returnQuery}`}
             aria-current={filters.tab === tab ? "page" : undefined}
-            className={`inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold capitalize ${filters.tab === tab ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
+            className={`inline-flex min-h-9 items-center border-b-[3px] px-3 py-2 text-[13px] font-semibold capitalize ${filters.tab === tab ? "border-primary text-foreground" : "border-transparent text-body hover:text-primary-text"}`}>
             {tab==="overview"?"Overview":tab==="applicants"?"Applicants ("+applicants.counts.all+")":
               tab==="rounds"?"Rounds & interviews":"Offers ("+offersTotal+")"}
           </Link>
         ))}
         <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
           aria-current={requestsTab?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className={requestsTab ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text"}>
           Requests{requestData?" ("+requestData.requests.length+")":""}
         </Link>
         <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery}
           aria-current={discussionTab?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className={discussionTab ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text"}>
           Discussion
         </Link>
         <Link href={hrDriveMessagesHref(workspace.job.id)}

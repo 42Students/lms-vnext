@@ -84,7 +84,7 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
   }
 
   return (
-    <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    <section className="space-y-4 border-b border-border pb-5">
       <div>
         <h2 className="m-0 text-lg font-semibold text-foreground">Engineering workflow</h2>
         <p className="mt-1 text-sm text-body">Super Admin only. Version {issue.version}; stale writes are rejected.</p>
@@ -92,27 +92,27 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
       <div className="grid gap-4 md:grid-cols-2">
         <label className="text-sm font-semibold text-body">
           Status
-          <select className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3" value={status} onChange={(e) => setStatus(e.target.value)}>
+          <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" value={status} onChange={(e) => setStatus(e.target.value)}>
             {BUG_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </select>
         </label>
         <label className="text-sm font-semibold text-body">
           Resolution
-          <select className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3" value={resolution} onChange={(e) => setResolution(e.target.value)}>
+          <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" value={resolution} onChange={(e) => setResolution(e.target.value)}>
             <option value="">No resolution</option>
             {BUG_RESOLUTIONS.map((value) => <option key={value} value={value}>{value}</option>)}
           </select>
         </label>
         <label className="text-sm font-semibold text-body">
           Affected layer
-          <select className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3" value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
+          <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
             <option value="">Not set</option>
             {BUG_AFFECTED_LAYERS.map((value) => <option key={value} value={value}>{value}</option>)}
           </select>
         </label>
         <label className="text-sm font-semibold text-body">
           Regression test
-          <select className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3" value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
+          <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
             {BUG_REGRESSION_TEST_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </select>
         </label>
@@ -128,15 +128,15 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
           Frontend commit SHA
           <Input className="mt-1" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
           {/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim())?<a href={"https://github.com/42Students/lms2-fe/commit/"+frontendCommitSha.trim()}
-            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">View on GitHub ↗</a>:null}
+            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">View on GitHub ↗</a>:null}
         </label>
         <label className="text-sm font-semibold text-body">
           Backend commit SHA
           <Input className="mt-1" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
           {/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim())?<a href={"https://github.com/42Students/lms/commit/"+backendCommitSha.trim()}
-            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">View on GitHub ↗</a>:null}
+            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">View on GitHub ↗</a>:null}
         </label>
-        <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
+        <label className="flex min-h-9 items-center gap-3 text-sm font-semibold text-body">
           <input type="checkbox" checked={productionVerified} onChange={(e) => setProductionVerified(e.target.checked)} />
           Production verified
         </label>

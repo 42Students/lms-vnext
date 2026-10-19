@@ -23,9 +23,9 @@ export default async function MyTrackerReportsPage(){
   return <section className="space-y-5">
     <PageHeader title="My reports" description="See the issues you have reported."/>
     <Link href="/tracker" className="font-semibold text-primary-text underline">Report an issue</Link>
-    {!reports.length?<p className="rounded-lg border border-border p-5 text-sm text-body">You have not reported any issues yet.</p>:
-      <ul className="space-y-3">{reports.map(item=><li key={item.publicId}
-        className="rounded-lg border border-border bg-surface p-4">
+    {!reports.length?<p className="border-y border-border py-5 text-sm text-body">You have not reported any issues yet.</p>:
+      <ul className="divide-y divide-border border-y border-border">{reports.map(item=><li key={item.publicId}
+        className="py-4">
         <Link href={"/tracker/mine/"+encodeURIComponent(item.publicId)}
           className="font-semibold text-primary-text underline">{item.publicId}</Link>
         <p className="mt-1 text-sm text-body">{item.issueType} · {item.status}</p>
