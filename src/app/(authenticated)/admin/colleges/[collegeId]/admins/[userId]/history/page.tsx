@@ -34,7 +34,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
    actions={<div className="flex flex-wrap items-center gap-2">
     <PageBackLink href={base} label="College admins"/>
     <a href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 sm:min-h-9">Export shown history (CSV)</a>
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Export shown history (CSV)</a>
    </div>}/>
   <p role="status" className="text-sm text-body">
    Page {data.page} · {data.events.length} recorded event(s) shown{data.truncated?" · more available":""}.
