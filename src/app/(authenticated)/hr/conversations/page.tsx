@@ -1,5 +1,8 @@
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -138,14 +141,14 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     <input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <input type="hidden" name="scope" value={parsed.data.scope}/>
     <label className="text-sm text-body">Order
-     <select name="sort" defaultValue={parsed.data.sort} className="mt-1 min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     <Select name="sort" defaultValue={parsed.data.sort} className="mt-1 min-h-11">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
-     </select>
+     </Select>
     </label>
     <label className="flex-1 text-sm text-body">Search by drive or message
-     <input name="q" maxLength={120} defaultValue={parsed.data.q}
-      className="mt-1 min-h-9 w-full rounded-[var(--radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-    <button type="submit" className="self-end rounded-[var(--radius)] border border-border px-4 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-9">Search</button>
+     <Input name="q" maxLength={120} defaultValue={parsed.data.q}
+      className="mt-1 min-h-11 w-full"/></label>
+    <Button type="submit" variant="secondary" className="self-end min-h-11">Search</Button>
    </form>
    <nav aria-label="Conversation kind" className="flex flex-wrap gap-2">
     {HR_CONVERSATION_KINDS.map(item=><Link key={item.value}
