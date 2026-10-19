@@ -300,7 +300,7 @@ export function ProjectWorkspace({
                 activeSection === section ? "page" : undefined
               }
               className={
-                "whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition " +
+                "whitespace-nowrap border-b-[3px] px-3 py-2 text-[14px] font-[650] transition " +
                 (activeSection === section
                   ? "bg-primary text-primary-foreground"
                   : "text-body hover:bg-muted hover:text-foreground")
