@@ -1,0 +1,118 @@
+/*
+ * Existing vNext recruiter calendar, painted with original LMS recruiter values.
+ * Source: 42Students/lms2-fe@prod-2026/src/styles/components/_recruiter-v2.scss:137-148,157-164.
+ * The vNext data, per-category tabs, month/week options and mobile day agenda remain.
+ */
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.range {
+  display: block;
+  margin: 4px 0 12px;
+  color: #66758d;
+  font-size: 13px;
+}
+.boardFrame {
+  min-width: 0;
+  overflow-x: auto;
+  border-block: 1px solid #e3e8ef;
+  padding-bottom: 6px;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(7,minmax(150px,1fr));
+  gap: 10px;
+  min-width: 0;
+  padding-bottom: 6px;
+}
+.dayHead {
+  padding: 12px 8px;
+  text-align: center;
+  color: #66758d;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.day {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 140px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e3e8ef;
+  border-radius: 10px;
+  background: #fff;
+}
+.day[data-today="true"] {
+  border-color: #2f6fed;
+  box-shadow: inset 0 0 0 1px #2f6fed;
+}
+.day[data-outside="true"] {
+  background: #f6f8fb;
+}
+.event {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 36px;
+  padding: 8px !important;
+  border: 1px solid #e3e8ef !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: #334155;
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.event:hover {
+  background: #f6f8fb !important;
+  border-color: #cdd5e0 !important;
+}
+.event:focus-visible {
+  outline: 2px solid #0a7c88;
+  outline-offset: 2px;
+}
+.time {
+  color: #4a5568;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.due {
+  border-color: #f5c27a !important;
+  background: #fffaf2 !important;
+}
+.mobileDay {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e3e8ef;
+}
+.mobileEvents {
+  display: grid;
+  gap: 8px;
+}
+.empty {
+  color: #66758d;
+  font-size: 12px;
+}
+@media (max-width: 860px) {
+  .board {
+    grid-template-columns: minmax(0,1fr);
+  }
+}
+@media (max-width: 767px) {
+  .boardFrame {
+    border-top: 1px solid #e3e8ef;
+    border-bottom: 1px solid #e3e8ef;
+  }
+  .nav { gap: 8px; }
+  .mobileDay { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .event { transition: none; }
+}
