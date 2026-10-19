@@ -42,7 +42,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
      {key:"company",header:"Company",mobileLabel:"Company",mobilePriority:"primary" as const,
       cell:(company:TpoCompanyRow)=><div className="min-w-0">
        <Link href={companyHref(company)}
-        className="inline-flex min-h-9 items-center break-words font-semibold text-link underline lms-inline-link">
+        className="inline-flex min-h-9 items-center break-words font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         {company.name}</Link>
        {company.unlinkedLeadGroup
         ?<div className="mt-2"><StatusBadge tone="warning">CRM name only · not linked</StatusBadge></div>
