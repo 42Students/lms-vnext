@@ -43,7 +43,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
   <button type="button" disabled={busy} onClick={()=>void load()}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Working…":"Preview applying round results"}</button>
-  {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-muted p-4">
+  {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
    <h3 className="font-semibold">Consequence preview</h3>
    <p className="text-sm">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
    <dl className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface text-sm sm:grid-cols-4">
@@ -52,7 +52,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
     <div className="p-3"><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
    </dl>
-   <div className="max-h-60 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border p-2">
+   <div className="max-h-60 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border px-2">
     {preview.rows.map(r=><div key={r.resultId} className="flex justify-between gap-2 border-b border-border px-2 py-2 text-sm last:border-b-0">
      <span>{r.student}</span><span>{r.outcome} → {r.destination} · {r.status}</span>
     </div>)}
