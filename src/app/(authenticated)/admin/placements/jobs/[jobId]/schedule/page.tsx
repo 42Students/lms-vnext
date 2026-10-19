@@ -29,8 +29,13 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   requireSuperAdminSelectedCollege(context,"placements.manage");
   const {jobId}=await params;
   const query=driveInterviewsParams(await searchParams);
-  if(!query) return <ErrorState title="Invalid interview filters"
-    description="Round kind, status or page is invalid. No records were loaded." />;
+  if(!query) return <div className="min-w-0 space-y-5">
+    <PageHeader title="Interviews" description="Schedule candidate interviews and review interview rounds."/>
+    <ErrorState title="Invalid interview filters"
+      description="Round kind, status or page is invalid. No records were loaded."
+      action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/schedule"}
+        className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+  </div>;
   const [data,appointments]=await Promise.all([
     listCollegeDriveInterviews(context,jobId,query),
     getCollegeRoundSlotAppointments(context,jobId),
