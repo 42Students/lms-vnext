@@ -758,12 +758,13 @@ export function RecruiterLeadsWorkspace({
             </Button>:null}
             {filterChips.length?<div role="group" aria-label="Active recruiter filters"
               className="flex flex-wrap gap-2">
-              {filterChips.map(chip=><Button type="button" key={chip.key}
+              {filterChips.map(chip=><FilterChip type="button" key={chip.key}
                 
                 title={"Clear "+chip.label+" filter"}
+                aria-label={"Clear "+chip.label+" filter"} aria-pressed={true}
                 onClick={()=>updateFilter(chip.key,"ALL")}>
                 {chip.label}: {chip.value} ×
-              </Button>)}
+              </FilterChip>)}
             </div>:null}
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
               className="grid gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-4">

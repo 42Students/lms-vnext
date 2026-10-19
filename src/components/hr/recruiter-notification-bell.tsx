@@ -51,7 +51,7 @@ export function RecruiterNotificationBell(){
   <Button ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
     aria-expanded={isOpen} aria-haspopup="dialog"
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
-    variant="secondary" className="relative min-h-11 min-w-11 !px-2">
+    variant="secondary" className="relative min-h-11 min-w-11 !p-0 md:min-h-9 md:min-w-9">
     <ShellNavGlyph name="bell" />
     {data?.unread&&data.unread>0?<Badge tone="error" aria-hidden="true"
       className="absolute -right-1 -top-1 !min-h-4 !min-w-4 !rounded-full !border-0 !bg-[var(--lms-error)] !px-1 !py-0 !text-[10px] !leading-3 !text-white">
@@ -59,13 +59,13 @@ export function RecruiterNotificationBell(){
   </Button>
   <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications">
    {!data&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:null}
-   {error?<ErrorState title="Notifications unavailable" description={error} action={<Button type="button" onClick={()=>void load()} variant="secondary">Retry</Button>}/>:null}
+   {error?<ErrorState title="Notifications unavailable" description={error} action={<Button type="button" onClick={()=>void load()} variant="secondary" className="min-h-11 md:min-h-9">Retry</Button>}/>:null}
    {data?.status==="CHOOSE_COLLEGE"?
     <div className="mt-3 space-y-2 text-sm">{data.choices?.map(item=>
      <Button type="button" key={item.collegeId} onClick={()=>{
        requestGate.current.invalidate();setData(null);setError("");setCollegeId(item.collegeId);
       }}
-      variant="secondary" className="w-full justify-start text-left">
+      variant="secondary" className="min-h-11 w-full justify-start text-left md:min-h-9">
       {item.collegeName}</Button>)}</div>:null}
    {data?.status==="READY"&&data.rows?.length===0?
      <EmptyState title="No notifications yet" description="New placement notifications will appear here."/>:null}
