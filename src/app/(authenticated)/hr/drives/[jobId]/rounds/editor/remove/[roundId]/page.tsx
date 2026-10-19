@@ -4,6 +4,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Button} from "@/components/ui/button";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
 export default async function HrRoundRemovalConfirm({params}:{
@@ -32,9 +33,9 @@ export default async function HrRoundRemovalConfirm({params}:{
     <input type="hidden" name="action" value="REMOVE"/>
     <input type="hidden" name="roundId" value={round.id}/>
     <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
-    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    <Button type="submit">
      Confirm remove
-    </button>
+    </Button>
    </form>
   </div>
  </div>;
