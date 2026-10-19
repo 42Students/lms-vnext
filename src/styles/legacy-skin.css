@@ -603,3 +603,31 @@
   :where(label:has(input[type="checkbox"]:checked, input[type="radio"]:checked)):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-form-ink) !important;
 }
+
+/* Explicit legacy error class and user-touched native validity:
+ * components___form.scss:136-143 (.ln-in2.error: #ef4444 border,
+ * rgba(239,68,68,.06) background, 20% focus halo). Untouched :invalid
+ * is intentionally left alone to avoid displaying errors on empty forms.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]), select, textarea):is(.error, :user-invalid):not(:where([data-unskin], [data-unskin] *)) {
+  border-color: var(--lms-error) !important;
+  background-color: rgba(239, 68, 68, 0.06) !important;
+}
+/* Legacy: components___form.scss:140-143 (2px red 20% active halo). */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]), select, textarea):is(.error, :user-invalid):not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  border-color: var(--lms-error) !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+}
+/* Legacy: components___antddesign.scss:178-185 (loading actions retain
+ * the teal fill while being inert, rather than appearing disabled gray);
+ * old-lms-shell-spec.md:23 (#0a7c88 / white measured action).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(button[aria-busy="true"]:not([data-slot="button"]):not([role="tab"]):not([aria-pressed])):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-button-primary) !important;
+  border-color: var(--lms-button-primary) !important;
+  color: var(--lms-on-primary) !important;
+  box-shadow: none !important;
+}
