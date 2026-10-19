@@ -30,17 +30,17 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
    className="w-full space-y-2">
    <label className="block text-xs">Edit message
     <textarea value={draft} maxLength={4000} required rows={3} disabled={busy}
-     onChange={event=>setDraft(event.target.value)} className="mt-1 w-full rounded-[var(--radius)] border border-border bg-surface p-2"/>
+     onChange={event=>setDraft(event.target.value)} className="mt-1 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-2"/>
    </label>
-   {error?<p role="alert" className="text-xs text-danger">{error}</p>:null}
-   <button type="submit" disabled={busy||!draft.trim()} className="min-h-10 rounded-[var(--radius)] bg-primary px-3 text-xs text-on-primary">{busy?"Saving…":"Save edit"}</button>
+   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+   <button type="submit" disabled={busy||!draft.trim()} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-3 text-xs text-on-primary">{busy?"Saving…":"Save edit"}</button>
    <button type="button" disabled={busy} onClick={()=>setMode(null)} className="ml-2 min-h-10 text-xs underline">Cancel</button>
   </form>:null}
   {mode==="DELETE"?<div role="alertdialog" aria-modal="false" aria-label="Delete this message?"
-   className="w-full space-y-2 rounded-[var(--radius)] border border-border p-3 text-xs">
+   className="w-full space-y-2 border-t border-border pt-3 text-xs">
    <p>Delete this message? Other team members will see Message removed.</p>
-   {error?<p role="alert" className="text-danger">{error}</p>:null}
-   <button type="button" disabled={busy} className="min-h-10 rounded-[var(--radius)] bg-primary px-3 text-on-primary"
+   {error?<p role="alert" className="text-error">{error}</p>:null}
+   <button type="button" disabled={busy} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-3 text-on-primary"
     onClick={()=>void submit("DELETE")}>{busy?"Removing…":"Delete message"}</button>
    <button type="button" disabled={busy} onClick={()=>setMode(null)} className="ml-2 min-h-10 underline">Cancel</button>
   </div>:null}
