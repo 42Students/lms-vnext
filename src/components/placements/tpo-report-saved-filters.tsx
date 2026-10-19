@@ -66,7 +66,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
   </div>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Choose saved view
-    <Select value={picked} disabled={views.length===0} onChange={e=>setPicked(e.target.value)}
+    <Select value={picked} disabled={views.length===0} onChange={e=>{setPicked(e.target.value);setMessage("");}}
      >
      <option value="">Select view</option>
      {views.map(v=><option key={v.name} value={v.name}>{v.name}</option>)}
