@@ -104,7 +104,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       {headings.map((heading,index)=><label key={index} className="flex items-center gap-2 text-xs">
        <Checkbox checked={!hidden.includes(index)}
         disabled={!hidden.includes(index)&&hidden.length===headings.length-1}
-        onChange={e=>setHidden(current=>e.target.checked?current.filter(n=>n!==index):[...current,index])}/>
+        onChange={e=>{setHidden(current=>e.target.checked?current.filter(n=>n!==index):[...current,index]);if(!e.target.checked&&sort===index){setSort(null);setDescending(false);}}}/>
        {heading}</label>)}
      </fieldset>
     </Dropdown>
