@@ -101,7 +101,7 @@ export function LearnerNotificationBell(){
      const target=learnerNotificationTarget(row.notification.actionHref)??"/learn/notifications";
      return <li key={row.notification.id}>
       <Link href={target} onClick={()=>setOpen(false)}
-        className="block min-h-11 rounded-lg border border-border p-3 text-sm text-body">
+        className="block min-h-11 rounded-[8px] border border-border bg-surface px-4 py-3 text-sm text-body hover:bg-[var(--lms-neutral-50)]">
        <span className="block font-semibold text-foreground">{row.notification.title}
         {row.notification.readAt===null?" · New":""}</span>
        <span className="mt-1 block line-clamp-2">{row.notification.body}</span>
