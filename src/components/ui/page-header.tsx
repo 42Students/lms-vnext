@@ -4,6 +4,8 @@ import { NeedsDoingChips, type NeedsDoingChip } from "@/components/ui/needs-doin
 export type PageHeaderProps = {
   eyebrow?: string;
   title: string;
+  /** Optional stable heading id for aria-labelledby on existing pages. */
+  id?: string;
   description?: string;
   actions?: ReactNode;
   /** Existing page-owned quick-filter destinations, displayed below the title row. */
@@ -17,7 +19,7 @@ export type PageHeaderProps = {
  * Legacy eyebrow and description props remain supported, but both become
  * inline subtitle text instead of a separate eyebrow or paragraph block.
  */
-export function PageHeader({ eyebrow, title, description, actions, needsDoingItems, selectedNeedKey, needsDoingLabel }: PageHeaderProps) {
+export function PageHeader({ eyebrow, title, id, description, actions, needsDoingItems, selectedNeedKey, needsDoingLabel }: PageHeaderProps) {
   const subtitle = [eyebrow?.trim(), description?.trim()].filter(Boolean).join(" · ");
 
   const heading = (
@@ -27,6 +29,7 @@ export function PageHeader({ eyebrow, title, description, actions, needsDoingIte
     >
       <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 md:flex-row md:items-baseline md:gap-4">
         <h1
+          id={id}
           className="m-0 min-w-0 max-w-full shrink break-words text-[20px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)] md:truncate md:text-[30px]"
           style={{ fontSize: "var(--lms-page-header-title-size, 30px)", fontWeight: 600 }}
           title={title}
