@@ -131,7 +131,6 @@ export default async function CollegeReadinessPage({
       </Link>
 
       <PageHeader
-        eyebrow="Super Admin · Tenant Setup"
         title={`${college.name} · Readiness Gate`}
         description={`Read-only go-live checklist for ${college.code}. Checks use persisted, college-scoped data. No settings are modified.`}
         actions={
@@ -185,7 +184,7 @@ export default async function CollegeReadinessPage({
         ].map((metric) => (
           <article
             key={metric.label}
-            className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
           >
             <p className="m-0 text-xs font-semibold text-muted-foreground">
               {metric.label}
@@ -255,7 +254,7 @@ export default async function CollegeReadinessPage({
         </p>
 
         {shownChecks.length===0 ? (
-          <p role="status" className="mt-4 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-muted p-4 text-sm text-body">
+          <p role="status" className="mt-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4 text-sm text-body">
             No readiness checks match the selected status and area. The overall tenant readiness verdict above still uses all ten checks.
           </p>
         ) : null}
@@ -264,7 +263,7 @@ export default async function CollegeReadinessPage({
             (check, index) => (
               <li
                 key={check.id}
-                className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-muted p-4"
+                className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
