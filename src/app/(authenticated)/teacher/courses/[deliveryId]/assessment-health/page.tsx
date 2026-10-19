@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 
@@ -40,7 +41,7 @@ export default async function FacultyCourseAssessmentHealthPage({
         className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Section students
       </Link>} />
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
       <h2 className="text-lg font-semibold text-foreground">Scope</h2>
       <p className="mt-1 text-sm text-body">
         {data.rosterSize} currently enrolled learners in this authorized Section.
@@ -50,12 +51,12 @@ export default async function FacultyCourseAssessmentHealthPage({
     <form action={facultyCourseHealthHref({...data.query,page:1}).split("?")[0]}
       method="get" className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment type
-        <select name="kind" defaultValue={data.query.kind}
+        <Select name="kind" defaultValue={data.query.kind}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All published assessments</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
-        </select>
+        </Select>
       </label>
       <Button type="submit" variant="primary">Filter</Button>
       <Link href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
@@ -68,7 +69,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       description="No registered published Assignment or Quiz matches this Section and filter. Draft work and unsupported legacy results are not counted." />
     : <div className="grid gap-3">{data.items.map(item =>
       <article key={item.kind + ":" + item.id}
-        className="rounded-xl border border-border bg-surface p-4">
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-semibold text-foreground">{item.title}</h2>
           <span className="text-xs font-semibold text-body">{item.kind}</span>
