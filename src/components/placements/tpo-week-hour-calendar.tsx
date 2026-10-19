@@ -193,8 +193,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
       <button type="button" onClick={()=>setMove(null)}
         className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Close</button>
-    </section>
-   </div>:null}
+   </Dialog>:null}
   {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
   {slot?<div role="dialog" aria-modal="true" aria-label="New recruiter follow-up" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <div className="w-full max-w-md space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-[var(--lms-space-5)]" onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();cancelDraft();}}}>
