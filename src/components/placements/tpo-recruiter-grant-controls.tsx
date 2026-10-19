@@ -109,7 +109,7 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
   }
   return <div className="mt-2">
     <button type="button" disabled={busy} onClick={() => setConfirmOpen(true)}
-      className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-xs font-semibold text-[var(--lms-teal-deep)] disabled:opacity-60">
+      className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
       {busy ? "Revoking..." : "Revoke access"}
     </button>
     {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}
@@ -152,7 +152,7 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
    </select>
   </label>
   <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-   className="min-h-11 md:min-h-9 rounded border border-border px-3 text-xs text-[var(--lms-teal-deep)] disabled:opacity-50">
+   className="min-h-11 md:min-h-9 rounded border border-border px-3 text-xs text-primary-text disabled:opacity-50">
    {busy?"Saving…":ended?"Give access again":"Extend"}
   </button>
   {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}
