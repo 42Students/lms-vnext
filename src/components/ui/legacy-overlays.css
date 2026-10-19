@@ -31,6 +31,9 @@
   right: 16px;
   z-index: 1;
 }
+[data-slot="dialog"] > div > div:first-child > button[aria-label="Close dialog"]:hover {
+  color: #1a1d21;
+}
 [data-slot="dialog"] > div > div:last-child:not(:first-child) {
   background: #fff;
 }
