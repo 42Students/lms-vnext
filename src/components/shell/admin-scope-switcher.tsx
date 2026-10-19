@@ -43,7 +43,7 @@ export function AdminScopeSwitcher({
 
       if (!value) {
         response = await fetch("/api/auth/admin-scope", {
-          method: "DELETE",
+          method: "DELETE", credentials: "same-origin",
         });
       } else {
         const [kind, id] = value.split(":");
@@ -53,7 +53,7 @@ export function AdminScopeSwitcher({
             : { kind: "college", collegeId: id };
 
         response = await fetch("/api/auth/admin-scope", {
-          method: "POST",
+          method: "POST", credentials: "same-origin",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(body),
         });
