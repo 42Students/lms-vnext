@@ -58,8 +58,8 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
   void load().catch(()=>setError("Could not load saved batch views.")).finally(()=>setBusy(false));
  }
  const selectedView=views.find(view=>view.id===selected);
- return <section aria-label="BATCH_STUDENTS saved views" className="space-y-2 print:hidden">
-  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" aria-expanded={open} onClick={toggle}
+ return <section aria-label="BATCH_STUDENTS saved views" className="min-w-0 space-y-2">
+  <Button variant="secondary" type="button" aria-expanded={open} onClick={toggle}
    >Saved batch views</Button>
   {open?<div className="min-w-0 space-y-3 border-b border-border py-4">
    <h3 className="font-semibold">Saved views</h3>
@@ -70,8 +70,8 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
       >{view.name}</Button>)}
    </div>
    <label className="block text-sm">View name
-    <Input className="min-h-11 md:min-h-9" value={name} onChange={e=>setName(e.target.value)} maxLength={100}
-     className="mt-1"/></label>
+    <Input value={name} onChange={e=>setName(e.target.value)} maxLength={100}
+     className="mt-1 min-h-11 w-full md:min-h-9"/></label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
     <Checkbox  checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</label>
    <div className="flex flex-wrap gap-2">
@@ -92,7 +92,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
     <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>void openSaved(view)}
      >Open</Button>
     <a href={batchStudentViewExportHref(batchId,1,view.query)}
-     className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Download CSV</a>
+     className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Download CSV</a>
     <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>setDeleteTarget(view)}
      >Delete</Button>
    </li>)}</ul>
