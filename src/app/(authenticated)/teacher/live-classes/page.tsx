@@ -1,4 +1,4 @@
-import { Select } from "@/components/ui/select";
+import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -70,13 +70,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
     <Link href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}
      className="inline-flex min-h-9 items-center text-sm text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open course</Link>
    </li>)}</ul>}
-  <nav aria-label="Live-class pages" className="flex items-center justify-between gap-3">
-   <p className="text-sm">Page {data.page} of {data.totalPages}</p>
-   <div className="flex gap-3">
-    {data.page>1?<Link href={facultyLiveClassesHref({...data.query,page:data.page-1})} className="inline-flex min-h-9 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
-    {data.page<data.totalPages?<Link href={facultyLiveClassesHref({...data.query,page:data.page+1})} className="inline-flex min-h-9 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
-   </div>
-  </nav>
+  <Pagination label="Live-class pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyLiveClassesHref({...data.query,page})}/>
   <p className="text-xs text-muted-foreground">
    Times use IST for display; links are HTTPS-only and are not written to logs.
    Scheduled Section calendar events without LIVE_CLASS content are not presented as online sessions.
