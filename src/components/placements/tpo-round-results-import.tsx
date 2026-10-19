@@ -65,7 +65,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   <button type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Checking…":"Preview matching results"}</button>
-  {preview?<div className="space-y-4 rounded-[var(--lms-control-radius)] border border-border bg-muted p-4">
+  {preview?<div className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
    <h3 className="font-semibold">Import preview</h3>
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
    <div tabIndex={0} role="group" aria-label="Imported round preview, scroll for more rows" className="max-h-44 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
