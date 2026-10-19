@@ -22,6 +22,21 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
     expect(styles()).toContain("transition:opacity .15s ease");
     expect(styles()).toContain(".lms-legacy-mobile-footer-items .active .lms-legacy-mobile-footer-icon {opacity:1;}");
   });
+  it("anchors the original AntD small badge to the bell with a red 14px indicator", () => {
+    expect(mobile()).toContain('className="lms-legacy-mobile-footer-icon-wrap"');
+    expect(mobile()).toContain('className="lms-legacy-mobile-footer-badge"');
+    expect(mobile()).toContain('{unread>99?"99+":unread}');
+    expect(styles()).toContain(".lms-legacy-mobile-footer-icon-wrap {");
+    expect(styles()).toContain("position:relative;");
+    expect(styles()).toContain("transform:translate(50%,-50%)");
+    for (const value of ["min-width:14px;", "height:14px;", "font-size:12px;",
+      "line-height:14px;", "background:#ff4d4f;", "box-shadow:0 0 0 1px #fff;"]) {
+      expect(styles(), value).toContain(value);
+    }
+    // The counter is visual decoration; the link names its count for screen readers.
+    expect(mobile()).toContain('aria-label={alerts?item.label+", "+unread+" unread":item.label}');
+    expect(mobile()).toContain('aria-hidden="true" className="lms-legacy-mobile-footer-badge"');
+  });
   it("retains learner and faculty icon order without mixing portal links", () => {
     const content = mobile();
     const learner = content.slice(content.indexOf("const learnerLinks"), content.indexOf("const facultyLinks"));
