@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 
@@ -40,35 +41,35 @@ export default async function FacultyResponseFollowUpsPage({
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment type
-        <select name="kind" defaultValue={data.query.kind}
+        <Select name="kind" defaultValue={data.query.kind}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
-        <select name="deliveryId" defaultValue={data.query.deliveryId ?? ""}
+        <Select name="deliveryId" defaultValue={data.query.deliveryId ?? ""}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="">All current Sections</option>
           {data.sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
             {section.courseCode} · {section.courseName} · {section.sectionName}
           </option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sort
-        <select name="sort" defaultValue={data.query.sort}
+        <Select name="sort" defaultValue={data.query.sort}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="RECENT_DUE">Most recently due</option>
           <option value="OLDEST_DUE">Oldest overdue first</option>
           <option value="TITLE">Assessment title</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assessments per page
-        <select name="pageSize" defaultValue={data.query.pageSize}
+        <Select name="pageSize" defaultValue={data.query.pageSize}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="5">5</option><option value="10">10</option>
-        </select>
+        </Select>
       </label>
       <Button type="submit" variant="primary">
         Filter
