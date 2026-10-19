@@ -161,7 +161,7 @@ export function PlacementBulkAddApplicants({
               {candidates.learners.map((candidate) => (
                 <label
                   key={candidate.membershipId}
-                  className="flex min-h-11 cursor-pointer items-center gap-3 px-3 py-2 hover:bg-primary-subtle"
+                  className="flex min-h-11 cursor-pointer items-center gap-3 border-b border-border px-3 py-2 hover:bg-muted"
                 >
                   <input
                     type="checkbox"
