@@ -64,13 +64,13 @@ export default async function FacultyCalendarPage({
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">Next month</Link>
         </div>
       </div>
-      <form method="get" action="/teacher/calendar" className="mt-4 flex flex-wrap items-end gap-3">
-        <label className="grid gap-1 text-sm font-semibold text-body">Month (IST)
+      <form method="get" action="/teacher/calendar" className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-end">
+        <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-body-text)]">Month (IST)
           <Input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
              />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
+        <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-body-text)]">Teaching Section
           <Select name="deliveryId" defaultValue={selected??""} >
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
