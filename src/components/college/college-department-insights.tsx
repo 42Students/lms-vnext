@@ -59,7 +59,7 @@ export function CollegeDepartmentInsights({
     />
     {attendance && correctionPolicy ? (
       <section aria-label="College attendance correction policy"
-        className="rounded-xl border border-border bg-surface px-4 py-3 text-sm text-body">
+        className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 py-3 text-sm text-body">
         <p className="font-semibold text-foreground">Attendance policy — read-only</p>
         <p className="mt-1">Faculty marking/correction window: {correctionPolicy.correctionWindowHours} hours after class end.</p>
         <p>Exam eligibility threshold: {correctionPolicy.eligibilityThresholdPercent}%.</p>
@@ -71,7 +71,7 @@ export function CollegeDepartmentInsights({
           className="mt-2 inline-block font-semibold text-primary-text">Attendance policy settings</Link>
       </section>
     ) : null}
-    <section aria-label="Department filters" className="sm: border-t border-border pt-4">
+    <section aria-label="Department filters" className="border-t border-border pt-4">
       <form method="get" action={path} className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
           Department name
@@ -83,7 +83,7 @@ export function CollegeDepartmentInsights({
         <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
     </section>
-    <section aria-label="Department evidence results" className="min-w-0 rounded-xl border border-border bg-surface">
+    <section aria-label="Department evidence results" className="min-w-0 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface">
       <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
         {data.total} matching department{data.total === 1 ? "" : "s"}
       </p>

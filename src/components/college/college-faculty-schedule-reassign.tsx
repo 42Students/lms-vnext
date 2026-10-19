@@ -39,23 +39,23 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
   finally{setBusy(false);}
  }
  return <>{confirmation}
-  <button type="button" onClick={()=>void show()} className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text">
+  <button type="button" onClick={()=>void show()} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">
    Reassign class schedules</button>
   <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}} title="Reassign class schedules" dismissible={!busy}>
     <div className="flex justify-between gap-3"><h2 className="font-semibold">Reassign class schedules</h2>
      <button type="button" disabled={busy} onClick={()=>setOpen(false)}
-      className="min-h-11 rounded border border-border px-3">Close</button></div>
+      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3">Close</button></div>
     <p className="text-sm">{upcoming} upcoming scheduled session(s) for {name}.</p>
     <label className="grid gap-2 text-sm font-semibold">Assign to
      <select value={selected} onChange={e=>setSelected(e.target.value)}
-      className="min-h-11 rounded border border-border bg-surface px-3 text-base sm:text-sm">
+      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm">
       <option value="">Choose a replacement faculty</option>
       {options.map(row=><option key={row.id} value={row.id}>{row.name??row.id}</option>)}
      </select></label>
     <p className="text-xs text-muted-foreground">Only future scheduled sessions are changed. Overlapping sessions are skipped; existing teaching history is retained.</p>
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     <button type="button" disabled={busy||!selected||!upcoming} onClick={()=>void submit()}
-     className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+     className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
      {busy?"Reassigning…":"Reassign class schedules"}</button>
     {receipt?<section role="status" className="space-y-2">
      <p className="font-semibold">Reassigned {receipt.reassigned} of {receipt.total} upcoming session(s).</p>
