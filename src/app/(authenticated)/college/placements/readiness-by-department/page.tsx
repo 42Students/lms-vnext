@@ -24,7 +24,7 @@ export default async function CollegePlacementDepartmentReadinessPage({
     <PageHeader eyebrow="College Admin" title="Placement Evidence by Department" />
     <ErrorState title="Invalid department filters"
       description="The search or page value is invalid. No placement evidence was loaded."
-      action={<Link href="/college/placements/readiness-by-department" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline">Clear filters</Link>} />
+      action={<Link href="/college/placements/readiness-by-department" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>} />
   </main>;
   return <CollegeDepartmentInsights data={
     await listCollegeDepartmentInsights(context, "PLACEMENT_READINESS", parsed.data)
