@@ -320,3 +320,58 @@ and grep -nE 'sm:|md:' FILE. This is NOT an executed repo-wide grep.
 No src/components/ui, package.json, server/permissions, or API files edited. Remaining: 40px vs 44px Quartz header (chat-14), 768px vs 640px shared DataTable (UI owner), full icon/link inventory, rendered phone/tablet and hover/focus/disabled/loading/empty screenshots, end-to-end export/selection verification. Global A5–A7/E8 unticked.
 
 Exact next file: src/components/tpo/recruiter-lead-csv-import.tsx; after that src/components/tpo/tpo-audit-grid.tsx and remaining TPO drive sheet inventory.
+
+
+## chat-12 follow-through — ten source-complete TPO files (2026-10-19)
+
+Branch only: chatgpt/chat-12-b. Synced main by a two-parent non-force merge after the first ten scoped source updates; other owners' files were not touched. The checks below are source comparisons, not a rendered-browser, application, test or CI claim.
+
+### File work queue (source complete; viewport signoff separately blocked)
+
+- [x] src/components/tpo/recruiter-lead-csv-import.tsx — preview groups and skip/confirm/row-results retained, two 256px ScrollCue panes, visible 4-step guidance, shared Checkbox in 44px label, original template CSV and XLSX accepted, both profile links teal/focus-correct.
+- [x] src/components/tpo/tpo-audit-grid.tsx — authenticated rows only, native Quartz audit grid, original person/text/date filters, source-shared copy handler, optional detail/about columns, native selected/all and original detail links.
+- [x] src/components/tpo/tpo-company-memory-workspace.tsx — metrics joined into ONE bordered strip, original People/Documents/Drives/Timeline and private Company Team preserved, linked targets focus-correct, phone two-column metric strip → md three → xl five.
+- [x] src/components/tpo/tpo-students-spreadsheet.tsx — existing Quartz unchanged, original bulk note/clipboard/after-college actions untouched, bulk note disclosure flattened, checkbox rows 44px and md (768px) columns, profile/history/participation links retained.
+- [x] src/components/tpo/tpo-applications-spreadsheet.tsx — existing Quartz and authorized row payload unchanged; CGPA/backlog/10th/12th columns now use numeric-only comparators, applicant link teal/44px/focus and path encoding.
+- [x] src/components/tpo/tpo-audit-saved-views.tsx — audit views no longer ordinary card, 44px phone / 36px tablet buttons, original revision-safe private saved-view commands untouched.
+- [x] src/components/tpo/tpo-company-create-form.tsx — company identity form remains guarded by synchronous submission latch; shared primary submit and fields preserve 44px phone / 36px tablet; notice is narrow warning strip.
+- [x] src/components/tpo/tpo-debounced-student-search.tsx — original search debounce, q/search redirect, page reset and URL handling retained; one shared field at 44px phone / 36px tablet.
+- [x] src/components/tpo/tpo-company-team-conversation.tsx — existing mentions, idempotent sends, CRUD, assignee, privacy and ScrollCue preserved; team and pinned links get teal focus/touch, composer one-column phone → two at md, 44px action targets.
+- [x] src/components/tpo/recruiter-lead-detail-workspace.tsx — profile routes, mailto/tel, duplicate lead and drive links focus-correct, pending/action/error warnings slim, follow-ups one separated list; form and mutation actions preserved.
+- [ ] Remaining broad E8/A5-A7 parity: shared Quartz header 44px vs legacy 40px, shared DataTable 640px vs legacy 768px, whole repository inventory and rendered screenshots; do not globally tick.
+
+### Legacy/vNext value comparison by file
+
+| File | Legacy exact reference or rule | VNext current value/source locator | Source result |
+|---|---|---|---|
+| recruiter-lead-csv-import.tsx | lms2-fe/src/components/tpo/ImportPreviewModal.js:10-19: preview matched/unmatched before commit; old-lms-shell.css:68-85 phone <768px | :159-285: 4 steps, 2 ScrollCue max-h-56, guarded two-press review/confirm, min-h-11 md:min-h-9 and row checkbox label | Source aligned; execution pending |
+| tpo-audit-grid.tsx | lms2-fe/src/components/tpo/grid/TpoGrid.jsx:2-24 AG Community Quartz with 44px rows, 48px pinned selection; old-lms-pages.md:9-10 single toolbar and compact table | :18-24 dynamic native Quartz; :32-48 authorized audit columns, :52-94 flat filters, filtered selection and link actions | Source aligned; header 44/40 gap unresolved |
+| tpo-company-memory-workspace.tsx | old-lms-pages.md:5,8 single canvas, one metrics/funnel strip instead of five cards; old-lms-shell.css:68-85 768px threshold | :244-258 single hairline-bordered metric strip grid-cols-2 md:grid-cols-3 xl:grid-cols-5, People/Drives/Timeline remain | Source aligned; rendered proof pending |
+| tpo-students-spreadsheet.tsx | old-lms-pages.md:5,9-10 table and compact expandable actions; shell.css:68-85 768px | :198-214 border-y note disclosure and md:grid-cols-2 selection list, min-h-11 checkbox rows; :221-245 native Quartz and original routes/actions | Source aligned |
+| tpo-applications-spreadsheet.tsx | legacy TpoGrid.jsx:14-24 numeric/date sorting only; components___common.scss:68-75 teal underline hover | :21-25 five sortKind:number columns, :58-69 native Quartz; authorized applicant link 44px phone, 36px md, focus-visible teal | Source aligned |
+| tpo-audit-saved-views.tsx | old-lms-pages.md:5 and 9: simple views toolbar inside canvas; shell.css:68-85 phone boundary | :122-158 border-y disclosure, five buttons min-h-11 md:min-h-9; original private saved views and revision tokens | Source aligned |
+| tpo-company-create-form.tsx | legacy-styles/components___form.scss:117-143 field 10px radius, 14px/400/20px; old-lms-shell-spec.md:24-25 36px desktop action | :66-118 shared Button/Input and md:min-h-9, narrow warning confirmation strip; original untrusted-company semantics | Source aligned |
+| tpo-debounced-student-search.tsx | legacy-styles/components___form.scss:117-143 searchable field; shell.css:68-85 768px | :11-26 shared Input focus ring, min-h-11 phone / md:min-h-9 desktop and original 350ms query | Source aligned |
+| tpo-company-team-conversation.tsx | old-lms-pages.md:5-12 clean one-canvas language and teal text actions; shell.css:68-85 tablet from 768px | :134-266 preserved message thread and composer, md:grid-cols-2, shared link/focus/min-h-11 with md:min-h-9 | Source aligned; full legacy chat layout unknown |
+| recruiter-lead-detail-workspace.tsx | components___common.scss:68-75 teal link hover underline; old-lms-pages.md:7 narrow alert, shell.css:68-85 44px phone target | :398-487 back/company/mailto/tel links underlined & focusable; :444-454 alerts; :649-666 follow-ups divide-y; original mutation dialogs | Source aligned |
+
+### Complete-file source grep equivalents
+
+All ten files fetched from GitHub and scanned for raw control opening elements matching /<(button|input|select|textarea)(?:\s|>)/g, inline SVG matching /<svg(?:\s|>)/g and six-digit literal colors matching /#[a-f0-9]{6}\b/gi. Equivalent local shell: grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' each scoped file. Nothing repo-wide is claimed.
+
+| File | Raw controls | Inline svg | Literal hex | JSX opening/closing; balanced braces | Responsive source |
+|---|---:|---:|---:|---|---|
+| recruiter-lead-csv-import.tsx | 0 | 0 | 0 | Button 7/7, Link 2/2, braces 132/132 | sm 0, md 9 |
+| tpo-audit-grid.tsx | 0 | 0 | 0 | Button 2/2, Link 2/2, braces 53/53 | sm 0, md 3 |
+| tpo-company-memory-workspace.tsx | 0 | 0 | 0 | Button 1/1, Link 10/10, braces 122/122 | sm 0, md 3 |
+| tpo-students-spreadsheet.tsx | 0 | 0 | 0 | Button 3/3, Link 2/2, braces 212/212 | sm 0, md 1 |
+| tpo-applications-spreadsheet.tsx | 0 | 0 | 0 | Link 1/1, braces 65/65 | sm 0, md 1 |
+| tpo-audit-saved-views.tsx | 0 | 0 | 0 | Button 5/5, braces 76/76 | sm 0, md 5 |
+| tpo-company-create-form.tsx | 0 | 0 | 0 | Button 3/3, braces 56/56 | sm 0, md 4 |
+| tpo-debounced-student-search.tsx | 0 | 0 | 0 | braces 13/13, shared Input only | sm 0, md 1 |
+| tpo-company-team-conversation.tsx | 0 | 0 | 0 | Button 10/10, Link 4/4, braces 180/180 | sm 0, md 12 |
+| recruiter-lead-detail-workspace.tsx | 0 | 0 | 0 | Button 18/18, Link 7/7, braces 304/304 | sm 0, md 34 |
+
+Responsive source proof: no sm: (<768px mismatches) in any of these ten edited components. md: uses Tailwind's 768px boundary from old-lms-shell.css:68-85. Source cannot substitute for actual phone/tablet screenshots, browser click/focus checks, runtime/CI or integration tests; leave global E8 unchecked.
+
+Exact next scope: TPO remaining Team/Companies links and buttons and detailed icon review, starting with src/components/tpo/tpo-team-search.tsx and src/components/tpo/tpo-team-handover.tsx (coordinate with chat-11 if scope already claimed).
