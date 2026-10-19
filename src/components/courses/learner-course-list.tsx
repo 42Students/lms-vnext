@@ -314,14 +314,13 @@ export function LearnerCourseList({
               <div>Semester: {selectedPeriod?.name??"Not recorded"}</div>
             </dl>
           </Disclosure>
-          <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
-            <summary className="cursor-pointer font-semibold">All Courses</summary>
+          <Disclosure title="All Courses" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
               className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{periodRows.slice(0,100).map((row,i)=>
               <li key={row.course.deliveryId+"-"+i}>{row.course.courseName}</li>)}</ul>
             {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for more courses.</p>:null}
             {periodRows.length>100?<p>Showing first 100; search the full list below.</p>:null}
-          </details>
+          </Disclosure>
           {creditSummary.recordedCount>0?<details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
             <summary className="cursor-pointer font-semibold">Credits Breakdown</summary>
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
