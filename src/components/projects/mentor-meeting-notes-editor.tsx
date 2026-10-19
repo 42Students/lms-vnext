@@ -10,6 +10,7 @@ import {projectMutation} from "./project-api";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import styles from "./legacy-project-touch-actions.module.css";
 export function MentorMeetingNotesEditor(props:{
   projectId:string;meetingId:string;updatedAt:string;initialNotes:string|null;
 }){
@@ -41,7 +42,7 @@ export function MentorMeetingNotesEditor(props:{
       showToast({tone:"error",title:"Meeting notes not saved",description:message});
     }finally{setPending(false);}
   }
-  return <>
+  return <div className={styles.legacy+" "+styles.contents}>
     <Button variant="secondary" onClick={()=>{
       setNotes(props.initialNotes??"");setError(null);setOpen(true);
     }}>{props.initialNotes?"Edit outcome notes":"Record outcome notes"}</Button>
@@ -73,5 +74,5 @@ export function MentorMeetingNotesEditor(props:{
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard meeting notes?" description="You have unsaved project changes. Leave this page and discard them?"
       confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
-  </>;
+  </div>;
 }
