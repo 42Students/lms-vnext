@@ -106,6 +106,7 @@ export function AcademicsOverview({
   >[] = [
     {
       key: "period",
+      mobilePriority: "primary",
       header: "Academic period",
       cell: (period) => (
         <div>
@@ -126,6 +127,7 @@ export function AcademicsOverview({
     },
     {
       key: "status",
+      mobilePriority: "secondary",
       header: "Status",
       cell: (period) => (
         <StatusBadge
@@ -137,6 +139,7 @@ export function AcademicsOverview({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (period) => (
