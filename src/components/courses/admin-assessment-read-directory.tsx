@@ -28,7 +28,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} />
-    <form action={base} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-3">
+    <form action={base} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-3 print:hidden">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment title
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
@@ -95,12 +95,12 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
               deadlineReached={item.resultsReleaseReady}/>:null}
         </div>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}#lesson-authoring`}
-          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline print:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Open offering builder / submissions →
         </Link>
       </article>)}
     </div> : <EmptyState title={assignment?"No assignments found for this college":"No quizzes found for this college"} description="Try adjusting your filters." />}
-    <nav aria-label={title + " pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
+    <nav aria-label={title + " pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm print:hidden">
       <span className="text-muted-foreground">Page {data.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.page > 1 ? <Link href={adminAssessmentHref(data.kind, { ...data.query, page: data.page - 1 })}
@@ -110,6 +110,6 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
-    <Link href="/admin/courses" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text print:hidden">← Courses</Link>
   </div>;
 }
