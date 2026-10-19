@@ -7,7 +7,7 @@ import type { ShellNavItem } from "../shell-model";
 import { apiFetch } from "@/lib/api-fetch";
 
 type LearnerCourse = { deliveryId: string; courseName: string; courseCode: string; sectionName: string };
-import { topbarCommands, topbarConfigForPath } from "./portal-config";
+import { topbarCommands, topbarConfigForPath, topbarSearchDestinations } from "./portal-config";
 import { SearchIcon } from "./icons";
 import style from "./topbar.module.css";
 
@@ -54,6 +54,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       .slice(0, 6);
   }, [config.portal, courses, query]);
   const commands = useMemo(() => topbarCommands(pathname, items), [pathname, items]);
+  const destinations = topbarSearchDestinations(pathname, query);
   const matches = useMemo(() => {
     const search = query.trim().toLocaleLowerCase("en-IN");
     return (search ? commands.filter(command =>
@@ -92,10 +93,11 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       router.push("/learn/courses/" + encodeURIComponent(courseMatches[0].deliveryId) + "/home");
     } else if (matches[0]) {
       router.push(matches[0].href);
+    } else if (destinations[0]) {
+      router.push(destinations[0].href);
     } else if (query.trim()) {
-      // The destination performs its own scoped search; this bar never
-      // queries private tenant records or assumes a cross-portal capability.
-      router.push(config.searchHref + "?q=" + encodeURIComponent(query.trim()));
+      // The destination applies the portal\u0027s own tenant and role policy.
+      router.push(config.searchHref + "?q=" + encodeURIComponent(query.trim().slice(0,100)));
     }
     setOpen(false);
     setMobileOpen(false);
@@ -141,12 +143,19 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           <SearchIcon /> <span className="min-w-0"><span className="block truncate">{course.courseName}</span>
             <span className="block truncate text-[11px] text-[#64748b]">{course.courseCode} · {course.sectionName}</span></span>
         </Link>)}
+        {destinations.length > 0 ? <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">Search within</p> : null}
+        {destinations.map(destination => <Link key={destination.href}
+          role="option" aria-selected={false} href={destination.href}
+          className={style.suggestion}
+          onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
+          <SearchIcon/> {destination.label}
+        </Link>)}
         {matches.map(command => <Link role="option" aria-selected={false}
           key={command.href} href={command.href} className={style.suggestion}
           onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
           <SearchIcon /> {command.label}
         </Link>)}
-        {matches.length === 0 ? <p className="p-2 text-xs text-[#64748b]">
+        {matches.length === 0 && destinations.length === 0 && courseMatches.length === 0 ? <p className="p-2 text-xs text-[#64748b]">
           No matching shortcuts. Press Enter to search this portal.
         </p> : null}
       </div> : null}

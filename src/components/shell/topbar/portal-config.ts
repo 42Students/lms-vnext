@@ -33,7 +33,7 @@ export function topbarConfigForPath(pathname: string): TopbarConfig {
     searchHref: "/tpo/students", newHref: "/tpo/placements/new",
     messagesHref: "/tpo/messages", notificationsHref: "/tpo/notifications",
   };
-  if (pathname === "/hr" || pathname.startsWith("/hr/")) return {
+  if (pathname === "/hr" || pathname.startsWith("/hr/") || pathname === "/recruiter" || pathname.startsWith("/recruiter/")) return {
     portal: "hr", placeholder: "Find a drive, applicant or message",
     searchHref: "/hr/drives", newHref: "/hr/drives/new",
     messagesHref: "/hr/conversations", notificationsHref: "/hr/notifications",
@@ -43,7 +43,7 @@ export function topbarConfigForPath(pathname: string): TopbarConfig {
     searchHref: "/learn/courses", newHref: null,
     messagesHref: null, notificationsHref: "/learn/notifications",
   };
-  if (pathname === "/teacher" || pathname.startsWith("/teacher/")) return {
+  if (pathname === "/teacher" || pathname.startsWith("/teacher/") || pathname === "/teach" || pathname.startsWith("/teach/")) return {
     portal: "teacher", placeholder: "Find a course or assignment",
     searchHref: "/teacher/courses", newHref: null,
     messagesHref: null, notificationsHref: "/teacher/notifications",
@@ -73,11 +73,34 @@ export function topbarCommands(
   )).map(({ label, href }) => ({ label, href }));
 }
 
-export function topbarInitials(identityUid: string): string {
-  const raw = identityUid.includes("@") ? identityUid.split("@")[0]! : identityUid;
+export function topbarInitials(identityUid: string, fallback = "42"): string {
+  // OAuth/Firebase opaque UIDs are not names. Only derive personal initials
+  // when the identity is an address; otherwise use the visible role label.
+  const raw = identityUid.includes("@") ? identityUid.split("@")[0]! : fallback;
   const words = raw.replace(/[._-]+/g, " ").trim().split(/\s+/)
     .filter(part => /^[a-z]/i.test(part));
   if (!words.length) return "42";
   return (words.length > 1 ? words[0]![0]! + words[words.length - 1]![0]! :
     words[0]!.slice(0, 2)).toUpperCase();
+}
+
+/** Existing portal pages, not a cross-tenant search API. A command only
+ * opens an authorized route which applies its own college/role filters.
+ */
+export function topbarSearchDestinations(pathname: string, text: string) {
+  const query = text.trim().slice(0,100);
+  if (!query) return [] as {label:string;href:string}[];
+  const enc = encodeURIComponent(query);
+  switch (topbarConfigForPath(pathname).portal) {
+    case "tpo": return [
+      {label:"Search students",href:"/tpo/students?q="+enc},
+      {label:"Search recruiter leads",href:"/tpo/recruiters?q="+enc},
+      {label:"Search companies",href:"/tpo/companies?search="+enc},
+    ];
+    case "admin": return [
+      {label:"Search people",href:"/admin/people/directory?q="+enc},
+      {label:"Search companies",href:"/admin/companies?q="+enc},
+    ];
+    default: return [] as {label:string;href:string}[];
+  }
 }

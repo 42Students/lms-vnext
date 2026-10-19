@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { topbarCommands, topbarConfigForPath, topbarInitials } from
+import { topbarCommands, topbarConfigForPath, topbarInitials, topbarSearchDestinations } from
   "@/components/shell/topbar/portal-config";
 import type { ShellNavItem } from "@/components/shell/shell-model";
 
@@ -42,10 +42,24 @@ describe("chat-13 legacy header portal navigation and measured shell values",()=
      "/admin/companies",
    ]);
  });
+ it("TOPBAR-02B routes TPO and Admin global text to supported scoped directories, not an unscoped aggregate",()=>{
+   expect(topbarSearchDestinations("/tpo/home"," Acme & Co ")).toEqual([
+     {label:"Search students",href:"/tpo/students?q=Acme%20%26%20Co"},
+     {label:"Search recruiter leads",href:"/tpo/recruiters?q=Acme%20%26%20Co"},
+     {label:"Search companies",href:"/tpo/companies?search=Acme%20%26%20Co"},
+   ]);
+   expect(topbarSearchDestinations("/admin/companies","Acme")).toEqual([
+     {label:"Search people",href:"/admin/people/directory?q=Acme"},
+     {label:"Search companies",href:"/admin/companies?q=Acme"},
+   ]);
+   expect(topbarSearchDestinations("/teacher/courses","Acme")).toEqual([]);
+   expect(topbarSearchDestinations("/tpo/home","  ")).toEqual([]);
+ });
  it("TOPBAR-03 derives circular initials without showing arbitrary IDs",()=>{
    expect(topbarInitials("Alice.Doe@example.edu")).toBe("AD");
    expect(topbarInitials("phanindra@example.edu")).toBe("PH");
    expect(topbarInitials("6931-7af3-55ab")).toBe("42");
+   expect(topbarInitials("opaque-oauth-user-id", "Super Admin")).toBe("SA");
  });
  it("TOPBAR-04 replaces only the app header slot, keeping the sidebar and drawer",()=>{
    const shell=read("src/components/shell/app-shell.tsx");
