@@ -18,13 +18,13 @@ export default async function CollegeLiveClassesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 overflow-x-clip space-y-4">
   <PageHeader eyebrow="College Admin · Courses & Content" title="Live Classes"/>
   <ErrorState title="Invalid session filters" description="Invalid page, publication or search filter."
-    action={<Link href="/college/live-classes" className="font-semibold text-link">Clear filters</Link>}/>
+    action={<Link href="/college/live-classes" className="font-semibold text-link lms-inline-link">Clear filters</Link>}/>
  </div>;
  const [data,authoring]=await Promise.all([listCollegeContentAggregate(context,"LIVE_CLASS",parsed.data),getCollegeContentAuthoringOptions(context,"LIVE_CLASS")]);
  return <div className="space-y-4">
   <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated}/>
   <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,from:data.from,to:data.to})}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+    className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
     Export live-class schedule CSV (UTC)
   </Link>
   <CollegeLiveClassesDirectory data={data}/>

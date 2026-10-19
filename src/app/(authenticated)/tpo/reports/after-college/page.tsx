@@ -34,7 +34,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const page=Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(pageCount,requestedPage)):1;
  const pageHref=(nextPage:number)=>{const next=new URLSearchParams(query);next.set("page",String(nextPage));return "/tpo/reports/after-college?"+next.toString();};
  return <div data-tpo-presentation-report className="space-y-5">
-  <Link href="/tpo/reports" className="text-sm font-semibold text-link underline">← All reports</Link>
+  <Link href="/tpo/reports" className="text-sm font-semibold text-link underline lms-inline-link">← All reports</Link>
       <TpoReportPresentation />
   <PageHeader eyebrow="TPO · Reports" title="After college"
    description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."/>
@@ -54,7 +54,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
       {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}
      </Select></label>
     <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-white">Filter</Button>
-    <Link href="/tpo/reports/after-college" className="text-link underline">Clear</Link>
+    <Link href="/tpo/reports/after-college" className="text-link underline lms-inline-link">Clear</Link>
     <a href={"/api/placements/tpo/reports/after-college?"+query.toString()}
       className="text-link underline">Download CSV</a>
    </form>

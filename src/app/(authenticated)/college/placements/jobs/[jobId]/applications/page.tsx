@@ -36,28 +36,28 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
-      actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">Drive overview</Link>} />
+      actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Drive overview</Link>} />
     <form method="get" role="search" aria-label="Application filters" className="grid gap-3 rounded-[8px] border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
-        <input name="q" defaultValue={query.q} maxLength={100} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm" />
+        <input name="q" defaultValue={query.q} maxLength={100} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm">Application
-        <select name="status" defaultValue={query.status} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <select name="status" defaultValue={query.status} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Screening
-        <select name="screening" defaultValue={query.screening} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <select name="screening" defaultValue={query.screening} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Source
-        <select name="source" defaultValue={query.source} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <select name="source" defaultValue={query.source} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Department
-        <select name="departmentId" defaultValue={query.departmentId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <select name="departmentId" defaultValue={query.departmentId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           <option value="">All departments</option>
           {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
             <option value={query.departmentId}>Selected department</option>}
@@ -65,7 +65,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         </select>
       </label>
       <label className="grid gap-1 text-sm">Program
-        <select name="programId" defaultValue={query.programId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <select name="programId" defaultValue={query.programId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           <option value="">All programs</option>
           {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
             <option value={query.programId}>Selected program</option>}
@@ -73,20 +73,20 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         </select>
       </label>
       <label className="grid gap-1 text-sm">Batch
-        <select name="cohortId" defaultValue={query.cohortId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <select name="cohortId" defaultValue={query.cohortId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           <option value="">All batches</option>
           {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
             <option value={query.cohortId}>Selected batch</option>}
           {filters.cohorts.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </select>
       </label>
-      <button type="submit" className="min-h-11 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
+      <button type="submit" className="min-h-[var(--lms-control-height)] self-end rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
     </form>
     <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2">
       {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>
         <Link key={stage} href={driveApplicationsHref(jobId,{...query,stage,page:1})}
           aria-current={query.stage===stage?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold "+
+          className={"inline-flex min-h-[var(--lms-control-height)] items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold "+
             (query.stage===stage?"border-primary bg-primary-subtle text-link":"border-border text-body")}>
           {stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase()}
           <span className="tabular-nums">{stage==="ALL"?
@@ -97,7 +97,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     <div className="flex flex-wrap justify-between gap-3 text-sm">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
-        className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
+        className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
       <p role="status" className="border-b border-border pb-5 text-sm">

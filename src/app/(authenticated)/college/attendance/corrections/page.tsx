@@ -23,13 +23,13 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
     <PageHeader eyebrow="College Admin · Attendance" title="Correction windows"/>
     <ErrorState title="Invalid date range"
       description="Enter both valid IST calendar dates, up to 31 days, without duplicate or unrelated filters."
-      action={<Link href="/college/attendance/corrections" className="font-semibold text-link">Reset filters</Link>}/>
+      action={<Link href="/college/attendance/corrections" className="font-semibold text-link lms-inline-link">Reset filters</Link>}/>
   </div>;
   const data=await getCollegeCorrectionRead(await getCurrentRequestContext(),query.data);
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Attendance" title="Attendance correction windows"
       description={"Persisted scheduled sessions and the current college policy for "+data.collegeName+"."}
-      actions={<Link href="/college/attendance/settings" className="text-sm font-semibold text-link">Policy settings</Link>}/>
+      actions={<Link href="/college/attendance/settings" className="text-sm font-semibold text-link lms-inline-link">Policy settings</Link>}/>
     <section className="border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Policy evidence</h2>
       <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">

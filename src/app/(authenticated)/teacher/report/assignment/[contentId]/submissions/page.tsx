@@ -23,8 +23,8 @@ export default async function FacultyAssignmentSubmissionsPage({
     assignmentId:contentId,...(search.success?search.data:{deliveryId:undefined}),
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <PageHeader title="Invalid Section submission filters" />
-    <Link href="/teacher/allAssignments" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <PageHeader title={"Invalid Section submission filters"} />
+    <Link href="/teacher/allAssignments" className="text-primary-text underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Back to All Assignments
     </Link>
   </section>;

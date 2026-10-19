@@ -16,7 +16,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   page:first(raw.page)??undefined,
  });
  if(!parsed.success)return <section role="alert" className="space-y-3">
-  <PageHeader title="Invalid live-class filters" /><Link href="/teacher/live-classes" className="underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+  <PageHeader title={"Invalid live-class filters"} /><Link href="/teacher/live-classes" className="underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
  </section>;
  const data=await getFacultyLiveClasses(await getCurrentRequestContext(),parsed.data);
  return <div className="min-w-0 max-w-full space-y-6">
@@ -56,7 +56,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   {data.items.length===0?<EmptyState title="No matching live classes"
    description="No published LIVE_CLASS content matches these filters in your current teaching Sections. Unregistered meetings are not invented."/>
    :<ul className="grid gap-3">{data.items.map(s=><li key={s.deliveryId+":"+s.id}
-     className="space-y-2 rounded-xl border border-border bg-surface p-4">
+     className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">{s.title}</h2>
     <p className="text-sm text-body">{s.courseName} · {s.sectionName}</p>
     <p className="text-sm text-body">

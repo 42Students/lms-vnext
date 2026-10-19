@@ -30,7 +30,6 @@ export default async function LearnerApplicationCompanyPage({
         ← Back to application
       </Link>
       <PageHeader
-        eyebrow="My Placements · Employer"
         title={company.companyName}
         description="Read-only company profile from your own placement application."
         actions={

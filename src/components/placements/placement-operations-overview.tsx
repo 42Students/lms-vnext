@@ -1,3 +1,5 @@
+import { SummaryStrip } from "@/components/ui/summary-strip";
+import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { SuperAdminDriveQuickSearch } from "@/components/placements/super-admin-drive-quick-search";
 import {SuperAdminNeedsAttention} from "@/components/placements/super-admin-needs-attention";
@@ -10,11 +12,7 @@ import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operati
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
 function Metric({ label, value, description }: { label: string; value: number; description: string }) {
-  return <section className="border-b border-border px-4 py-4 last:border-r-0 sm:border-r sm:border-b-0">
-    <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">{label}</p>
-    <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
-    <p className="mt-1 text-xs leading-5 text-body">{description}</p>
-  </section>;
+  return <StatTile label={label} value={value} detail={description} />;
 }
 function priorityTone(priority: string): "error" | "warning" | "info" {
   return priority === "HIGH" ? "error" : priority === "MEDIUM" ? "warning" : "info";
@@ -28,21 +26,6 @@ function conversion(value: number, previous: number) {
     style: "percent",
     maximumFractionDigits: 1,
   }).format(value / previous);
-}
-function FunnelMetric({
-  label,
-  value,
-  previous,
-}: {
-  label: string;
-  value: number;
-  previous?: number;
-}) {
-  return <div className="min-w-0">
-    <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">{label}</p>
-    <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
-    <p className="mt-1 text-xs text-body">{previous === undefined ? "Season total" : `${conversion(value, previous)} from previous stage`}</p>
-  </div>;
 }
 export function PlacementOperationsOverview({ operations, basePath, showDriveSearch = false, staleDays=7 }: { operations: Operations; basePath: string; showDriveSearch?: boolean; staleDays?: number }) {
   return <div className="space-y-6">
@@ -63,13 +46,17 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         <h2 className="m-0 text-base font-semibold text-foreground">Placement funnel</h2>
         <p className="mt-1 text-sm text-body">{operations.analytics.season ? `${operations.analytics.season.name} · durable season-to-date conversion` : "Start a placement season to establish a durable funnel baseline."}</p>
       </div>
-      <div className="grid gap-5 py-4 sm:grid-cols-2 xl:grid-cols-5">
-        <FunnelMetric label="Applications" value={operations.analytics.funnel.applications} />
-        <FunnelMetric label="Shortlisted" value={operations.analytics.funnel.shortlisted} previous={operations.analytics.funnel.applications} />
-        <FunnelMetric label="Offered" value={operations.analytics.funnel.offered} previous={operations.analytics.funnel.shortlisted} />
-        <FunnelMetric label="Accepted" value={operations.analytics.funnel.accepted} previous={operations.analytics.funnel.offered} />
-        <FunnelMetric label="Joined" value={operations.analytics.funnel.joined} previous={operations.analytics.funnel.accepted} />
-      </div>
+      <SummaryStrip className="my-4" label="Placement funnel" steps={[
+        {label:"Applications",value:operations.analytics.funnel.applications,note:"Season total"},
+        {label:"Shortlisted",value:operations.analytics.funnel.shortlisted,
+          note:conversion(operations.analytics.funnel.shortlisted,operations.analytics.funnel.applications)+" from previous stage"},
+        {label:"Offered",value:operations.analytics.funnel.offered,
+          note:conversion(operations.analytics.funnel.offered,operations.analytics.funnel.shortlisted)+" from previous stage"},
+        {label:"Accepted",value:operations.analytics.funnel.accepted,
+          note:conversion(operations.analytics.funnel.accepted,operations.analytics.funnel.offered)+" from previous stage"},
+        {label:"Joined",value:operations.analytics.funnel.joined,
+          note:conversion(operations.analytics.funnel.joined,operations.analytics.funnel.accepted)+" from previous stage"},
+      ]} />
     </section>
     {showDriveSearch?<SuperAdminNeedsAttention items={operations.workQueue} basePath={basePath}/>:
     <section className="border-b border-border pb-6">

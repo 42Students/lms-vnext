@@ -1,3 +1,12 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
-export default function Error({reset}:{reset:()=>void}){return <section role="alert" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"><p>Unable to load batch rules.</p><Button variant="secondary" onClick={reset}>Retry</Button></section>;}
+import { ErrorState } from "@/components/ui/error-state";
+
+export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorState
+    title="Could not load this page"
+    description="Unable to load batch rules."
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+  />;
+}

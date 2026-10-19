@@ -188,7 +188,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     {notice?<p role={notice.startsWith("Could not")?"alert":"status"} className="text-sm text-body">{notice}</p>:null}
     {items.length?<ol className="space-y-2">
       {items.map(item=><li key={item.id} id={"log-"+item.requestId}
-        className="rounded-lg border border-border p-3 text-sm">
+        className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
         <details>
           <summary className="inline-flex min-h-9 cursor-pointer items-center font-semibold">
             {new Date(item.time).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} · {item.event} · {item.path}

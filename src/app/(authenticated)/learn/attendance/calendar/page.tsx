@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { CalendarGrid } from "@/components/ui/calendar-grid";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -77,11 +79,11 @@ export default async function LearnerAttendanceCalendarPage({
       className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Month
         <Input name="month" type="month" defaultValue={data.query.month}
-          className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course
         <Select name="deliveryId" defaultValue={data.query.deliveryId}
-          className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All accessible Courses</option>
           {data.courses.map(course=>
             <option key={course.deliveryId} value={course.deliveryId}>
@@ -91,14 +93,14 @@ export default async function LearnerAttendanceCalendarPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <Select name="status" defaultValue={data.query.status}
-          className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All status types</option>
           {Object.entries(statusNames).map(([value,label])=>
             <option key={value} value={value}>{label}</option>)}
         </Select>
       </label>
       <div className="flex flex-wrap items-center gap-3 sm:col-span-3">
-        <Button variant="primary" type="submit">
+        <Button type="submit" className="min-h-11">
           Apply filters
         </Button>
         <Link href="/learn/attendance/calendar"
@@ -130,7 +132,7 @@ export default async function LearnerAttendanceCalendarPage({
         <Link href={next} aria-label="Next month"
           className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Next →</Link>
       </div>
-      <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-muted-foreground sm:gap-2">
+      <CalendarGrid className="text-center text-xs font-semibold text-muted-foreground sm:gap-2">
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day=>
           <span key={day} className="py-1">{day}</span>)}
         {days.map((day,index)=>{
@@ -151,7 +153,7 @@ export default async function LearnerAttendanceCalendarPage({
             </div>
           </div>;
         })}
-      </div>
+      </CalendarGrid>
     </section>
     <section aria-label="Attendance class entries" className="space-y-3">
       <h2 className="text-lg font-semibold text-foreground">Class details</h2>

@@ -1,6 +1,8 @@
-"use client";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { PageHeader } from "@/components/ui/page-header";
+"use client";
+
+import { MetricBar } from "@/components/ui/metric-bar";
 import { Badge } from "@/components/ui/badge";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -273,9 +275,8 @@ export function TpoCompanyMemoryWorkspace({
             {company.hiredPerYear.map(item=>(
               <li key={item.year} className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3 text-sm">
                 <span>{item.year}</span>
-                <div className="h-3 overflow-hidden rounded-full bg-surface-secondary" role="img" aria-label={item.hired+" joined learners in "+item.year}>
-                  <div className="h-full rounded-full bg-primary" style={{width:(100*item.hired/Math.max(1,...company.hiredPerYear.map(row=>row.hired)))+"%"}}/>
-                </div>
+                <MetricBar size="default" role="img" label={item.hired+" joined learners in "+item.year}
+                  value={item.hired} maximum={Math.max(1,...company.hiredPerYear.map(row=>row.hired))} />
                 <strong className="text-right tabular-nums">{item.hired}</strong>
               </li>
             ))}
@@ -298,7 +299,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.people.map(person => (
                   <div key={person.id} className="flex items-center justify-between gap-3 py-3">
                     <div>
-                      <Link className="font-medium text-link hover:underline"
+                      <Link className="font-medium text-link hover:underline lms-inline-link"
                         href={"/tpo/recruiters/" + encodeURIComponent(person.id)}>
                         {person.name}
                       </Link>
@@ -332,7 +333,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
                   <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<currentTimeMs()?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
-                  <Link className="text-sm text-link underline"
+                  <Link className="text-sm text-link underline lms-inline-link"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
                 </li>)}
               </ul>}
@@ -367,7 +368,7 @@ export function TpoCompanyMemoryWorkspace({
                   caption="Company drives" empty={<p>No matching drives.</p>}
                   columns={[
                     {key:"role",header:"Role",mobilePriority:"primary",cell:drive=>
-                      <Link className="inline-flex min-h-9 items-center font-semibold text-link hover:underline"
+                      <Link className="inline-flex min-h-9 items-center font-semibold text-link hover:underline lms-inline-link"
                         href={"/tpo/placements/jobs/" + encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>},
                     {key:"status",header:"Status",mobilePriority:"secondary",cell:drive=>statusLabel(drive.status)},
                     {key:"year",header:"Year",mobilePriority:"secondary",cell:drive=>new Intl.DateTimeFormat("en-IN",{year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(drive.createdAt))},

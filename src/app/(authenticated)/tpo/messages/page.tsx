@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import {DataTable} from "@/components/ui/data-table";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
@@ -168,7 +169,7 @@ export default async function TpoMessagesPage({
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
             <Link
               href="/tpo/messages/notifications"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary hover:bg-primary-hover px-4 text-sm font-[650] text-on-primary"
             >
               My placement notifications
             </Link>
@@ -246,17 +247,7 @@ export default async function TpoMessagesPage({
               : "Not applicable",
           },
         ].map((metric) => (
-          <article
-            key={metric.label}
-            className="border-b border-border px-1 py-4"
-          >
-            <p className="text-xs font-semibold text-muted-foreground">
-              {metric.label}
-            </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {metric.value}
-            </p>
-          </article>
+          <StatTile key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </section>
 

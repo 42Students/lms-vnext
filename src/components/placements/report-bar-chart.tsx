@@ -1,3 +1,5 @@
+import { MetricBar } from "@/components/ui/metric-bar";
+
 type MetricRow={label:string;value:number;detail?:string};
 /** Accessible read-only bar chart. Incoming values must be measured, never placeholders. */
 export function ReportBarChart({title,rows,units="items",limit=20}:{
@@ -14,10 +16,7 @@ export function ReportBarChart({title,rows,units="items",limit=20}:{
     <span className="min-w-0 break-words font-semibold">{row.label}</span>
     <span className="shrink-0 tabular-nums">{row.value.toLocaleString("en-IN")} {units}</span>
    </div>
-   <div className="h-2 overflow-hidden rounded-full bg-muted" role="img"
-    aria-label={row.label+": "+row.value+" "+units}>
-    <div className="h-full rounded-full bg-primary" style={{width:(row.value/maximum*100).toFixed(2)+"%"}}/>
-   </div>
+   <MetricBar label={row.label} value={row.value} maximum={maximum} unit={units} />
    {row.detail?<p className="mt-1 text-xs text-muted-foreground">{row.detail}</p>:null}
   </li>)}</ol>:<p className="text-sm text-muted-foreground">No measured values are available for this chart.</p>}
   {normalized.length>shown.length?<p className="text-xs text-muted-foreground">

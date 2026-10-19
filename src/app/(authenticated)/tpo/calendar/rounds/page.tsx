@@ -22,7 +22,7 @@ export default async function TpoRoundCalendarPage({searchParams}:{
    ...(result.q?{q:result.q}:{}),page:String(page),
   }).toString();
   return <div className="space-y-5">
-    <Link href="/tpo/calendar" className="text-sm font-semibold text-link hover:underline">
+    <Link href="/tpo/calendar" className="text-sm font-semibold text-link hover:underline lms-inline-link">
       ← Calendar
     </Link>
     <PageHeader eyebrow="TPO · Calendar" title="Drive round scheduling"
@@ -33,7 +33,7 @@ export default async function TpoRoundCalendarPage({searchParams}:{
        placeholder="Company, drive or round name" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 sm:min-h-9"/>
      </label>
      <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white sm:min-h-9">Find</Button>
-     <Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center text-link underline">Clear</Link>
+     <Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center text-link underline lms-inline-link">Clear</Link>
     </form>
     <p role="status" className="text-sm">Page {result.page}: {result.rows.length} rounds{result.limited?" · more available":""}</p>
     <TpoRoundCalendarControl blockedDates={blockedDates.ready?blockedDates.rows.map(row=>row.day):[]} blockedDatesAvailable={blockedDates.ready}
@@ -42,8 +42,8 @@ export default async function TpoRoundCalendarPage({searchParams}:{
       scheduledAt: row.scheduledAt?.toISOString() ?? null,
     }))} />
     <nav aria-label="Round pages" className="flex flex-wrap gap-3">
-     {result.page>1?<Link href={link(result.page-1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-link sm:min-h-9">Previous 200</Link>:null}
-     {result.limited?<Link href={link(result.page+1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-link sm:min-h-9">Next 200</Link>:null}
+     {result.page>1?<Link href={link(result.page-1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-link sm:min-h-9 lms-inline-link">Previous 200</Link>:null}
+     {result.limited?<Link href={link(result.page+1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-link sm:min-h-9 lms-inline-link">Next 200</Link>:null}
     </nav>
     <p className="text-sm text-body">Venue checks use persisted on-campus bookings.
       Unknown duration is a blocker, not an assumed clear venue.

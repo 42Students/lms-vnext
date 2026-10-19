@@ -14,7 +14,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
   await requireTpoBatchActor(context);
   const { rows, truncated } = await listArchivedTpoCompanyRelationships(context);
   return <div className="space-y-5">
-    <Link href="/tpo/companies" className="font-semibold text-link hover:underline">
+    <Link href="/tpo/companies" className="font-semibold text-link hover:underline lms-inline-link">
       ← Companies directory
     </Link>
     <PageHeader eyebrow="TPO · Companies" title="Archived company relationships"

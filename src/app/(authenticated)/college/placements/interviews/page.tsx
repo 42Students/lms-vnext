@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {redirect} from "next/navigation";
@@ -20,7 +22,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   sort:first(raw.sort)??"UPCOMING",page:first(raw.page)??"1"};
  const valid=collegeInterviewFilters.safeParse(input);
  if(!valid.success)return <div className="space-y-4"><p role="alert">Invalid interview filters.</p>
-  <Link href="/college/placements/interviews" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">Clear filters</Link></div>;
+  <Link href="/college/placements/interviews" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Clear filters</Link></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data);
  const build=(page:number,format:"html"|"ics"|"csv"="html")=>{
   const query=new URLSearchParams({q:valid.data.q,status:valid.data.status,
@@ -43,7 +45,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   {key:"status",header:"Status",cell:row=><span>{row.status}{row.conflict?<span className="block text-body">Conflict: this student has overlapping interviews.</span>:null}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
     <Link href={"/college/placements/jobs/"+encodeURIComponent(row.jobId)+"/applications"}
-      className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View applications</Link>
+      className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View applications</Link>
     <CollegeInterviewStatusActions id={row.id} version={row.version} status={row.status}/>
   </div>},
  ];
@@ -63,15 +65,15 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
    </div>
    <form method="get" className="grid gap-3 rounded-[8px] border border-border bg-surface p-4 sm:grid-cols-3">
     <label className="grid gap-1 text-sm">Search student, company or role
-     <input name="q" defaultValue={valid.data.q} maxLength={100} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
+     <Input name="q" defaultValue={valid.data.q} maxLength={100} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
     </label>
     <label className="grid gap-1 text-sm">Company
-     <Select name="companyId" defaultValue={valid.data.companyId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+     <Select name="companyId" defaultValue={valid.data.companyId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       <option value="">All companies</option>{data.companies.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
     </label>
     <label className="grid gap-1 text-sm">Department
-     <Select name="departmentId" defaultValue={valid.data.departmentId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+     <Select name="departmentId" defaultValue={valid.data.departmentId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       <option value="">All departments</option>{data.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
     </label>
@@ -80,23 +82,23 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       {name:"mode",label:"Mode",values:["ALL","ON_CAMPUS","VIRTUAL"]}]
     ).map(filter=><label key={filter.name} className="grid gap-1 text-sm">{filter.label}
      <Select name={filter.name} defaultValue={String(valid.data[filter.name as "type"|"status"|"mode"])}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       {filter.values.map(value=><option key={value} value={value}>{value==="ALL"?"All":value.replaceAll("_"," ")}</option>)}
      </Select></label>)}
     <label className="grid gap-1 text-sm">Sort
-     <Select name="sort" defaultValue={valid.data.sort} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+     <Select name="sort" defaultValue={valid.data.sort} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       <option value="UPCOMING">Upcoming first</option><option value="RECENT">Recent first</option>
       <option value="STUDENT">Student name</option>
      </Select>
     </label>
-    <div className="flex items-end gap-3"><button className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply filters</button>
-     <Link href="/college/placements/interviews" className="min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Clear</Link>
+    <div className="flex items-end gap-3"><Button variant="secondary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply filters</Button>
+     <Link href="/college/placements/interviews" className="min-h-[var(--lms-control-height)] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Clear</Link>
     </div>
    </form>
    <div className="flex flex-wrap items-center gap-3">
     <p role="status" className="text-sm">{data.total} matching appointments</p>
-    <a href={build(1,"ics")} className="min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Download .ics</a>
-    <a href={build(1,"csv")} className="min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Export CSV</a>
+    <a href={build(1,"ics")} className="min-h-[var(--lms-control-height)] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Download .ics</a>
+    <a href={build(1,"csv")} className="min-h-[var(--lms-control-height)] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Export CSV</a>
    </div>
    {data.limited?<p role="status" className="text-sm text-warning-text">Results and summary are capped at the first 5,000 records. Narrow filters for a complete view.</p>:null}
    <section aria-label="College interview appointments">
@@ -105,9 +107,9 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       empty={<p role="status" className="text-sm text-body">No interviews match these filters.</p>} />
    </section>
    <nav aria-label="Interview result pages" className="flex gap-4 text-sm">
-    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">Previous</Link>:null}
+    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Previous</Link>:null}
     <span>Page {valid.data.page} of {data.pageCount}</span>
-    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">Next</Link>:null}
+    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Next</Link>:null}
    </nav>
   </>}
  </div>;

@@ -1,4 +1,6 @@
 "use client";
+
+import { MetricBar } from "@/components/ui/metric-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Radio } from "@/components/ui/radio";
@@ -467,9 +469,8 @@ export function LearnerQuizAttempt() {
             </Button>
           ) : <span className="font-semibold text-success">All questions answered</span>}
         </div>
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
-          <div className="h-full bg-primary transition-all" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
-        </div>
+        <MetricBar className="mt-4" role="progressbar" label="Quiz question position"
+          value={step + 1} maximum={questions.length} unit="questions" />
       </div>
 
       <div className="grid lg:grid-cols-[220px_1fr]">

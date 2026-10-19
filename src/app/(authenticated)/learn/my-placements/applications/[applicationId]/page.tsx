@@ -26,8 +26,8 @@ export default async function LearnerApplicationDetailPage({params}:{
   );
   return <div className="min-w-0 space-y-6">
     <Link href="/learn/my-placements/applications"
-      className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Applications</Link>
-    <PageHeader eyebrow="My Placements" title={record.roleTitle}
+      className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Applications</Link>
+    <PageHeader title={record.roleTitle}
       description={record.companyName+" · Own application status and timeline"}
       actions={<StatusBadge>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
     <section className="border-b border-border py-4 sm:py-6">
