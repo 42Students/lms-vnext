@@ -201,7 +201,7 @@ export function TpoBulkRoundResultRecorder({
               <option value="FAIL">Not selected (FAIL)</option>
               <option value="HOLD">Waitlisted (HOLD)</option>
               <option value="ABSENT">Marked absent (ABSENT)</option>
-            </Select
+            </Select>
           </label>
           <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3">
             <legend className="text-sm font-semibold text-foreground">Everyone I did not mark</legend>
