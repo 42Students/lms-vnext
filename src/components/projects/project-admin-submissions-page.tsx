@@ -13,6 +13,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref,projectAdminSubmissionHref } from "@/modules/projects/admin-submissions-query-model";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
@@ -204,9 +205,7 @@ export async function ProjectAdminSubmissionsPage({
       }))}/>} />
 
       {!result.items.length ? (
-        <section className="border-b border-border py-6 text-sm text-muted-foreground">
-          No final-delivery versions match these filters.
-        </section>
+        <EmptyState title="No matching deliveries" description="No final-delivery versions match these filters."/>
       ) : (
         <div className="space-y-3">
           {result.items.map((submission) => (
