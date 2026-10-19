@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {isVerifiedRecruiterDecisionReadReceipt} from "@/modules/placements/recruiter-decision-read-model";
 import {useRouter} from "next/navigation";
@@ -26,10 +27,10 @@ export function RecruiterDecisionReadButton({id}:{id:string}){
   finally{lock.current=false;setBusy(false);}
  }
  return <div className="mt-2">
-  <button type="button" disabled={busy||complete} onClick={()=>void read()}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+  <Button variant="secondary" type="button" disabled={busy||complete} onClick={()=>void read()}
+   >
    {complete?"Marked as read":busy?"Saving…":"Mark as read"}
-  </button>
+  </Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </div>;
 }
