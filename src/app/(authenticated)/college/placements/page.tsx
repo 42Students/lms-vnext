@@ -32,8 +32,8 @@ export default async function CollegePlacementsPage() {
         }
       />
       <nav aria-label="Placement workspaces" className="flex min-w-0 flex-wrap gap-3">
-      <Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Interviews</Link>
-      <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">All drives</Link>
+      <Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Interviews</Link>
+      <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">All drives</Link>
       </nav>
       <CollegeDriveAttentionCards data={attention}/>
       <PlacementOperationsWorkspace
