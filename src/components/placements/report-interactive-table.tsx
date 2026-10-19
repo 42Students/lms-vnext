@@ -8,7 +8,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 import {trySaveReportCsv} from "./report-interactive-table-download-model";
-import {reportTableCsv,reportTableTsv,safeReportDownloadName,type ReportCell} from "./report-interactive-table-export-model";
+import {reportTableCsv,reportTableTsv,type ReportCell} from "./report-interactive-table-export-model";
 
 type Cell=ReportCell;
 const stringValue=(value:Cell)=>value===null?"":String(value);
@@ -63,7 +63,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
  return <section className="space-y-3" aria-label={title}>
   <h2 className="text-lg font-semibold text-foreground">{title}</h2>
   {rows.length===0?<p role="status" className="border-y border-border py-4 text-sm">{emptyDescription}</p>:<>
-   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+   <div data-report-toolbar className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold">Search table
      <Input type="search" maxLength={100} value={search} onChange={e=>{setSearch(e.target.value);setLimit(100);}}
       className="min-h-11" placeholder="Search shown report rows"/>
@@ -92,7 +92,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       </label>)}
      </div>
     </Dropdown>
-    <Dropdown mobileSheet align="end" label="Report visible columns" trigger="Columns">
+    <Dropdown mobileSheet align="end" label="Report visible columns" trigger={"Columns ("+(headings.length-hidden.length)+"/"+headings.length+")"}>
      <fieldset aria-label="Report columns, scroll for more" tabIndex={0} className="min-h-0 space-y-2">
       <legend className="sr-only">Choose report columns</legend>
       <Button variant="secondary" type="button" onClick={event=>{
@@ -109,15 +109,15 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
        {heading}</label>)}
      </fieldset>
     </Dropdown>
-    <Button variant="secondary" type="button" onClick={()=>void copy()} disabled={showing.length===0} size="sm">Copy shown</Button>
-    <Button variant="secondary" type="button" onClick={saveCsv} disabled={showing.length===0} size="sm">Export shown CSV</Button>
-    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);}}
+    <Button variant="secondary" type="button" onClick={()=>void copy()} disabled={showing.length===0} aria-label={"Copy "+showing.length+" shown report rows"} size="sm">Copy shown</Button>
+    <Button variant="secondary" type="button" onClick={saveCsv} disabled={showing.length===0} aria-label={"Export "+showing.length+" shown report rows as CSV"} size="sm">Export shown CSV</Button>
+    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);setMessage("");}}
      size="sm">Reset view</Button>
    </div>
    <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
-   <div className="flex flex-wrap items-center gap-2 sm:hidden">
+   <div data-report-toolbar className="flex flex-wrap items-center gap-2 sm:hidden">
     <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Sort rows by
      <Select value={sort??""} onChange={event=>{
        setSort(event.target.value===""?null:Number(event.target.value));
@@ -145,7 +145,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
        onClick={()=>{if(sort===col.index)setDescending(!descending);else{setSort(col.index);setDescending(false);}}}
        aria-pressed={sort===col.index}
        aria-label={"Sort "+col.heading+(sort===col.index?(descending?" descending":" ascending"):"")}
-       className="justify-start text-left text-foreground underline-offset-4 hover:underline">
+       className={"justify-start text-left underline-offset-4 hover:underline "+(sort===col.index?"text-[var(--lms-primary-text)] underline":"text-foreground")}>
        {col.heading} {sort===col.index?(descending?"↓":"↑"):""}
       </Button>,
       cell:(row:(typeof visibleRows)[number])=>{

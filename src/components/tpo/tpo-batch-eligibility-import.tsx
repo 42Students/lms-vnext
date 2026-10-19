@@ -4,6 +4,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {FileUpload} from "@/components/ui/file-upload";
 import {DataTable} from "@/components/ui/data-table";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -101,8 +102,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
      >Close</Button>
    </div>
   <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
-  <div className="rounded-[var(--lms-canvas-radius)] border border-dashed border-border p-3"
-   onDragOver={event=>event.preventDefault()} onDrop={event=>{event.preventDefault();void chooseFile(event.dataTransfer.files.item(0));}}>
+  <div className="space-y-2">
    <FileUpload ref={fileInput} label="Choose or drop eligibility CSV" maxBytes={1_500_000}
       accept=".csv,text/csv" disabled={busy} onFiles={files=>void chooseFile(files?.[0]??null)}/>
    {chosenName?<p className="text-xs text-muted-foreground">Selected: {chosenName}</p>:null}
@@ -133,9 +133,9 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
      {key:"roll",header:"Roll",mobilePriority:"secondary",cell:({row,i})=>row.rollNumber??preview.rows[i]?.studentCode??"—"},
      {key:"change",header:"Current → Proposed",mobilePriority:"secondary",cell:({row})=>
       (row.currentStatus??"—")+" → "+(row.proposedStatus??"—")},
-     {key:"result",header:"Match",mobilePriority:"secondary",cell:({row})=>
-      (row.status==="matched"&&row.currentStatus===row.proposedStatus?
-       "No change":row.status==="matched"?"Matched":"Can't use")+(row.reason?" — "+row.reason:"")},
+     {key:"result",header:"Match",mobilePriority:"secondary",cell:({row})=><>
+      <StatusBadge tone={row.status==="matched"?(row.currentStatus===row.proposedStatus?"neutral":"success"):"warning"}>{row.status==="matched"&&row.currentStatus===row.proposedStatus?"No change":row.status==="matched"?"Matched":"Can't use"}</StatusBadge>
+      {row.reason?<span className="ml-2 text-xs text-body">{row.reason}</span>:null}</>},
      {key:"include",header:"Include",mobilePriority:"action",cell:({row,i})=>row.status==="unusable"?
       <Button variant="secondary" size="sm" type="button" disabled={busy||skippedByUser.includes(i)}
        onClick={()=>setSkippedByUser(current=>current.includes(i)?current:[...current,i])}>

@@ -63,7 +63,6 @@ export default async function CollegeProjectTemplatesPage({
         active="templates"
       />
       <PageHeader
-        eyebrow="Projects"
         title="Project templates"
         description="Published project templates assigned to this college."
       />

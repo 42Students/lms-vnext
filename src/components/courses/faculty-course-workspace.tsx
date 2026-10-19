@@ -520,20 +520,16 @@ export function FacultyCourseWorkspace({
             </div>
           </section>
 
-          <Tabs
-            ariaLabel="Blueprint content filters"
-            value={contentFilter}
-            renderPanel={false}
+          <Tabs ariaLabel="Blueprint content filters" value={contentFilter} renderPanel={false}
             items={([
-              ["ALL","All"],["LECTURES","Lectures"],["RESOURCES","Resources"],
-              ["ASSESSMENTS","Assessments"],["LIVE","Live sessions"],
-            ] as const).map(([value,label]) => ({
+              ["ALL", "All"], ["LECTURES", "Lectures"], ["RESOURCES", "Resources"],
+              ["ASSESSMENTS", "Assessments"], ["LIVE", "Live sessions"],
+            ] as const).map(([value, label]) => ({
               value,
               label,
-              href: facultyCourseTabHref(course.deliveryId,"blueprint")+
-                (value==="ALL"?"":"?filter="+value),
-            }))}
-          />
+              href: facultyCourseTabHref(course.deliveryId, "blueprint") +
+                (value === "ALL" ? "" : "?filter=" + value),
+            }))} />
           {selectedLessonId?<nav aria-label="Lesson navigation" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
             <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline">
               Back to Blueprint
