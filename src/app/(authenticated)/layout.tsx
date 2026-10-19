@@ -1,3 +1,4 @@
+import "./authenticated-print.css";
 import {Suspense} from "react";
 import {PortalAccessNotice} from "@/components/auth/portal-access-notice";
 import {ConnectionFailureNotice} from "@/components/auth/connection-failure-notice";
