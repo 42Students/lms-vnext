@@ -1,5 +1,8 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -76,11 +79,11 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  if(quiz.status==="ARCHIVED")return null;
  return <div className="mt-2 space-y-2">
   <div className="flex flex-wrap gap-2">
-   <Button variant="secondary" type="button" disabled={busy||loading} onClick={()=>void beginEdit()}
-    className="text-primary-text">
+   <Button type="button" disabled={busy||loading} onClick={()=>void beginEdit()}
+    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
     {loading?"Loading…":"Edit metadata"}</Button>
-   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void act("ARCHIVE")}
-    className="text-error">
+   <Button type="button" disabled={busy} onClick={()=>void act("ARCHIVE")}
+    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error">
     Delete</Button>
   </div>
   {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
@@ -100,10 +103,10 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     <Input type="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
      className="min-h-10 rounded border border-border px-2"/></label>
    {quiz.status==="DRAFT"?<div className="grid gap-2 text-xs font-semibold">
-    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleQuestions}
+    <label className="flex items-center gap-2"><Checkbox checked={shuffleQuestions}
      disabled={busy} onChange={e=>setShuffleQuestions(e.target.checked)}/>
      Shuffle question order per learner</label>
-    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleOptions}
+    <label className="flex items-center gap-2"><Checkbox checked={shuffleOptions}
      disabled={busy} onChange={e=>setShuffleOptions(e.target.checked)}/>
      Shuffle answer options per learner</label>
    </div>:null}
@@ -111,8 +114,8 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     Quiz deadlines cannot be changed after learner attempts or after the quiz closes.
     Other immutable quiz fields stay unchanged.
    </p>:null}
-   <Button variant="primary" type="button" disabled={busy} onClick={()=>void act("EDIT")}
-    >
+   <Button type="button" disabled={busy} onClick={()=>void act("EDIT")}
+    className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
     {busy?"Saving…":"Save quiz"}</Button>
   </div>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
