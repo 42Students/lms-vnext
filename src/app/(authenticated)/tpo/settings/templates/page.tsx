@@ -20,6 +20,6 @@ export default async function TpoCommunicationTemplatesPage() {
       <label className="block text-sm">Draft text<Textarea readOnly value={item.body} rows={5} className="mt-1 w-full"/></label>
       <p className="text-xs text-muted-foreground">No recipients are selected or contacted.</p>
     </section>)}</div>
-    <Link href="/tpo/batches" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Review batches and their actual deadlines</Link>
+    <Link href="/tpo/batches" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline lms-inline-link">Review batches and their actual deadlines</Link>
   </div>;
 }
