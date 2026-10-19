@@ -57,7 +57,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
   const others = devices.filter((device) => !device.current).length;
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
+    <section className="border-y border-border">
       <ul className="m-0 list-none divide-y divide-border p-0">
         {devices.map((device) => (
           <li

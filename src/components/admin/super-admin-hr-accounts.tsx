@@ -674,7 +674,7 @@ export function SuperAdminHrAccounts({
       </p>}
       <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">{([
         ["Accounts",statusSummary?.accounts],["Active",statusSummary?.active],["Suspended",statusSummary?.archived],["Disabled",statusSummary?.disabled],
-      ] as const).map(([label,value])=><div key={label} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value??"Unavailable"}</dd></div>)}</dl>
+      ] as const).map(([label,value])=><div key={label} className="border-r border-border pr-4 last:border-r-0"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value??"Unavailable"}</dd></div>)}</dl>
       <form
         key={[
           filters.q,
@@ -683,7 +683,7 @@ export function SuperAdminHrAccounts({
         ].join("|")}
         method="get"
         action="/admin/recruiters"
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
+        className="flex flex-wrap items-end gap-3"
       >
         <label className="grid min-w-52 flex-1 gap-1 text-xs font-semibold text-body">
           Search
@@ -725,7 +725,7 @@ export function SuperAdminHrAccounts({
 
         <Link
           href="/admin/recruiters"
-          className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:bg-muted"
+          className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:bg-muted"
         >
           Clear
         </Link>
@@ -770,7 +770,7 @@ export function SuperAdminHrAccounts({
                 filters.q || filters.status ? (
                   <Link
                     href="/admin/recruiters"
-                    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body"
+                    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body"
                   >
                     Clear filters
                   </Link>
@@ -785,7 +785,7 @@ export function SuperAdminHrAccounts({
             <>
               <div className="grid min-w-0 gap-3 lg:hidden" aria-label="Recruiter account cards">
                 {list.items.map((account) => (
-                  <article key={account.userId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+                  <article key={account.userId} className="min-w-0 border-b border-border py-4 last:border-b-0">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         <h2 className="m-0 break-words text-base font-semibold text-foreground">{hrDisplayName(account)}</h2>
@@ -834,7 +834,7 @@ export function SuperAdminHrAccounts({
                       filters,
                       list.page - 1,
                     )}
-                    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold hover:bg-muted"
+                    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold hover:bg-muted"
                   >
                     Previous
                   </Link>
@@ -850,7 +850,7 @@ export function SuperAdminHrAccounts({
                       filters,
                       list.page + 1,
                     )}
-                    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold hover:bg-muted"
+                    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold hover:bg-muted"
                   >
                     Next
                   </Link>

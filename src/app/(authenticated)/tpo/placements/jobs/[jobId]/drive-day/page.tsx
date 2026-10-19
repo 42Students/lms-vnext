@@ -20,7 +20,7 @@ export default async function DriveDayForOneDrive({
     <PageHeader eyebrow="TPO · Drive day" title={drive.job.title + " · Drive day"}
       description="The campus-day rounds, attendance and result readiness for this drive."
       actions={<Link href="/tpo/drive-day"
-        className="inline-flex min-h-11 items-center rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
         Open drive day / attendance
       </Link>} />
     {drive.rounds.length ? (
@@ -39,14 +39,14 @@ export default async function DriveDayForOneDrive({
               : "Date to be confirmed"}</p>
             <p className="mt-1 text-sm text-body">{round.venue || "Venue to be told"}</p>
             <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
-              <Link className="text-[var(--lms-link-text)] underline"
+              <Link className="text-link underline"
                 href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}>See attendance and results</Link>
-              <Link className="text-[var(--lms-link-text)] underline" href="/tpo/drive-day">Open drive day</Link>
+              <Link className="text-link underline" href="/tpo/drive-day">Open drive day</Link>
             </div>
           </article>;
         })}
       </section>
-    ) : <p className="text-sm text-body rounded-[9px] border border-border bg-muted p-3">No rounds planned for this drive day yet.</p>}
+    ) : <p className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">No rounds planned for this drive day yet.</p>}
     <PlacementDriveDayOverview driveDay={drive} />
   </div>;
 }

@@ -16,11 +16,11 @@ export default async function CollegeContactProfilePage() {
       title="College contact profile"
       description="Manage the college display name, public support contacts and policy links."
       actions={<Link href="/college/branding"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
         Branding workspace
       </Link>}
     />
-      <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-sm text-body">
+      <p role="status" className="border-b border-border pb-3 text-sm text-body">
         College profile manages operational contact details. Sign-in branding, domains and logos are managed by a Super Admin.
       </p>
     <CollegeContactProfileForm initial={profile} />
