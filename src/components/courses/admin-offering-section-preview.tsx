@@ -6,8 +6,8 @@ function ItemList({items}:{items:readonly {
  studentVisible:boolean;
 }[]}){
  if(!items.length)return <p className="text-xs text-muted-foreground">No items for this Section.</p>;
- return <ul className="space-y-1">{items.map(item=><li key={item.id}
-  className="flex flex-wrap items-center justify-between gap-2 rounded border border-border bg-background p-2 text-sm">
+ return <ul className="divide-y divide-border border-y border-border">{items.map(item=><li key={item.id}
+  className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
   <span className="break-words">{item.title}
    {item.kind?<span className="ml-1 text-xs text-muted-foreground">({item.kind.replaceAll("_"," ")})</span>:null}
   </span>
@@ -17,7 +17,7 @@ function ItemList({items}:{items:readonly {
  </li>)}</ul>;
 }
 export function AdminOfferingSectionPreview({data}:{data:Preview}){
- return <section id="section-content" className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5"
+ return <section id="section-content" className="space-y-4 border-t border-border pt-5"
   aria-label="Section course content">
   <div className="space-y-1">
    <h2 className="text-lg font-semibold text-foreground">Section content</h2>
@@ -25,7 +25,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
   </div>
   <form method="get" className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold">Section
-    <select className="min-h-10 rounded border border-border bg-background p-2"
+    <select className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
      name="deliveryId" defaultValue={data.selected?.deliveryId??""}>
      <option value="">Showing every section&apos;s content together</option>
      {data.options.map(item=><option value={item.deliveryId} key={item.deliveryId}>
@@ -33,14 +33,14 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
      </option>)}
     </select>
    </label>
-   <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">View Section</button>
+   <button type="submit" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">View Section</button>
   </form>
   {data.invalid?<p role="alert" className="text-sm text-error">The selected Section is unavailable for this Course Offering.</p>:null}
   {data.truncated?<p role="status" className="text-xs text-muted-foreground">Only the first 200 active Sections are listed. Use the Section management page for the full directory.</p>:null}
   {data.selected?<div className="space-y-3">
    <p className="text-sm font-semibold">Viewing {data.selected.sectionName} ({data.selected.sectionCode})</p>
    <p className="text-xs text-muted-foreground">This is a metadata-only view of shared and Section-specific content. It does not reveal private video, file or meeting links. Visibility indicators reflect publication and lesson flags, not an individual learner&apos;s enrolment or progress.</p>
-   {data.lessons.map(lesson=><div key={lesson.id} className="space-y-3 rounded-lg border border-border p-3">
+   {data.lessons.map(lesson=><div key={lesson.id} className="space-y-3 rounded-xl border border-border p-3">
     <h3 className="font-semibold">{lesson.name}
      <span className="ml-2 text-xs font-normal text-muted-foreground">
       {lesson.visibleToStudents?"Lesson visible":"Lesson hidden"}
