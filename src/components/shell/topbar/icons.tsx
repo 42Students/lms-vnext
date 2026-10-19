@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-function Icon({ children, size = 19 }: { children: ReactNode; size?: number }) {
+function Icon({ children, size = 20 }: { children: ReactNode; size?: number }) {
   return <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24"
     fill="none" stroke="currentColor" strokeWidth={1.8}
     strokeLinecap="round" strokeLinejoin="round">{children}</svg>;
