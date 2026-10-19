@@ -6,7 +6,7 @@ export default function ErrorView({ reset }: {
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-[12px] border border-border bg-surface p-6">
+    <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
       <h1 className="text-lg font-semibold text-foreground">
         Couldn&apos;t load student placement history
       </h1>

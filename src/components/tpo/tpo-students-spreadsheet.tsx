@@ -175,14 +175,14 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{selectedScoped.length} selected of {shared?.totalCount??rows.length} in the authorized view.</p>
-   {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-3 text-sm font-semibold text-link">Export selected XLSX</a>:
+   {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Export selected XLSX</a>:
     selectedScoped.length>200?<p role="status" className="text-xs text-warning-text">Export up to 200 individually selected students or select all matching students.</p>:null}
   <button type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
-    onClick={downloadSelection} className="min-h-9 rounded-[var(--radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+    onClick={downloadSelection} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
     Export selected CSV
   </button>
   {downloadError?<p role="alert" className="text-xs text-error">{downloadError}</p>:null}
-  <details className="rounded-[12px] border border-border p-4">
+  <details className="rounded-[var(--lms-canvas-radius)] border border-border p-4">
    <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
    <label className="mt-3 flex min-h-11 items-center gap-2 text-sm"><input type="checkbox"
@@ -200,7 +200,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   </details>
   <label className="inline-flex items-center gap-3 text-sm font-semibold">Sort visible roster page
    <select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}
-    className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
     <option value="NAME">Name</option><option value="APPLICATIONS_DESC">Applications · most</option>
     <option value="APPLICATIONS_ASC">Applications · fewest</option>
     <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>

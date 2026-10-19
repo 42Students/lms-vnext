@@ -214,14 +214,14 @@ export function TpoCompanyMemoryWorkspace({
           <details className="relative">
            <summary className={buttonStyle+" cursor-pointer"}>+ New</summary>
            <nav aria-label={"New work for "+company.name}
-            className="absolute right-0 z-20 mt-1 w-60 space-y-1 rounded-[var(--radius)] border border-border bg-surface p-2 shadow-[var(--lms-dropdown-shadow)]">
+            className="absolute right-0 z-20 mt-1 w-60 space-y-1 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-2 shadow-[var(--lms-dropdown-shadow)]">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-             className="block rounded-[var(--radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
+             className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-             className="block rounded-[var(--radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New drive for {company.name}</Link>
+             className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New drive for {company.name}</Link>
             <div role="separator" className="border-t border-border"/>
             <Link href={"/tpo/calendar?company="+encodeURIComponent(company.name)}
-             className="block rounded-[var(--radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">Follow-up</Link>
+             className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">Follow-up</Link>
            </nav>
           </details>
           {company.canonicalCompanyId?<Link className={buttonStyle}
@@ -249,7 +249,7 @@ export function TpoCompanyMemoryWorkspace({
           ["students placed", company.studentsHired == null ? "Verification pending" : String(company.studentsHired)],
           ["Last activity", latest ? latest.type.toLowerCase()+" / "+legacyActivityDay(latest.createdAt) : "no activity yet"],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-[var(--radius)] border border-border bg-surface p-4">
+          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
             <p className="mt-1 font-semibold text-foreground">{value}</p>
           </div>
@@ -257,7 +257,7 @@ export function TpoCompanyMemoryWorkspace({
       </div>
 
       {company.studentsHired == null ? (
-        <div role="status" className="rounded-[var(--radius)] border border-border bg-surface-secondary p-3 text-sm text-muted-foreground">
+        <div role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-secondary p-3 text-sm text-muted-foreground">
           Students-placed counts are unavailable for this college&apos;s selected placement rule. No estimated zero is shown.
         </div>
       ) : null}
@@ -352,7 +352,7 @@ export function TpoCompanyMemoryWorkspace({
               Export drives CSV
             </button>
             <label className="mt-3 block text-sm text-body">Search drives
-              <input className="mt-1 min-h-9 w-full rounded-[var(--radius)] border border-border bg-surface px-3"
+              <input className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
                 type="search" value={driveSearch} onChange={e=>setDriveSearch(e.target.value)}
                 placeholder="Search role, status or year"/>
             </label>

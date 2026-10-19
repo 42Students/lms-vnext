@@ -7,7 +7,7 @@ export function TpoBatchStudentBulkNotes({rows}:{rows:readonly {id:string;label:
  const eligible=new Set(rows.map(row=>row.id));
  const valid=selected.filter(id=>eligible.has(id)).slice(0,100);
  if(rows.length===0)return null;
- return <section aria-label="Add a note to batch learners" className="space-y-3 rounded-[var(--radius)] border border-border bg-surface p-4">
+ return <section aria-label="Add a note to batch learners" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <h3 className="font-semibold">Add a note</h3>
   <p className="text-xs text-body">Select up to 100 learners on this current batch page. Notes remain private to authorized placement staff.</p>
   <label className="flex min-h-10 items-center gap-2 text-sm">

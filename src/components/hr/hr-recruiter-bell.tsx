@@ -99,7 +99,7 @@ export function HrRecruiterBell(){
    <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
     <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
     {unread>0?<button type="button" disabled={loading} onClick={()=>void markAll()}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50">{loading?"Saving…":"Mark all read"}</button>:null}
+      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50">{loading?"Saving…":"Mark all read"}</button>:null}
    </div>
    {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}
   </section>:null}

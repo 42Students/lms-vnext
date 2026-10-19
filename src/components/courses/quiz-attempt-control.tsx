@@ -289,14 +289,14 @@ export function QuizAttemptControl({
   }
 
   if(missedReview){
-    return <section aria-label="Missed quiz review" className="mt-4 space-y-4 rounded-lg border border-border bg-surface p-4">
+    return <section aria-label="Missed quiz review" className="mt-4 space-y-4 rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h3 className="text-base font-semibold text-foreground">Review quiz</h3>
           <p className="text-sm text-body">You didn&apos;t attempt this quiz. The answer key has been released.</p></div>
         <Button size="sm" variant="secondary" onClick={()=>setMissedReview(null)}>Close review</Button>
       </div>
       <ol className="space-y-3">
-        {missedReview.questions.map((question,index)=><li key={question.id} className="rounded-md border border-border p-3">
+        {missedReview.questions.map((question,index)=><li key={question.id} className="rounded-[var(--lms-control-radius)] border border-border p-3">
           <h4 className="font-semibold text-foreground">Question {index+1}: {question.prompt}</h4>
           <p className="mt-1 text-xs text-body">{question.points} pts</p>
           <ul className="mt-2 space-y-1">{question.options.map(option=>
@@ -318,7 +318,7 @@ export function QuizAttemptControl({
       ).length;
 
     return (
-      <div className="mt-4 rounded-lg border border-border bg-[var(--lms-neutral-50)] p-4">
+      <div className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="m-0 text-sm font-semibold text-foreground">
@@ -344,20 +344,20 @@ export function QuizAttemptControl({
           </Button>
         </div>
 
-        <nav aria-label="Quiz question progress" className="mt-4 rounded-lg border border-border bg-surface p-3">
+        <nav aria-label="Quiz question progress" className="mt-4 rounded-xl border border-border bg-surface p-3">
           <h3 className="text-sm font-semibold text-foreground">Progress</h3>
           <details className="mt-2 lg:hidden">
             <summary className="cursor-pointer text-sm text-primary-text">Questions</summary>
             <ol className="mt-2 flex flex-wrap gap-2">
               {quiz.questions.map((question,index)=><li key={question.id}>
-                <a className="inline-flex min-h-10 rounded border border-border px-3 py-2 text-sm text-primary-text"
+                <a className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle sm:min-h-9"
                   href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</a>
               </li>)}
             </ol>
           </details>
           <ol className="mt-2 hidden flex-wrap gap-2 lg:flex">
             {quiz.questions.map((question,index)=><li key={question.id}>
-              <a className="inline-flex min-h-10 rounded border border-border px-3 py-2 text-sm text-primary-text"
+              <a className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle sm:min-h-9"
                 href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</a>
             </li>)}
           </ol>
@@ -399,7 +399,7 @@ export function QuizAttemptControl({
                       return (
                         <label
                           key={option.id}
-                          className="flex cursor-pointer items-start gap-3 rounded-md border border-border bg-surface px-3 py-2.5 text-sm text-body transition hover:border-primary hover:bg-primary-subtle"
+                          className="flex cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2.5 text-sm text-body transition hover:border-primary hover:bg-primary-subtle"
                         >
                           <input
                             type={
@@ -460,7 +460,7 @@ export function QuizAttemptControl({
 
   if (attempts) {
     return (
-      <div className="mt-4 rounded-lg border border-border bg-[var(--lms-neutral-50)] p-4">
+      <div className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="m-0 text-sm font-semibold text-foreground">
@@ -521,7 +521,7 @@ export function QuizAttemptControl({
                     ) => (
                       <div
                         key={answer.id}
-                        className="rounded-md border border-border p-3"
+                        className="rounded-[var(--lms-control-radius)] border border-border p-3"
                       >
                         <div className="flex flex-wrap items-start justify-between gap-2">
                           <p className="m-0 text-sm font-semibold text-foreground">

@@ -21,7 +21,7 @@ export default async function SuperAdminShortlistedDetail({params}:{params:Promi
    <PageHeader eyebrow="Super Admin · Placements" title="Shortlisted applicant"/>
    <ErrorState title="Select a college to continue"
     description="An active Super Admin with a selected college is required to view shortlisted applicant details."
-    action={<Link href="/admin/placements/shortlisted" className="font-semibold text-[var(--lms-teal-deep)]">Back to shortlisted applicants</Link>}/>
+    action={<Link href="/admin/placements/shortlisted" className="font-semibold text-primary-text">Back to shortlisted applicants</Link>}/>
   </div>;
  }
  let detail:Awaited<ReturnType<typeof getSuperAdminShortlistedDetail>>;
@@ -32,7 +32,7 @@ export default async function SuperAdminShortlistedDetail({params}:{params:Promi
    <PageHeader eyebrow="Super Admin · Placements" title="Shortlisted applicant"/>
    <ErrorState title="Shortlisted applicant unavailable"
     description="This applicant detail could not be loaded. Your selected college has not changed."
-    action={<Link href="/admin/placements/shortlisted" className="font-semibold text-[var(--lms-teal-deep)]">Back to shortlisted applicants</Link>}/>
+    action={<Link href="/admin/placements/shortlisted" className="font-semibold text-primary-text">Back to shortlisted applicants</Link>}/>
   </div>;
  }
  if(!detail)notFound();
