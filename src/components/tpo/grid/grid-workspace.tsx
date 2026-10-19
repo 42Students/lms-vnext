@@ -186,9 +186,11 @@ export function GridWorkspace<Row>({
      router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
     }}><Image src="/assets/images/common/search.svg" alt="" aria-hidden="true" width={19} height={19}/>Search</Button>
    </div>:null}
-   {filters.length?<Button variant="secondary" type="button" aria-expanded={filterOpen}
-    aria-controls={id+"-filters"} onClick={()=>setFilterOpen(value=>!value)}>
-    Filters{activeFilters.length?" ("+activeFilters.length+")":""}
+   {filters.length||externalFilters?<Button variant="secondary" type="button"
+    aria-expanded={externalFilters?.open??filterOpen}
+    aria-controls={externalFilters?.controlsId??id+"-filters"}
+    onClick={externalFilters?externalFilters.onToggle:()=>setFilterOpen(value=>!value)}>
+    Filters{(externalFilters?.count??activeFilters.length)>0?" ("+(externalFilters?.count??activeFilters.length)+")":""}
    </Button>:null}
    {savedViews?<Button variant="secondary" type="button" aria-expanded={viewsOpen}
     aria-controls={id+"-views"} onClick={()=>setViewsOpen(value=>!value)}>Views</Button>:null}
