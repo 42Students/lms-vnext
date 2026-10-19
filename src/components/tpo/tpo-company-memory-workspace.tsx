@@ -5,7 +5,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import {Avatar} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
-import {DataTable} from "@/components/ui/data-table";
 import {MetricBar} from "@/components/ui/metric-bar";
 import chartStyles from "./legacy-company-bar.module.css";
 
@@ -210,12 +209,12 @@ export function TpoCompanyMemoryWorkspace({
            <nav aria-label={"New work for "+company.name}
             className="w-60 space-y-1">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-             className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New recruiter lead for {company.name}</Link>
+             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-             className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New drive for {company.name}</Link>
+             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New drive for {company.name}</Link>
             <MenuSeparator />
             <Link href={"/tpo/calendar?company="+encodeURIComponent(company.name)}
-             className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">Follow-up</Link>
+             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Follow-up</Link>
            </nav>
           </Dropdown>
           {company.canonicalCompanyId?<Link className={buttonStyle}
@@ -241,7 +240,7 @@ export function TpoCompanyMemoryWorkspace({
         </p>
       ) : null}
 
-      <div aria-label="Company numbers" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div aria-label="Company numbers" className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface md:grid-cols-3 xl:grid-cols-5">
         {[
           ["Contacts", company.people.length + " · " + activeContacts + " active"],
           ["Drives that ran", String(company.drivesRan)],
@@ -249,15 +248,15 @@ export function TpoCompanyMemoryWorkspace({
           ["students placed", company.studentsHired == null ? "Verification pending" : String(company.studentsHired)],
           ["Last activity", latest ? latest.type.toLowerCase()+" / "+legacyActivityDay(latest.createdAt) : "no activity yet"],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+          <div key={label} className="min-w-0 border-b border-r border-border px-3 py-3 last:border-r-0 md:px-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-            <p className="mt-1 font-semibold text-foreground">{value}</p>
+            <p className="mt-1 break-words font-semibold text-foreground">{value}</p>
           </div>
         ))}
       </div>
 
       {company.studentsHired == null ? (
-        <div role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-secondary p-3 text-sm text-muted-foreground">
+        <div role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-muted-foreground">
           Students-placed counts are unavailable for this college&apos;s selected placement rule. No estimated zero is shown.
         </div>
       ) : null}
@@ -292,11 +291,11 @@ export function TpoCompanyMemoryWorkspace({
             ) : (
               <div className="mt-3 divide-y divide-border">
                 {company.people.map(person => (
-                  <div key={person.id} className="flex items-center justify-between gap-3 py-3">
+                  <div key={person.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3 md:flex-nowrap">
                     <div className="flex min-w-0 items-center gap-3">
                       <Avatar name={person.name} size="sm" className="!h-[38px] !w-[38px] !rounded-[10px] [&_img]:!rounded-[10px]"/>
                       <div className="min-w-0">
-                      <Link className="font-medium text-link hover:underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      <Link className="lms-inline-link inline-flex min-h-11 items-center break-words font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         href={"/tpo/recruiters/" + encodeURIComponent(person.id)}>
                         {person.name}
                       </Link>
@@ -331,7 +330,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
                   <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<currentTimeMs()?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
-                  <Link className="text-sm text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
                 </li>)}
               </ul>}
