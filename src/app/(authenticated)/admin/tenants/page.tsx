@@ -51,25 +51,25 @@ export default async function TenantDirectory({searchParams}:{
   <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />} />
-  <Link href="/admin/domains" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-primary-text">Domains</Link>
+  <Link href="/admin/domains" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Domains</Link>
   <div className="flex flex-wrap gap-3">
-   <Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-primary-text">Create an organization and its colleges</Link>
-   <Link href="/admin/tenants/setup" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-primary-text">Get this college ready to go live</Link>
+   <Link href="/admin/tenants/create" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Create an organization and its colleges</Link>
+   <Link href="/admin/tenants/setup" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Get this college ready to go live</Link>
   </div>
   <form className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold text-body">College
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-     className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground"/>
+     className="w-full"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Organization
     <Select name="organizationId" defaultValue={data.query.organizationId}
-     className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+     className="w-full">
      <option value="">All permitted</option>
      {data.organizations.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">College status
-    <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+    <Select name="status" defaultValue={data.query.status} className="w-full">
      {statuses.map(status=><option key={status}>{status}</option>)}
     </Select>
    </label>
