@@ -327,7 +327,7 @@ export function LoginForm({
       {error ? (
         <div
           role="alert" ref={errorSummaryRef} tabIndex={-1}
-          className="mt-4 rounded-[9px] border border-error bg-[var(--lms-error-subtle)] p-3 text-sm text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
+          className="mt-4 rounded-[var(--lms-control-radius)] border border-error bg-[var(--lms-error-subtle)] p-3 text-sm text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
         >
           {error}
         </div>
@@ -343,7 +343,7 @@ export function LoginForm({
       {notice ? (
         <div
           role="status"
-          className="mt-4 rounded-[9px] border border-border bg-primary-subtle p-3 text-sm text-body"
+          className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle p-3 text-sm text-body"
         >
           {notice}
         </div>
@@ -354,10 +354,10 @@ export function LoginForm({
           {allowedChannels.length>1?<div
             role="tablist"
             aria-label="Sign in method"
-            className="grid grid-cols-2 gap-1 rounded-[9px] bg-muted p-1"
+            className="grid grid-cols-2 gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1"
           >
             {(["EMAIL", "PHONE"] as const).filter(value=>allowedChannels.includes(value)).map((value) => (
-              <button
+              <Button variant="ghost"
                 key={value}
                 type="button"
                 role="tab"
@@ -392,12 +392,12 @@ export function LoginForm({
                 }}
                 className={
                   channel === value
-                    ? "min-h-10 rounded-[9px] bg-surface text-sm font-semibold text-primary-text shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    : "min-h-10 rounded-[9px] text-sm font-medium text-body hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    ? "min-h-10 rounded-[var(--lms-control-radius)] bg-surface text-sm font-semibold text-primary-text shadow-none "
+                    : "min-h-10 rounded-[var(--lms-control-radius)] text-sm font-medium text-body hover:bg-primary-subtle hover:text-primary-text "
                 }
               >
                 {value === "PHONE" ? "Phone" : "Email"}
-              </button>
+              </Button>
             ))}
           </div>:null}
 
@@ -523,34 +523,34 @@ export function LoginForm({
           </Button>
 
           <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => void start()}
               disabled={busy || cooldown > 0}
-              className="inline-flex min-h-9 items-center font-medium text-primary-text underline-offset-2 hover:underline focus-visible:rounded-[9px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
+              className="inline-flex min-h-9 items-center font-medium text-primary-text underline-offset-2 hover:underline  disabled:text-muted-foreground disabled:no-underline"
             >
               {cooldown > 0 ? "Resend code in "+Math.floor(cooldown/60)+":"+
                 String(cooldown%60).padStart(2,"0") : "Resend code"}
-            </button>
+            </Button>
             {attempt.emailFallbackAvailable && !attempt.requiresSecondFactor ? (
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => void sendEmailCode()}
                 disabled={busy || emailCooldown > 0}
-                className="inline-flex min-h-9 items-center font-medium text-primary-text underline-offset-2 hover:underline focus-visible:rounded-[9px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
+                className="inline-flex min-h-9 items-center font-medium text-primary-text underline-offset-2 hover:underline  disabled:text-muted-foreground disabled:no-underline"
               >
                 {emailCooldown>0?`Email another code in ${emailCooldown}s`:"Get the code by email"}
-              </button>
+              </Button>
             ) : null}
           </div>
 
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={reset}
-            className="inline-flex min-h-9 items-center text-sm text-muted-foreground hover:text-foreground focus-visible:rounded-[9px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex min-h-9 items-center text-sm text-muted-foreground hover:text-foreground "
           >
             Change
-          </button>
+          </Button>
           <LoginConsent />
         </form>
       )}
