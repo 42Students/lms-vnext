@@ -34,7 +34,7 @@ function SignInStylePreview({
       aria-label={mobile ? "Mobile sign-in illustration" : "Desktop sign-in illustration"}
       className={
         mobile
-          ? "mx-auto flex h-[360px] w-[235px] max-w-full items-center justify-center overflow-hidden rounded-[2rem] border-[7px] border-border p-3 shadow-sm"
+          ? "mx-auto flex h-[360px] w-[235px] max-w-full items-center justify-center overflow-hidden rounded-[2rem] border-[7px] border-border p-3 shadow-none"
           : "flex min-h-[360px] items-center justify-center overflow-hidden rounded-xl border border-border p-5"
       }
       style={canvasStyle}
@@ -58,7 +58,7 @@ function SignInStylePreview({
           />
         ) : (
           <div
-            className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg text-lg font-bold"
+            className="mb-3 flex h-10 w-10 items-center justify-center rounded-[var(--lms-control-radius,9px)] text-lg font-bold"
             style={{
               color: branding.tokens.text,
               backgroundColor: branding.tokens.subtle,
@@ -74,11 +74,11 @@ function SignInStylePreview({
         <p className="mt-1 text-xs text-muted-foreground">
           Sign in to your college
         </p>
-        <div className="mt-5 rounded-md border border-border bg-surface-subtle px-3 py-2 text-xs text-muted-foreground">
+        <div className="mt-5 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface-subtle px-3 py-2 text-xs text-muted-foreground">
           Email or mobile number
         </div>
         <div
-          className="mt-3 rounded-md px-3 py-2 text-center text-xs font-semibold"
+          className="mt-3 rounded-[var(--lms-control-radius,9px)] px-3 py-2 text-center text-xs font-semibold"
           style={{
             backgroundColor: branding.tokens.primary,
             color: branding.tokens.onPrimary,
@@ -104,9 +104,9 @@ function ColorSwatch({
   overridden: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-border p-3">
+    <div className="flex items-center gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3">
       <span
-        className="h-11 w-11 shrink-0 rounded-md border border-border"
+        className="h-11 w-11 shrink-0 rounded-[var(--lms-control-radius,9px)] border border-border"
         style={{ backgroundColor: color }}
         aria-hidden="true"
       />
