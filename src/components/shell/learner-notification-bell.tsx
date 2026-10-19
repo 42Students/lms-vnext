@@ -5,6 +5,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import { PopoverPanel } from "@/components/ui/popover";
+import { Drawer } from "@/components/ui/drawer";
 import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
 import {learnerNotificationTarget} from "@/modules/activity/learner-notification-inbox-model";
 type Due={key:string;title:string;body:string;href:string;dueAt:string};
@@ -14,12 +15,18 @@ export function LearnerNotificationBell(){
  const [items,setItems]=useState<Row[]>([]);
  const [due,setDue]=useState<Due[]>([]);
  const [open,setOpen]=useState(false);
+ const [mobile,setMobile]=useState(false);
  const [error,setError]=useState("");
  const [loading,setLoading]=useState(true);
  const [everLoaded,setEverLoaded]=useState(false);
  const root=useRef<HTMLDivElement|null>(null);
  const trigger=useRef<HTMLButtonElement|null>(null);
  const [count,setCount]=useState(0);
+ useEffect(()=>{
+  const update=()=>setMobile(window.innerWidth<=767);
+  update();window.addEventListener("resize",update);
+  return ()=>window.removeEventListener("resize",update);
+ },[]);
  const refreshDue=useCallback(async()=>{
   try{
    const payload=await apiFetch<{notices?:Due[]}>("/api/courses/learner/due-notices",{cache:"no-store"});
