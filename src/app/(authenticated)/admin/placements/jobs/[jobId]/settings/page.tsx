@@ -19,7 +19,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
  const base="/admin/placements/jobs/"+encodeURIComponent(jobId);
  return <div className="space-y-4">
     <SuperAdminDriveTabs jobId={jobId} active="Settings"/>
-  <PageHeader eyebrow="Super Admin · Drive workspace" title="Settings" description="Drive status, deadline and policy controls for the selected college."/>
+  <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."/>
   <section className="space-y-2 border-b border-border pb-5">
    <h2 className="font-semibold">{job.title}</h2>
    <p className="flex flex-wrap items-center gap-2 text-sm text-body">Status: <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>{job.status}</StatusBadge></p>
