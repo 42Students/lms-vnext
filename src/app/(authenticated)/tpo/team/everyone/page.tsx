@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import {TpoEveryoneControls} from "@/components/tpo/tpo-everyone-controls";
 import {redirect} from "next/navigation";
@@ -19,11 +20,8 @@ export default async function TpoEveryonePage({searchParams}:{
   return {status:"FAILED" as const};
  });
  return <div className="space-y-5">
-  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-9 sm:min-h-9 items-center text-link">← Team conversations</Link>
-  <header className="space-y-2">
-   <h1 className="text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">{TPO_EVERYONE_TITLE}</h1>
-   <p className="text-sm text-body">{TPO_EVERYONE_DESCRIPTION}</p>
-  </header>
+  <PageHeader title={TPO_EVERYONE_TITLE} description={TPO_EVERYONE_DESCRIPTION}
+    actions={<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text sm:min-h-9">← Team conversations</Link>} />
   {result.status==="FAILED"?<section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border p-4">
    <p>Could not load Everyone right now. Your messages were not changed.</p>
    <Link href="/tpo/team/everyone" className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-link underline">Retry Everyone</Link>
