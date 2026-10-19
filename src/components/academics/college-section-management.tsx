@@ -1,3 +1,5 @@
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 "use client";
 
 import { useState, useTransition, type FormEvent } from "react";
@@ -112,11 +114,11 @@ export function CollegeClassCreate({ cohorts, periods }: {
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class name
           <Input required maxLength={255} value={name} onChange={event => setName(event.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class code (optional; generated from name)
           <Input maxLength={64} value={code} onChange={event => setCode(event.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Capacity (required, 1–200)
           <Input required type="number" min={1} max={200} step={1} value={capacity}
@@ -125,7 +127,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
         </label>
         <label className="grid gap-1 text-sm font-medium text-body sm:col-span-2 lg:col-span-5">Description (optional)
           <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
-            className="min-h-28 w-full" />
+            className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-foreground" />
         </label>
         <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-5">Moving a student into a full section is refused.</p>
         <div className="sm:col-span-2 lg:col-span-5">
@@ -195,11 +197,11 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         </p>
         <label className="grid gap-1 text-sm font-medium text-body">Class name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Capacity (blank means unlimited)
           <Input type="number" min={1} max={10000} step={1} value={capacity}
@@ -208,7 +210,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Description
           <Textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
-            className="min-h-28 w-full" />
+            className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-foreground" />
         </label>
         <p className="text-xs text-muted-foreground">Active learner enrollments: {row.activeLearners}.</p>
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
