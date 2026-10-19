@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 import {useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -46,13 +47,11 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
         Send test alert
       </Button>
     </div>
-    {!configured?<p role="status" className="text-sm text-body">
-      Telegram alerts are not configured. Manual sends are unavailable.
-    </p>:null}
-    {notice?<p role={error?"alert":"status"} className="text-sm text-body">{notice}</p>:null}
+    {!configured?<InlineNotice tone="info" message="Telegram alerts are not configured. Manual sends are unavailable."/>:null}
+    {notice?<InlineNotice tone={error?"error":"success"} message={notice}/>:null}
     <Dialog open={open} onOpenChange={setOpen} title="Daily digest"
       description="This preview covers the latest visible Known Errors only. The sent digest uses up to 100 signatures.">
-      <dl className="grid gap-2 text-sm sm:grid-cols-2">
+      <dl className="grid gap-2 text-sm md:grid-cols-2">
         <div><dt>Regressions</dt><dd className="font-semibold">{regressions}</dd></div>
         <div><dt>Marked fixed</dt><dd className="font-semibold">{fixed}</dd></div>
         <div><dt>Muted types</dt><dd className="font-semibold">{muted}</dd></div>
