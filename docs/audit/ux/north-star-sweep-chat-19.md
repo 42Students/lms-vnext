@@ -195,3 +195,10 @@ Source baseline: `docs/orchestrator/queues/master-queue.md` OWNER GOAL and the e
 **HR continuation:** Re-scanned all 22 `/hr` canonical pages for raw visible controls, non-token palette/radii and extra `<main>` wrappers; found no new non-hidden raw controls. Added a missing `aria-current="page"` state to recruiter Drives' active college selector; brought keyboard focus outlines on conversation kind/status tabs and recruiter shared-applicant/offer metric links into the measured teal outline style. Did not alter business content, page ordering, mutations or access checks.
 
 **Scope of verification:** Compared the source values and authored unexecuted source assertions; no browser screenshots or computed-style visual diff. Matching source declarations supports, but cannot prove, runtime pixel-level equality. No tests, typecheck, lint, CI, build, app run or deploy were performed as instructed.
+
+
+### Mobile drawer SCSS follow-up (Checkpoint 2)
+
+The source reference `docs/design/legacy-styles/components___antddesign.scss`, lines 348–389, additionally specifies a mobile sidebar drawer body with **12px left/right padding**, **8px top padding**, **24px + safe-area bottom padding**, and navigation links with **10px all-side padding**, **2px item spacing**, and **10px text/icon gap**. Scoped those values to `.lms-mobile-sidebar` in `sidebar-legacy.css` and updated the existing mobile drawer's scroll padding class, leaving the Escape key, focus trap, backdrop close and return-focus behaviour intact. All modified SVG, aside, div and paired button closing tags were re-read; the backdrop button is intentionally self-closing.
+
+Every literal `href` in `shell-model.ts` currently resolves through `SHELL_NAV_ICON_KEYS`, and all legacy learner image icon references point to assets found in `public/assets/images/common/`. Added an unexecuted exhaustiveness source check for navigation glyph coverage. HR page continuation remains strictly styling and accessibility chrome: no user-owned page content was rewritten.
