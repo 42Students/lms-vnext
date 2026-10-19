@@ -83,7 +83,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
             {BUG_STATUSES.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}
           </Select>
         </label>
-        <Button variant="primary" type="button" disabled={busy||selected.length===0} onClick={()=>void apply()}
+        <Button variant="primary" type="button" disabled={busy||selected.length===0} loading={busy} onClick={()=>void apply()}
          >
           {busy?"Updating…":"Apply to "+selected.length+" selected"}
         </Button>
