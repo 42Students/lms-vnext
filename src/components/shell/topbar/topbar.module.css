@@ -430,3 +430,5 @@
 .searchBox .searchInput[data-slot="input"]:focus-visible {
   box-shadow:none; border:0; outline:none;
 }
+
+.topbarNotificationDrawer::backdrop { background:rgba(0,0,0,.08); }
