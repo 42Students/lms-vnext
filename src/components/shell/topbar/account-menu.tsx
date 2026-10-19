@@ -102,12 +102,12 @@ export function TopbarAccountMenu({
       const next = event.relatedTarget;
       if (open && next instanceof Node && !event.currentTarget.contains(next)) setOpen(false);
     }}>
-    <button type="button" ref={trigger} className={style.avatar}
+    <Button variant="ghost" size="icon-sm" type="button" ref={trigger} className={style.avatar}
       aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "lms-topbar-account-dialog" : undefined}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
       <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
-    </button>
+    </Button>
     {open ? <div id="lms-topbar-account-dialog" role="dialog" aria-modal={false} aria-label="Account menu" className={style.menu}>
       <div className="px-2 pb-2 text-left">
         <p className={style.accountHeading}>{roleLabel}</p>
