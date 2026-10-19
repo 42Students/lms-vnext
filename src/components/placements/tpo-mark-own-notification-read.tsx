@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -21,10 +22,10 @@ export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId:
     } finally { setBusy(false); }
   }
   return <div>
-    <button type="button" disabled={busy} onClick={() => void markRead()}
-      className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text disabled:opacity-60">
+    <Button type="button" disabled={busy} onClick={() => void markRead()}
+      variant="secondary" className="min-h-11 sm:min-h-9">
       {busy ? "Saving..." : "Mark read"}
-    </button>
+    </Button>
     {error ? <p role="alert" className="mt-2 text-xs text-error">{error}</p> : null}
   </div>;
 }
