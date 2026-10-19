@@ -58,18 +58,18 @@ const columns: DataTableColumn<CollegeRow>[] = [
     cell: (college) => (
       <div className="flex min-w-0 flex-wrap justify-start gap-2 sm:justify-end">
         <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)]-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
           Tenant setup
         </Link>
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)]-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle"
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
         >
           Readiness
         </Link>
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)]-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle"
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
         >
           Branding
         </Link>
@@ -143,7 +143,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         />
       ) : null}
       {creatableOrganizations.length>0?<CollegeBulkImport organizations={creatableOrganizations.map(x=>({id:x.id,name:x.name}))}/>:null}
-      <Link href="/admin/tenants" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)]-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+      <Link href="/admin/tenants" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
         Search tenant directory →
       </Link>
       <form className="flex flex-wrap items-end gap-3 border-t border-border pt-4" method="get">
@@ -156,8 +156,8 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         </Select>
        </label>
        <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Search</Button>
-       <Link href="/admin/colleges" className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Clear search</Link>
-       <Link href={href(page)} className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Refresh</Link>
+       <Link href="/admin/colleges" className="min-h-11 inline-flex items-center text-primary-text underline">Clear search</Link>
+       <Link href={href(page)} className="min-h-11 inline-flex items-center text-primary-text underline">Refresh</Link>
       </form>
       <p role="status" className="text-sm text-body">{q?matches.length+" of "+rows.length:rows.length} colleges · Page {page} of {pages}</p>
       <DataTable columns={columns} rows={visible} getRowKey={college=>college.id}
