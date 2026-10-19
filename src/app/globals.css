@@ -324,6 +324,7 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
   --lms-control-height: 36px;
   --lms-tab-gap: 20px;
   --lms-control-radius: 9px;
+  --lms-field-radius: 10px; /* legacy components___form.scss:120 */
   --lms-canvas-radius: 12px;
   --lms-canvas-padding: 24px;
   --lms-control-shadow: 0 0 0 2px rgba(38, 186, 199, .15);
@@ -335,8 +336,8 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
   --lms-space-4: 16px;
   --lms-space-5: 24px;
   --lms-space-6: 32px;
-  --lms-space-7: 40px;
-  --lms-space-8: 48px;
+  --lms-space-7: 48px;
+  --lms-space-8: 64px;
 }
 body {
   font-size: 14px;
@@ -408,7 +409,7 @@ body {
 [data-slot="textarea"] {
   width: 100%;
   border: 1px solid var(--lms-canvas-border);
-  border-radius: var(--lms-control-radius);
+  border-radius: var(--lms-field-radius);
   background: var(--lms-form-bg);
   color: var(--lms-form-ink);
   font-family: inherit;
@@ -596,7 +597,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="skeleton"] .lms-skeleton-shimmer { border-radius: var(--lms-skeleton-radius); background: var(--lms-neutral-100); }
 [data-slot="page-header"] { border-color: var(--lms-canvas-border); }
 [data-slot="page-header"] p { font-size: 13px; line-height: 1.5; }
-[data-slot="form-field"] > label { font-size: 13px; line-height: 20px; font-weight: 600; }
+[data-slot="form-field"] > label { font-size: 13px; line-height: 16px; font-weight: 600; }
 [data-slot="form-field"] [role="alert"] { color: #b91c1c; font-size: 12px; }
 @media (max-width: 639px) {
   [data-slot="page-canvas"] { padding: 16px; }
@@ -1000,10 +1001,10 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   scrollbar-width: thin;
   scrollbar-color: var(--lms-scrollbar-thumb) var(--lms-scrollbar-track);
 }
-.lms-scrollbar-thin::-webkit-scrollbar { display: block; width: 4px; height: 4px; }
-.lms-scrollbar-thin::-webkit-scrollbar-thumb {
+.lms-scrollbar-thin::-webkit-scrollbar { display: block; width: 8px; height: 8px; }
+ .lms-scrollbar-thin::-webkit-scrollbar-thumb {
   background: var(--lms-scrollbar-thumb);
-  border-radius: 999px;
+  border-radius: 1px;
 }
 @media (max-width: 767px) {
   [data-slot="dropdown-root"] > summary,
