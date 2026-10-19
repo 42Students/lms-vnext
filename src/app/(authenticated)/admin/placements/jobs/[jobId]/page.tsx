@@ -20,7 +20,7 @@ export default async function AdminPlacementDrivePage({
   const { jobId } = await params;
   const pipeline = await getSuperAdminDrivePipeline(context, jobId);
   return (
-   <div className="space-y-5">
+   <div className="min-w-0 space-y-5">
     
     <PlacementDriveWorkspace
       context={context}
