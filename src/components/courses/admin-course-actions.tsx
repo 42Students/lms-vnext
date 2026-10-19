@@ -121,7 +121,7 @@ export function CourseActions({
   return (
     <>
       <div className="flex justify-end gap-2">
-        {duplicateHref?<Link href={duplicateHref} className="inline-flex min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Duplicate</Link>:null}
+        {duplicateHref?<Link href={duplicateHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Duplicate</Link>:null}
         <Button
           size="sm"
           variant="secondary"
