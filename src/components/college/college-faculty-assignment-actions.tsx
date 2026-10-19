@@ -2,6 +2,9 @@
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
@@ -94,7 +97,7 @@ export function CollegeFacultyAssignmentCreate({
   return <>{confirmation}<section aria-label="Assign Faculty to multiple courses"
     className="border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
-    <form onSubmit={event => void submit(event)} className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <form onSubmit={event => void submit(event)} className="mt-4 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-1 text-sm font-semibold">Program
         <Select required className={fieldClass} value={programId}
           onChange={event => resetParents("program", event.target.value)}>
@@ -145,12 +148,10 @@ export function CollegeFacultyAssignmentCreate({
           <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
         </Select>
       </label>
-      <fieldset className="space-y-2 sm:col-span-2 lg:col-span-4">
+      <fieldset className="space-y-2 md:col-span-2 lg:col-span-4">
         <legend className="text-sm font-semibold">Courses to Assign ({selected.length} selected)</legend>
         <div className="max-h-64 space-y-2 overflow-auto rounded-[var(--lms-control-radius)] border border-border p-3">
-          {choices.length === 0 && <p className="text-sm text-muted-foreground">
-            Select a program, batch and class to view eligible courses.
-          </p>}
+          {choices.length === 0 && <EmptyState title="No eligible courses" description="Select a program, batch and class to view eligible courses."/>}
           {choices.map(item => <label key={item.id} className="flex items-center gap-2 text-sm">
             <Checkbox checked={selected.includes(item.id)}
               onChange={event => setSelected(previous => event.target.checked
@@ -159,18 +160,15 @@ export function CollegeFacultyAssignmentCreate({
           </label>)}
         </div>
       </fieldset>
-      <div className="sm:col-span-2 lg:col-span-4">
-        <Button variant="primary" type="submit" disabled={saving || !selected.length || !membershipId}
-          >
+      <div className="md:col-span-2 lg:col-span-4">
+        <Button variant="primary" type="submit" className="min-h-11 md:min-h-9" loading={saving} disabled={saving || !selected.length || !membershipId}>
           {saving ? "Assigning…" : `Assign to ${selected.length} course(s)`}
         </Button>
       </div>
     </form>
-    {(deliveriesTruncated || facultyTruncated) && <p role="note" className="mt-3 text-sm text-warning">
-      Only the first 200 active delivery or faculty records are listed. Narrow the selection or use its own course workspace.
-    </p>}
-    {error && <p role="alert" className="mt-3 text-sm text-error">{error}</p>}
-    {message && <p role="status" className="mt-3 text-sm text-success">{message}</p>}
+    {(deliveriesTruncated || facultyTruncated) && <Alert tone="warning" className="mt-3">Only the first 200 active delivery or faculty records are listed. Narrow the selection or use its own course workspace.</Alert>}
+    {error && <Alert tone="error" className="mt-3">{error}</Alert>}
+    {message && <Alert tone="success" className="mt-3">{message}</Alert>}
   </section></>;
 }
 
@@ -204,17 +202,19 @@ export function CollegeFacultyAssignmentEnd({
       setSaving(false);
     }
   }
-  return <div className="space-y-1">
-    <Button variant="secondary" type="button" disabled={saving} onClick={()=>{setConfirming(true);setError(null);}}
-     >
-      {saving ? "Ending…" : "End assignment"}
+  return <div className="space-y-2">
+    <Button variant="secondary" type="button" loading={saving} disabled={saving}
+      onClick={()=>{setConfirming(true);setError(null);}} className="min-h-11 md:min-h-9">
+      {saving?"Ending…":"End assignment"}
     </Button>
-    {confirming?<div role="group" aria-label="Confirm end assignment" className="mt-2 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-xs">
-      <p>End {role} assignment for {facultyName} in {courseName}? This cannot be undone. Teaching history is retained.</p>
-      <Button variant="primary" type="button" disabled={saving} onClick={()=>void end()}>Confirm end</Button>
-      <Button variant="secondary" type="button" disabled={saving} onClick={()=>setConfirming(false)} className="ml-2">Cancel</Button>
-    </div>:null}
-    {success?<p role="status" className="text-xs">{success}</p>:null}
-    {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}
+    {success?<Alert tone="success">{success}</Alert>:null}
+    {!confirming&&error?<Alert tone="error">{error}</Alert>:null}
+    <ConfirmDialog open={confirming} onOpenChange={setConfirming}
+      title={"End "+role+" assignment?"}
+      description={"End "+role+" assignment for "+facultyName+" in "+courseName+"? This cannot be undone. Teaching history is retained."}
+      confirmLabel="Confirm end" confirmVariant="danger" pending={saving}
+      onConfirm={()=>void end()}>
+      {error?<Alert tone="error">{error}</Alert>:<p className="text-sm text-body">Teaching history will be retained.</p>}
+    </ConfirmDialog>
   </div>;
 }

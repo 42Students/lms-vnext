@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {Button} from "@/components/ui/button";
 import { cx } from "@/lib/class-names";
 import { isSafeInternalHref } from "@/lib/safe-internal-href";
 
@@ -48,7 +49,7 @@ export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs d
           return <span key={item.key} aria-disabled="true" className={cx(classes, "cursor-not-allowed opacity-50 hover:brightness-100")}>{content}</span>;
         }
         if (onSelect) {
-          return <button key={item.key} type="button" data-selected={selected} aria-label={accessibleLabel} disabled={item.disabled} aria-pressed={selected} onClick={() => onSelect(item.key)} className={classes}>{content}</button>;
+          return <Button key={item.key} type="button" variant="ghost" size="sm" data-selected={selected} aria-label={accessibleLabel} disabled={item.disabled} aria-pressed={selected} onClick={() => onSelect(item.key)} className={classes}>{content}</Button>;
         }
         return <span key={item.key} aria-disabled={item.disabled || undefined} className={cx(classes, "cursor-default hover:brightness-100")}>{content}</span>;
       })}

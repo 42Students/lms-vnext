@@ -4,6 +4,7 @@ import { facultyScheduleFieldsChanged, facultyScheduleErrorMessage } from "@/mod
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
@@ -93,43 +94,43 @@ export function FacultyAttendanceScheduleEditor({
       Times are entered in IST (Asia/Kolkata) and saved as UTC instants.
       Only sessions you scheduled and have not marked for attendance can be rescheduled.
     </p>
-    <div className="grid gap-3 sm:grid-cols-2">
-      <label className="grid gap-1 text-sm">Action
+    <div className="grid gap-3 md:grid-cols-2">
+      <label className="grid gap-1 text-[13px] font-semibold leading-4">Action
         <Select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
-          className="text-base sm:text-sm">
+          className="text-base md:text-sm">
           <option value="CREATE">Schedule</option>
           <option value="RESCHEDULE" disabled={eligible.length===0}>Reschedule</option>
         </Select>
       </label>
-      {action==="RESCHEDULE"?<label className="grid gap-1 text-sm">Unmarked session
+      {action==="RESCHEDULE"?<label className="grid gap-1 text-[13px] font-semibold leading-4">Unmarked session
         <Select value={id} onChange={e=>{const next=eligible.find(s=>s.id===e.target.value);if(next)applyExistingSession(next);}}
-          className="text-base sm:text-sm">
+          className="text-base md:text-sm">
           {eligible.map(s=>
             <option key={s.id} value={s.id}>{s.title}</option>)}
         </Select>
       </label>:null}
-      <label className="grid gap-1 text-sm">Session title
+      <label className="grid gap-1 text-[13px] font-semibold leading-4">Session title
         <Input value={title} onChange={e=>setTitle(e.target.value)}
-          maxLength={160} className="text-base sm:text-sm" />
+          maxLength={160} className="text-base md:text-sm" />
       </label>
-      <label className="grid gap-1 text-sm">Location
+      <label className="grid gap-1 text-[13px] font-semibold leading-4">Location
         <Input value={location} onChange={e=>setLocation(e.target.value)}
-          maxLength={240} className="text-base sm:text-sm" />
+          maxLength={240} className="text-base md:text-sm" />
       </label>
-      <label className="grid gap-1 text-sm">Start (IST)
+      <label className="grid gap-1 text-[13px] font-semibold leading-4">Start (IST)
         <Input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
-          className="text-base sm:text-sm" />
+          className="text-base md:text-sm" />
       </label>
-      <label className="grid gap-1 text-sm">End (IST)
+      <label className="grid gap-1 text-[13px] font-semibold leading-4">End (IST)
         <Input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
-          className="text-base sm:text-sm" />
+          className="text-base md:text-sm" />
       </label>
     </div>
-    <label className="grid gap-1 text-sm">Description
+    <label className="grid gap-1 text-[13px] font-semibold leading-4">Description
       <Textarea value={description} onChange={e=>setDescription(e.target.value)}
-        maxLength={1000} className="text-base sm:text-sm" />
+        maxLength={1000} className="text-base md:text-sm" />
     </label>
-    <Button type="button" variant="primary" onClick={()=>void save()}
+    <Button type="button" variant="primary" className="min-h-11 md:min-h-[var(--lms-control-height)]" loading={busy} onClick={()=>void save()}
       disabled={busy||unchanged||action==="RESCHEDULE"&&!selected}>
       {busy?"Saving…":"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
     </Button>
@@ -138,7 +139,7 @@ export function FacultyAttendanceScheduleEditor({
       confirmLabel={"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
       confirmVariant="primary" pending={busy} onConfirm={()=>void save(true)}/>
     {unchanged?<p role="status" className="text-xs text-muted-foreground">No schedule details have changed.</p>:null}
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-    {success?<p role="status" className="text-sm text-body">{success}</p>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
+    {success?<Alert tone="success">{success}</Alert>:null}
   </section>;
 }

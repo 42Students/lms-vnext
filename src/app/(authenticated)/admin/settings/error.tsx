@@ -12,7 +12,7 @@ export default function SuperAdminSettingsError({
   return (
     <section
       role="alert"
-      className="border-t border-border pt-5 text-center"
+      className="space-y-3"
     >
       <PageHeader title={"Unable to load platform settings"} />
       <p className="mt-2 text-sm leading-6 text-body">
