@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { SuperAdminDriveQuickSearch } from "@/components/placements/super-admin-drive-quick-search";
 import {SuperAdminNeedsAttention} from "@/components/placements/super-admin-needs-attention";
@@ -10,11 +11,7 @@ import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operati
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
 function Metric({ label, value, description }: { label: string; value: number; description: string }) {
-  return <section className="border-b border-border px-4 py-4 last:border-r-0 sm:border-r sm:border-b-0">
-    <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">{label}</p>
-    <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
-    <p className="mt-1 text-xs leading-5 text-body">{description}</p>
-  </section>;
+  return <StatTile label={label} value={value} detail={description} />;
 }
 function priorityTone(priority: string): "error" | "warning" | "info" {
   return priority === "HIGH" ? "error" : priority === "MEDIUM" ? "warning" : "info";
