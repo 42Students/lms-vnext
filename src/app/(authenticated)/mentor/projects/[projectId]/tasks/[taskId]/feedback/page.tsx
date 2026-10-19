@@ -12,7 +12,7 @@ export default async function Page({params}:{
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Mentor · Task Board" title="Recorded task review feedback"
    description={data.task.title}/>
-  <section role="status" className="rounded-xl border border-border bg-surface p-4">
+  <section role="status" className="border-b border-border pb-4">
    <h2 className="font-semibold">Conversation thread unavailable</h2>
    <p className="mt-2 text-sm text-body">
     The promoted Project schema stores one reviewer-feedback value per submission version.
@@ -22,8 +22,8 @@ export default async function Page({params}:{
   </section>
   {data.feedback.length===0?<EmptyState title="No recorded reviewer feedback"
    description="No persisted submission-version feedback exists for this authorized task. Missing messages are not reconstructed."/>
-   :<ol className="grid gap-3">{data.feedback.map(entry=><li key={entry.id}
-    className="rounded-xl border border-border bg-surface p-4">
+   :<ol className="divide-y divide-border">{data.feedback.map(entry=><li key={entry.id}
+    className="py-4">
     <div className="flex flex-wrap items-center justify-between gap-2">
      <h2 className="text-sm font-semibold">Version {entry.version} · {taskFeedbackStatusLabel(entry.status)}</h2>
      <span className="text-xs text-muted-foreground">

@@ -140,8 +140,8 @@ export function TpoPublicJoinLinkCard({
           {status.domain ? <p className="mt-2 text-sm text-body">Email domains: @{status.domain}</p> :
           companyId ? <div className="mt-3 flex flex-wrap gap-2">
            <input aria-label="Company email domain" value={domainDraft} onChange={event=>setDomainDraft(event.target.value)}
-            placeholder="company.com" className="min-h-11 sm:min-h-9 min-w-0 flex-1 rounded-[9px] border border-border bg-surface px-3 text-sm"/>
-           <button type="button" className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold"
+            placeholder="company.com" className="min-h-11 sm:min-h-9 min-w-0 flex-1 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm"/>
+           <button type="button" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold"
             disabled={busy||!domainDraft.trim()} onClick={()=>void saveDomain()}>Add domain</button>
           </div> : null}
         </>
@@ -171,7 +171,7 @@ export function TpoPublicJoinLinkCard({
           <button
             type="button" disabled={busy || (isCompany && !status.domain)}
             onClick={()=>{if(status.link)setReplaceOpen(true);else void makeLink();}}
-            className="mt-4 min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-4 min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:cursor-not-allowed disabled:opacity-50"
           >
             {status.link ? PUBLIC_JOIN_LINK_COPY.replace :
               isCompany ? PUBLIC_JOIN_LINK_COPY.initial : PUBLIC_JOIN_LINK_COPY.publicInitial}
@@ -182,9 +182,9 @@ export function TpoPublicJoinLinkCard({
               <div className="flex flex-wrap items-center gap-2">
                 <input aria-label={title} readOnly value={freshUrl}
                   onFocus={(event) => event.currentTarget.select()}
-                  className="min-w-0 flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground" />
+                  className="min-w-0 flex-1 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 text-sm text-foreground" />
                 <button type="button" onClick={copyLink}
-                  className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-foreground">
+                  className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-foreground">
                   Copy
                 </button>
               </div>

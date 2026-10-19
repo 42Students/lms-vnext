@@ -266,7 +266,7 @@ export function AdminCourseCreatePanel({
 
   return (
     <section aria-label="Course setup workflow" className="grid gap-4 xl:grid-cols-2">
-      <nav aria-label="Course setup steps" className="flex flex-wrap gap-3 rounded-xl border border-border bg-surface p-3 text-sm xl:col-span-2">
+      <nav aria-label="Course setup steps" className="flex flex-wrap gap-3 border-b border-border pb-4 text-sm xl:col-span-2">
        <a href="#setup-course" className="font-semibold text-primary-text underline">1. Create Course</a>
        <a href="#setup-offering" className="font-semibold text-primary-text underline">2. Course Offering</a>
        <a href="#setup-delivery" className="font-semibold text-primary-text underline">3. Section Delivery</a>

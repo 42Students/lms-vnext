@@ -486,7 +486,7 @@ export function FacultyAttendanceWorkspace({
   return (
     <div className="space-y-5">
       {savedNotice?<p role="status" className="rounded border border-border bg-surface p-3 text-sm text-success">{savedNotice}</p>:null}
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
@@ -593,7 +593,7 @@ export function FacultyAttendanceWorkspace({
             </div>
           </section>
 
-          <section aria-label="Monthly class health" className="rounded-xl border border-border bg-surface p-5">
+          <section aria-label="Monthly class health" className="border-b border-border pb-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h2 className="text-sm font-semibold text-body">Monthly Attendance</h2>
@@ -824,7 +824,7 @@ export function FacultyAttendanceWorkspace({
               description="Use Schedule Class to create a class session before marking attendance."
             />
           ) : (
-            <section className="rounded-xl border border-border bg-surface p-5">
+            <section className="border-b border-border pb-5">
               <div className="grid gap-4 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
                 <div>
                   <label className="block text-xs font-semibold text-body">

@@ -116,10 +116,10 @@ export default async function TpoLeadsReportPage({
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/leads" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
-      <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
+      <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
        <p className="min-w-0 flex-1 text-sm text-body">This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.</p>
-       <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">Open Engage →</Link>
-       <Link href="/tpo/companies" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">Company memory →</Link>
+       <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Open Engage →</Link>
+       <Link href="/tpo/companies" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Company memory →</Link>
       </nav>
 
 
@@ -130,15 +130,15 @@ export default async function TpoLeadsReportPage({
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-60 flex-1 gap-1 text-sm font-semibold">Company
-         <select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3">
+         <select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="">All companies</option>
           {companyEngagement.filter(row=>row.companyId).map(row=>
            <option key={row.companyId!} value={row.companyId!}>{row.companyName}</option>)}
          </select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">Filter</button>
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Filter</button>
         {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
-         className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Clear company</Link>:null}
+         className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">Clear company</Link>:null}
        </form>
        <p className="text-xs text-muted-foreground">The company filter applies to this company table and its CSV only. Headline recruiter lead metrics, stage summaries and acquisition source totals remain college-wide.</p>
        {!companyFilter.valid?<p role="alert" className="text-sm text-warning-text">This company is not in the authorized college report. Clear the company filter.</p>:null}
@@ -146,7 +146,7 @@ export default async function TpoLeadsReportPage({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
         ...(selectedCompanyId?{companyId:selectedCompanyId}:{}),
-       }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">Export company engagement CSV</a>
+       }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Export company engagement CSV</a>
        <ReportTable title="Engage and placement outcomes by company"
         headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
         rows={companyFilter.rows.map(row=>{
@@ -157,7 +157,7 @@ export default async function TpoLeadsReportPage({
 
       <section
         aria-label="Lead reporting scope"
-        className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
       >
         <p className="font-semibold text-foreground">
           Reporting methodology
@@ -172,7 +172,7 @@ export default async function TpoLeadsReportPage({
         {metrics.map(([label, value]) => (
           <div
             key={label}
-            className="rounded-xl border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
           >
             <p className="text-xs font-semibold uppercase text-body">
               {label}
@@ -183,7 +183,7 @@ export default async function TpoLeadsReportPage({
           </div>
         ))}
 
-        <div className="rounded-xl border border-border bg-surface p-4">
+        <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <p className="text-xs font-semibold uppercase text-body">
             Recruiter account linkage rate
           </p>
@@ -212,7 +212,7 @@ export default async function TpoLeadsReportPage({
             ["No next step", health.noNextStep],
             ["Unassigned", health.unassigned],
           ] as const).map(([label, value]) => (
-            <div key={label} className="rounded-xl border border-border bg-surface p-4">
+            <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
               <p className="text-xs font-semibold uppercase text-body">{label}</p>
               <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">{reportNumber(value)}</p>
             </div>

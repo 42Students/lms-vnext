@@ -126,6 +126,10 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           onChange={event => { setQuery(event.target.value); setOpen(true); }}
           onKeyDown={event => {
             if (event.key === "Enter") { event.preventDefault(); submit(); }
+            if (event.key === "ArrowDown" && open) {
+              const first = root.current?.querySelector<HTMLButtonElement>("button[data-tpo-result]");
+              if (first) { event.preventDefault(); first.focus(); }
+            }
             if (event.key === "Escape") { event.preventDefault(); setOpen(false); setMobileOpen(false); }
           }}/>
         <kbd className={style.searchHint}>Ctrl K</kbd>

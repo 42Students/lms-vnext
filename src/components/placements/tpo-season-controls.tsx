@@ -77,18 +77,18 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
                 <input type={key.endsWith("Date") ? "date" : "text"}
                   value={form[key]} disabled={busy}
                   onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
-                  className="min-h-11 md:min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground"
+                  className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
                   required />
               </label>
             ))}
           </div>
           <div className="flex flex-wrap gap-3">
             <button type="button" onClick={() => void save()} disabled={busy}
-              className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60 text-primary-foreground">
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60">
               {busy ? "Saving..." : edit ? "Review and confirm edit" : "Review and confirm new season"}
             </button>
             {edit ? <button type="button" onClick={() => select(null)}
-              className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm">Cancel edit</button> : null}
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm">Cancel edit</button> : null}
           </div>
         </>
       )}

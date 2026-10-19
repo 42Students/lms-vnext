@@ -97,7 +97,7 @@ export async function ProjectAdminReadinessPage({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-base font-semibold">Active overrides ({activeOverrides.length})</h2>
           <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
-            className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             Export overrides CSV
           </a>
         </div>
@@ -124,7 +124,7 @@ export async function ProjectAdminReadinessPage({
       </section>
       <section className="space-y-3 border-b border-border pb-5">
         <h2 className="text-base font-semibold">Select workspace</h2>
-        {outsideScope ? <p role="alert" className="rounded-md border border-border p-3 text-sm text-warning-text">This workspace belongs to a different college — switch colleges in the header and try again.</p> : null}
+        {outsideScope ? <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-warning-text">This workspace belongs to a different college — switch colleges in the header and try again.</p> : null}
         <AdminReadinessWorkspacePicker items={workspaceChoices} selected={selected} action={readinessPath}/>
         {selected ? <>
           <Link href={basePath+"/"+selected+"/readiness"} className="text-sm font-semibold text-primary-text underline">

@@ -84,7 +84,7 @@ export function HrRecruiterBell(){
    <div className="flex items-center justify-between gap-2">
     <h2 className="font-semibold">Notifications</h2>
     <button type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
-     className="min-h-9 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Close</button>
+     className="min-h-9 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
    </div>
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
    {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
@@ -92,12 +92,12 @@ export function HrRecruiterBell(){
     state.items.length===0?<div className="mt-3 text-sm"><p className="font-semibold">{HR_BELL_EMPTY}</p>
      <p className="text-muted-foreground">{HR_BELL_EMPTY_HELP}</p></div>:
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-80"><ul className="divide-y divide-border">{state.items.map(item=><li key={item.id} className="py-2">
-     <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-9 items-start gap-2 text-sm text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-9 items-start gap-2 text-sm text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary":"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted"}/>
       <span className="flex-1">{item.label}</span><span className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</span>
      </Link></li>)}</ul></ScrollCue>}
    <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">More</Link>
+    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
     {unread>0?<button type="button" disabled={loading} onClick={()=>void markAll()}
       className="min-h-9 rounded-[9px] border border-border px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50">{loading?"Saving…":"Mark all read"}</button>:null}
    </div>

@@ -17,7 +17,7 @@ export default async function MentorMeetingNotesPage({params}:{
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(path.projectId)+"/team-meetings"}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Meeting history</Link>}/>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-b border-border pb-5">
       <h2 className="font-semibold">Persisted meeting outcome</h2>
       <p className="mt-2 text-sm text-body">
         {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",

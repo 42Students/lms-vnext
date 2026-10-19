@@ -47,7 +47,7 @@ export function LearnerApplicationDetailWithdraw({applicationId,requiresRequest=
       </label>
       <textarea id="own-application-withdraw-reason" rows={4} maxLength={2000}
         value={reason} onChange={event=>setReason(event.target.value)}
-        className="mt-2 min-h-28 w-full rounded-md border border-border bg-surface p-3 text-sm text-foreground"
+        className="mt-2 min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-[14px] text-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         placeholder="Explain why you are withdrawing this application."/>
       {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
     </Dialog>

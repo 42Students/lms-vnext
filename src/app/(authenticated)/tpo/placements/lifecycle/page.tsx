@@ -81,53 +81,53 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <Link href="/tpo/placements/overview" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">Operations overview</Link>
       <nav aria-label="Drive creation paths" className="flex flex-wrap items-center gap-3">
         <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Recorded outside · history</Link>
-      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Create drive</Link>
-      <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Recorded outside (history)</Link>
+      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Create drive</Link>
+      <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Recorded outside (history)</Link>
       </nav>
     </div>
     <form action="/tpo/placements/lifecycle" method="get"
       className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Season
         <select name="seasonId" defaultValue={data.season?.id ?? ""} disabled={!data.seasons.length}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="">All college seasons</option>
           {data.seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
       </label>
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Batch
         <select name="cohortId" defaultValue={data.cohortId??""}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="">All batches</option>
           {data.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.programName} · {batch.name}</option>)}
         </select>
       </label>
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Company
         <select name="companyId" defaultValue={data.companyId??""}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="">All companies</option>
           {data.companies.map(company=><option key={company.id} value={company.id}>{company.name}</option>)}
         </select>
       </label>
       {data.view!=="REQUESTS"?<label className="min-w-40 flex-1 text-sm font-semibold text-body">Created by
         <select name="ownerUserId" defaultValue={data.ownerUserId??""}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="">Any creator</option>
           {data.owners.map(owner=><option key={owner.id} value={owner.id}>{owner.name??"College staff"}</option>)}
         </select>
       </label>:null}
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Lifecycle
         <select name="view" defaultValue={data.view}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="ALL">All jobs</option><option value="REQUESTS">Requests</option><option value="DRAFT">Drafts</option>
           <option value="LIVE">Live</option><option value="CLOSED">Closed</option>
         </select>
       </label>
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Company or drive
        <input name="search" defaultValue={data.search} maxLength={100}
-        className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+        className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Deadline state
-        <select name="deadline" defaultValue={data.deadline} className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <select name="deadline" defaultValue={data.deadline} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="ALL">All deadlines</option>
           <option value="TODAY">Today (IST)</option>
           <option value="DUE_SOON">Live · next 7 days</option>
@@ -136,13 +136,13 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         </select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Card columns
-        <select name="display" defaultValue={data.display} className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <select name="display" defaultValue={data.display} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="DETAILED">Detailed</option><option value="COMPACT">Compact</option>
         </select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Where it is
         <select name="journey" defaultValue={data.journey}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="ALL">Every stage</option>
           <option value="TAKING_APPLICATIONS">Taking applications</option>
           <option value="RUNNING_ROUNDS">Rounds in progress</option>
@@ -151,53 +151,53 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         </select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Work mode
-        <select name="workMode" defaultValue={data.workMode} className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <select name="workMode" defaultValue={data.workMode} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="ALL">All modes</option><option value="ONSITE">On-site</option>
           <option value="REMOTE">Remote</option><option value="HYBRID">Hybrid</option>
         </select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Employment type
-        <select name="employmentType" defaultValue={data.employmentType} className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <select name="employmentType" defaultValue={data.employmentType} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="ALL">All employment</option><option value="FULL_TIME">Full-time</option>
           <option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
         </select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Sort drives
-        <select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+        <select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="COMPANY">Company name</option><option value="DEADLINE_ASC">Earliest recorded deadline</option>
           <option value="DEADLINE_DESC">Latest recorded deadline</option>
         </select>
       </label>
       <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. applied
         <input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
       </label>
       <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. applied
         <input name="maxApplied" type="number" min={0} max={100000} defaultValue={data.maxApplied??""}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
       </label>
       <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. offers
         <input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
       </label>
       <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. offers
         <input name="maxOffers" type="number" min={0} max={100000} defaultValue={data.maxOffers??""}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Pay category
         <select name="payCategory" defaultValue={data.payCategory}
-          className="mt-2 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground md:min-h-9">
+          className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
           <option value="ALL">All categories</option><option value="REGULAR">Regular</option>
           <option value="DREAM">Dream</option>
         </select>
       </label>
-      <button type="submit" className="min-h-11 rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Apply</button>
+      <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Apply</button>
     </form>
     <div className="flex flex-wrap gap-3 text-sm">
-      <Link href={exportHref("PAGE")} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+      <Link href={exportHref("PAGE")} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
         Export shown page (CSV)
       </Link>
-      <Link href={exportHref("ALL")} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+      <Link href={exportHref("ALL")} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
         Export all matching drives (CSV)
       </Link>
     </div>
@@ -214,18 +214,18 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           ...(data.season?{seasonId:data.season.id}:{}),
           attention,view:"ALL",page:1,
         },
-       }} className={"inline-flex min-h-11 items-center rounded-md border px-3 text-sm "+
+       }} className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm "+
        (data.attention===attention?"border-primary bg-primary-subtle font-semibold":"border-border")}>
        {label} · {n}
       </Link>)}
-      <Link className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 text-sm md:min-h-9"
+      <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm md:min-h-9"
        href="/tpo/placements/lifecycle?view=REQUESTS">Waiting for your review</Link>
     </nav>
     <nav aria-label="Drive status tabs" className="flex flex-wrap gap-2">
       {([["REQUESTS","Requests",data.needsReviewCount],["LIVE","Live",data.statusCounts.live],["DRAFT","Drafts",data.statusCounts.drafts],["CLOSED","Closed",data.statusCounts.closed],["ALL","All jobs",data.statusCounts.all]] as const).map(([view,label,total])=>
         <Link key={view} href={{pathname:"/tpo/placements/lifecycle",query:{view,search:"",page:1}}}
           aria-current={data.view===view?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 rounded border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary "+(data.view===view?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border")}>
+          className={"inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary "+(data.view===view?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border")}>
           {label}<span className={"rounded-full px-2 py-0.5 tabular-nums "+(view==="REQUESTS"&&total>0?"bg-amber-100 text-amber-900":"bg-muted text-body")}>{total}</span>
         </Link>)}
     </nav>
@@ -238,7 +238,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             <h2 className="font-semibold">{item.company} · {item.title}</h2>
             <StatusBadge tone={driveRequestStatusTone(item.status)}>{driveRequestStatusLabel(item.status)}</StatusBadge>
             <p className="text-xs text-muted-foreground">Request ID: {item.id}</p>
-            <section aria-label="Recruiter contact" className="mt-2 space-y-1 rounded border border-border p-3 text-sm">
+            <section aria-label="Recruiter contact" className="mt-2 space-y-1 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
              <h3 className="font-semibold">Recruiter</h3>
              <p>Email: {item.recruiterEmail??"Not recorded"} · Phone: {item.recruiterPhone??"Not recorded"}</p>
              {item.verificationStatus!=="VERIFIED"?<p className="text-[var(--lms-gold-accent)]">Unverified</p>:null}
@@ -246,7 +246,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
              <Link href={"/tpo/recruiters?search="+encodeURIComponent(item.recruiterEmail??"")}
               className="text-[var(--lms-teal-deep)] underline">Open recruiter</Link>
             </section>
-            {item.changes?<section aria-label="What changed since the last request" className="mt-3 space-y-2 rounded border border-border p-3 text-sm">
+            {item.changes?<section aria-label="What changed since the last request" className="mt-3 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
               <h3 className="font-semibold">What changed since the last request</h3>
               {!item.changes.some(change=>change.changed)?<p>Nothing that we compare changed.</p>:
                <dl className="grid gap-2">{item.changes.filter(change=>change.changed).map(change=><div key={change.label} className="rounded border p-2">
@@ -266,7 +266,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         </nav>
       </section>
     ) : <>
-      <section aria-label="Drive lifecycle counts" className="grid grid-cols-2 gap-3 rounded-lg border border-border p-3 sm:grid-cols-4">
+      <section aria-label="Drive lifecycle counts" className="grid grid-cols-2 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-4">
         {metrics.map(([name,n]) =>
           <div key={name} className="border-r border-border px-3 py-2 last:border-r-0">
             <p className="text-xs text-body">{name}</p>
@@ -286,7 +286,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
              data.view==="DRAFT"?"Create a drive to start planning the next hiring opportunity.":
              data.view==="CLOSED"?"Completed and cancelled opportunities appear here.":
               "No non-archived jobs match the selected season and filters."} />
-          <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Create drive</Link>
+          <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Create drive</Link>
         </div> :
         <form action="/api/placements/tpo/drives/export" method="get" aria-label="Selected drive export" className="grid gap-3">
           {Array.from(exportParams.entries()).map(([key,value])=><input type="hidden" key={key} name={key} value={value}/>)}
@@ -327,24 +327,24 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                   ? new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})
                   +" IST": "Not recorded"}</p></div>
               <div className="flex flex-wrap items-center gap-2">
-                <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-11 items-center justify-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Open drive</Link>
+                <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Open drive</Link>
                 <details className="relative">
-                  <summary aria-label={"More actions for "+job.company+" "+job.title} className="flex min-h-11 cursor-pointer list-none items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-primary md:min-h-9">More ···</summary>
-                  <nav aria-label={"Drive links for "+job.title} className="absolute right-0 z-10 mt-1 min-w-48 space-y-1 rounded-md border border-border bg-surface p-2 shadow-lg">
-                    <Link className="block rounded-[9px] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/applicants"}>Applicants</Link>
-                    <Link className="block rounded-[9px] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/rounds"}>Rounds and schedule</Link>
-                    <Link className="block rounded-[9px] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/offers"}>Offers</Link>
-                    <Link className="block rounded-[9px] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
+                  <summary aria-label={"More actions for "+job.company+" "+job.title} className="flex min-h-11 cursor-pointer list-none items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-primary md:min-h-9">More ···</summary>
+                  <nav aria-label={"Drive links for "+job.title} className="absolute right-0 z-10 mt-1 min-w-48 space-y-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 shadow-lg">
+                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/applicants"}>Applicants</Link>
+                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/rounds"}>Rounds and schedule</Link>
+                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/offers"}>Offers</Link>
+                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
                       href={"/tpo/placements/jobs/"+job.id+"/applications-export"}>Export applicants</Link>
-                    <Link className="block rounded-[9px] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
+                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
                       href={"/tpo/placements/jobs/"+job.id+"/share-preview"}>Share with company</Link>
                     {job.status==="PUBLISHED"?<Link
-                      className="block rounded-[9px] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
+                      className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
                       href={"/tpo/placements/jobs/"+job.id+"/extend-deadline"}>
                       Set or extend deadline
                     </Link>:null}
                     {job.status==="PUBLISHED"?<Link
-                      className="block rounded-[9px] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
+                      className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
                       href={"/tpo/placements/jobs/"+job.id+"/close-preview"}>
                       Review and close drive
                     </Link>:null}
@@ -355,15 +355,15 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
               </div>
             </div></article>)}
           <div className="flex flex-wrap items-start gap-3">
-          <button type="submit" className="min-h-11 justify-self-start rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+          <button type="submit" className="min-h-11 justify-self-start rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
             Export selected drives (CSV)
           </button>
            <TpoDriveActOnPanel/>
           </div>
         </form>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
-       {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Previous</Link>:<span/>}
-       {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Next</Link>:null}
+       {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Previous</Link>:<span/>}
+       {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Next</Link>:null}
       </nav>
     </>}
   </div>;

@@ -51,7 +51,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
   }
 
   return <section aria-labelledby="placement-notification-title"
-    className="rounded-xl border border-border bg-surface p-5 sm:p-6">
+    className="border-b border-border pb-5">
     <h2 id="placement-notification-title" className="text-lg font-semibold text-foreground">
       Placement notification choices
     </h2>
@@ -60,7 +60,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
       updates. Essential college, academic and security messages are not controlled here.
     </p>
     <div className="mt-5 grid gap-4">
-      <label className="flex min-h-12 items-start gap-3 rounded-lg border border-border p-4">
+      <label className="flex min-h-12 items-start gap-3 rounded-[var(--lms-control-radius)] border border-border p-4">
         <input type="checkbox" checked={matching} onChange={e=>setMatching(e.target.checked)}
           disabled={pending} className="mt-1 h-5 w-5 shrink-0" />
         <span><span className="block font-semibold text-foreground">Matching opportunities</span>
@@ -68,7 +68,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
             Choose whether to receive matching placement-job notifications.
           </span></span>
       </label>
-      <label className="flex min-h-12 items-start gap-3 rounded-lg border border-border p-4">
+      <label className="flex min-h-12 items-start gap-3 rounded-[var(--lms-control-radius)] border border-border p-4">
         <input type="checkbox" checked={updates} onChange={e=>setUpdates(e.target.checked)}
           disabled={pending} className="mt-1 h-5 w-5 shrink-0" />
         <span><span className="block font-semibold text-foreground">Application updates</span>

@@ -139,16 +139,16 @@ export default async function MentorNotificationsPage({
         <Link href={MENTOR_INBOX} className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       {!projectAccess?.projects.enabled
-        ? <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+        ? <p role="status" className="border-b border-border pb-4 text-sm text-body">
             Projects access is disabled; project attention is unavailable.
           </p>
         : visibleAlerts.length === 0
-          ? <p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+          ? <p className="border-b border-border pb-4 text-sm text-body">
               {failedSources.length ? "No project alerts are visible, but some notification sources could not be checked." : "Nothing needs your attention right now."}
             </p>
-          : <div className="grid gap-3">{visibleAlerts.map(alert=>
+          : <div className="grid">{visibleAlerts.map(alert=>
               <Link key={alert.key} href={alert.href}
-                className="min-h-11 block rounded-xl border border-border bg-surface p-4 transition hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="min-h-11 block border-b border-border py-4 transition hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3 className="font-semibold text-foreground">{alert.title}</h3>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :

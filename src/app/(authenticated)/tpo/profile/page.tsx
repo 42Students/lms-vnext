@@ -49,7 +49,7 @@ export default async function TpoProfilePage() {
         actions={
           <Link
             href="/tpo/more"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle"
           >
             Back to More
           </Link>
@@ -58,7 +58,7 @@ export default async function TpoProfilePage() {
 
       <section
         aria-label="Your TPO profile"
-        className="rounded-xl border border-border bg-surface p-5 sm:p-6"
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:p-6"
       >
         <h2 className="text-lg font-semibold text-foreground">
           Account details
