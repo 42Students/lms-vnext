@@ -32,7 +32,7 @@ export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) 
     </Button>
     <Drawer open={open} onOpenChange={setOpen} side="left" title="Navigation menu"
       headerLeading={<ShellLogoMark />} className="lms-mobile-sidebar md:hidden"
-      bodyClassName="!p-0">
+      bodyClassName="!px-3 !pt-2 !pb-[calc(24px+env(safe-area-inset-bottom,0px))]">
       <SidebarNav items={items} onNavigate={() => setOpen(false)} />
     </Drawer>
   </>;
