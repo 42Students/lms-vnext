@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { CalendarGrid } from "@/components/ui/calendar-grid";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -130,7 +132,7 @@ export default async function LearnerAttendanceCalendarPage({
         <Link href={next} aria-label="Next month"
           className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Next →</Link>
       </div>
-      <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-muted-foreground sm:gap-2">
+      <CalendarGrid className="text-center text-xs font-semibold text-muted-foreground sm:gap-2">
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day=>
           <span key={day} className="py-1">{day}</span>)}
         {days.map((day,index)=>{
@@ -151,7 +153,7 @@ export default async function LearnerAttendanceCalendarPage({
             </div>
           </div>;
         })}
-      </div>
+      </CalendarGrid>
     </section>
     <section aria-label="Attendance class entries" className="space-y-3">
       <h2 className="text-lg font-semibold text-foreground">Class details</h2>
