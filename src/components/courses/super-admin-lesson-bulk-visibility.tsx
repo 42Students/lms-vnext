@@ -1,6 +1,5 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
-import { Alert } from "@/components/ui/alert";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";

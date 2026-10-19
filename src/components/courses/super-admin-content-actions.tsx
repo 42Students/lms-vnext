@@ -1,6 +1,5 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
-import { Alert } from "@/components/ui/alert";
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
