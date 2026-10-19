@@ -274,3 +274,15 @@ Every row refers to a full source file, not to an arbitrary commit. The checked 
 
 - [ ] Screenshot pixel matching, true computed CSS and interaction QA, TypeScript builds, tests and CI all remain unverified by owner policy.
 - [ ] **Next file:** `src/components/admin/super-admin-student-bulk-access.tsx` (Super Admin first-third people/academic components), then `src/components/admin/super-admin-student-import-history.tsx`.
+
+
+### Student bulk-access final source pass
+
+| File | Old LMS / current value proof | Grep and responsive proof |
+| --- | --- | --- |
+| [x] `src/components/admin/super-admin-student-bulk-access.tsx` | `components___form.scss:110-112` 13px/600 selector labels; vNext Module and Access labels now `text-[13px] font-semibold text-body`, shared Select fields retain 10px radius, palette and focus (`components___form.scss:120-142`). Scrollable checkbox list uses `focus-visible:outline-primary`, semantically matching keyboard focus, rather than custom deep-teal override. | Raw controls `0`, hex `0`, inline styles `0`, Button 1/1, Select 2/2. Both selects min 44px on ≤767px phone and 36px ≥768px; selection grid one column mobile, two columns starting at 768px. API, max-25 selection, mutations and confirmation untouched. |
+| [x] `src/components/admin/super-admin-student-import-history.tsx` — reviewed | Existing `Button`, shared `Drawer` and bounded scroll already use semantic tokens and 44px mobile action; no bespoke color/radius to replace. | Native controls `0`, hex `0`, inline styles `0`, Button 1/1; `md:min-h-9` matches old 768px tablet breakpoint. No source change warranted. |
+
+**Grep:** `rg -o '<(button|input|select|textarea)\\b' <file> | wc -l` and `rg -o '#[0-9a-fA-F]{3,8}\\b' <file> | wc -l` => `0` for both files; shared tag counts match. **Responsive source:** `pages___admin-list-pages.scss:8,193` 44px phone/767px mobile ceiling, `globals.css:341` 36px normal control. Browser and functional validation remain pending.
+
+- [ ] **Next file:** `src/components/admin/super-admin-people-csv-control.tsx`, then `src/components/admin/person-membership-actions.tsx`.
