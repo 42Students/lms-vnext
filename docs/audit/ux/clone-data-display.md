@@ -400,3 +400,21 @@ After the initial E5 file census, both previously documented rich-lesson excepti
 **Unresolved category status:** E1/E2/E3/E4/E5/E8 global checklist entries remain unticked: exhaustive repo-wide grep, full state-by-state legacy computed values, phone/tablet rendered snapshots, and runtime interaction/strict TS checks were not run. E8 has the preexisting undeclared AG Grid packages in the repository manifest. Individual files above can be marked source-migrated only.
 
 **Next exact file after this batch:** `src/components/verification/CollegeVerificationPanel.tsx` (action-based pagination: preserve `navigate` selection-reset guard and page-size change; not safe to replace directly with href-only Pagination).
+
+### Guarded E2 action pagination (chat-14, same bounded turn)
+
+| Completed file | Legacy/client behavior and value mapping | GitHub source grep-equivalent proof |
+|---|---|---|
+| [x] `src/components/ui/action-pagination.tsx` (new E2 sibling) | A client-only button pager for list pages requiring local state cleanup before navigation. Shares `paginationWindow` and `normalizedPageCount` with the link-based Pagination without turning the server-safe link component into a client boundary. Phone: 44px square, 8px radius, 42px numeric line-height, active-only page number. Tablet/desktop: 36px controls, nonactive numbers visible. Disabled, focus-visible and current-page accessibility states included. | `min-h-11` ×1; `min-w-11` ×1; `rounded-[8px]` ×1; `leading-[42px]` ×1; `md:min-h-9` ×1; route-less `onPageChange` called only from genuine button click, never an effect. |
+| [x] `src/components/verification/CollegeVerificationPanel.tsx` | Converted native Previous/Next ghost-buttons to one `ActionPagination` (not Link) so all page changes still go through guarded `navigate`, which clears selected/sequence/bulk feedback and then `router.push`. Sort and per-page Select inputs and showing-count text retained. `hasMore` remains the authoritative next-page condition; disabled while bulk mutation is in progress. | Shared `<ActionPagination>` **1 self-closing occurrence**, old `<nav aria-label="Verification pagination"` **0**, old standalone Previous/Next `<Button>` **0**; pageCount derived from current page plus one only when `hasMore`. |
+
+Legacy E2 evidence: `docs/design/legacy-styles/components___antddesign.scss:242-280` (mobile 44×44, 8px corners, 42px line-height, only active page number and prev/next). Source implementation: `src/components/ui/action-pagination.tsx:27-52`; `src/components/verification/CollegeVerificationPanel.tsx:216-227`. All phone geometric values match statically, not by rendered screenshot. On larger screens shared Button may retain existing secondary hover/disabled treatment; Ant computed hover/cascade still requires later browser verification.
+
+Reproduce the source-scoped grep (not run locally in this turn):
+
+```sh
+grep -nE '<ActionPagination|Previous page</Button>|Next page</Button>|pageCount=|hasMore=|onPageChange=' src/components/verification/CollegeVerificationPanel.tsx
+grep -nE 'min-h-11|min-w-11|rounded-\[8px\]|leading-\[42px\]|md:min-h-9|onPageChange' src/components/ui/action-pagination.tsx
+```
+
+Strict E2 global checklist still **[ ]** pending all portal pagination, full state coverage and side-by-side responsive proof. E1/E3/E4/E5/E8 also remain **[ ]**. Next file after this source batch: `src/components/placements/report-interactive-table.tsx` — assess sort-pressed states and show-more versus actual pagination without changing authorized report rows.
