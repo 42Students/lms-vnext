@@ -29,7 +29,7 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 - [ ] I: table-row hover and selected-row **whole-app parity** — standard `.ln-table` hover is now source-matched (`components___common.scss:697-714,849-855` → micro CSS 443-454: cell `background:none !important`); `components___common.scss:130-139` proves the white no-hover exemption. Selected-row colour is still not specified by legacy SCSS (`old-lms-shell.css:45-48` is navigation, not a table), and custom/non-shared table instances have not been exhaustively grepped; full strict tick withheld.
 - [ ] I: checkbox/radio glyph and switch-thumb **animation parity** — teal checked colours matched, 150ms track-transition aligned to `components___variables.scss:251-259` (micro CSS 327-340); the old SCSS does not define the glyph/thumb animation, and native browser checkmarks are not tweenable by CSS.
 - [ ] I: input browser autofill **exact parity** — `components___form.scss:57-60` gives placeholder but not autofill; micro CSS 115-120,342-353 preserves ink/caret. Browser-autofill background remains user-agent controlled.
-- [ ] I: tooltip mouse-enter/mouse-leave **delay parity** — `components___antddesign.scss:46-80` defines visual palette, not delay. `src/components/ui/tooltip.tsx:18-34` opens immediately on pointer-enter. CSS cannot alter the trigger's JS event timing; no delay invented.
+- [ ] I: tooltip mouse-enter/mouse-leave **delay parity** — confirmed source mismatch, not a styling mystery: `42Students/lms2-fe@prod-2026/src/components/Global/Tooltips/CustomToolTipTable.jsx:10-31` passes no timing props to AntD v5 Tooltip; [AntD v5 Tooltip API](https://5x.ant.design/components/tooltip/) documents **0.1s/0.1s** enter/leave defaults. `src/components/ui/tooltip.tsx:30-45` opens/closes immediately (**0ms**). CSS cannot delay JS `details.open` mutations, so leave unticked for tooltip component owner.
 - [ ] I: toast **timeout parity** — no toast lifetime in the supplied legacy SCSS. `src/components/ui/toast.tsx:133-143` uses 4500–15000ms reading time, errors persistent, timers paused during focus/hover. Timer logic is not CSS-editable.
 - [ ] I: toast **placement parity** — old SCSS has no toast placement. Current bottom-right safe-area placement is `src/components/ui/toast.tsx:49-73`; positioning would change layout/JS scope and is not modified.
 - [ ] I: toast **animation exact parity** — `globals.css:269-287` already has 250ms entrance (generic normal token from `components___variables.scss:253-259`); no legacy toast keyframes were found to confirm exact curves.
@@ -90,9 +90,9 @@ This batch changed only `src/styles/micro-details.css` plus this audit; componen
 
 | Exact search string | Hits | Production declarations found |
 | --- | ---: | --- |
-| `@import "../styles/micro-details.css"` | 1 | `src/app/globals.css:9`, exactly once after legacy skin at line 6 |
-| `data-slot="table"` | 3 | `src/components/ui/table.tsx:14`; `src/styles/micro-details.css`; `src/app/globals.css` |
-| `data-slot="data-table"` | 14 | `src/components/ui/data-table.tsx:38,93`; remaining hits are skin/print CSS and tests; only one production component source |
+| `@import "../styles/micro-details.css"` | 2 indexed-file hits (1 code + 1 audit) | Only production CSS import: `src/app/globals.css:9`, once after legacy skin at line 6 |
+| `data-slot="table"` | 4 indexed-file hits | `src/components/ui/table.tsx:14`, `src/styles/micro-details.css`, `src/app/globals.css`, this audit; only one shared component definition |
+| `data-slot="data-table"` | 15 indexed-file hits | `src/components/ui/data-table.tsx:38,93` and style/print CSS, this audit, and tests; only one production component source |
 | `data-slot="scroll-cue"` | 12 | `src/components/ui/scroll-cue.tsx:61-69` provides `[tabindex]` and its actual first-child scroll viewport; remaining matches are style/audit/test references |
 
 Whole-repository negative greps required by the STRICT TICK RULE remain **unrun** because this lane is expressly not permitted to run code. Re-run these source-only commands in the orchestrator before ticking broad closure:
@@ -136,6 +136,21 @@ The current pass also inspected the **original legacy repository** `42Students/l
 - Selector integration: table and tab thin scrollbars address `[data-slot="scroll-cue"][data-axis="x"] > div:first-child`, exactly the native viewport in `scroll-cue.tsx`; selected rows require a real `aria-selected` / `data-state` attribute. CSS does not fabricate selection state.
 - Responsive: baseline hidden scrollbars and focus rules apply on mobile and desktop; the thin scrollbar exceptions are for horizontally overflowing table/tab viewport only. Touch press is guarded by `@media (hover:none)`; reduced motion is guarded by the OS setting; print rules are in `@media print`. No widths, paddings, grid/flex, positioning or modal dimensions changed.
 - No CI, TypeScript checks or app execution were performed, as requested. GitHub code search is not a substitute for a whole-repo grep; **do not claim zero hand-rolled instances**. Full paired-screen verification is a separate future orchestrator step.
+
+## Focused CSS-only compatibility closure — dark-theme selected state
+
+This is a **vNext-only regression prevention**, not an assertion that the old LMS had a dark theme. The legacy light-theme colours and focus geometry remain unchanged. The opt-in tracker mode declares the following values in `src/app/globals.css:168-181`, while `micro-details.css:12-18` defines legacy light-only fallback tokens.
+
+| Property and state | Legacy light / vNext source | vNext dark-mode declaration | Result |
+| --- | --- | --- | --- |
+| Selected row background | Legacy text/selected-table paint unresolved; light vNext `micro-details.css:17` `#eff8fa` | `globals.css:180` `--lms-primary-subtle:#164e57`, now linked by `micro-details.css:469-472` to `--lms-micro-selected` | **Dark-mode compatibility fixed**; table-selected legacy parity still unticked |
+| Keyboard focus tint | Legacy `components___accessibility.scss:19-23` `#1a95a1`, outline 2px, offset 3px | `globals.css:176` `--lms-primary-text:#75dce3`; `micro-details.css:469-472` reuses it for `--lms-micro-focus` | **Dark contrast paint corrected**; ring width/offset unchanged |
+| Normal light selection and focus | `components___variables.scss:12-13` `#1a95a1`, `#eff8fa` | `micro-details.css:16-18` untouched for default theme | **No light-mode regression** |
+| Responsive behaviour | Old `components___accessibility.scss:19-23,116-124` does not assign viewport-specific keyboard ring colour | Same CSS custom-property substitutions at phone 375px, tablet 768px and desktop 1280px; `prefers-reduced-motion` has no bearing on static colour | **Source media-query proof only**, no screenshot claim |
+
+**Proof inventory (GitHub repository search, exact returned file-hit counts):** `@import "../styles/micro-details.css"` → **2 file hits**, one being the audit itself and only one production import in `src/app/globals.css:9`; `data-slot="table"` → **4** (component, two styles, audit); `data-slot="data-table"` → **15** (shared component, styles, audit and tests); `data-slot="scroll-cue"` → **12**; `data-slot="card"` → **4**; `data-slot="toast-stack"` → **8**; `data-slot="info-popover"` → **5**. Search index snapshots may lag moving `main`. These are source-index results, **not local grep output** or proof that no hand-rolled variants remain.
+
+**Tooltip timing mismatch, now sourced:** Original source `CustomToolTipTable.jsx:10-31` renders AntD Tooltip without an override. AntD 5.x's [documented defaults](https://5x.ant.design/components/tooltip/) are 100ms before opening and 100ms before closing for pointer hover. vNext `src/components/ui/tooltip.tsx:30-45` mutates `details.open` immediately. **This is a real 100ms-vs-0ms source difference**, but requires a trigger/timer change in `src/components/ui/tooltip.tsx`, forbidden for chat-20. Do not paper over it with a 100ms CSS entry fade (the tooltip would still be interactive before the delay and its close timer would remain wrong).
 
 ## Remaining acceptance queue — ownership and exact unblock condition
 
