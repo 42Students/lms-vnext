@@ -172,7 +172,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
         Materials counts cover registered additional materials only; a legacy Resource HTTPS link is stored separately.
         {data.materialCountsReady?"":" Counts require the verified DB05 Resource Materials runtime."}
       </p>:null}
-      <section aria-label={title + " catalogue"} className="overflow-x-auto rounded-xl border border-border bg-surface">
+      <section aria-label={title + " catalogue"} className="min-w-0 overflow-x-auto border-y border-border">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {data.total} matching content {data.total === 1 ? "record" : "records"}
         </p>
