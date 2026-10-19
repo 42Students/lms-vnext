@@ -303,7 +303,7 @@ export async function PlacementDriveWorkspace({
               <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-foreground md:min-h-9">
                 More ▾
               </summary>
-              <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-lg border border-border bg-surface p-3 shadow-lg">
+              <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-[6px] border border-border bg-surface p-3 shadow-[9px_11px_28px_rgba(0,0,0,0.1)]">
                 <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
                   className="min-h-9 rounded-[9px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[var(--lms-button-primary)]-subtle md:min-h-9 text-[var(--lms-on-primary)]">
                   Export applicants
