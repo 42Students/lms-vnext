@@ -89,6 +89,7 @@ export function CollegeCreateForm({
   return (
     <form
       onSubmit={submit}
+      aria-busy={pending}
       className="grid gap-3 lg:grid-cols-[1fr_1fr_12rem_auto] lg:items-end border-t border-border pt-4"
     >
       <div>
