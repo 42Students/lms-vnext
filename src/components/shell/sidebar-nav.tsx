@@ -86,7 +86,7 @@ export function SidebarNav({
       <span className="lms-nav-heading-text">{label}</span>
      </div>:null}
     <Link href={item.href}
-     aria-label={item.label}
+     aria-label={badge&&count!==null?`${item.label}, ${count} pending`:item.label}
      title={item.label}
      aria-current={active?"page":undefined}
      data-active={active?"true":undefined}
