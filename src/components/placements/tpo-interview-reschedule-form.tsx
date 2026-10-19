@@ -43,7 +43,7 @@ export function TpoInterviewRescheduleForm({round}:{
   <label className="text-sm text-body">Mode
    <Select name="mode" defaultValue={round.mode??"ON_CAMPUS"} className={field}>
     <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
-   </Select</label>
+   </Select></label>
   <label className="text-sm text-body">Venue (for on-campus)
    <Input name="venue" defaultValue={round.venue??""} className={field} maxLength={500}/></label>
   <label className="text-sm text-body">Meeting URL (for virtual)
