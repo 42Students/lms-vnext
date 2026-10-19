@@ -238,7 +238,7 @@ Coverage proof: HR route/component scan is recorded above; recruiter alias, trac
 
 ## Next file
 
-`src/components/placements/recruiter-placement-portfolio.tsx`
+`src/app/(authenticated)/hr/drives/page.tsx`
 
 ## chat-15 bounded turn — source-level changes after main sync
 
@@ -280,3 +280,11 @@ Main at turn start: `5a2abb4bba7e3bcfcf7523ffde18a0346e3590ed`; lane was fast-fo
 - [ ] **Remaining next work:** `src/components/placements/recruiter-placement-portfolio.tsx` rich action-card list, then `src/app/(authenticated)/hr/drives/page.tsx` toolbar/exports and `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx` per-round value states.
 
 No CI, typecheck, browser or app execution was attempted. All modified TSX files were re-read from the branch after editing; shared UI source was not changed.
+
+### HR drive cards and editable-round judgement-case evidence
+
+- [ ] `src/components/placements/recruiter-placement-portfolio.tsx` now uses `Card as="article"` with both JSX tags balanced, preserving all per-drive Links, metrics, status and pending employer-action notices. Answerable recruiter requests use the warning-subtle token rather than an unrelated muted fill. **Not ticked:** existing legacy drive sheet's complete table/toolbar source and responsive proof are unavailable.
+- [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx` uses `StatusBadge`, shared `Card as="article"`, and `EmptyState`, retaining both authorized CRUD forms, optimistic token fields, and the removal-review Link. **Not ticked:** no rendered/keyboard or legacy SCSS value comparison.
+- [ ] `scripts/codemods/chat15-hr-header-eyebrows.cjs` also recognizes `eyebrow="Recruiter · Hiring drive"`. Commit remains script-only (unexecuted), so current source can still contain legacy eyebrow props.
+
+Next file to resume: `src/app/(authenticated)/hr/drives/page.tsx`, inspect its authorized Published/Closed drive list against the old sheet without dropping card actions or inventing AG Grid imports.
