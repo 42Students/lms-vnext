@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -158,7 +159,7 @@ export async function ProjectAdminSubmissionsPage({
               <Link href={basePath+"/"+row.id+"/delivery"}
                 className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open</Link>},
           ]}
-          empty={<EmptyState title="All workspaces submitted" description="All matching workspaces have a submission."/>}
+          empty={<EmptyState title="No pending submissions" description="All matching workspaces have a submission." />}
         />
         <Pagination page={unsubmitted.page} pageCount={unsubmitted.totalPages}
           hrefForPage={page=>projectAdminUnsubmittedHref(queuePath,query,page)}
