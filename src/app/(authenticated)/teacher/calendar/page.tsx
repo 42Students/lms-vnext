@@ -44,11 +44,13 @@ export default async function FacultyCalendarPage({
   const names=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   const selected=grid.query.deliveryId;
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader title="Class Schedule" actions={
+    <PageHeader title="Class Schedule" />
+    <div className="flex justify-end">
       <Link href="/teacher/live-classes"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         View live classes
-      </Link>} />
+      </Link>
+    </div>
     <section className="border-b border-border pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-foreground">
@@ -57,20 +59,20 @@ export default async function FacultyCalendarPage({
         </h2>
         <div className="flex flex-wrap gap-3 text-sm font-semibold">
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">Previous month</Link>
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous month</Link>
           <Link href={facultyMonthHref({...grid.query,month:currentIstMonth(new Date())})}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">Current month</Link>
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Current month</Link>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,1)})}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">Next month</Link>
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next month</Link>
         </div>
       </div>
-      <form method="get" action="/teacher/calendar" className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-end">
-        <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-body-text)]">Month (IST)
+      <form method="get" action="/teacher/calendar" className="mt-4 flex flex-wrap items-end gap-3">
+        <label className="grid gap-1 text-sm font-semibold text-body">Month (IST)
           <Input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
              />
         </label>
-        <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-body-text)]">Teaching Section
+        <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
           <Select name="deliveryId" defaultValue={selected??""} >
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
@@ -91,7 +93,7 @@ export default async function FacultyCalendarPage({
         <CalendarGrid variant="hairline" className="min-w-[44rem]">
           {names.map(name=><div key={name} className="bg-surface-subtle p-2 text-center text-xs font-semibold">{name}</div>)}
           {grid.days.map(day=><section key={day.key}
-            aria-label={day.key+" IST"} className={"min-h-28 border border-[var(--lms-canvas-border)] p-[var(--lms-space-2)] "+(day.inMonth?"bg-[var(--lms-surface)]":"bg-[var(--lms-neutral-50)]")}>
+            aria-label={day.key+" IST"} className={"min-h-28 p-2 "+(day.inMonth?"bg-surface":"bg-surface-subtle")}>
             <time dateTime={day.key} className="text-xs font-semibold text-foreground">
               {Number(day.key.slice(8))}
             </time>

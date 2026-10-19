@@ -1,5 +1,4 @@
 import { PageHeader } from "@/components/ui/page-header";
-import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {ZodError} from "zod";
@@ -47,9 +46,9 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
       <div><dt className="text-muted-foreground">Panel</dt><dd>{slot.panelLabel??"Not recorded"}</dd></div>
       <div><dt className="text-muted-foreground">Venue</dt><dd>{slot.meetingLocation??"Room not confirmed"}</dd></div>
     </dl>
-  </li>)}</ol>:<Alert tone="info">
+  </li>)}</ol>:<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
     No recruiter interview slot proposals were recorded for this drive.
-  </Alert>}
+  </p>}
   {data.capReached?<p role="status" className="text-sm text-body">Showing the first 200 proposals. Contact the placement cell administrator for older records.</p>:null}
  </div>;
 }
