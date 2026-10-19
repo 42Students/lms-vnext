@@ -38,6 +38,8 @@ const componentRoots = [
 const apply = process.argv.includes("--apply");
 const onlyValue = (process.argv.find(a => a.startsWith("--only=")) || "--only=all").slice(7);
 const modes = new Set(["all", "loading", "error", "not-found", "inline", "empty"]);
+// Keep position/responsive-layout classes, not duplicate background/radius/colour skin.
+const KEEP_LAYOUT = /^(-?m[trblxy]?-|w-|min-w-|max-w-|h-full|flex-|grow|shrink|basis-|self-|justify-self-|place-self-|col-|row-|order-|absolute|relative|fixed|sticky|top-|bottom-|left-|right-|inset-|z-|hidden$|block$|inline-block$|truncate$|whitespace-|sr-only$|space-[xy]-)/;
 if (!modes.has(onlyValue)) {
   console.error("Invalid --only option: " + onlyValue);
   process.exitCode = 2;
@@ -185,7 +187,7 @@ function run() {
           if (!["section", "div", "aside", "p"].includes(tag) ||
               !klass || !/\bborder\b/.test(klass) ||
               !/(?:\bbg-|\bborder-(?:amber|yellow|warning|red|rose))/.test(klass) ||
-              /<(?:PageHeader|h1|h2|h3|form|input|select|table)\b/.test(node.getText(sf))) {
+              /<(?:PageHeader|h1|h2|h3|form|input|select|table|ul|ol|nav|article|details|fieldset|textarea|dl)\b/.test(node.getText(sf))) {
             ts.forEachChild(node, visit);
             return;
           }
@@ -197,7 +199,12 @@ function run() {
               ? "error" : /(?:saved|success|complete)/i.test(text) ? "success"
                 : /(pending|not ready|unavailable|blocked|cannot|limit|capped|migration)/i.test(text)
                   ? "warning" : isError ? "error" : "info";
-          const restAttrs = attrs.filter(a => attrName(a) !== "className").map(a => a.getText(sf)).join(" ");
+          const layoutClasses = klass.split(/\s+/).filter(Boolean).filter(token =>
+            KEEP_LAYOUT.test(token.split(":").pop()));
+          const restAttrs = [
+            ...attrs.filter(a => attrName(a) !== "className").map(a => a.getText(sf)),
+            ...(layoutClasses.length ? ["className=" + JSON.stringify(layoutClasses.join(" "))] : []),
+          ].join(" ");
           const action = children.length >= 2 ? children[children.length - 1] : null;
           const actionTag = action && ts.isJsxElement(action) ? action.openingElement.tagName.getText(sf) : "";
           const isBanner = tone === "warning" && /(bg-(?:amber|yellow|warning))/.test(klass) &&

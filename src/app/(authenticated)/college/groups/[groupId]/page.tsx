@@ -81,7 +81,6 @@ export default async function CollegeGroupDetailPage({
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
-        eyebrow="Student groups"
         title={group.name}
         description={group.description ?? `${label(group.kind)} in ${detail.collegeName}`}
         actions={

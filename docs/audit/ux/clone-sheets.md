@@ -74,4 +74,35 @@ Branch fast-forwarded from b1d0962 to then-current main b275ca0 BEFORE changes. 
 - **Unresolved:** current src/components/tpo/grid/tpo-grid.tsx advertises TPO_GRID_ENGINE="shared-table-fallback"; package.json on the connected branch does not declare ag-grid-react/ag-grid-community. Native AG Grid themeQuartz migration belongs to chat-14 and remains **unticked**. Recruiter Leads still renders its existing DataTable under the workspace chrome; this is a behavior-preserving incremental port, not an AG Grid claim.
 - **Strict tick rule:** E8 remains unticked. No dev runtime, typecheck, CI, browser screenshots or local grep were run, and component and page-wide zero-mismatch coverage was not established. Source line comparisons are partial only.
 
-**Next E8 file:** src/components/tpo/tpo-company-memory-workspace.tsx (company/drive sheet chrome and contextual actions), after verifying Recruiter Leads column/selection behavior by source review. Then src/app/(authenticated)/tpo/batches/[batchId]/page.tsx for the roster workspace.
+Source inspection was performed through GitHub file reads; **no** runtime, exhaustive repository grep, visual state matrix, or AG Grid integration evidence exists. Future continuation: `src/components/tpo/grid/tpo-grid.tsx` when upstream legacy-grid and declared AG Grid dependencies become available; otherwise work E1–E5 coverage.
+
+
+## chat-15 continuation — main sync `46cd0161a0e289e7da68e615359589b03ee463e9` (2026-10-19)
+
+Fast-forward of `chatgpt/chat-15-b` to this main head was verified before edits (branch had zero unique commits and 1,029 behind). This section supersedes the earlier **missing-grid-path** notes; it does not supersede the missing-native-engine and reference blockers.
+
+- [ ] E8 native AG Grid parity (missing: exact legacy `docs/design/legacy-grid/*.txt`; real `ag-grid-community` / `ag-grid-react` package declarations; `AgGridReact`/Quartz implementation; exhaustive visual/value and interaction proof). `src/components/tpo/grid/tpo-grid.tsx:12-17` explicitly reports `shared-table-fallback`, not native AG Grid.
+- [ ] HR report sheet parity (pending visual/state matching): `src/components/hr/hr-company-reports-grid.tsx:15-33` maps the exact existing 10 report columns, preserving numeric/date distinctions; `:35-48` attaches authorized navigation and a status pill to the shared grid. The row source is the existing filtered/paginated `jobs` at `src/app/(authenticated)/hr/company/reports/page.tsx:333-344`. `storageKey` is scoped by user and college.
+- [ ] HR round-results sheet parity (pending visual/state matching): `src/components/hr/hr-round-results-grid.tsx:16-33` maps candidate/outcome/status/score/waitlist rank, with numeric-only sort on score/rank; authorized `results.rows` are passed from `src/app/(authenticated)/hr/round-results/page.tsx:80-86`. `storageKey` includes employer, college, job, round. Existing outcome filter Tabs and read-only explanation remain.
+- [ ] Recruiter job applicants, offers, selection history, drive list and round-editor grids remain open. The job's selection/offer `DataTable` components preserve badge-and-action semantics; replacing them blindly with a text-only grid would remove content. Do not tick until a wrapper retains every action, pill, and mobile detail.
+- [ ] Exact export wording/filenames against old LMS (missing legacy-grid files). Existing server export links were not replaced by client CSV generators.
+
+| Inspected surface | Reference evidence | Current vNext evidence | Match / gap |
+| --- | --- | --- | --- |
+| One canvas, compact tables, filter toolbar | `docs/design/old-lms-pages.md:6-12` | `src/components/tpo/grid/grid-workspace.tsx:123-160` and shared table fallback | Structural reference available; HR toolbar not yet wired on all sheets |
+| Read-only results numeric values | `docs/design/ui-clone-checklist.md:65` (E8) | `src/components/hr/hr-round-results-grid.tsx:19-23` | Numeric-only sort contract wired, interaction not run |
+| Selection column 48px | `docs/design/ui-clone-checklist.md:65` | `src/components/tpo/tpo-spreadsheet-grid.tsx:190-196` | Available in shared fallback, not currently requested for read-only HR sheets |
+| Hover/focus/mobile | Legacy source lines unavailable in `legacy-grid/` | `src/components/tpo/tpo-spreadsheet-grid.tsx:175-220` | No exact proof; remain open |
+| AG Grid Quartz | Requested legacy grid source absent | `src/components/tpo/grid/tpo-grid.tsx:12-17` | **Not implemented** |
+
+No CI, app build, app execution, visual comparison or authentic local grep was run by chat-15. Do not claim completed AG Grid integration. Resume at `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` for remaining selection/offer sheet wiring.
+
+## chat-15 continuation: job sheets after SMARTER PLAN (2026-10-19)
+
+- [ ] **Native E8** remains open: `src/components/tpo/grid/tpo-grid.tsx:12-17` reports `shared-table-fallback`. Neither `ag-grid-community` nor `ag-grid-react` is declared in the inspected `package.json`. The legacy `docs/design/legacy-grid/` directory was absent when checked. **No Quartz rendering, imports, filenames, or legacy event semantics are claimed.**
+- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`: read-only **selection history** and **offers** now use `HrJobSelectionGrid` and `HrJobOffersGrid` (same authorized page rows, headings, outcome labels, CTC display, IST reply deadline and joining state/date; no mutation). The existing server-controlled offer CSV, stage tabs, and both independent pagination links remain unchanged.
+- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`: filtered round result cards now use the previously authorized `HrRoundResultsGrid` with keys scoped to user/company/college/job/round. Evaluative outcome tabs and controls were not moved into the grid.
+- [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`: restored `HrCompanyReportsGrid` after the main sync; continues to use server-scoped report rows and its original server CSV endpoint. The grid keeps numeric/date sorting opt-in, with no client-side broad export.
+- [ ] **Remaining**: recruiter drives portfolio currently remains a rich action-card list; changing it to a text-only sheet would drop employer actions, status pills and deadline notices. Need a parity-preserving contract before migration. Need a full live and mobile comparison before any strict ticks.
+
+The visible shared grid fallback has column choice, TSV copy, numeric-sort opt-ins, mobile primary fields, storage-keyed preferences and 48px checkbox support. The source-level wiring does **not** prove AG Grid parity. No CI, runtime, typecheck or local browser testing was performed.

@@ -229,10 +229,10 @@ export function AcademicsCreatePanel({
   }
 
   return (
-    <section className="grid gap-4 xl:grid-cols-2">
+    <section className="grid min-w-0 gap-[var(--lms-space-5)] xl:grid-cols-2">
       <form
         onSubmit={createPeriod}
-        className="border-t border-border pt-5"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New academic period
@@ -240,7 +240,7 @@ export function AcademicsCreatePanel({
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Create the College calendar window before placing Cohorts or Sections.
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
           <div>
             <FieldLabel htmlFor="academic-period-name">
               Name
@@ -299,6 +299,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !periodName.trim() ||
@@ -314,7 +315,7 @@ export function AcademicsCreatePanel({
 
       <form
         onSubmit={createProgram}
-        className="border-t border-border pt-5"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New program
@@ -322,8 +323,8 @@ export function AcademicsCreatePanel({
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Programs are owned by Departments; duration is measured in academic terms.
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <div className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="program-department">
               Department
             </FieldLabel>
@@ -396,6 +397,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !programDepartmentId ||
@@ -410,7 +412,7 @@ export function AcademicsCreatePanel({
 
       <form
         onSubmit={createCohort}
-        className="border-t border-border pt-5"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New cohort / batch
@@ -418,8 +420,8 @@ export function AcademicsCreatePanel({
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Cohorts are long-lived Program intakes; learner term progression is stored separately.
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <div className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="cohort-program">
               Program
             </FieldLabel>
@@ -535,6 +537,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !cohortProgramId ||
@@ -550,7 +553,7 @@ export function AcademicsCreatePanel({
 
       <form
         onSubmit={createSection}
-        className="border-t border-border pt-5"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New section
@@ -558,8 +561,8 @@ export function AcademicsCreatePanel({
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           Sections are period-specific. Rosters and movement history attach here.
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <div className="mt-4 grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="section-cohort">
               Cohort
             </FieldLabel>
@@ -585,7 +588,7 @@ export function AcademicsCreatePanel({
               ))}
             </Select>
           </div>
-          <div className="sm:col-span-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="section-period">
               Academic period
             </FieldLabel>
@@ -663,6 +666,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !sectionCohortId ||
