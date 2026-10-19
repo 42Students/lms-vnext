@@ -17,7 +17,7 @@ export default async function TpoPreparationCoursePlan(){
  });
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Students" title="Preparation course plan" />
-  <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2">Back to learners needing support</Link>
+  <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 lms-inline-link">Back to learners needing support</Link>
   <p className="text-sm text-body">This lists the college placement cell&apos;s recorded readiness-course selection. It is a planning preview, not a course enrollment, assignment, learner completion record, or outreach workflow.</p>
   {!plan.ready?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">{!settings.ready?"Preparation settings storage is unavailable.":"Saved preparation settings could not be validated; ask an administrator to review them."}</p>:<>
     <p role="status" className="text-sm">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>
@@ -26,6 +26,6 @@ export default async function TpoPreparationCoursePlan(){
       <h2 className="font-semibold">{course.name}</h2><p className="text-xs text-muted-foreground">{course.code}</p>
     </li>)}</ul>}
   </>}
-  <Link href="/tpo/settings/prep-readiness" className="inline-flex min-h-9 items-center text-link underline">Open existing preparation settings editor</Link>
+  <Link href="/tpo/settings/prep-readiness" className="inline-flex min-h-9 items-center text-link underline lms-inline-link">Open existing preparation settings editor</Link>
  </div>;
 }
