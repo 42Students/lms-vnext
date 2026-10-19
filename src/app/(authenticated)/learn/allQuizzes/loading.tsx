@@ -11,7 +11,7 @@ export default function LearnerAssessmentsLoading() {
           <div key={item} className="h-24 animate-pulse rounded-xl border border-border bg-surface" />
         ))}
       </div>
-      <div className="h-12 animate-pulse rounded-xl border border-border bg-surface" />
+      <div className="h-12 animate-pulse border-b border-border bg-surface" />
       {[1,2,3,4].map((item) => (
         <div key={item} className="h-32 animate-pulse rounded-xl border border-border bg-surface" />
       ))}
