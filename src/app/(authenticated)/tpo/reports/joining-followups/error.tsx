@@ -1,9 +1,12 @@
 "use client";
-import {Button} from "@/components/ui/button";
-export default function ErrorPage({reset}:{error:Error&{digest?:string};reset:()=>void}){
- return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
-  <h1 className="font-semibold text-foreground">Couldn&apos;t load joining follow-ups</h1>
-  <p className="mt-2 text-sm text-body">The report is unavailable; this is not evidence of completed joinings.</p>
-  <Button className="mt-4" onClick={reset}>Retry</Button>
- </section>;
+
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+
+export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorState
+    title="Couldn't load joining follow-ups"
+    description="The report is unavailable; this is not evidence of completed joinings."
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+  />;
 }
