@@ -47,7 +47,7 @@ export function BottomSheet({ open, onOpenChange, title, description, children, 
           {dismissible ? <Button className="min-h-11 min-w-11 shrink-0 rounded-full bg-surface p-0 text-[var(--lms-muted-text)] hover:bg-[var(--lms-neutral-100)]" variant="ghost" aria-label="Close sheet" onClick={() => onOpenChange(false)}><OverlayCloseIcon /></Button> : null}
         </header>
         <ScrollCue axis="y" label={`${title} sheet content`} className="min-h-0 flex-1" viewportClassName="min-h-0 max-h-[calc(var(--lms-visual-height)_-_8rem)] overscroll-contain p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">{children}</ScrollCue>
-        {footer ? <footer className="flex shrink-0 flex-wrap justify-end gap-2 border-t border-[var(--lms-canvas-border)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">{footer}</footer> : null}
+        {footer ? <footer data-slot="bottom-sheet-footer" className="flex shrink-0 flex-wrap justify-end gap-2 border-t border-[var(--lms-canvas-border)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">{footer}</footer> : null}
       </div>
     </dialog>
   );
