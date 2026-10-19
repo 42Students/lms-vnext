@@ -52,7 +52,9 @@ function initialMonth(raw: unknown): Date {
     const monday = weekStart(raw);
     if (monday) return new Date(monday.getFullYear(), monday.getMonth(), 1);
     if (/^\d{4}-\d{2}(?:-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?)?)?$/.test(raw)) {
-      const [year, month] = raw.split("-").map(Number);
+      const dateParts = raw.split("-");
+      const year = Number(dateParts[0]);
+      const month = Number(dateParts[1]);
       if (year >= 1 && month >= 1 && month <= 12) return new Date(year, month - 1, 1);
     }
   }
@@ -110,7 +112,11 @@ export function DateInput({
   function dateTimeMinuteNumber(raw: string): number | null {
     const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(raw);
     if (!match) return null;
-    const [, year, month, day, hour, minute] = match.map(Number);
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const hour = Number(match[4]);
+    const minute = Number(match[5]);
     if (month < 1 || month > 12 || hour > 23 || minute > 59) return null;
     const utc = Date.UTC(year, month - 1, day, hour, minute);
     const reconstructed = new Date(utc);
@@ -157,8 +163,8 @@ export function DateInput({
     if (mode === "date") {
       const dayNumber = (raw: string): number | null => {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
-        const [year, month, day] = raw.split("-").map(Number);
-        return Date.UTC(year, month - 1, day) / 86400000;
+        const parts = raw.split("-");
+        return Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])) / 86400000;
       };
       return ((dayNumber(candidate) ?? 0) - (dayNumber(base) ?? 0)) % step === 0;
     }
