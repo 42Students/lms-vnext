@@ -161,7 +161,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {mode==="TEAMS" ? <p className="border-l-2 border-border pl-3 text-sm text-body">Pick a class and a team size, preview the teams, move anyone between teams, then create. Each team gets its own workspace named after the title (“Title - Team 1”, “Title - Team 2”…), with the same template and mentor.</p> : null}
     {emptyMessages.classes?<p role="status" className="border-b border-border py-3 text-sm text-body">{emptyMessages.classes}</p>:null}
     {emptyMessages.templates?<p role="alert" className="border-b border-border py-3 text-sm text-body">{emptyMessages.templates}</p>:null}
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
       <label className="block space-y-1 text-sm font-medium">Class
         <Select value={classId} onChange={e=>setClassId(e.target.value)} disabled={loading||pending}>
           <option value="">{loading?"Loading classes…":"Select a class"}</option>
