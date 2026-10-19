@@ -155,7 +155,7 @@ export default async function CollegeReadinessPage({
 
       <section
         aria-label="Readiness summary"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+        className="grid gap-3 md:grid-cols-2 min-[1366px]:grid-cols-4"
       >
         {[
           {
@@ -213,12 +213,12 @@ export default async function CollegeReadinessPage({
         </div>
 
         <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
-          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body sm:w-auto sm:min-w-40">Show checks
+          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body md:w-auto md:min-w-40">Show checks
             <Select name="status" defaultValue={parsed.status} className="min-h-11 min-[768px]:min-h-9 ">
               <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>
             </Select>
           </label>
-          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body sm:w-auto sm:min-w-40">Setup area
+          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body md:w-auto md:min-w-40">Setup area
             <Select name="area" defaultValue={parsed.area} className="min-h-11 min-[768px]:min-h-9 ">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </Select>
@@ -290,7 +290,7 @@ export default async function CollegeReadinessPage({
           or runtime access are functional.
         </p>
 
-        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+        <dl className="mt-4 grid gap-4 md:grid-cols-2">
           <div>
             <dt className="text-xs font-semibold text-muted-foreground">
               Active lecture halls
