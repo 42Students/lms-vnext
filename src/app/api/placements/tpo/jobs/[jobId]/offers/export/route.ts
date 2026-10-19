@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoDriveOfferRegisterCsv } from "@/modules/placements/tpo-drive-offer-register-service";
@@ -26,7 +27,7 @@ export async function GET(request:Request,{params}:{
    {...Object.fromEntries(url.searchParams.entries()),jobId});
   return new Response("\uFEFF"+result.csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="tpo-drive-offers.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-drive-offers", "csv") + '"',
    "Cache-Control":"private, no-store, max-age=0",
    "X-Content-Type-Options":"nosniff",
    "Vary":"Cookie",
