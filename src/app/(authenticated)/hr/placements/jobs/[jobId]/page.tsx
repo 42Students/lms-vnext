@@ -667,13 +667,13 @@ export default async function HrPlacementJobPage({
             {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
               <span key={applicant.id} className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground">{applicant.name || "Candidate"}</span>)}</div> : null}
           </section>
-          <nav aria-label="Offer status" className="flex flex-wrap gap-2">
+          <nav aria-label="Offer status" className="flex flex-wrap gap-3 border-b border-border">
             {HR_OFFER_STATES.map((status) => (
               <Link key={status} href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status+returnQuery}
                 aria-current={status===filters.offerState ? "page" : undefined}
                 className={status===filters.offerState ?
-                  "border-b-[3px] border-primary px-3 py-2 text-xs font-semibold text-primary-text" :
-                  "border-b-[3px] border-transparent px-3 py-2 text-xs text-body hover:text-primary-text"}>
+                  "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" :
+                  "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
                 {status==="ALL" ? "All statuses" : status==="PENDING_VERIFICATION"?"Verified, awaiting release":status==="REVOKED"?"Selection cancelled":recruiterOfferStatusLabel(status)}
               </Link>
             ))}

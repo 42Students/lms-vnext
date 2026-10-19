@@ -667,10 +667,7 @@ export function SuperAdminHrAccounts({
       <h2 className="text-base font-semibold">Recruiter accounts</h2>
       {!statusSummary&&<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
         Account totals are temporarily unavailable. The directory is still usable.
-        <button type="button" onClick={()=>router.refresh()}
-          className="ml-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
-          Retry totals
-        </button>
+        <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()} className="ml-2 min-h-11 sm:min-h-9">Retry totals</Button>
       </p>}
       <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">{([
         ["Accounts",statusSummary?.accounts],["Active",statusSummary?.active],["Suspended",statusSummary?.archived],["Disabled",statusSummary?.disabled],

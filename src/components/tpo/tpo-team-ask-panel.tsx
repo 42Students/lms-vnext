@@ -1,10 +1,10 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 type Ask={
  id:string;title:string;status:string;dueAt:string|null;doneNote:string|null;
  askerMembershipId:string;assigneeMembershipId:string;
@@ -30,25 +30,25 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
   finally{pending.current=false;setBusy(false);}
  }
  return <div className="mt-2 flex flex-wrap gap-2">
-  {canDone?<Button variant="secondary" type="button" disabled={busy}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs"
-   onClick={()=>setConfirmation("DONE")}>Mark done</Button>:null}
-  {canCancel?<Button variant="secondary" type="button" disabled={busy}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs"
-   onClick={()=>setConfirmation("CANCEL")}>Cancel ask</Button>:null}
+  {canDone?<button type="button" disabled={busy}
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs"
+   onClick={()=>setConfirmation("DONE")}>Mark done</button>:null}
+  {canCancel?<button type="button" disabled={busy}
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs"
+   onClick={()=>setConfirmation("CANCEL")}>Cancel ask</button>:null}
   {confirmation?<div role="alertdialog" aria-label={confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"}
-   className="w-full space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+   className="w-full space-y-2 rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-sm">
    <p>{confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"}</p>
    {confirmation==="DONE"?<label className="grid gap-1 text-xs">A note goes into the conversation as your reply (optional)
     <Textarea rows={2} maxLength={2000} disabled={busy} value={note}
      onChange={event=>setNote(event.target.value)} className="w-full"/>
    </label>:null}
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-   <Button variant="primary" type="button" disabled={busy} onClick={()=>void submit()}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-xs text-on-primary">
+   <Button type="button" disabled={busy} onClick={()=>void submit()}
+    className="min-h-11 sm:min-h-9 text-xs">
     {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}</Button>
-   <Button variant="secondary" type="button" disabled={busy} onClick={()=>setConfirmation(null)}
-    className="ml-2 min-h-10 text-xs underline">{confirmation==="CANCEL"?"Keep it":"Not now"}</Button>
+   <button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
+    className="ml-2 min-h-11 sm:min-h-9 text-xs underline">{confirmation==="CANCEL"?"Keep it":"Not now"}</button>
   </div>:null}
  </div>;
 }
@@ -98,14 +98,14 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
      className="min-h-11 sm:min-h-9 w-full"/>
    </label>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-   <Button variant="primary" type="submit" disabled={busy||!title.trim()||!recipientId}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+   <Button type="submit" disabled={busy||!title.trim()||!recipientId}
+    className="min-h-11 sm:min-h-9">
     {busy?"Sending…":"Ask someone"}</Button>
   </form>
   <ul className="space-y-2">{items.map(ask=>{
    const overdue=ask.status==="OPEN"&&ask.dueAt&&new Date(ask.dueAt).getTime()<serverNowMs;
    const label=ask.status==="OPEN"&&overdue?"Overdue":ask.status==="OPEN"?"Open":ask.status==="DONE"?"Done":"Cancelled";
-   return <li key={ask.id} id={"team-ask-"+ask.id} className="border-b border-border py-3 text-sm">
+   return <li key={ask.id} id={"team-ask-"+ask.id} className="rounded border border-border bg-surface p-3 text-sm">
     <p className="font-semibold">{ask.title}</p>
     <p className="mt-1 text-xs text-muted-foreground">
      Ask · {ask.assigneeMembershipId===actorId?"you":recipientName}
