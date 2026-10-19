@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -107,48 +108,48 @@ export default async function CollegeActivityPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Event type
-          <input name="eventType" defaultValue={data.query.eventType ?? ""}
+          <Input name="eventType" defaultValue={data.query.eventType ?? ""}
             maxLength={120} placeholder="identity.membership.suspended"
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Search audit summary or entity
-          <input name="q" defaultValue={data.query.q ?? ""} maxLength={100}
+          <Input name="q" defaultValue={data.query.q ?? ""} maxLength={100}
             placeholder="Summary, entity or action text"
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Actor user UUID
-          <input name="actorUserId" defaultValue={data.query.actorUserId ?? ""}
+          <Input name="actorUserId" defaultValue={data.query.actorUserId ?? ""}
             placeholder="Optional actor UUID"
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Actor display name
-          <input name="actorName" defaultValue={data.query.actorName ?? ""} maxLength={100}
+          <Input name="actorName" defaultValue={data.query.actorName ?? ""} maxLength={100}
             placeholder="Search recorded actor name"
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Entity type
-          <input name="subjectType" defaultValue={data.query.subjectType ?? ""}
+          <Input name="subjectType" defaultValue={data.query.subjectType ?? ""}
             maxLength={80} placeholder="course_lesson"
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Entity identifier
-          <input name="subjectId" defaultValue={data.query.subjectId ?? ""}
+          <Input name="subjectId" defaultValue={data.query.subjectId ?? ""}
             maxLength={500} placeholder="Persisted entity identifier"
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           From date (IST)
-          <input name="from" type="date" defaultValue={data.query.from ?? ""}
+          <Input name="from" type="date" defaultValue={data.query.from ?? ""}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           To date (IST)
-          <input name="to" type="date" defaultValue={data.query.to ?? ""}
+          <Input name="to" type="date" defaultValue={data.query.to ?? ""}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
