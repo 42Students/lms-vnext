@@ -16,7 +16,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
  return <form method="get" action={action} className="space-y-3">
   <label className="block text-sm font-semibold">Search workspace title or ID
    <Input value={search} onChange={e=>{setSearch(e.target.value);setPage(1)}}
-    placeholder="Search workspace" className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3"/></label>
+    placeholder="Search workspace" className="mt-1 w-full"/></label>
   <fieldset className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
    <legend className="sr-only">Select a workspace</legend>
    {rows.map(item=><label key={item.id} className="flex min-h-10 cursor-pointer items-center gap-2 text-sm">
@@ -31,12 +31,12 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
    <span>{matching.length} matching · Page {current} of {count}</span>
    <div className="flex gap-2">
     <Button type="button" variant="secondary" disabled={current===1} onClick={()=>setPage(x=>Math.max(1,x-1))}
-      className="rounded-md border border-border px-3 py-2 disabled:opacity-50">Previous</Button>
+      >Previous</Button>
     <Button type="button" variant="secondary" disabled={current===count} onClick={()=>setPage(x=>Math.min(count,x+1))}
-      className="rounded-md border border-border px-3 py-2 disabled:opacity-50">Next</Button>
+      >Next</Button>
    </div>
   </div>
-  <Button type="submit" disabled={!choice} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">
+  <Button type="submit" disabled={!choice} >
    View readiness</Button>
  </form>;
 }

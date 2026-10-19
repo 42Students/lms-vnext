@@ -58,8 +58,8 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   </div>
   <ul className="grid gap-2 sm:grid-cols-2">
    {colleges.map(college=><li key={college.id}>
-    <label className="flex min-h-10 items-center gap-2 rounded-[9px] border border-border px-3 py-2 text-sm">
-     <input type="checkbox" checked={selected.includes(college.id)} disabled={pending||!college.canAssign}
+    <label className="flex min-h-10 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm">
+     <input type="checkbox" className="size-4 accent-[var(--lms-button-primary)]" checked={selected.includes(college.id)} disabled={pending||!college.canAssign}
       onChange={e=>setSelected(current=>e.target.checked?[...current,college.id]:current.filter(id=>id!==college.id))}/>
      <span className="flex-1 truncate">{college.name}</span>
      <span className="text-xs text-muted-foreground">{college.assigned?"Assigned":"Not assigned"}</span>
