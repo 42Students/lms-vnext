@@ -1,5 +1,6 @@
 "use client";
 import { StatTile } from "@/components/ui/stat-tile";
+import styles from "./learner-assessment-metrics.module.css";
 import { Badge } from "@/components/ui/badge";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -236,8 +237,8 @@ export function LearnerAssessmentOverview({
             ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
           </Disclosure>
         </section>
-      ) : (<div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
-        <StatTile
+      ) : (<div className={styles.metricGrid} aria-label="Assessment totals">
+        <StatTile className={styles.tile}
           label={
             kind === "ASSIGNMENT"
               ? "Assignments"
@@ -245,13 +246,13 @@ export function LearnerAssessmentOverview({
           }
           value={scopedAttentionItems.length}
         />
-        <StatTile
+        <StatTile className={styles.tile}
           label="Courses"
           value={learnerAssessmentCourseScopeCount(courses,activeCourseId)}
         />
-        <StatTile label="Needs action" value={actionCounts.pending} />
-        <StatTile label="Overdue / missed" value={actionCounts.overdue} />
-        <StatTile
+        <StatTile className={styles.tile} label="Needs action" value={actionCounts.pending} />
+        <StatTile className={styles.tile} label="Overdue / missed" value={actionCounts.overdue} />
+        <StatTile className={styles.tile}
           label={
             kind === "ASSIGNMENT"
               ? "Submitted"
