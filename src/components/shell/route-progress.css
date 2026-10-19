@@ -51,33 +51,42 @@
  text-align:center;
  border-radius:4px;
 }
+/* Ant Design v5 large Spin: 32px dot group, 14px dots, rotated 45deg.
+ * Legacy prod-2026 Loader/loader.js renders <Spin size="large" />.
+ * Keep each dot's alternating 1s opacity wave; rotating four equally bright
+ * dots made the vNext loader visibly unlike the original animation. */
 .lms-legacy-loader-dots {
  position:relative;
  display:inline-block;
- width:32px;
- height:32px;
- animation:lms-legacy-spin-rotate 1.2s linear infinite;
+ font-size:32px;
+ width:1em;
+ height:1em;
  transform:rotate(45deg);
+ animation:lms-legacy-spin-rotate 1.2s infinite linear;
 }
 .lms-legacy-loader-dots i {
  position:absolute;
  display:block;
  width:14px;
  height:14px;
- background:#26bac7;
+ background:#1677ff;
  border-radius:100%;
- opacity:.7;
+ transform:scale(.75);
+ transform-origin:50% 50%;
+ opacity:.3;
+ animation:lms-legacy-spin-move 1s infinite linear alternate;
 }
 .lms-legacy-loader-dots i:nth-child(1) {top:0;left:0;}
-.lms-legacy-loader-dots i:nth-child(2) {top:0;right:0;}
-.lms-legacy-loader-dots i:nth-child(3) {bottom:0;right:0;}
-.lms-legacy-loader-dots i:nth-child(4) {bottom:0;left:0;}
+.lms-legacy-loader-dots i:nth-child(2) {top:0;right:0;animation-delay:.4s;}
+.lms-legacy-loader-dots i:nth-child(3) {bottom:0;right:0;animation-delay:.8s;}
+.lms-legacy-loader-dots i:nth-child(4) {bottom:0;left:0;animation-delay:1.2s;}
 @keyframes lms-legacy-spin-rotate {
  from {transform:rotate(45deg);}
  to {transform:rotate(405deg);}
 }
+@keyframes lms-legacy-spin-move {to {opacity:1;}}
 .lms-legacy-loader-recovery {margin-top:12px;text-align:center;}
 .lms-legacy-loader-recovery p {margin:0 0 8px;color:#84828b;font-size:14px;}
 @media (prefers-reduced-motion:reduce) {
- .lms-legacy-loader-dots {animation:none;}
+ .lms-legacy-loader-dots,.lms-legacy-loader-dots i {animation:none;}
 }
