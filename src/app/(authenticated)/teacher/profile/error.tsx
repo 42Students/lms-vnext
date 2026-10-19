@@ -9,7 +9,7 @@ export default function FacultyProfileError({
   reset: () => void;
 }) {
   return (
-    <section className="space-y-3 py-6">
+    <section role="alert" className="space-y-3 py-6">
       <PageHeader title={"Unable to load your profile"} />
       <p className="mt-2 text-sm text-body">
         Your Faculty profile could not be loaded. Try again.
