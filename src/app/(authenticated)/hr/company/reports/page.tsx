@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { DataTable } from "@/components/ui/data-table";
@@ -272,7 +273,7 @@ export default async function RecruiterCompanyReportsPage({
           action="/hr/company/reports"
           className="mt-4 flex flex-wrap items-end gap-3"
         >
-          <input
+          <Input
             type="hidden"
             name="collegeId"
             value={collegeId}
