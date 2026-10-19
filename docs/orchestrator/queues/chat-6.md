@@ -278,3 +278,11 @@ Direct-to-main implementation commits use the required `[chat-6]` prefix. No tes
 - Additional blockers: TPO-batches-20 outbound remind delivery depends on messaging owner decision OD-12; TPO-batches-37 genuine .xlsx parsing needs a supported Excel dependency; SA-placements-projects-12 destructive drive deletion/cancel policy needs impact and authorization decision. Move on.
 - WP completeness: own WP-chat-6-01 through -06 and reassigned WP-chat-5-04/-05/-11/-16 remain IN-PROGRESS. Significant unblocked higher-priority parity remains (registered contact fields, published-drive editing, class/student academic filters across the full cohort, grouped exports, TPO messaging). No DONE status was claimed for partially closed work.
 - FAST v2: no tests, typecheck, lint, builds or CI waits. Every lane write only on chatgpt/chat-6-b.
+
+## G4/G5 UI clone bounded-turn handoff (2026-10-19, [chat-6])
+
+- Refreshed branch onto main `d915bd67b20838f496d2a5b25b4365e748a35dd5` by replaying all 13 existing branch commits, then pushed G4 DataTable/canvas fixes and native Button conversions.
+- Native button targets found by case-sensitive per-file review: `src/components/admin/copy-finding-for-claude.tsx` and `src/app/(authenticated)/admin/inbound-mail/error.tsx` — both converted to shared Button, with original click handlers preserved.
+- Candidate queue from GitHub code search: `src/components/admin/**` (58 candidates, 0 case-sensitive raw buttons after conversion), `src/app/(authenticated)/admin/**` (81 candidates, 0 after conversion), and four `src/components/auth/**` candidates (0). These are **candidate-based checks, not an exhaustive grep**. Run `grep -rlE '<button[ >]' src --include='*.tsx'` and put any remaining filenames on this queue when a checkout is available.
+- G4 and G5 are still OPEN under the strict tick rule; checked-in legacy SCSS lacks `@media print` or `@page` template evidence. See `docs/audit/ux/clone-import-print-email.md` for detailed work queue and missing proof.
+- **Exact next file:** `src/app/(authenticated)/layout.tsx` for G5 scoped print style integration/reconciliation; do not edit `src/components/ui/*`. No tests, TypeScript, app runtime or CI executed.

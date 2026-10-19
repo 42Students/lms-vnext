@@ -45,19 +45,19 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
         className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2">
         <label className="text-sm font-semibold text-body">Season
           <Select name="seasonId" defaultValue={report.season?.id ?? ""}
-            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full">
             {report.seasons.length === 0 ? <option value="">No season</option> : null}
             {report.seasons.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
           </Select>
         </label>
         <label className="text-sm font-semibold text-body">Drive
           <Select name="jobId" defaultValue={report.selectedJobId ?? ""}
-            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full">
             <option value="">All drives</option>
             {report.jobs.map((item) => <option key={item.id} value={item.id}>{item.companyName} · {item.title}</option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary sm:col-span-2"
+        <Button type="submit" className="min-h-11 sm:min-h-9 sm:col-span-2"
           disabled={!report.season}>Apply filters</Button>
       </form>
       {!report.season ? <EmptyState title="No placement season" description="No results can be inferred without a recorded season." /> : (

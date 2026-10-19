@@ -3,6 +3,7 @@ import { Tabs } from "@/components/ui/tabs";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {FileUpload} from "@/components/ui/file-upload";
+import {DataTable} from "@/components/ui/data-table";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -121,20 +122,29 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     items={[{value:"ALL",label:"All",count:preview.preview.length},
       {value:"MATCHED",label:"Matched",count:preview.ready},
       {value:"UNUSABLE",label:"Can't use",count:preview.skipped}]} />
-   <ul className="space-y-1 text-xs">{preview.preview.map((row,i)=>({row,i}))
-    .filter(({row})=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable"))
-    .slice((previewPage-1)*8,previewPage*8)
-    .map(({row,i})=><li className="min-w-0 break-all rounded-[var(--lms-control-radius)] border border-border p-2" key={i}>
-    {row.status==="unusable"?<Button variant="secondary" type="button" disabled={busy||skippedByUser.includes(i)}
-     onClick={()=>setSkippedByUser(current=>current.includes(i)?current:[...current,i])}
-     className="mr-2 min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-link">
-     {skippedByUser.includes(i)?"Row skipped":"Skip row"}</Button>:
-     <label className="mr-2 inline-flex items-center gap-1"><Checkbox checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy}/>Include</label>}
-    <strong>Row {i+1}: {row.studentName??preview.rows[i]?.studentCode}</strong>
-    <p>Roll: {row.rollNumber??preview.rows[i]?.studentCode} · Current: {row.currentStatus??"—"} · Becomes: {row.proposedStatus??"—"}</p>
-    <p>{row.status==="matched"&&row.currentStatus===row.proposedStatus?
-      "No change":row.status==="matched"?"Matched":"Can't use"}{row.reason?" — "+row.reason:""}</p>
-   </li>)}</ul>
+   <DataTable<{row:Preview["preview"][number];i:number}> caption="Eligibility import preview rows"
+    rows={preview.preview.map((row,i)=>({row,i}))
+     .filter(({row})=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable"))
+     .slice((previewPage-1)*8,previewPage*8)}
+    getRowKey={item=>String(item.i)} empty={<p>No rows in this preview filter.</p>}
+    columns={[
+     {key:"learner",header:"Learner",mobilePriority:"primary",cell:({row,i})=><span className="break-all">
+      Row {i+1}: {row.studentName??preview.rows[i]?.studentCode}</span>},
+     {key:"roll",header:"Roll",mobilePriority:"secondary",cell:({row,i})=>row.rollNumber??preview.rows[i]?.studentCode??"—"},
+     {key:"change",header:"Current → Proposed",mobilePriority:"secondary",cell:({row})=>
+      (row.currentStatus??"—")+" → "+(row.proposedStatus??"—")},
+     {key:"result",header:"Match",mobilePriority:"secondary",cell:({row})=>
+      (row.status==="matched"&&row.currentStatus===row.proposedStatus?
+       "No change":row.status==="matched"?"Matched":"Can't use")+(row.reason?" — "+row.reason:"")},
+     {key:"include",header:"Include",mobilePriority:"action",cell:({row,i})=>row.status==="unusable"?
+      <Button variant="secondary" size="sm" type="button" disabled={busy||skippedByUser.includes(i)}
+       onClick={()=>setSkippedByUser(current=>current.includes(i)?current:[...current,i])}>
+       {skippedByUser.includes(i)?"Row skipped":"Skip row"}</Button>:
+      <label className="inline-flex items-center gap-1 text-sm">
+       <Checkbox checked={!skippedByUser.includes(i)} disabled={busy}
+        onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])}/>Include
+      </label>},
+    ]}/>
    <nav aria-label="Import preview pages" className="flex flex-wrap items-center gap-3 text-xs">
     <Button variant="secondary" type="button" disabled={busy||previewPage===1} onClick={()=>setPreviewPage(p=>Math.max(1,p-1))} >Previous</Button>
     <span>Page {previewPage} of {Math.max(1,Math.ceil(preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length/8))}</span>
