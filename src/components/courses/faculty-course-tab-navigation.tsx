@@ -1,8 +1,7 @@
 "use client";
-import {Select} from "@/components/ui/select";
-
 import { Select } from "@/components/ui/select";
 import { Tabs } from "@/components/ui/tabs";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -46,21 +45,19 @@ export function FacultyCourseTabNavigation({
     <div className="space-y-3">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
-          <Link href="/teacher/courses" className="text-sm font-semibold text-primary-text hover:underline">
-            Back to courses
-          </Link>
+          <PageBackLink href="/teacher/courses" label="Back to courses" />
           <p className="mt-2 text-sm font-semibold text-foreground">
             {courseName} · {sectionName}
           </p>
         </div>
         {teachingSections.length > 1 ? (
-          <label htmlFor="faculty-course-section" className="text-xs font-semibold text-body">
+          <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-body-text)] sm:w-auto">
             {activeTab==="attendanceDetail"?"Select class to view attendance":"Teaching Section"}
             <Select
               id="faculty-course-section"
               value={deliveryId}
               onChange={(event) => router.push(facultyCourseTabHref(event.target.value, activeTab))}
-              className="ml-2 min-h-11 w-auto"
+              className="min-h-11 w-full min-w-0 sm:min-h-[var(--lms-control-height)] sm:w-auto"
             >
               {teachingSections.map((section) => (
                 <option key={section.deliveryId} value={section.deliveryId}>{section.label}</option>
@@ -71,15 +68,15 @@ export function FacultyCourseTabNavigation({
       </div>
       <div className="flex flex-wrap gap-2 text-sm">
         <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-          className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text">
+          className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
           Author Assignments
         </Link>
         <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-          className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text">
+          className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
           Build Quizzes
         </Link>
         <Link href={"/teacher/live-classes?deliveryId="+encodeURIComponent(deliveryId)}
-          className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text">
+          className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
           Live Classes
         </Link>
       </div>

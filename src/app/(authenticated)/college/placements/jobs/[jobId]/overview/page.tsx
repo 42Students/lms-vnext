@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatTile } from "@/components/ui/stat-tile";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { displayDriveMetric, describeDriveMetric } from "@/modules/placements/college-drive-overview-model";
 import { getCollegeDriveOverview } from "@/modules/placements/college-drive-overview-service";
 import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
@@ -28,7 +29,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
         <Link href={`/college/placements/jobs/${jobId}/settings`} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link lms-inline-link">Edit</Link>
         <CollegeDriveDuplicateAction jobId={jobId}/></div>} />
     <div className="flex flex-wrap gap-3 text-sm text-body">
-      <span>Status: {drive.status}</span><span>Type: {drive.employmentType}</span>
+      <span className="inline-flex items-center gap-2">Status: <StatusBadge tone={drive.status==="PUBLISHED"?"success":drive.status==="DRAFT"?"warning":"neutral"}>{drive.status}</StatusBadge></span><span>Type: {drive.employmentType}</span>
       <span>Mode: {drive.workMode}</span><span>Openings: {drive.openings ?? "Not recorded"}</span>
     </div>
     <p className="whitespace-pre-wrap text-body">{drive.description}</p>
