@@ -30,6 +30,17 @@ describe("NORTH-STAR chat-19: legacy recruiter page canvas", () => {
     expect(text).not.toContain('className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4"');
   });
 
+  it("uses shared Input Select Button chrome for proposal filters", () => {
+    const text = source(hr + "drives/proposals/page.tsx");
+    expect(text).toContain('import {Input} from "@/components/ui/input";');
+    expect(text).toContain('import {Select} from "@/components/ui/select";');
+    expect(text).toContain('<Input name="q"');
+    expect(text).toContain('<Select name="sort"');
+    expect(text).toContain('</Select>');
+    expect(text).toContain('<Button type="submit" variant="secondary"');
+    expect(text).not.toContain('<select name="sort"');
+  });
+
   it("keeps the mobile drawer icon-only triggers with balanced SVG markup", () => {
     const text = source("src/components/shell/mobile-navigation.tsx");
     expect(text).not.toContain('aria-hidden="true">☰');
