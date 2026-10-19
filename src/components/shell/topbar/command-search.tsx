@@ -127,7 +127,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           onKeyDown={event => {
             if (event.key === "Enter") { event.preventDefault(); submit(); }
             if (event.key === "ArrowDown" && open) {
-              const first = root.current?.querySelector<HTMLButtonElement>("button[data-tpo-result]");
+              const first = root.current?.querySelector<HTMLElement>('[role="option"], button[data-tpo-result]');
               if (first) { event.preventDefault(); first.focus(); }
             }
             if (event.key === "Escape") { event.preventDefault(); setOpen(false); setMobileOpen(false); }
