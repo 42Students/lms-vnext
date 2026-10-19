@@ -47,10 +47,10 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
        <StatusBadge>{({NEW:"To read",TRIAGED:"Being handled",RESOLVED:"Done"} as Record<string,string>)[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>
       </div>
       <p className="mt-1 break-all text-sm text-body">From {row.fromAddress} · To {row.toAddress}</p>
-      <p className="mt-2 line-clamp-2 break-words text-sm text-muted-foreground">{safeInboundPreview(row.bodyPlain)}</p>
+      <p className="mt-2 line-clamp-2 break-words text-sm text-muted-foreground print:line-clamp-none">{safeInboundPreview(row.bodyPlain)}</p>
       <p className="mt-1 text-xs text-muted-foreground">Sender identity and conversation-routing status are not verified by this inbox.</p>
       <p className="mt-1 text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
-      <Button type="button" variant="secondary" className="mt-3" onClick={()=>{setMessage("");setSelected(row);}}>Read message</Button>
+      <Button type="button" variant="secondary" className="mt-3 min-h-11 md:min-h-9 print:hidden" onClick={()=>{setMessage("");setSelected(row);}}>Read message</Button>
     </article>)}
    </div>}
   {selected?<Drawer open onOpenChange={open=>{if(!open)setSelected(null)}} title={selected.subject||"(No subject)"}
@@ -62,7 +62,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
     </dl>
     <div className="mt-4 flex flex-wrap gap-2">
      {inboundMailStatusActions(overrides[selected.id]?.status??selected.status).map(action=>
-      <Button key={action.status} type="button" variant={action.status==="RESOLVED"?"primary":"secondary"} disabled={busy} onClick={()=>void change(selected,action.status)}>
+      <Button key={action.status} type="button" className="min-h-11 md:min-h-9" variant={action.status==="RESOLVED"?"primary":"secondary"} disabled={busy} onClick={()=>void change(selected,action.status)}>
        {busy?"Saving…":action.label}
       </Button>)}
     </div>
