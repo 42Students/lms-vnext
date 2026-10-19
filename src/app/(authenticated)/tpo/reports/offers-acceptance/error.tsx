@@ -3,9 +3,7 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 
-export default function ErrorPage({
-  reset,
-}: {
+export default function ErrorPage({ reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {

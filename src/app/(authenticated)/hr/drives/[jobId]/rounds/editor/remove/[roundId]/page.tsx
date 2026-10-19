@@ -5,6 +5,8 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
 export default async function HrRoundRemovalConfirm({params}:{
@@ -20,20 +22,20 @@ export default async function HrRoundRemovalConfirm({params}:{
  const round=rounds.find(row=>row.id===roundId);
  if(!round||!round.editable)notFound();
  return <div className="min-w-0 max-w-full space-y-5">
-  <PageHeader eyebrow="Recruiter · Hiring rounds" title="Confirm unused round removal"
+  <PageHeader title="Confirm unused round removal"
    description="Only an unused, pending recruiter-created round can be cancelled. The record remains in audit history."/>
   <div className="border-b border-border pb-5">
    <p className="font-semibold text-foreground">{round.sequence}. {round.name}</p>
-   <p className="mt-2 text-sm text-body">{round.kind} · {round.status} · No recorded candidate results.</p>
+   <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone="warning">{round.status}</StatusBadge> · No recorded candidate results.</p>
   </div>
   <div className="flex flex-wrap gap-3">
    <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
     className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Keep round</Link>
    <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"}>
-    <input type="hidden" name="action" value="REMOVE"/>
-    <input type="hidden" name="roundId" value={round.id}/>
-    <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
-    <Button type="submit">
+    <Input type="hidden" name="action" value="REMOVE"/>
+    <Input type="hidden" name="roundId" value={round.id}/>
+    <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
+    <Button type="submit" variant="danger">
      Confirm remove
     </Button>
    </form>

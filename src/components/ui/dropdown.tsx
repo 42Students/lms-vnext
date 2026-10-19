@@ -31,7 +31,7 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
     if (!root || !panel) return;
     const positionPanel = () => {
       if (!root.open || (inlineDesktop && window.innerWidth >= 768)) return;
-      if (mobileSheet && window.innerWidth < 640) {
+      if (mobileSheet && window.innerWidth <= 767) {
         panel.style.top = "auto";
         panel.style.bottom = "0";
         panel.style.transform = "none";
@@ -108,7 +108,7 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
   return <details ref={rootRef} data-slot="dropdown-root" data-mobile-sheet={mobileSheet || undefined} data-inline-desktop={inlineDesktop || undefined} className={cx("group relative inline-block min-w-0 align-middle", inlineDesktop ? "md:contents" : "", className)} {...props}
     onPointerDown={event => {
       props.onPointerDown?.(event);
-      if (event.defaultPrevented || !mobileSheet || window.innerWidth >= 640) return;
+      if (event.defaultPrevented || !mobileSheet || window.innerWidth >= 768) return;
       if (rootRef.current?.open && event.target === rootRef.current) {
         event.preventDefault();
         closeDropdown(true);
@@ -123,7 +123,7 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
       (event.key === "ArrowUp" ? options.at(-1) : options[0])?.focus();
     }} className={cx("inline-flex min-h-9 cursor-pointer list-none items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden", mobileSheet ? "min-h-11" : "", inlineDesktop ? "md:hidden" : "", triggerClassName)}>{trigger}</summary>
     <div ref={panelRef} data-slot="dropdown"
-      className={cx("z-40 min-w-[100px] max-w-[calc(100vw_-_1.5rem)] overflow-y-auto overscroll-contain border border-[var(--lms-canvas-border)] bg-white text-[14px] leading-5 text-[var(--lms-body-text)] shadow-[var(--lms-dropdown-shadow)]", mobileSheet ? "fixed inset-x-0 bottom-0 max-h-[70dvh] w-full rounded-t-[12px] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:absolute sm:inset-x-auto sm:bottom-auto sm:top-[calc(100%_+_5px)] sm:max-h-72 sm:w-72 sm:rounded-[6px] sm:p-3" : "absolute top-[calc(100%_+_5px)] max-h-[min(32rem,calc(100dvh_-_2rem))] rounded-[6px] px-6 py-4", inlineDesktop ? "md:!static md:!inset-auto md:!max-h-none md:!w-full md:!max-w-none md:!overflow-visible md:!border-0 md:!bg-transparent md:!p-0 md:!shadow-none" : "", align === "end" ? "right-0" : "left-0")}
+      className={cx("z-40 min-w-[100px] max-w-[calc(100vw_-_1.5rem)] overflow-y-auto overscroll-contain border border-[var(--lms-canvas-border)] bg-white text-[14px] leading-5 text-[var(--lms-body-text)] shadow-[var(--lms-dropdown-shadow)]", mobileSheet ? "fixed inset-x-0 bottom-0 max-h-[70dvh] w-full rounded-t-[12px] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:absolute md:inset-x-auto md:bottom-auto md:top-[calc(100%_+_5px)] md:max-h-72 md:w-72 md:rounded-[6px] md:p-3" : "absolute top-[calc(100%_+_5px)] max-h-[min(32rem,calc(100dvh_-_2rem))] rounded-[6px] px-6 py-4", inlineDesktop ? "md:!static md:!inset-auto md:!max-h-none md:!w-full md:!max-w-none md:!overflow-visible md:!border-0 md:!bg-transparent md:!p-0 md:!shadow-none" : "", align === "end" ? "right-0" : "left-0")}
       onKeyDown={event => {
         if (event.target instanceof Element && event.target.closest('input, select, textarea, dialog, [contenteditable="true"]')) return;
         if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
