@@ -20,7 +20,7 @@ export default async function HrRoundRemovalConfirm({params}:{
  const round=rounds.find(row=>row.id===roundId);
  if(!round||!round.editable)notFound();
  return <div className="min-w-0 max-w-full space-y-5">
-  <PageHeader eyebrow="Recruiter · Hiring rounds" title="Confirm unused round removal"
+  <PageHeader title="Confirm unused round removal"
    description="Only an unused, pending recruiter-created round can be cancelled. The record remains in audit history."/>
   <div className="border-b border-border pb-5">
    <p className="font-semibold text-foreground">{round.sequence}. {round.name}</p>
