@@ -76,10 +76,10 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
         {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
           <label className="flex items-center gap-2">Stale after
-            <select name="staleDays" defaultValue={staleDays} className="min-h-10 rounded border border-border bg-surface px-3">
+            <select name="staleDays" defaultValue={staleDays} className="min-h-10 rounded-[9px] border border-border bg-surface px-3">
               {[3,7,14,30].map(n=><option key={n} value={n}>{n} days</option>)}
             </select></label>
-          <button type="submit" className="min-h-10 rounded border border-border px-4 font-semibold">Apply</button>
+          <button type="submit" className="min-h-10 rounded-[9px] border border-border px-4 font-semibold">Apply</button>
         </form>:null}
       </div>
       {operations.workQueue.length === 0 ? <div className="p-5"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." /></div> :
@@ -90,7 +90,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
               <p className="mt-2 font-semibold text-foreground">{item.jobTitle}</p>
               <p className="mt-1 text-sm text-body">{item.companyName} · {item.code.toLowerCase().split("_").join(" ")}</p>
             </div>
-            <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
+            <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
           </div>)}</div>}
     </section>}
     <section className="rounded-xl border border-border bg-surface">

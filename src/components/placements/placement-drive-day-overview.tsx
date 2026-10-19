@@ -15,7 +15,7 @@ function formatWhen(value: Date | null, timezone: string | null) {
 }
 export function PlacementDriveDayOverview({ driveDay }: { driveDay: DriveDay }) {
   return <div className="space-y-6">
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="border-b border-border pb-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div><p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">{driveDay.job.company.name}</p><h2 className="mt-1 text-xl font-semibold text-foreground">{driveDay.job.title}</h2></div>
         <StatusBadge tone={tone(driveDay.driveStatus)}>{driveDay.driveStatus.toLowerCase().split("_").join(" ")}</StatusBadge>
