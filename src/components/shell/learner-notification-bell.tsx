@@ -63,7 +63,7 @@ export function LearnerNotificationBell(){
   return ()=>document.removeEventListener("keydown",escape);
  },[open]);
  return <div className="relative shrink-0" ref={root}>
-  <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" new":"Notifications"}
+  <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" unread":"Notifications, no unread items"}
     aria-haspopup="dialog" aria-expanded={open} aria-controls={open?"lms-learner-notifications":undefined}
     onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
     className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
