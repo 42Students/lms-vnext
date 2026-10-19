@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MetricBar } from "@/components/ui/metric-bar";
+import { Alert } from "@/components/ui/alert";
 import {AssignmentMultipartPartsEditor,type AssignmentLinkPart} from "./assignment-multipart-parts-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
@@ -175,20 +176,20 @@ export function AssignmentFileSubmissionControl({
   return <section aria-label="Assignment file submission" className="mt-4 space-y-3">
     <h3 className="text-sm font-semibold text-foreground">{multipartEnabled?"Combined assignment submission":"File Upload"}</h3>
     {uploadsAllowed?<p className="text-xs text-muted-foreground">{limitsSummary("assignment-submission")} Up to {MAX_ASSIGNMENT_FILES_PER_SUBMISSION} files.</p>:null}
-    {uploadsAllowed?<label className="block text-sm font-semibold text-body">Choose a file to upload
+    {uploadsAllowed?<label className="block text-xs font-semibold text-body">Choose a file to upload
       <Input type="file" multiple accept={pdfOnly?".pdf":acceptAttributeFor("assignment-submission")}
         disabled={loading || busy || staged.length >= MAX_ASSIGNMENT_FILES_PER_SUBMISSION}
-        className="mt-2 min-h-11 max-w-full"
+        className="mt-2 min-h-11 max-w-full md:min-h-9"
         onChange={event => { select(event.currentTarget.files); event.currentTarget.value = ""; }} />
     </label>:null}
     {uploadsAllowed?<p role="status" className="text-xs text-muted-foreground">Google Drive import is not configured. To add a file from Google Drive, download it to your device first, then use Choose a file to upload. The uploaded file must pass private-storage security checks.</p>:null}
-    {uploadsAllowed?<Button type="button" disabled={busy || loading || selected.length === 0} onClick={upload}>
+    {uploadsAllowed?<Button type="button" disabled={busy || loading || selected.length === 0} onClick={upload} className="min-h-11 md:min-h-9">
       {busy && activeName ? "Uploading…" : staged.length > 0 ? "Add another file" : "Choose a file to upload"}
     </Button>:null}
     {busy && activeName ? <div className="space-y-2" role="status">
       <p className="break-words text-sm text-body">{activeName}: {progress}%</p>
       <MetricBar label="File upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className="w-full" />
-      <Button type="button" variant="secondary" onClick={() => active.current?.abort()}>Cancel upload</Button>
+      <Button type="button" variant="secondary" onClick={() => active.current?.abort()} className="min-h-11 md:min-h-9">Cancel upload</Button>
       <p className="text-xs text-muted-foreground">Your submission is being sent. Keep this window open until it finishes.</p>
     </div> : null}
     {loading ? <p role="status" className="text-sm text-muted-foreground">Loading your files…</p> : null}
@@ -198,8 +199,8 @@ export function AssignmentFileSubmissionControl({
         return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-3">
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={state.detail}><StatusBadge tone={state.tone}>{state.label}</StatusBadge></span>
-          {file.status === "VERIFYING" || file.status === "UPLOADING" ? <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => retry(file.id)}>Check file</Button> : null}
-          {canRemoveStagedFile(file) ? <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => remove(file.id)} aria-label="Remove this file">Remove</Button> : null}
+          {file.status === "VERIFYING" || file.status === "UPLOADING" ? <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy} onClick={() => retry(file.id)}>Check file</Button> : null}
+          {canRemoveStagedFile(file) ? <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy} onClick={() => remove(file.id)} aria-label="Remove this file">Remove</Button> : null}
         </li>;
       })}
     </ul>
@@ -214,10 +215,10 @@ export function AssignmentFileSubmissionControl({
           onChange={event => setConfirmed(event.target.checked)} />
         <span>I confirm this is my final assignment submission and cannot be replaced after it is recorded.</span>
       </label>
-      <Button type="button" disabled={busy || loading || !confirmed || !maySubmit} onClick={submit}>
+      <Button type="button" disabled={busy || loading || !confirmed || !maySubmit} onClick={submit} className="min-h-11 md:min-h-9">
         {busy && !activeName ? "Submitting…" : "Submit Your Work"}
       </Button>
     </div> : null}
-    {error ? <p role="alert" className="break-words text-sm font-semibold text-error">{error}</p> : null}
+    {error ? <Alert tone="error">{error}</Alert> : null}
   </section>;
 }
