@@ -18,14 +18,14 @@ export default async function HrJobActivityPage({searchParams}:{
  const input=hrActivityQuerySchema.safeParse({
   collegeId:raw.collegeId,kind:raw.kind,page:raw.page,q:raw.q,
  });
- if(!input.success)return <div className="min-w-0 max-w-full space-y-4"><PageHeader eyebrow="Recruiter" title="Hiring activity"/>
+ if(!input.success)return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Hiring activity"/>
   <p role="alert">Invalid activity filters.</p><Link href="/hr/activity" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose again</Link></div>;
  const result=await listRecruiterJobActivity(context,input.data);
  const fmt=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(date);
  return <div className="min-w-0 max-w-full space-y-6">
-  <PageHeader eyebrow="Employer Recruiter" title="Hiring activity"
+  <PageHeader title="Hiring activity"
    description="Published and closed hiring drives at your authorized college. No private applicant information."/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-5">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
