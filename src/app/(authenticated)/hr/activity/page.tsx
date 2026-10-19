@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import { Tabs } from "@/components/ui/tabs";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import Link from "next/link";
@@ -59,8 +60,7 @@ export default async function HrJobActivityPage({searchParams}:{
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
       className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.title}</Link>
      <p className="mt-1 text-sm text-body">{item.status} · {fmt(item.occurredAt)} IST</p>
-    </li>)}</ol>:<p role="status" className="border-y border-border py-5 text-sm text-body">
-     No visible publication or closure activity at this college.</p>}
+    </li>)}</ol>:<EmptyState title="No hiring activity" description="No visible publication or closure activity at this college."/>}
    <div className="flex justify-end">
      <Link href={"/api/placements/recruiter/activity/export?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)}
        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
