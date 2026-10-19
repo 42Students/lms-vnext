@@ -22,7 +22,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
     {truncated ? <p role="status" className="text-sm text-body">
       Showing only the first 100 archived relationships. This is not a complete list.
     </p> : null}
-    {rows.length === 0 ? <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
+    {rows.length === 0 ? <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
       No archived college-company relationships are recorded.
     </p> : <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
       {rows.map((row) => <li key={row.companyId} className="flex flex-wrap justify-between gap-3 p-4 text-sm">
