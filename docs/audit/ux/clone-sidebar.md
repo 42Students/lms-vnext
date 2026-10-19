@@ -723,3 +723,33 @@ are compared for 320/360/390px phone versus 768/1024/1280px tablet/desktop.
 The remote-source subtree scan covered 41 shell files and 127 TPO files,
 but final checkout-wide `git grep` and rendered browser comparisons
 remain open. **B3 [ ], B4 [ ]** remain unchanged.
+
+### Chat-19 regression-file coverage: 27 suites
+
+The entire 27-file `tests/unit/chat19*.test.ts(x)` inventory was
+enumerated from the nontruncated GitHub tree and searched file by file
+for five superseded shell assumptions: hardcoded content
+`padding-left:96px/256px`, the old `w-[min(82vw,300px)]` drawer
+class, raw `aria-modal="true"`/manual Escape handlers in
+`mobile-navigation.tsx`, and outdated checklist strings.
+The **only four remaining 256px references** are intentionally
+*negative* regression assertions (`not.toContain`) in:
+`chat19-clone-sidebar-checkpoint.test.ts`,
+`chat19-north-star-legacy-sidebar.test.ts`,
+`chat19-shell-sidebar-clone.test.ts` and
+`chat19-sidebar-hr-value-parity.test.ts`.
+No positive obsolete signatures remain in those 27 suites.
+This proves the named source-grep predicates, not that all tests pass.
+
+A paired source review confirmed both stale-value suites were updated
+to inspect `src/components/ui/drawer.tsx` for native
+`<dialog>` Escape/focus-return and `sidebar-legacy.css` for
+96→256px flex-push. The single TPO More footer remains on one client
+component, and its navigation/viewport cleanup is covered by
+`chat19-tpo-mobile-footer.test.ts`. JSX closing tags in the changed
+mobile footer and shared shell wrappers were re-read by source.
+
+**No tests, build, lint, browser or checkout-wide `git grep` were run.**
+Only confirmed remote-source findings are reported. Under the strict
+tick rule, B3 and B4 remain **[ ]** until the owner executes the
+generated ledger and verifies browser pixels and interactions.
