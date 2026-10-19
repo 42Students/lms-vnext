@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -16,7 +17,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const parsed=parseTpoVerificationParams(params);
  if(!parsed)return <div className="space-y-3 p-5">
   <PageHeader title="Invalid verification filters" />
-  <p role="alert">No verification records were loaded. Choose a supported status or reset the filters.</p>
+  <Alert tone="error">No verification records were loaded. Choose a supported status or reset the filters.</Alert>
   <Link href="/tpo/verification" className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
  </div>;
  const query=parsed;
@@ -94,16 +95,16 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
   {queue.available&&queue.enabled&&queue.permitted&&query.pageSize===1000&&
    (query.tab==="WAITING"?queue.counts?.WAITING:query.tab==="VERIFIED"?queue.counts?.VERIFIED:queue.counts?.SENT_BACK)!==undefined&&
    ((query.tab==="WAITING"?queue.counts?.WAITING:query.tab==="VERIFIED"?queue.counts?.VERIFIED:queue.counts?.SENT_BACK)??0)>1000?
-    <p role="status" className="rounded border border-border p-3 text-sm">Showing the first 1,000 students in this view. Narrow the filters to find more students.</p>:null}
-  {!queue.available?<section role="status" className="rounded border border-border p-4">
+    <Alert tone="warning">Showing the first 1,000 students in this view. Narrow the filters to find more students.</Alert>:null}
+  {!queue.available?<section className="space-y-3">
    <PageHeader title="Verification" />
-   <p>Verification records are not available right now. Please try again or contact your college admin.</p>
-   <Link href="/tpo/verification" className="font-semibold text-[var(--lms-teal-deep)] underline">Retry</Link>
-  </section>:!queue.enabled||!queue.permitted?<section role="status" className="rounded border border-border p-4">
+   <Alert tone="warning">Verification records are not available right now. Please try again or contact your college admin.
+   <Link href="/tpo/verification" className="font-semibold text-[var(--lms-teal-deep)] underline">Retry</Link></Alert>
+  </section>:!queue.enabled||!queue.permitted?<section className="space-y-3">
    <PageHeader title="You cannot verify profiles here" />
-   <p className="text-sm">{!queue.enabled
+   <Alert tone="warning">{!queue.enabled
     ?"Your college admin has not allowed the placement cell to verify profiles"
-    :"Your verification access has been removed. Ask your college admin."}</p>
+     :"Your verification access has been removed. Ask your college admin."}</Alert>
   </section>:<><TpoVerificationPanel rows={queue.rows} counts={queue.counts} serverTab={query.tab} serverKind={query.kind}/>
   <nav aria-label="Verification pages" className="flex items-center gap-3 text-sm">
    {query.page>1?<Link href={tpoVerificationHref({...query,page:query.page-1})} className="text-[var(--lms-teal-deep)] underline">Previous page</Link>:null}
