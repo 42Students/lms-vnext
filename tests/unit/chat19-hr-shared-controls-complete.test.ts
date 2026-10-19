@@ -22,6 +22,12 @@ describe("NORTH-STAR chat-19 shared HR controls",()=>{
    }
   }
  });
+ it("also uses shared form controls inside recruiter placement-specific subviews",()=>{
+  for(const component of ["applicant-notes-panel","recruiter-result-controls","recruiter-resume-download"]){
+   const content=source("src/components/placements/"+component+".tsx");
+   expect(content,component).not.toMatch(/<(?:button|input|select|textarea)\b/);
+  }
+ });
  it("keeps complete Select and Button closing tag names in edited authoring flows",()=>{
   for(const name of ["hr-drive-draft-form","recruiter-round-inline-editor","recruiter-private-rating-editor"]){
    const content=source("src/components/hr/"+name+".tsx");
