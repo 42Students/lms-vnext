@@ -174,9 +174,18 @@ for (const file of filesIn(root)) {
   if (!/fixed\s+inset-0|role=["'](?:alert)?dialog["']|aria-modal/.test(source)) continue;
   const sf = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   if (sf.parseDiagnostics.length) { stats.errors.push(relative + ": source has JSX syntax diagnostics"); continue; }
-  if (/\b(?:const|function|class)\s+Dialog\b/.test(source) &&
-      !/from\s*["']@\/components\/ui\/dialog["']/.test(source)) {
-    stats.errors.push(relative + ": local Dialog name collision"); continue;
+  const reserved = new Set(["Dialog", "Drawer"]);
+  const collides = sf.statements.some((stmt) =>
+    ts.isImportDeclaration(stmt) && !!stmt.importClause &&
+    ((stmt.importClause.name && reserved.has(stmt.importClause.name.text)) ||
+     (stmt.importClause.namedBindings && ts.isNamedImports(stmt.importClause.namedBindings) &&
+      stmt.importClause.namedBindings.elements.some((element) =>
+        reserved.has(element.name.text) &&
+        (!ts.isStringLiteral(stmt.moduleSpecifier) ||
+         stmt.moduleSpecifier.text !== "@/components/ui/" + element.name.text.toLowerCase())))));
+  if (collides || /\b(?:const|function|class)\s+(?:Dialog|Drawer)\b/.test(source)) {
+    stats.errors.push(relative + ": Dialog/Drawer name collision; manual migration required");
+    continue;
   }
   const edits = [];
   function visit(node) {
