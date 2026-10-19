@@ -90,7 +90,7 @@ export default async function FacultyResponseFollowUpsPage({
       description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/response-followups" className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear follow-up filters</Link> : null}</div>
     : <div className="grid gap-3">{data.items.map(item =>
       <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
-        className="rounded-xl border border-border bg-surface p-4">
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div><h2 className="font-semibold text-foreground">{item.title}</h2>
             <p className="mt-1 text-sm text-body">{item.courseName} · {item.sectionName} · {item.kind}</p>
@@ -104,7 +104,7 @@ export default async function FacultyResponseFollowUpsPage({
           <h3 className="mt-4 text-sm font-semibold text-foreground">Learners without a recorded response</h3>
           <ul className="mt-2 grid gap-2 sm:grid-cols-2">
             {item.missingPreview.map(learner =>
-              <li key={learner.id} className="rounded-lg bg-surface-subtle px-3 py-2 text-sm text-body">
+              <li key={learner.id} className="rounded-[var(--lms-control-radius)] bg-surface-subtle px-3 py-2 text-sm text-body">
                 {learner.displayName}
                 {learner.rollNumber ? " · Roll " + learner.rollNumber : ""}
               </li>)}
