@@ -1,3 +1,6 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
@@ -39,26 +42,26 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
         <form action={path} method="get" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">
             {semesters ? "Semester or program" : "Batch or program"}
-            <input name="q" type="search" maxLength={100} defaultValue={data.query.q}
+            <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
               placeholder="Search name or code"
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Program
-            <select name="programId" defaultValue={data.query.programId ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            <Select name="programId" defaultValue={data.query.programId ?? ""}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="">All programs</option>
               {data.programs.map((program) => (
                 <option key={program.id} value={program.id}>
                   {program.name} ({program.code})
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Status
-            <select name="status" defaultValue={data.query.status}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            <Select name="status" defaultValue={data.query.status}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All statuses</option>
               {semesters ? (
                 <>
@@ -73,7 +76,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                   <option value="ARCHIVED">Archived</option>
                 </>
               )}
-            </select>
+            </Select>
           </label>
           <details className="col-span-full rounded-[var(--lms-control-radius)] border border-border p-3">
             <summary className="cursor-pointer text-sm font-semibold text-body">More filters</summary>
@@ -81,144 +84,144 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Recorded current term
-              <input type="number" name="currentTerm" min={1} max={24} step={1}
+              <Input type="number" name="currentTerm" min={1} max={24} step={1}
                 defaultValue={data.query.currentTerm??""} placeholder="All progression terms"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Progression record
-              <select name="progression" defaultValue={data.query.progression}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="progression" defaultValue={data.query.progression}
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="RECORDED">Progression recorded</option>
                 <option value="MISSING">No progression record</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Recorded academic year (start)
-              <input name="yearStart" type="number" min={1900} max={9998} step={1}
+              <Input name="yearStart" type="number" min={1900} max={9998} step={1}
                 defaultValue={data.query.yearStart ?? ""} placeholder="All academic years"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Minimum configured credits
-              <input type="number" name="minimumCredits" min={0} max={500} step={1}
+              <Input type="number" name="minimumCredits" min={0} max={500} step={1}
                 defaultValue={data.query.minimumCredits??""} placeholder="All credit totals"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Maximum configured credits
-              <input type="number" name="maximumCredits" min={0} max={500} step={1}
+              <Input type="number" name="maximumCredits" min={0} max={500} step={1}
                 defaultValue={data.query.maximumCredits ?? ""} placeholder="All credit totals"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Semester number
-              <input type="number" name="termNumber" min={1} max={24} step={1}
+              <Input type="number" name="termNumber" min={1} max={24} step={1}
                 defaultValue={data.query.termNumber ?? ""} placeholder="All semesters"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Credits availability
-              <select name="creditState" defaultValue={data.query.creditState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="creditState" defaultValue={data.query.creditState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All terms</option>
                 <option value="CONFIGURED">Credits configured</option>
                 <option value="UNSET">No configured credits</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Program status
-              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active programs</option>
                 <option value="ARCHIVED">Archived programs</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Course mapping
-              <select name="mappingState" defaultValue={data.query.mappingState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="mappingState" defaultValue={data.query.mappingState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All terms</option>
                 <option value="MAPPED">Has mapped courses</option>
                 <option value="UNMAPPED">No mapped courses</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Expected end period
-              <select name="expectedEndState" defaultValue={data.query.expectedEndState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="expectedEndState" defaultValue={data.query.expectedEndState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="SET">End period recorded</option>
                 <option value="UNSET">No end period recorded</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Academic year
-              <select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="RECORDED">Year recorded</option>
                 <option value="UNRECORDED">No recorded year</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Program status
-              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All parent programs</option>
                 <option value="ACTIVE">Active</option>
                 <option value="ARCHIVED">Archived</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Batch start on or after
-              <input type="date" name="startOnOrAfter" defaultValue={data.query.startOnOrAfter ?? ""}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input type="date" name="startOnOrAfter" defaultValue={data.query.startOnOrAfter ?? ""}
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Batch start on or before
-              <input type="date" name="startOnOrBefore" defaultValue={data.query.startOnOrBefore ?? ""}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input type="date" name="startOnOrBefore" defaultValue={data.query.startOnOrBefore ?? ""}
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Classes
-              <select name="activeClassState" defaultValue={data.query.activeClassState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="activeClassState" defaultValue={data.query.activeClassState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="HAS_ACTIVE">Has active classes</option>
                 <option value="NONE_ACTIVE">No active classes</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Students
-              <select name="activeLearnerState" defaultValue={data.query.activeLearnerState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="activeLearnerState" defaultValue={data.query.activeLearnerState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="HAS_ACTIVE">Has active learner enrollments</option>
                 <option value="NONE_ACTIVE">No active learner enrollments</option>
-              </select>
+              </Select>
             </label>
           ) : null}
             </div>
           </details>
           <div className="flex items-end gap-2">
-            <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+            <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
               Filter
-            </button>
+            </Button>
             <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
               Clear
             </Link>
