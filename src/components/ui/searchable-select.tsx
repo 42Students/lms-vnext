@@ -6,6 +6,7 @@ import {
 } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
+import { PopoverListbox } from "./popover";
 import { cx } from "@/lib/class-names";
 
 export type SearchableSelectProps = Omit<ComponentPropsWithRef<"input">, "list" | "type"> & {
@@ -135,8 +136,9 @@ export function SearchableSelect({
           className="absolute right-1 top-0 z-[1] !h-9 !w-9 !min-w-9 max-[767px]:!h-11 max-[767px]:!w-11"
           onClick={() => select("")}>×</Button> : null}
     {open && !disabled && !readOnly
-      ? <div id={listId} role="listbox" aria-label={props["aria-label"] ?? "Available options"}
-          className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[44px] w-full min-w-0 overflow-y-auto rounded-[12px] border border-[var(--lms-neutral-200)] bg-white pt-[5px] shadow-[var(--lms-search-dropdown-shadow)]">
+      ? <PopoverListbox id={listId} label={String(props["aria-label"] ?? "Available options")}
+          onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
+          className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[44px] w-full min-w-0 overflow-y-auto pt-[5px]">
           {matches.length
             ? matches.map((option, index) =>
               <button key={option.value} id={`${listId}-option-${index}`} type="button" role="option"
@@ -147,7 +149,7 @@ export function SearchableSelect({
                 {option.label ?? option.value}
               </button>)
             : <p role="status" className="px-[10px] py-[10px] text-center text-[13px] text-[var(--lms-muted-text)]">No results</p>}
-        </div> : null}
+        </PopoverListbox> : null}
     {selectionError
       ? <p id={validationId} role="alert" className="mt-1 text-[12px] leading-5 text-[var(--lms-error-text)]">{selectionError}</p>
       : null}
