@@ -2,6 +2,7 @@
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
+import { Disclosure } from "@/components/ui/disclosure";
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import {useRouter,useSearchParams} from "next/navigation";
@@ -220,8 +221,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       {!readOnly?<ProjectTaskAssigneeControl projectId={projectId} taskId={task.id} taskTitle={task.title}
        assigneeMembershipId={task.assigneeMembershipId}
        updatedAt={new Date(task.updatedAt).toISOString()} learners={learnerChoices}/>:null}
-      <details className="rounded-[var(--lms-control-radius)] border border-border p-2">
-       <summary className="cursor-pointer font-semibold text-link">Task details</summary>
+      <Disclosure title="Task details" className="rounded-[var(--lms-control-radius)] border border-border p-2">
        <p className="mt-2 whitespace-pre-wrap text-xs">{task.description||"No description"}</p>
        <p className="mt-2 text-xs font-semibold">Approach</p>
        <p className="whitespace-pre-wrap text-xs">{task.approach||"Not recorded"}</p>
@@ -246,7 +246,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        )}</ul>
        <ProjectTaskComments projectId={projectId} taskId={task.id}
         updatedAt={new Date(task.updatedAt).toISOString()} canPost={!readOnly}/>
-      </details>
+      </Disclosure>
      </li>;
     })}
     {!lane.tasks.length?<li className="py-4 text-center text-xs text-muted-foreground">No tasks</li>:null}
