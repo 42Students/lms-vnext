@@ -80,20 +80,18 @@ export function TopbarAccountMenu({
 
   return <div className="relative shrink-0" ref={root}>
     <button type="button" ref={trigger} className={style.avatar}
-      aria-label="Open account menu" aria-haspopup="menu" aria-expanded={open}
+      aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
       {topbarInitials(identityUid)}
     </button>
-    {open ? <div role="menu" aria-label="Account" className={style.menu}>
+    {open ? <div role="dialog" aria-label="Account menu" className={style.menu}>
       <div className="px-2 pb-2 text-left">
         <p className="m-0 truncate text-[13px] font-semibold text-[#172033]">{roleLabel}</p>
         <p className="mt-1 truncate text-[12px] text-[#64748b]">{organizationName}</p>
       </div>
-      {copy.accountHref ? <Link role="menuitem" href={copy.accountHref}
-        onClick={() => setOpen(false)} className={style.menuItem}>{copy.accountLabel}</Link> : null}
-      <Link role="menuitem" href="/account/security" onClick={() => setOpen(false)}
-        className={style.menuItem}>Account security</Link>
+      <Link href={copy.accountHref ?? "/account/security"}
+        onClick={() => setOpen(false)} className={style.menuItem}>{copy.accountLabel ?? "My Account"}</Link>
       {adminScopeChoices || memberships.length > 1 ? <>
         <hr className={style.menuDivider}/>
         <p className="px-2 pb-2 text-left text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">Switch workspace</p>
@@ -101,7 +99,7 @@ export function TopbarAccountMenu({
           <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId}/>}
       </> : null}
       <hr className={style.menuDivider}/>
-      <button type="button" role="menuitem" disabled={pending}
+      <button type="button" disabled={pending}
         className={style.menuItem} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
         <span className="ml-auto text-[#94a3b8]"><ChevronIcon /></span>
       </button>
