@@ -34,6 +34,8 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {GridWorkspace} from "./grid/grid-workspace";
+import {gridExportFilename} from "@/modules/placements/grid-export-filename";
+import boardStyles from "./recruiter-board-theme.module.css";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 
 type Lead = {
@@ -421,7 +423,7 @@ export function RecruiterLeadsWorkspace({
       new Blob([recruiterTableExportCsv(chosen,visibleColumns)],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
-    link.href=url;link.download="recruiter-leads-"+view+"-"+selection+(filterChips.length?"-filtered":"")+"."+format;
+    link.href=url;link.download=gridExportFilename("recruiter-leads-"+view+"-"+selection+(filterChips.length?"-filtered":""),format);
     document.body.appendChild(link);link.click();link.remove();
     URL.revokeObjectURL(url);
     setExportFeedback(chosen.length+" recruiter leads exported to "+format.toUpperCase());
@@ -1066,7 +1068,7 @@ export function RecruiterLeadsWorkspace({
             <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
                 <section key={column} className={
-                  "w-64 min-w-64 shrink-0 rounded-lg border border-border bg-surface p-4 "+
+                  boardStyles.column+" "+
                   (draggedBoardId&&column==="CONTACTED"?"ring-2 ring-primary":"")
                  }
                   onDragOver={event=>{
@@ -1083,10 +1085,10 @@ export function RecruiterLeadsWorkspace({
                      column==="NOT_NOW"?"Requires a recorded reason":
                      "Automatically set by invitation and placement activity"}
                   </p>
-                  <h2 className="mb-3 font-semibold">{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
+                  <h2 className={"mb-3 font-semibold "+boardStyles.columnTitle}>{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
                   <div className="space-y-2">
                     {visible.filter(x => x.stage === column).slice(0, column==="RECRUITED"||column==="NOT_NOW"?5:50).map(lead => (
-                      <div key={lead.id} className="rounded-md border border-border p-3 hover:bg-surface-secondary"
+                      <div key={lead.id} className={"p-3 hover:bg-surface-secondary "+boardStyles.leadCard}
                         draggable={lead.manualStage==="NEW"&&!boardMoving}
                         onDragStart={event=>{if(lead.manualStage==="NEW"){event.dataTransfer.setData("text/plain",lead.id);event.dataTransfer.effectAllowed="move";setDraggedBoardId(lead.id);}}}
                         onDragEnd={()=>setDraggedBoardId(null)}
