@@ -48,11 +48,11 @@ export function TpoDriveRequestActions({requestId,status}:{
           setAction(option.value);setError("");setMessage("");
           setReason(option.value==="APPROVE_LATER"?"Approved for later":"");
         }}
-        className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold">
+        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
         {option.label}</button>)}
     </div>
     {action?<div role="group" aria-label={actions.find(x=>x.value===action)?.label}
-      className="space-y-2 rounded border border-border p-3">
+      className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
       <p className="text-sm font-semibold">{actions.find(x=>x.value===action)?.label}</p>
       <p className="text-sm text-body">{action==="APPROVE_LATER"?
         "This creates a draft. No students are told until you publish.":
@@ -61,15 +61,15 @@ export function TpoDriveRequestActions({requestId,status}:{
       <label className="block text-sm">Reason
         <textarea value={reason} maxLength={1000} rows={3} disabled={busy||guardedPending}
           onChange={event=>setReason(event.target.value)}
-          className="mt-1 block w-full rounded-[9px] border border-border bg-surface p-2"/>
+          className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
       </label>
       <p className="text-xs text-body">The recruiter is notified in the app. Email delivery is not enabled.</p>
       <div className="flex gap-2">
         <button type="button" onClick={()=>void runGuarded(submit)} disabled={busy||guardedPending||reason.trim().length<3}
-          className="min-h-11 md:min-h-9 rounded bg-primary px-3 text-sm text-on-primary disabled:opacity-50">
+          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm text-on-primary disabled:opacity-50">
           {busy?"Saving…":"Confirm"}</button>
         <button type="button" disabled={busy} onClick={()=>setAction(null)}
-          className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-sm">Cancel</button>
+          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Cancel</button>
       </div>
     </div>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

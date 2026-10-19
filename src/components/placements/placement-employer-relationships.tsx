@@ -247,7 +247,7 @@ export function PlacementEmployerRelationships({
                       Relationship owner
                     </span>
                     <select
-                      className="min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)] md:min-h-9"
+                      className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)] md:min-h-9"
                       value={
                         draft.ownerMembershipId
                       }
