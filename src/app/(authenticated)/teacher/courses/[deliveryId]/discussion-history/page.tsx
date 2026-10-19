@@ -16,7 +16,7 @@ export default async function FacultyDiscussionHistoryPage({
   const [{deliveryId},raw]=await Promise.all([params,searchParams]);
   const parsed=parseFacultyDiscussionHistoryLocation(deliveryId,raw);
   if(!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid discussion history filters</h1>
+    <PageHeader title={"Invalid discussion history filters"} />
     <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to Courses</Link>
   </section>;
   const context=await getCurrentRequestContext();
