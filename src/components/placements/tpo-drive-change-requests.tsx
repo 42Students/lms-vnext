@@ -70,11 +70,11 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      </div>
      <p className="whitespace-pre-wrap text-sm">{item.proposedValue}</p>
      <p className="text-sm text-body">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
-     {item.decisionNote?<p className="rounded border border-border bg-surface-subtle p-3 text-sm">
+     {item.decisionNote?<p className="rounded border border-border bg-muted p-3 text-sm">
       Decision: {item.decisionNote}</p>:null}
      <div className="space-y-2 border-t border-border pt-3">
       <h4 className="text-sm font-semibold">Discussion</h4>
-      {item.messages.map(message=><p key={message.id} className="rounded border border-border bg-surface-subtle p-3 text-sm">
+      {item.messages.map(message=><p key={message.id} className="rounded border border-border bg-muted p-3 text-sm">
        <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
       </p>)}
       <label className="grid gap-1 text-sm">Reply or decision explanation
