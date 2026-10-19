@@ -4,5 +4,5 @@ import { GracefulScreen } from "@/components/public/graceful-screen";
 export default function PublicPlacementNotFound() {
   return <GracefulScreen title="This page isn't available"
     message="The placement cell hasn't published a placements page here."
-    homeHref="/placements" homeLabel="Return to placements" />;
+    homeHref="/home" homeLabel="Go to home" />;
 }
