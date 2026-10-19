@@ -60,7 +60,7 @@ export function TpoSpreadsheetGrid<Row>({
   return {minWidth:width,width,left:before,position:"sticky",zIndex:1,background:"var(--surface, white)"};
  }
  const visibleRowIds=orderedRows.map(rowKey);
- const selectAllIds=selection?.allIds??visibleRowIds;
+ const selectAllIds=[...new Set(selection?.allIds??visibleRowIds)];
  const anchor=useRef<string|null>(null);
  const fullySelected=selectAllIds.length>0&&selectAllIds.every(id=>selection?.selected.includes(id));
  function changePageSelection(checked:boolean){
