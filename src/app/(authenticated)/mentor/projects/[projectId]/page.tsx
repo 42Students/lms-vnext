@@ -1,4 +1,5 @@
 import { MentorProjectsUnavailable } from "@/components/projects/mentor-projects-unavailable";
+import { Disclosure } from "@/components/ui/disclosure";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -64,7 +65,7 @@ export default async function MentorProjectPage({
       {(selectedTab==="board"||selectedTab==="performance") ?
         <PageHeader title={workspace.project.title} /> : null}
       <MentorProjectTabs projectId={projectId}/>
-      {access.access === "MENTOR" ? <section className="min-w-0 border-b border-border pb-4"><details className="min-w-0"><summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Additional project tools</summary><div className="mt-3 flex flex-wrap gap-3">
+      {access.access === "MENTOR" ? <section className="min-w-0 border-b border-border pb-4"><Disclosure title="Additional project tools" className="min-w-0"><div className="mt-3 flex flex-wrap gap-3">
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface sm:min-h-9 px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Task board status
@@ -117,7 +118,7 @@ export default async function MentorProjectPage({
         >
           Recorded project activity →
         </Link>
-      </div></details></section> : null}
+      </div></Disclosure></section> : null}
       {selectedTab==="board"?<div className="space-y-5">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
           sprints={workspace.sprints}
