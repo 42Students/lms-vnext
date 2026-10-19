@@ -58,7 +58,7 @@ export default async function TpoShortlistSharePreviewPage({
       title={data.job.title + " · Recruiter-visible shortlist preview"}
       description="Read-only, current submitted/shortlisted candidates. This is a TPO report, not a sent share or authorization for an external recipient."
       actions={<a href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
-        className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground md:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">
         Export capped CSV
       </a>}
     />
@@ -69,7 +69,7 @@ export default async function TpoShortlistSharePreviewPage({
         <input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
           placeholder="Learner name" className="min-h-11 rounded-[9px] border border-border bg-surface px-3 md:min-h-9"/>
       </label>
-      <button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 font-semibold text-primary-foreground md:min-h-9">
+      <button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 font-[650] text-primary-foreground md:min-h-9">
         Search
       </button>
       <Link href={path} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Clear</Link>

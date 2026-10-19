@@ -129,7 +129,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
       </label>)}</div>
     </fieldset>
     <button type="button" disabled={pending||selectedColumns.length===0} onClick={createLink}
-     className="min-h-11 rounded bg-primary px-4 font-semibold text-primary-foreground">
+     className="min-h-11 rounded bg-primary px-4 font-[650] text-primary-foreground">
      Create expiring link
     </button>
    </div>
