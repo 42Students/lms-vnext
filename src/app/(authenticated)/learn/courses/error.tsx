@@ -14,7 +14,7 @@ export default function LearnerCoursesError({
   const pathname=usePathname();
   const isList=pathname==="/learn/courses";
   return (
-    <div className="rounded-xl border border-border bg-surface p-8 text-center">
+    <div className="py-8 text-center">
       <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
         {isList?"Failed to load courses. Please try again.":"Could not load course lessons"}
       </h1>
@@ -25,7 +25,7 @@ export default function LearnerCoursesError({
         <Button onClick={reset}>{isList?"Try again":"Retry"}</Button>
         <Link
           href="/learn/courses"
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9"
         >
           {LEARNER_BACK_TO_COURSES}
         </Link>
