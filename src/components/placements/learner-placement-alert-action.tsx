@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
@@ -40,12 +41,11 @@ export function LearnerPlacementAlertAction({id,href,unread}:{
   {safeHref?<Link href={safeHref} aria-disabled={pending}
      onClick={event=>{if(event.defaultPrevented||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
        event.preventDefault();void open();}}
-     className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
      {pending?"Marking as read…":"Open related page →"}
-   </Link>:isUnread?<button type="button" onClick={()=>void markRead()} disabled={pending}
-      className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+   </Link>:isUnread?<Button variant="link" className="max-md:min-h-11" type="button" onClick={()=>void markRead()} disabled={pending}>
       {pending?"Marking as read…":"Mark as read"}
-   </button>:null}
+   </Button>:null}
   {error?<p role="alert" className="w-full text-xs font-semibold text-error">{error}</p>:null}
  </div>;
 }
