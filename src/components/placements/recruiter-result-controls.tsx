@@ -11,6 +11,8 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -557,7 +559,7 @@ export function RecruiterResultControls({
                                 </span>
                                 <Select
                                   aria-label="Outcome"
-                                 
+                                  className="w-full"
                                   value={
                                     draft.outcome
                                   }
@@ -601,7 +603,7 @@ export function RecruiterResultControls({
                                 </span>
                                 <Input
                                   aria-label="Score %"
-                                 
+                                  className="w-full"
                                   type="number"
                                   min="0"
                                   max="100"
@@ -638,7 +640,7 @@ export function RecruiterResultControls({
                                   </span>
                                   <Input
                                     aria-label="Waitlist rank"
-                                   
+                                    className="w-full"
                                     type="number"
                                     min="1"
                                     max="100000"
@@ -674,7 +676,7 @@ export function RecruiterResultControls({
                                 </span>
                                 <Select
                                   aria-label="Reason category"
-                                 
+                                  className="w-full"
                                   value={
                                     draft.reasonCategory
                                   }
