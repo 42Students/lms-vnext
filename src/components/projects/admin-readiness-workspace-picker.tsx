@@ -20,7 +20,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
     placeholder="Search workspace" className="mt-1 w-full"/></label>
   <fieldset className="max-h-64 min-w-0 space-y-1 overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
    <legend className="sr-only">Select a workspace</legend>
-   {rows.map(item=><label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm text-body hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary sm:min-h-9">
+   {rows.map(item=><label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm text-body hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:min-h-9">
     <Radio name="workspaceId" value={item.id} checked={choice===item.id}
       onChange={()=>setChoice(item.id)}/>
     <span className="min-w-0 flex-1 break-words">{item.title}</span>
