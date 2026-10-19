@@ -44,6 +44,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
  }
  return <section aria-busy={busy} className="space-y-3 border-t border-border pt-4">
   <Button type="button" variant="secondary"
+   aria-expanded={open} aria-controls={open?"admin-college-bulk-import-panel":undefined}
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
   {open?<div className="space-y-3">
    <label className="grid gap-1 text-sm">Organization
