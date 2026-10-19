@@ -115,7 +115,7 @@ export default async function HrPlacementJobPage({
         <ErrorState title="Invalid hiring filters"
           description="Check the selected tab, applicant and page filters, or clear them to continue."
           action={<Link href={"/hr/placements/jobs/"+encodeURIComponent(jobId)}
-            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+            className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Clear filters
           </Link>} />
       </div>;
@@ -264,7 +264,7 @@ export default async function HrPlacementJobPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <RecruiterDriveFocusRefresh />
-      <Link href={returnTo} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+      <Link href={returnTo} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         ← Back to Drives
       </Link>
       <PageHeader
@@ -399,7 +399,7 @@ export default async function HrPlacementJobPage({
             {recruiterDriveProgressSteps(driveOverview).map(step=><li key={step.label}
               aria-current={step.state==="CURRENT"?"step":undefined}
               className={step.state==="CURRENT"
-                ?"rounded-lg border border-primary bg-primary-subtle px-3 py-3 text-sm font-semibold text-primary-text"
+                ?"rounded-lg border border-primary bg-primary-subtle px-3 py-3 text-sm font-semibold text-link"
                 :"rounded-lg border border-border bg-surface-secondary px-3 py-3 text-sm text-body"}>
               <span className="block text-xs">{step.state==="COMPLETE"?"Done":step.state==="CURRENT"?"Current":"Upcoming"}</span>
               <span className="mt-1 block">{step.label}</span>
@@ -411,7 +411,7 @@ export default async function HrPlacementJobPage({
             <Link href={recruiterDriveNextAction(driveOverview).tab
                ? "/recruiter/drives/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab+returnQuery
                : recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
-              className="mt-3 inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+              className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               {recruiterDriveNextAction(driveOverview).label}
             </Link>
           </div>
@@ -429,19 +429,19 @@ export default async function HrPlacementJobPage({
             </div>)}
           </div>
           <div className="flex flex-wrap gap-3 text-sm">
-            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants"+returnQuery} className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Review applicants</Link>
-            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery} className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Rounds & results</Link>
-            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers"+returnQuery} className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">View offers</Link>
+            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants"+returnQuery} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review applicants</Link>
+            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Rounds & results</Link>
+            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers"+returnQuery} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View offers</Link>
           </div>
         </section>
       ) : null}
       <div className="flex flex-wrap gap-3">
         <Link href={recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
-          className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Hire again
         </Link>
         <Link href={recruiterDriveDraftHref({collegeId:workspace.college.id})}
-          className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Request another drive
         </Link>
       </div>
@@ -449,23 +449,23 @@ export default async function HrPlacementJobPage({
         {(["overview", "applicants", "rounds", "offers"] as const).map(tab => (
           <Link key={tab} href={`/recruiter/drives/${workspace.job.id}?tab=${tab}${returnQuery}`}
             aria-current={filters.tab === tab ? "page" : undefined}
-            className={`inline-flex min-h-9 items-center rounded-[9px] border px-4 text-sm font-semibold capitalize ${filters.tab === tab ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
+            className={`inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold capitalize ${filters.tab === tab ? "border-primary bg-primary-subtle text-link" : "border-border text-body"}`}>
             {tab==="overview"?"Overview":tab==="applicants"?"Applicants ("+applicants.counts.all+")":
               tab==="rounds"?"Rounds & interviews":"Offers ("+offersTotal+")"}
           </Link>
         ))}
         <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
           aria-current={requestsTab?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Requests{requestData?" ("+requestData.requests.length+")":""}
         </Link>
         <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery}
           aria-current={discussionTab?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Discussion
         </Link>
         <Link href={hrDriveMessagesHref(workspace.job.id)}
-          className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Messages
         </Link>
       </nav>
@@ -478,7 +478,7 @@ export default async function HrPlacementJobPage({
             <p className="font-semibold text-foreground">Change-request activity · {requestData.requests.length} recorded</p>
             <p className="mt-1 text-body">Review submitted requests, college decisions and replies in the Requests tab.</p>
             <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
-              className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Open change requests →</Link>
+              className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open change requests →</Link>
           </div>:null}
         {threadMessages?<div className="space-y-3">
           <p className="text-xs text-muted-foreground">{threadMessages.total} recorded messages</p>
@@ -494,12 +494,12 @@ export default async function HrPlacementJobPage({
           </ol></ScrollCue>
           <RecruiterConversationReplyForm threadId={selectedThread!.id}/>
           <Link href={"/hr/conversations/"+selectedThread!.id}
-            className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Browse full conversation history</Link>
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Browse full conversation history</Link>
         </div>:<form method="post" action="/api/placements/recruiter/conversations/open" className="space-y-3">
           <input type="hidden" name="collegeId" value={workspace.college.id}/>
           <input type="hidden" name="jobId" value={workspace.job.id}/>
           <p className="text-sm text-body">No private drive discussion exists yet.</p>
-          <button type="submit" className="min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Open drive discussion</button>
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open drive discussion</button>
         </form>}
       </section>:null}
       {requestsTab&&requestData?.party==="COMPANY" ? <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
@@ -515,11 +515,11 @@ export default async function HrPlacementJobPage({
             <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
             {applicants.rows.some(row=>row.status==="SUBMITTED") ? <Link
               href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1"+returnQuery}
-              className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Focused review
             </Link> : null}
             <Link href={"/api/placements/recruiter/jobs/"+workspace.job.id+"/applicants/export?stage="+filters.stage}
-              className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Export shared applicants CSV
             </Link>
           </div>
@@ -528,7 +528,7 @@ export default async function HrPlacementJobPage({
             {HR_RECRUITER_STAGES.map(({value:stage,label}) => (
               <Link key={stage} href={`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}${returnQuery}`}
                 aria-current={filters.stage === stage ? "page" : undefined}
-                className={`inline-flex min-h-9 items-center rounded-[9px] border px-3 text-sm ${filters.stage === stage ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
+                className={`inline-flex min-h-11 items-center rounded-md border px-3 text-sm ${filters.stage === stage ? "border-primary bg-primary-subtle text-link" : "border-border text-body"}`}>
                 {label} ({stageCounts[stage]})
               </Link>
             ))}
@@ -547,7 +547,7 @@ export default async function HrPlacementJobPage({
                 <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{applicant.status}</StatusBadge><StatusBadge>{applicant.screening}</StatusBadge></div>
                 <p className="mt-2 text-xs text-muted-foreground">Applied {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(applicant.submittedAt)}</p>
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&applicant="+applicant.id+returnQuery}
-                  className="mt-3 inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Review applicant</Link>
+                  className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review applicant</Link>
               </article>
             ))}
           </div> : <p className="text-sm text-muted-foreground">{applicants.counts.all===0 ? "The placement cell has not shared the applicants yet" : "No shared applicants match this stage."}</p>}
@@ -565,8 +565,8 @@ export default async function HrPlacementJobPage({
                   <progress aria-label="Focused review progress" value={focusedNavigation.index+1} max={focusedNavigation.total}
                     className="h-2 min-w-20 flex-1 accent-primary"/>
                 </label>
-                {focusedNavigation.previous ? <Link className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
-                {focusedNavigation.next ? <Link className="rounded-[9px] border border-border px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
+                {focusedNavigation.previous ? <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
+                {focusedNavigation.next ? <Link className="rounded-md border border-border px-3 py-2 text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
               </nav> : null}
               <dl className="mt-5 grid gap-4 text-sm">
                 <div><dt className="text-muted-foreground">Applicant</dt><dd className="font-semibold text-foreground">{selectedApplicant.name}</dd></div>
@@ -613,7 +613,7 @@ export default async function HrPlacementJobPage({
                 {driveOverview.readOnly?"This drive is finished. Results can no longer be sent.":"Official screening is controlled by the placement cell. Open Focused review to stage results for this applicant."}
               </p>}
               <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery}
-                className="mt-4 inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Review rounds</Link>
+                className="mt-4 inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review rounds</Link>
             </RecruiterApplicantReviewDrawer>
           ) : null}
           <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
@@ -625,11 +625,11 @@ export default async function HrPlacementJobPage({
             <div className="flex gap-2">
               {filters.page > 1 ? (
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page-1)+returnQuery}
-                  className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Previous</Link>
+                  className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>
               ) : null}
               {filters.page < applicantsPage.pages ? (
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page+1)+returnQuery}
-                  className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Next</Link>
+                  className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>
               ) : null}
             </div>
           </nav>
@@ -640,7 +640,7 @@ export default async function HrPlacementJobPage({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">Job offers · read only</h2>
             {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<Link href={"/api/placements/recruiter/jobs/"+workspace.job.id+"/offers/export?offerState="+filters.offerState}
-              className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Export offers CSV
             </Link>:null}
           </div>
@@ -702,9 +702,9 @@ export default async function HrPlacementJobPage({
               </p>
               <nav aria-label="Selection history pages" className="flex gap-3 text-sm">
                {selectionPage.page>1?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page-1)+returnQuery}
-                className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Previous selections</Link>:null}
+                className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous selections</Link>:null}
                {selectionPage.page<selectionPage.pages?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page+1)+returnQuery}
-                className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Next selections</Link>:null}
+                className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next selections</Link>:null}
               </nav>
             </section>:null}
           {offers.length ? <DataTable
@@ -736,12 +736,12 @@ export default async function HrPlacementJobPage({
             <div className="flex gap-2">
               {filters.offerPage > 1 ? <Link
                 href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)+returnQuery}
-                className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 Previous
               </Link> : null}
               {filters.offerPage < offersPage.pages ? <Link
                 href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage+1)+returnQuery}
-                className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 Next
               </Link> : null}
             </div>
@@ -758,11 +758,11 @@ export default async function HrPlacementJobPage({
                 This drive is finished, so slots and results can no longer be sent.
               </p>
             : <div className="flex flex-wrap gap-2">          <Link href={"/recruiter/drives/"+workspace.job.id+"/rounds/editor"}
-            className="mt-2 inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+            className="mt-2 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Add, change or remove rounds
           </Link>
           <Link href={"/recruiter/drives/"+workspace.job.id+"/interview-slots"}
-            className="ml-2 mt-2 inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+            className="ml-2 mt-2 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Interview slots
           </Link>
 </div>}
@@ -802,7 +802,7 @@ export default async function HrPlacementJobPage({
 
               {!driveOverview.readOnly && round.createdByUserId===context.user.id ?
                 <Link href={"/recruiter/drives/"+workspace.job.id+"/rounds/editor"}
-                 className="mt-2 inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Change or remove</Link>:null}
+                 className="mt-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Change or remove</Link>:null}
             </li>)}
           </ul>
           {roundSchedule.length?<div className="grid gap-3 sm:grid-cols-2">
@@ -816,7 +816,7 @@ export default async function HrPlacementJobPage({
                 <ul className="mt-1 list-inside list-disc text-sm font-normal">
                   {hrRoundConflictLinks(roundSchedule,round.conflicts,workspace.job.id).map(link=>
                     <li key={link.id}>
-                      <Link href={link.href} className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+                      <Link href={link.href} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                         {link.label} · inspect round
                       </Link>
                     </li>)}
