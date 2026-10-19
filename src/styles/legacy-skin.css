@@ -631,3 +631,41 @@
   color: var(--lms-on-primary) !important;
   box-shadow: none !important;
 }
+
+/* Native select option selection follows AntD's selected teal/white state.
+ * Legacy: components___antddesign.scss:134-140 (#26bac7, #fff and wrapped
+ * option content). Popup rendering remains OS-dependent and is not forced
+ * into a custom overlay by this global paint layer.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(select[multiple] option:checked):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-primary) !important;
+  color: var(--lms-white) !important;
+}
+/* Selected menu option invalid/disabled state remains readable.
+ * Legacy: components___variables.scss:27-32 (disabled ink #a9a7ae,
+ * neutral surface #fafbfc).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(select option:disabled):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-400) !important;
+  background-color: var(--lms-neutral-50) !important;
+}
+/* Native WebKit date/time picker glyph: preserve browser picker behavior.
+ * Legacy: components___antddesign.scss:93-97,191-203,219-224 (teal picker
+ * focus, selected day and today indicator). Popup day-grid is OS-owned.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input[type="date"], input[type="time"], input[type="datetime-local"],
+    input[type="month"], input[type="week"]):not(:where([data-unskin], [data-unskin] *))::-webkit-calendar-picker-indicator {
+  color: var(--lms-primary) !important;
+}
+/* Phone and tablet selection text and hover remain the same pale-teal
+ * brand tone, as in components___variables.scss:10-13,145-159.
+ */
+@media (hover: none) {
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+    :where(tbody tr:active):not(:where([data-unskin], [data-unskin] *)) {
+    background-color: var(--lms-primary-subtle) !important;
+  }
+}
