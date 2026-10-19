@@ -1,9 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
-import {Select} from "@/components/ui/select";
-import {Button} from "@/components/ui/button";
 
 type Member={membershipId:string;displayName:string};
 export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
@@ -42,7 +42,7 @@ export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
      <option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </Select>
   </label>
-  <Button type="button" variant="secondary" disabled={!target||busy} onClick={()=>void handover()}
+  <Button type="button" disabled={!target||busy} onClick={()=>void handover()}
    className="min-h-11 sm:min-h-9">
    {busy?"Handing over…":"Hand over work"}
   </Button>
