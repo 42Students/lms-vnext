@@ -13,8 +13,10 @@ type ApplyReport={applied:number;skipped:number;unchanged:number;
  results:Array<{resultId:string;student:string;outcome:string;status:string;reason?:string}>};
 function downloadRoundCsv(csv:string,name:string){
  const url=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
- const link=document.createElement("a");link.href=url;link.download=name;link.click();
- URL.revokeObjectURL(url);
+ const link=document.createElement("a");link.href=url;link.download=name;
+ document.body.appendChild(link);
+ try { link.click(); }
+ finally { link.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000); }
 }
 export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:string}){
  const router=useRouter();const [preview,setPreview]=useState<Preview|null>(null);
@@ -42,7 +44,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
  return <section className="space-y-3 border-b border-border pb-6">
   <h2 className="font-semibold text-foreground">Apply results for the whole round</h2>
   <p className="text-sm text-body">Preview who passes, is not cleared, is waitlisted or marked absent, then confirm the full round in one step. Applied results cannot be edited.</p>
-  <Button variant="secondary" type="button" disabled={busy} onClick={()=>void load()}
+  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>void load()
    >
    {busy?"Working…":"Preview applying round results"}</Button>
   {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
@@ -54,36 +56,36 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
     <div className="p-3"><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
    </dl>
-   <div className="max-h-60 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border px-2">
+   <div className="max-h-60 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border px-2 print:max-h-none print:overflow-visible">
     {preview.rows.map(r=><div key={r.resultId} className="flex justify-between gap-2 border-b border-border px-2 py-2 text-sm last:border-b-0">
      <span>{r.student}</span><span>{r.outcome} → {r.destination} · {r.status}</span>
     </div>)}
    </div>
    <p className="text-xs text-body">{preview.skippedUnrecordedNote}</p>
-   <Button variant="secondary" type="button" onClick={()=>downloadRoundCsv(
+   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>downloadRoundCsv(
     roundApplyPreviewCsv(preview.rows),"round-"+roundId+"-apply-preview.csv")}
     >
     Export consequence preview (CSV)
    </Button>
    {!preview.ready?<Alert tone="warning">Complete this evaluation round before applying results.</Alert>:null}
-   <div className="flex flex-wrap gap-3">
+   <div className="flex flex-wrap gap-3 print:hidden">
     <Button variant="primary" type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
      Confirm and apply {preview.staged} result(s)</Button>
-    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setPreview(null)}
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>setPreview(null)
      >Not yet</Button>
    </div>
   </div>:null}
   {report?<div role="status" className="space-y-2 text-sm">
    <p className="font-semibold">{report.applied} applied · {report.skipped} skipped · {report.unchanged} already applied.</p>
-   <div className="max-h-44 overflow-y-auto">{report.results.map(x=><p key={x.resultId}>
+   <div className="max-h-44 overflow-y-auto print:max-h-none print:overflow-visible">{report.results.map(x=><p key={x.resultId}>
     {x.student}: {x.status} ({x.outcome}) {x.reason?"· "+x.reason:""}
    </p>)}</div>
-   <Button variant="secondary" type="button" className="mr-3"
+   <Button variant="secondary" type="button" className="mr-3 min-h-11 md:min-h-9 print:hidden"
     onClick={()=>downloadRoundCsv(roundApplyReportCsv(report.results),"round-"+roundId+"-apply-results.csv")}>
     Export results (CSV)
    </Button>
-   <Button variant="secondary" type="button" onClick={()=>{if(!navigator.clipboard){setError("Clipboard is unavailable. Use Export results (CSV).");return;}void navigator.clipboard.writeText(
+   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>{if(!navigator.clipboard){setError("Clipboard is unavailable. Use Export results (CSV).");return;}void navigator.clipboard.writeText(
     ["Learner\tResult state\tOutcome\tReason",...report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].map(value=>value.replaceAll("\t"," ").replaceAll("\n"," ")).join("\t"))].join("\n")
    ).catch(()=>setError("Copy failed. Use Export results (CSV)."));}}>Copy results</Button>
   </div>:null}
