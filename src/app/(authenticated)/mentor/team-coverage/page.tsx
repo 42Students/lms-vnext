@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -108,10 +109,7 @@ export default async function MentorTeamCoveragePage({
             ["Projects with no active learners",data.summary.zeroLearnerProjects],
             ["Projects without primary Mentor",data.summary.withoutPrimaryMentor],
           ] as const).map(([label,value])=>
-            <div key={label} className="rounded-xl border border-border bg-surface p-4">
-              <p className="text-xs font-semibold text-muted-foreground">{label}</p>
-              <p className="mt-2 text-xl font-semibold tabular-nums">{value}</p>
-            </div>)}
+            <StatTile key={label} label={label} value={value} className="p-4 sm:p-4" />)}
         </section>
         <p className="text-sm text-body">
           {data.total} matching project{data.total === 1 ? "" : "s"}
