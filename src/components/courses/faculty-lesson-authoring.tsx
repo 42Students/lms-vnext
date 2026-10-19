@@ -658,7 +658,7 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("ASSIGNMENT")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
             + Assignment · Full builder
           </Link>:<Button size="sm" variant="secondary" onClick={()=>setMode("ASSIGNMENT")}>
             + Assignment
@@ -667,7 +667,7 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("QUIZ")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
             + Quiz · Full builder
           </Link>:<Button size="sm" variant="secondary" onClick={()=>setMode("QUIZ")}>
             + Quiz
