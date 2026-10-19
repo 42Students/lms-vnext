@@ -2,6 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { BoardColumn } from "@/components/ui/board-column";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
@@ -101,10 +102,10 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   <div role="region" aria-label="Project Board lanes, scroll horizontally to see more"
     tabIndex={0} className="overflow-x-auto overscroll-x-contain pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    <div className="flex min-w-max gap-3">{lanes.map(lane=>
-    <section key={lane.id} aria-label={lane.label}
+    <BoardColumn key={lane.id} label={lane.label} width="compact"
       onDragOver={event=>{if(statuses.includes(lane.id as EditableStatus))event.preventDefault()}}
       onDrop={event=>drop(event,lane.id)}
-      className="w-64 shrink-0 rounded-xl border border-border bg-surface-subtle p-3">
+      >
      <h2 className="flex items-center justify-between font-semibold">
       <span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge>
      </h2>
@@ -146,7 +147,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
      })}
      {!lane.tasks.length?<li className="py-5 text-center text-xs text-muted-foreground">No tasks</li>:null}
      </ul>
-    </section>)}</div>
+    </BoardColumn>)}</div>
   </div>
  </section>;
 }

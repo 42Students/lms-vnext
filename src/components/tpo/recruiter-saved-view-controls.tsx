@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 "use client";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";

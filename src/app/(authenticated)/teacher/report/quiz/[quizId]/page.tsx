@@ -1,3 +1,4 @@
+import { MetricBar } from "@/components/ui/metric-bar";
 import Link from "next/link";
 import {notFound} from "next/navigation";
 import {parseFacultyAssessmentReportRoute,facultyQuizReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
@@ -152,12 +153,8 @@ export default async function FacultyQuizReportPage({
               <details key={bucket.label} className="rounded-md border border-border p-2 text-sm">
                 <summary className="grid min-h-9 cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <span className="text-body">{bucket.label}</span>
-                <span className="h-2 overflow-hidden rounded-full bg-muted">
-                  <span
-                    className="block h-full rounded-full bg-primary"
-                    style={{ width: `${width}%` }}
-                  />
-                </span>
+                <MetricBar label={bucket.label+" grade distribution"}
+                  value={width} maximum={100} unit="percent" />
                 <strong className="text-right text-foreground">{bucket.count}</strong>
                 </summary>
                 <ul className="mt-2 space-y-1 border-t border-border pt-2">
@@ -209,14 +206,8 @@ export default async function FacultyQuizReportPage({
                       : `${question.accuracyPercent}%`}
                   </strong>
                 </div>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-                  <span
-                    className="block h-full rounded-full bg-primary"
-                    style={{
-                      width: `${question.accuracyPercent ?? 0}%`,
-                    }}
-                  />
-                </div>
+                <MetricBar className="mt-3" label="Question answer accuracy"
+                  value={question.accuracyPercent ?? 0} maximum={100} unit="percent" />
                 <p className="mt-2 text-xs text-muted-foreground">
                   {question.answeredCount > 0
                     ? `${question.correctCount}/${question.answeredCount} correct`

@@ -1,1 +1,2 @@
-"use client";export default function Error({reset}:{error:Error;reset:()=>void}){return <section role="alert" className="space-y-3 p-5"><h2>Unable to load Section assignments</h2><button type="button" onClick={reset} className="rounded border border-border p-2">Retry</button></section>}
+"use client";
+import { Button } from "@/components/ui/button";export default function Error({reset}:{error:Error;reset:()=>void}){return <section role="alert" className="space-y-3 p-5"><h2>Unable to load Section assignments</h2><Button type="button" variant="secondary" type="button" onClick={reset} className="rounded border border-border p-2">Retry</Button></section>}

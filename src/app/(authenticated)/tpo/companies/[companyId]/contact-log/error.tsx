@@ -1,22 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
 
-export default function TpoCompanyContactLogError({
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
-  return (
-    <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
-      <h1 className="text-lg font-semibold text-foreground">
-        Couldn&apos;t load the contact log
-      </h1>
-      <p className="mt-2 text-sm text-body">
-        The activity records could not be retrieved. No empty history is assumed.
-      </p>
-      <Button className="mt-4" onClick={reset}>Retry</Button>
-    </section>
-  );
+export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorState
+    title="\n        Couldn't load the contact log\n      "
+    description="The activity records could not be retrieved. No empty history is assumed."
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+  />;
 }
