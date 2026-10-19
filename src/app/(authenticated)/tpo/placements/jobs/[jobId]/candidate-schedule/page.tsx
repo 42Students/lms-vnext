@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
+import { PageHeader } from "@/components/ui/page-header";
 import { notFound, redirect } from "next/navigation";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -38,12 +39,8 @@ export default async function TpoCandidateSchedulePage({
   return <div className="min-w-0 space-y-5">
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
       className="text-sm font-semibold text-link">← Back to drive</Link>
-    <header>
-      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">{drive.job.title} · Candidate round schedule</h1>
-      <p className="mt-2 text-sm text-body">
-        Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes.
-      </p>
-    </header>
+    <PageHeader title={drive.job.title+" · Candidate round schedule"}
+      description="Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes." />
     <section role="status" className="text-sm text-body border-b border-border pb-6">
       {slotsReady ? "Candidate-specific slot booking is available from each interview round. Room-time conflicts are checked at assignment." :
       "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
