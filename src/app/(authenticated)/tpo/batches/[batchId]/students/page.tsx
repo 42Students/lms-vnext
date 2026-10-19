@@ -60,7 +60,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    {([["Students",journey.total],["Eligible",journey.eligible],
       ["Invitation sent",batchScope.lifecycle?.invitedAt?"Yes":"Not yet"],
       ["Registered",journey.registered]] as const).map(([label,value])=>
-      <div key={label} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+      <div key={label} className="border-l-2 border-border px-3 py-2">
        <dt className="text-xs text-muted-foreground">{label}</dt>
        <dd className="text-xl font-semibold tabular-nums">{value===null?"—":value}</dd>
       </div>)}
