@@ -73,19 +73,19 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
     title="Reload the latest Faculty profile?" description="Any unsaved changes in every section will be lost."
     confirmLabel="Reload latest profile" onConfirm={() => window.location.reload()} />
   <p className="text-sm text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
-  {error?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-error">
+  {error?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-sm text-error">
    <p>{error}</p>
    {needsReload?<Button variant="secondary" type="button" onClick={()=>{
     setReloadOpen(true);
    }} className="min-h-11 px-4 sm:min-h-9">Reload latest profile</Button>:null}
   </div>:null}
-  {pending&&savingSection?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-foreground">
+  {pending&&savingSection?<p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-sm text-foreground">
     Saving {facultyProfileSaveSectionLabel(savingSection)}…</p>:null}
-  {success?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-foreground">{success}</p>:null}
-  <nav aria-label="Profile sections" className="rounded-xl border border-border bg-surface p-4">
+  {success?<p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-sm text-foreground">{success}</p>:null}
+  <nav aria-label="Profile sections" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
     <p className="mb-3 text-sm font-semibold text-foreground">Jump to a profile section</p>
     <div className="flex flex-wrap gap-2">{FACULTY_PROFILE_NAV.map(item=><a key={item.section}
-      className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text hover:underline"
+      className="rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm text-primary-text hover:underline"
       href={"#"+facultyProfileAnchor(item.section)}>{item.label}</a>)}</div>
   </nav>
   <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
