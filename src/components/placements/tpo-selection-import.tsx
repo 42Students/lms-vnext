@@ -51,16 +51,16 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
   <label className="block text-sm font-semibold">Selection list (CSV)
    <input type="file" accept=".csv,text/csv" disabled={busy} onChange={e=>void read(e.target.files?.[0]??null)}
-    className="mt-2 block w-full rounded-[9px] border border-border p-3 text-sm"/>
+    className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border p-3 text-sm"/>
   </label>
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
-   <div tabIndex={0} role="group" aria-label="Selection import preview, scroll for more" className="max-h-52 min-h-0 overflow-auto overscroll-contain rounded border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
+   <div tabIndex={0} role="group" aria-label="Selection import preview, scroll for more" className="max-h-52 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
     {entries.map(e=><p key={e.applicationId} className="border-b border-border px-2 py-1">{e.name} · {e.roleTitle}
      {e.annualCtcInr==null?"":" · ₹"+(e.annualCtcInr/100000)+" LPA"}</p>)}
    </div>
    <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
+    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
     {busy?"Recording…":"Confirm and record "+entries.length+" selections"}
    </button>
   </div>:null}
@@ -69,7 +69,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     description={unmatched.length+" unmatched rows will not be recorded. No offers will be released yet."}
     confirmLabel={"Confirm and record "+entries.length+" selections"}
     onConfirm={()=>void confirm()}/>
-  {unmatched.length?<details className="rounded border border-border p-3" open>
+  {unmatched.length?<details className="rounded-[var(--lms-control-radius)] border border-border p-3" open>
    <summary className="cursor-pointer text-sm font-semibold">{unmatched.length} unmatched or unusable rows</summary>
    <ul tabIndex={0} aria-label="Unmatched selection import rows, scroll for more" className="mt-2 max-h-40 min-h-0 list-disc overflow-y-auto overscroll-contain pl-6 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">{unmatched.map(x=>
     <li key={x.line}>Row {x.line}: {x.value||"Empty identifier"} — {x.reason}</li>)}</ul>
