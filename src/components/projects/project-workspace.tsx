@@ -464,7 +464,7 @@ export function ProjectWorkspace({
       ) : null}
 
       {show("overview") ? (
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <section className={mode==="ADMIN"?"border-b border-border pb-5":"rounded-xl border border-border bg-surface p-5"}>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</h2>
             {mentorReviewHref ? <Link href={mentorReviewHref}
