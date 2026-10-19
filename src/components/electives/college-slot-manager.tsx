@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 "use client";
 
@@ -102,21 +103,21 @@ export function CollegeSlotManager({ options, row }: {
           <option value="">No period linked</option>
           {options.periods.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </Select></Field>
-        <Field label="Semester number"><input required type="number" min={1} max={Math.min(12, limit)}
+        <Field label="Semester number"><Input required type="number" min={1} max={Math.min(12, limit)}
           className={fieldClass} value={term} onChange={event => setTerm(event.target.value)} /></Field>
-        <Field label="Academic year (optional, YYYY-YY)"><input maxLength={9}
+        <Field label="Academic year (optional, YYYY-YY)"><Input maxLength={9}
           placeholder="2026-27" className={fieldClass} value={year}
           onChange={event => setYear(event.target.value)} /></Field>
       </> : null}
-      <Field label="Slot name"><input required maxLength={150} className={fieldClass}
+      <Field label="Slot name"><Input required maxLength={150} className={fieldClass}
         value={name} onChange={event => setName(event.target.value)} /></Field>
-      <Field label="Description"><input maxLength={1000} className={fieldClass}
+      <Field label="Description"><Input maxLength={1000} className={fieldClass}
         value={description} onChange={event => setDescription(event.target.value)} /></Field>
-      <Field label="Credits"><input type="number" required min={0} max={30}
+      <Field label="Credits"><Input type="number" required min={0} max={30}
         className={fieldClass} value={credits} onChange={event => setCredits(event.target.value)} /></Field>
-      <Field label="Minimum choices"><input type="number" required min={0} max={100}
+      <Field label="Minimum choices"><Input type="number" required min={0} max={100}
         className={fieldClass} value={minPick} onChange={event => setMinPick(event.target.value)} /></Field>
-      <Field label="Maximum choices"><input type="number" required min={1} max={100}
+      <Field label="Maximum choices"><Input type="number" required min={1} max={100}
         className={fieldClass} value={maxPick} onChange={event => setMaxPick(event.target.value)} /></Field>
       {error ? <p role="alert" className="sm:col-span-2 text-sm text-red-700">{error}</p> : null}
       <div className="flex gap-3 sm:col-span-2">
