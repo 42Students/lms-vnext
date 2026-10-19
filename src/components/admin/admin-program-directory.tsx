@@ -132,7 +132,7 @@ export function AdminProgramDirectory({
 
   return (
     <div className="space-y-5">
-      <form onSubmit={create} className="rounded-xl border border-border bg-surface p-5">
+      <form onSubmit={create} className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Create New Program</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Programs belong to a department. Choose the usual academic years; two terms are stored per year.
@@ -191,11 +191,11 @@ export function AdminProgramDirectory({
           <div className="flex flex-wrap items-end gap-2">
             <label htmlFor="admin-program-page-size" className="grid gap-1 text-xs font-semibold text-body">
               Rows per page
-              <select id="admin-program-page-size" value={pageSize}
+              <Select id="admin-program-page-size" value={pageSize}
                 onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
-                className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground">
+                className="w-full">
                 {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
-              </select>
+              </Select>
             </label>
             {filtered.length ? (
               <a
