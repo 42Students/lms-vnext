@@ -144,9 +144,11 @@ export default async function AuthenticatedLayout({
       adminScopeChoices={shellData.adminScopeChoices}
     >
       <SessionResponseGuard />
-      <Suspense fallback={null}><PortalAccessNotice/></Suspense>
-      <ConnectionFailureNotice/>
-      <PageCanvas>{children}</PageCanvas>
+      <PageCanvas>
+        <Suspense fallback={null}><PortalAccessNotice /></Suspense>
+        <ConnectionFailureNotice />
+        {children}
+      </PageCanvas>
     </AppShell>
   );
 }
