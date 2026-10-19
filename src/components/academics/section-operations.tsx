@@ -387,6 +387,7 @@ export function SectionOperations({
   const facultyColumns = [
     {
       key: "faculty",
+      mobilePriority: "primary",
       header: "Faculty",
       cell: (row: FacultyAssignment) => (
         <span className="font-semibold text-foreground">
@@ -396,6 +397,7 @@ export function SectionOperations({
     },
     {
       key: "role",
+      mobilePriority: "secondary",
       header: "Responsibility",
       cell: (row: FacultyAssignment) => (
         <StatusBadge
@@ -413,6 +415,7 @@ export function SectionOperations({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (row: FacultyAssignment) =>
