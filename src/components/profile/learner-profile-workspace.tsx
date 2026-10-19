@@ -21,6 +21,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -563,11 +564,11 @@ export function LearnerProfileWorkspace(props: {
           <Button variant="secondary" onClick={openDetails}>Edit profile</Button>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface-subtle p-4">
+          <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
             <p className="m-0 text-sm font-semibold text-foreground">Profile image</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/replace remains blocked until the shared Cloud Storage profile-asset workflow is live.</p>
           </div>
-          <div className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface-subtle p-4">
+          <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
             <p className="m-0 text-sm font-semibold text-foreground">Resume</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/import/remove remains explicitly blocked until Cloud Storage signing and cleanup are live.</p>
           </div>
@@ -926,11 +927,11 @@ export function LearnerProfileWorkspace(props: {
         </>}>
         <div className="grid gap-4">
           <label className="text-sm font-semibold text-body">Role Preference (multiple)
-            <input value={jobPrefsDraft.rolePreferences.join(", ")} maxLength={800}
+            <Input value={jobPrefsDraft.rolePreferences.join(", ")} maxLength={800}
               placeholder="e.g. Software Engineer, Data Analyst"
               onChange={event=>setJobPrefsDraft(current=>({...current,
                 rolePreferences:event.target.value.split(",").map(x=>x.trim()).filter(Boolean)}))}
-              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm"/>
+              className="mt-1 min-h-11 sm:min-h-9 w-full"/>
           </label>
           <label className="text-sm font-semibold text-body">Specific Role Preference
             <Input className="mt-1" value={jobPrefsDraft.specificRolePreference} maxLength={200}
@@ -980,7 +981,7 @@ export function LearnerProfileWorkspace(props: {
                 </label>;
               if(collection==="education"&&field.key==="qualifyingExam")
                 return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
-                  <input className="mt-1.5 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"
+                  <Input className="mt-1.5 min-h-11 sm:min-h-9 w-full"
                     list="learner-qualifying-exams" value={value} maxLength={120}
                     onChange={event=>setItemDraft({...itemDraft,[field.key]:event.target.value})}/>
                   <datalist id="learner-qualifying-exams">
@@ -992,7 +993,7 @@ export function LearnerProfileWorkspace(props: {
               return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Input className="mt-1.5" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
             })}
             {collection==="education"?<label className="flex items-center gap-2 text-sm text-body sm:col-span-2">
-              <input type="checkbox" checked={Boolean(itemDraft.isCurrentlyPursuing)}
+              <Checkbox checked={Boolean(itemDraft.isCurrentlyPursuing)}
                 onChange={event=>setItemDraft(current=>({
                   ...current,isCurrentlyPursuing:event.target.checked,
                   ...(event.target.checked?{endYear:""}:{}),
@@ -1027,7 +1028,7 @@ export function LearnerProfileWorkspace(props: {
                 })}
               </fieldset>:null}
             {collection==="education"&&educationError?<p role="alert" className="sm:col-span-2 text-sm text-error">{educationError}</p>:null}
-            {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body sm:col-span-2"><input type="checkbox" checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
+            {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body sm:col-span-2"><Checkbox checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
           </div>
         ) : null}
       </Dialog>
