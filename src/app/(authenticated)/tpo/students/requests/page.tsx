@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -288,12 +289,12 @@ export default async function TpoStudentRequestsPage({
         </label>
 
         <div className="sm:col-span-3">
-          <button
+          <Button variant="primary"
             type="submit"
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+            className="min-h-9 px-5"
           >
             Apply filters
-          </button>
+          </Button>
         </div>
       </form>
 
