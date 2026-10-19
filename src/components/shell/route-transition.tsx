@@ -22,9 +22,15 @@ export function RouteTransition({children}:{children:ReactNode}) {
    const destination=new URL(link.href,window.location.href);
    if(destination.origin!==window.location.origin||destination.pathname===pathname)return;
    setLeaving(true);
+   if(recoveryTimer.current!==null)window.clearTimeout(recoveryTimer.current);
+   recoveryTimer.current=window.setTimeout(()=>setLeaving(false),3000);
   };
   document.addEventListener("click",onNavigate,true);
-  return ()=>document.removeEventListener("click",onNavigate,true);
+  return ()=>{
+   document.removeEventListener("click",onNavigate,true);
+   if(recoveryTimer.current!==null)window.clearTimeout(recoveryTimer.current);
+   recoveryTimer.current=null;
+  };
  },[pathname]);
  useEffect(()=>{setLeaving(false);},[pathname]);
  return <div key={pathname} data-slot="route-content" data-route-transitioning={leaving?"true":undefined}
