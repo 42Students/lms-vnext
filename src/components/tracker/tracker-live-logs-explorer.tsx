@@ -173,11 +173,11 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         <Input type="search" maxLength={150} value={query} onChange={event=>setQuery(event.target.value)}
           placeholder="Message, route, reference"/>
       </label>
-      <Button variant="primary" type="button" onClick={()=>void load()} disabled={pending||exporting}
+      <Button variant="primary" type="button" onClick={()=>void load()} loading={pending} disabled={pending||exporting}
        >
         {pending?"Loading…":"Refresh newer"}
       </Button>
-      <Button variant="secondary" type="button" onClick={()=>void downloadRange("csv")} disabled={pending||exporting||configured!==true}
+      <Button variant="secondary" type="button" onClick={()=>void downloadRange("csv")} loading={exporting} disabled={pending||exporting||configured!==true}
        >
         {exporting?"Exporting…":"Download logs"}
       </Button>
@@ -215,7 +215,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         </Disclosure>
       </li>)}
     </ol>:<p role="status" className="text-sm text-body">No live errors loaded.</p>}
-    {nextPage?<Button variant="secondary" type="button" onClick={()=>void load(true)} disabled={pending||exporting}
+    {nextPage?<Button variant="secondary" type="button" onClick={()=>void load(true)} loading={pending} disabled={pending||exporting}
      >
       Load older
     </Button>:null}
@@ -237,7 +237,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       <div className="mt-3 flex flex-wrap gap-3">
         <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void copy(trackerLogMarkdown(items))}
          >Copy report</Button>
-        <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void downloadRange("markdown")} disabled={exporting}
+        <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void downloadRange("markdown")} loading={exporting} disabled={exporting}
          >Download report</Button>
         <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>setReportOpen(false)}
          >Close</Button>
