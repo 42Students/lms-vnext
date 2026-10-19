@@ -51,13 +51,13 @@ export function FacultyCourseTabNavigation({
           </p>
         </div>
         {teachingSections.length > 1 ? (
-          <label htmlFor="faculty-course-section" className="text-xs font-semibold text-body">
+          <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-body-text)] sm:w-auto">
             {activeTab==="attendanceDetail"?"Select class to view attendance":"Teaching Section"}
             <Select
               id="faculty-course-section"
               value={deliveryId}
               onChange={(event) => router.push(facultyCourseTabHref(event.target.value, activeTab))}
-              className="ml-2 min-h-11 w-auto"
+              className="min-h-11 w-full min-w-0 sm:min-h-[var(--lms-control-height)] sm:w-auto"
             >
               {teachingSections.map((section) => (
                 <option key={section.deliveryId} value={section.deliveryId}>{section.label}</option>
