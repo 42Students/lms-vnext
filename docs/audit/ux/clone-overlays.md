@@ -768,3 +768,8 @@ Per-file **F2 source** passes for action menus. Evidence uses old-LMS SCSS value
 - [ ] F1/F2 category completion still blocked on local checkout grep, real focus/scroll/animation test, complete exact legacy source variants and computed style cascade.
 
 **Exact next file:** `src/components/tpo/recruiter-leads-workspace.tsx` — mobile stage/action dropdown's nested controls and dismissal semantics, then remaining indexed DropDown consumers.
+
+
+### Cross-lane main reconciliation checkpoint
+
+While preparing the current main integration, reviewed actual branch-vs-main source diffs instead of blindly copying lane blobs. Preserved a newer main-only `FilterChip` import/usage and `sortDirection` metadata in `src/components/placements/report-interactive-table.tsx` while reapplying only the 44px disabled column-chooser rows. Preserved a newer main-only `Mark all read` button size class in `src/components/hr/hr-recruiter-bell.tsx` while reapplying dismissal and hover states. Confirmed other lane paths' main-only changed lines were the superseded styling/handling under this lane, not newly introduced content. **No TypeScript/build/runtime commands were executed.** F1/F2 remain [ ] for the outstanding checkout grep and responsive browser checks.
