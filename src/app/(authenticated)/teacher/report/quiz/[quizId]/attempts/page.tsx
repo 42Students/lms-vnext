@@ -22,7 +22,7 @@ export default async function FacultyQuizAttemptPage({
     quizId,...(search.success?search.data:{deliveryId:undefined}),
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid Quiz Section or pagination</h1>
+    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid Quiz Section or pagination</h1>
     <Link href="/teacher/allQuizzes" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">All Quizzes</Link>
   </section>;
   const context=await getCurrentRequestContext();
@@ -39,7 +39,7 @@ export default async function FacultyQuizAttemptPage({
     <PageHeader eyebrow="Faculty · Quiz Report" title="Individual Quiz attempts"
       description={data.quiz.title+" · "+data.quiz.sectionName}
       actions={<Link href={back}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Full Quiz report
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-4">
@@ -68,24 +68,24 @@ export default async function FacultyQuizAttemptPage({
     </section>
     <nav aria-label="Quiz attempt view" className="flex flex-wrap gap-3">
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,data.query.q,"ALL")}
-        aria-current={data.query.view==="ALL"?"page":undefined} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">All attempts</Link>
+        aria-current={data.query.view==="ALL"?"page":undefined} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">All attempts</Link>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,data.query.q,"LATEST")}
-        aria-current={data.query.view==="LATEST"?"page":undefined} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Latest per learner</Link>
+        aria-current={data.query.view==="LATEST"?"page":undefined} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Latest per learner</Link>
     </nav>
     <nav aria-label="Quiz attempt order" className="flex flex-wrap gap-3">
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,"NEWEST",data.query.q,data.query.view)}
-        aria-current={data.query.order==="NEWEST"?"page":undefined} className="min-h-11 rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Newest first</Link>
+        aria-current={data.query.order==="NEWEST"?"page":undefined} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Newest first</Link>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,"OLDEST",data.query.q,data.query.view)}
-        aria-current={data.query.order==="OLDEST"?"page":undefined} className="min-h-11 rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Oldest first</Link>
+        aria-current={data.query.order==="OLDEST"?"page":undefined} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Oldest first</Link>
     </nav>
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+    <form method="get" className="flex flex-wrap items-end gap-3">
       <input type="hidden" name="deliveryId" value={data.query.deliveryId} />
       {data.query.order!=="NEWEST"?<input type="hidden" name="order" value={data.query.order}/>:null}
       {data.query.view!=="ALL"?<input type="hidden" name="view" value={data.query.view}/>:null}
       <label className="grid min-w-0 flex-1 basis-56 gap-1 text-sm font-semibold text-body">
         Search learner attempts
         <input type="search" name="q" defaultValue={data.query.q} maxLength={120}
-          placeholder="Learner name" className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-body text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
+          placeholder="Learner name" className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-body text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
       </label>
       <Button type="submit" variant="primary">Search</Button>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,"",data.query.view)}
