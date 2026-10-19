@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {headers} from "next/headers";
@@ -39,8 +40,8 @@ export default async function TpoCalendarPage({
     date:first(raw.date),view:first(raw.view)??initialTpoCalendarView(agent),company:first(raw.company),kind:first(raw.kind),
   });
   if(!parsed.success)return <div className="space-y-4">
-    <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Invalid calendar filters</h1>
-    <p role="alert" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
+    <PageHeader title="Invalid calendar filters" />
+    <p role="alert" className="rounded border border-border bg-surface p-4 text-sm text-body">
       Enter a valid day, calendar view, event kind and company filter. No events were queried.
     </p>
     <Link href="/tpo/calendar" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Reset calendar filters</Link>
