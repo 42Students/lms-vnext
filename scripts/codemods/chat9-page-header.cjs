@@ -144,7 +144,7 @@ function headingProps(h1, sf) {
   if (!safeAttrs(h1, ["className", "id"])) return null;
   const cls = attributes(h1).find((attr) => nameOf(attr) === "className");
   if (cls && cls.initializer && ts.isStringLiteral(cls.initializer) &&
-      /(?:^|\\s)(?:sr-only|hidden|invisible|opacity-0)(?:\\s|$)/.test(cls.initializer.text)) return null;
+      /(?:^|\s)(?:sr-only|hidden|invisible|opacity-0)(?:\s|$)/.test(cls.initializer.text)) return null;
   const title = propFromChildren(h1, sf);
   if (!title) return null;
   let id = "";
