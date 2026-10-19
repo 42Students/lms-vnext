@@ -6,5 +6,6 @@ export type DateInputProps = Omit<ComponentPropsWithRef<"input">, "type"> & {
 };
 /** Native locale-aware picker with one legacy focus/error skin. */
 export function DateInput({ mode = "date", error = false, ...props }: DateInputProps) {
-  return <Input {...props} data-slot="date-input" type={mode} error={error} />;
+  return <Input {...props} data-slot="date-input" type={mode} error={error}
+    aria-readonly={props.readOnly || undefined} />;
 }
