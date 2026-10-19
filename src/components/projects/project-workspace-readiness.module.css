@@ -42,3 +42,31 @@
 @media (prefers-reduced-motion: reduce) {
   .track > div { transition: none; }
 }
+
+/* Matching compact table-row application of the same old project progress
+ * label/track semantics, retaining 96px read-only row width. */
+.inlineCell {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+.inlineTrack {
+  width: 96px;
+  min-width: 44px;
+  height: 8px;
+  flex: 0 1 96px;
+  overflow: hidden;
+  background: #9ee4e8;
+}
+.inlineTrack > div { background: #26bac7; }
+.inlinePercent {
+  color: #1a1d21;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 767px) {
+  .inlineCell { flex-wrap: wrap; }
+  .inlineTrack { flex-basis: 72px; width: 72px; }
+}
