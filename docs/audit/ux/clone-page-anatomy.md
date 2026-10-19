@@ -625,3 +625,84 @@ Each line below means a connector fetch *after the write* confirmed **0** litera
 **B5 [ ], B6 [ ], E6 [ ]**: category not closed. Remaining work includes full-portal hand-rolled title/card/heading grep (only connector-backed scoped scans so far), legacy breadcrumb exact-source values and offscreen/keyboard/browser responsive checks.
 
 **Next exact file:** `src/app/(authenticated)/admin/domains/page.tsx` — compare existing head/actions and error states; then `src/app/(authenticated)/admin/organizations/page.tsx`, followed by Super Admin tenant/detail and other open portal page-headers as listed in this work queue.
+
+## Replacement chat-9 additional batch — Super Admin detail, content and academy source parity, 2026-10-19
+
+**Work queue:** 19 edited source-complete files (including the People Directory lexical-binding correction); 12 inspected no-change entrypoints/subroutes (11 in the table below plus `admin/domains/page.tsx`). All commits use `[chat-9]` on `chatgpt/chat-9-b`. Entries are source-level file completions, not parent-category closure.
+
+| Edited / source-verified file | Exact current file:line | B5 and E6 presentation result, with exceptions | B6 class-rule responsive result |
+| --- | --- | --- | --- |
+| [x] `src/app/(authenticated)/admin/organizations/page.tsx` | `src/app/(authenticated)/admin/organizations/page.tsx:31-37,109-122` | Organization rows use DataTable and hairline archived list; no extra rounded page shell | Phone controls min44px; 768+ controls 36px; search max width wraps |
+| [x] `src/app/(authenticated)/admin/settings/error.tsx` | `src/app/(authenticated)/admin/settings/error.tsx:14-20` | Error PageHeader no longer centered inside redundant border-top panel; retry unchanged | Shared PageHeader title 20px under768/30px desktop; error body flows full width |
+| [x] `src/components/courses/super-admin-content-directory-page.tsx` | `src/components/courses/super-admin-content-directory-page.tsx:47-88,91-127,150-155` | Resources/Videos/Live Classes share PageHeader with Courses back link in head; no separate bottom back row | Filters 1/2/3 at phone/768/1366; back min44px phone, content rows hairline |
+| [x] `src/components/admin/college-create-form.tsx` | `src/components/admin/college-create-form.tsx:95,155-168,173-186` | Address Disclosure is a hairline subsection instead of card-in-card; multi-field form retains behavior | One column <992, 4-column creation at992; address inner columns at768/992 |
+| [x] `src/components/admin/super-admin-attendance-settings-editor.tsx` | `src/components/admin/super-admin-attendance-settings-editor.tsx:41-56` | Attendance editor remains a plain border-b section with shared inputs and confirm dialog | Single-column through767, 2 columns at768 |
+| [x] `src/components/admin/tenant-domain-manager.tsx` | `src/components/admin/tenant-domain-manager.tsx:233-239,318-355` | DNS ownership detail Card flattened to a titled hairline section; read-only TXT name/value boxes intentionally retain field borders | Flex wraps hostname/action controls; min44px buttons phone |
+| [x] `src/app/(authenticated)/admin/announcements/page.tsx` | `src/app/(authenticated)/admin/announcements/page.tsx:42-59,125-140,167-194` | Receipt notices become hairline rows; slim status/alert signals kept separate | Controls min44 phone /36 desktop; search becomes min-w0 + width100% on phone |
+| [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx` | `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx:205-224,382-395` | Membership override summary no longer nests rounded cards inside the Student overrides section | Three read-only fields stack phone, 3 across at768; 44px phone controls |
+| [x] `src/app/(authenticated)/admin/people/page.tsx` | `src/app/(authenticated)/admin/people/page.tsx:111-124,142-173` | Shared People header; no extra canvas; search inputs/action links honor 44px phone target | Filter grids 1/2/4 at phone/768/1366; link min-height 44 then36 |
+| [x] `src/app/(authenticated)/admin/course-progress/page.tsx` | `src/app/(authenticated)/admin/course-progress/page.tsx:35-46,74-98` | Courses PageBackLink moved from bottom to PageHeader actions beside CSV export; plain rows preserved | Filters 1/2/5 at phone/768/1366; controls min44 mobile/36 >=768 |
+| [x] `src/app/(authenticated)/admin/batches/page.tsx` | `src/app/(authenticated)/admin/batches/page.tsx:35-77,100-105` | Batches filters/status/table stay on one inherited canvas, no extra card wrapper | Full-width filter labels until768; controls min44 mobile/36 tablet; pager min44 mobile |
+| [x] `src/app/(authenticated)/admin/hr/page.tsx` | `src/app/(authenticated)/admin/hr/page.tsx:42-61` | Invalid filter state retains PageHeader and error with corrected minimum tap height | Reset filters min44 phone,36 desktop |
+| [x] `src/app/(authenticated)/admin/departments/page.tsx` | `src/app/(authenticated)/admin/departments/page.tsx:54-60` | Shared department directory head remains; navigation action uses legacy phone target | 44px phone,36px at768 |
+| [x] `src/app/(authenticated)/admin/faculty/page.tsx` | `src/app/(authenticated)/admin/faculty/page.tsx:18-32` | AdminScopedReadPage owns faculty page title; standalone action remains outside any cosmetic card | 44px phone,36px at768 |
+| [x] `src/app/(authenticated)/admin/classes/page.tsx` | `src/app/(authenticated)/admin/classes/page.tsx:33-67,94-96` | Classes list DataTable and filters remain on one canvas; no nested card | Filters full-width until768; pager 44px phone; desktop controls36px |
+| [x] `src/app/(authenticated)/admin/people/directory/page.tsx` | `src/app/(authenticated)/admin/people/directory/page.tsx:23-45,59-80,115-130` | People Directory uses shared PageHeader/Tabs and no nested canvas; removed duplicated context declaration in one function for valid lexical binding | 1/2/5 search cols phone/768/1366; related links 44px phone/36 desktop |
+| [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx` | `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx:20-41` | College admin directory uses single PageHeader, shared back link and DataTable; session/history links accessible | Session/history links 44px phone/36 desktop |
+| [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx` | `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx:23-33` | Active-session view shares PageHeader and back action | History link target 44px phone/36 desktop |
+| [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx` | `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx:22-46` | Admin activity history PageHeader, back and export actions shared; error/empty states untouched | History CSV export 44px phone/36 desktop |
+
+### No-edit queue entries fully reviewed at file boundary
+
+| Entry (each source-fetched) | Verification and delegation |
+| --- | --- |
+| [x] `src/app/(authenticated)/admin/domains/page.tsx` | two PageHeader states and single TenantDomainManager; no local h1, main or PageCanvas |
+| [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx` | PageHeader + PageBackLink, single inherited canvas, no mobile grid override; zero literal native h1/main/PageCanvas in route source |
+| [x] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx` | PageHeader + PageBackLink; form provided by subcomponent, no local nested canvas; zero literal native h1/main/PageCanvas in route source |
+| [x] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx` | PageHeader + PageBackLink; no hand-written h1; zero literal native h1/main/PageCanvas in route source |
+| [x] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx` | PageHeader + PageBackLink; verification panel owns content, not extra page canvas; zero literal native h1/main/PageCanvas in route source |
+| [x] `src/app/(authenticated)/admin/recruiters/page.tsx` | canonical re-export of ../hr/page.tsx; shared HrAccounts page owns heading; zero literal native h1/main/PageCanvas in route source |
+| [x] `src/app/(authenticated)/admin/resources/page.tsx` | canonical delegate to SuperAdminContentDirectoryPage (edited above); zero literal native h1/main/PageCanvas in route source |
+| [x] `src/app/(authenticated)/admin/videos/page.tsx` | canonical delegate to SuperAdminContentDirectoryPage (edited above); zero literal native h1/main/PageCanvas in route source |
+| [x] `src/app/(authenticated)/admin/domains/error.tsx` | GracefulErrorBoundary delegate retains shared error head/Retry; zero literal native h1/main/PageCanvas in route source |
+| [x] `src/app/(authenticated)/admin/organizations/error.tsx` | GracefulErrorBoundary delegate retains shared error head/Retry; zero literal native h1/main/PageCanvas in route source |
+| [x] `src/app/(authenticated)/admin/colleges/error.tsx` | GracefulErrorBoundary delegate retains shared error head/Retry; zero literal native h1/main/PageCanvas in route source |
+| [x] `src/app/(authenticated)/admin/not-found.tsx` | already uses shared PageHeader and 44px mobile home action; zero literal native h1/main/PageCanvas in route source |
+
+### Value-by-value reference table for this file group
+
+| Property/state | Old LMS source:line, exact expectation | Current vNext source:line and value | Result |
+| --- | --- | --- | --- |
+| Default canvas | `docs/design/old-lms-shell-spec.md:18-20`: #fff, 1px #e5e9f0, 12px radius, padding 24, shadow none; shell background #f1f4f9 | `src/components/ui/page-canvas.tsx:13-23` and `src/app/(authenticated)/layout.tsx:147-156`; each of 19 changed files uses **0** extra `<PageCanvas>` and `<main>` tags | Inherited single white canvas; no new wrappers |
+| Page title/subtitle | `old-lms-shell-spec.md:26-28`: h1 30px/600/#172033 with grey inline description and right-aligned actions; `old-lms-pages.md:6` | `src/components/ui/page-header.tsx:26-49`; `course-progress/page.tsx:36-40` moved Courses back action into head; `settings/error.tsx:17-19` removed extra centered border | Shared PageHeader; no native h1; alternative 28px listing SCSS variant still unconfirmed |
+| Phone header/action | `legacy-styles/components___listing-page-header.scss:130-154`: <=767px title20px, actions stack and fill width | Shared `PageHeader` md768 breakpoint; directory forms use `md:` not `sm:`; `PageBackLink` remains icon+aria mobile | Matches static class selections |
+| Back link default/focus/hover | `legacy-styles/components___learn-layout.scss:361-383`: min44x44, label hidden at <=767, teal hover and focus | `src/components/ui/page-back-link.tsx:18-29`; `courses/super-admin-content-directory-page.tsx:85-88`; `admin/course-progress/page.tsx:36-40` | Shared back action, routes unchanged |
+| Desktop action height | `old-lms-shell-spec.md:23-25`: 36px; `legacy-styles/components___variables.scss:140`: 44px phone touch target | `admin/organizations/page.tsx:35,120`, `admin/batches/page.tsx:46-76,103-104`, `admin/people/page.tsx:122,168,171`, `admin/colleges/[collegeId]/admins/page.tsx:37-38` | `min-h-11 md:min-h-9` or `md:min-h-[var(--lms-control-height)]`: 44 phone,36 desktop |
+| Section-only content | `old-lms-pages.md:5,10,13` plain content on canvas divided by hairlines, not cards within cards; `legacy-styles/components___variables.scss:30` `#e5e9f0` | `src/components/admin/tenant-domain-manager.tsx:318-355`: DNS Card replaced by titled border-t section; `admin/announcements/page.tsx:187-195`: receipt cards become border-b rows; `admin/features/[collegeId]/trace/page.tsx:385-394`: overview cards become hairlines | Matches E6; input-like DNS TXT field borders retained as legitimate distinct values |
+| Distinct objects | `old-lms-pages.md:13` cards only for independent objects, e.g. report options | College create form Disclosure now border-b `college-create-form.tsx:155-168`; company/tenant object cards and alert banners stay separately surfaced | E6 exception ledger: actionable tenant, project, company choices and warning banners remain |
+| Form responsiveness | `legacy-styles/components___variables.scss:148-159`: 425/767/768/991/1365/1366 breakpoints | `college-create-form.tsx:95,157` 4-up and address 3-up at992; `admin/people/page.tsx:152` 2-up768/4-up1366; `admin/classes/page.tsx:40-66` input group full-width phone | Direct breakpoint alignment |
+| Read-only listing states | `old-lms-pages.md:9-10` tables/list rows directly on canvas with 1px separators, no nested per-row card | `admin/course-progress/page.tsx:67-88` offers border-y divide-y; `admin/batches/page.tsx:78-103` shared DataTable; `admin/people/directory/page.tsx:95-128` shared DataTable | Preserved existing pagination/filter/empty actions |
+| Disabled/loading/error | `ui-clone-checklist.md:11-17` preserve disabled, loading, empty, error, and focus states; `legacy-styles/components___variables.scss:140` 44px | `college-create-form.tsx:93-190` pending/disabled unchanged, `super-admin-attendance-settings-editor.tsx:20-65` confirm/disabled unchanged, `tenant-domain-manager.tsx:269-390` verification/deletion confirmation unchanged | Behavioral controls unchanged in source; interaction not executed |
+| Focus/hover | `legacy-styles/components___learn-layout.scss:361-383` teal hover and visible focus / transition | Existing `focus-visible` and `hover:` selectors in modified page links unchanged, shared Buttons remain, no event-handler changes in 19 files | Source retention; not browser proof |
+
+### Scoped grep/coverage proof and JSX/TS no-regression checks
+
+- **19/19 edited files** fetched from branch after latest writes. Native heading equivalent `grep -nE '<h1([[:space:]]|>)' FILE` (connector-backed regex `/<h1(?:\\s|>)/g`) => **0 in each of 19**; nested native `<main>` => **0 each**, new `<PageCanvas>` => **0 each**. File counts are *scoped*, not global grep from a checkout.
+- Rechecked pre/post opening+closing tag counts for `div, section, form, nav, article, li, dl, ul, label, fieldset` against main on the 16-file subset and static checks in later edits; `tenant-domain-manager.tsx` specifically converts the single Card open/close pair to a semantic section pair; `course-progress/page.tsx` adds one balanced action wrapper `<div></div>`. All inspected edits preserve JSX matching tags.
+- `admin/people/directory/page.tsx`: **one** `const context=await getCurrentRequestContext();` remains (previously twice in the same function), and one matching `isSuperAdmin` authorization guard remains. This is a source-level TypeScript syntax repair without running a compiler.
+- **12/12 no-edit routes** additionally source-inspected: no raw h1/main/PageCanvas. Headers are existing PageHeader or delegated to shared view/error components (see table). No additional claim about hidden transitive components beyond those inspected.
+- No runtime, TypeScript compiler, lint, tests, CI, Playwright, screenshot comparison or keyboard observation was run. All responsive and interaction proofs here are based on source classes and preserved conditionals.
+
+### Breakpoint proof for phone/tablet/desktop, this group
+
+| Width | Source rule and expected shape | Edited files proving it |
+| --- | --- | --- |
+| 320/390px | <768, single-column filters and form fields, min-height44 controls, back label visually hidden with accessible label | `people/page.tsx:152-168`, `classes/page.tsx:40-67`, `college-create-form.tsx:95-157`, `tenant-domain-manager.tsx:269-315` |
+| 425–767px | Still phone per legacy `$ssm:767px`; content and actions wrap, no decorative nested summary cards | `announcements/page.tsx:187-195`, `features/[collegeId]/trace/page.tsx:385-394` |
+| 768–991px | `md` two-column forms/summary, min-height36 desktop controls, full back-link label | `courses/super-admin-content-directory-page.tsx:90-125`, `super-admin-attendance-settings-editor.tsx:43`, `people/directory/page.tsx:79` |
+| 992–1365px | Legacy `$md:992px` enables college-create four-column form and address three-column input | `college-create-form.tsx:95,157,155` |
+| >=1366px | Legacy `$lg:1366px` enables 4/5-column inventory filters | `admin/people/page.tsx:152`, `admin/course-progress/page.tsx:46`, `admin/people/directory/page.tsx:79` |
+
+**Strict category gates B5/B6/E6 remain [ ]** pending complete repository hand-rolled title/canvas/card inventory, exhaustive value proof for all global elements/states, and device/browser screenshot verification. Do not infer full pixel parity from source checks.
+
+**Next exact file:** `src/app/(authenticated)/admin/audit/page.tsx` (Super Admin Activity Log header/actions), then `src/app/(authenticated)/admin/placements/page.tsx`, then the remaining Super Admin first/second-third routes whose inherited canvas may contain duplicate presentation wrappers.
