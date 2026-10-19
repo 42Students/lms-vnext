@@ -184,7 +184,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             <FileUpload ref={fileRef} label="Choose CSV or Excel file" maxBytes={10_000_000}
               accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               disabled={busy} onFiles={files => void chooseFile(files?.[0])}/>
-            {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
+            {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
             {preview ? (
               <div className="space-y-3">
                 <p className="text-sm text-body" role="status">
