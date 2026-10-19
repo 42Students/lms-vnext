@@ -6,6 +6,7 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-export";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -160,9 +161,9 @@ export async function ProjectAdminAuditPage({
       />
 
       {filters.ignoredInvalidFilters ? (
-        <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm leading-5 text-body">
+        <Banner tone="warning" role="alert">
           Some audit filters were invalid and have been ignored. Review the filters below and apply them again.
-        </p>
+        </Banner>
       ) : null}
 
       <nav aria-label="Audit time range" className="flex flex-wrap gap-2 text-sm">
