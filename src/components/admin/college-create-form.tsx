@@ -92,7 +92,7 @@ export function CollegeCreateForm({
     <form
       onSubmit={submit}
       aria-busy={pending}
-      className="grid min-w-0 gap-3 border-t border-border pt-4 lg:grid-cols-[1fr_1fr_12rem_auto] lg:items-end"
+      className="grid min-w-0 gap-3 border-t border-border pt-4 min-[992px]:grid-cols-[1fr_1fr_12rem_auto] min-[992px]:items-end"
     >
       <div>
         <label
@@ -152,9 +152,9 @@ export function CollegeCreateForm({
           title="Unique ID must be 3-63 chars, lowercase letters/numbers/hyphen only."
         />
       </div>
-      <div className="space-y-3 lg:col-span-4">
-       <Disclosure title="Address details (optional)" className="rounded-[var(--lms-radius-card)] border border-border p-3">
-        <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
+      <div className="space-y-3 min-[992px]:col-span-4">
+       <Disclosure title="Address details (optional)" className="border-b border-border pb-4">
+        <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">
          {([
           ["City",city,setCity,128],["State",state,setState,128],
           ["Address",addressLine1,setAddressLine1,255],["Address line 2",addressLine2,setAddressLine2,255],
@@ -181,9 +181,9 @@ export function CollegeCreateForm({
       >
         {pending ? "Creating…" : "Create College"}
       </Button>
-      {restored?<Alert tone="info" className="lg:col-span-4">Draft restored</Alert>:null}
+      {restored?<Alert tone="info" className="min-[992px]:col-span-4">Draft restored</Alert>:null}
       {error ? (
-        <Alert tone="error" className="lg:col-span-4">
+        <Alert tone="error" className="min-[992px]:col-span-4">
           {error}
         </Alert>
       ) : null}
