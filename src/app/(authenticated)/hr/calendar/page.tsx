@@ -423,33 +423,10 @@ export default async function HrCalendarPage({
                     option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds",
                   href:calendarHref(anchor,view,option),
                 }))} />
-              <nav
-                aria-label="Calendar views"
-                className="flex flex-wrap gap-3 border-b border-border"
-              >
-                {VIEWS.map((option) => (
-                  <Link
-                    key={option}
-                    href={calendarHref(
-                      anchor,
-                      option,
-                      category,
-                    )}
-                    aria-current={
-                      view === option
-                        ? "page"
-                        : undefined
-                    }
-                    className={
-                      view === option
-                        ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold capitalize text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                        : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold capitalize text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                    }
-                  >
-                    {option}
-                  </Link>
-                ))}
-              </nav>
+              <Tabs ariaLabel="Calendar views" renderPanel={false} value={view}
+                items={VIEWS.map(option=>({
+                  value:option,label:option,href:calendarHref(anchor,option,category),
+                }))} />
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-2">
