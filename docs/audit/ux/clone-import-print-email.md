@@ -326,12 +326,12 @@ The following are **source-based value comparisons**; every remaining mismatch /
 #### `src/components/tpo/tpo-academic-import-workspace.tsx`
 | Property/state | Old LMS reference | Current file:line and value | Source verdict |
 |---|---|---|---|
-| Open/preview/confirm action touch area | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `:102,129,163` shared `Button` `min-h-11 md:min-h-9` | Matched source |
-| Template link keyboard state | `components___accessibility.scss:18-21` 2px teal/3px offset | `:118` link focus-visible 2px/3px and `--lms-primary-text` | Matched source on light-theme token |
-| File input and pasted data | `components___form.scss:23-33` mouse focus removal; `pages___admin-list-pages.scss:193-214` 44px phone | `:121,123` shared FileUpload/Textarea; input 44px/36px | Shared inherited source; original drop-area state metrics missing |
-| Match/invalid table and badges | `old-lms-pages.md:9` compact list/data table and status pills | `:139-153` shared `DataTable`, success/warning `StatusBadge`, per-row Checkbox | Structural match; exact historical cells/badges unknown |
-| Review/confirmation and failure | No old import wizard result-state source | `:134-177` existing guarded preview, row inclusion, Dialog, alerts/status messages | Behaviors retained, no pixel-level claim |
-| Paper output | No legacy TPO import printer stylesheet | `:102,118,121,123,129,155,163` interactive controls hidden; results table retained | Source-only G5 print baseline |
+| Open/preview/confirm action touch area | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `:102,132,166` shared `Button` `min-h-11 md:min-h-9` | Matched source |
+| Template link keyboard state | `components___accessibility.scss:18-21` 2px teal/3px offset | `:121` link focus-visible 2px/3px and `--lms-primary-text` | Matched source on light-theme token |
+| File input and pasted data | `components___form.scss:23-33` mouse focus removal; `pages___admin-list-pages.scss:193-214` 44px phone | `:124,126` shared FileUpload/Textarea; input 44px/36px | Shared inherited source; original drop-area state metrics missing |
+| Match/invalid table and badges | `old-lms-pages.md:9` compact list/data table and status pills | `:142-156` shared `DataTable`, success/warning `StatusBadge`, per-row Checkbox | Structural match; exact historical cells/badges unknown |
+| Review/confirmation and failure | No old import wizard result-state source | `:137-180` existing guarded preview, row inclusion, Dialog, alerts/status messages | Behaviors retained, no pixel-level claim |
+| Paper output | No legacy TPO import printer stylesheet | `:102,116,121,124,126,132,158,166` interactive controls hidden; results table retained | Source-only G5 print baseline |
 
 ### Scoped grep proof and responsive-state audit
 
@@ -356,3 +356,6 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 **Responsive source proof:** 0–767px uses `min-h-11` = 44px in actions, inputs and links, matching `pages___admin-list-pages.scss:193-214`; 768px+ `md:min-h-9` resolves 36px matching `ui-clone-checklist.md:46-47`. Student chooser uses `sm:grid-cols-3`, which may show three columns on 640–767px with 44px targets. The row results are shared `DataTable` with phone single-row-card presentation and `sm:` table layout (see `src/components/ui/data-table.tsx:49-100`); no new page-specific overflow or fixed width was added. Print modifiers only suppress interactive widgets; no A4 margins, fonts or page geometry were invented.
 
 **Still open for G4:** exact legacy import wizard drop-zone measurements, hover/disabled/error/empty/stepper visual values, complete repository-wide grep and runtime phone/tablet screenshots. **Still open for G5:** historical printed offer/certificate/receipt/PDF and hosted email templates, computed print output and email clients. No tests/CI/app/browser were run. These are **whole-file source completions**, not strict category parity ticks.
+
+### Concurrent-main integration proof (2026-10-19)
+The second merge `c0886af430adec3868af30b7059c07c2cea887db` incorporated newer `main` `2808e32a641e1e35f513755b840b6ef892c61163`. For overlapping files, the merge retained the other lanes' **tenant DataTable migration** (`admin/tenants/page.tsx`) and **assessment Pagination migration** (`admin-assessment-read-directory.tsx`), with that pager still `print:hidden` at current line 104. The TPO academic import's concurrent step guidance was kept at `tpo-academic-import-workspace.tsx:116-118`; the import template/export control states are now at lines 121/124/126/132/158/166. Only G4 visual controls were patched over the newer page. The four-file scoped zero-native-control / zero-hex count was reverified after merging. G4/G5 categories remain unticked, with no tests, browser rendering or CI.

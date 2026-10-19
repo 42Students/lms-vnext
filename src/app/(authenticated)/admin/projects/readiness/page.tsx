@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { ErrorState } from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -6,6 +5,7 @@ import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope
 import { ProjectAdminReadinessPage } from "@/components/projects/project-admin-readiness-page";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 
 export default async function SuperAdminProjectReadinessRoute({
@@ -24,7 +24,7 @@ export default async function SuperAdminProjectReadinessRoute({
       <PageHeader title="Submission readiness" />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
-        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}
+        action={<PageBackLink href="/dashboard" label="Back to dashboard" />}
       />
     </div>;
   }
