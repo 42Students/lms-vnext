@@ -70,7 +70,7 @@ export default async function CollegeBatchStudentsPage({
     <PageHeader eyebrow="College Admin · Batches" title={"Students · " + batch.name}
       description={batch.program + " · Search the batch roster and move students to another class."}
       actions={<Link href="/college/batches" className="font-semibold text-[var(--lms-teal-deep)]">Back to batches</Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+    <form method="get" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border bg-surface p-4">
       <label className="grid flex-1 gap-1 text-sm font-semibold">Name, roll or email
         <input type="search" name="q" defaultValue={q} maxLength={100}
           className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm" />
