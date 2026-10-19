@@ -227,7 +227,7 @@ export default async function RecruiterCompanyReportsPage({
             collegeId,
           })}
           aria-current="page"
-          className="border-b-2 border-primary px-3 py-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="border-b-[3px] border-primary px-3 py-3 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Reports
         </Link>
@@ -266,7 +266,7 @@ export default async function RecruiterCompanyReportsPage({
         ))}
       </section>
 
-      <section aria-label="All your drives at this college" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label="All your drives at this college" className="border-b border-border pb-4 sm:pb-5">
         <h2 className="font-semibold text-foreground">All your drives at this college</h2>
         <p className="mt-1 text-sm text-body">Hiring progress of applicants already shared by the placement cell, across all your authorized drives. Private applications are not counted.</p>
         <div className="mt-4 space-y-3">
