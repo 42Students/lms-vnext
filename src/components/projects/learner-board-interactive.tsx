@@ -27,6 +27,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
  const [tasks,setTasks]=useState(initialTasks),[busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [undo,setUndo]=useState<{taskId:string;status:EditableStatus;blockerReason:string|null}|null>(null);
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
+ const [dragging,setDragging]=useState(false);
  if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
   if(!undo)return;
@@ -103,10 +104,11 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   </Button>:null}
   <p className="text-xs text-muted-foreground sm:hidden">Scroll sideways to see all Board lanes.</p>
   <div role="region" aria-label="Project Board lanes, scroll horizontally to see more"
-    tabIndex={0} className={styles.scrollRegion}>
+    tabIndex={0} data-dragging={dragging} className={styles.scrollRegion}>
    <div className={styles.track}>{lanes.map(lane=>
     <BoardColumn key={lane.id} label={lane.label} width="compact"
        className={[styles.lane, lane.id==="BACKLOG"?styles.backlogLane:"",lanes.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
+       data-can-drop={!readOnly&&!busy&&statuses.includes(lane.id as EditableStatus)}
       onDragOver={event=>{if(statuses.includes(lane.id as EditableStatus))event.preventDefault()}}
       onDrop={event=>drop(event,lane.id)}
       >
@@ -117,7 +119,8 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
       const own=membershipId!==null&&task.assigneeMembershipId===membershipId;
       const editable=!readOnly&&own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);
       return <li key={task.id} draggable={editable&&!busy}
-       onDragStart={event=>{if(editable)event.dataTransfer.setData("text/plain",task.id)}}
+       onDragStart={event=>{if(editable){event.dataTransfer.setData("text/plain",task.id);setDragging(true);}}}
+        onDragEnd={()=>setDragging(false)}
        className={"border p-3 text-sm "+styles.card}>
         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
          className="block break-words font-semibold text-primary-text">{task.title}</Link>
