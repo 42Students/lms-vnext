@@ -631,6 +631,7 @@ export function SectionOperations({
             </p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
               <Select
+                aria-label="Active program enrollment to place in section"
                 value={placementEnrollmentId}
                 onChange={(event) =>
                   setPlacementEnrollmentId(
