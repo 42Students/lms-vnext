@@ -19,14 +19,14 @@ export default async function SuperAdminQuizzesPage({
   if (!query.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <ErrorState title="Invalid quiz filters" description="Check search, status and page."
-      action={<Link href="/admin/quizzes" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
+      action={<Link href="/admin/quizzes" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if(!isSuperAdmin(context)) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <ErrorState title="Quiz access denied"
       description="Your account cannot access Super Admin quizzes."
-      action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)]">Back to dashboard</Link>}/>
+      action={<Link href="/dashboard" className="font-semibold text-primary-text">Back to dashboard</Link>}/>
   </div>;
   if (!context.adminScope?.collegeId) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
@@ -44,7 +44,7 @@ export default async function SuperAdminQuizzesPage({
     <ErrorState title="Quizzes unavailable"
       description="The quiz directory could not be loaded. Your filters have not changed."
       action={<Link href={adminAssessmentHref("QUIZ",query.data)}
-        className="font-semibold text-[var(--lms-teal-deep)]">Retry loading quizzes</Link>}/>
+        className="font-semibold text-primary-text">Retry loading quizzes</Link>}/>
   </div>;
   const data=dataResult.value;
   return <div className="space-y-4">
