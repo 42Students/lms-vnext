@@ -25,7 +25,7 @@ export default async function TrackerReportPage({
     <PageHeader eyebrow="Report an LMS issue" title="What went wrong?"
       description="Pick the context, describe the problem, and submit." />
     {isSuperAdmin(context)?<TrackerAdminNav />:
-      <Link href="/tracker/mine" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      <Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         My reports
       </Link>}
     {!ready ? <Banner tone="warning">
