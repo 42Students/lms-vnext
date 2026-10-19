@@ -28,6 +28,9 @@ type GridWorkspaceProps<Row>={
  act?:(shown:readonly Row[],selected:readonly Row[],clear:()=>void)=>ReactNode;
  exportName?:string;
  xlsxHref?:string|null;
+ onExportCsv?:(selected:boolean)=>void;
+ onExportXlsx?:(selected:boolean)=>void;
+ onCopyRows?:()=>void;
  searchPlaceholder?:string;
  searchParam?:string;
  filterTitle?:string;
