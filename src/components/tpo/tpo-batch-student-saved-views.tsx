@@ -61,7 +61,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
  return <section aria-label="BATCH_STUDENTS saved views" className="space-y-2">
   <Button variant="secondary" type="button" aria-expanded={open} onClick={toggle}
    >Saved batch views</Button>
-  {open?<div className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+  {open?<div className="min-w-0 space-y-3 border-b border-border py-4">
    <h3 className="font-semibold">Saved views</h3>
    <p className="text-xs text-body">These filters are private to your account and this batch. Pin up to five views.</p>
    <div className="flex flex-wrap gap-2" aria-label="Pinned batch views">
