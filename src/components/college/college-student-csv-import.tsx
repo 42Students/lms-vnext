@@ -1,5 +1,9 @@
 "use client";
 import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { FileUpload } from "@/components/ui/file-upload";
 
 import {DataTable} from "@/components/ui/data-table";
 
@@ -69,7 +73,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Program
           <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            >
             <option value="">Choose program</option>
             {choices.programs.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
           </Select>
@@ -77,7 +81,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Batch
           <Select required value={cohortId}
             onChange={event=>{setCohortId(event.target.value);setSectionId("");setReport(null);}}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            >
             <option value="">Choose batch</option>
             {choices.batches.filter(option=>option.programId===programId).map(option=>
               <option key={option.id} value={option.id}>{option.name}</option>)}
@@ -86,29 +90,26 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Class/Section
           <Select value={sectionId}
             onChange={event=>{setSectionId(event.target.value);setReport(null);}}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            >
             <option value="">No class placement</option>
             {choices.classes.filter(option=>option.cohortId===cohortId).map(option=>
               <option key={option.id} value={option.id}>{option.name} · capacity {option.capacity??"unlimited"}</option>)}
           </Select>
         </label>
       </div>
-      <label className="mt-4 grid gap-2 text-sm font-semibold text-body">
-        Choose local CSV file
-        <input type="file" accept=".csv,text/csv" className="max-w-full text-sm"
-          onChange={async event => {
-            const file = event.currentTarget.files?.[0];
+      <FileUpload className="mt-4" label="Choose local CSV file" maxBytes={1_000_000} accept=".csv,text/csv"
+          disabled={pending} onFiles={async files => {
+            const file = files?.[0];
             if (!file) return;
             if (file.size > 1000000) { setError("File exceeds 1 MB"); return; }
             setCsv(await file.text()); setReport(null); setConfirm(false); setError(null);
           }} />
-      </label>
       <label className="mt-4 grid gap-2 text-sm font-semibold text-body">
         CSV contents
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setReport(null); setConfirm(false);
         }} rows={8} spellCheck={false}
-          className="w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 font-mono text-xs text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm" />
+          className="font-mono text-xs" />
       </label>
       <Button variant="primary" type="button" disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => guardRun(async () => {
         try { await submit("PREVIEW"); } catch (reason) {
@@ -146,8 +147,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
 
       {report.preview && report.valid > 0 && report.invalid === 0 && report.structuralErrors.length === 0 ? <div className="space-y-3">
         <label className="flex items-start gap-2 text-sm text-body">
-          <input type="checkbox" checked={confirm} onChange={event => setConfirm(event.target.checked)}
-            className="mt-1" />
+          <Checkbox checked={confirm} onChange={event => setConfirm(event.target.checked)} className="mt-1" />
           I understand that importing creates real identities and memberships, successful rows are not rolled back,
           and any partial onboarding requires manual enrollment recovery.
         </label>
@@ -157,7 +157,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
               setError(reason instanceof Error ? reason.message : "Import failed");
             }
           })}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          >
           {pending ? "Importing..." : "Confirm import of validated rows"}
         </Button>
       </div> : null}
