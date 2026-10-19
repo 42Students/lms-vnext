@@ -17,9 +17,9 @@ export function SuperAdminStudentImportHistory({runs}:{runs:readonly Run[]}) {
     </Button>
     <dialog ref={dialogRef} aria-label="Bulk import history"
       onClose={()=>triggerRef.current?.focus()}
-      className="w-[min(92vw,48rem)] max-h-[calc(100dvh-2rem)] overflow-hidden overscroll-contain rounded-[12px] border border-border bg-surface p-5 text-foreground shadow-[0_8px_30px_rgba(26,45,72,.1)] backdrop:bg-black/50 [&[open]]:flex [&[open]]:flex-col">
+      className="w-[min(92vw,48rem)] max-h-[calc(100dvh-2rem)] overflow-hidden overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-foreground shadow-[var(--lms-overlay-shadow)] backdrop:bg-black/50 [&[open]]:flex [&[open]]:flex-col">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Bulk import history</h2>
+        <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Bulk import history</h2>
         <Button variant="secondary" type="button" onClick={()=>dialogRef.current?.close()}
           className="">Close</Button>
       </div>
