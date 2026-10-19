@@ -192,3 +192,9 @@ After the initial sweep and its merge into main, fast-forwarded `chatgpt/chat-12
 - Fixed duplicated shared Button/Input imports in `tpo-team-rename.tsx` and duplicated shared Button import in `tpo-team-thread-details.tsx` (source TypeScript hygiene). Source modifications verified with exact occurrence assertions, opening/closing JSX tag counts, a malformed `</Select>`/`</Button>` check, and follow-up reads of the newly edited components.
 - **Verification is source-only.** No tests, TypeScript compiler/typecheck, lint, CI, application execution, browser or screenshot comparison was run. This pass does not claim compile or pixel-exact parity, which awaits the orchestrator's final checks.
 - Latest source comparison before this log: `chatgpt/chat-12-b` ahead **122** and behind **0** relative to `main` at `8049636`; no changes were pushed to `main`.
+
+### Additional first-third TPO form and canvas cleanup — same session
+
+- **Eight more [chat-12] source commits** after the 37-commit batch above, bringing this session to **45 source component commits**. Finished `tpo-student-quick-panel.tsx` (shared prev/next navigation and old-LMS underline tab controls), `tpo-selected-review-queue.tsx`, `tpo-timed-debar-control.tsx`, `tpo-everyone-controls.tsx`, `tpo-spreadsheet-grid.tsx`, `tpo-participation-decision-form.tsx`, `tpo-academic-import-workspace.tsx`, and `tpo-academic-import-preview.tsx`.
+- Continued removing native buttons/selects/textareas with long styles; kept native checkboxes and the file-upload input. Removed redundant outer white cards in academic CSV import/preview so the one page canvas remains primary. Kept workflow copy, eligibility safety checks, keyboard behavior, table content, routes and server mutations unchanged.
+- Re-fetched all eight component files and verified shared import uniqueness and intact JSX closing tags. Source review only; no run, typecheck, tests, lint, CI or pixel comparison.
