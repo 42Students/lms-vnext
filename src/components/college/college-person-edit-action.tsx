@@ -32,7 +32,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   const [error,setError]=useState("");
   const [success,setSuccess]=useState("");
   const base="/api/college/people/"+encodeURIComponent(membershipId)+"/edit";
-  const field="min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+  const field="min-h-[var(--lms-control-height)] w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
   async function load(){
     setLoading(true);setError("");setSuccess("");setPerson(null);setOpen(true);
     try{
@@ -72,7 +72,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   }
   return <div className="inline-block">{confirmation}
     <Button variant="secondary" type="button" onClick={()=>void load()}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text">
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text">
       {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
     </Button>
     {success&&<span role="status" className="ml-2 text-xs text-body">{success}</span>}
@@ -80,7 +80,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
         <div className="flex items-start justify-between gap-3">
           <h2 className="text-lg font-semibold">{kind==="FACULTY"?"Edit Faculty":"Edit Student"}</h2>
           <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3">Close</Button>
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3">Close</Button>
         </div>
         {loading&&<p role="status" className="mt-4 text-sm">Loading profile…</p>}
         {error&&<p role="alert" className="my-2 text-sm text-error">{error}</p>}
@@ -149,19 +149,19 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
               onChange={e=>patch("contactEmail",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm sm:col-span-2">Address
-            <Textarea className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-base sm:text-sm" rows={2} maxLength={1000}
+            <Textarea className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base sm:text-sm" rows={2} maxLength={1000}
               value={person.address} onChange={e=>patch("address",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm sm:col-span-2">Bio
-            <Textarea className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-base sm:text-sm" rows={3} maxLength={3000}
+            <Textarea className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base sm:text-sm" rows={3} maxLength={3000}
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
           </label>
           <div className="flex gap-2 sm:col-span-2">
-            <Button variant="primary" type="submit" disabled={pending} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-on-primary disabled:opacity-50">
+            <Button variant="primary" type="submit" disabled={pending} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary disabled:opacity-50">
               {pending?"Saving…":"Save changes"}
             </Button>
             <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-4">Cancel</Button>
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4">Cancel</Button>
           </div>
         </form>}
     </Dialog>
