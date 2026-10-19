@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { Tabs } from "@/components/ui/tabs";
 import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPORT_CAP } from "@/modules/placements/college-drive-applications-model";
 import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
 import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
@@ -85,18 +86,12 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       </label>
       <Button type="submit" className="self-end">Filter</Button>
     </form>
-    <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2 border-b border-border">
-      {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>
-        <Link key={stage} href={adminHref(jobId,{...query,stage,page:1})}
-          aria-current={query.stage===stage?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-sm font-semibold sm:min-h-9 "+
-            (query.stage===stage?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
-          {stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase()}
-          <span className="tabular-nums">{stage==="ALL"?
-            Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):
-            data.stageCounts[stage]??0}</span>
-        </Link>)}
-    </nav>
+    <Tabs ariaLabel="Application pipeline stages" value={query.stage} renderPanel={false}
+      items={(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>({
+       value:stage,label:stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase(),
+       count:stage==="ALL"?Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):data.stageCounts[stage]??0,
+       href:adminHref(jobId,{...query,stage,page:1}),
+      }))}/>
     <div className="flex flex-wrap justify-between gap-3 text-sm">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${adminHref(jobId,query,true).split("/export")[1] ?? ""}`}
