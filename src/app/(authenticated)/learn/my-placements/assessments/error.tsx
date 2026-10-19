@@ -17,7 +17,7 @@ export default function LearnerAssessmentsError({
       action={<div className="flex flex-wrap justify-center gap-3">
         <Button variant="secondary" onClick={reset}>Retry</Button>
         <Link href="/learn/my-placements"
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
           My Placements
         </Link>
       </div>}

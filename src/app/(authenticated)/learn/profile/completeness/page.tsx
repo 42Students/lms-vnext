@@ -26,7 +26,7 @@ export default async function ProfileCompleteness({searchParams}:{
     {value:"filled",label:"Filled"},
   ] as const;
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
+    <Link href="/learn/profile" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
       ← Back to Profile
     </Link>
     <PageHeader eyebrow="Learner · Profile" title="Profile completion checklist"

@@ -110,7 +110,7 @@ export function LearnerJobsBrowse({
       <section className="rounded-xl border border-border bg-surface p-3 sm:p-5" aria-label="Find placement drives">
         <button type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
           onClick={()=>setMobileOpen(value=>!value)}
-          className="flex min-h-11 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">
+          className="flex min-h-11 sm:min-h-9 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">
           <span>{mobileOpen ? "Hide drive filters" : learnerJobsMobileFilterLabel(filters)}</span>
           <span aria-hidden="true">{mobileOpen ? "−" : "+"}</span>
         </button>
@@ -247,7 +247,7 @@ export function LearnerJobsBrowse({
         <div className="space-y-3">
           <EmptyState title={empty.title} description={empty.description} />
           <Link href="/learn/my-placements"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
             Review placement dashboard →
           </Link>
         </div>

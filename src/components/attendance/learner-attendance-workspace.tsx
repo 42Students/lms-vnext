@@ -315,7 +315,7 @@ export function LearnerAttendanceWorkspace({
               Jump to month
               <input
                 type="month"
-                className="mt-1.5 min-h-11 rounded-md border border-border bg-surface px-3 text-base text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+                className="mt-1.5 min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
                 value={monthKey(month)}
                 onChange={(event) =>
                   changeMonth(
@@ -354,7 +354,7 @@ export function LearnerAttendanceWorkspace({
             </p>
             {learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month) ? (
               <Link href={learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month)!}
-                className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
                 Full course attendance history →
               </Link>
             ) : null}
@@ -496,21 +496,21 @@ export function LearnerAttendanceWorkspace({
         </div>
         <div className="flex w-full flex-wrap gap-3 sm:w-auto">
         <label className="w-full min-w-44 flex-1 text-xs font-semibold text-body">Order
-          <Select className="mt-1.5 min-h-11 w-full" value={historyOrder}
+          <Select className="mt-1.5 min-h-11 sm:min-h-9 w-full" value={historyOrder}
             onChange={event=>changeHistoryOrder(event.target.value as LearnerAttendanceOrder)}>
             <option value="NEWEST">Newest first</option>
             <option value="OLDEST">Oldest first</option>
           </Select>
         </label>
         <label className="w-full min-w-44 flex-1 text-xs font-semibold text-body">Show
-          <Select className="mt-1.5 min-h-11 w-full" value={historyFilter}
+          <Select className="mt-1.5 min-h-11 sm:min-h-9 w-full" value={historyFilter}
             onChange={event => changeHistoryFilter(event.target.value as LearnerAttendanceHistoryFilter)}>
             {LEARNER_ATTENDANCE_HISTORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
         </label>
         {(historyFilter !== "ALL" || historyOrder !== "NEWEST") ? (
           <button type="button" onClick={() => router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false})}
-            className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
             Reset history filters
           </button>
         ) : null}
@@ -521,7 +521,7 @@ export function LearnerAttendanceWorkspace({
           <span>{attendanceCsv.truncated ? "CSV includes the first 200 matching sessions; narrow the selection for remaining records." : "CSV includes the matching sessions shown for this month."}</span>
           <a download="learner-attendance-history.csv"
             href={"data:text/csv;charset=utf-8,"+encodeURIComponent(attendanceCsv.content)}
-            className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
             Download attendance CSV
           </a>
         </div>

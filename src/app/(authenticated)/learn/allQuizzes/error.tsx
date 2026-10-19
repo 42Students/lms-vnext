@@ -12,7 +12,7 @@ export default function LearnerAssessmentsError({
 }) {
   return (
     <div className="rounded-xl border border-border bg-surface p-8 text-center">
-      <h1 className="m-0 text-xl font-semibold text-foreground">Could not load this page</h1>
+      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Could not load this page</h1>
       <p className="mt-2 text-sm text-body">
         The assessment list failed to load. This is not treated as an empty list.
       </p>

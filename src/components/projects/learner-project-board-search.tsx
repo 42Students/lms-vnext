@@ -16,12 +16,12 @@ export function LearnerProjectBoardSearch({
         <label className="flex-1 text-sm font-semibold text-foreground">
           Search tasks
           <input name="taskSearch" type="search" maxLength={100} defaultValue={search}
-            placeholder="Task title or details" className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 font-normal" />
+            placeholder="Task title or details" className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-normal" />
         </label>
         <label className="text-sm font-semibold text-foreground">
           Priority
           <select name="priority" defaultValue={priority}
-            className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal">
+            className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-normal">
             <option value="">All priorities</option>
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -32,7 +32,7 @@ export function LearnerProjectBoardSearch({
         <label className="text-sm font-semibold text-foreground">
           Status
           <select name="taskStatus" defaultValue={status}
-            className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal">
+            className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-normal">
             <option value="">All statuses</option>
             <option value="TODO">To do</option>
             <option value="IN_PROGRESS">In progress</option>
@@ -42,7 +42,7 @@ export function LearnerProjectBoardSearch({
           </select>
         </label>
         <label className="text-sm font-semibold text-foreground">Task order
-          <select name="taskSort" defaultValue={taskSort} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal">
+          <select name="taskSort" defaultValue={taskSort} className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-normal">
             <option value="DEFAULT">Project order</option><option value="PRIORITY">Highest priority first</option>
             <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option>
           </select>
@@ -50,7 +50,7 @@ export function LearnerProjectBoardSearch({
         <label className="text-sm font-semibold text-foreground">
           Sprint
           <select name="sprintId" defaultValue={sprintId}
-            className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal">
+            className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-normal">
             <option value="">All sprints</option>
             {sprints.map(sprint => <option key={sprint.id} value={sprint.id}>{sprint.title}</option>)}
           </select>
@@ -58,7 +58,7 @@ export function LearnerProjectBoardSearch({
         <label className="text-sm font-semibold text-foreground">
           Release
           <select name="releaseId" defaultValue={releaseId}
-            className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal">
+            className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-normal">
             <option value="">All releases</option>
             {releases.map(release=>(
               <option key={release.id} value={release.id}>{release.title}</option>
@@ -66,12 +66,12 @@ export function LearnerProjectBoardSearch({
           </select>
         </label>
         <label className="text-sm font-semibold text-foreground">Assignee
-          <select name="assignee" defaultValue={mine ? "mine" : ""} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal">
+          <select name="assignee" defaultValue={mine ? "mine" : ""} className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-normal">
             <option value="">Everyone</option><option value="mine">Mine</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply</button>
-        <Link href={base} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-body">Clear all</Link>
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply</button>
+        <Link href={base} className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body">Clear all</Link>
       </form>
   );
   return (

@@ -36,18 +36,18 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
       className="mt-1 min-h-24 w-full rounded border border-border bg-surface p-3"/></label>
    <label className="text-sm">Preferred date and time
     <input required type="datetime-local" value={date} onChange={e=>setDate(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded border border-border bg-surface p-3"/></label>
+      className="mt-1 min-h-11 sm:min-h-9 w-full rounded border border-border bg-surface p-3"/></label>
    <label className="text-sm">Mode
     <select value={nextMode} onChange={e=>setNextMode(e.target.value as typeof mode)}
-      className="mt-1 min-h-11 w-full rounded border border-border bg-surface p-3">
+      className="mt-1 min-h-11 sm:min-h-9 w-full rounded border border-border bg-surface p-3">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Online</option>
     </select></label>
    {nextMode==="ON_CAMPUS"?<label className="text-sm">Suggested venue
     <input required value={nextVenue} maxLength={500} onChange={e=>setNextVenue(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded border border-border bg-surface p-3"/></label>:
+      className="mt-1 min-h-11 sm:min-h-9 w-full rounded border border-border bg-surface p-3"/></label>:
     <label className="text-sm">Suggested meeting URL
      <input required type="url" value={nextUrl} maxLength={2000} onChange={e=>setNextUrl(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded border border-border bg-surface p-3"/></label>}
+      className="mt-1 min-h-11 sm:min-h-9 w-full rounded border border-border bg-surface p-3"/></label>}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    <button type="button" disabled={busy||reason.trim().length<3||!date||
      (nextMode==="ON_CAMPUS"?!nextVenue.trim():!/^https:\/\//i.test(nextUrl))}
