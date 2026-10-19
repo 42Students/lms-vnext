@@ -194,8 +194,8 @@ export default async function RecruiterCompanyReportsPage({
               }
               className={
                 grant.collegeId === collegeId
-                  ? "rounded-full bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
-                  : "rounded-full border border-border bg-surface px-4 py-2 text-sm text-body hover:border-primary"
+                  ? "rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
+                  : "rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm text-body hover:border-primary"
               }
             >
               {grant.collegeName}

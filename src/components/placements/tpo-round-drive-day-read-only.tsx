@@ -195,7 +195,7 @@ export function TpoRoundDriveDayReadOnly({
           {summary.map(([label, count]) => (
             <div
               key={label}
-              className="rounded-xl border border-border bg-surface p-4"
+              className="border-b border-border px-1 py-4"
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {label}
@@ -238,7 +238,7 @@ export function TpoRoundDriveDayReadOnly({
         aria-label="Round applicant roster"
         className="overflow-hidden border-t border-border"
       >
-        <div className="border-b border-border p-5">
+        <div className="border-b border-border py-4">
           <h2 className="text-base font-semibold text-foreground">
             Applicants in this round
           </h2>
