@@ -7,6 +7,7 @@ import {useState} from "react";
 import type {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
 import {DataTable} from "@/components/ui/data-table";
 import { MetricBar } from "@/components/ui/metric-bar";
+import { StatTile } from "@/components/ui/stat-tile";
 import {EmptyState} from "@/components/ui/empty-state";
 
 type Result=Awaited<ReturnType<typeof getCollegeLearnerProgressReport>>;
@@ -59,17 +60,14 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
   {!report?<p className="text-sm text-muted-foreground">
    Select a Class and Course to see each enrolled learner’s progress.
   </p>:<>
-   <dl className="grid gap-3 sm:grid-cols-4">
+   <div className="grid gap-3 sm:grid-cols-4" aria-label="Class course progress summary">
     {[
      ["Average completion",report.averageCompletion+"%"],
      ["Students",String(report.students)],
      ["Not started",String(report.notStarted)],
      ["Items measured",String(report.itemsMeasured)],
-    ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3">
-     <dt className="text-xs text-muted-foreground">{label}</dt>
-     <dd className="mt-1 text-xl font-semibold tabular-nums">{value}</dd>
-    </div>)}
-   </dl>
+    ].map(([label,value])=><StatTile key={label} label={label} value={value} className="p-3 sm:p-3" />)}
+   </div>
    <Link prefetch={false} download
     href={"/api/courses/college/learner-progress/export?"+
      new URLSearchParams({offeringId:report.chosen.offeringId,deliveryId:report.chosen.deliveryId}).toString()}
