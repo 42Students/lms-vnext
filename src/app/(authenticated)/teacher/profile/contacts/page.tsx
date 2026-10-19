@@ -8,7 +8,7 @@ export default async function FacultyOwnContactPage(){
  return <div className="min-w-0 max-w-full space-y-6">
  <PageHeader eyebrow="Faculty · Profile" title="Contact details"
   description="Your college-managed sign-in details and the status of optional contact fields."
-  actions={<Link href="/teacher/profile" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Profile</Link>}/>
+  actions={<Link href="/teacher/profile" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Profile</Link>}/>
  <section className="border-b border-border pb-5">
   <h2 className="font-semibold text-foreground">Registered identity contact</h2>
   <dl className="mt-4 grid gap-4 sm:grid-cols-2">
