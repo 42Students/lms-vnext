@@ -1,4 +1,8 @@
 "use client";
+import { DateInput } from "@/components/ui/date-input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meetingUrl}:{applicationId:string;roundId:string;mode:"ON_CAMPUS"|"VIRTUAL";venue:string|null;meetingUrl:string|null}){
@@ -32,21 +36,21 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
    <h4 className="font-semibold">Ask to reschedule</h4>
    <p className="text-sm text-body">The placement cell must approve your suggested time.</p>
    <label className="text-sm">Reason (3–900 characters)
-    <textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={900} rows={3}
+    <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={900} rows={3}
       className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"/></label>
    <label className="text-sm">Preferred date and time
-    <input required type="datetime-local" value={date} onChange={e=>setDate(e.target.value)}
+    <DateInput required mode="datetime-local" value={date} onChange={e=>setDate(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/></label>
    <label className="text-sm">Mode
-    <select value={nextMode} onChange={e=>setNextMode(e.target.value as typeof mode)}
+    <Select value={nextMode} onChange={e=>setNextMode(e.target.value as typeof mode)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Online</option>
-    </select></label>
+    </Select></label>
    {nextMode==="ON_CAMPUS"?<label className="text-sm">Suggested venue
-    <input required value={nextVenue} maxLength={500} onChange={e=>setNextVenue(e.target.value)}
+    <Input required value={nextVenue} maxLength={500} onChange={e=>setNextVenue(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/></label>:
     <label className="text-sm">Suggested meeting URL
-     <input required type="url" value={nextUrl} maxLength={2000} onChange={e=>setNextUrl(e.target.value)}
+     <Input required type="url" value={nextUrl} maxLength={2000} onChange={e=>setNextUrl(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/></label>}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    <button type="button" disabled={busy||reason.trim().length<3||!date||
