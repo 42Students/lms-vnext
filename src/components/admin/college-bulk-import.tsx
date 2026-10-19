@@ -68,7 +68,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
     <Button type="button" variant="secondary" disabled={busy}
      onClick={()=>csv?setConfirmDiscard(true):discard()}>Discard draft</Button>
    </div>
-   {results.length>0?<div className="max-h-80 overflow-auto"><h3 className="font-semibold">Import results</h3>
+   {results.length>0?<div role="region" aria-label="College import results" className="max-h-80 overflow-auto"><h3 className="font-semibold">Import results</h3>
     <DataTable caption="College bulk import results" rows={results} getRowKey={row=>String(row.line)}
      empty={<p role="status" className="text-sm text-body">No import results have been recorded.</p>}
      columns={[
