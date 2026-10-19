@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import {platformAnnouncementPublicationSummary} from "@/modules/announcements/super-admin-publish-consent-model";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { safeAnnouncementLink } from "@/modules/announcements/link-model";
@@ -245,7 +246,7 @@ export function AnnouncementAdminWorkspace({
               <Input className="mt-1" type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
             </label>
             <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
-              <input type="checkbox" checked={pinned} onChange={(e) => setPinned(e.target.checked)} />
+              <Checkbox checked={pinned} onChange={(e) => setPinned(e.target.checked)} />
               Pin for recipients
             </label>
             {!createTiming.valid?<p role="alert" className="md:col-span-2 text-sm text-danger-text">Invalid timing: expiry must follow the schedule.</p>:null}
@@ -335,7 +336,7 @@ export function AnnouncementAdminWorkspace({
         {editing ? (
           <form id="announcement-edit-form" className="grid gap-4">
             {requiresPublicationConsent?<label className="flex items-start gap-2 text-sm text-body">
-              <input type="checkbox" checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
+              <Checkbox checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
               I reviewed the audience and notice contents and consent to applying changes to recipients.
             </label>:null}
             <label className="text-sm font-semibold text-body">
@@ -378,7 +379,7 @@ export function AnnouncementAdminWorkspace({
               <Input name="expiresAt" type="datetime-local" defaultValue={localInputValue(editing.expiresAt)} className="mt-1" />
             </label>
             <label className="flex items-center gap-3 text-sm font-semibold text-body">
-              <input name="isPinned" type="checkbox" defaultChecked={editing.isPinned} />
+              <Checkbox name="isPinned" defaultChecked={editing.isPinned} />
               Pin for recipients
             </label>
           </form>
