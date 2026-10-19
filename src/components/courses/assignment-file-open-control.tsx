@@ -90,7 +90,7 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
         return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-3">
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={descriptor.detail}><StatusBadge tone={descriptor.tone}>{descriptor.label}</StatusBadge></span>
-          {descriptor.usable ? <Button type="button" variant="secondary" size="sm"
+          {descriptor.usable ? <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9"
             disabled={busyId !== null} onClick={() => void download(file.id)}>
             {busyId === file.id ? "Preparing file…" : "Download"}
           </Button> : null}
