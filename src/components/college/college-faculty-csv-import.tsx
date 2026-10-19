@@ -1,4 +1,6 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
 import { useRef, useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
@@ -68,15 +70,15 @@ export function CollegeFacultyCsvImport(){
         }}/>
       </label>
       <label className="grid gap-2 text-sm font-semibold">CSV contents
-        <textarea rows={10} value={csv} disabled={pending} onChange={event=>{
+        <Textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
           setCsv(event.target.value);setReport(null);setConfirmed(false);
         }} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-mono text-xs"/>
       </label>
-      <button type="button" disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
-        className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+      <Button variant="primary" type="button" disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
+        className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
         {pending?"Validating…":"Validate CSV"}
-      </button>
+      </Button>
       {error&&<p role="alert" className="text-sm text-error">{error}</p>}
     </section>
     {report&&<section className="space-y-4 border-t border-border pt-5">
@@ -103,10 +105,10 @@ export function CollegeFacultyCsvImport(){
           <input type="checkbox" checked={confirmed} onChange={event=>setConfirmed(event.target.checked)}/>
           I understand valid rows create real faculty memberships; partial failures require manual review.
         </label>
-        <button type="button" disabled={pending||!confirmed} onClick={()=>run("IMPORT")}
-          className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+        <Button variant="primary" type="button" disabled={pending||!confirmed} onClick={()=>run("IMPORT")}
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
           {pending?"Registering…":"Confirm faculty registration"}
-        </button>
+        </Button>
       </div>}
     </section>}
   </div>;
