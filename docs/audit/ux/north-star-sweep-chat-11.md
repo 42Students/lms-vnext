@@ -29,5 +29,78 @@ Owner: chat-11. Branch: `chatgpt/chat-11-b`. Reference snapshot: `main` 2026-10-
 ## Status
 
 - [x] Source inventory and design references established; branch synchronized from main.
-- [ ] Page/control sweep in progress. Commit hashes and complete file list will be added as changes land.
+- [x] Source-level page and component sweep completed across the inventory; see exact changed paths below.
 - [ ] Legacy-browser visual comparison at 320/360/390/1280px, CI/TypeScript and live runtime verification are deferred per owner direction.
+
+## Execution record — 2026-10-19
+
+- Pulled current `main` into the chat-11 branch before the first source edit (fast-forward), wrote this inventory **before** code changes, and later merged the new `main` non-destructively. No edits to shared `src/components/ui`, global CSS, top bar or sidebar.
+- **147 applicable TSX sources reviewed:** 76 loading/error surfaces plus 71 pages/imported editors. Several inherited the newly shipped old-LMS shared skins and required no local override; **52 TSX sources changed** in this sweep.
+- Changes were restricted to presentation: legacy desktop/mobile page headings, semantic link/primary colors, control borders/radii and white primary labels, eliminating ordinary section-card shells that duplicated `PageCanvas`, and fixing native retry controls. All existing page content, navigation, async logic, permission checks, and text are preserved.
+- Primary source commits: `6f5b69e`, `99bb50d`, `8130287`, `ba44149`, `a178024`, `1ee4a0c`, `3c81fa7`, `5a7cb20`, `8f73477`, `738877b`. Follow-up class-token cleanup: `e98bec6`, `f7d74df`, `5705a4b`, `1e6b412`, `2c2826f`. Branch merge: `4df3d74`.
+- Source-level re-review removed accidental standalone `-` utility tokens after flattening and aligned secondary bordered links to legacy 9px control radius. The component kit's measured Inter typeface and existing `PageHeader`/`Button`/`Input`/`Select` skins remain the canonical source of visual details.
+- **Not certified:** No TypeScript, tests, CI, browser/screenshots, actual accessibility-tree audit, or legacy-vs-vNext pixel visual diff was executed. Owner's no-CI instruction applies. This is the authored source sweep, not proof of visual parity under production data.
+
+### Exact changed TSX paths (compared with synced main baseline)
+
+- `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
+- `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
+- `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
+- `src/app/(authenticated)/admin/course-progress/page.tsx`
+- `src/app/(authenticated)/admin/course-progress/students/page.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- `src/app/(authenticated)/admin/features/page.tsx`
+- `src/app/(authenticated)/admin/module-access/page.tsx`
+- `src/app/(authenticated)/admin/settings/auth/page.tsx`
+- `src/app/(authenticated)/admin/settings/error.tsx`
+- `src/app/(authenticated)/admin/settings/page.tsx`
+- `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- `src/app/(authenticated)/admin/tenants/page.tsx`
+- `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- `src/app/(authenticated)/college/college-profile/page.tsx`
+- `src/app/(authenticated)/college/course-progress/page.tsx`
+- `src/app/(authenticated)/college/page.tsx`
+- `src/app/(authenticated)/tpo/settings/after-college/error.tsx`
+- `src/app/(authenticated)/tpo/settings/blocked-dates/error.tsx`
+- `src/app/(authenticated)/tpo/settings/branding/error.tsx`
+- `src/app/(authenticated)/tpo/settings/job-types/error.tsx`
+- `src/app/(authenticated)/tpo/settings/notices/page.tsx`
+- `src/app/(authenticated)/tpo/settings/notifications/error.tsx`
+- `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- `src/app/(authenticated)/tpo/settings/prep-readiness/error.tsx`
+- `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
+- `src/app/(authenticated)/tpo/settings/recruiters/error.tsx`
+- `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- `src/app/(authenticated)/tpo/settings/rules/error.tsx`
+- `src/app/(authenticated)/tpo/settings/season/error.tsx`
+- `src/app/(authenticated)/tpo/settings/see/error.tsx`
+- `src/app/(authenticated)/tpo/settings/team/error.tsx`
+- `src/app/(authenticated)/tpo/settings/team/page.tsx`
+- `src/app/(authenticated)/tpo/settings/trusted/error.tsx`
+- `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
+- `src/components/admin/college-branding-form.tsx`
+- `src/components/admin/college-branding-preview.tsx`
+- `src/components/admin/descendant-feature-rule-editor.tsx`
+- `src/components/placements/placement-season-manager.tsx`
+- `src/components/placements/tpo-college-rules-control.tsx`
+- `src/components/placements/tpo-public-placement-content-editor.tsx`
+- `src/components/placements/tpo-recruiter-grant-controls.tsx`
+- `src/components/placements/tpo-season-controls.tsx`
+- `src/components/tpo/tpo-after-college-bulk-editor.tsx`
+- `src/components/tpo/tpo-job-types-editor.tsx`
+- `src/components/tpo/tpo-public-join-link-card.tsx`
+
+### Verified no-local-change class
+
+- Unchanged pages and editor components already use semantic tokens, shared controls, or the intentionally separate card/tile objects. All remaining route-specific error/loading files were inspected: shared `GracefulPageLoading`, `GracefulErrorBoundary`, `ErrorState`, `Skeleton` and neutral `bg-muted` skeleton placeholders inherit chat-17's kit.
+- No structural modifications were made to forms, tables, section order, search filters, statuses, permission checks, or response bodies.
+
+### Visual handoff (for orchestrator with a running app)
+
+Check at 320/360/390/768/1280px: page-canvas border/padding, TPO settings left navigation and sticky behavior, filter and save control height, keyboard focus and overlays, tenant setup steps, branding preview, sign-in-method radio rows, module-access hierarchy tabs, readiness evidence tables, College Admin course progress, TPO notice error/retry and contact settings. Diff screenshots against the old LMS before release.
