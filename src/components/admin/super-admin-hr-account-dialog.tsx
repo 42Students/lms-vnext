@@ -148,7 +148,7 @@ export function SuperAdminHrAccountDialog({
                   setAdditionalRelationshipIds([]);}}/>
               Company not listed? Create a company by name
             </label>
-            {createCompany?<div className="mb-4 space-y-3 rounded border border-border p-3">
+            {createCompany?<div className="mb-4 space-y-3 border-b border-border pb-4">
               <label className="grid gap-1 text-sm font-semibold">Company name
                 <Input value={newCompanyName} minLength={2} maxLength={150} required
                   onChange={event=>setNewCompanyName(event.target.value)} disabled={pending}/>
@@ -201,7 +201,7 @@ export function SuperAdminHrAccountDialog({
             </Select>
 
             {companyRelationshipId&&!createCompany ? (
-              <fieldset className="mt-3 space-y-2 rounded border border-border p-3">
+              <fieldset className="mt-3 space-y-2 border-b border-border pb-4">
                 <legend className="text-xs font-semibold">Colleges · optional additional access</legend>
                 <p className="text-xs text-muted-foreground">
                   You can add or remove colleges later. Only colleges connected to this same company are shown.
@@ -258,7 +258,7 @@ export function SuperAdminHrAccountDialog({
             ) : null}
           </div>
         ) : (
-          <div className="rounded-lg border border-border bg-muted px-3 py-3">
+          <div className="border-y border-border bg-muted px-3 py-3">
             <p className="m-0 text-xs font-semibold text-muted-foreground">
               Company
             </p>
@@ -404,7 +404,7 @@ export function SuperAdminHrAccountDialog({
         {error ? (
           <p
             role="alert"
-            className="rounded-lg border border-error bg-[var(--lms-error-subtle)] p-3 text-sm text-error"
+            className="border-l-2 border-error bg-error-subtle px-4 py-3 text-sm text-error"
           >
             {error}
           </p>
