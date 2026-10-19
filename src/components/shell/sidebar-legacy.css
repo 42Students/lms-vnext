@@ -213,6 +213,26 @@
 .lms-sidebar-role-details {z-index:2;min-width:0;margin-top:auto;transition:opacity .15s cubic-bezier(.2,0,0,1);}
 .lms-sidebar-scroll {overscroll-behavior-y:contain;overflow-x:hidden;scrollbar-width:none;}
 .lms-sidebar-scroll::-webkit-scrollbar {display:none;width:0;height:0;}
+/* Legacy TPO rail exposes a 4px scroll thumb only while expanded.
+ * Keep it hidden for the collapsed icon rail and non-TPO workspaces. */
+@media (min-width:768px) {
+ .lms-desktop-sidebar:is(:hover,:focus-within)
+ .lms-sidebar-scroll:has(.lms-sidebar-nav[data-sidebar-portal="tpo"]) {
+  scrollbar-width:thin;
+  scrollbar-color:rgba(107,114,128,.28) transparent;
+ }
+ .lms-desktop-sidebar:is(:hover,:focus-within)
+ .lms-sidebar-scroll:has(.lms-sidebar-nav[data-sidebar-portal="tpo"])::-webkit-scrollbar {
+  display:block;
+  width:4px;
+  height:0;
+ }
+ .lms-desktop-sidebar:is(:hover,:focus-within)
+ .lms-sidebar-scroll:has(.lms-sidebar-nav[data-sidebar-portal="tpo"])::-webkit-scrollbar-thumb {
+  background:rgba(107,114,128,.28);
+  border-radius:999px;
+ }
+}
 @media (prefers-reduced-motion:reduce) {
  .lms-desktop-sidebar,.lms-shell-page,.lms-sidebar-nav .lms-sidebar-item,
  .lms-sidebar-role-details {transition:none!important;}
