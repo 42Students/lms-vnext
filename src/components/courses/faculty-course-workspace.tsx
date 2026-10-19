@@ -408,7 +408,7 @@ export function FacultyCourseWorkspace({
       />
 
       <section aria-label="In this Course" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-        <Badge  tone="neutral">
+        <Badge tone="neutral">
           {course.credits===null?"Credits not configured":course.credits+" Credits"}
         </Badge>
         <span className="text-sm text-body">
@@ -602,7 +602,7 @@ export function FacultyCourseWorkspace({
                             </p>
                           ) : null}
                         </div>
-                        <Badge  tone="neutral">
+                        <Badge tone="neutral">
                           {itemCount} items · Expand lesson
                         </Badge>
                       </summary>
@@ -611,13 +611,13 @@ export function FacultyCourseWorkspace({
                         className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
                         View lesson details →
                       </Link>:<div className="mb-3 flex flex-wrap gap-2 text-xs">
-                        <Badge  tone="neutral">
+                        <Badge tone="neutral">
                           {lesson.contents.length} content
                         </Badge>
-                        <Badge  tone="neutral">
+                        <Badge tone="neutral">
                           {lesson.assignments.length} assignments
                         </Badge>
-                        <Badge  tone="neutral">
+                        <Badge tone="neutral">
                           {lesson.quizzes.length} quizzes
                         </Badge>
                       </div>}
