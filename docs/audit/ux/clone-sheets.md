@@ -617,3 +617,36 @@ Used full current branch file text. Regular expression equivalent to `grep -nE '
 | tpo-batch-student-saved-views.tsx | 0/0/0 | 6/6; 0/0 | 78/78 | sm 0; md 3 |
 
 Source matching is not a substitute for responsive screenshots or clicking/typing in the app; visual/behavioral acceptance for phone 360px, 767px, 768px and tablet 1024px remains open. Global A5/A6/A7/E8 unticked.
+
+## chat-12 bounded continuation, 2026-10-20 — batch 3
+
+- [x] src/components/tpo/tpo-new-recruiter-conversation.tsx — Recruiter selector, preset buttons, textarea and actions min-h-11 phone/36px md; quick reply radius token; multiline text switches only at md; original target-route and draft/send guard unchanged.
+- [x] src/components/tpo/tpo-recruiter-message-reply.tsx — Reply quick buttons 44px phone/36px md, 9px token radius; original auto-draft, discard confirmation and read actions retained.
+- [x] src/components/tpo/tpo-public-join-link-card.tsx — Public and company join-link enabling/replace flow preserved; shared domain Input and link actions min-h-11 md:min-h-9, 44px toggle row.
+- [x] src/components/tpo/tpo-inbox-search.tsx — Original search debounce and keyboard actions retained; shared Input min-h-11 44px phone/md 36px at old 768px.
+- [x] src/components/tpo/tpo-new-followup-modal.tsx — Original review and guarded new follow-up retained; field shared Select/Input/Textarea 44px phone /36px md; teal underlined launch link and focus.
+- [x] src/components/tpo/tpo-due-followup-workspace.tsx — Original recruiter follow-up/complete conditional workflow and 25-row slice retained; white single-canvas border-y panels, md 768px two-column, 44px phone buttons, teal underlined recruiter/mail/phone links and 2px keyboard outline.
+
+### Old LMS versus vNext value table
+Old reference: docs/design/old-lms-pages.md:6-10 white 12px outer canvas, hairline row separators, compact table/list and slim warnings; old-lms-shell.css:23,31-32,73 phone below 768px with 44px touch; old-lms-shell-spec.md:24-25 36px desktop action and 9px radius; components___common.scss:68-75 teal link and underline hover; no change to server-authorized row scope.
+| File | Authored source value and retained behavior | Status |
+|---|---|---|
+| tpo-new-recruiter-conversation.tsx | tpo-new-recruiter-conversation.tsx:76,94,117 — Recruiter selector, preset buttons, textarea and actions min-h-11 phone/36px md; quick reply radius token; multiline text switches only at md; original target-route and draft/send guard unchanged | Source-aligned, rendered check open |
+| tpo-recruiter-message-reply.tsx | tpo-recruiter-message-reply.tsx:70,84,86 — Reply quick buttons 44px phone/36px md, 9px token radius; original auto-draft, discard confirmation and read actions retained | Source-aligned, rendered check open |
+| tpo-public-join-link-card.tsx | tpo-public-join-link-card.tsx:146,147,160 — Public and company join-link enabling/replace flow preserved; shared domain Input and link actions min-h-11 md:min-h-9, 44px toggle row | Source-aligned, rendered check open |
+| tpo-inbox-search.tsx | tpo-inbox-search.tsx:27 — Original search debounce and keyboard actions retained; shared Input min-h-11 44px phone/md 36px at old 768px | Source-aligned, rendered check open |
+| tpo-new-followup-modal.tsx | tpo-new-followup-modal.tsx:14,91,117 — Original review and guarded new follow-up retained; field shared Select/Input/Textarea 44px phone /36px md; teal underlined launch link and focus | Source-aligned, rendered check open |
+| tpo-due-followup-workspace.tsx | tpo-due-followup-workspace.tsx:38,39,127 — Original recruiter follow-up/complete conditional workflow and 25-row slice retained; white single-canvas border-y panels, md 768px two-column, 44px phone buttons, teal underlined recruiter/mail/phone links and 2px keyboard outline | Source-aligned, rendered check open |
+
+### File-scoped grep and responsive source proof
+All six complete files fetched from branch and checked for raw `<button|input|select|textarea>`, literal SVG, six-digit colors, JSX Button/Link pair balance, curly counts and `sm:`/`md:` breakpoints; equivalent CLI grep `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE`.
+| File | Raw/SVG/hex | Button; Link pairs | Curly | Source breakpoints |
+|---|---|---|---|---|
+| tpo-new-recruiter-conversation.tsx | 0/0/0 | 4/4; 0/0 | 70/70 | sm 0; md 6 |
+| tpo-recruiter-message-reply.tsx | 0/0/0 | 4/4; 0/0 | 61/61 | sm 0; md 4 |
+| tpo-public-join-link-card.tsx | 0/0/0 | 4/4; 0/0 | 102/102 | sm 0; md 5 |
+| tpo-inbox-search.tsx | 0/0/0 | 0/0; 0/0 | 17/17 | sm 0; md 1 |
+| tpo-new-followup-modal.tsx | 0/0/0 | 3/3; 0/0 | 83/83 | sm 0; md 4 |
+| tpo-due-followup-workspace.tsx | 0/0/0 | 3/3; 1/1 | 113/113 | sm 0; md 10 |
+
+The TPO recruiter/message/follow-up scoped visual text is **source reviewed**, not pixel-certified. No app, CI, typecheck, lint, browser clicks, screenshot at 360px/767px/768px/1024px or real clipboard/send testing. Global A5–A7 and E8 remain unchecked.
