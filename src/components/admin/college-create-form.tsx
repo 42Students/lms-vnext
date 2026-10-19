@@ -139,6 +139,7 @@ export function CollegeCreateForm({
         </label>
         <Input
           id="college-code"
+          autoCapitalize="none"
           disabled={pending}
           value={code}
           onChange={(event) => setCode(event.target.value.toLowerCase())}
