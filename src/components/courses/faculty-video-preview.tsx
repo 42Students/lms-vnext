@@ -1,6 +1,6 @@
+"use client";
 import { Alert } from "@/components/ui/alert";
 import { PageLoading } from "@/components/ui/page-loading";
-"use client";
 import { Alert } from "@/components/ui/alert";
 import { PageLoading } from "@/components/ui/page-loading";
 
