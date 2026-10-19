@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -13,7 +14,7 @@ export async function GET(request:Request){
   const result=await getTpoFollowupQueueCsv(await getCurrentRequestContext(),query);
   return new Response("\uFEFF"+result.csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="tpo-recruiter-followups.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-recruiter-followups", "csv") + '"',
    "Cache-Control":"private, no-store, max-age=0",
    "X-Content-Type-Options":"nosniff","Vary":"Cookie",
    "X-Export-Truncated":String(result.truncated),

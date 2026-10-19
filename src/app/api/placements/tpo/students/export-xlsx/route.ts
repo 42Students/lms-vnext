@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -27,7 +28,7 @@ export async function GET(request:Request){
   const bytes=exportTpoStudentsXlsx(subset,cols,viewName);
   return new Response(new Uint8Array(bytes),{headers:{
    "Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-   "Content-Disposition":'attachment; filename="tpo-students.xlsx"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-students", "xlsx") + '"',
    "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff","Vary":"Cookie",
   }});
  }catch(error){return apiErrorResponse(error);}
