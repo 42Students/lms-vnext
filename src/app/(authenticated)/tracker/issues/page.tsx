@@ -38,7 +38,6 @@ export default async function TrackerIssuesPage({
     return (
       <div className="space-y-6">
         <PageHeader
-          eyebrow="42 Tracker"
           title="Issues"
           description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
         />
@@ -56,7 +55,7 @@ export default async function TrackerIssuesPage({
   if (!parsed) {
     return (
       <div className="space-y-6">
-        <PageHeader eyebrow="42 Tracker" title="Issues" description="Review and triage reported LMS issues." />
+        <PageHeader title="Issues" description="Review and triage reported LMS issues." />
         <TrackerAdminNav />
         <ErrorState title="Invalid issue filter." description="Review and triage reported LMS issues."
           action={<Link className="inline-flex min-h-9 items-center font-semibold text-primary-text underline" href="/tracker/issues">
@@ -83,7 +82,6 @@ export default async function TrackerIssuesPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="42 Tracker"
         title="Issues"
         description="Private Super Admin triage. Engineering notes and attachment metadata are never exposed through a public list."
       />
