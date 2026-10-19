@@ -96,7 +96,7 @@ export function RecruiterNotificationBell(){
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-11 rounded-[8px] px-3 py-3 text-sm text-primary-text hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="block min-h-11 rounded-[var(--lms-control-radius,9px)] px-3 py-3 text-sm text-primary-text hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}
