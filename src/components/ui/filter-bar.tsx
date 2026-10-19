@@ -62,8 +62,8 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
     };
   }, [open]);
 
-  return <section data-slot="filter-bar" aria-label={title} className={cx("min-w-0 space-y-3", className)}>
-    <div className="flex min-w-0 flex-wrap items-end gap-3">
+  return <section data-slot="filter-bar" aria-label={title} className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
+    <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
       {search ? <div className="min-w-0 flex-1 basis-40 sm:basis-48">{search}</div> : null}
       <div className="sm:hidden">
         <Button ref={launcher} variant="secondary" aria-expanded={open} aria-controls={panelId}
@@ -75,7 +75,7 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
       className="fixed inset-0 z-30 bg-foreground/30 sm:hidden"/> : null}
     <div id={panelId} ref={panel} style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties} role={open ? "dialog" : undefined} aria-modal={open ? true : undefined}
       aria-label={open ? title : undefined}
-      className={cx("min-w-0 rounded-[12px] border border-[#e5e9f0] bg-surface p-4 sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none",
+      className={cx("min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none",
         open ? "fixed inset-0 z-40 flex max-h-[var(--lms-visual-height)] min-h-0 w-full flex-col overflow-hidden pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-[var(--lms-elevation-4)]" : "hidden sm:block")}>
       <div className="mb-4 flex shrink-0 items-center justify-between gap-3 sm:hidden">
         <h2 className="text-lg font-semibold text-[#172033]">{title}</h2>

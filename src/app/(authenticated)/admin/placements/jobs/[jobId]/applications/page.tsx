@@ -40,7 +40,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <PageHeader eyebrow="Super Admin · Placements" title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Drive overview</Link>} />
-    <form method="get" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
+    <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
         <Input name="q" defaultValue={query.q} maxLength={100} className="min-h-9 rounded-[9px] border border-border px-2" />
       </label>
@@ -85,12 +85,12 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       </label>
       <Button type="submit" className="self-end">Filter</Button>
     </form>
-    <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2">
+    <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2 border-b border-border">
       {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>
         <Link key={stage} href={adminHref(jobId,{...query,stage,page:1})}
           aria-current={query.stage===stage?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 rounded-[9px] border px-3 text-sm font-semibold "+
-            (query.stage===stage?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border text-body")}>
+          className={"inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-sm font-semibold sm:min-h-9 "+
+            (query.stage===stage?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
           {stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase()}
           <span className="tabular-nums">{stage==="ALL"?
             Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):
@@ -103,7 +103,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
-      <p role="status" className="rounded border border-border bg-surface p-5 text-sm">
+      <p role="status" className="border-b border-border py-4 text-sm">
         Application stage actions are awaiting migration registration. You can still review the scoped applicant register.
       </p>
       <DataTable<(typeof data.items)[number]> rows={data.items} getRowKey={row=>row.id}

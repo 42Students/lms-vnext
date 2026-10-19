@@ -8,6 +8,6 @@ export default function CollegePeopleError({reset}:{error:Error&{digest?:string}
     action={<div className="flex min-w-0 flex-wrap gap-3">
       <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
       <Link href="/college/people/manage"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
     </div>} />;
 }

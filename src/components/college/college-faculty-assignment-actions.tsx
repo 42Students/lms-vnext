@@ -86,7 +86,7 @@ export function CollegeFacultyAssignmentCreate({
       setError(academicSetupErrorMessage(cause, FACULTY_ASSIGNMENT_COPY.createFailed));
     } finally { setSaving(false); }
   }
-  const fieldClass = "min-h-11 min-w-0 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+  const fieldClass = "min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
   return <>{confirmation}<section aria-label="Assign Faculty to multiple courses"
     className="border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
@@ -143,7 +143,7 @@ export function CollegeFacultyAssignmentCreate({
       </label>
       <fieldset className="space-y-2 sm:col-span-2 lg:col-span-4">
         <legend className="text-sm font-semibold">Courses to Assign ({selected.length} selected)</legend>
-        <div className="max-h-64 space-y-2 overflow-auto rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+        <div className="max-h-64 space-y-2 overflow-auto rounded-[var(--lms-control-radius)] border border-border p-3">
           {choices.length === 0 && <p className="text-sm text-muted-foreground">
             Select a program, batch and class to view eligible courses.
           </p>}
@@ -157,7 +157,7 @@ export function CollegeFacultyAssignmentCreate({
       </fieldset>
       <div className="sm:col-span-2 lg:col-span-4">
         <button type="submit" disabled={saving || !selected.length || !membershipId}
-          className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+          className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
           {saving ? "Assigning…" : `Assign to ${selected.length} course(s)`}
         </button>
       </div>
@@ -202,13 +202,13 @@ export function CollegeFacultyAssignmentEnd({
   }
   return <div className="space-y-1">
     <button type="button" disabled={saving} onClick={()=>{setConfirming(true);setError(null);}}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
+      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link disabled:opacity-60">
       {saving ? "Ending…" : "End assignment"}
     </button>
-    {confirming?<div role="group" aria-label="Confirm end assignment" className="mt-2 space-y-2 rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-xs">
+    {confirming?<div role="group" aria-label="Confirm end assignment" className="mt-2 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-xs">
       <p>End {role} assignment for {facultyName} in {courseName}? This cannot be undone. Teaching history is retained.</p>
-      <button type="button" disabled={saving} onClick={()=>void end()} className="rounded-[var(--lms-control-radius,9px)] bg-primary px-3 py-2 font-semibold text-on-primary">Confirm end</button>
-      <button type="button" disabled={saving} onClick={()=>setConfirming(false)} className="ml-2 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2">Cancel</button>
+      <button type="button" disabled={saving} onClick={()=>void end()} className="rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 font-semibold text-on-primary">Confirm end</button>
+      <button type="button" disabled={saving} onClick={()=>setConfirming(false)} className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2">Cancel</button>
     </div>:null}
     {success?<p role="status" className="text-xs">{success}</p>:null}
     {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}

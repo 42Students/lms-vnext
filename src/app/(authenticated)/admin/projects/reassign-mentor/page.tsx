@@ -50,7 +50,7 @@ export default async function SuperAdminProjectReassignMentorRoute({
       <PageHeader eyebrow="Super Admin Projects" title="Bulk mentor reassignment"/>
       <ErrorState title="Mentor reassignment access denied"
         description="This account cannot manage projects in the selected college."
-        action={<Link href="/admin/projects" className="font-semibold text-[var(--lms-teal-deep)]">Back to projects</Link>}/>
+        action={<Link href="/admin/projects" className="font-semibold text-primary-text">Back to projects</Link>}/>
     </div>;
   }
 

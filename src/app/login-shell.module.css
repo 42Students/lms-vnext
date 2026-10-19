@@ -77,7 +77,7 @@
   object-position: left center;
 }
 .wordmark {
-  color: #172033;
+  color: var(--auth-ink);
   font-size: 23px;
   font-weight: 750;
   letter-spacing: -.055em;
@@ -104,12 +104,12 @@
   padding: 40px 42px 38px;
   border: 1px solid var(--auth-border);
   border-radius: 14px;
-  background: #fff;
+  background: var(--lms-surface, #fff);
   box-shadow: 0 18px 48px rgba(23, 32, 51, .07), 0 3px 10px rgba(23, 32, 51, .025);
 }
 .card :global(.login-form) { width: 100%; max-width: none; }
 .card :global(.login-form > h2) {
-  color: #172033;
+  color: var(--auth-ink);
   font-family: inherit;
   font-size: 30px;
   font-weight: 600;
@@ -118,7 +118,7 @@
 }
 .card :global(.login-form > p) {
   margin-top: 8px;
-  color: #6b7280;
+  color: var(--lms-muted-text, #6b7280);
   font-size: 14px;
   line-height: 22px;
 }
@@ -131,26 +131,26 @@
 .card :global([role="tab"]) {
   min-height: 40px;
   border-radius: 8px;
-  color: #54505d;
+  color: var(--auth-body);
   transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
 }
-.card :global([role="tab"][aria-selected="true"]) {
-  background: #fff;
+ .card :global([role="tab"][aria-selected="true"]) {
+  background: var(--lms-surface, #fff);
   color: var(--auth-primary);
   box-shadow: 0 1px 4px rgba(23, 32, 51, .10);
 }
 .card :global(label span:first-child) { color: var(--auth-ink); }
- .card :global(input[name="contact"]), .card :global(input[name="code"]),
+.card :global(input[name="contact"]), .card :global(input[name="code"]),
 .card :global(input[name="secondCode"]) {
   display: block;
   width: 100%;
   min-height: 52px;
   border: 1px solid #e9eff9;
   border-radius: 10px;
-  background: #fff;
+  background: var(--lms-surface, #fff);
   padding: 15px 10px;
   height: auto;
-  color: #0a0517;
+  color: var(--lms-input-text, #0a0517);
   font-size: 14px;
   line-height: 20px;
   letter-spacing: .2px;
@@ -175,7 +175,7 @@
   box-shadow: none;
   transition: background-color .15s ease, box-shadow .15s ease;
 }
-.card :global(button[type="submit"]:hover:not(:disabled)) { filter: brightness(.92); }
+.card :global(button[type="submit"]:hover:not(:disabled)) { background: color-mix(in srgb, var(--auth-primary) 90%, #000); }
 .card :global(button[type="submit"]:focus-visible) {
   outline: 3px solid rgba(10, 124, 136, .25);
   outline-offset: 2px;
@@ -193,7 +193,7 @@
 .card :global(button:not([type="submit"]):not([role="tab"])),
 .card :global(a) { color: var(--auth-primary); }
 .card :global(button:disabled:not([type="submit"])) { color: var(--lms-neutral-400, #a9a7ae); }
-.status { margin-bottom: 24px; border-radius: 10px; padding: 14px 16px; font-size: 14px; line-height: 22px; }
+.status { margin-bottom: 24px; border-radius: var(--lms-control-radius, 9px); padding: 14px 16px; font-size: 14px; line-height: 22px; }
 .statusWarning { border: 1px solid #f3d1a0; background: #fffbeb; color: #92400e; }
 .statusError { border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; }
 .statusTitle { margin: 0 0 4px; font-weight: 650; }
@@ -207,7 +207,7 @@
   align-items: center;
   gap: 10px 20px;
   padding: 20px clamp(24px, 5vw, 72px) 28px;
-  color: #6b7280;
+  color: var(--lms-muted-text, #6b7280);
   font-size: 12px;
   line-height: 20px;
 }
@@ -246,7 +246,7 @@
   outline: 2px solid var(--auth-primary);
   outline-offset: 2px;
 }
-.card :global([role="tab"][aria-selected="false"]:hover) { background: #effbfb; color: var(--auth-primary); }
+.card :global([role="tab"][aria-selected="false"]:hover) { background: var(--lms-primary-subtle, #eff8fa); color: var(--auth-primary); }
 
 /* The OTP view inherits the same form shell, with larger monospaced digits. */
 .card :global(.login-form[data-step="code"] input[name="code"]),
@@ -280,7 +280,7 @@
   font-size: 13px;
   font-weight: 600;
   line-height: 16px;
-  color: #54505d;
+  color: var(--auth-body);
 }
 .card :global(.login-form p[role="status"]),
 .card :global(.login-form div[role="status"]) { line-height: 22px; }

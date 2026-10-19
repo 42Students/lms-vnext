@@ -26,11 +26,11 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
   finally{inFlight.current=false;setBusy(false);setConfirmOpen(false);}
  }
  return <section className="space-y-4">
-  <p className="rounded border border-border bg-surface p-4 text-sm">
+  <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm">
    {preview.freeSeats===null?"No fixed openings recorded":preview.freeSeats+" available seat(s)"}
    {" · "}{preview.activeOffers} active issued/accepted offers.
   </p>
-  {!preview.storageReady?<p role="status" className="rounded border border-border p-4 text-sm">
+  {!preview.storageReady?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">
    Waitlist promotion storage is not registered yet. No promotion can be released.</p>:null}
   <p className="text-sm text-body">{preview.rows.filter(row=>row.canPromote).length} waitlisted learner(s) currently pass preliminary checks; {preview.rows.filter(row=>!row.canPromote).length} have a blocking reason. The next eligible rank is shown below.</p>
   <DataTable<(typeof preview.rows)[number]> caption="Applied waitlist results"
@@ -45,14 +45,14 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
       (row.canPromote?"Ready for final offer checks":row.reasons.join("; "))+
       (row.promotionStatus?" · "+row.promotionStatus:"")},
    ]}/>
-  {preview.next&&preview.storageReady?<div className="space-y-3 rounded border border-border bg-surface p-5">
+  {preview.next&&preview.storageReady?<div className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-5">
    <h2 className="font-semibold">Offer to next waitlisted: {preview.next.name} (rank {preview.next.rank})</h2>
    <p className="text-sm text-body">Review the ranked queue before release. The offer issuer rechecks held-offer rules, eligibility and response deadline.</p>
    <label className="grid gap-1 text-sm">Reason for promotion
     <textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>setReason(e.target.value)}
-     className="rounded-[9px] border border-border bg-surface p-3"/></label>
+     className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/></label>
    <button type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 md:min-h-9 rounded bg-primary px-4 font-[650] text-primary-foreground disabled:opacity-50">
+    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-primary-foreground disabled:opacity-50">
     {busy?"Verifying…":"Verify and release next offer"}</button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
@@ -61,7 +61,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
     confirmLabel="Verify and release next offer" onConfirm={()=>void promote()}/>
   {success?<p role="status">{success}</p>:null}
   <button type="button" disabled={busy} onClick={()=>router.refresh()}
-    className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold">Refresh waitlist and seats</button>
+    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Refresh waitlist and seats</button>
   {error?<p role="alert" className="text-foreground">{error} Refresh the preview before retrying.</p>:null}
  </section>;
 }

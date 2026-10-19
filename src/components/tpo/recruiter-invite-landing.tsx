@@ -22,7 +22,7 @@ type Invite = {
 };
 type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "joined";
 
-const actionLink="inline-flex min-h-9 w-full items-center justify-center rounded-[9px] border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+const actionLink="inline-flex min-h-9 w-full items-center justify-center rounded-[9px] border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export function RecruiterInviteLanding({ token }: { token: string }) {
   const [state, setState] = useState<State>("loading");
@@ -123,7 +123,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   }
 
   const shell = (children: React.ReactNode) => (
-    <main className={`${authStyles.page} flex min-h-dvh min-w-0 items-center justify-center  px-4 py-8 sm:py-12`}>
+    <main className={`${authStyles.page} flex min-h-dvh min-w-0 items-center justify-center px-4 py-8 sm:py-12`}>
       <Card as="section" className="w-full max-w-md">
         {children}
       </Card>
@@ -186,7 +186,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         Contact details are shared only as the placement cell allows.
       </p>
 
-      <div className="mt-5 rounded-[9px] border border-border bg-surface-secondary p-4 text-sm">
+      <div className="mt-5 rounded-[9px] border border-border bg-surface-secondary p-4 text-sm text-body">
         <p><strong>Contact:</strong> {invite.contactName}</p>
         {invite.designation ? <p><strong>Designation:</strong> {invite.designation}</p> : null}
       </div>
@@ -249,7 +249,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       </div>
 
       <p className="mt-5 text-center text-xs text-muted-foreground">
-        Already have an account? <Link className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/login">Sign in</Link>
+        Already have an account? <Link className="inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/login">Sign in</Link>
       </p>
     </>,
   );

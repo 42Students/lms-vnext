@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { ErrorState } from "@/components/ui/error-state";
 
@@ -8,6 +9,5 @@ export default function CollegeCourseProgressError({ reset }: {
 }) {
   return <ErrorState title="Course progress unavailable"
     description="Learner content activity could not be loaded. No zero-value conclusion is assumed."
-    action={<button type="button" onClick={reset}
-      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Retry</button>} />;
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>} />;
 }

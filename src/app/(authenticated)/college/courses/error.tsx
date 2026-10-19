@@ -1,6 +1,7 @@
 "use client";
 
 import { ErrorState } from "@/components/ui/error-state";
+import { Button } from "@/components/ui/button";
 
 export default function CollegeCoursesError({ reset }: {
   error: Error & { digest?: string };
@@ -8,8 +9,5 @@ export default function CollegeCoursesError({ reset }: {
 }) {
   return <ErrorState title="Course catalogue unavailable"
     description="The course catalogue failed to load. Missing records cannot be assumed."
-    action={<button type="button" onClick={reset}
-      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">
-      Retry
-    </button>} />;
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>} />;
 }

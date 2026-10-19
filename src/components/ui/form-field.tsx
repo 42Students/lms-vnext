@@ -28,12 +28,12 @@ export function FormField({ id, label, required = false, helper, error, children
       })
     : rendered;
   return <div data-slot="form-field" className="min-w-0 space-y-1.5">
-    <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[#a9a7ae]">
+    <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       {label}{required ? <span aria-hidden="true"> *</span> : null}
       {required ? <span className="sr-only">required</span> : null}
     </label>
     {associated}
-    {helper ? <p id={`${id}-hint`} className="text-[13px] leading-5 text-[#6b7280]">{helper}</p> : null}
-    {error ? <p id={`${id}-error`} role="alert" className="text-xs leading-5 text-error">{error}</p> : null}
+    {helper ? <p id={`${id}-hint`} className="text-[13px] leading-5 text-[var(--lms-muted-text)]">{helper}</p> : null}
+    {error ? <p id={`${id}-error`} role="alert" className="text-[12px] leading-5 text-[var(--lms-error)]">{error}</p> : null}
   </div>;
 }

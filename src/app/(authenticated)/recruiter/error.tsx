@@ -2,10 +2,10 @@
 
 import { GracefulErrorBoundary } from "@/components/public/graceful-error-boundary";
 
-/** GR-20: route-specific fallback that keeps a retry visible. */
+/** Keep the existing private error report and recovery actions on the shared canvas. */
 export default function RouteError({ error, reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <GracefulErrorBoundary error={error} reset={reset} />;
+  return <GracefulErrorBoundary error={error} reset={reset} homeHref="/recruiter" insideShell />;
 }

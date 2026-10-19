@@ -147,7 +147,7 @@ export default async function SuperAdminFeaturesPage({
               maxLength={100}
               defaultValue={result.q}
               placeholder="College name or code"
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base text-foreground"
+              className="w-full"
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Sort colleges
@@ -187,7 +187,7 @@ export default async function SuperAdminFeaturesPage({
           </label>
           <Button
             type="submit"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="min-h-11 sm:min-h-9"
           >
             Search
           </Button>

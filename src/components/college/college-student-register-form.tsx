@@ -32,7 +32,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const [gender,setGender]=useState<""|"Male"|"Female"|"Other"|"Prefer not to say">("");
   const [dateOfBirth,setDob]=useState("");
   const [address,setAddress]=useState("");
-  const field="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+  const field="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
   async function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();setError("");setResult(null);setSavedMemberId(null);
     if(!indianMobileToE164(phoneE164)){setError("Mobile number must be 10 digits");return;}
@@ -61,7 +61,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       }catch(reason){setError(reason instanceof Error?reason.message:"Registration failed");}
     });
   }
-  return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid gap-4 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-5 sm:grid-cols-2">
+  return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid gap-4 rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 sm:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold">First Name
       <input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
     </label>
@@ -108,14 +108,14 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     </label>
     <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Address
       <textarea maxLength={1000} rows={3} value={address} onChange={e=>setAddress(e.target.value)}
-        className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-foreground text-base sm:text-sm"/>
+        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground text-base sm:text-sm"/>
     </label>
     <div className="space-y-2 sm:col-span-2">
-      <button disabled={pending} className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
+      <button disabled={pending} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
         {pending?"Registering…":"Register student"}
       </button>
       {result&&<p role="status" className="text-sm text-body">{result}</p>}
-      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Open registered student profile →</Link>:null}
+      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Open registered student profile →</Link>:null}
       {error&&<p role="alert" className="text-sm text-error">{error}</p>}
     </div>
   </form></>;

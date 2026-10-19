@@ -36,7 +36,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
   }catch(err){setMessage(err instanceof Error?err.message:"Unable to update address");}
   finally{setBusy(false);}
  }
- return <section className="space-y-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-5" aria-label="Managed college web address">
+ return <section className="space-y-3 border-t border-border pt-5" aria-label="Managed college web address">
   <h2 className="font-semibold">Web address · Managed subdomain</h2>
   {!state.ready?<p role="status" className="text-sm text-warning-text">
    One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.</p>:
@@ -46,16 +46,16 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
     <label className="grid max-w-md gap-1 text-sm">Subdomain
       <div className="flex items-center gap-2">
        <Input value={label} maxLength={63} autoCapitalize="none" spellCheck={false}
-        onChange={e=>setLabel(e.target.value)} className="min-h-11 min-w-0 flex-1 rounded-[var(--lms-control-radius,9px)] border border-border p-2"/>
+        onChange={e=>setLabel(e.target.value)} className="min-h-11 min-w-0 flex-1"/>
        <span>.{state.baseDomain}</span>
       </div>
     </label>
     <div className="flex flex-wrap gap-2">
      <Button type="button" disabled={busy||!label.trim()} onClick={()=>setPendingAction(state.currentHost?"CHANGE":"ALLOT")}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm text-on-primary disabled:opacity-50">
+      className="min-h-11 sm:min-h-9">
       {state.currentHost?"Change":"Allot"}</Button>
      {state.currentHost&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>setPendingAction("REMOVE")}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm">Remove</Button>}
+      className="min-h-11 sm:min-h-9">Remove</Button>}
     </div>
     <p className="text-xs text-muted-foreground">A managed address is routed only when the configured wildcard DNS and TLS infrastructure is operational.</p>
    </>}
@@ -63,7 +63,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
    title={pendingAction==="REMOVE"?"Remove this managed web address?":pendingAction==="CHANGE"?"Change this college's live web address?":"Allot this platform subdomain?"}
    description="Confirm the managed web address change for this college." confirmLabel={pendingAction==="REMOVE"?"Remove":pendingAction==="CHANGE"?"Change":"Allot"}
    pending={busy} onConfirm={()=>{if(pendingAction)void send(pendingAction);}}>
-   {message?<p role="alert" className="text-sm text-foreground">{message}</p>:null}
+   {message?<p role="alert" className="text-sm text-body">{message}</p>:null}
   </ConfirmDialog>
   {message&&<p role="status" className="text-sm">{message}</p>}
  </section>;

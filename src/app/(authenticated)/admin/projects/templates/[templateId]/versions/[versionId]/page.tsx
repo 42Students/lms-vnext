@@ -21,7 +21,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
       <PageHeader eyebrow="Super Admin · Projects" title="Template version comparison"/>
       <ErrorState title="Template history access denied"
         description="Only an authorized administrator can read global template version snapshots."
-        action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Back to template catalogue</Link>}/>
+        action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>}/>
     </div>;
   }
   let detail;
@@ -34,12 +34,12 @@ export default async function TemplateVersionComparisonPage({ params }: {
       <ErrorState title="Template history unavailable"
         description="The version comparison could not be loaded. No private version content is shown."
         action={<Link href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"}
-          className="font-semibold text-[var(--lms-teal-deep)]">Back to version history</Link>}/>
+          className="font-semibold text-primary-text">Back to version history</Link>}/>
     </div>;
   }
   return <div className="min-w-0 space-y-6">
     <Link href={`/admin/projects/templates/${detail.template.id}/versions`}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Version history</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← Version history</Link>
     <PageHeader eyebrow="Super Admin · Read-only version comparison" title={detail.template.title}
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`} />
     <p className="text-sm text-muted-foreground">This snapshot is read-only. Publication state and college assignments are managed separately.</p>
@@ -49,7 +49,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
         <div className="grid min-w-0 gap-4 md:grid-cols-2">
           {[{ label: "Current", value: change.current }, { label: "Selected version", value: change.selected }].map(value =>
             <div key={value.label} className="min-w-0"><h3 className="text-sm font-semibold text-body">{value.label}</h3>
-              <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] whitespace-pre-wrap break-all rounded-lg bg-muted p-3 text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{value.value}</pre></div>)}
+              <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] whitespace-pre-wrap break-all rounded-[var(--lms-canvas-radius)] bg-muted p-3 text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{value.value}</pre></div>)}
         </div>
       </article>)}
     </section> : <p className="border-b border-border py-4 text-sm text-body">No content differences from the current version.</p>}

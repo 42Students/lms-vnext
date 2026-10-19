@@ -5,7 +5,7 @@ export function TpoNoticeAcknowledge({id}:{id:string}){
  const [error,setError]=useState("");
  return <div className="mt-3 space-y-1">
   <button type="button" disabled={read||busy}
-   className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-60"
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-60"
    onClick={async()=>{
     setBusy(true);setError("");
     try{
@@ -18,6 +18,6 @@ export function TpoNoticeAcknowledge({id}:{id:string}){
     }catch(e){setError(e instanceof Error?e.message:"Read status couldn't be saved");}
     finally{setBusy(false);}
    }}>{busy?"Saving…":read?"Read confirmed":"Mark notice read"}</button>
-  {error?<p role="alert" className="text-sm">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </div>;
 }
