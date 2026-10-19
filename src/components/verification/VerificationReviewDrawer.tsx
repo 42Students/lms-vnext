@@ -7,6 +7,7 @@ import {verificationSnapshotComparison} from "@/modules/verification/snapshot-co
 import { verificationEducationRows } from "@/modules/verification/education-rows";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
