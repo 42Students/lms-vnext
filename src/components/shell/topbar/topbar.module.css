@@ -40,12 +40,12 @@
 .actions { display:flex; align-items:center; gap:8px; flex:none; }
 .iconButton { position:relative; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; width:36px; height:36px; min-width:36px; min-height:36px; border:1px solid var(--lms-header-border); border-radius:var(--lms-control-radius); background:var(--lms-white); color:var(--topbar-ink); }
 .iconButton:hover { color:var(--lms-button-primary); background:var(--topbar-search-bg); }
-.badge { position:absolute; top:-6px; right:-6px; display:flex; justify-content:center; align-items:center; min-width:17px; height:17px; padding:0 4px; border-radius:999px; border:2px solid var(--lms-white); background:var(--topbar-unread); color:var(--lms-white); font-family:inherit; font-size:10px; font-weight:700; line-height:1; pointer-events:none; }
+.badge { position:absolute; top:-6px; right:-6px; display:flex; justify-content:center; align-items:center; min-width:16px; height:16px; padding:0 4px; border-radius:999px; border:2px solid var(--lms-white); background:var(--topbar-unread); color:var(--lms-white); font-family:inherit; font-size:10px; font-weight:700; line-height:1; pointer-events:none; }
 .accountArea { display:flex; align-items:center; justify-content:flex-end; gap:10px; min-width:0; flex:none; }
 .orgName { max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--topbar-ink); font-family:inherit; font-size:12px; font-weight:600; line-height:1.35; }
 .avatar { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; flex:none; border-radius:50%; background:var(--topbar-avatar-bg); color:var(--lms-button-primary); font-family:inherit; font-size:13px; font-weight:700; line-height:1; border:1px solid var(--topbar-avatar-border); }
 .avatar:hover { background:var(--topbar-avatar-hover); }
-.menu { position:absolute; top:calc(100% + 9px); right:0; z-index:60; width:min(280px,calc(100vw - 24px)); border:1px solid var(--lms-header-border); border-radius:var(--lms-canvas-radius); padding:12px; background:var(--lms-white); box-shadow:var(--lms-overlay-shadow); }
+.menu { position:absolute; top:calc(100% + 9px); right:0; z-index:60; box-sizing:border-box; width:min(280px,calc(100vw - 24px)); min-height:150px; border:1px solid var(--lms-header-border); border-radius:6px; padding:16px 24px; background:var(--lms-white); box-shadow:9px 11px 28px rgba(0,0,0,.10); }
 .menuItem { display:flex; align-items:center; width:100%; min-height:44px; padding:8px 11px; border-radius:7px; color:var(--topbar-ink); font-family:inherit; font-size:13px; font-weight:600; line-height:1.4; text-align:left; }
 .menuItem:hover,.menuItem:focus-visible { outline:2px solid transparent; background:var(--lms-primary-subtle); color:var(--lms-button-primary); }
 .menuDivider { border:0; border-top:1px solid var(--lms-header-border); margin:8px 0; }
@@ -78,6 +78,7 @@
   .newLabel { display:none; }
   .actions { gap:6px; margin-left:auto; }
   .orgName { display:none; }
+  .accountArea { gap:5px; }
   .avatar { width:40px; height:40px; }
 }
 
@@ -132,6 +133,7 @@
 @media (max-width:767px) {
   .searchOpen .search { max-width:calc(100vw - 20px); }
   .searchOpen .dropdown { width:100%; max-width:100%; }
+  .menu { border-radius:14px; padding:16px; }
   .menu, .createOptions { max-height:calc(100dvh - 76px); overflow-y:auto; overscroll-behavior:contain; }
 }
 @media (prefers-reduced-motion:reduce) {
