@@ -38,12 +38,12 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
     {!selected ? <p role="status" className="rounded-xl border border-border bg-surface p-5">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
     {data ? <>
       <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} />
-      <section aria-label="Filter managed batches" className="border-b border-border pb-4">
+      <section aria-label="Filter managed batches" className="border-b pb-4">
         <form action="/admin/batches" method="get" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 w-full sm:min-w-48 gap-1 text-sm font-semibold text-body">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="">All programs</option>
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
             </Select>
@@ -51,29 +51,29 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           <label className="grid min-w-0 w-full sm:min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
             Search batches
             <Input type="search" name="q" defaultValue={data.query.q}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+              className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-36 gap-1 text-sm font-semibold text-body">
             Status
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               {statuses.map(status => <option key={status} value={status}>{status === "INACTIVE" ? "Inactive (planned / archived)" : legacyAcademicStatus(status, true)}</option>)}
             </Select>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
-            <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               {[10,25,50,100].map(n=><option value={n} key={n}>{n}</option>)}
             </Select>
           </label>
-          <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</Button>
-          <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
+          <Button type="submit" className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary font-[650]">Filter</Button>
+          <Button variant="secondary" type="submit" className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
           <Link href="/admin/batches" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
         </form>
       </section>
       <nav aria-label="Batch lifecycle views" className="flex flex-wrap gap-3 text-sm">
-        <Link href="/admin/batches?status=ACTIVE" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Active batches</Link>
-        <Link href="/admin/batches?status=INACTIVE" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show inactive</Link>
-        <Link href="/admin/batches?status=COMPLETED" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show completed</Link>
+        <Link href="/admin/batches?status=ACTIVE" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Active batches</Link>
+        <Link href="/admin/batches?status=INACTIVE" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show inactive</Link>
+        <Link href="/admin/batches?status=COMPLETED" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show completed</Link>
       </nav>
       <section aria-label="Manage batches" className="space-y-3 pt-2">
         <h2 className="text-lg font-semibold">Manage batches</h2>

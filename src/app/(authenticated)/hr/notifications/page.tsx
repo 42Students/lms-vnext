@@ -53,9 +53,9 @@ export default async function HrMessagesPage({searchParams}:{
      <input type="hidden" name="collegeId" value={result.collegeId} />
      <input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
      <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
-     <input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
-       placeholder="Search drive titles" className="min-h-9 min-w-48 flex-1 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" />
-     <button type="submit" className="min-h-9 rounded-[var(--radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Search</button>
+     <Input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
+       placeholder="Search drive titles" className="min-w-48 flex-1" />
+     <Button type="submit" variant="secondary">Search</Button>
    </form>
    <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
    <div className="flex justify-end">
@@ -68,7 +68,7 @@ export default async function HrMessagesPage({searchParams}:{
      <p className="text-xs text-muted-foreground">Grouped by drive within this page only. This is not a conversation thread.</p>
      {groupHrNotificationPage(result.rows).map(group=><section key={group.jobId}
        aria-label={"Notifications for "+group.title}
-       className="rounded-xl border border-border bg-surface p-4">
+       className="border-b border-border pb-4">
        <div className="flex flex-wrap items-center justify-between gap-2">
          <h2 className="font-semibold text-foreground">
            <Link href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}

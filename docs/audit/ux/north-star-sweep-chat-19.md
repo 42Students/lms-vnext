@@ -46,3 +46,25 @@ Source audit test: `tests/unit/chat19-north-star-hr-sweep.test.ts`, reading the 
 - This sidebar change touches `app-shell.tsx` only for the fixed sidebar, logo and content-push class. The concurrent chat-13 `LegacyTopbar` integration was fetched from main and preserved in a two-parent branch merge; no topbar markup was intentionally changed.
 - Desktop layout push, hovering at width breakpoints, fast pointer transitions, focus-within expansion, overflow edge cases, TalkBack/VoiceOver, and mobile Escape/focus-return need interactive verification on the dev site.
 - No scripts/CI/TypeScript, browser or PostgreSQL runs were performed. Source-created tests and source edits are **not** a claim of runtime signoff. Owners should validate at 320, 360, 390, 768, 1024 and 1280px.
+
+
+## Value-by-value second pass — 2026-10-19 (chat-19)
+
+The second pass re-read `docs/design/old-lms-shell.css` and checked the actual desktop/mobile shell. Measured differences fixed:
+
+| Old LMS value or behavior | Current implementation |
+|---|---|
+| 96px collapsed, 256px expanded; width and content push use **150ms cubic-bezier(.2,0,0,1)** | `sidebar-legacy.css`: `.lms-desktop-sidebar` and sibling `.lms-shell-page` |
+| White panel, #f1f4f9 hairline border, no shadow | Retained exact panel tokens |
+| Sidebar scroll body top **8px**, bottom **16px** | `app-shell.tsx`: `lms-sidebar-scroll pt-2 pb-4` |
+| Footer padding **25px vertical / 16px horizontal**, hidden in collapsed rail | `lms-sidebar-role-details px-4 py-[25px]`; collapse/expand CSS applies to actual footer |
+| Group heading 12px, weight 750, letter spacing .105em; divider 22px collapsed | Retained explicit old LMS values |
+| Icon 24px box, 20px SVG, muted default **opacity .55** | `sidebar-legacy.css` corrected previous .7 opacity |
+| Badge positioned **top:4px**, **left:50% + 5px**, scaled **.72** collapsed | Corrected previous 2px badge offset; expanded is trailing with original size |
+| Active: background #eff8fa, 3px #26bac7 inset, text #1a95a1; hover rgba(38,186,199,.07) | Retained exact explicit colors, visible `:focus-visible` |
+| Mobile drawer below 768px; no tablet-width phantom menu slot | `LegacyTopbar` wrapper corrected `lg:hidden` to `md:hidden` to match existing mobile drawer/desktop rail breakpoint |
+| Topbar still needs role-scoped TPO college | Retained incoming `tpoCollegeId` prop while reconciling `app-shell.tsx` with main |
+
+**HR portal second pass:** All 22 canonical `/hr` page files and the 19 reusable `src/components/hr` client components were inspected for numeric `rounded-[9px]`, generic focus outline classes and raw hex/ambiguous colors. The remaining numeric 9px corners were changed to `rounded-[var(--lms-control-radius)]`, and control focus classes to `focus-visible:outline-[var(--lms-primary)]`. The round-builder's formerly `rounded-md` buttons/links were aligned to the same 9px token. The 48 loading/error/not-found route-level surfaces were audited by their source patterns; nine conversation, messages and draft/proposal fallbacks had duplicate outer `p-5` removed so they sit on the single authenticated page canvas without added padding. No HR data behavior, form schema, permission boundary or content organization was intentionally changed.
+
+Source-only adversarial checks: `tests/unit/chat19-sidebar-hr-value-parity.test.ts`. **Not executed**, per no-CI directive. Browser rendering, mobile/touch accessibility and compile integration remain for the final verification pass. These source checks do not claim visual pixel-parity proven on a running browser.

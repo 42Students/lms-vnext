@@ -23,7 +23,7 @@ export default async function MentorProjectCloseoutPage({
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Delivery workspace
       </Link>} />
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-foreground">Persisted completion checklist</h2>
       <ul className="mt-3 grid gap-2">{items.map(([label,passed])=>
         <li key={label} className="flex items-center justify-between gap-3 text-sm">

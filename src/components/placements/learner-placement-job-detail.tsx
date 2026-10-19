@@ -53,13 +53,13 @@ export function LearnerPlacementJobDetail({
         <span aria-current="page" className="font-semibold text-foreground">{summary.title}</span>
       </nav>
 
-      <section className="rounded-xl border border-border bg-surface p-5 sm:p-7" aria-labelledby="drive-title">
+      <section className="border-t border-border pt-5" aria-labelledby="drive-title">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
               Published campus drive
             </p>
-            <h1 id="drive-title" className="mt-2 font-semibold leading-tight text-[var(--lms-heading)] text-[30px] leading-9">
+            <h1 id="drive-title" className="mt-2 text-[30px] font-semibold leading-9 text-[var(--lms-heading)]">
               {summary.title}
             </h1>
             <p className="mt-2 text-base font-semibold text-body">{summary.companyName}</p>

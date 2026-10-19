@@ -178,7 +178,7 @@ export async function ProjectAdminAuditPage({
           if(subjectId)params.set("subjectId",subjectId);
           if(item.days!==null)params.set("from",istDate(new Date(currentTimeMs()-item.days*86400000)));
           return <a key={item.label} href={basePath+"/audit?"+params.toString()}
-           className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
+           className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">
              {item.label}</a>;
         })}
       </nav>
@@ -270,7 +270,7 @@ export async function ProjectAdminAuditPage({
           </Button>
           <a
             href={basePath + "/audit"}
-            className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text"
           >
             Reset
           </a>

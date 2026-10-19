@@ -100,6 +100,8 @@ export function topbarSearchDestinations(pathname: string, text: string) {
     case "admin": return [
       {label:"Search people",href:"/admin/people/directory?q="+enc},
       {label:"Search companies",href:"/admin/companies?q="+enc},
+      {label:"Search placement drives",href:"/admin/placements/drives?q="+enc},
+      {label:"Search project workspaces",href:"/admin/projects?search="+enc},
     ];
     case "hr": return [
       {label:"Search drives",href:"/hr/drives?q="+enc},

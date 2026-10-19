@@ -132,7 +132,7 @@ export function ProjectAdminWorkspaceList({
               "Project workspace."}
           </p>
 
-          <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg bg-muted p-3 text-xs">
+          <div className="mt-4 grid grid-cols-3 gap-2 rounded-[var(--lms-control-radius,9px)] bg-muted p-3 text-xs">
             <Metric
               label="Mentor"
               value={
@@ -168,7 +168,7 @@ export function ProjectAdminWorkspaceList({
                 "/" +
                 item.id
               }
-              className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-muted"
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-muted"
             >
               Open workspace
             </Link>
