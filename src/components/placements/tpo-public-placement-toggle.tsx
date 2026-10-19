@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
@@ -37,6 +38,6 @@ export function TpoPublicPlacementToggle({enabled,canEnable}:{enabled:boolean;ca
     className="min-h-11 md:min-h-9">
     {enabled?"Turn placements page off":"Turn placements page on"}
   </Button>
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  {message?<InlineNotice tone="info" message={message}/>:null}
  </div>;
 }
