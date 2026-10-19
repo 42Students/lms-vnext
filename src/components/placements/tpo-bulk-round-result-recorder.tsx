@@ -158,22 +158,22 @@ export function TpoBulkRoundResultRecorder({
                className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
             </label>
             <div className="flex flex-wrap gap-3 text-sm">
-              <button type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
-                className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]">Select first 25 unmarked</button>
-              <button type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
-                className="font-semibold text-[var(--lms-link-text)]">Clear selection</button>
+              <Button variant="secondary" type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
+                className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]">Select first 25 unmarked</Button>
+              <Button variant="secondary" type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
+                className="font-semibold text-[var(--lms-link-text)]">Clear selection</Button>
             </div>
             <details className="rounded-[var(--lms-control-radius)] border border-border p-3">
               <summary className="cursor-pointer text-sm font-semibold">Paste application IDs from a spreadsheet</summary>
               <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
               <Textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
                 className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"/>
-              <button type="button" disabled={busy} className="mt-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm"
+              <Button variant="secondary" type="button" disabled={busy} className="mt-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm"
                 onClick={()=>{
                   const resolved=resolveBulkRoundLearnerTokens(pastedIds,available);
                   if(resolved.error){setError(resolved.error);return;}
                   setError(null);setSelected(resolved.ids);
-                }}>Select matching learners</button>
+                }}>Select matching learners</Button>
             </details>
             <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-52 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
               {visible.map((row) => (
@@ -261,7 +261,7 @@ export function TpoBulkRoundResultRecorder({
       {error ? <p role="alert" className="text-sm text-foreground">{error}</p> : null}
       {results.length > 0 ? (
         <div role="status" className="space-y-2 text-sm text-body">
-          <button type="button" onClick={()=>{
+          <Button variant="secondary" type="button" onClick={()=>{
             const cell=(input:string)=>{
               const safe=/^[=+@\-\t\r]/.test(input)?"'"+input:input;
               return '"'+safe.replaceAll('"','""')+'"';
@@ -275,7 +275,7 @@ export function TpoBulkRoundResultRecorder({
             link.download="round-"+roundId+"-bulk-results.csv";link.click();URL.revokeObjectURL(url);
           }} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
             Export per-learner staging report (CSV)
-          </button>
+          </Button>
           <p className="font-semibold">Per-learner outcomes</p>
           <ul className="divide-y divide-border border-t border-border">
             {results.map((item) => (

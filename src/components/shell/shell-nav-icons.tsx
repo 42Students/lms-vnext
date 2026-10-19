@@ -38,6 +38,13 @@ const paths:Record<ShellNavIconName,string>={
  "check-circle":"M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M8 12l3 3 5-6",
  "file-text":"M6 2h9l5 5v15H6V2z M15 2v5h5 M9 12h8 M9 16h8",
  wrench:"M21 7a6 6 0 0 1-8 6L7 19a3 3 0 0 1-4-4l6-6a6 6 0 0 1 7-8l-4 4 3 3 4-4a6 6 0 0 1 2 3z",
+ solution:"M4 3h16v18H4z M7 7h10 M7 11h5 M7 15h4 M15 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4 M12 19a3 3 0 0 1 6 0",
+ "usergroup-add":"M9 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M2 21v-3a7 7 0 0 1 14 0v3 M18 5v8 M14 9h8",
+ bank:"M2 9l10-6 10 6 M4 10h16 M6 10v9 M11 10v9 M16 10v9 M3 20h18 M2 22h20",
+ appstore:"M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z",
+ partition:"M12 3v6 M4 9h16 M4 9v8 M12 9v8 M20 9v8 M2 17h4v4H2z M10 17h4v4h-4z M18 17h4v4h-4z",
+ apartment:"M3 21V8h7V3h8v18 M7 12h2 M7 16h2 M13 7h2 M13 11h2 M13 15h2 M11 21v-4h4v4 M20 21H2",
+
 };
 export function ShellNavGlyph({name}:{name:ShellNavIconName}){
  return <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"

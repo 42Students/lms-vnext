@@ -49,7 +49,7 @@ export function TpoGeneralRequestsPanel(){
  }
  const pendingRows=rows.filter(row=>row.status==="PENDING");
  const approveSupported=(kind:string)=>["OFF_CAMPUS_OFFER","REGISTRATION_CHANGE"].includes(kind);
- return <section aria-label="Other student requests" className="space-y-3 rounded-xl border border-border p-4">
+ return <section aria-label="Other student requests" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold">Other student requests · {pendingRows.length} waiting</h2>
   <p className="text-sm">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
   <button type="button" onClick={()=>void load()} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Refresh other requests</button>

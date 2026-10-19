@@ -42,25 +42,25 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
-        <Input name="q" defaultValue={query.q} maxLength={100} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2" />
+        <Input name="q" defaultValue={query.q} maxLength={100} className="w-full" />
       </label>
       <label className="grid gap-1 text-sm">Application
-        <Select name="status" defaultValue={query.status} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
+        <Select name="status" defaultValue={query.status} className="w-full">
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Screening
-        <Select name="screening" defaultValue={query.screening} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
+        <Select name="screening" defaultValue={query.screening} className="w-full">
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Source
-        <Select name="source" defaultValue={query.source} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
+        <Select name="source" defaultValue={query.source} className="w-full">
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Department
-        <Select name="departmentId" defaultValue={query.departmentId??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
+        <Select name="departmentId" defaultValue={query.departmentId??""} className="w-full">
           <option value="">All departments</option>
           {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
             <option value={query.departmentId}>Selected department</option>}
@@ -68,7 +68,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Program
-        <Select name="programId" defaultValue={query.programId??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
+        <Select name="programId" defaultValue={query.programId??""} className="w-full">
           <option value="">All programs</option>
           {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
             <option value={query.programId}>Selected program</option>}
@@ -76,7 +76,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Batch
-        <Select name="cohortId" defaultValue={query.cohortId??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
+        <Select name="cohortId" defaultValue={query.cohortId??""} className="w-full">
           <option value="">All batches</option>
           {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
             <option value={query.cohortId}>Selected batch</option>}
