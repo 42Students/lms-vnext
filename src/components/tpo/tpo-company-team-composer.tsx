@@ -1,4 +1,6 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -50,15 +52,15 @@ export function TpoCompanyTeamComposer({companyId,actorUserId}:{
  }
  return <form className="space-y-3" onSubmit={event=>{event.preventDefault();void submit();}}>
   <label className="grid gap-1 text-sm text-body">Message
-   <textarea required maxLength={4000} rows={4} value={body} disabled={busy}
+   <Textarea required maxLength={4000} rows={4} value={body} disabled={busy}
     onChange={event=>update(event.target.value)}
-    className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
+    />
   </label>
   {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
   <p className="text-xs text-muted-foreground">Only active placement-team members in this college can read and reply.</p>
-  <button type="submit" disabled={busy||!body.trim()}
-   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+  <Button type="submit" disabled={busy||!body.trim()}
+   >
    {busy?"Sending…":"Send"}
-  </button>
+  </Button>
  </form>;
 }
