@@ -52,6 +52,13 @@
   max-width: 300px;
   border-right: 0;
 }
+[data-slot="drawer"][data-side="left"] [data-slot="drawer-header"] {
+  min-height: calc(52px + env(safe-area-inset-top, 0px));
+  align-items: center;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 4px 10px 16px;
+  gap: 8px;
+  border-bottom-color: #f0f0f0;
+}
 [data-slot="drawer-header"] {
   background: var(--lms-neutral-50);
   border-bottom: 1px solid var(--lms-canvas-border);
