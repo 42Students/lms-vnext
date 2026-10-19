@@ -95,10 +95,10 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
         <input type="datetime-local" className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface p-2"
           value={dateInput} onChange={(event) => setDateInput(event.target.value)} />
       </label>
-      {blockedDay?<p role="alert" className="rounded border border-warning bg-warning-subtle p-3 text-sm text-warning-text">
+      {blockedDay?<p role="alert" className="rounded border border-warning bg-warning-subtle p-3 text-sm text-[var(--lms-gold-accent)]">
        This day is blocked in placement settings. Review the clash before scheduling a round.
       </p>:null}
-      {!blockedDatesAvailable?<p role="status" className="text-sm text-warning-text">
+      {!blockedDatesAvailable?<p role="status" className="text-sm text-[var(--lms-gold-accent)]">
        Blocked-date storage is unavailable; schedule clashes cannot be verified.
       </p>:null}
       <label className="block text-sm font-semibold text-foreground">Mode
