@@ -70,9 +70,9 @@ export async function AppShell({
   return (
     <ToastProvider>
       <PageTitle superAdmin={superAdmin} />
-      <div className="min-h-dvh bg-background text-foreground">
+      <div className="lms-shell-frame min-h-dvh bg-background text-foreground">
         <a href="#lms-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:p-3 focus:text-link focus:outline-2 focus:outline-[var(--lms-primary)]">Skip to content</a>
-      <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar fixed inset-y-0 left-0 z-20 hidden flex-col md:flex">
+      <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar relative z-20 hidden h-screen shrink-0 flex-col md:flex">
         <div className="lms-sidebar-logo-row flex h-20 shrink-0 items-center justify-center border-b border-[var(--lms-sidebar-border)] px-2">
           <Link href="/dashboard" aria-label="42Students LMS home"
             className="lms-sidebar-brand-link inline-flex h-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -99,7 +99,7 @@ export async function AppShell({
         </div>
       </aside>
 
-      <div className="lms-shell-page min-h-dvh">
+      <div className="lms-shell-page min-h-dvh min-w-0 flex-1">
         <LegacyTopbar
           navigation={navigation}
           roleLabel={getShellRoleLabel(context)}
