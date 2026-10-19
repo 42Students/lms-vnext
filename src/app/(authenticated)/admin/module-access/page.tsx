@@ -39,7 +39,7 @@ export default async function SuperAdminModuleAccessPage({
   return <div className="space-y-6">
     <PageHeader eyebrow="Super Admin" title="Module Access"
       description="Select a college to inspect the existing inherited module access rules."
-      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Feature Controls</Link>}/>
+      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Feature Controls</Link>}/>
     <section aria-label="Module Access overview" className="border-b border-border pb-5">
       <p className="text-sm font-semibold">Effective access · {scopeLabel}</p>
       <h2 className="mt-1 text-base font-semibold">Optional module access hierarchy</h2>
