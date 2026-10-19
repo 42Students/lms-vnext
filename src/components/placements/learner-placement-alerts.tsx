@@ -9,13 +9,13 @@ type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
 export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=false }: { alerts: Alerts; filtered?: boolean; unreadOnly?:boolean }) {
   return (
     <section aria-labelledby="learner-placement-alerts"
-      className="border-t border-border pt-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="learner-placement-alerts" className="text-base font-semibold text-foreground">
+      className="min-w-0 border-t border-border pt-5">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <h2 id="learner-placement-alerts" className="min-w-0 break-words text-base font-semibold text-foreground">
           Your placement alerts
         </h2>
         <Link href={learnerAlertsHistoryHref(unreadOnly)}
-          className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline sm:min-h-9">
           Personal notification history →
         </Link>
       </div>
@@ -24,21 +24,21 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
         These are not a substitute for official college-wide placement notices or dispute decisions.
       </p>
       {alerts.length === 0 ? (
-        <div role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-4 text-sm text-body">
-          {filtered ? "No loaded personal placement alerts match this search." : "No personal placement alerts have been delivered to you yet."}
+        <div role="status" className="mt-4 flex min-h-[180px] flex-col items-center justify-center gap-4 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
+          {filtered ? "No loaded personal placement alerts match this search." : "No personal placement alerts have been delivered to you yet."}{" "}
           This does not establish that your college has published no notices.
         </div>
       ) : (
         <ol className="mt-4 divide-y divide-border">
           {alerts.map((alert) => (
-            <li key={alert.id} className="py-4 first:pt-0 last:pb-0">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <li key={alert.id} className="min-w-0 py-4 first:pt-0 last:pb-0">
+              <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="break-words text-[14px] font-semibold leading-[1.35] text-foreground sm:text-[16px]">
                     {alert.title}
 
                   </p>
-                  <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{alert.body}</p>
+                  <p className="mt-1 whitespace-pre-wrap break-words text-[13px] leading-[1.5] text-body sm:text-[14px]">{alert.body}</p>
                 </div>
                 <time dateTime={learnerAlertSafeDate(alert.createdAt).iso??undefined}
                   className="shrink-0 text-xs text-muted-foreground">{learnerAlertSafeDate(alert.createdAt).label}</time>
