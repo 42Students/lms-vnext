@@ -21,16 +21,16 @@ export default async function MyTrackerReportsPage(){
   catch{return <div className="space-y-4">
     <PageHeader title="My reports" description="See the issues you have reported."/>
     <ErrorState title="Could not load reports" description="We could not load your reports."
-      action={<Link href="/tracker/mine" className="font-semibold text-primary-text underline">Retry</Link>} />
+      action={<Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>} />
   </div>;}
   return <section className="space-y-5">
     <PageHeader title="My reports" description="See the issues you have reported."/>
-    <Link href="/tracker" className="font-semibold text-primary-text underline">Report an issue</Link>
+    <Link href="/tracker" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Report an issue</Link>
     {!reports.length?<EmptyState title="No reports yet" description="You have not reported any issues yet." />:
       <ul className="divide-y divide-border border-y border-border">{reports.map(item=><li key={item.publicId}
         className="py-4">
         <Link href={"/tracker/mine/"+encodeURIComponent(item.publicId)}
-          className="font-semibold text-primary-text underline">{item.publicId}</Link>
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">{item.publicId}</Link>
         <p className="mt-1 text-sm text-body">{item.issueType} · {item.status}</p>
         <p className="mt-1 text-sm text-body">{item.description}</p>
       </li>)}</ul>}

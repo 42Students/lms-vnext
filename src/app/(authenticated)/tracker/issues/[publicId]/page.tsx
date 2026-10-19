@@ -9,6 +9,7 @@ import {
   type TrackerWorkflowIssue,
 } from "@/components/tracker/tracker-workflow-panel";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { TrackerAdminError } from "@/modules/bug-tracker/admin-errors";
@@ -52,9 +53,8 @@ export default async function TrackerIssueDetailPage({
       <div className="space-y-6">
         <PageHeader title={publicId} description="The tracker is temporarily unavailable." />
         <TrackerAdminNav />
-        <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
-          We could not load tracker details right now. Please try again later.
-        </p>
+        <ErrorState title="Issue details unavailable"
+          description="We could not load tracker details right now. Please try again later." />
       </div>
     );
   }
@@ -89,7 +89,7 @@ export default async function TrackerIssueDetailPage({
         title={issue.publicId}
         description={`${issue.issueType} · ${issue.page}`}
         actions={
-          <Link href="/tracker/issues" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-foreground">
+          <Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-foreground">
             Back to issues
           </Link>
         }
@@ -105,7 +105,7 @@ export default async function TrackerIssueDetailPage({
         </div>
         <p className="m-0 whitespace-pre-wrap text-sm leading-6 text-body">{issue.description}</p>
         <TrackerIssueCopyActions publicId={issue.publicId} description={issue.description} page={issue.page}/>
-        <dl className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
+        <dl className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
           <div><dt className="font-semibold text-muted-foreground">Reporter</dt><dd className="m-0">{issue.reporterName} · {issue.accountRole}</dd></div>
           <div><dt className="font-semibold text-muted-foreground">Location</dt><dd className="m-0">{[issue.page, issue.screen, issue.section].filter(Boolean).join(" · ")}</dd></div>
           <div><dt className="font-semibold text-muted-foreground">Created</dt><dd className="m-0">{when(issue.createdAt)}</dd></div>
@@ -148,7 +148,7 @@ export default async function TrackerIssueDetailPage({
             ...(cursor.activityBeforeCreatedAt && cursor.activityBeforeId ? {
               activityBeforeCreatedAt:cursor.activityBeforeCreatedAt,activityBeforeId:cursor.activityBeforeId,
             }:{}),
-          }).toString()} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">
+          }).toString()} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">
             Older screenshot metadata
           </Link>
         ) : null}
@@ -181,7 +181,7 @@ export default async function TrackerIssueDetailPage({
               attachmentBeforeCreatedAt:cursor.attachmentBeforeCreatedAt,attachmentBeforeId:cursor.attachmentBeforeId,
             }:{}),
           }).toString()}
-            className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">
             Older audit events
           </Link>
         ) : null}
