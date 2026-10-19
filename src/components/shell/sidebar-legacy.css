@@ -194,6 +194,8 @@
   height:var(--lms-visual-height,100dvh);
   max-height:var(--lms-visual-height,100dvh);
   border-right:0;
+  /* components___antddesign.scss:412-426: left drawer casts rightward shadow. */
+  box-shadow:4px 0 16px rgba(0,0,0,.12);
  }
  /* Old Ant drawer mask: components___antddesign.scss:143-146. */
  .lms-mobile-sidebar::backdrop {background:rgba(30,54,63,.1);box-shadow:0 4px 4px #00000040;}
@@ -224,6 +226,16 @@
   padding:10px;
   margin-bottom:2px;
   gap:10px;
+ }
+ /* components___antddesign.scss:383-389: unlike the 96px rail,
+  * the mobile drawer allows long menu labels to wrap instead of ellipsizing. */
+ .lms-mobile-sidebar .lms-nav-label {
+  max-width:none;
+  white-space:normal;
+  overflow:visible;
+  text-overflow:clip;
+  word-break:break-word;
+  overflow-wrap:break-word;
  }
 }
 @media (max-width:767px) {
@@ -257,7 +269,8 @@
  pointer-events:none;
  align-self:stretch;
  width:auto;
- margin-inline:12px;
+ /* components___antddesign.scss:403-405: mobile divider 6px by 8px. */
+ margin:6px 8px;
 }
 .lms-sidebar-heading-label {min-width:0; white-space:nowrap;}
 .lms-sidebar-role-details {z-index:2;min-width:0;margin-top:auto;padding:25px 16px;transition:opacity .15s cubic-bezier(.2,0,0,1);}

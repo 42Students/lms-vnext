@@ -87,8 +87,8 @@ export function TpoAfterCollegeEditor({
     <Dialog open={confirmation!==null} onOpenChange={open=>{if(!open&&!pending)setConfirmation(null);}}
       title={confirmation?.reversing?"Restore previous outcome":"Save after-college outcome"}
       description={(confirmation?.reversing?"Restore":"Save")+" after-college outcome for "+learnerName+"?"}
-      footer={<><Button variant="secondary" disabled={pending} onClick={()=>setConfirmation(null)}>Cancel</Button>
-        <Button disabled={pending} onClick={()=>void apply()}>{pending?"Saving…":"Confirm"}</Button></>}>
+      footer={<><Button variant="secondary" disabled={pending} className="min-h-11 min-[768px]:min-h-9" onClick={()=>setConfirmation(null)}>Cancel</Button>
+        <Button disabled={pending} className="min-h-11 min-[768px]:min-h-9" onClick={()=>void apply()}>{pending?"Saving…":"Confirm"}</Button></>}>
       <p className="text-sm">Your selected outcome is kept if saving does not complete.</p>
     </Dialog>
   </div>;

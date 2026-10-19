@@ -2,6 +2,8 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import {EmptyState} from "@/components/ui/empty-state";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
 import {Disclosure} from "@/components/ui/disclosure";
@@ -93,7 +95,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
    caption="Request spreadsheet"
    rows={sorted}
    getRowKey={row=>row.id}
-   empty={<p role="status" className="text-sm text-body">No requests on this page.</p>}
+   empty={<EmptyState title="No requests on this page."/>}
    columns={[
     {key:"selection",header:<Checkbox
       aria-label="Select all request rows"
@@ -124,6 +126,6 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
   </label>
   <Button variant="secondary" type="button" disabled={selectedRows.length===0} onClick={()=>void copy()}
    >Copy selected rows</Button>
-  {notice?<p role="status" className="text-sm">{notice}</p>:null}
+  {notice?<InlineNotice tone="info" message={notice}/>:null}
  </section>;
 }

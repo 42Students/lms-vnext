@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -33,9 +35,7 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
    setMessage("The record could not be saved. Your existing evidence has not changed.");
   }
  }
- if(!available)return <p role="status" className="text-sm text-body">
-  External drive participant evidence is not available until its database migration is registered. Existing outside-drive records are preserved.
- </p>;
+ if(!available)return <Alert tone="warning">External drive participant evidence is not available until its database migration is registered. Existing outside-drive records are preserved.</Alert>;
  return <section className="space-y-4">
   <div className="flex flex-wrap items-end gap-3">
    <label className="grid gap-1 text-sm font-semibold">Learner from this college
@@ -56,7 +56,7 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
     Record participation
    </Button>
   </div>
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  {message?<InlineNotice tone="info" message={message}/>:null}
   {participants.length?<ul className="space-y-2">
    {participants.map(person=><li key={person.id} className="flex flex-wrap items-center gap-3 border-b border-border py-3">
     <span className="min-w-0 flex-1 text-sm">{person.name??"Unnamed learner"} · {outsideDriveResultLabel(person.result)}</span>

@@ -10,6 +10,7 @@ import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 export function TpoCompanyInteractionForm({
   companyId,
@@ -127,10 +128,8 @@ export function TpoCompanyInteractionForm({
         >
         {busy ? "Recording..." : reviewing?"Confirm activity":"Review and confirm activity"}
       </Button>
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
-      {saved ? <p role="status" className="text-sm text-body">
-        Activity recorded. The page is refreshing.
-      </p> : null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
+      {saved ? <InlineNotice tone="success" message="Activity recorded. The page is refreshing."/> : null}
     </section>
   );
 }

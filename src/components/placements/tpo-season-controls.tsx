@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 type Season = {
   id: string;
@@ -66,10 +68,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
         {edit ? "Edit active season" : "Start new season"}
       </h3>
       {active && !edit ? (
-        <p role="status" className="text-sm text-body">
-          An active season already exists. Close that season through the existing
-          lifecycle workflow before creating another one.
-        </p>
+        <Alert tone="warning">An active season already exists. Close that season through the existing lifecycle workflow before creating another one.</Alert>
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -100,7 +99,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
           Edit {season.name} →
         </Button>
       ))}
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
     </section>
   );
 }

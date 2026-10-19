@@ -4,6 +4,8 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 import {tpoGeneralRequestReviewFacts} from "@/modules/placements/tpo-general-request-review-facts";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
@@ -19,7 +21,7 @@ function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<strin
    </div>)}</dl>:null}
   {detail.proofUrl?<a href={detail.proofUrl} target="_blank" rel="noopener noreferrer"
    className="inline-flex min-h-11 items-center text-primary-text underline">Review submitted proof link</a>:
-   detail.requiresProof?<p role="alert" className="text-[var(--lms-gold-accent)]">No proof attached</p>:null}
+   detail.requiresProof?<InlineNotice tone="error" message="No proof attached"/>:null}
  </div>;
 }
 export function TpoGeneralRequestsPanel(){
@@ -55,9 +57,9 @@ export function TpoGeneralRequestsPanel(){
   <h2 className="font-semibold">Other student requests · {pendingRows.length} waiting</h2>
   <p className="text-sm">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
   <Button variant="secondary" type="button" onClick={()=>void load()} className="min-h-11 px-3">Refresh other requests</Button>
-  {error?<p role="alert" className="text-error">{error}</p>:null}
-  {message?<p role="status">{message}</p>:null}
-  {!rows.length?<p role="status" className="text-sm">No other requests to review.</p>:
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
+  {!rows.length?<EmptyState title="No other requests to review."/>:
    <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[700px] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
     <h3 className="font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
     <p className="break-words">{row.reason}</p>

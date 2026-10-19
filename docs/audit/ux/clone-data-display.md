@@ -325,3 +325,96 @@ Reproduce the source grep in the repository (shell commands **not executed by th
 - [ ] E8 AG Grid — both TPO callers use next/dynamic with ssr:false and native Quartz source exists, but the checked package.json still omits ag-grid-community and ag-grid-react; user prohibits package.json edits. No build/visual proof.
 
 **Next exact file:** src/components/placements/tpo-drive-cancel-form.tsx for a source-state audit and any remaining display patterns; then the broader hand-rolled disclosure and tab inventory. No unchecked category was prematurely ticked.
+
+
+## chat-14 E5 accordion census, source batch (2026-10-19)
+
+Source of truth: `docs/design/legacy-styles/components___common.scss`, `components___antddesign.scss`, `old-lms-pages.md`. This turn started by fast-forwarding the lane to inspected `origin/main` because the lane had no unmerged commits. The established script `scripts/codemods/chat14-tables-tabs.cjs` remains available; not executed by this lane (owner-directed dev-only/no app or CI execution).
+
+### File-level completed work queue (source migration, not global E5 tick)
+
+For each entry the complete modified TSX file was fetched again after its GitHub commit. The literal JSX-pattern counters count shared-opening / shared-closing and remaining raw `<details` respectively:
+
+| Completed | File | Shared Disclosure openings/closings | Raw details | Preserved content, state and mobile behavior |
+|---|---|---:|---:|---|
+| [x] | `src/components/placements/placement-drive-workspace.tsx` | 1 / 1 | 0 | Dynamic Set/Extend deadline heading and form; no route/permission changes |
+| [x] | `src/components/courses/quiz-attempt-control.tsx` | 1 / 1 | 0 | Question anchor links; phone/tablet `lg:hidden` collapse versus desktop full list unchanged |
+| [x] | `src/components/tpo/tpo-students-spreadsheet.tsx` | 1 / 1 | 0 | Bulk Add a note, filtered page selection limit, checkboxes and note editor unchanged |
+| [x] | `src/components/projects/learner-project-board-search.tsx` | 1 / 1 | 0 | Rich title with active-filter count; GET filters and links intact |
+| [x] | `src/components/courses/faculty-course-home-signals.tsx` | 2 / 2 | 0 | Grade-bucket three-column summary including MetricBar and count; other existing Disclosure retained |
+| [x] | `src/components/courses/learner-course-workspace.tsx` | 1 / 1 | 1 documented exemption | Simple mobile Jump to lesson migrated; focused lesson's dynamic `open`, badges, description and lesson anchor remain native (do not alter focus/expanded behavior without browser parity proof) |
+| [x] | `src/app/(authenticated)/admin/features/page.tsx` | 1 / 1 | 0 | Per-college Change module rule editor, localized in-row action preserved |
+| [x] | `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx` | 1 / 1 | 0 | Recorded round result versions and count remain visible in summary |
+| [x] | `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx` | 1 / 1 | 0 | Additional project tools and all mentor deep links retained |
+| [x] | `src/app/(authenticated)/college/contacts/page.tsx` | 1 / 1 | 0 | Advanced filters `defaultOpen={activeCollegeContactFilterCount(filter)>0}` and full filter form kept |
+| [x] | `src/app/(authenticated)/tpo/students/page.tsx` | 3 / 3 | 0 | Profile strength, marks/passing year, More placement outcomes; all filters and report rows retained |
+| [x] | `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx` | 1 / 1 | 0 | Per-bucket metric bar, count, learner attempts retained in a rich Disclosure title |
+| [x] | `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx` | 1 / 1 | 0 | Same three-column graphic plus score/submission details retained |
+
+All displayed pairs above were counted from whole-file GitHub reads, not merely snippet search. Another native rich lesson accordion remains in `src/components/courses/faculty-course-workspace.tsx`; its selected-lesson open state and semantic `aria-label` need a controlled migration plan. Neither rich lesson accordion should be blindly converted by the codemod. The E5 repository-wide shell grep is **not yet executed**, so no zero-instances claim.
+
+Reproduce the file-level grep and structural count:
+
+```sh
+grep -nE '<details([[:space:]>])|<summary([[:space:]>])' src/components/{placements/placement-drive-workspace,courses/quiz-attempt-control,tpo/tpo-students-spreadsheet,projects/learner-project-board-search,courses/faculty-course-home-signals,courses/learner-course-workspace}.tsx
+grep -nE '<Disclosure([[:space:]>])|</Disclosure>' src/components/{placements/placement-drive-workspace,courses/quiz-attempt-control,tpo/tpo-students-spreadsheet,projects/learner-project-board-search,courses/faculty-course-home-signals,courses/learner-course-workspace}.tsx
+grep -rnE '<details([[:space:]>])|<summary([[:space:]>])' src --include='*.tsx'
+```
+
+### E1/E2/E4 high-leverage source corrections and value proof
+
+| Property/state | Legacy exact rule (file:line) | Updated vNext (file:line) | Assessment |
+|---|---|---|---|
+| E1 exam-table zebra odd-row | `docs/design/legacy-styles/components___common.scss:810-815` — `#f8fbff` in cells and row | `src/components/ui/table.tsx:16` — optional `striped` odd-row fill `#f8fbff` | **Value matches** optional variant; no claim of generic zebra runtime/cascade equality |
+| E1 normal body/header background | `components___common.scss:700-708,851-860` — white table body/header and hover reset | `src/components/ui/table.tsx:16` — white header and hovered cells | Source paint mapped; global canvas CSS and table variant cascade not browser-tested |
+| E4 neutral status fill | `components___common.scss:995-996` — `#fafbfc` | `src/components/ui/status-badge.tsx:9`; `src/app/globals.css:38` — `var(--lms-neutral-50) = #fafbfc` | **Exact token match** |
+| E4 neutral status ink | `components___common.scss:1005` — `#84828b` | `src/components/ui/status-badge.tsx:9` — `text-[#84828b]` | **Exact color match**, correcting previous `--lms-neutral-400 = #a9a7ae` mismatch |
+| E4 status dimensions | `components___common.scss:997-1004` — pad 2/15px, radius 6px, 12px/700, min-width 90px | `src/components/ui/status-badge.tsx:17` — same values; min-height 22px derived from line-height18 + vertical padding | Static match; empty/loading not applicable to passive badge |
+| E2 phone pager line-height | `components___antddesign.scss:250-256` — 42px line-height in 44px control | `src/components/ui/pagination.tsx:54` — `leading-[42px] md:leading-5` in 44px hitbox | **Exact mobile line-height and target match**; desktop remains 20px leading |
+| E2 phone pager radius and density | `components___antddesign.scss:242-280` — 8px corners, active-only number, next/prev visible | `pagination.tsx:54-84` — 8px until 767px, hides other page numbers, retains next/prev | Static match; actual responsive rendering not performed |
+
+### Responsive proof by source and remaining strict-tick blockers
+
+- Phone under 768px: Disclosure `summary` supplies minimum 44px target, semantic native keyboard Enter/Space and focus styling; quiz question jump collapses below `lg` (1024px); learner lesson index collapses only below `md` (768px); college filters, TPO roster bulk notes and score distributions remain wrap-safe in the existing page layout. StatusBadge keeps inline 90px minimum and wrapping.
+- Tablet 768–1023px: learner mobile Jump-to-lesson hides at md; quiz mobile question links stay available until lg; standard Disclosure follows shared `min-h-11` summary geometry. Pagination becomes 36px at md with numeric links visible.
+- Wide 1600px+: existing shared Tabs retains 40px gap; no alterations to page layout/authorized content; all changed disclosures keep their original surrounding grids/sections.
+- Keyboard/focus/default/active: newly unified native details have native open/closed behavior and a shared 2px focus-visible primary outline; college Advanced filters starts open for existing active filters; other ordinary disclosures start closed. Counts and meta text are inside the focusable summary where present.
+- Pending verification: no application or CI was run, no TypeScript compiler/test invocation, no real phone/tablet/browser side-by-side, and no exhaustive repo-wide grep; user asked for dev-only source changes. **Do not tick E1–E5 or E8 globally** until full state/property matrix, coverage, responsive and runtime proofs meet STRICT TICK RULE. E8 still blocked by missing `ag-grid-community` and `ag-grid-react` manifest entries (do not modify `package.json`).
+
+**Next exact file:** `src/components/courses/faculty-course-workspace.tsx` (rich selected-lesson accordion; preserve dynamic open and summary `aria-label`). Then `src/components/courses/learner-course-workspace.tsx` (rich focused-lesson accordion exemption) and remaining E2 action pagers such as `src/components/verification/CollegeVerificationPanel.tsx`.
+
+### Rich lesson accordion continuation (chat-14, same bounded turn)
+
+After the initial E5 file census, both previously documented rich-lesson exceptions were migrated **without discarding their explicit open condition, focus anchor, label, progress metadata or content**. This uses a backward-compatible extension to the shared `src/components/ui/disclosure.tsx`, not a generic text-only replacement.
+
+| Completed file | Before | After / exact source static proof |
+|---|---|---|
+| [x] `src/components/courses/faculty-course-workspace.tsx` | 1 rich native details with `open={selectedLessonId?true:lessonIndex===0?true:undefined}`, accessible summary label, lesson description and item count | `<Disclosure>` **1 opening / 1 closing**, native `<details>` **0**; `defaultOpen={Boolean(selectedLessonId \|\| lessonIndex === 0)}`, exact lesson-count summary `summaryAriaLabel`, rich title fragment, original `min-h-11 sm:min-h-9` summary classes. Authoring controls unchanged |
+| [x] `src/components/courses/learner-course-workspace.tsx` | 1 mobile jump disclosure and 1 rich lesson disclosure with `id=lesson-...`, focused-lesson/default-first open logic, badges and progress | `<Disclosure>` **2 openings / 2 closings**, native `<details>` **0**; retained `id={\`lesson-\${lesson.id}\`}`, focus expression, rich lesson summary contents, progress badges, expandable body and `group-open` arrow |
+| [x] `src/components/ui/disclosure.tsx` | String/ReactNode titles, native details, defaultOpen and generic chevron | Added optional `id`, `summaryAriaLabel`, `summaryClassName`, `contentClassName`, and `preserveSummary`. Defaults unchanged for existing call sites. `preserveSummary` keeps rich summary layout/own arrow without a second indicator; native details still supplies Enter/Space and semantic open/closed state. Exactly **1** native details and **1** native summary intentionally remain *inside* this shared primitive |
+
+**Responsive source comparison:** Faculty rich lesson summary retains minimum 44px through phones and 36px from `sm`, and its flex-wrap + badge position; learner rich summary retains 16px padding on phone and 20px from `md`, while the simpler mobile outline still uses `md:hidden`. Neither layout was redesigned. Source static inspection found no newline-before-`as` cast or extra `title={<>{{` sequence in these two files. These are source assertions, **not** a TS compiler or browser output.
+
+**Earlier audit correction:** The neutral 50 token in `src/app/globals.css` is at approximately line 40 in the inspected source, not the previously recorded line 38; its literal value is confirmed `#fafbfc`. The matched legacy neutral status text color is now the literal `#84828b` inside `src/components/ui/status-badge.tsx` (allowed UI-component-local legacy value).
+
+**Unresolved category status:** E1/E2/E3/E4/E5/E8 global checklist entries remain unticked: exhaustive repo-wide grep, full state-by-state legacy computed values, phone/tablet rendered snapshots, and runtime interaction/strict TS checks were not run. E8 has the preexisting undeclared AG Grid packages in the repository manifest. Individual files above can be marked source-migrated only.
+
+**Next exact file after this batch:** `src/components/verification/CollegeVerificationPanel.tsx` (action-based pagination: preserve `navigate` selection-reset guard and page-size change; not safe to replace directly with href-only Pagination).
+
+### Guarded E2 action pagination (chat-14, same bounded turn)
+
+| Completed file | Legacy/client behavior and value mapping | GitHub source grep-equivalent proof |
+|---|---|---|
+| [x] `src/components/ui/action-pagination.tsx` (new E2 sibling) | A client-only button pager for list pages requiring local state cleanup before navigation. Shares `paginationWindow` and `normalizedPageCount` with the link-based Pagination without turning the server-safe link component into a client boundary. Phone: 44px square, 8px radius, 42px numeric line-height, active-only page number. Tablet/desktop: 36px controls, nonactive numbers visible. Disabled, focus-visible and current-page accessibility states included. | `min-h-11` ×1; `min-w-11` ×1; `rounded-[8px]` ×1; `leading-[42px]` ×1; `md:min-h-9` ×1; route-less `onPageChange` called only from genuine button click, never an effect. |
+| [x] `src/components/verification/CollegeVerificationPanel.tsx` | Converted native Previous/Next ghost-buttons to one `ActionPagination` (not Link) so all page changes still go through guarded `navigate`, which clears selected/sequence/bulk feedback and then `router.push`. Sort and per-page Select inputs and showing-count text retained. `hasMore` remains the authoritative next-page condition; disabled while bulk mutation is in progress. | Shared `<ActionPagination>` **1 self-closing occurrence**, old `<nav aria-label="Verification pagination"` **0**, old standalone Previous/Next `<Button>` **0**; pageCount derived from current page plus one only when `hasMore`. |
+
+Legacy E2 evidence: `docs/design/legacy-styles/components___antddesign.scss:242-280` (mobile 44×44, 8px corners, 42px line-height, only active page number and prev/next). Source implementation: `src/components/ui/action-pagination.tsx:27-52`; `src/components/verification/CollegeVerificationPanel.tsx:216-227`. All phone geometric values match statically, not by rendered screenshot. On larger screens shared Button may retain existing secondary hover/disabled treatment; Ant computed hover/cascade still requires later browser verification.
+
+Reproduce the source-scoped grep (not run locally in this turn):
+
+```sh
+grep -nE '<ActionPagination|Previous page</Button>|Next page</Button>|pageCount=|hasMore=|onPageChange=' src/components/verification/CollegeVerificationPanel.tsx
+grep -nE 'min-h-11|min-w-11|rounded-\[8px\]|leading-\[42px\]|md:min-h-9|onPageChange' src/components/ui/action-pagination.tsx
+```
+
+Strict E2 global checklist still **[ ]** pending all portal pagination, full state coverage and side-by-side responsive proof. E1/E3/E4/E5/E8 also remain **[ ]**. Next file after this source batch: `src/components/placements/report-interactive-table.tsx` — assess sort-pressed states and show-more versus actual pagination without changing authorized report rows.

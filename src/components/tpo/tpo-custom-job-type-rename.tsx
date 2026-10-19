@@ -1,15 +1,17 @@
 "use client";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 export function TpoCustomJobTypeRename({id,label,version}:{id:string;label:string;version:string}){
  const router=useRouter();
+ const {askConfirm,dialog}=useConfirmFlow();
  const [name,setName]=useState(label),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const changed=name.trim()!==label;
  async function save(){
   if(busy||!changed||name.trim().length<2||name.trim().length>40)return;
-  if(!window.confirm("Rename this custom job type? Existing drives are not rewritten by this change."))return;
+  if(!(await askConfirm("Rename this custom job type? Existing drives are not rewritten by this change.")))return;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/settings/job-types/"+encodeURIComponent(id),{
@@ -33,5 +35,6 @@ export function TpoCustomJobTypeRename({id,label,version}:{id:string;label:strin
   <Button variant="secondary" type="button" disabled={busy||!changed||name.trim().length<2} onClick={()=>void save()}
    className="min-h-11 min-[768px]:min-h-9 text-xs">Rename</Button>
   {error?<p role="alert" className="max-w-xs text-xs text-error">{error}</p>:null}
+  {dialog}
  </div>;
 }
