@@ -139,6 +139,7 @@ export function CollegeCreateForm({
         </label>
         <Input
           id="college-code"
+          aria-describedby="college-code-help"
           autoCapitalize="none"
           spellCheck={false}
           disabled={pending}
@@ -164,7 +165,7 @@ export function CollegeCreateForm({
          </label>)}
         </div>
        </details>
-       <p className="text-xs text-muted-foreground">Unique ID / Code identifies this college across links and integrations. Choose it carefully; it is not editable after creation.</p>
+       <p id="college-code-help" className="text-xs text-muted-foreground">Unique ID / Code identifies this college across links and integrations. Choose it carefully; it is not editable after creation.</p>
       </div>
       <Button
         type="submit"
