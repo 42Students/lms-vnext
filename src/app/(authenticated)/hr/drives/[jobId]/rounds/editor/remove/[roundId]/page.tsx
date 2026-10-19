@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
@@ -30,9 +31,9 @@ export default async function HrRoundRemovalConfirm({params}:{
    <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
     className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Keep round</Link>
    <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"}>
-    <input type="hidden" name="action" value="REMOVE"/>
-    <input type="hidden" name="roundId" value={round.id}/>
-    <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
+    <Input type="hidden" name="action" value="REMOVE"/>
+    <Input type="hidden" name="roundId" value={round.id}/>
+    <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
     <Button type="submit">
      Confirm remove
     </Button>
