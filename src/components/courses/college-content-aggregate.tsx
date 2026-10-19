@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
+import { Pagination } from "@/components/ui/pagination";
 import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content-order-readiness";
 import { COLLEGE_COURSE_TAB_COPY } from "@/modules/courses/college-course-tabs-copy";
 import { CollegeStudentVisibilityControl } from "./college-student-visibility-control";
@@ -260,23 +261,12 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           </>
         )}
       </section>
-      <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
-        <div className="flex gap-2">
-          {data.query.page > 1 ? (
-            <Link href={collegeContentHref(data.kind, { ...data.query, page: data.query.page - 1 })}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
-              Previous
-            </Link>
-          ) : null}
-          {data.query.page < data.totalPages ? (
-            <Link href={collegeContentHref(data.kind, { ...data.query, page: data.query.page + 1 })}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
-              Next
-            </Link>
-          ) : null}
-        </div>
-      </nav>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className="text-xs text-muted-foreground">25 per page</span>
+        <Pagination page={data.query.page} pageCount={data.totalPages}
+          hrefForPage={page=>collegeContentHref(data.kind,{...data.query,page})}
+          label={title+" pagination"} showBoundaryLinks={false}/>
+      </div>
       <p className="text-xs leading-5 text-muted-foreground">
         This catalogue shows authorization-scoped content metadata. Publishing state does not by itself grant learner visibility.
         No storage key, file download, signed URL or external playback URL is returned here.
