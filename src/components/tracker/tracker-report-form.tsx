@@ -121,10 +121,10 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         onClick={()=>void linkCreatedIssue(created)}>Retry linking Known Error</Button>:null}
 
       <div className="flex flex-wrap gap-3">
-        <Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
+        <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
         <Button 
           onClick={() => {setCreated("");setDraft(initial);clearDraft();setError("");}}
-          type="button">Report another</Button>
+          type="button" className="min-h-11 md:min-h-9">Report another</Button>
       </div>
     </section>
   );
@@ -211,7 +211,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         </span>
       </label>
       {canSearchSimilar ? <>
-      <section aria-label="Similar issues" className="rounded-[var(--lms-control-radius)] border border-border p-4">
+      <section aria-label="Similar issues" className="border-y border-border py-4">
         <h2 className="text-sm font-semibold text-foreground">Similar issues</h2>
         <p className="mt-1 text-xs text-muted-foreground">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
         <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2">
@@ -227,9 +227,9 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         </div>
         {similarError?<p role="alert" className="mt-2 text-sm text-error">{similarError}</p>:null}
         {similarSearched?<div role="status" className="mt-2 text-sm">
-          {similarResults.length?<ul className="space-y-2">
-            {similarResults.map(issue=><li key={issue.publicId} className="rounded-[var(--lms-control-radius)] border border-border p-2">
-              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{issue.publicId}</Link>
+          {similarResults.length?<ul className="divide-y divide-border">
+            {similarResults.map(issue=><li key={issue.publicId} className="py-3">
+              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{issue.publicId}</Link>
               <span className="ml-2 text-xs text-muted-foreground">{issue.status}</span>
               <p className="mt-1 break-words text-xs text-body">{issue.description.slice(0,160)}</p>
             </li>)}
