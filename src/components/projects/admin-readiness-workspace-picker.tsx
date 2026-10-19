@@ -20,7 +20,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
   <fieldset className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
    <legend className="sr-only">Select a workspace</legend>
    {rows.map(item=><label key={item.id} className="flex min-h-10 cursor-pointer items-center gap-2 text-sm">
-    <input type="radio" name="workspaceId" value={item.id} checked={choice===item.id}
+    <input type="radio" className="size-4 accent-[var(--lms-button-primary)]" name="workspaceId" value={item.id} checked={choice===item.id}
       onChange={()=>setChoice(item.id)}/>
     <span className="flex-1">{item.title}</span>
     <span className="text-xs text-muted-foreground">{item.status}</span>

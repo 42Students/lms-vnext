@@ -26,11 +26,11 @@ export default async function HrJobActivityPage({searchParams}:{
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Employer Recruiter" title="Hiring activity"
    description="Published and closed hiring drives at your authorized college. No private applicant information."/>
-  {result.status!=="READY"?<section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+  {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-5">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
    {result.choices.map(grant=><Link key={grant.id}
     href={"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId)}
-    className="block rounded-[var(--lms-control-radius)] border border-border px-3 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11">{grant.collegeName}</Link>)}
+    className="block rounded-[var(--lms-control-radius)] border border-border px-3 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{grant.collegeName}</Link>)}
   </section>:<>
    {result.choices.length>1?<nav aria-label="College activity filter" className="flex flex-wrap gap-2">
     {result.choices.map(grant=><Link key={grant.id}
@@ -45,24 +45,26 @@ export default async function HrJobActivityPage({searchParams}:{
        placeholder="Search hiring drive titles" className="min-w-48 flex-1"/>
      <Button variant="secondary" type="submit">Search</Button>
    </form>
-   <nav aria-label="Hiring activity event type" className="flex flex-wrap gap-2">
+   <nav aria-label="Hiring activity event type" className="flex flex-wrap gap-3 border-b border-border">
      {HR_ACTIVITY_FILTER_KINDS.map(kind=><Link key={kind}
        href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind+"&q="+encodeURIComponent(input.data.q)}
        aria-current={kind===input.data.kind?"page":undefined}
-       className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className={kind===input.data.kind
+         ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+         : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
        {kind==="ALL"?"All events":kind==="PUBLISHED"?"Published":"Closed"}
      </Link>)}
    </nav>
-   {result.events.length?<ol className="grid gap-3">{result.events.map(item=>
-    <li key={item.id} className="rounded-lg border border-border bg-surface p-4">
+   {result.events.length?<ol className="divide-y divide-border border-y border-border">{result.events.map(item=>
+    <li key={item.id} className="py-4">
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
       className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.title}</Link>
      <p className="mt-1 text-sm text-body">{item.status} · {fmt(item.occurredAt)} IST</p>
-    </li>)}</ol>:<p role="status" className="rounded-lg border border-border p-5 text-sm text-body">
+    </li>)}</ol>:<p role="status" className="border-y border-border py-5 text-sm text-body">
      No visible publication or closure activity at this college.</p>}
    <div className="flex justify-end">
      <Link href={"/api/placements/recruiter/activity/export?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)}
-       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        Export activity CSV
      </Link>
    </div>

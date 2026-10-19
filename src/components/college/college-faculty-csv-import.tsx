@@ -49,7 +49,7 @@ export function CollegeFacultyCsvImport(){
       </p>
       <p className="break-words font-mono text-xs">{header}</p>
       <a download="faculty-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(header+"\n")}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
         Download CSV template
       </a>
       <label className="grid gap-2 text-sm font-semibold">Choose CSV
@@ -71,10 +71,10 @@ export function CollegeFacultyCsvImport(){
         <textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
           setCsv(event.target.value);setReport(null);setConfirmed(false);
-        }} className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 font-mono text-xs"/>
+        }} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-mono text-xs"/>
       </label>
       <button type="button" disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
-        className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+        className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
         {pending?"Validating…":"Validate CSV"}
       </button>
       {error&&<p role="alert" className="text-sm text-error">{error}</p>}
@@ -85,7 +85,7 @@ export function CollegeFacultyCsvImport(){
       {report.structuralErrors.length>0&&<p role="alert">{report.structuralErrors.join(", ")}</p>}
       <a download="faculty-import-report.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent("row,status,detail,membershipId\r\n"+csvResult)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
         Download row report
       </a>
       <DataTable<Row> caption="Faculty CSV import row results" rows={report.results}
@@ -104,7 +104,7 @@ export function CollegeFacultyCsvImport(){
           I understand valid rows create real faculty memberships; partial failures require manual review.
         </label>
         <button type="button" disabled={pending||!confirmed} onClick={()=>run("IMPORT")}
-          className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+          className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
           {pending?"Registering…":"Confirm faculty registration"}
         </button>
       </div>}

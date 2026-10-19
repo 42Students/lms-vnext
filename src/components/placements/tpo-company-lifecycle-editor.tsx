@@ -65,7 +65,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
         <textarea
           value={reason} onChange={(event) => {setReviewAction(null);setReason(event.target.value);}}
           disabled={busy} maxLength={500} rows={3}
-          className="mt-2 block w-full rounded-[9px] border border-border bg-surface p-3 text-sm font-normal"
+          className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal"
         />
       </label>
       <div className="flex flex-wrap gap-3">
@@ -73,32 +73,32 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
           <>
             <button type="button" disabled={busy || reason.trim().length < 8}
               onClick={() => void submit("EDIT_TRUST")}
-              className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
               {company.isTrusted ? "Remove trust" : "Mark trusted"}
             </button>
             <button type="button" disabled={busy || reason.trim().length < 8}
               onClick={() => void submit("ARCHIVE")}
-              className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
               Archive relationship
             </button>
           </>
         ) : (
           <button type="button" disabled={busy || reason.trim().length < 8}
             onClick={() => void submit("RESTORE")}
-            className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
             Restore relationship
           </button>
         )}
       </div>
-      {reviewAction?<div role="group" aria-label="Confirm company change" className="rounded-lg border border-border bg-muted p-3 text-sm">
+      {reviewAction?<div role="group" aria-label="Confirm company change" className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-3 text-sm">
         <p className="text-body">Confirm: {reviewAction==="EDIT_TRUST"
           ?company.isTrusted?"remove trust from ":"mark trusted ":""+(reviewAction==="ARCHIVE"?"archive ":"restore ")}{company.name}?
           This changes only this college&apos;s relationship and is audited.</p>
         <div className="mt-2 flex gap-2">
           <button type="button" disabled={busy} onClick={()=>void submit(reviewAction)}
-            className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 font-[650] text-on-primary text-primary-foreground">Confirm change</button>
+            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary text-primary-foreground">Confirm change</button>
           <button type="button" disabled={busy} onClick={()=>setReviewAction(null)}
-            className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4">Cancel</button>
+            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4">Cancel</button>
         </div>
       </div>:null}
       {busy ? <p role="status" className="text-sm text-body">Saving change…</p> : null}

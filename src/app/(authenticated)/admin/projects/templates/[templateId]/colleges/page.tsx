@@ -28,7 +28,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <PageHeader eyebrow="Super Admin · Template college availability" title="College availability" />
     <ErrorState title="College availability access denied"
       description="Only an active Super Admin can read global project template assignments."
-      action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Back to template catalogue</Link>} />
+      action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>} />
   </div>;
   const raw = await searchParams;
   const parsed = templateCollegeAvailabilityQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
@@ -44,7 +44,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
       <PageHeader eyebrow="Super Admin · Template college availability" title="College availability" />
       <ErrorState title="College availability unavailable"
         description="Template assignments could not be loaded. No availability is shown until the read succeeds."
-        action={<Link href={templateCollegeAvailabilityHref(id.data,parsed.data)} className="font-semibold text-[var(--lms-teal-deep)]">Retry loading colleges</Link>} />
+        action={<Link href={templateCollegeAvailabilityHref(id.data,parsed.data)} className="font-semibold text-primary-text">Retry loading colleges</Link>} />
     </div>;
   }
   const statuses = ["ALL", "ASSIGNED", "UNASSIGNED"] as const;

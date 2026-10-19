@@ -8,7 +8,7 @@ export type InlineNoticeProps = { tone: "error" | "success" | "info"; message: s
 const toneClasses = {
   error: "border-[rgba(239,68,68,0.25)] bg-[rgba(239,68,68,0.06)] text-[#b91c1c]",
   success: "border-[rgba(5,150,105,0.25)] bg-[rgba(5,150,105,0.08)] text-[#065f46]",
-  info: "border-[#bde9ec] bg-[#eff8fa] text-[#1a95a1]",
+  info: "border-[#bde9ec] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
 } as const;
 
 export function InlineNotice({ tone, message, onDismiss, successDismissMs = 5_000 }: InlineNoticeProps) {
@@ -30,9 +30,9 @@ export function InlineNotice({ tone, message, onDismiss, successDismissMs = 5_00
     };
   }, [tone, message, onDismiss, successDismissMs]);
   return <div data-slot="inline-notice" data-tone={tone} role={tone === "error" ? "alert" : "status"} aria-live={tone === "error" ? "assertive" : "polite"}
-    className={cx("flex min-w-0 items-start gap-3 rounded-[9px] border px-4 py-3 text-[13px] leading-5", toneClasses[tone])}>
+    className={cx("flex min-w-0 items-start gap-3 rounded-[var(--lms-control-radius)] border px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[13px] leading-5", toneClasses[tone])}>
     <span className="min-w-0 flex-1 break-words">{message}</span>
     {onDismiss ? <button type="button" onClick={onDismiss} aria-label="Dismiss notice"
-      className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[9px] px-2 text-[13px] font-semibold text-inherit underline hover:bg-white/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7]">Dismiss</button> : null}
+      className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] px-2 text-[13px] font-semibold text-inherit underline hover:bg-white/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Dismiss</button> : null}
   </div>;
 }

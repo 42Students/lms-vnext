@@ -218,7 +218,7 @@ export function LectureHallManager({
               cell: (hall) => (
                 <div className="flex flex-wrap justify-end gap-2">
                   <Link href={`${availabilityBase}/${hall.id}`}
-                    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                     Availability
                   </Link>
                   <Button variant="secondary" size="sm" onClick={() => open(hall)}>
@@ -265,7 +265,7 @@ export function LectureHallManager({
       >
         <div className="space-y-3">
           {formError ? (
-            <p role="alert" className="m-0 rounded-[var(--lms-control-radius,9px)] bg-[var(--lms-error-subtle)] p-2 text-sm text-foreground">
+            <p role="alert" className="m-0 rounded-[var(--lms-control-radius)] bg-[var(--lms-error-subtle)] p-2 text-sm text-foreground">
               {formError}
             </p>
           ) : null}

@@ -136,7 +136,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           firstSeen:formatInstant(item.firstSeenAt),lastSeen:formatInstant(item.lastSeenAt),
           issuePublicId:item.issuePublicId,
         }).slice(0,450))+"&knownErrorId="+encodeURIComponent(item.id)}
-          className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
           Create tracker issue
         </Link>
         <Button size="sm" variant="secondary" disabled={pending || Boolean(item.acknowledgedAt)}
@@ -252,14 +252,14 @@ export function KnownErrorsWorkspace({
 
   return (
     <div id="known-errors" className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <p className="m-0 text-sm text-body">Last reviewed: {formatInstant(lastViewedAt)}</p>
         <Button variant="secondary" size="sm" disabled={pending} onClick={markViewed}>
           {pending ? "Saving…" : "Mark logs reviewed"}
         </Button>
       </div>
       {items.length === 0 ? (
-        <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
+        <p className="border-y border-border py-6 text-sm text-muted-foreground">
           No tracked errors yet. This does not prove that live Cloud Logging contains no errors.
         </p>
       ) : (

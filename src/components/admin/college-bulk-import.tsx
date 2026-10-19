@@ -43,18 +43,18 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <section className="space-y-3 border-t border-border pt-4">
-  <Button type="button" variant="secondary" className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-[var(--lms-teal-deep)]"
+  <Button type="button" variant="secondary" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-link"
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
   {open?<div className="space-y-3">
    <label className="grid gap-1 text-sm">Organization
-    <Select className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3" value={organizationId}
+    <Select className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" value={organizationId}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);}}>
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
     </Select></label>
    <label className="grid gap-1 text-sm">CSV (name, code, city, state, country)
     <Textarea rows={5} maxLength={150000} value={csv}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
-     className="w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-background p-3 font-mono"
+     className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-mono"
      placeholder="name,code,city,state,country"/>
    </label>
    <p className="text-sm text-muted-foreground">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
@@ -62,9 +62,9 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    {(error||validation)?<p role="alert" className="text-sm text-error">{error||validation}</p>:null}
    <div className="flex flex-wrap gap-2">
     <Button type="button" disabled={busy||!valid} onClick={()=>{confirmedVersionRef.current=versionRef.current;setConfirmImport(true);}}
-     className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm text-on-primary disabled:opacity-50">
+     className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm text-on-primary disabled:opacity-50">
      {busy?"Importing…":"Import colleges"}</Button>
-    <Button type="button" disabled={busy} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm"
+    <Button type="button" disabled={busy} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm"
      onClick={()=>csv?setConfirmDiscard(true):discard()}>Discard draft</Button>
    </div>
    {results.length>0?<div className="max-h-80 overflow-auto"><h3 className="font-semibold">Import results</h3>

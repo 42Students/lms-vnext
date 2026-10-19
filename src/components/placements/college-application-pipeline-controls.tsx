@@ -109,7 +109,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    </div>},
  ];
  return <section className="space-y-4">
-  <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4 text-sm">
+  <div className="flex flex-wrap items-center gap-3 border-b border-border pb-4 text-sm">
    <label className="flex items-center gap-2"><input type="checkbox" checked={allPage}
     disabled={busy||!eligible.length} onChange={e=>{setAllMatching(false);setSelected(e.target.checked?eligible.map(r=>r.id):[]);}} />
     Select all {eligible.length} on this page</label>
@@ -129,7 +129,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
        stage==="HIRED"?"Mark Hired":stage}</option>)}
    </select>
    <button type="button" disabled={!selectedCount||busy} onClick={()=>chooseBulk(target)}
-    className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Act on {selectedCount} selected</button>
    <span className="text-body">Changes are tracked with per-row results and students receive in-app notifications.</span>
   </div>

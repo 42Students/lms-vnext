@@ -90,14 +90,14 @@ export default async function TrackerIssueDetailPage({
         title={issue.publicId}
         description={`${issue.issueType} · ${issue.page}`}
         actions={
-          <Link href="/tracker/issues" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground">
+          <Link href="/tracker/issues" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground">
             Back to issues
           </Link>
         }
       />
       <TrackerAdminNav />
 
-      <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+      <section className="space-y-4 border-b border-border pb-5">
         <div className="flex flex-wrap gap-2">
           <StatusBadge>{issue.status}</StatusBadge>
           <StatusBadge>{issue.severity}</StatusBadge>
@@ -129,7 +129,7 @@ export default async function TrackerIssueDetailPage({
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Screenshots</h2>
         {detail.attachments.length === 0 ? (
-          <p className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">No screenshot metadata.</p>
+          <p className="border-y border-border py-5 text-sm text-muted-foreground">No screenshot metadata.</p>
         ) : (
           <div className="grid gap-2">
             {detail.attachments.map((attachment) => (
@@ -149,7 +149,7 @@ export default async function TrackerIssueDetailPage({
             ...(cursor.activityBeforeCreatedAt && cursor.activityBeforeId ? {
               activityBeforeCreatedAt:cursor.activityBeforeCreatedAt,activityBeforeId:cursor.activityBeforeId,
             }:{}),
-          }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          }).toString()} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
             Older screenshot metadata
           </Link>
         ) : null}
@@ -158,7 +158,7 @@ export default async function TrackerIssueDetailPage({
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Activity</h2>
         {detail.activities.length === 0 ? (
-          <p className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">No workflow history yet.</p>
+          <p className="border-y border-border py-5 text-sm text-muted-foreground">No workflow history yet.</p>
         ) : (
           <ol className="grid gap-3">
             {detail.activities.map((activity) => (
@@ -182,7 +182,7 @@ export default async function TrackerIssueDetailPage({
               attachmentBeforeCreatedAt:cursor.attachmentBeforeCreatedAt,attachmentBeforeId:cursor.attachmentBeforeId,
             }:{}),
           }).toString()}
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
             Older audit events
           </Link>
         ) : null}

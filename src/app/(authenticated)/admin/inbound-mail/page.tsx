@@ -25,7 +25,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    <div role="alert" className="rounded-xl border border-border p-5">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-[var(--lms-teal-deep)]">Reset</Link></div></div>;
  const data=await listInboundMailForAdmin(context,parsed.data);
  if(!data.available)return <div className="space-y-6">{header}
-  <div role="status" className="space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-6">
+  <div role="status" className="space-y-3 border-b border-border pb-5">
    <p>Inbound mail storage has not been registered or deployed. The inbox is unavailable; this is not a zero-message result.</p>
    <Link href="/admin/inbound-mail" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Retry</Link>
   </div></div>;
@@ -52,11 +52,11 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    </Link>})}</nav>
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="min-w-0 flex-1 text-sm">Search
-    <Input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-h-9 w-full min-w-0 rounded-[9px] border border-border px-3" placeholder="Sender, subject or message body"/></label>
+    <Input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-w-0" placeholder="Sender, subject or message body"/></label>
    <label className="min-w-0 flex-1 basis-48 text-sm">Recipient inbox
-    <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-h-9 w-full min-w-0 rounded-[9px] border border-border px-3" placeholder="inbox@example.edu"/></label>
+    <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-w-0" placeholder="inbox@example.edu"/></label>
    <label className="text-sm">Status
-    <Select name="status" defaultValue={parsed.data.status} className="mt-1 min-h-9 w-full rounded-[9px] border border-border px-3">
+    <Select name="status" defaultValue={parsed.data.status} className="mt-1 w-full">
      <option value="ALL">All</option><option value="NEW">To read</option><option value="TRIAGED">Being handled</option><option value="RESOLVED">Done</option>
     </Select></label>
    <Button type="submit">Filter</Button>

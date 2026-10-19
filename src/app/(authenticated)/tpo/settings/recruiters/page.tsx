@@ -3,6 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {TpoRecruiterDurationEditor} from "@/components/tpo/tpo-communication-settings-editors";
 import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communication-settings-service";
 import { redirect } from "next/navigation";
@@ -167,7 +170,7 @@ export default async function TpoRecruiterAccessPage({
             <Select
               name="status"
               defaultValue={query.status}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 sm:min-h-9"
             >
               {TPO_RECRUITER_ACCESS_FILTERS.map(
                 (status) => (
@@ -190,11 +193,11 @@ export default async function TpoRecruiterAccessPage({
             Search name, designation or company
             <Input type="search" name="q" defaultValue={query.q} maxLength={80}
               placeholder="Recruiter, role or company"
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" />
+              className="min-h-11 sm:min-h-9" />
           </label>
-          <Button variant="primary"
+          <Button
             type="submit"
-            className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+            className="min-h-11 sm:min-h-9"
           >
             Apply
           </Button>

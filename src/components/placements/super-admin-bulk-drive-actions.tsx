@@ -1,6 +1,8 @@
 "use client";
 import { useRef, useState } from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
 type Drive = {id: string; title: string; status: string; companyName: string};
@@ -44,7 +46,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       setError(cause instanceof Error ? cause.message : "Unable to update drives. Please try again.");
     } finally {inFlightRef.current=false;setBusy(false);}
   }
-  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4"
+  return <section className="space-y-3 border-b border-border pb-5"
     aria-label="Super Admin bulk drive actions">
     <div className="flex flex-wrap items-center gap-3">
       <h2 className="font-semibold">Bulk Open / Close</h2>
@@ -56,24 +58,23 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         Select eligible on this page ({eligible.length})
       </label>
       <label className="flex items-center gap-2 text-sm">Action
-        <select value={action} aria-label="Bulk action" onChange={e=>{
+        <Select value={action} aria-label="Bulk action" onChange={e=>{
           setAction(e.target.value as "OPEN" | "CLOSE");setSelected([]);
           setPreview(null);setResult(null);}}
-          className="min-h-9 rounded-[9px] border border-border bg-surface p-2">
+          className="min-w-0">
           <option value="CLOSE">Close selected</option>
           <option value="OPEN">Open closed drives</option>
-        </select>
+        </Select>
       </label>
-      <button type="button" disabled={busy || !selected.length || selected.length>25}
-        onClick={()=>void send(false)}
-        className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] disabled:opacity-50">
+      <Button type="button" disabled={busy || !selected.length || selected.length>25}
+        onClick={()=>void send(false)}>
         Preview {selected.length} drive(s)
-      </button>
+      </Button>
     </div>
     {eligible.length>3?<p id="bulk-drive-scroll-cue" className="text-xs text-muted-foreground">More drives below ↓ · Scroll to review the eligible drives.</p>:null}
     <div tabIndex={0} role="region" aria-label="Eligible drive list" aria-describedby={eligible.length>3?"bulk-drive-scroll-cue":undefined}
       className="grid max-h-48 min-w-0 gap-2 overflow-y-auto overscroll-contain sm:grid-cols-2 xl:grid-cols-4 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">
-      {eligible.map(d=><label key={d.id} className="flex gap-2 rounded border border-border p-2 text-xs">
+      {eligible.map(d=><label key={d.id} className="flex gap-2 border-b border-border py-2 text-xs">
         <input type="checkbox" disabled={busy} checked={selected.includes(d.id)}
           onChange={()=>toggle(d.id)}/>
         <span><strong>{d.title}</strong><span className="block text-muted-foreground">
@@ -90,10 +91,9 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       <p>{action==="CLOSE"?
         `${preview.pendingLettersWithdrawn} issued offers may be withdrawn when these drives close.`:
         "Previously withdrawn offers will not be reissued."}</p>
-      <button type="button" disabled={busy || !preview.eligible} onClick={()=>setConfirmOpen(true)}
-        className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-3 font-semibold text-[var(--lms-on-primary)] disabled:opacity-50">
+      <Button type="button" disabled={busy || !preview.eligible} onClick={()=>setConfirmOpen(true)}>
         Confirm {action.toLowerCase()}
-      </button>
+      </Button>
       <button type="button" disabled={busy} onClick={()=>setPreview(null)}
         className="ml-2 min-h-9 rounded-[9px] border border-border px-3">Cancel</button>
     </div>:null}

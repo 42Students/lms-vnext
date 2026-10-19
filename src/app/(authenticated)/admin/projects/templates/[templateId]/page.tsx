@@ -28,7 +28,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
       <PageHeader eyebrow="Super Admin · Projects" title="Project template"/>
       <ErrorState title="Project template access denied"
         description="The active administrator does not have permission to view global project templates."
-        action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Back to template catalogue</Link>}/>
+        action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>}/>
     </div>;
   }
   let detail: Awaited<ReturnType<typeof getProjectTemplateDetail>>;
@@ -41,7 +41,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
       <ErrorState title="Project template unavailable"
         description="This template could not be loaded. No version or college assignment details are shown."
         action={<Link href={"/admin/projects/templates/"+encodeURIComponent(id.data)}
-          className="font-semibold text-[var(--lms-teal-deep)]">Retry template details</Link>}/>
+          className="font-semibold text-primary-text">Retry template details</Link>}/>
     </div>;
   }
 
@@ -53,7 +53,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
       />
       <Link
         href="/admin/projects/templates"
-        className="inline-flex text-sm font-semibold text-[var(--lms-teal-deep)] hover:text-primary-hover"
+        className="inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
       >
         ← Template catalogue
       </Link>

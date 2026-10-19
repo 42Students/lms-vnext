@@ -37,7 +37,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
               </p>
             </div>
             {step.href ? <Link href={step.href}
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text hover:underline">
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link hover:underline">
               Open
             </Link> : <span className="text-xs text-muted-foreground">
               Page unavailable

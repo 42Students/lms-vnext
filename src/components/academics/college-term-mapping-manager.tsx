@@ -130,7 +130,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         <select required value={programId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained for this semester.");
           setProgramId(event.target.value); setTermId("");
-        }} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2 text-foreground">
+        }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose program</option>
           {Array.from(new Map(data.terms.map(t => [t.programId, t.programName])).entries()).map(
             ([id, name]) => <option key={id} value={id}>{name}</option>)}
@@ -140,7 +140,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         <select required value={termId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained.");
           setTermId(event.target.value);
-        }} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2 text-foreground">
+        }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose semester</option>
           {termChoices.map(t => <option key={t.id} value={t.id}>{t.name} ({t.termNumber})</option>)}
         </select>
@@ -149,7 +149,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         <select multiple size={8} value={selectedIds}
           disabled={!termId} onChange={event => setDraftByTerm(current => ({
             ...current, [termId]: Array.from(event.target.selectedOptions).map(option => option.value),
-          }))} className="min-h-40 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2 text-foreground">
+          }))} className="min-h-40 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           {availableCourses.map(c => <option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
         </select>
         <span className="text-xs font-normal text-muted-foreground">
@@ -204,36 +204,36 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                   <input type="number" min={1} max={10} step={1} required
                     value={editing.credits}
                     onChange={event=>setEditing({...editing,credits:event.target.value})}
-                    className="block min-h-11 w-24 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2"/>
+                    className="block min-h-11 w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
                 </label>
                 <label className="text-xs">Order
                   <input type="number" min={1} max={orderedPeers(row).length} step={1}
                     value={editing.position}
                     onChange={event=>setEditing({...editing,position:event.target.value})}
-                    className="block min-h-11 w-24 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2"/>
+                    className="block min-h-11 w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
                 </label>
                 <div className="flex gap-2">
                   <button type="submit" disabled={pending}
-                    className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-xs font-semibold">Save</button>
+                    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold">Save</button>
                   <button type="button" disabled={pending} onClick={()=>setEditing(null)}
-                    className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-xs">Cancel</button>
+                    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs">Cancel</button>
                 </div>
               </form>
             ) : (
               <div className="flex flex-wrap gap-2">
                 <button type="button" disabled={pending}
-                  className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-xs"
+                  className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs"
                   onClick={()=>setEditing({
                     id:row.id,credits:row.credits===null?"3":String(row.credits),
                     position:String(orderedPeers(row).findIndex(item=>item.id===row.id)+1),
                   })}>Edit</button>
                 <button type="button" disabled={pending||orderedPeers(row)[0]?.id===row.id}
-                  className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-xs"
+                  className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs"
                   aria-label={"Move "+row.courseName+" up"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"3":String(row.credits),
                     orderedPeers(row).findIndex(item=>item.id===row.id))}>↑</button>
                 <button type="button" disabled={pending||orderedPeers(row).at(-1)?.id===row.id}
-                  className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-xs"
+                  className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs"
                   aria-label={"Move "+row.courseName+" down"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"":String(row.credits),
                     orderedPeers(row).findIndex(item=>item.id===row.id)+2)}>↓</button>

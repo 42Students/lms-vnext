@@ -53,7 +53,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
     });
   }
   return <div className="space-y-5">
-    <form onSubmit={preview} className="space-y-4 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:p-6">
+    <form onSubmit={preview} className="space-y-4 border-b border-border pb-4">
       <p className="text-sm text-body">
         Upload a CSV with one column named <code>email</code>. Maximum 500 rows and 128 KiB.
         Only currently active learners in this college are eligible.
@@ -66,7 +66,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <label className="grid gap-2 text-sm font-semibold text-body">CSV contents
         <textarea rows={8} maxLength={131072} value={csv}
           onChange={(event) => { setCsv(event.target.value); setResult(null); }}
-          className="w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 font-mono text-sm text-foreground" />
+          className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-mono text-sm text-foreground" />
       </label>
       <Button type="submit" disabled={reading || pending || !csv.trim()}>
         {pending ? "Validating…" : "Preview only (no import)"}
@@ -80,11 +80,11 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <p className="text-sm text-body">{result.warning}</p>
       <a href={"data:text/csv;charset=utf-8," + encodeURIComponent(result.errorCsv)}
         download="group-import-validation-errors.csv"
-        className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
         Download safe error CSV
       </a>
       {result.rows.length === 0 ? <p className="text-sm text-body">No learner rows were supplied.</p> : (
-        <div className="max-h-[35rem] overflow-auto rounded-[var(--lms-control-radius,9px)] border border-border">
+        <div className="max-h-[35rem] overflow-auto rounded-[var(--lms-control-radius)] border border-border">
           <DataTable<Result["rows"][number]>
             caption="Group import preview validation"
             rows={result.rows} getRowKey={row=>String(row.rowNumber)}
