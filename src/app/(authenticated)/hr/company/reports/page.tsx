@@ -1,4 +1,5 @@
 import { DataTable } from "@/components/ui/data-table";
+import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -204,34 +205,12 @@ export default async function RecruiterCompanyReportsPage({
         </nav>
       ) : null}
 
-      <nav
-        aria-label="Company sections"
-        className="flex gap-2 border-b border-border"
-      >
-        <Link
-          href={`${companyBase}&tab=company`}
-          className="border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-        >
-          Company
-        </Link>
-
-        <Link
-          href={`${companyBase}&tab=team`}
-          className="border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-        >
-          Team
-        </Link>
-
-        <Link
-          href={recruiterCompanyReportsHref({
-            collegeId,
-          })}
-          aria-current="page"
-          className="border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-        >
-          Reports
-        </Link>
-      </nav>
+      <Tabs ariaLabel="Company sections" renderPanel={false} value="reports"
+        items={[
+          {value:"company",label:"Company",href:companyBase+"&tab=company"},
+          {value:"team",label:"Team",href:companyBase+"&tab=team"},
+          {value:"reports",label:"Reports",href:recruiterCompanyReportsHref({collegeId})},
+        ]} />
 
       <section
         aria-label="Hiring portfolio summary"
