@@ -107,7 +107,7 @@ export default async function TpoPlacementSummaryPage({
         ].map((item) => (
           <div
             key={item.label}
-            className="rounded-xl border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
           >
             <p className="text-xs font-semibold uppercase text-body">
               {item.label}
@@ -120,7 +120,7 @@ export default async function TpoPlacementSummaryPage({
       </section>
 
       <ReportScopeNote note={workspace.registrationScopeNote} />
-      <section aria-label="Offers by current status" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+      <section aria-label="Offers by current status" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
        <h2 className="text-lg font-semibold">Offers by status</h2>
        <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {([
@@ -159,44 +159,44 @@ export default async function TpoPlacementSummaryPage({
             {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
             {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
             <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold">Company
-             <select name="companyId" defaultValue={companyId} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-2">
+             <select name="companyId" defaultValue={companyId} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
               <option value="">All companies</option>
               {byCompany.map(row=><option key={row.companyId} value={row.companyId}>{row.companyName}</option>)}
              </select>
             </label>
             <label className="grid gap-1 text-sm font-semibold">Work mode
-             <select name="workMode" defaultValue={workMode} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-2">
+             <select name="workMode" defaultValue={workMode} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
               <option value="">All modes</option><option value="ONSITE">Onsite</option>
               <option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
              </select>
             </label>
             <label className="grid gap-1 text-sm font-semibold">Pay evidence
-             <select name="payCategory" defaultValue={payCategory} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-2">
+             <select name="payCategory" defaultValue={payCategory} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
               <option value="">All</option><option value="CTC_RECORDED">CTC recorded</option>
               <option value="STIPEND_RECORDED">Stipend recorded</option>
               <option value="NOT_RECORDED">Not recorded</option>
              </select>
             </label>
-            <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</button>
+            <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</button>
             {(companyId||workMode||payCategory)?<a href={"/tpo/reports/placement-summary?"+
              new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
-             }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
+             }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">
               Clear drive dimensions
              </a>:null}
 
           </form>
-          {!validFilters?<p role="alert" className="rounded-md border border-border p-3 text-sm text-warning-text">
+          {!validFilters?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-warning-text">
            One or more selected drive dimensions are invalid for this college. Clear the filters.
           </p>:null}
-          {!dimensions?<section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warning-border bg-warning-subtle p-4 text-sm">
+          {!dimensions?<section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-4 text-sm">
             <p className="text-warning-text">Batch filter unavailable. Drive dimension details could not be loaded; the season report remains available, but no drive-row totals are inferred.</p>
             <Link href={"/tpo/reports/placement-summary?"+new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
               ...(companyId?{companyId}:{}),...(workMode?{workMode}:{}),...(payCategory?{payCategory}:{}),
-            }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 py-2 font-semibold text-[var(--lms-link-text)]">Retry</Link>
+            }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-link">Retry</Link>
           </section>:null}
           {dimensions?<p role="status" className="text-xs text-muted-foreground">
            Showing {shownDrives.length} of {byDrive.length} drive rows. This filters the drive table only.
