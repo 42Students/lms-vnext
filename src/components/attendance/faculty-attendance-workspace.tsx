@@ -1,5 +1,6 @@
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import {
   type FormEvent,
@@ -487,7 +488,7 @@ export function FacultyAttendanceWorkspace({
 
   return (
     <div className="space-y-5">
-      {savedNotice?<p role="status" className="rounded border border-border bg-surface p-3 text-sm text-success">{savedNotice}</p>:null}
+      {savedNotice?<Alert tone="success">{savedNotice}</Alert>:null}
       <section className="border-b border-border pb-5">
         <PageHeader
           title="Attendance"
@@ -500,7 +501,7 @@ export function FacultyAttendanceWorkspace({
         </p>
 
         <SegmentedControl
-          className="mt-4 w-full sm:w-auto"
+          className="mt-4 w-full md:w-auto"
           label="Attendance view"
           value={mode}
           options={[{value:"REPORT",label:"Monthly Attendance"},{value:"MARK",label:"Mark attendance"}]}
@@ -545,7 +546,7 @@ export function FacultyAttendanceWorkspace({
                 >
                   ←
                 </Button>
-                <label className="text-xs font-semibold text-body">
+                <label className="text-[13px] font-semibold leading-4 text-body">
                   Jump to month
                   <Input
                     className="mt-1.5"
@@ -626,7 +627,7 @@ export function FacultyAttendanceWorkspace({
                 />
               ) : null}
             </div>
-            <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+            <dl className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
               {[
                 ["Students", monthSummary.learnerCount],
                 ["Sessions", monthSummary.sessionCount],
@@ -653,7 +654,7 @@ export function FacultyAttendanceWorkspace({
                 This monthly preview is not an official debarment or institutional eligibility decision.
               </p>
               {attendanceRisk.below.length > 0 ? (
-                <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                <ul className="mt-3 grid gap-2 md:grid-cols-2">
                   {attendanceRisk.below.map((membershipId) => {
                     const learner = workspace.roster.find((row) => row.membershipId === membershipId);
                     const summary = monthSummary.learners.find((row) => row.membershipId === membershipId);
@@ -953,7 +954,7 @@ export function FacultyAttendanceWorkspace({
                             <div className="flex gap-2">
                               <Button
                                 size="sm"
-                                className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+                                className="min-h-11 md:min-h-[var(--lms-control-height)]"
                                 variant={
                                   !isAbsent
                                     ? "primary"
@@ -974,7 +975,7 @@ export function FacultyAttendanceWorkspace({
                               </Button>
                               <Button
                                 size="sm"
-                                className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+                                className="min-h-11 md:min-h-[var(--lms-control-height)]"
                                 variant={
                                   isAbsent
                                     ? "danger"
@@ -1019,7 +1020,7 @@ export function FacultyAttendanceWorkspace({
                   {attendanceConfirmation ?? "No recorded marks have changed. Choose a changed mark to correct attendance."}
                 </p>
               ) : null}
-              <div className="sticky bottom-0 z-20 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 sm:static sm:border-0 sm:bg-surface-subtle">
+              <div className="sticky bottom-0 z-20 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 md:static md:border-0 md:bg-surface-subtle">
                 <span className="text-sm font-semibold text-body">
                   {absent.size} absent ·{" "}
                   {Math.max(
@@ -1100,7 +1101,7 @@ export function FacultyAttendanceWorkspace({
                 selectedLearner.email, selectedLearner.phoneE164].filter(Boolean).join(" · ") ||
                 "Contact details unavailable"}
             </p>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
               {[
                 ["Present", learnerDetail.present],
                 ["Absent", learnerDetail.absent],

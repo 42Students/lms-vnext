@@ -495,3 +495,66 @@ Full blob re-fetch confirmed \`<Button>\` vs \`</Button>\` counts: material link
 **STRICT TICK RULE boundary:** All original **94 category-H Work queue items remain unchecked**: browser computed-state values, actual visual phone/tablet verification at 375/767/768/991/1024px, screenshots against old LMS and complete transitive portal grep have not been performed. No source execution, CI, typecheck, test, lint or local rendering was performed; no \`src/components/ui/*\` file was edited.
 
 **Next exact source file:** \`src/components/courses/faculty-course-workspace.tsx\`; then \`src/components/courses/faculty-content-order-editor.tsx\`. Follow these with remaining Super Admin academic/people page list without taking ownership from other lanes.
+
+
+## Replacement chat-3 — bounded-turn source sweep of 26 further files (2026-10-19)
+
+Source-complete paths (not strict H checks):
+
+| File (exactly under the Work queue folders) | Raw controls / native confirm / hex / aria-pressed count | Button opening/closing tag counts | Legacy value and responsive source mapping |
+|---|---:|---:|---|
+| `academics-actions.tsx` | 0 | 21/21 | 13px labels; md 36px action targets |
+| `academics-create-panel.tsx` | 0 | 4/4 | 13px label; md 36px action targets |
+| `section-operations.tsx` | 0 | 10/10 | 44px phone buttons; md table-actions/forms |
+| `super-admin-attendance-settings-editor.tsx` | 0 | 1/1 | Alert success/error; 44px phone save |
+| `super-admin-faculty-assignment-create.tsx` | 0 | 5/5 | shared validation alerts; 44px phone, 36px md |
+| `super-admin-faculty-bulk-import.tsx` | 0 | 2/2 | shared Alert; 44px phone download/import |
+| `super-admin-faculty-schedule-reassign-action.tsx` | 0 | 3/3 | shared Dialog/ConfirmDialog/Alert and responsive Select |
+| `super-admin-people-csv-control.tsx` | 0 | 1/1 | shared error Alert; 14px/650 Button |
+| `faculty-attendance-schedule-editor.tsx` | 0 | 1/1 | 13px form labels; 768px two-column; shared alerts |
+| `faculty-attendance-workspace.tsx` | 2 toggles (exempt) | 14/14 | shared success Alert; md grid/sticky-action switch |
+| `faculty-assessment-lifecycle.tsx` | 0 | 1/1 | 14px shared Button; Alert saved/error |
+| `faculty-assessment-overview.tsx` | 0 | 2/2 | 13px labels, 14px link actions; one-column phone |
+| `faculty-assignment-editor.tsx` | 0 | 4/4 | 13px labels; 768px field type; shared loading |
+| `faculty-choice-quiz-builder.tsx` | 0 | 26/26 | 36 responsive modifiers moved to md; 13px labels; 12px panels |
+| `faculty-content-order-editor.tsx` | 0 | 4/4 | 44px phone actions, 14px buttons; wrapping row |
+| `faculty-course-workspace.tsx` | 0 | 0/0 | removed unsupported Disclosure props; md action targets; 12px empty panel |
+| `faculty-report-csv-download.tsx` | 0 | 0/0 | 44px phone, 36px md download target |
+| `faculty-report-download.tsx` | 0 | 1/1 | 44px phone, 36px md PDF action; ConfirmDialog unchanged |
+| `faculty-report-student-table.tsx` | 0 | 2/2 | fixed duplicate Button import; EmptyState; 13px search label |
+| `faculty-submission-file-review.tsx` | 0 | 1/1 | 12px file row; 44px phone and loading button |
+| `faculty-video-preview.tsx` | 0 | 0/0 | 12px native-media viewport radius |
+| `faculty-profile-editor.tsx` | 0 | 1/1 | shared Alert and LoadingState; existing anchor navigation preserved |
+| `faculty-profile-metadata.tsx` | 0 | 5/5 | 13px labels; 12px row panel; shared errors |
+| `faculty-profile-repeatable.tsx` | 0 | 9/9 | 13px labels; shared validation Alert; existing 768px layout |
+| `faculty-profile-skills.tsx` | 0 | 7/7 | 13px labels; 12px row panel; md column switch |
+| `faculty-profile-text-section.tsx` | 0 | 2/2 | shared validation Alert; 44px phone actions |
+
+The count expression was evaluated on the **whole UTF-8 GitHub file** of each of the 26 paths after the individual `[chat-3]` commits. Query equivalent:
+
+```sh
+git grep -nE '<(button|input|select|textarea|table|dialog)([ >])|window[.]confirm[(]|#[0-9A-Fa-f]{3,8}|aria-pressed' -- \
+  src/components/academics src/components/admin/super-admin-{attendance-settings-editor,faculty-assignment-create,faculty-bulk-import,faculty-schedule-reassign-action,people-csv-control}.tsx \
+  src/components/attendance/faculty-attendance-{schedule-editor,workspace}.tsx \
+  src/components/courses/faculty-*.tsx src/components/people/faculty-profile-*.tsx
+```
+
+The *printed shell command is not claimed as executed*, and its broad globs may return other existing transitive files not in this batch. **The actually evaluated 26 full-blob matches were 0 in 25 files and 2 in faculty-attendance-workspace.tsx**: both `aria-pressed` on the accessible Present/Absent two-state Buttons, at lines 963 and 984 in the before-rebase file. Those are deliberately exempted toggle states, not native controls; the action Button remains shared. Every scanned file has zero native `button/input/select/textarea/table/dialog` tags, zero `window.confirm`, zero hard-coded hex. JSX Button opening/closing counts match for every source file; remaining native `<option>` elements are valid children of shared Select. Full JSX parser/typecheck not run by owner constraint.
+
+### Legacy property proof — selected properties only; do not tick strict item
+
+| State/property | Legacy source (line and value) | Changed-file source / inherited token | Conclusion |
+|---|---|---|---|
+| Phone action minimum | `docs/design/legacy-styles/components___variables.scss:139`: 44px | `min-h-11` (44px standard root) or `max-[767px]:[&_button]:min-h-11`, across the file rows above | Source rule aligned; actual computed viewport pending |
+| Phone/tablet cutover | `components___variables.scss:148-149`: phone max 767px, tablet 991px | Changed `sm:` to `md:` on applicable form, control height and column rules; all 26 fetched blobs had **0 remaining `sm:`**; existing `min-[768px]` also aligns | Static 375/767 phone, 768/991 tablet mapping; no browser screenshot |
+| Field label | `components___form.scss:111-114`: 13px, weight 600, 16px leading | Updated form labels use `text-[13px]`, `font-semibold`, `leading-4` in assessment, teacher-scheduling, profiles and academia | Source declaration match for changed labels; shared field inherited values not computed |
+| Card border/corners | `components___variables.scss:30,134`: #e5e9f0, 12px | `border-border` or `border-[var(--lms-canvas-border)]`, `rounded-[var(--lms-canvas-radius)]` in changed objects/fields | Source token match; nested-card layout not visually confirmed |
+| Default buttons | `docs/orchestrator/queues/master-queue.md:5`: 36px, 14px/650, teal primary, white content, 9px radius | Shared `Button` with `size=md`; Link appearance still authored as token-mapped class | Inherited default/hover/focus; shared owner must verify computed skin |
+| Disabled/loading/error | `components___form.scss:23-32,137-142`: keyboard focus, error treatment; controls must show disabled state | Shared Buttons/Alerts/LoadingState/ConfirmDialog now used in migrated paths, including prompt and network states | Code paths audited, rendered hover/focus/disabled/loading/error state comparisons pending |
+| Narrow forms and table surfaces | `pages___admin-list-pages.scss:193-215`: one-column form/touch actions at max 767px | Faculty quiz builder, academic actions, course workspace, report tables and profile form explicitly align at 768px instead of 640px | Static source breakpoints checked; no actual 375px/767px/768px/991px/1024px viewports rendered |
+
+**Critical existing JSX repair:** `faculty-course-workspace.tsx` passed unsupported `summaryAriaLabel`, `summaryClassName`, `preserveSummary` props to shared `Disclosure`; these were removed and the visible lesson title, description and count grouped inside its documented `title` prop. This is a source compatibility repair only, not a compilation claim. `faculty-report-student-table.tsx` had a duplicate Button import; it was removed. No code, tests, typecheck, lint, CI or screenshots executed. `src/components/ui/*` untouched.
+
+**Strict H status:** The original 94 Work queue checkboxes remain `[ ]` because rendered computed-style comparison for default/hover/focus/disabled/empty/error/loading and portal-wide transitive coverage proof are not yet available. Do **not** claim pixel parity complete or tick them based on only source inspection.
+
+**Next exact source file:** `src/components/academics/academics-overview.tsx`, then the 46 owned teacher/Super Admin route pages starting `src/app/(authenticated)/admin/academics/page.tsx` and their directly rendered components; preserve ownership boundaries.
