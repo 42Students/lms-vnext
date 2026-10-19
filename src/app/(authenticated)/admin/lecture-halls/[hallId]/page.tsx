@@ -52,7 +52,7 @@ export default async function SuperAdminLectureHallAvailability({
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin · Lecture halls" title={result?.hall.name ?? "Room availability"}
       description="Read-only scheduled bookings. An empty schedule is not proof of a free room."
-      actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Back to Lecture Halls</Link>} />
+      actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to Lecture Halls</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">From (IST)
         <Input name="from" type="date" required defaultValue={typeof raw.from === "string" ? raw.from : ""}

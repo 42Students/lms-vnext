@@ -41,40 +41,40 @@ export default async function SuperAdminElectivesPage({
       <form className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <label className="grid gap-1 text-sm font-semibold text-body">Search
           <Input name="q" defaultValue={data.query.q} placeholder="Slot or program"
-            className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Status
           <Select name="status" defaultValue={data.query.status}
-            className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Program
           <Select name="programId" defaultValue={data.query.programId ?? ""}
-            className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="">All programs</option>
             {data.programs.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Semester
           <Select name="semesterNumber" defaultValue={data.query.semesterNumber ?? ""}
-            className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="">All semesters</option>
             {Array.from({length:12},(_,i)=>i+1).map(n=><option key={n} value={n}>{n}</option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-9 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary font-[650]">Filter</Button>
+        <Button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary font-[650]">Filter</Button>
       </form>
       <form method="get" action="/admin/electives" aria-label="Refresh elective directory">
         {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
         <input type="hidden" name="status" value={data.query.status} />
         {data.query.programId?<input type="hidden" name="programId" value={data.query.programId}/>:null}
         {data.query.semesterNumber?<input type="hidden" name="semesterNumber" value={data.query.semesterNumber}/>:null}
-        <Button variant="secondary" type="submit" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Refresh</Button>
+        <Button variant="secondary" type="submit" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
       </form>
       <p role="status" aria-live="polite" className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
       {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
-        {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 border-b border-border py-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.name}</h2>
             <StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{legacyAcademicStatus(item.status)}</StatusBadge>
@@ -102,6 +102,6 @@ export default async function SuperAdminElectivesPage({
       </div> : <EmptyState title="No elective slots" description="No persisted elective slots match the current college and filters." />}
       {data.truncated ? <p className="text-sm text-muted-foreground">Showing only 200 matching elective slots. Narrow the search for older entries.</p> : null}
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← Academic overview</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline sm:min-h-9">← Academic overview</Link>
   </div>;
 }

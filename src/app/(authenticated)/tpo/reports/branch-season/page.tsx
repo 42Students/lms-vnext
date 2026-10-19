@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -48,7 +50,7 @@ export default async function TpoBranchSeasonPage({
         <form method="get" className="flex flex-wrap items-end gap-3">
           <label className="text-sm font-semibold text-foreground">
             Placement season
-            <select
+            <Select
               name="seasonId"
               defaultValue={dashboard.season?.id ?? ""}
               className="mt-2 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm font-normal"
@@ -58,28 +60,28 @@ export default async function TpoBranchSeasonPage({
                   {season.name} · {season.status}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
-          <button
+          <Button variant="secondary"
             type="submit"
             className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground"
           >
             View season
-          </button>
+          </Button>
         </form>
       ) : null}
       {!dashboard.season ? (
-        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
+        <p role="status" className="border-t border-border py-6 text-sm text-body">
           No placement seasons are recorded for this college. No branch rate can be calculated.
         </p>
       ) : (
         <>
           <section className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+            <div className="border-b border-border px-1 py-5">
               <p className="text-sm text-body">Distinct applicants (all application states)</p>
               <p className="mt-2 text-3xl font-bold tabular-nums">{dashboard.totalApplicants}</p>
             </div>
-            <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+            <div className="border-b border-border px-1 py-5">
               <p className="text-sm text-body">Distinct learners with currently accepted offers</p>
               <p className="mt-2 text-3xl font-bold tabular-nums">{dashboard.totalAcceptedLearners}</p>
             </div>
@@ -92,7 +94,7 @@ export default async function TpoBranchSeasonPage({
             </p>
           ) : null}
           {dashboard.rows.length === 0 ? (
-            <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
+            <p role="status" className="border-t border-border py-6 text-sm text-body">
               This season has no persisted applicant, accepted-offer or registered-pool
               branch evidence. Rates cannot be inferred.
             </p>

@@ -177,14 +177,14 @@ export function DriveDayRoster({
         actions={
           <Link
             href="/tpo/drive-day"
-            className="inline-flex min-h-9 items-center justify-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:bg-muted"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:bg-muted md:min-h-9"
           >
             Back
           </Link>
         }
       />
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 lg:grid-cols-4">
         {[
           ["On roster", counts.total],
           ["Checked in", counts.present],
@@ -193,7 +193,7 @@ export function DriveDayRoster({
         ].map(([label, value]) => (
           <div
             key={String(label)}
-            className="rounded-xl border border-border bg-surface p-4"
+            className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 lg:border-b-0"
           >
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
               {label}
@@ -205,7 +205,7 @@ export function DriveDayRoster({
         ))}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <div className="border-b border-border p-4">
           <input
             className={inputClass}

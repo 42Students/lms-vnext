@@ -73,9 +73,9 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
       <p className="text-sm text-body">
         Cancelling stops new applications. Open applicants are marked Not selected and notified, pending or scheduled rounds are cancelled, and issued offers are withdrawn. Pending withdrawal requests are settled, the recruiter is notified when linked, and accepted offers remain valid. History is retained.
       </p>
-      <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <dl className="grid grid-cols-1 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2">
         {rows.map(([label, n]) => (
-          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-3">
+          <div key={label} className="border-b border-border p-3 last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0">
             <dt className="text-xs text-body">{label}</dt>
             <dd className="text-2xl font-semibold tabular-nums">{n}</dd>
           </div>
