@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
@@ -48,14 +49,14 @@ export function LearnerBoardTaskDetailDialog({
   return (
     <dialog ref={ref} aria-labelledby="learner-task-dialog-title"
       onClose={()=>{if(navigatingRef.current.shouldReturn())router.replace(returnHref);}}
-      className="fixed inset-0 m-auto max-h-[85dvh] w-[min(94vw,38rem)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50 sm:p-6">
+      className="fixed inset-0 m-auto max-h-[85dvh] w-[min(94vw,38rem)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground shadow-[var(--lms-dialog-shadow)] backdrop:bg-black/50 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Project Board task</p>
           <h2 id="learner-task-dialog-title" className="mt-1 break-words text-lg font-semibold">{task.title}</h2>
         </div>
         <form method="dialog">
-          <button className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold" aria-label="Close task details">Close</button>
+          <Button type="submit" variant="secondary" className="min-h-11" aria-label="Close task details">Close</Button>
         </form>
       </div>
       {task.carriedFromSprintId?<p className="mt-2 text-xs font-semibold text-warning-text">

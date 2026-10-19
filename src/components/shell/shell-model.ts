@@ -18,7 +18,8 @@ export type ShellNavIconName =
  | "checklist" | "clipboard" | "messages" | "bell" | "megaphone"
  | "chart" | "contact" | "search" | "layers" | "user"
  | "award" | "target" | "clock" | "table" | "inbox" | "help"
- | "comment" | "check-circle" | "file-text" | "wrench";
+ | "comment" | "check-circle" | "file-text" | "wrench"
+ | "solution" | "usergroup-add" | "bank" | "appstore" | "partition" | "apartment";
 
 export type ShellNavItem = {
   label: string;
@@ -43,12 +44,12 @@ export const TPO_SECTION_LABELS = {
  * inline SVG because this repository does not depend on lucide-react. */
 export const SHELL_NAV_ICON_KEYS:ReadOnly<Record<string,ShellNavIconName>>={
  "/dashboard":"dashboard",
- "/admin/tenants":"building", "/admin/features":"sliders",
- "/admin/module-access":"puzzle", "/admin/settings":"settings",
+ "/admin/tenants":"bank", "/admin/features":"appstore",
+ "/admin/module-access":"partition", "/admin/settings":"settings",
  "/admin/audit":"history", "/admin/inbound-mail":"mail",
- "/admin/departments":"school", "/admin/courses":"book",
- "/admin/faculty":"users", "/admin/verification":"shield",
- "/admin/placements":"briefcase", "/admin/projects/templates":"folder",
+ "/admin/departments":"apartment", "/admin/courses":"book",
+ "/admin/faculty":"usergroup-add", "/admin/verification":"shield",
+ "/admin/placements":"solution", "/admin/projects/templates":"folder",
  "/learn/courses":"book", "/learn/allQuizzes":"clipboard",
  "/learn/allAssignments":"checklist", "/learn/calendar":"calendar",
  "/learn/attendance":"table", "/learn/my-placements":"briefcase",
@@ -59,19 +60,19 @@ export const SHELL_NAV_ICON_KEYS:ReadOnly<Record<string,ShellNavIconName>>={
  "/teacher/profile":"user",
  "/mentor/projects":"folder", "/mentor/calendar":"calendar",
  "/mentor/notifications":"bell",
- "/tpo/home":"dashboard", "/tpo/batches":"building", "/tpo/recruiters":"users",
- "/tpo/placements":"briefcase", "/tpo/team":"comment",
+ "/tpo/home":"dashboard", "/tpo/batches":"apartment", "/tpo/recruiters":"usergroup-add",
+ "/tpo/placements":"solution", "/tpo/team":"comment",
  "/tpo/students":"users", "/tpo/requests":"check-circle",
  "/tpo/verification":"shield", "/tpo/calendar":"calendar",
  "/tpo/announcements":"megaphone", "/tpo/reports":"file-text",
  "/tpo/messages":"messages", "/tpo/settings":"wrench",
  "/tpo/audit":"history", "/tpo/notifications":"bell",
- "/hr/home":"dashboard", "/hr/drives":"briefcase", "/hr/calendar":"calendar",
+ "/hr/home":"dashboard", "/hr/drives":"solution", "/hr/calendar":"calendar",
  "/hr/conversations":"messages", "/hr/company":"users",
  "/college":"dashboard", "/college/activity":"history",
- "/college/departments":"school", "/college/courses":"book",
- "/college/faculty":"users", "/college/verification":"shield",
- "/college/placements":"briefcase", "/college/projects":"folder",
+ "/college/departments":"apartment", "/college/courses":"book",
+ "/college/faculty":"usergroup-add", "/college/verification":"shield",
+ "/college/placements":"solution", "/college/projects":"folder",
  "/college/profile":"user",
 };
 export function shellNavIconKey(item:ShellNavItem):ShellNavIconName{
@@ -98,30 +99,21 @@ function navPortal(href: string): string | null {
  * Single-role college admins retain their one explicit Placement cell link.
  * The general Dashboard link remains a safe cross-workspace escape. */
 export function scopedShellNavigation(items: readonly ShellNavItem[], pathname: string): ShellNavItem[] {
- const counts = new Map<string, number>();
- for (const item of items) {
-  const portal = navPortal(item.href);
-  if (portal) counts.set(portal, (counts.get(portal) ?? 0) + 1);
- }
- const substantial = ["learn", "teacher", "mentor", "tpo", "hr", "college"]
-  .filter(portal => (counts.get(portal) ?? 0) > 1);
- const rolePortals = ["learn", "teacher", "mentor", "tpo", "hr"]
-  .filter(portal => counts.has(portal));
- // One navigation item can still represent a separate role. Do not assume
- // every role has multiple rows before isolating its workspace.
- const mixedCollege = (counts.get("college") ?? 0) > 1 && rolePortals.length > 0;
- if (substantial.length < 2 && rolePortals.length < 2 && !mixedCollege) return [...items];
+ const portals = [...new Set(items.map(item => navPortal(item.href)).filter(
+  (portal): portal is string => portal !== null
+ ))];
+ if (portals.length <= 1) return [...items];
+ // The legacy shell displays one account's navigation at a time. A single
+ // stray row from another portal must not leak into the active icon rail.
  const pathPortal = navPortal(pathname);
- const selected = pathPortal && counts.has(pathPortal) ? pathPortal :
-  substantial[0] ?? rolePortals[0] ?? "college";
+ const selected = pathPortal && portals.includes(pathPortal) ? pathPortal :
+  portals.includes("college") ? "college" : portals[0]!;
  return items.filter(item => {
   const portal = navPortal(item.href);
-  return !portal || portal === selected ||
-   (selected === "college" && item.label === "Placement cell" && item.href === "/tpo/home") ||
-   (portal === "college" && counts.get("college") === 1);
+  return portal === selected ||
+   (selected === "college" && item.href === "/tpo/home" &&
+    item.label.replace(/ · Placements$/, "") === "Placement cell");
  }).map(item => {
-  // Role disambiguators are only needed in a mixed list. Once scoped to one
-  // legacy portal, restore its exact unsuffixed labels and accessible names.
   const label = item.label.replace(/ · (?:Learning|Teaching|Mentoring|College|Admin|Placements|Recruiting)$/, "");
   return label === item.label ? item : {...item, label};
  });

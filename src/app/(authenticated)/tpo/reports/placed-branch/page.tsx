@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -42,21 +44,21 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
       <form action="/tpo/reports/placed-branch" method="get"
         className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2">
         <label className="text-sm font-semibold text-body">Season
-          <select name="seasonId" defaultValue={report.season?.id ?? ""}
+          <Select name="seasonId" defaultValue={report.season?.id ?? ""}
             className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             {report.seasons.length === 0 ? <option value="">No season</option> : null}
             {report.seasons.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold text-body">Drive
-          <select name="jobId" defaultValue={report.selectedJobId ?? ""}
+          <Select name="jobId" defaultValue={report.selectedJobId ?? ""}
             className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="">All drives</option>
             {report.jobs.map((item) => <option key={item.id} value={item.id}>{item.companyName} · {item.title}</option>)}
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary sm:col-span-2"
-          disabled={!report.season}>Apply filters</button>
+        <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary sm:col-span-2"
+          disabled={!report.season}>Apply filters</Button>
       </form>
       {!report.season ? <EmptyState title="No placement season" description="No results can be inferred without a recorded season." /> : (
         <>

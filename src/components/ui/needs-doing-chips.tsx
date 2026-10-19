@@ -31,7 +31,7 @@ const tones = {
 /** The old LMS's compact "Needs doing:" chips: genuine links or quick filters, never inert buttons. */
 export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs doing:", className }: NeedsDoingChipsProps) {
   if (!items.length) return null;
-  const base = "inline-flex min-h-8 max-w-full items-center gap-[var(--lms-space-2)] rounded-[8px] border px-[var(--lms-space-4)] py-[var(--lms-space-2)] text-[13px] font-medium leading-[17px] transition-colors duration-[var(--lms-motion-fast)] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+  const base = "inline-flex min-h-8 max-w-full items-center gap-[var(--lms-space-2)] rounded-[var(--lms-radius-pill)] border px-[var(--lms-space-4)] py-[var(--lms-space-2)] text-[13px] font-medium leading-[17px] transition-colors duration-[var(--lms-motion-fast)] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
   return (
     <div data-slot="needs-doing-chips" role="group" aria-label={label.replace(/:$/, "")} className={cx("flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]", className)}>
       <span className="mr-1 text-[13px] font-semibold text-[var(--lms-neutral-500)]">{label}</span>
@@ -43,12 +43,12 @@ export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs d
         const content = <><span>{item.label}</span>{count !== null ? <span className="tabular-nums">{count}</span> : null}</>;
         if (item.href !== undefined) {
           if (!item.disabled && item.href && isSafeInternalHref(item.href)) {
-            return <Link key={item.key} href={item.href} aria-label={accessibleLabel} aria-current={selected ? "page" : undefined} className={classes}>{content}</Link>;
+            return <Link key={item.key} href={item.href} data-selected={selected} aria-label={accessibleLabel} aria-current={selected ? "page" : undefined} className={classes}>{content}</Link>;
           }
-          return <span key={item.key} aria-disabled="true" className={cx(classes, "cursor-not-allowed opacity-50")}>{content}</span>;
+          return <span key={item.key} aria-disabled="true" className={cx(classes, "cursor-not-allowed opacity-50 hover:brightness-100")}>{content}</span>;
         }
         if (onSelect) {
-          return <button key={item.key} type="button" aria-label={accessibleLabel} disabled={item.disabled} aria-pressed={selected} onClick={() => onSelect(item.key)} className={classes}>{content}</button>;
+          return <button key={item.key} type="button" data-selected={selected} aria-label={accessibleLabel} disabled={item.disabled} aria-pressed={selected} onClick={() => onSelect(item.key)} className={classes}>{content}</button>;
         }
         return <span key={item.key} aria-disabled={item.disabled || undefined} className={cx(classes, "cursor-default hover:brightness-100")}>{content}</span>;
       })}

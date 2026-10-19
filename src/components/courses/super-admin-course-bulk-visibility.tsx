@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {Button} from "@/components/ui/button";
@@ -44,14 +45,14 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
   <h3 className="font-semibold text-foreground">Students see it</h3>
   <p className="text-sm text-body">Show to students or hide from students across currently published lesson content in selected courses. Archived or unpublished content remains unchanged. New content keeps its own student visibility setting.</p>
   <label className="flex min-h-11 items-center gap-2 py-2 text-sm">
-   <input type="checkbox" checked={courses.length>0&&selectedInScope.length===courses.length}
+   <Checkbox checked={courses.length>0&&selectedInScope.length===courses.length}
     disabled={pending||!courses.length}
     onChange={e=>setSelected(e.target.checked?courses.map(course=>course.id):[])}/>
    Select all courses on this page
   </label>
   <ScrollCue axis="y" label="Bulk course selection" viewportClassName="max-h-48"><div className="divide-y divide-border border-y border-border">
    {courses.map(course=><label key={course.id} className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={selectedInScope.includes(course.id)} disabled={pending}
+    <Checkbox checked={selectedInScope.includes(course.id)} disabled={pending}
      onChange={e=>setSelected(ids=>{
       const scoped=ids.filter(id=>currentIds.has(id));
       return e.target.checked?[...new Set([...scoped,course.id])]:scoped.filter(id=>id!==course.id);
@@ -65,10 +66,10 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
     onClick={()=>void apply(true)}
     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
     {pending?"Updating…":"Show to students"}</Button>
-   <button type="button" disabled={!selectedInScope.length||pending}
+   <Button type="button" variant="secondary" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(false)}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
-    Hide from students</button>
+    className="min-h-11">
+    Hide from students</Button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {report?<div role="status" className="space-y-2 text-sm">
