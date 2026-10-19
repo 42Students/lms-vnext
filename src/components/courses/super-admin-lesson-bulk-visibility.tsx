@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 type Lesson={id:string;name:string;courseName:string;contentCount:number;publishedContentCount:number;publishedAndVisibleFlagCount:number};
@@ -32,22 +33,22 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
    <span role="status" className="text-sm text-muted-foreground">{selected.length} of {lessons.length} lessons selected</span>
   </div>
   <p className="text-sm text-body">Show or hide student access to published lesson content; unpublished content stays unpublished. This is a bulk operation with a per-content failure report.</p>
-  <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold">
+  <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-10">
     <Checkbox checked={lessons.length>0&&selected.length===lessons.length}
       onChange={e=>setSelected(e.target.checked?lessons.map(l=>l.id):[])} disabled={pending}/> Select all on this page
   </label>
-  <div className="grid max-h-48 gap-2 overflow-y-auto sm:grid-cols-2">
-   {lessons.map(lesson=><label key={lesson.id} className="flex min-h-10 items-center gap-3 border-b border-border px-3 py-2 text-sm">
+  <ScrollCue axis="y" label="Lesson bulk selection" viewportClassName="max-h-48"><div className="grid gap-2 md:grid-cols-2">
+   {lessons.map(lesson=><label key={lesson.id} className="flex min-h-11 min-w-0 items-center gap-3 border-b border-border px-3 py-2 text-sm md:min-h-10">
     <Checkbox checked={selected.includes(lesson.id)} disabled={pending}
      onChange={e=>setSelected(list=>e.target.checked?[...list,lesson.id]:list.filter(id=>id!==lesson.id))}/>
     <span className="min-w-0"><span className="block truncate font-semibold">{lesson.name}</span>
      <span className="text-xs text-muted-foreground">{lesson.courseName} · {lesson.publishedAndVisibleFlagCount}/{lesson.publishedContentCount} published records visible</span>
     </span>
    </label>)}
-  </div>
+  </div></ScrollCue>
   <div className="flex flex-wrap gap-2">
-   <Button type="button" disabled={pending||!selected.length} onClick={()=>void mutate(true)}>{pending?"Saving…":"Show selected"}</Button>
-   <Button type="button" variant="secondary" disabled={pending||!selected.length} onClick={()=>void mutate(false)}>Hide selected</Button>
+   <Button type="button" className="min-h-11 md:min-h-9" disabled={pending||!selected.length} onClick={()=>void mutate(true)}>{pending?"Saving…":"Show selected"}</Button>
+   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending||!selected.length} onClick={()=>void mutate(false)}>Hide selected</Button>
   </div>
   {error?<Alert tone="error">{error}</Alert>:null}
   {report?<div role="status" className="space-y-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm">
