@@ -82,14 +82,14 @@ export function CollegeClassCreate({ cohorts, periods }: {
       : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <label className="grid gap-1 text-sm font-medium text-body">Program
           <select required value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
-           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+           className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
            <option value="">Select program</option>
            {uniquePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch
           <select required value={cohortId} onChange={event => setCohortId(event.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
             <option value="">Select batch</option>
             {filteredCohorts.map(c => <option key={c.id} value={c.id}>
               {c.programName} · {c.name} ({c.code})
@@ -99,7 +99,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
         <label className="grid gap-1 text-sm font-medium text-body">Academic period
           <select required value={academicPeriodId}
             onChange={event => setAcademicPeriodId(event.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
             <option value="">Select period</option>
             {periods.map(p => <option key={p.id} value={p.id}>
               {p.name} ({p.code})
@@ -108,20 +108,20 @@ export function CollegeClassCreate({ cohorts, periods }: {
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class name
           <input required maxLength={255} value={name} onChange={event => setName(event.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class code (optional; generated from name)
           <input maxLength={64} value={code} onChange={event => setCode(event.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Capacity (required, 1–200)
           <input required type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body sm:col-span-2 lg:col-span-5">Description (optional)
           <textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
-            className="rounded-md border border-border bg-surface p-3 text-foreground" />
+            className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-foreground" />
         </label>
         <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-5">Moving a student into a full section is refused.</p>
         <div className="sm:col-span-2 lg:col-span-5">
@@ -179,7 +179,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
   return <div>
     <button type="button" disabled={pending || row.status !== "ACTIVE"}
       onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); }}
-      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
       Edit
     </button>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
@@ -191,20 +191,20 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         </p>
         <label className="grid gap-1 text-sm font-medium text-body">Class name
           <input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class code
           <input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Capacity (blank means unlimited)
           <input type="number" min={1} max={10000} step={1} value={capacity}
             onChange={e => setCapacity(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Description
           <textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
-            className="rounded-md border border-border bg-surface p-3 text-foreground" />
+            className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-foreground" />
         </label>
         <p className="text-xs text-muted-foreground">Active learner enrollments: {row.activeLearners}.</p>
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}

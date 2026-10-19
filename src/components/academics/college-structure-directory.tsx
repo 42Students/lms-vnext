@@ -68,7 +68,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
               <option value="ALL">All</option>
             </select>
           </label>
-          <details className="col-span-full rounded-md border border-border p-3">
+          <details className="col-span-full rounded-[var(--lms-control-radius,9px)] border border-border p-3">
             <summary className="cursor-pointer text-sm font-semibold text-body">More filters</summary>
             <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {data.kind === "ELECTIVES" ? (
