@@ -202,6 +202,7 @@ export function LearnerCareerCalendar({
           {filters.map((option) => (
             <FilterChip
               className={styles.legendChip}
+              data-kind={option.key}
               type="button"
               key={option.key}
               aria-pressed={filter === option.key}
