@@ -514,3 +514,5 @@
 
 .hrNotificationBody ul { list-style:none; padding:0 12px; margin:0; }
 .hrNotificationBody ul > li { margin-bottom:6px; overflow:hidden; border-radius:8px; }
+
+.hrNotificationBody li a { display:flex; min-height:44px; padding:12px 16px; border:1px solid #e5e9f0; border-radius:8px; background:#fff; transition:background .2s ease,border-color .2s ease,box-shadow .2s ease; }
