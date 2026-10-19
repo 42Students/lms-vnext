@@ -50,7 +50,7 @@ export default async function SuperAdminCourseProgressPage({
         </Select>
       </label>
       <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
-      <Button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-foreground">Filter</Button>
+      <Button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</Button>
     </form>
     {filtersResult.status==="rejected"?<p role="status"
       className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
