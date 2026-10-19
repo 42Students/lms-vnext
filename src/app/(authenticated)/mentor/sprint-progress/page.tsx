@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -135,15 +136,7 @@ export default async function MentorSprintProgressPage({
             Open authorized sprint workspace →
           </Link>
         </article>)}</div>}
-      <nav aria-label="Sprint progress pages" className="flex items-center justify-between gap-3">
-        <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
-        <div className="flex gap-3">
-          {data.page > 1 && <Link href={mentorSprintProgressHref({...data.query, page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
-          {data.page < data.totalPages && <Link href={mentorSprintProgressHref({...data.query, page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
-        </div>
-      </nav>
+      <Pagination label="Sprint progress pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorSprintProgressHref({...data.query,page})}/>
     </>}
     <p className="text-xs leading-5 text-muted-foreground">
       Counts reflect registered tasks and workflow statuses, not hours, sprint velocity or
