@@ -1,4 +1,7 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {useEffect,useRef} from "react";
 import Link from "next/link";
 
@@ -66,26 +69,26 @@ export function ProjectParticipantListControls({
       onChange={mentor?liveRefresh:undefined}
       method="get"
       action={basePath}
-      className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
+      className="flex flex-wrap items-end gap-3 border-b border-border pb-4"
     >
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Search
-        <input
+        <Input
           name="search"
           type="search"
           defaultValue={query.search ?? ""}
           aria-label="Search my projects"
           placeholder="Search project title, course or slug"
-          className="min-h-11 w-full min-w-0 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="w-full"
         />
       </label>
 
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Status
-        <select
+        <Select
           name="status"
           defaultValue={query.status ?? ""}
-          className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="w-full"
         >
           <option value="">All statuses</option>
           {(mentor || learner ? mentorStatusOptions : statusOptions).map(
@@ -98,18 +101,18 @@ export function ProjectParticipantListControls({
               </option>
             ),
           )}
-        </select>
+        </Select>
       </label>
 
       {mentor || learner ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Attention
-          <select
+          <Select
             name="attention"
             defaultValue={
               query.attention ?? ""
             }
-            className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+            className="w-full"
           >
             <option value="">
               All attention states
@@ -130,64 +133,64 @@ export function ProjectParticipantListControls({
                 <option value="BLOCKED">Blocked</option>
               </>
             ) : null}
-          </select>
+          </Select>
         </label>
       ) : null}
 
       {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Sort
-        <select name="sort" defaultValue={query.sort ?? "RECENT"} className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Select name="sort" defaultValue={query.sort ?? "RECENT"} className="w-full">
           <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option><option value="PROGRESS">Least recorded progress first</option><option value="PROGRESS_DESC">Most recorded progress first</option><option value="OPEN_TASKS">Most open tasks first</option><option value="TEAM_SIZE_DESC">Largest active team first</option><option value="TEAM_SIZE_ASC">Smallest active team first</option>
-        </select></label>) : null}
+        </Select></label>) : null}
       {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Assignment
-        <select name="assignment" defaultValue={query.assignment ?? ""}
-          className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Select name="assignment" defaultValue={query.assignment ?? ""}
+          className="w-full">
           <option value="">All Mentor assignments</option><option value="PRIMARY">Primary mentor</option><option value="SUPPORTING">Supporting mentor</option>
-        </select>
+        </Select>
       </label>) : null}
 
       {mentor ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Recorded task coverage
-          <select name="work" defaultValue={query.work ?? ""}
-            className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          <Select name="work" defaultValue={query.work ?? ""}
+            className="w-full">
             <option value="">All task coverage</option>
             <option value="NO_TASKS">No tracked tasks</option>
             <option value="HAS_OPEN_TASKS">Open tasks recorded</option>
             <option value="ALL_DONE">All recorded tasks done</option>
             <option value="HAS_DONE_TASKS">Some recorded tasks done</option>
-          </select>
+          </Select>
         </label>
       ) : null}
       {learner ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Work attention
-          <select name="work" defaultValue={query.work ?? ""}
-            className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          <Select name="work" defaultValue={query.work ?? ""}
+            className="w-full">
             <option value="">All work</option>
             <option value="BLOCKED">Has blocked tasks</option>
             <option value="NO_TASKS">No tracked tasks yet</option>
-          </select>
+          </Select>
         </label>
       ) : null}
       {learner ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Sort projects
-          <select name="sort" defaultValue={query.sort ?? "RECENT"}
-            className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          <Select name="sort" defaultValue={query.sort ?? "RECENT"}
+            className="w-full">
             <option value="RECENT">Recently updated</option>
             <option value="TITLE">Title A–Z</option>
             <option value="PROGRESS">Least progress first</option>
-          </select>
+          </Select>
         </label>
       ) : null}
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Rows
-        <select
+        <Select
           name="pageSize"
           defaultValue={String(
             query.pageSize ?? 25,
           )}
-          className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="w-full"
         >
           {(learner||mentor?[10,25,50]:[25,50,100]).map((size) => (
             <option
@@ -197,18 +200,18 @@ export function ProjectParticipantListControls({
               {size}
             </option>
           ))}
-        </select>
+        </Select>
       </label>
 
-      <button
+      <Button
         type="submit"
-        className="min-h-11 rounded-lg bg-primary px-4 py-2 text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+        className=""
       >
         Apply
-      </button>
+      </Button>
       {!mentor || hasFilters ? <Link
         href={basePath}
-        className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 py-2 text-base font-semibold text-body hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+        className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-[14px] font-[650] text-body hover:bg-primary-subtle"
       >
         Clear filters
       </Link> : null}
