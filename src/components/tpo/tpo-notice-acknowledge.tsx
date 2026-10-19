@@ -18,6 +18,6 @@ export function TpoNoticeAcknowledge({id}:{id:string}){
     }catch(e){setError(e instanceof Error?e.message:"Read status couldn't be saved");}
     finally{setBusy(false);}
    }}>{busy?"Saving…":read?"Read confirmed":"Mark notice read"}</button>
-  {error?<p role="alert" className="text-sm">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </div>;
 }
