@@ -24,8 +24,9 @@ export function useOverlayExit(
       if (opener?.isConnected) opener.focus();
     };
     const finishClose = () => {
+      if (!dialog.open) return;
       dialog.removeAttribute("data-closing");
-      if (dialog.open) dialog.close();
+      dialog.close();
       restoreFocus();
     };
     if (open) {
