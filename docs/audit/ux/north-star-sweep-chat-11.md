@@ -104,3 +104,7 @@ Owner: chat-11. Branch: `chatgpt/chat-11-b`. Reference snapshot: `main` 2026-10-
 ### Visual handoff (for orchestrator with a running app)
 
 Check at 320/360/390/768/1280px: page-canvas border/padding, TPO settings left navigation and sticky behavior, filter and save control height, keyboard focus and overlays, tenant setup steps, branding preview, sign-in-method radio rows, module-access hierarchy tabs, readiness evidence tables, College Admin course progress, TPO notice error/retry and contact settings. Diff screenshots against the old LMS before release.
+
+## Follow-on sweep (2026-10-19)
+
+The continuation after this initial source inventory is recorded in [`north-star-sweep-11.md`](./north-star-sweep-11.md). It contains the additional **33 code commits** on `chatgpt/chat-11-b`, the exact 33 edited source paths, legacy token fixes, standalone card-wrapper corrections, malformed utility cleanup, primary-button contrast fixes, and deferred browser/CI checks. This historical ledger remains intact as the first-pass baseline.
