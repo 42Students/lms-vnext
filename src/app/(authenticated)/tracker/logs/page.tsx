@@ -83,7 +83,7 @@ export default async function TrackerLogsPage({
       <div className="space-y-6">
         {header}
         <ErrorState title="Invalid log environment." description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
-          action={<Link href="/tracker/logs" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          action={<Link href="/tracker/logs" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline">
             Reset filter
           </Link>}/>
       </div>
@@ -105,7 +105,7 @@ export default async function TrackerLogsPage({
             href={"/tracker/logs?environment=" + value}
             aria-current={environment === value ? "page" : undefined}
             className={
-              "inline-flex min-h-9 items-center border-b-[3px] px-3 py-2 text-[13px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] " +
+              "inline-flex min-h-[var(--lms-control-height)] items-center border-b-[3px] px-3 py-2 text-[13px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] " +
               (environment === value
                 ? "border-primary text-foreground"
                 : "border-transparent text-body hover:text-primary-text")
