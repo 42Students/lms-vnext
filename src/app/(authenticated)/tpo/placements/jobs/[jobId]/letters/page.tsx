@@ -33,10 +33,10 @@ export default async function TpoOfferLettersPage({
   })));
   const evidenceByOfferId=new Map(offers.map((row,index)=>[row.offer.id,projected[index]] as const));
   return <div className="min-w-0 space-y-5">
-    <Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">← Back to drive</Link>
     <PageHeader title={job.title+" · Offer letter evidence"}
-      description="Persisted offer records are listed below. An issued offer is not proof that an offer letter was generated, sent, received or acknowledged." />
+      description="Persisted offer records are listed below. An issued offer is not proof that an offer letter was generated, sent, received or acknowledged."
+      actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">← Back to drive</Link>} />
     <p role="status" className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
       Letter-issued and letter-acknowledged states are unavailable: the registered
       placement offer schema has no letter document, delivery or acknowledgement
