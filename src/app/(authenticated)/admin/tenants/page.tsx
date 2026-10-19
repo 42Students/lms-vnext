@@ -53,13 +53,13 @@ export default async function TenantDirectory({searchParams}:{
    actions={<div className="flex flex-wrap items-center justify-end gap-2">
     <TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />
     <Link href="/admin/tenants/create"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">
+      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover ">
       Create an organization and its colleges
     </Link>
    </div>} />
-  <Link href="/admin/domains" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Domains</Link>
+  <Link href="/admin/domains" className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">Domains</Link>
   <div className="flex flex-wrap gap-3">
-   <Link href="/admin/tenants/setup" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Get this college ready to go live</Link>
+   <Link href="/admin/tenants/setup" className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">Get this college ready to go live</Link>
   </div>
   <form className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold text-body">College
@@ -89,7 +89,7 @@ export default async function TenantDirectory({searchParams}:{
      <StatusBadge tone={x.organizationStatus==="ACTIVE"?"success":"neutral"}>Organization {x.organizationStatus}</StatusBadge></div>
     <p className="mt-2 text-xs text-muted-foreground">{[x.city,x.state,x.country].filter(Boolean).join(", ")||"Location not recorded"}</p>
     <Link href={`/admin/colleges/${encodeURIComponent(x.id)}`}
-     className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text">Tenant details →</Link>
+     className="mt-3 inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text">Tenant details →</Link>
    </article>)}
   </div>:<EmptyState title="No matching tenants" description="No colleges in the current scope match these lifecycle filters."/>}
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={url} label="Tenant pages" />
