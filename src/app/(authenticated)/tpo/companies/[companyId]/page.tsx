@@ -97,11 +97,11 @@ export default async function TpoCompanyDetailPage({
         actions={
           <div className="flex flex-wrap gap-2">
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-              className="inline-flex min-h-9 items-center rounded-[var(--radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
               Create drive
             </Link>
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-              className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link">
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link">
               Add contact
             </Link>
           </div>
@@ -132,30 +132,30 @@ export default async function TpoCompanyDetailPage({
 
       <nav aria-label="Company CRM views" className="flex flex-wrap gap-3">
         <Link href={"/tpo/companies/"+encodeURIComponent(route.companyId)+"/team"}
-         className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-link">
+         className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
          Open in Team · Company discussion
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/manage"}
-          className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
         >
           Edit / archive relationship
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/people"}
-          className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
         >
           Manage contact people
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/contact-log"}
-          className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover"
         >
           View contact activity log →
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/feedback"}
-          className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
         >
           Internal recruiter feedback
         </Link>
@@ -164,7 +164,7 @@ export default async function TpoCompanyDetailPage({
       {!contactsAvailable ? (
         <section
           role="status"
-          className="rounded-[12px] border border-border bg-surface p-4 text-sm leading-6 text-body"
+          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm leading-6 text-body"
         >
           Recruiter CRM data is unavailable in this database.
           Contact counts and interaction history cannot be
@@ -176,7 +176,7 @@ export default async function TpoCompanyDetailPage({
       {contactsAvailable && !activitiesAvailable ? (
         <section
           role="status"
-          className="rounded-[12px] border border-border bg-surface p-4 text-sm leading-6 text-body"
+          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm leading-6 text-body"
         >
           Recruiter contact activity storage is unavailable.
           The timeline below contains only available drive,
@@ -194,7 +194,7 @@ export default async function TpoCompanyDetailPage({
         ].map(([label, value]) => (
           <div
             key={label}
-            className="rounded-[12px] border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {label}
@@ -223,7 +223,7 @@ export default async function TpoCompanyDetailPage({
               ? dateLabel(new Date(hiringPulse.latestRecordedEventIso)) + " IST"
               : "Not recorded"],
           ].map(([name, value]) => (
-            <div key={name} className="rounded-[var(--radius)] border border-border p-3">
+            <div key={name} className="rounded-[var(--lms-control-radius)] border border-border p-3">
               <dt className="text-xs font-semibold text-muted-foreground">{name}</dt>
               <dd className="mt-2 break-words text-sm font-semibold tabular-nums text-foreground">{value}</dd>
             </div>
@@ -241,7 +241,7 @@ export default async function TpoCompanyDetailPage({
               :""}
           </p>
           {hiringPulse.hiredPerYear.length===0
-            ?<p role="status" className="mt-3 rounded-[var(--radius)] border border-border p-3 text-sm text-muted-foreground">
+            ?<p role="status" className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-muted-foreground">
               No dated, confirmed joins have been recorded for this college-company relationship.
              </p>
             :<ol className="mt-3 space-y-2" aria-label="Confirmed joined learners per year">
@@ -259,7 +259,7 @@ export default async function TpoCompanyDetailPage({
       </section>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <section className="min-w-0 rounded-[12px] border border-border bg-surface">
+        <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
           <div className="border-b border-border px-5 py-4">
             <h2 className="text-lg font-semibold text-foreground">
               Recruiter contacts
@@ -323,7 +323,7 @@ export default async function TpoCompanyDetailPage({
           )}
         </section>
 
-        <section className="min-w-0 rounded-[12px] border border-border bg-surface">
+        <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
           <div className="border-b border-border px-5 py-4">
             <h2 className="text-lg font-semibold text-foreground">
               Placement drives
@@ -364,7 +364,7 @@ export default async function TpoCompanyDetailPage({
         </section>
       </div>
 
-      <section className="rounded-[12px] border border-border bg-surface">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
           <h2 className="text-lg font-semibold text-foreground">
             Hiring history
@@ -414,7 +414,7 @@ export default async function TpoCompanyDetailPage({
         </p>
       </section>
 
-      <section className="rounded-[12px] border border-border bg-surface">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
           <h2 className="text-lg font-semibold text-foreground">
             Company timeline
