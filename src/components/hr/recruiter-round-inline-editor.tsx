@@ -9,6 +9,7 @@ import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {Dialog} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {isVerifiedHrRoundMutation,hrRoundEditorHasUnsavedChanges} from "@/modules/placements/hr-round-editor-model";
 
 type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
@@ -85,14 +86,14 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
  }
  const canEdit=(row:Row)=>row.createdByYou&&row.status==="PENDING";
  return <div className="space-y-3">
-  {!readOnly?<Button variant="primary" type="button" onClick={()=>edit(null)}
-  >
+  {!readOnly?<Button type="button" onClick={()=>edit(null)}
+   variant="secondary">
    Add a round</Button>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
   {error&&!open?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {!readOnly?<div className="flex flex-wrap gap-2">{rows.filter(canEdit).map(row=>
-   <Button variant="primary" key={row.id} type="button" onClick={()=>edit(row)}
-   >
+   <Button key={row.id} type="button" onClick={()=>edit(row)}
+    variant="secondary">
     Change / Remove: {row.name}
    </Button>)}</div>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
@@ -114,12 +115,12 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
       </Select></label>
      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
      <div className="flex flex-wrap justify-end gap-2">
-      {active?<Button variant="secondary" className="border-error text-error" type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
-      >Remove</Button>:null}
-      <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}
-      >Cancel</Button>
-      <Button variant="primary" type="submit" disabled={pending}
-      >
+      {active?<Button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
+       variant="secondary" className="border-error text-error">Remove</Button>:null}
+      <Button type="button" disabled={pending} onClick={requestClose}
+       variant="secondary">Cancel</Button>
+      <Button type="submit" disabled={pending}
+       >
        {pending?"Saving…":active?"Save changes":"Add round"}</Button>
      </div>
     </form>
