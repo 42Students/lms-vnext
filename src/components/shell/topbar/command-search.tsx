@@ -122,7 +122,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         <label className="sr-only" htmlFor="lms-topbar-command-search">Search workspace</label>
         <Input id="lms-topbar-command-search" ref={input} type="search" value={query}
           autoComplete="off" role="combobox" aria-haspopup="listbox" aria-keyshortcuts="Control+K Meta+K"
-          aria-controls={open ? "lms-topbar-command-results" : undefined} aria-expanded={open}
+          aria-controls={open ? "lms-topbar-command-results" : undefined} aria-expanded={open} aria-describedby="lms-topbar-command-key-help"
           placeholder={config.placeholder} className={style.searchInput}
           onFocus={() => { setOpen(true); setMobileOpen(true); }}
           onChange={event => { setQuery(event.target.value); setOpen(true); }}
@@ -135,7 +135,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
             }
             if (event.key === "Escape") { event.preventDefault(); setOpen(false); setMobileOpen(false); }
           }}/>
-        <kbd className={style.searchHint}>Ctrl K</kbd>
+        <kbd id="lms-topbar-command-key-help" className={style.searchHint}>Ctrl K</kbd>
       </div>
       {open ? <div id="lms-topbar-command-results" role="listbox"
         aria-label="Workspace commands" className={style.dropdown}
