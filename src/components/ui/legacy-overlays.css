@@ -86,6 +86,13 @@
 [data-slot="menu"] [role="menuitem"]:not(:disabled):active {
   background: rgba(0, 0, 0, .06);
 }
+[data-slot="menu"] :is(hr, [role="separator"]) {
+  display: block;
+  height: 1px;
+  margin: 6px 8px;
+  border: 0;
+  background: var(--lms-neutral-200);
+}
 [role="dialog"][aria-modal="false"]:not([data-slot]) {
   border: 1px solid var(--lms-canvas-border);
   border-radius: 12px;
