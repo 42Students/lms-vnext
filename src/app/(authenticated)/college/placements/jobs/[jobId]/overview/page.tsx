@@ -24,8 +24,8 @@ export default async function CollegeDriveOverviewPage({ params }: {
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={drive.title}
       description={drive.companyName + " · " + drive.seasonName}
-      actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/placements/drives" className="text-link underline">All drives</Link><Link href={`/college/placements/jobs/${jobId}/applications`} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link">Applications</Link>
-        <Link href={`/college/placements/jobs/${jobId}/settings`} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link">Edit</Link>
+      actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/placements/drives" className="text-link underline">All drives</Link><Link href={`/college/placements/jobs/${jobId}/applications`} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link">Applications</Link>
+        <Link href={`/college/placements/jobs/${jobId}/settings`} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-link">Edit</Link>
         <CollegeDriveDuplicateAction jobId={jobId}/></div>} />
     <div className="flex flex-wrap gap-3 text-sm text-body">
       <span>Status: {drive.status}</span><span>Type: {drive.employmentType}</span>
@@ -41,7 +41,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
         <p className="mt-3 text-2xl font-semibold text-foreground">{funnel.totals.HIRED ?? 0}</p>
         <p className="mt-2 text-xs text-muted-foreground">Applications currently at the Hired stage, not inferred joining outcomes.</p>
         <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications?stage=HIRED`}
-          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-link underline">View hired candidates</Link>
+          className="mt-2 inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline">View hired candidates</Link>
       </article>
     </section>
     <CollegeDrivePipelineOverview jobId={jobId} data={funnel} attention={attention}/>
