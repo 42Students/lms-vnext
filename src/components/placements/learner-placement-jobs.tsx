@@ -290,7 +290,7 @@ function JobActions({
           <StatusBadge tone="success">
             Applied · {humanize(application.channel)}
           </StatusBadge>
-          <Button
+          <Button className="max-sm:min-h-11"
             size="sm"
             variant="secondary"
             disabled={pendingAction !== null}
@@ -308,11 +308,11 @@ function JobActions({
           description={`Request to withdraw ${roleOption.title} at this employer. The placement team must review your request.`}
           footer={
             <>
-              <Button variant="secondary" disabled={pendingAction !== null}
+              <Button className="max-sm:min-h-11" variant="secondary" disabled={pendingAction !== null}
                 onClick={() => setConfirmation(null)}>
                 Keep application
               </Button>
-              <Button
+              <Button className="max-sm:min-h-11"
                 disabled={!validWithdrawalReason || pendingAction !== null}
                 onClick={() => void requestWithdrawal()}
               >
@@ -376,8 +376,8 @@ function JobActions({
       {missing.length>0?<p className="text-xs text-body">Missing: {missing.map(row=>row.criterion).join(", ")}</p>:null}
       {failed.length>0?<p className="text-xs text-body">Not met: {failed.map(row=>row.criterion).join(", ")}</p>:null}
       <div className="flex flex-wrap gap-3">
-        <Link href="/learn/my-placements#registration" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Check registration</Link>
-        <Link href="/learn/my-placements#placement-academic-evidence" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Review academic evidence</Link>
+        <Link href="/learn/my-placements#registration" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9">Check registration</Link>
+        <Link href="/learn/my-placements#placement-academic-evidence" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9">Review academic evidence</Link>
       </div>
     </div>;
   }
@@ -394,7 +394,7 @@ function JobActions({
   return (
     <div className="flex flex-wrap items-center gap-2">
       {internalAvailable ? (
-        <Button
+        <Button className="max-sm:min-h-11"
           size="sm"
           disabled={pendingAction !== null}
           onClick={() => setConfirmation("INTERNAL")}
@@ -414,7 +414,7 @@ function JobActions({
           >
             Open employer form
           </a>
-          <Button
+          <Button className="max-sm:min-h-11"
             size="sm"
             variant="secondary"
             disabled={pendingAction !== null}
@@ -432,8 +432,8 @@ function JobActions({
         title="Ready to apply?"
         description="We'll send your profile to the recruiter. You can withdraw later from Applications."
         footer={<>
-          <Button variant="secondary" disabled={pendingAction!==null} onClick={()=>setConfirmation(null)}>Not yet</Button>
-          <Button disabled={pendingAction!==null} onClick={()=>void apply("INTERNAL")}>
+          <Button className="max-sm:min-h-11" variant="secondary" disabled={pendingAction!==null} onClick={()=>setConfirmation(null)}>Not yet</Button>
+          <Button className="max-sm:min-h-11" disabled={pendingAction!==null} onClick={()=>void apply("INTERNAL")}>
             {pendingAction==="INTERNAL"?"Submitting…":"Confirm & apply"}
           </Button>
         </>}
@@ -447,11 +447,11 @@ function JobActions({
             <div><dt className="font-semibold text-muted-foreground">Resume</dt>
               <dd className="mt-1 text-foreground">Not attached</dd></div>
           </dl>
-          <button type="button" aria-expanded={showSharedDetails}
+          <Button className="max-sm:min-h-11" type="button" variant="link" aria-expanded={showSharedDetails}
             onClick={()=>setShowSharedDetails(open=>!open)}
-            className="min-h-10 font-semibold text-primary-text underline">
+            className="max-sm:min-h-11 font-semibold text-primary-text underline">
             {showSharedDetails?"Hide what gets shared":"What exactly gets shared?"}
-          </button>
+          </Button>
           {showSharedDetails?<ul className="list-disc space-y-2 pl-5 text-sm text-body">
             <li>Your contact details may be shared with the company by the placement cell. No resume is attached by this form.</li>
             <li>Your academic record is checked for eligibility; the record itself is not sent with this application.</li>
@@ -471,11 +471,11 @@ function JobActions({
         description={`Record your application for ${roleOption.title} at ${item.company.name} in your LMS journey.`}
         footer={
           <>
-            <Button variant="secondary" disabled={pendingAction !== null}
+            <Button className="max-sm:min-h-11" variant="secondary" disabled={pendingAction !== null}
               onClick={() => setConfirmation(null)}>
               Not yet
             </Button>
-            <Button disabled={pendingAction !== null}
+            <Button className="max-sm:min-h-11" disabled={pendingAction !== null}
               onClick={() => void apply("EXTERNAL")}>
               {pendingAction === "EXTERNAL" ? "Recording…" : "Yes, I submitted externally"}
             </Button>
@@ -532,14 +532,14 @@ export function LearnerPlacementJobs({
         return (
           <article
             key={item.roleOption.id}
-            className="rounded-xl border border-border bg-surface p-5"
+            className="min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] motion-reduce:transition-none sm:p-6"
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
-                <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
+                <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   {item.company.name}
                 </p>
-                <h2 className="mt-1 text-xl font-semibold text-foreground">
+                <h2 className="mt-1 break-words text-xl font-semibold text-foreground">
                   <Link
                     href={learnerJobDetailFromDrivesHref(item.job.id,returnQuery) ?? "/learn/my-placements/jobs"}
                     className="underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
@@ -554,11 +554,11 @@ export function LearnerPlacementJobs({
                     Drive · {item.job.title}
                   </p>
                 ) : null}
-                <p className="mt-2 line-clamp-3 max-w-3xl text-sm leading-6 text-body">
+                <p className="mt-2 line-clamp-3 max-w-3xl break-words text-sm leading-6 text-body">
                   {item.job.description}
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-3">
               <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
                {item.application ? (
                  <StatusBadge tone={item.application.status==="SUBMITTED"?"success":"neutral"}>
@@ -575,12 +575,12 @@ export function LearnerPlacementJobs({
               </div>
             </div>
 
-            <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-4 grid min-w-0 gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">
               <div>
                 <p className="m-0 text-xs font-semibold text-muted-foreground">
                   Work
                 </p>
-                <p className="mt-1 font-semibold text-body">
+                <p className="mt-1 break-words font-semibold text-body">
                   {humanize(
                     item.roleOption.employmentType,
                   )}{" "}
@@ -594,7 +594,7 @@ export function LearnerPlacementJobs({
                 <p className="m-0 text-xs font-semibold text-muted-foreground">
                   Location
                 </p>
-                <p className="mt-1 font-semibold text-body">
+                <p className="mt-1 break-words font-semibold text-body">
                   {item.roleOption.locations.length
                     ? item.roleOption.locations.join(", ")
                     : "Not specified"}
@@ -604,7 +604,7 @@ export function LearnerPlacementJobs({
                 <p className="m-0 text-xs font-semibold text-muted-foreground">
                   Compensation
                 </p>
-                <p className="mt-1 font-semibold text-body">
+                <p className="mt-1 break-words font-semibold text-body">
                   {formatCtc(
                     item.roleOption
                       .minimumAnnualCtcInr,
@@ -617,7 +617,7 @@ export function LearnerPlacementJobs({
                 <p className="m-0 text-xs font-semibold text-muted-foreground">
                   Deadline
                 </p>
-                <p className="mt-1 font-semibold text-body">
+                <p className="mt-1 break-words font-semibold text-body">
                   {formatDeadline(
                     item.job.applicationDeadline,
                   )}
