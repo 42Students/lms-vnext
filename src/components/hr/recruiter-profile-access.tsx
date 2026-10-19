@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 
 import { useRef, useState } from "react";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
+import {Button} from "@/components/ui/button";
 import {isConfirmedRecruiterLeaveResponse} from "@/modules/placements/recruiter-profile-access-model";
 import Link from "next/link";
 import {hrRecruiterGrantLinks} from "@/modules/placements/hr-recruiter-grant-navigation-model";
@@ -83,11 +84,12 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
                   ))}
                 </nav>
               </div>
-              <Button variant="secondary" className="border-error/30 text-error hover:bg-error/5"
+              <Button
+                variant="secondary"
                 type="button"
                 disabled={leaving === grant.id}
                 onClick={() => setConfirmGrant(grant)}
-               
+                className="border-error/30 text-error hover:bg-error/5"
               >
                 {leaving === grant.id ? "Leaving…" : "Leave Access"}
               </Button>
