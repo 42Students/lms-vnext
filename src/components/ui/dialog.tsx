@@ -46,7 +46,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
           <h2 id={titleId} className="m-0 break-words text-[var(--lms-font-lg)] font-semibold leading-[1.35] text-[var(--lms-heading)]">{title}</h2>
           {description ? <p id={descriptionId} className="mt-[var(--lms-space-1)] text-[13px] leading-5 text-[var(--lms-body-text)]">{description}</p> : null}
         </div>
-        {dismissible ? <Button className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] text-[var(--lms-muted-text)] hover:bg-[var(--lms-neutral-100)]" variant="ghost" aria-label="Close dialog" onClick={() => onOpenChange(false)}><span aria-hidden="true">×</span></Button> : null}
+        {dismissible ? <Button className="min-h-11 min-w-11 rounded-full bg-white text-[var(--lms-muted-text)] hover:bg-[var(--lms-neutral-100)]" variant="ghost" aria-label="Close dialog" onClick={() => onOpenChange(false)}><span aria-hidden="true">×</span></Button> : null}
       </div>
       <ScrollCue axis="y" label={`${title} dialog content`} className="min-h-0 flex-1" viewportClassName="h-full min-h-0 overscroll-contain p-4 sm:p-[var(--lms-canvas-padding)]">{children}</ScrollCue>
       {footer ? <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-[var(--lms-canvas-border)] bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">{footer}</div> : null}
