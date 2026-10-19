@@ -27,6 +27,6 @@ export function TpoTeamDecisionToggle({threadId,messageId,marked}:{
    >
    {busy?"Saving…":marked?"Unmark decision":"Mark as decision"}
   </Button>
-  {error?<span role="alert" className="text-xs text-danger">{error}</span>:null}
+  {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
  </span>;
 }
