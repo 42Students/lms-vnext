@@ -72,6 +72,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
      <Select value={limit} onChange={e=>setLimit(Number(e.target.value))}
       className="min-h-11">
       {[25,50,100,500,1000].map(n=><option key={n} value={n}>{n}</option>)}
+      {![25,50,100,500,1000].includes(limit)?<option value={limit}>{limit}</option>:null}
      </Select>
     </label>
     <Dropdown mobileSheet align="end" label="Report column filters" trigger={"Column filters ("+Object.values(columnFilters).filter(v=>v.trim()).length+")"}>
