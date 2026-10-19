@@ -71,6 +71,11 @@ export function GridWorkspace<Row>({
    .filter(column=>!column.exportOnly);
  const pageIds=useMemo(()=>new Set(rows.map(rowKey)),[rows,rowKey]);
  const selectedPage=rows.filter(row=>selection?.selected.includes(rowKey(row)));
+ const clearPageSelection=()=>{
+  if(!selection)return;
+  const pageIdsNow=new Set(rows.map(rowKey));
+  selection.onChange(selection.selected.filter(key=>!pageIdsNow.has(key)));
+ };
  const exportedRows=selectedPage.length?selectedPage:rows;
  const activeFilters=filters.filter(field=>{
   const raw=params.get(field.urlKey??"filter."+field.key);
