@@ -1,5 +1,6 @@
 "use client";
 import {Checkbox} from "@/components/ui/checkbox";
+import { Disclosure } from "@/components/ui/disclosure";
 
 import {useRouter} from "next/navigation";
 import {ScrollCue} from "@/components/ui/scroll-cue";
@@ -100,8 +101,8 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
    }catch(error){setMessage(error instanceof Error?error.message:friendlyApiError({}));}
   });
  }
- return <details className="border-y border-border py-3 text-sm text-body">
-  <summary className="cursor-pointer font-semibold">Show to students / Hide from students</summary>
+ return <Disclosure title="Show to students / Hide from students" className="border-y border-border py-3 text-sm text-body">
+  
   <p className="mt-2 text-xs text-muted-foreground">
    Select Lessons on this page. Saved visibility does not delete student progress.
   </p>
@@ -136,5 +137,5 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
    </Button>:null}
   </div>
   {message?<p role="status" className="mt-2 text-xs">{message}</p>:null}
- </details>;
+ </Disclosure>;
 }
