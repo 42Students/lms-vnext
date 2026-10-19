@@ -60,7 +60,7 @@ export default async function ProfileCompleteness({searchParams}:{
       <h2 className="text-base font-semibold text-foreground">Your sections</h2>
       {readiness.items.length===0 ? <p className="mt-3 text-sm text-body">
         No sections match this filter. Choose All sections to review the full checklist.
-      </p> : <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+      </p> : <ul className="mt-4 grid gap-3 md:grid-cols-2">
         {readiness.items.map(item=><li key={item.section} className="min-w-0">
           <Link href={"/learn/profile?section="+encodeURIComponent(item.section)}
             className="flex min-h-12 items-center justify-between gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-sm text-foreground hover:border-primary hover:bg-primary-subtle">

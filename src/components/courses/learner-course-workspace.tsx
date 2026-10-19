@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
@@ -783,11 +784,8 @@ export function LearnerCourseWorkspace({
         }))}
       />
 
-      <details className="rounded-xl border border-border bg-surface md:hidden">
-        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">
-          Jump to lesson ({mobileOutline.length})
-          <span aria-hidden="true">⌄</span>
-        </summary>
+      <Disclosure title={"Jump to lesson ("+mobileOutline.length+")"}
+          className="rounded-xl border border-border bg-surface md:hidden [&>summary]:min-h-11 [&>summary]:p-4">
         {mobileOutline.length ? (
           <nav aria-label="Published lesson index" className="border-t border-border p-2">
             <ol className="space-y-1">
@@ -806,7 +804,7 @@ export function LearnerCourseWorkspace({
         ) : <p className="border-t border-border p-4 text-sm text-body">
           No published items match this filter.
         </p>}
-      </details>
+      </Disclosure>
       {emptyState ? (
         <EmptyState title={emptyState.title} description={emptyState.description} />
       ) : null}
