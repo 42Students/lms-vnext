@@ -85,7 +85,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     <h3 className="font-semibold">Selected recruiter audience</h3>
     {audienceStatus==="loading"?<p role="status">Checking selected contacts and suppression rules…</p>:null}
     {audienceStatus==="error"?<div role="alert"><p>Could not check selected contacts. No emails have been sent.</p>
-      <button type="button" className="mt-2 underline" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</button>
+      <Button variant="ghost" type="button" className="mt-2 underline" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</Button>
     </div>:null}
     {audienceStatus==="ready"&&audience?<div role="status" className="mt-2 space-y-1">
       <p><strong>{audience.eligible} potential recipients</strong> out of {audience.selected} selected · {audience.leftOut} left out.</p>
