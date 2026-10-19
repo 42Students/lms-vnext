@@ -51,7 +51,7 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
   <h2 className="font-semibold">Edit published drive</h2>
   <p className="text-xs text-body">Edits apply to future applicants. Existing applications and offer decisions remain unchanged.</p>
   {!open?<button type="button" onClick={()=>setOpen(true)}
-   className="min-h-10 rounded border border-border px-4 font-semibold text-primary-text">
+   className="min-h-10 rounded-[9px] border border-border px-4 font-semibold text-primary-text">
    Edit published drive</button>:
    <form className="grid gap-3 sm:grid-cols-2" onSubmit={e=>void save(e)}>
     <label className="grid gap-1 text-sm">Title<input name="title" required minLength={3} maxLength={100}
@@ -73,10 +73,10 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
     {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
     <div className="flex flex-wrap gap-3 sm:col-span-2">
      <button type="submit" disabled={pending}
-      className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+      className="min-h-10 rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-on-primary disabled:opacity-50 text-[var(--lms-on-primary)]">
       {pending?"Saving…":"Review and save published changes"}</button>
      <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-      className="min-h-10 rounded border border-border px-4">Cancel</button>
+      className="min-h-10 rounded-[9px] border border-border px-4">Cancel</button>
     </div>
    </form>}
  </section>;
