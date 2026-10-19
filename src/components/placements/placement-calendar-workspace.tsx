@@ -1010,9 +1010,10 @@ export async function PlacementCalendarWorkspace({
                 >
                   <p
                     className={
-                      day === today
+                      (day === today
                         ? "m-0 text-xs font-bold text-[var(--lms-link-text)]"
-                        : "m-0 text-xs font-semibold text-foreground"
+                        : "m-0 text-xs font-semibold text-foreground") +
+                      (day!==today&&new Date(day+"T12:00:00Z").getUTCDay()===0?" "+calendarStyles.calendarSunday:"")
                     }
                   >
                     {dayLabel(day)}
