@@ -44,16 +44,16 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
    </p>:<>
    <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
     <label className="grid gap-1 text-sm">Batch
-     <Select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+     <Select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9">
       <option value="">All current batches</option>
       {batches.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select></label>
     <label className="grid gap-1 text-sm">Branch
-     <Select name="branchId" defaultValue={branchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+     <Select name="branchId" defaultValue={branchId??""} className="min-h-11 sm:min-h-9">
       <option value="">All branches</option>
       {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}
      </Select></label>
-    <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-white">Filter</Button>
+    <Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
     <Link href="/tpo/reports/after-college" className="text-link underline lms-inline-link">Clear</Link>
     <a href={"/api/placements/tpo/reports/after-college?"+query.toString()}
       className="text-link underline">Download CSV</a>
