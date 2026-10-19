@@ -198,8 +198,7 @@
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button:not([data-slot="button"]):not([role="tab"])
-    :not([aria-pressed]):not([role="menuitem"]):not([role="switch"]))
-  :not(:where([data-unskin], [data-unskin] *)) {
+    :not([aria-pressed]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-button-primary) !important;
   border-color: var(--lms-button-primary) !important;
   border-radius: 9px !important;
@@ -219,8 +218,7 @@
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button:not([data-slot="button"]):not([role="tab"])
-    :not([aria-pressed]):not([role="menuitem"]):not([role="switch"]))
-  :not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled) {
+    :not([aria-pressed]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled) {
   background-color: var(--lms-button-primary-hover) !important;
   border-color: var(--lms-button-primary-hover) !important;
   color: var(--lms-on-primary) !important;
@@ -232,8 +230,7 @@
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button:not([data-slot="button"]):not([role="tab"])
-    :not([aria-pressed]):not([role="menuitem"]):not([role="switch"]))
-  :not(:where([data-unskin], [data-unskin] *)):disabled {
+    :not([aria-pressed]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):disabled {
   background-color: var(--lms-neutral-200) !important;
   border-color: var(--lms-neutral-200) !important;
   color: var(--lms-neutral-500) !important;
@@ -241,16 +238,14 @@
 }
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button:not([data-slot="button"]):not([role="tab"])
-    :not([aria-pressed]):not([role="menuitem"]):not([role="switch"]))
-  :not(:where([data-unskin], [data-unskin] *)):focus-visible {
+    :not([aria-pressed]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   box-shadow: 0 0 0 3px rgba(38, 186, 199, 0.35) !important;
 }
 /* Legacy reduced motion: components___antddesign.scss:184-189. */
 @media (prefers-reduced-motion: reduce) {
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(button:not([data-slot="button"]):not([role="tab"])
-      :not([aria-pressed]):not([role="menuitem"]):not([role="switch"]))
-    :not(:where([data-unskin], [data-unskin] *)) {
+      :not([aria-pressed]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
     transition: none !important;
   }
 }
@@ -349,15 +344,13 @@
  * Shared button-like anchors and tabs keep their dedicated component skins.
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(a:not([data-slot="button"]):not([role="tab"]))
-  :not(:where([data-unskin], [data-unskin] *)) {
+  :where(a:not([data-slot="button"]):not([role="tab"])):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-primary) !important;
   font-weight: 500 !important;
   transition: color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(a:not([data-slot="button"]):not([role="tab"]))
-  :not(:where([data-unskin], [data-unskin] *)):hover {
+  :where(a:not([data-slot="button"]):not([role="tab"])):not(:where([data-unskin], [data-unskin] *)):hover {
   color: var(--lms-primary) !important;
   text-decoration-color: var(--lms-primary) !important;
   text-decoration-line: underline !important;
@@ -366,8 +359,7 @@
  * components___variables.scss:12 (#1a95a1 accessible focus teal).
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(a:not([data-slot="button"]):not([role="tab"]))
-  :not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  :where(a:not([data-slot="button"]):not([role="tab"])):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   box-shadow: 0 0 0 2px rgba(26, 149, 161, 0.12) !important;
 }
 
@@ -400,8 +392,7 @@
  * chat-16; this rule never touches those concerns.
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(dialog, [role="dialog"], [role="alertdialog"])
-  :not(:where([data-unskin], [data-unskin] *)) {
+  :where(dialog, [role="dialog"], [role="alertdialog"]):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-white) !important;
   color: var(--lms-neutral-700) !important;
   border-color: var(--lms-neutral-200) !important;
@@ -446,8 +437,7 @@
  * #1a95a1 accessible teal); old-lms-shell.css:45-48 (soft active/hover).
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(summary:hover, details[open] > summary)
-  :not(:where([data-unskin], [data-unskin] *)) {
+  :where(summary:hover, details[open] > summary):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-primary-text) !important;
   background-color: var(--lms-primary-subtle) !important;
 }
