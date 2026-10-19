@@ -1049,75 +1049,29 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   [data-slot="page-canvas"][data-authenticated-canvas="true"] { min-height: calc(100dvh - 132px); }
 }
 
-/* chat-16: legacy accessibility.scss focus ring, including plain links and
-   custom interactive triggers that do not use the shared Button primitive. */
-:where(a, button, input, select, textarea, summary, [role="button"], [role="menuitem"], [tabindex]):focus:not(:focus-visible) {
-  outline: none;
+/* Chat-17 global form and notice aliases from legacy SCSS. */
+:root {
+  --lms-form-ink: #0a0517;
+  --lms-field-hover-border: #bfc9da;
+  --lms-info-border: #bde9ec;
+  --lms-warning-border: #f0d9ad;
+  --lms-warning-surface: #fef6e7;
 }
-:where(a, button, input, select, textarea, summary, [role="button"], [role="menuitem"], [tabindex]):focus-visible {
-  outline: 2px solid var(--lms-primary-text);
-  outline-offset: 3px;
+body {
+  font-synthesis-weight: none;
+  font-synthesis-style: none;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-x: hidden;
 }
-@media (forced-colors: active) {
-  :where(a, button, input, select, textarea, summary, [role="button"], [role="menuitem"], [tabindex]):focus-visible {
-    outline: 2px solid Highlight;
-  }
-}
-
-/* Legacy focus treatment must win over consumer-level Tailwind outline colors
-   on popup, toast, modal and drawer actions without removing focus visibility. */
-:is([data-slot="dropdown-root"] > summary, [data-slot="info-popover"] > summary,
-    [data-slot="menu"] [role="menuitem"], [data-slot="toast-stack"] button,
-    [data-slot="dialog"] button, [data-slot="drawer"] button,
-    [data-slot="bottom-sheet"] button,
-    [role="dialog"][aria-modal="false"] button):focus-visible {
-  outline: 2px solid var(--lms-primary-text);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(26, 149, 161, .12);
-}
-
-@media (forced-colors: active) {
-  :is([data-slot="dropdown-root"] > summary, [data-slot="info-popover"] > summary,
-      [data-slot="menu"] [role="menuitem"], [data-slot="toast-stack"] button,
-      [data-slot="dialog"] button, [data-slot="drawer"] button,
-      [data-slot="bottom-sheet"] button,
-      [role="dialog"][aria-modal="false"] button):focus-visible {
-    outline: 2px solid Highlight;
-    box-shadow: none;
-  }
-}
-
-/* Legacy overlay lists keep scrolling and mobile momentum without visible chrome.
-   Their content is not clipped by a fixed-height body or nested browser scrollbar. */
-[data-slot="dropdown"],
-[data-slot="toast-stack"],
-[data-slot="drawer"] [data-slot="scroll-cue"] [role="region"],
-[data-slot="dialog"] [data-slot="scroll-cue"] [role="region"],
-[data-slot="bottom-sheet"] [data-slot="scroll-cue"] [role="region"],
-[role="dialog"][aria-modal="false"] [data-slot="scroll-cue"] [role="region"] {
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-[data-slot="dropdown"]::-webkit-scrollbar,
-[data-slot="toast-stack"]::-webkit-scrollbar,
-[data-slot="drawer"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar,
-[data-slot="dialog"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar,
-[data-slot="bottom-sheet"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar,
-[role="dialog"][aria-modal="false"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar {
-  display: none;
-}
-
-/* The tracker dark override must also win over native disabled-control selectors. */
-:root[data-tracker-theme="dark"] :is([data-slot="input"], [data-slot="select"], [data-slot="textarea"]):disabled {
-  background: var(--lms-neutral-50);
-  color: var(--lms-neutral-400);
-  border-color: var(--lms-border);
-}
-
-/* Empty listings live on the single page canvas, including in the optional tracker theme. */
-:root[data-tracker-theme="dark"] [data-slot="empty-state"] {
-  background: transparent;
-  border-color: transparent;
+:root[data-tracker-theme="dark"] {
+  --lms-heading: #f8fafc;
+  --lms-canvas-border: var(--lms-border);
+  --lms-form-ink: #f8fafc;
+  --lms-form-bg: #172337;
+  --lms-field-hover-border: #64748b;
+  --lms-info-border: #25636c;
+  --lms-warning-border: #92400e;
+  --lms-warning-surface: #422f1c;
 }
