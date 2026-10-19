@@ -22,7 +22,7 @@ export default async function FacultyStudentDetailPage({
   const root = "/teacher/courses/" + encodeURIComponent(data.course.deliveryId);
   return <div className="min-w-0 max-w-full space-y-6">
     <Link href={root + "/students"}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Students</Link>
+      className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Students</Link>
     <PageHeader eyebrow="Faculty · Course Students" title={name}
       description={[data.course.courseName, data.course.sectionName,
         data.course.academicPeriodName].join(" · ")} />
@@ -80,7 +80,7 @@ export default async function FacultyStudentDetailPage({
                 cell:row=>row.markedAt?dateText(row.markedAt):"Not recorded" },
             ]}/>}
       <Link href={root + "/attendanceDetail"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         View monthly class attendance →
       </Link>
     </section>
