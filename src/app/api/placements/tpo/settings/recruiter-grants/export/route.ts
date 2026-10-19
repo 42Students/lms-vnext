@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -26,11 +27,11 @@ export async function GET(request:Request){
   if(format==="xlsx")
    return new Response(tpoRecruiterGrantXlsx(result.items,result.truncated),{
     headers:{...headers,"Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-     "Content-Disposition":'attachment; filename="recruiters.xlsx"'},
+     "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiters", "xlsx") + '"'},
    });
   return new Response("\uFEFF"+tpoRecruiterGrantCsv(result.items,result.truncated),{
    headers:{...headers,"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="recruiters.csv"'},
+    "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiters", "csv") + '"'},
   });
  }catch(error){return apiErrorResponse(error);}
 }
