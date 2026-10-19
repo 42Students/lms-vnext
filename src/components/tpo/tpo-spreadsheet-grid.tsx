@@ -9,6 +9,7 @@ import {useEffect,useRef,useState,type CSSProperties,type ReactNode} from "react
 import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoGridColumnChooser} from "./tpo-grid-column-chooser";
 import {gridSelectionClick, gridSelectionCheckbox, selectedGridIdsWithin} from "./grid/grid-selection";
+import {sortTpoGridRows,type TpoGridSort} from "./grid/grid-sort";
 
 export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,mobilePrimaryKeys,storageKey,selection,showColumnChooser=true}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;mobilePrimaryKeys?:readonly string[];storageKey?:string;showColumnChooser?:boolean;
  selection?:{selected:readonly string[];onChange:(ids:string[])=>void;allIds?:readonly string[]};
@@ -157,7 +158,7 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
        className="min-w-11">{columnView[col.key]?.pinned?"Unpin":"Pin"}</Button>
      </div>:null}
     </th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
-    <tbody>{rows.map(row=><tr key={rowKey(row)} aria-selected={selection?.selected.includes(rowKey(row))||undefined}
+    <tbody>{orderedRows.map(row=><tr key={rowKey(row)} aria-selected={selection?.selected.includes(rowKey(row))||undefined}
      onClick={event=>{
       if(event.target instanceof HTMLElement && event.target.closest("button,a,input,select,textarea,[role=button]"))return;
       changeRowClick(rowKey(row),event);
