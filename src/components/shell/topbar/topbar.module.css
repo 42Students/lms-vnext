@@ -141,3 +141,14 @@
 /* Keep the command's two real children on measured tracks without reserving an empty column. */
 .searchBox button:focus-visible { outline:2px solid var(--lms-button-primary); outline-offset:2px; border-radius:4px; }
 .searchInput::-webkit-search-cancel-button { cursor:pointer; }
+
+/* Shared Button instances within the legacy command box keep its measured 36px field. */
+.searchBox [data-slot="button"] {
+  flex:none; width:20px; min-width:20px; height:28px; min-height:28px;
+  padding:0; border:0; background:transparent; box-shadow:none;
+}
+.searchBox [data-slot="button"]:hover { background:transparent; }
+.dropdown [data-slot="button"][role="option"] {
+  width:100%; min-height:44px; justify-content:flex-start; padding:8px 10px;
+  border:0; text-align:left; font-size:13px; font-weight:500;
+}
