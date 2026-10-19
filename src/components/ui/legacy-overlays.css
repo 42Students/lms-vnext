@@ -170,6 +170,7 @@
   box-shadow: 9px 11px 28px rgba(0, 0, 0, .1);
 }
 [data-slot="popover-listbox"] { border-radius: 12px; }
+[data-slot="popover-listbox"] { box-shadow: 0 4px 24px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04); }
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
