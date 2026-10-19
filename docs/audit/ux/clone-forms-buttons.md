@@ -347,7 +347,7 @@ GitHub indexed searches for `<button`, `<input`, `<select`, `<textarea` returned
 | Image upload | `components___button.scss:295+` — upload affordance | `file-upload.tsx`, `file-dropzone.tsx` preview/list/progress additions | Functional states improved; original legacy crop/preview visual geometry not fully proven |
 | Responsive titles | `components___typo.scss:3-40` — 24px phone h1, 22/30px h2, 18/20px h3 | `legacy-skin.css` heading + media rules, 767/768/992px | Breakpoint rules source-matched; no viewport screenshot run |
 
-**Static source verification on the repository's actual files (not CI):** `legacy-skin.css` currently has **62 scoped selector blocks**, 193 source-path:line references, 0 unscoped selectors, 0 selectors missing `[data-unskin]`, no unbalanced brackets/braces/quotes, and no width/height/margin/padding/display/position/flex/grid/transform/overflow/line-height declarations. The skin is imported **once** by `src/app/globals.css`. Edited JSX source was reviewed for paired opening and closing components; `searchable-select.tsx` now opens and closes `<Button>` for listbox options.
+**Static source verification on the repository's actual files (not CI):** `legacy-skin.css` currently has **64 scoped selector blocks**, 196 source-path:line references, 0 unscoped selectors, 0 selectors missing `[data-unskin]`, no unbalanced brackets/braces/quotes, and no width/height/margin/padding/display/position/flex/grid/transform/overflow/line-height declarations. The skin is imported **once** by `src/app/globals.css`. Edited JSX source was reviewed for paired opening and closing components; `searchable-select.tsx` now opens and closes `<Button>` for listbox options.
 
 **STRICT CATEGORY TICKS: none.** The 12 existing A1–A4, C1–C7 and D categories above remain unchecked under the owner rule until global raw-element and hard-coded-color grep counts, every portal caller, responsive visual proof, and the native/AntD picker and rich-text parity are satisfied. Do **not** misrepresent the checked file ledger as completion of those 12 categories.
 
@@ -373,3 +373,15 @@ grep -rnE '#[0-9A-Fa-f]{3,8}\\b' src --include='*.tsx' --include='*.css'
 ```
 
 Do not check the strict C3 category until date/time/month/week popup parity and phone/tablet keyboard behavior are actually verified. The file checkmarks above describe reviewed source updates only, not complete category proof.
+
+
+## Latest completion evidence — global skin and calendar integration
+
+- [x] `src/styles/legacy-skin.css` source review: **64** element-level selector blocks; all scoped under authenticated main/canvas, all preserve the `[data-unskin]` subtree exemption, **196** legacy reference occurrences, one import from `src/app/globals.css`, zero unbalanced CSS delimiters, and zero layout-property declarations. White table cells now clear on hover to reveal legacy teal row tracking (`components___common.scss:700-713,840-853`); form error copy follows `components___global.scss:66-70`.
+- [x] `src/components/ui/date-input.tsx` source review: shared PopoverPanel + CalendarGrid month/day popup, date limits, focus return, Escape/arrow keys, and existing native input events/props retained. No hand-rolled modal/drawer.
+- [x] `src/components/ui/date-range-picker.tsx` source review: start/end labels now use proper `htmlFor` relationships rather than containing a second interactive calendar button, and both inputs reference the reversed-range error.
+- [x] `src/components/ui/file-dropzone.tsx` source review: stale picker selection now resets when a file is dropped; valid/invalid selections and previews cannot both display old and new files.
+- [x] `src/components/ui/searchable-select.tsx` source review: listbox option action now uses the shared Button; skin also exempts role=option from generic button paint.
+- [x] `scripts/audit/chat17-form-skin-coverage.cjs` source review: TypeScript AST enumerates raw JSX controls, hard-coded colors, responsive references and JSX parse diagnostics. **No run or result count claimed.**
+
+These are file-level source completions, **not** strict A1–A4, C1–C7 or D ticks. Without actually executing the source inventory and comparing the app at phone/tablet sizes to the old LMS, the owner-defined coverage/responsive requirements are not met. Picker time/week/month equivalence, image cropping, and rich-text editor parity also remain unproven.
