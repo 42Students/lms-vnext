@@ -51,7 +51,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   return <div className="min-w-0 space-y-5">
     <PageHeader title={data.template.title}
       description="Availability within the current safety scope. Existing workspaces retain their pinned versions."
-      actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Template catalogue</Link>} />
+      actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">← Template catalogue</Link>} />
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">College name or code
@@ -68,7 +68,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
         canAssign:can(context,"project-template.assign",{collegeId:row.id,organizationId:row.organizationId})}))}/>
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
       {data.items.map(row => <article key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="break-words text-base font-semibold text-foreground">{row.name}</h2>
+        <h2 className="break-words text-base font-semibold text-[var(--lms-heading)]">{row.name}</h2>
         <p className="text-xs text-muted-foreground">{row.code}</p>
         <StatusBadge tone={row.assignment ? "success" : "neutral"}>{row.assignment ? "Assigned" : "Not assigned"}</StatusBadge>
         {row.assignment ? <p className="text-sm text-body">Pinned version {row.assignment.assignedVersion ?? "Unresolved"} ·
