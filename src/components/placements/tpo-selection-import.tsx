@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { FileUpload } from "@/components/ui/file-upload";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -50,10 +51,8 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   <h2 className="font-semibold text-foreground">Import the company&apos;s selection list</h2>
   <p className="text-sm text-body">Use CSV with Application ID, Email or Student name. Optional Role and Package LPA columns.
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
-  <label className="block text-sm font-semibold">Selection list (CSV)
-   <input type="file" accept=".csv,text/csv" disabled={busy} onChange={e=>void read(e.target.files?.[0]??null)}
-    className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm md:min-h-9"/>
-  </label>
+  <FileUpload label="Selection list (CSV)" accept=".csv,text/csv" maxBytes={2_000_000}
+     disabled={busy} onFiles={files=>void read(files?.[0]??null)}/>
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
    <div tabIndex={0} role="group" aria-label="Selection import preview, scroll for more" className="max-h-52 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
