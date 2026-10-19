@@ -63,6 +63,11 @@
   background: var(--lms-neutral-50);
   border-bottom: 1px solid var(--lms-canvas-border);
 }
+[data-slot="drawer"][data-side="left"] [data-slot="scroll-cue"] > div:first-child {
+  padding: 8px 0 calc(24px + env(safe-area-inset-bottom, 0px));
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+}
 [data-slot="drawer-footer"] {
   padding: 12px 20px max(12px, env(safe-area-inset-bottom));
   background: var(--lms-neutral-50);
