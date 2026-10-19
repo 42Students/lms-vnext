@@ -207,7 +207,7 @@ export default async function TpoPlacementBrandingPage() {
           </p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 min-[768px]:grid-cols-2">
           <BrandColor
             label="Primary colour"
             field={branding.primaryColor}

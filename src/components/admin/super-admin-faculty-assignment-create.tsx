@@ -54,20 +54,20 @@ export function SuperAdminFacultyAssignmentCreate({
    }
   });
  }
- const inputClass="w-full";
+ const inputClass="min-h-11 w-full min-[768px]:min-h-9";
  return <section aria-label="Create teaching assignment" className="space-y-3">
    <Button variant="secondary" type="button" disabled={!available.length||!faculty.length||pending}
     onClick={()=>setOpen(value=>!value)} aria-expanded={open}
-    className="min-h-11 sm:min-h-9">
+    className="min-h-11 min-[768px]:min-h-9">
     Create teaching assignment
    </Button>
    {!available.length?<p role="status" className="text-sm text-body">
     Create an active course offering and class delivery before assigning a teacher.
    </p>:null}
    {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
-   {open?<form onSubmit={e=>void submit(e)} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2">
-    <p className="sm:col-span-2 text-sm text-body">Select a course and class in the current college. Only active faculty can be assigned.</p>
-    <label className="grid gap-1 text-sm font-semibold">Course / Class / Semester
+   {open?<form onSubmit={e=>void submit(e)} className="grid gap-3 border-b border-border pb-5 min-[768px]:grid-cols-2">
+    <p className="min-[768px]:col-span-2 text-sm text-body">Select a course and class in the current college. Only active faculty can be assigned.</p>
+    <label className="grid gap-1 text-[13px] font-semibold text-body">Course / Class / Semester
      <Select required className={inputClass} value={deliveryId} onChange={e=>{setDeliveryId(e.target.value);setOtherDeliveryIds([]);}}>
       <option value="">Choose an active class</option>
       {available.map(item=><option key={item.id} value={item.id}>
@@ -75,11 +75,11 @@ export function SuperAdminFacultyAssignmentCreate({
       </option>)}
      </Select>
     </label>
-    {selected?<fieldset className="grid gap-2 border-b border-border pb-3 sm:col-span-2">
-      <legend className="px-1 text-sm font-semibold">Course(s)</legend>
+    {selected?<fieldset className="grid gap-2 border-b border-border pb-3 min-[768px]:col-span-2">
+      <legend className="px-1 text-[13px] font-semibold text-foreground">Course(s)</legend>
       <p className="text-xs text-body">Select several courses to assign this lecturer to all of them at once. The chosen course is always included. Select up to 9 additional courses for the same class and semester.</p>
       <div role="region" aria-label="Available courses in the selected class" tabIndex={0}
-        className="grid max-h-48 gap-2 overflow-y-auto overscroll-contain sm:grid-cols-2 [mask-image:linear-gradient(to_bottom,black_90%,transparent)]">
+        className="grid max-h-48 gap-2 overflow-y-auto overscroll-contain min-[768px]:grid-cols-2 [mask-image:linear-gradient(to_bottom,black_90%,transparent)]">
         {sameClass.map(item=><label key={item.id} className="flex min-h-11 items-center gap-2 text-sm">
           <Checkbox checked={item.id===deliveryId||otherDeliveryIds.includes(item.id)}
             disabled={pending||item.id===deliveryId||(!otherDeliveryIds.includes(item.id)&&deliveryIds.length>=10)}
@@ -88,7 +88,7 @@ export function SuperAdminFacultyAssignmentCreate({
         </label>)}
       </div>
     </fieldset>:null}
-    <label className="grid gap-1 text-sm font-semibold">Faculty
+    <label className="grid gap-1 text-[13px] font-semibold text-body">Faculty
      <Select required className={inputClass} value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
       <option value="">Choose faculty</option>
       {faculty.map(item=><option key={item.membershipId} value={item.membershipId}>
@@ -96,7 +96,7 @@ export function SuperAdminFacultyAssignmentCreate({
       </option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold">Role
+    <label className="grid gap-1 text-[13px] font-semibold text-body">Role
      <Select className={inputClass} value={role} onChange={e=>setRole(e.target.value as CourseTeachingRole)}>
       {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
        {facultyAssignmentRoleLabel(value)}
@@ -106,13 +106,13 @@ export function SuperAdminFacultyAssignmentCreate({
     {truncated?<p role="status" className="text-xs text-muted-foreground">
      Only the first 500 active faculty members are available here. Use the course workspace to find others.
     </p>:null}
-    {error?<p role="alert" className="sm:col-span-2 text-sm text-error">{error}</p>:null}
-    <div className="flex flex-wrap gap-2 sm:col-span-2">
-      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 sm:min-h-9">
+    {error?<p role="alert" className="min-[768px]:col-span-2 text-sm text-error">{error}</p>:null}
+    <div className="flex flex-wrap gap-2 min-[768px]:col-span-2">
+      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 min-[768px]:min-h-9">
        {pending?"Assigning…":"Assign faculty"}
       </Button>
       <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-       className="min-h-11 sm:min-h-9">Cancel</Button>
+       className="min-h-11 min-[768px]:min-h-9">Cancel</Button>
     </div>
    </form>:null}
  </section>;
@@ -148,13 +148,13 @@ export function SuperAdminTeachingRoleEdit({
   });
  }
  return <div className="min-w-0 space-y-2">
-   <Button variant="secondary" size="sm" type="button" className="min-h-9"
+   <Button variant="secondary" size="sm" type="button" className="min-h-11 min-[768px]:min-h-9"
      aria-expanded={open} disabled={pending}
      onClick={()=>{setRole(initialRole);setNotice("");setOpen(v=>!v);}}>
       Edit role
    </Button>
    {open?<div className="grid gap-2">
-      <label className="grid gap-1 text-xs font-semibold">Teaching role
+      <label className="grid gap-1 text-[13px] font-semibold text-body">Teaching role
        <Select value={role} disabled={pending}
         onChange={e=>setRole(e.target.value as CourseTeachingRole)}
         >
@@ -163,7 +163,7 @@ export function SuperAdminTeachingRoleEdit({
        </Select>
       </label>
       <Button variant="primary" type="button" disabled={pending||role===initialRole}
-       onClick={()=>void save()} className="min-h-11 sm:min-h-9">
+       onClick={()=>void save()} className="min-h-11 min-[768px]:min-h-9">
        {pending?"Saving…":"Save role"}
       </Button>
     </div>:null}

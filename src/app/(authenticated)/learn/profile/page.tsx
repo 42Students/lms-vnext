@@ -77,7 +77,7 @@ export default async function LearnerProfilePage({
           <p>Your academic summary is temporarily unavailable. Your saved profile remains available below; no missing enrollment has been inferred.</p>
           <LearnerProfileAcademicRetry />
         </div> : academic?.enrollment ? (
-          <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
+          <dl className="mt-4 grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
             <div>
               <dt className="font-semibold text-muted-foreground">Program</dt>
               <dd className="mt-1 text-foreground">{academic.enrollment.program}
@@ -109,7 +109,7 @@ export default async function LearnerProfilePage({
         className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Who has my data →
       </Link>
-      <section aria-label="Verification status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:p-6">
+      <section aria-label="Verification status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
         <h2 className="text-base font-semibold text-foreground">Education and identity verification</h2>
         <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
         {verification?<div className="mt-4 space-y-3">

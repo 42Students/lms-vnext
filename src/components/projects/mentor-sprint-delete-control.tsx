@@ -1,4 +1,5 @@
 "use client";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -7,9 +8,10 @@ export function MentorSprintDeleteControl({projectId,sprintId,title,taskCount,up
  projectId:string;sprintId:string;title:string;taskCount:number;updatedAt:string;
 }){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const {askConfirm,dialog}=useConfirmFlow();
  async function remove(){
-  if(busy||!window.confirm('Delete sprint "'+title+'"? '+taskCount+
-    ' task(s) will return to the product backlog. This cannot be undone.'))return;
+  if(busy||!(await askConfirm('Delete sprint "'+title+'"? '+taskCount+
+    ' task(s) will return to the product backlog. This cannot be undone.')))return;
   setBusy(true);setError("");
   try{
    const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
@@ -21,11 +23,11 @@ export function MentorSprintDeleteControl({projectId,sprintId,title,taskCount,up
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to delete sprint.");}
   finally{setBusy(false);}
  }
- return <span className="inline-flex flex-col gap-1">
+ return <><span className="inline-flex flex-col gap-1">
   <Button variant="danger" type="button" disabled={busy}
    onClick={()=>void remove()} className="min-h-9 px-3">
    {busy?"Deleting…":"Delete sprint"}
   </Button>
   {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
- </span>;
+ </span>{dialog}</>;
 }

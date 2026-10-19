@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {TpoRequestDecisionControl} from "./tpo-request-decision-control";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 type Row={
  id:string;studentName:string;requestType:string;reason:string;
@@ -49,11 +50,11 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
      >Stop and return to queue</Button>
    </div>
   </div>:<div className="space-y-2">
-   <p role="status" className="text-sm">This request is no longer pending on the visible page.</p>
+   <InlineNotice tone="info" message="This request is no longer pending on the visible page."/>
    <Button variant="secondary" type="button" onClick={()=>advance(false)} >Next</Button>
    <Button variant="secondary" type="button" onClick={stop} className="ml-2">Finish</Button>
   </div>}
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
   <p className="text-xs text-muted-foreground">This session covers the pending requests on the visible page. Each decision is independently persisted and rechecked on the server.</p>
  </section>;
 }

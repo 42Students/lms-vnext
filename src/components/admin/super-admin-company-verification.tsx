@@ -3,6 +3,8 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 export function SuperAdminCompanyVerification({companyId,name,verified}:{
  companyId:string;name:string;verified:boolean;
 }){
@@ -21,18 +23,15 @@ export function SuperAdminCompanyVerification({companyId,name,verified}:{
   finally{setBusy(false);}
  }
  return <div className="mt-2 space-y-2">
-  {confirm?<div role="group" aria-label="Confirm global company verification"
-   className="space-y-2 border-l-2 border-border py-2 pl-4 text-sm">
-   <p>{verified?"Unverify":"Verify"} {name} globally for 42?</p>
-   <Button type="button" disabled={busy} onClick={()=>void save()}
-    className="min-h-9">
-    {busy?"Saving…":verified?"Confirm unverify":"Confirm verify"}</Button>
-   <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirm(false)}
-    className="ml-2">Cancel</Button>
-  </div>:
-  <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirm(true)}
-   className="min-h-9">
-   {verified?"Unverify":"Verify"} company</Button>}
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  <Button type="button" variant="secondary" disabled={busy} loading={busy}
+   onClick={()=>setConfirm(true)} className="min-h-11 md:min-h-9">
+   {verified?"Unverify":"Verify"} company
+  </Button>
+  <ConfirmDialog open={confirm} onOpenChange={setConfirm}
+   title={verified?"Remove global company verification?":"Verify company globally?"}
+   description={(verified?"Unverify ":"Verify ")+name+" globally for 42?"}
+   confirmLabel={verified?"Confirm unverify":"Confirm verify"} pending={busy}
+   onConfirm={()=>void save()}/>
+  {error?<Alert tone="error">{error}</Alert>:null}
  </div>;
 }

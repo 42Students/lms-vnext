@@ -1,0 +1,52 @@
+/*
+ * Original TPO reporting bars, scoped to Super Admin hiring funnel only:
+ * lms2-fe@prod-2026/src/styles/components/_tpo-reports.scss:429-484,602-605.
+ * Existing vNext 3-up funnel stage layout and real stage-percent logic stay.
+ */
+.step {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e7ecf2;
+  border-left: 4px solid #26bac7;
+  border-radius: 8px;
+  background: #fff;
+}
+.label {
+  display: block;
+  overflow: hidden;
+  color: #44536a;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+}
+.count {
+  display: block;
+  color: #334155;
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.percent {
+  margin: 4px 0 0;
+  color: #5b6b82;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.track {
+  height: 11px !important;
+  border-radius: 999px;
+  background: #e7ecf2 !important;
+}
+.track > div {
+  background: #26bac7 !important;
+}
+.track[aria-valuenow]:not([aria-valuenow="0"]) > div { min-width: 2px; }
+@media (max-width: 767px) {
+  .step { padding: 10px; }
+  .count { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track > div { transition: none; }
+}

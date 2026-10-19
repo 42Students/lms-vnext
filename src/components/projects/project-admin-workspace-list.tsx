@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "./project-workspace-readiness.module.css";
 import Link from "next/link";
 import { ProjectArchiveControl } from "@/components/projects/project-archive-control";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -87,16 +88,16 @@ export function ProjectAdminWorkspaceList({
       {key:"progress",header:"Progress",mobilePriority:"secondary",cell:item=>{
         const progress=safeProjectProgressPercent(item.progressPercent);
         return progress===null ? <span className="text-sm text-muted-foreground">Progress unavailable</span> :
-        <div className="flex items-center gap-2">
-          <MetricBar role="progressbar" className="w-24"
+        <div className={styles.inlineCell}>
+          <MetricBar role="progressbar" className={styles.inlineTrack}
             label={item.title+" progress"} value={progress} maximum={100} unit="percent" />
-          <span className="tabular-nums">{progress}%</span>
+          <span className={styles.inlinePercent}>{progress}%</span>
         </div>;
       }},
       {key:"members",header:"Members",mobilePriority:"secondary",cell:item=>item.memberCount},
       {key:"action",header:"Action",mobilePriority:"action",cell:item=>
         <div className="flex flex-wrap items-center gap-2">
-          <Link href={basePath+"/"+item.id} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open</Link>
+          <Link href={basePath+"/"+item.id} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open</Link>
           <ProjectArchiveControl projectId={item.id} projectTitle={item.title}
             status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
         </div>},
@@ -167,7 +168,7 @@ export function ProjectAdminWorkspaceList({
                 "/" +
                 item.id
               }
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-muted md:min-h-9"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
             >
               Open workspace
             </Link>

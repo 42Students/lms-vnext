@@ -56,20 +56,20 @@ const columns: DataTableColumn<CollegeRow>[] = [
     header: <span className="sr-only">Actions</span>,
     className: "text-right",
     cell: (college) => (
-      <div className="flex min-w-0 flex-wrap justify-start gap-2 sm:justify-end">
+      <div className="flex min-w-0 flex-wrap justify-start gap-2 md:justify-end">
         <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
           Tenant setup
         </Link>
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
         >
           Readiness
         </Link>
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
         >
           Branding
         </Link>
@@ -125,7 +125,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       <PageHeader
         title="Colleges"
         description="Active colleges are constrained by the selected Super Admin safety scope."
-        actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 sm:min-h-9">Search tenant directory →</Link>}
+        actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Search tenant directory →</Link>}
       />
       {creatableOrganizations.length > 0 ? (
         <CollegeCreateForm
@@ -144,7 +144,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       ) : null}
       {creatableOrganizations.length>0?<CollegeBulkImport organizations={creatableOrganizations.map(x=>({id:x.id,name:x.name}))}/>:null}
       <form className="flex flex-wrap items-end gap-3 border-t border-border pt-4" method="get">
-       <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-sm font-semibold sm:min-w-48">Search college, code, city or organization
+       <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-sm font-semibold md:min-w-48">Search college, code, city or organization
         <Input type="search" name="q" defaultValue={q} maxLength={100} />
        </label>
        <label className="flex flex-col gap-1 text-sm font-semibold">Rows per page

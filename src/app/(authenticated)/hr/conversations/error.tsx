@@ -1,12 +1,14 @@
 "use client";
-import { Alert } from "@/components/ui/alert";
+
+import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 
 export default function ErrorView({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  return <Alert tone="error" className="space-y-4">
+  return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Conversations unavailable" />
-    <p className="text-sm text-body">Your employer messages could not be loaded.</p>
-    <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
-  </Alert>;
+    <ErrorState title="Could not load conversations"
+      description="Your employer messages could not be loaded. This does not mean they were deleted or marked read."
+      action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>} />
+  </div>;
 }

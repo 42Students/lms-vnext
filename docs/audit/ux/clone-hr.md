@@ -168,7 +168,6 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] `src/components/hr/hr-notification-read-button.tsx`
 - [ ] `src/components/hr/hr-recruiter-bell.tsx`
 - [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
-- [ ] `src/components/hr/hr-job-applicants-grid.tsx` (new shared desktop sheet; source-wired, computed and runtime parity not verified)
 - [ ] `src/components/hr/recruiter-applicant-review-drawer.tsx`
 - [ ] `src/components/hr/recruiter-conversation-live-refresh.tsx`
 - [ ] `src/components/hr/recruiter-conversation-read-control.tsx`

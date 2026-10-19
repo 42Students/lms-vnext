@@ -28,12 +28,20 @@ function localISO(date: Date): string {
   return `${y}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 function initialMonth(raw: unknown): Date {
-  if (typeof raw === "string" && /^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+  if (typeof raw === "string" && /^\d{4}-\d{2}(?:-\d{2})?$/.test(raw)) {
     const [year, month] = raw.split("-").map(Number);
     if (year >= 1 && month >= 1 && month <= 12) return new Date(year, month - 1, 1);
   }
   const today = new Date();
   return new Date(today.getFullYear(), today.getMonth(), 1);
+}
+function pad2(value: number) { return String(value).padStart(2, "0"); }
+function minuteOf(raw: string): number | null {
+  const match = /^(\d{2}):(\d{2})$/.exec(raw);
+  if (!match) return null;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  return hours < 24 && minutes < 60 ? hours * 60 + minutes : null;
 }
 
 /**
@@ -53,10 +61,29 @@ export function DateInput({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [open, setOpen] = useState(false);
   const [viewMonth, setViewMonth] = useState(() => initialMonth(value ?? defaultValue));
-  const enabled = mode === "date" && calendarPopup && !disabled && !readOnly;
+  const [draftHour, setDraftHour] = useState(0);
+  const requestedStep = props.step === "any" ? NaN : Number(props.step ?? 60);
+  // Second-level precision remains the browser's native picker; the legacy
+  // time panel is minute-based, like components___antddesign.scss:204-211.
+  const minuteStep = Number.isInteger(requestedStep) && requestedStep >= 60 && requestedStep % 60 === 0
+    ? requestedStep / 60 : null;
+  const hasPanel = mode === "date" || mode === "month" || (mode === "time" && minuteStep !== null);
+  const enabled = hasPanel && calendarPopup && !disabled && !readOnly;
   const selected = String(value ?? (inputRef.current?.value || defaultValue || ""));
   const today = localISO(new Date());
   const monthYear = `${monthNames[viewMonth.getMonth()]} ${viewMonth.getFullYear()}`;
+  const minimumMinute = minuteOf(String(props.min ?? ""));
+  const maximumMinute = minuteOf(String(props.max ?? ""));
+  const stepBaseMinute = minimumMinute ?? 0;
+  function timeAllowed(hour: number, minute: number) {
+    const time = hour * 60 + minute;
+    // Native time inputs allow a min-to-max interval that crosses midnight.
+    const insideRange = minimumMinute !== null && maximumMinute !== null && minimumMinute > maximumMinute
+      ? time >= minimumMinute || time <= maximumMinute
+      : (minimumMinute === null || time >= minimumMinute) &&
+        (maximumMinute === null || time <= maximumMinute);
+    return minuteStep !== null && (time - stepBaseMinute) % minuteStep === 0 && insideRange;
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -67,8 +94,8 @@ export function DateInput({
     return () => document.removeEventListener("pointerdown", closeOutside);
   }, [open]);
   useEffect(() => {
-    if (disabled || readOnly || !calendarPopup || mode !== "date") setOpen(false);
-  }, [disabled, readOnly, calendarPopup, mode]);
+    if (!enabled) setOpen(false);
+  }, [enabled]);
 
   function bindRef(node: HTMLInputElement | null) {
     inputRef.current = node;
@@ -88,7 +115,11 @@ export function DateInput({
   }
   function toggle() {
     if (!enabled) return;
-    if (!open) setViewMonth(initialMonth(inputRef.current?.value ?? value ?? defaultValue));
+    if (!open) {
+      const raw = String(inputRef.current?.value ?? value ?? defaultValue ?? "");
+      setViewMonth(initialMonth(raw));
+      setDraftHour(Math.floor((minuteOf(raw) ?? 0) / 60));
+    }
     setOpen(!open);
   }
   function monthDelta(delta: number) {
@@ -111,16 +142,17 @@ export function DateInput({
   const native = <Input {...props} id={inputId} ref={bindRef} type={mode}
     value={value} defaultValue={defaultValue} disabled={disabled} readOnly={readOnly}
     aria-readonly={readOnly || undefined} error={error}
-    className={cx(enabled ? "pr-12" : "", className)}
+    className={cx(enabled ? "pr-12 [&::-webkit-calendar-picker-indicator]:opacity-0" : "", className)}
     onChange={onChange} onKeyDown={onKeyDown} />;
 
-  if (mode !== "date" || !calendarPopup) return native;
+  if (!hasPanel || !calendarPopup) return native;
 
   return (
     <div ref={rootRef} data-slot="date-field" className="relative min-w-0">
       {native}
       <Button type="button" variant="ghost" size="icon-sm"
-        aria-label="Open date calendar" aria-expanded={open} aria-controls={open ? popupId : undefined}
+        aria-label={mode === "time" ? "Open time picker" : mode === "month" ? "Open month picker" : "Open date calendar"}
+        aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? popupId : undefined}
         disabled={!enabled} onClick={toggle}
         className="absolute right-1 top-0 !h-9 !w-9 !min-w-9 !rounded-[9px] !border-0 !p-0 max-[767px]:!h-11 max-[767px]:!w-11">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -130,18 +162,65 @@ export function DateInput({
         </svg>
       </Button>
       {open && enabled
-        ? <PopoverPanel id={popupId} label="Choose date" onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
-            onKeyDown={handleCalendarKey}
-            data-slot="legacy-date-calendar"
+        ? <PopoverPanel id={popupId} label={mode === "time" ? "Choose time" : mode === "month" ? "Choose month" : "Choose date"}
+            onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
+            onKeyDown={mode === "date" ? handleCalendarKey : undefined}
+            data-slot={mode === "time" ? "legacy-time-picker" : mode === "month" ? "legacy-month-picker" : "legacy-date-calendar"}
             className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] !rounded-[12px] border border-[var(--lms-neutral-200)] bg-white p-3 !shadow-[var(--lms-search-dropdown-shadow)]">
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <Button type="button" variant="ghost" size="icon-sm"
-                aria-label="Previous month" onClick={() => monthDelta(-1)}>‹</Button>
-              <span aria-live="polite" className="text-[14px] font-semibold text-[var(--lms-neutral-900)]">{monthYear}</span>
-              <Button type="button" variant="ghost" size="icon-sm"
-                aria-label="Next month" onClick={() => monthDelta(1)}>›</Button>
-            </div>
-            <CalendarGrid variant="spaced" role="group" aria-label={monthYear} className="text-center">
+            {mode !== "time"
+              ? <div className="mb-3 flex items-center justify-between gap-2">
+                  <Button type="button" variant="ghost" size="icon-sm"
+                    aria-label={mode === "month" ? "Previous year" : "Previous month"}
+                    onClick={() => monthDelta(mode === "month" ? -12 : -1)}>‹</Button>
+                  <span aria-live="polite" className="text-[14px] font-semibold text-[var(--lms-neutral-900)]">
+                    {mode === "month" ? viewMonth.getFullYear() : monthYear}
+                  </span>
+                  <Button type="button" variant="ghost" size="icon-sm"
+                    aria-label={mode === "month" ? "Next year" : "Next month"}
+                    onClick={() => monthDelta(mode === "month" ? 12 : 1)}>›</Button>
+                </div> : null}
+            {mode === "time"
+              ? <div className="grid grid-cols-2 gap-2" role="group" aria-label="Hours and minutes">
+                  <div aria-label="Hour" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    {Array.from({ length: 24 }, (_, hour) => {
+                      const available = Array.from({ length: 60 }, (_, minute) => timeAllowed(hour, minute)).some(Boolean);
+                      return <Button key={hour} variant="ghost" type="button" size="sm" disabled={!available}
+                        aria-pressed={draftHour === hour} onClick={() => setDraftHour(hour)}
+                        className={cx("mb-1 !w-full !justify-center !rounded-[6px] !border-0 max-[767px]:!min-h-11",
+                          draftHour === hour ? "!bg-[var(--lms-primary)] !text-white" : "hover:!bg-[var(--lms-primary-subtle)]")}>
+                        {pad2(hour)}
+                      </Button>;
+                    })}
+                  </div>
+                  <div aria-label="Minute" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    {Array.from({ length: 60 }, (_, minute) => (
+                      <Button key={minute} variant="ghost" type="button" size="sm"
+                        disabled={!timeAllowed(draftHour, minute)}
+                        aria-pressed={selected === `${pad2(draftHour)}:${pad2(minute)}`}
+                        onClick={() => choose(`${pad2(draftHour)}:${pad2(minute)}`)}
+                        className={cx("mb-1 !w-full !justify-center !rounded-[6px] !border-0 max-[767px]:!min-h-11",
+                          selected === `${pad2(draftHour)}:${pad2(minute)}`
+                            ? "!bg-[var(--lms-primary)] !text-white" : "hover:!bg-[var(--lms-primary-subtle)]")}>
+                        {pad2(minute)}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              : mode === "month"
+                ? <div className="grid grid-cols-3 gap-2" role="group" aria-label={String(viewMonth.getFullYear())}>
+                    {monthNames.map((month, index) => {
+                      const monthValue = `${viewMonth.getFullYear()}-${pad2(index + 1)}`;
+                      const limited = (props.min != null && monthValue < String(props.min)) ||
+                        (props.max != null && monthValue > String(props.max));
+                      return <Button key={month} type="button" variant="ghost" size="sm" disabled={Boolean(limited)}
+                        aria-pressed={selected === monthValue} onClick={() => choose(monthValue)}
+                        className={cx("!rounded-[6px] !border-0 !px-1 max-[767px]:!min-h-11",
+                          selected === monthValue ? "!bg-[var(--lms-primary)] !text-white" : "hover:!bg-[var(--lms-primary-subtle)]")}>
+                        {month.slice(0, 3)}
+                      </Button>;
+                    })}
+                  </div>
+                : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} className="text-center">
               {weekdays.map(day => <span key={day} aria-hidden="true" className="py-1 text-[12px] font-semibold text-[var(--lms-muted-text)]">{day}</span>)}
               {days.map(day => {
                 const iso = localISO(day);
@@ -160,7 +239,7 @@ export function DateInput({
                   {day.getDate()}
                 </Button>;
               })}
-            </CalendarGrid>
+            </CalendarGrid>}
           </PopoverPanel> : null}
     </div>
   );
