@@ -31,7 +31,7 @@ export default async function ProfileCompleteness({searchParams}:{
     </Link>
     <PageHeader eyebrow="Learner · Profile" title="Profile completion checklist"
       description="Read-only coverage of the fields saved to your learner profile." />
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="py-2">
       <h2 className="text-lg font-semibold text-foreground">{readiness.filled} of {readiness.total} sections filled</h2>
       <p className="mt-2 text-sm font-semibold text-foreground">{career.percentage??0}% career profile complete · {learnerCareerCompletionMessage(career.percentage??0)}</p>
       <p className="mt-2 text-sm text-body">
@@ -49,21 +49,21 @@ export default async function ProfileCompleteness({searchParams}:{
         href={"/learn/profile/completeness?show="+option.value}
         aria-current={readiness.show===option.value ? "page" : undefined}
         className={
-          "inline-flex min-h-11 items-center rounded-lg border px-4 text-sm font-semibold " +
+          "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold sm:min-h-9 " +
           (readiness.show===option.value ? "border-primary bg-primary-subtle text-[var(--lms-teal-deep)]" :
             "border-border bg-surface text-foreground")
         }>
         {option.label}
       </Link>)}
     </nav>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-t border-border pt-5">
       <h2 className="text-base font-semibold text-foreground">Your sections</h2>
       {readiness.items.length===0 ? <p className="mt-3 text-sm text-body">
         No sections match this filter. Choose All sections to review the full checklist.
       </p> : <ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {readiness.items.map(item=><li key={item.section} className="min-w-0">
           <Link href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-12 items-center justify-between gap-3 rounded-lg border border-border p-3 text-sm text-foreground hover:border-primary hover:bg-primary-subtle">
+            className="flex min-h-12 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-foreground hover:border-primary hover:bg-primary-subtle">
             <span className="min-w-0 break-words">{item.label}
               {(["personal-details","contacts","education","skills"].includes(item.section))?
                 <span className="ml-2 text-xs font-semibold text-muted-foreground">Required</span>:null}
