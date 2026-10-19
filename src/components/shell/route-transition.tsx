@@ -27,9 +27,10 @@ export function RouteTransition({children}:{children:ReactNode}) {
    if(recoveryTimer.current!==null)window.clearTimeout(recoveryTimer.current);
    recoveryTimer.current=window.setTimeout(()=>setLeaving(false),3000);
   };
-  document.addEventListener("click",onNavigate);
+  // Observe before Next Link prevents the native click during client routing.
+  document.addEventListener("click",onNavigate,true);
   return ()=>{
-   document.removeEventListener("click",onNavigate);
+   document.removeEventListener("click",onNavigate,true);
    if(recoveryTimer.current!==null)window.clearTimeout(recoveryTimer.current);
    recoveryTimer.current=null;
   };
