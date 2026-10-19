@@ -86,6 +86,12 @@ export function GridWorkspace<Row>({
   return ()=>window.clearTimeout(timer);
  },[typed,querySearch,searchKey,pathname,router,searchParam]);
  const changeColumns=(keys:string[])=>{
+  if(columnScope==="local"){
+   setLocalKeys(keys);
+   if(columnStorageKey){try{window.localStorage.setItem(columnStorageKey,keys.join(","));}
+    catch{/* Keep the in-page preference even with storage disabled. */}}
+   return;
+  }
   const reset=keys.length===permitted.length&&keys.every((key,index)=>key===permitted[index]);
   const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:reset?"":keys.join(",")},false);
   router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
@@ -197,6 +203,6 @@ export function GridWorkspace<Row>({
    )}>Clear page selection</Button>:null}
   </div>
   {notice?<p role="status" className="text-xs text-muted-foreground">{notice}</p>:null}
-  {children}
+  {typeof children==="function"?children(activeKeys):children}
  </section>;
 }
