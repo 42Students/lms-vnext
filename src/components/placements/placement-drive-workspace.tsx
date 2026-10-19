@@ -466,7 +466,7 @@ export async function PlacementDriveWorkspace({
         <p className="mt-1 text-xs text-body">{journey.definition}</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
-            className="rounded-lg border border-border p-3 hover:bg-[var(--lms-button-primary)]-subtle text-[var(--lms-on-primary)]">
+            className="rounded-[var(--lms-control-radius)] border border-border p-3 text-foreground hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]">
             <span className="block text-xs text-body">{stage.name}</span>
             <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
           </Link>)}
