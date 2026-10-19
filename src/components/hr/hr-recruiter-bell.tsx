@@ -20,6 +20,8 @@ export function HrRecruiterBell(){
  const markAllGate=useRef(createHrBellMutationGate());
  const loadGate=useRef(createRecruiterBellRequestGate());
  const triggerRef=useRef<HTMLButtonElement>(null);
+ const rootRef=useRef<HTMLDivElement>(null);
+ const [mobile,setMobile]=useState(false);
  const load=useCallback(async()=>{
   const request=loadGate.current.begin();
   try{
