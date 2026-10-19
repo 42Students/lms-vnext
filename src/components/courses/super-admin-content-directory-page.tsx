@@ -85,11 +85,11 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."}/>
   {lessonsResult.status==="fulfilled"
    ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false}/>
-   :<p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+   :<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
      Content authoring options are temporarily unavailable. Existing content remains visible.
     </p>}
   {sectionsResult.status==="rejected"?<p role="status"
-   className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+   className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
      Section filter choices are temporarily unavailable. Your selected filters are still applied.
    </p>:null}
   <form method="get" className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-3">

@@ -71,7 +71,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
   <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold">Drive or company
-    <Input name="q" defaultValue={q.q} maxLength={100} className="min-h-9 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/></label>
+    <Input name="q" defaultValue={q.q} maxLength={100} className="min-w-0"/></label>
    {select("jobId","Job",filters.jobs)}
    {select("departmentId","Department",filters.departments)}
    {select("programId","Program",filters.programs)}
@@ -79,7 +79,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <label className="grid gap-1 text-sm font-semibold">Applied from
     <Input type="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-w-0"/></label>
    <label className="grid gap-1 text-sm font-semibold">Applied through
-    <Input type="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/></label>
+    <Input type="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-w-0"/></label>
    <div className="flex flex-wrap items-end gap-3"><Button type="submit">Refresh</Button>
     <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear all</Link></div>
   </form>
@@ -89,7 +89,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
     className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Export report (CSV) →</a>
   </div>
-  {data.truncated?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
+  {data.truncated?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
   </p>:null}
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
