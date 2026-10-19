@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import {collegeCourseCatalogueHref,paginateCollegeCourses,type CollegeCourseCatalogueQuery} from "@/modules/courses/college-course-catalogue-model";
 import {collegeCourseCatalogueExportHref} from "@/modules/courses/college-course-catalogue-export-model";
@@ -38,19 +39,7 @@ function Metric({
   value: number;
   detail: string;
 }) {
-  return (
-    <section className="border-b border-border py-4">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-        {value}
-      </p>
-      {detail ? <p className="mt-1 text-xs leading-5 text-body">
-        {detail}
-      </p> : null}
-    </section>
-  );
+  return <StatTile label={label} value={value} detail={detail} />;
 }
 
 export function AdminCourseOverview({
