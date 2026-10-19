@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 "use client";
 import { Tabs } from "@/components/ui/tabs";
 
@@ -603,12 +604,11 @@ export function RecruiterLeadsWorkspace({
 
   return (
     <section className="space-y-5" aria-label="Recruiter leads">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-[30px] font-semibold leading-9 tracking-[-0.02em] text-[#172033]">{TPO_OWNER_PAGE_COPY.recruiterLeads}</h1>
-           <p className="mt-1 text-sm text-body">Every company contact you find, and what you will do next.</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+      <PageHeader
+        title={TPO_OWNER_PAGE_COPY.recruiterLeads}
+        description="Every company contact you find, and what you will do next."
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
           <Link href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</Link>
           <Link href="/tpo/recruiters/campaigns" className={buttonStyle}>Campaign history</Link>
           <Link href="/tpo/follow-ups" className={buttonStyle}>
@@ -620,7 +620,8 @@ export function RecruiterLeadsWorkspace({
             Add recruiter lead
           </button>
         </div>
-      </div>
+        }
+      />
 
       {phase==="ready"&&error?<div role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm">
         {error} Showing the last recruiter list we loaded.
