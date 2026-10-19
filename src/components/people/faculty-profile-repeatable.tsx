@@ -1,6 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
@@ -58,15 +61,15 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   }
   return (
     <form id={facultyProfileAnchor(section)} aria-label={title} onSubmit={submit}
-      className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
+      className="space-y-4 border-b border-border pb-5">
       <div>
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
       {rows.length === 0 ? <p className="text-sm text-muted-foreground">No records added yet.</p> : null}
       {rows.length>5?<label className="block text-sm font-semibold text-body">Find {title.toLowerCase()} records
-        <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-          className="mt-1.5 w-full rounded-md border border-border bg-background p-3" placeholder="Search section fields"/>
+        <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
+          className="mt-1.5 min-h-11 sm:min-h-9 w-full" placeholder="Search section fields"/>
       </label>:null}
       {rows.length>5&&search.trim()?<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
@@ -76,9 +79,9 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       {rows.length>5 && !facultyProfileCanReorderVisible(rows.length,visibleRows.length)?<p className="text-xs text-muted-foreground">Clear search to reorder records in their full saved order.</p>:null}
       <div className="space-y-3">
         {visibleRows.map(({row,index}) => (
-          <fieldset key={row.id} className="min-w-0 rounded-lg border border-border p-3 sm:p-4">
+          <fieldset key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-border p-3 sm:p-4">
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
-            <Button variant="secondary" type="button" className="mb-3 min-h-9 px-3"
+            <Button variant="secondary" type="button" className="mb-3 min-h-11 sm:min-h-9 px-3"
               aria-expanded={!collapsedIds.includes(row.id)}
               onClick={()=>setCollapsedIds(current=>toggleFacultyProfileCollapsed(current,row.id))}>
               {collapsedIds.includes(row.id)?"Show record fields":"Hide record fields"}
@@ -91,15 +94,15 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                 return <label key={field.name} className="block min-w-0 text-sm font-semibold text-body">
                   {field.label}
                   {field.kind === "checkbox" ? (
-                    <input type="checkbox" className="ml-3" checked={value === true} disabled={pending}
+                    <Checkbox className="ml-3" checked={value === true} disabled={pending}
                       onChange={event => update(row.id, field.name, event.target.checked)} />
                   ) : field.multiline ? (
-                    <textarea className="mt-1.5 min-h-24 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
+                    <Textarea className="mt-1.5 min-h-24 w-full min-w-0"
                       maxLength={field.maxLength} value={typeof value === "string" ? value : ""}
                       disabled={pending || currentDegreeEndYear} required={field.required}
                       onChange={event => update(row.id, field.name, event.target.value)} />
                   ) : (
-                    <input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
+                    <Input className="mt-1.5 min-h-11 sm:min-h-9 w-full min-w-0"
                       type={field.kind ?? "text"} maxLength={field.maxLength}
                       value={typeof value === "string" ? value : ""}
                       disabled={pending || currentDegreeEndYear} required={field.required}
@@ -139,12 +142,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           Add {title.toLowerCase()} record
         </Button>
         <Button variant="primary" type="submit" disabled={!changed || pending || missingRequired || Boolean(sectionIssue)}
-          className="min-h-9 px-4">
+          className="min-h-11 sm:min-h-9 px-4">
           {pending ? "Saving…" : "Save " + title.toLowerCase()}
         </Button>
       </div>
       {changed && sectionIssue?<p role="alert" className="text-sm text-error">Review this section: {sectionIssue}</p>:null}
-      {changed ? <Button variant="secondary" type="button" disabled={pending} className="min-h-9 px-4"
+      {changed ? <Button variant="secondary" type="button" disabled={pending} className="min-h-11 sm:min-h-9 px-4"
         onClick={async()=>{if(!(await askConfirm("Discard unsaved changes to "+title+"?")))return;
           setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
         Discard unsaved edits
