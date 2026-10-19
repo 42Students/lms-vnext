@@ -1,1 +1,1 @@
-"use client";export default function Error({reset}:{reset:()=>void}){return <section role="alert"><p>Batch workspace could not be loaded.</p><button onClick={reset} className="min-h-11 rounded border px-4">Retry</button></section>;}
+"use client";export default function Error({reset}:{reset:()=>void}){return <section role="alert"><p>Batch workspace could not be loaded.</p><button onClick={reset} className="min-h-9 rounded-[var(--radius)] border px-4">Retry</button></section>;}
