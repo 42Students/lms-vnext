@@ -1,10 +1,9 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 
-export type StatusBadgeProps = {
+export type StatusBadgeProps = HTMLAttributes<HTMLSpanElement> & {
   children: ReactNode;
   tone?: "neutral" | "info" | "success" | "warning" | "error";
-  className?: string;
 };
 const toneClasses = {
   neutral: "bg-[var(--lms-neutral-100)] text-[var(--lms-neutral-700)]",
@@ -14,6 +13,6 @@ const toneClasses = {
   error: "bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
 } as const;
 
-export function StatusBadge({ children, tone = "neutral", className }: StatusBadgeProps) {
-  return <span data-slot="status-badge" className={cx("inline-flex min-h-[22px] max-w-full items-center justify-center rounded-[var(--lms-radius-pill)] border border-current/10 px-[var(--lms-space-2)] py-0.5 text-center text-[12px] font-semibold leading-[18px] [overflow-wrap:anywhere]", toneClasses[tone], className)}>{children}</span>;
+export function StatusBadge({ children, tone = "neutral", className, ...props }: StatusBadgeProps) {
+  return <span {...props} data-slot="status-badge" data-tone={tone} className={cx("inline-flex min-h-[22px] max-w-full items-center justify-center rounded-[var(--lms-radius-pill)] border border-current/10 px-[var(--lms-space-2)] py-0.5 text-center text-[12px] font-semibold leading-[18px] [overflow-wrap:anywhere]", toneClasses[tone], className)}>{children}</span>;
 }
