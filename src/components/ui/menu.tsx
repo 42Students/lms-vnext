@@ -27,10 +27,10 @@ export function Menu({ className, onKeyDown, children, ...props }: MenuProps) {
     items[target]?.focus();
   }
   return <div {...props} data-slot="menu" role="menu" onKeyDown={handleKeyDown}
-    className={cx("min-w-44 rounded-[9px] bg-white p-1 text-[14px] leading-5 text-[#54505d]", className)}>{children}</div>;
+    className={cx("min-w-44 rounded-[6px] bg-white p-1 text-[14px] leading-5 text-[#54505d]", className)}>{children}</div>;
 }
 
 export function MenuItem({ className, children, type = "button", ...props }: MenuItemProps) {
   return <button {...props} type={type} role="menuitem"
-    className={cx("flex min-h-9 w-full items-center rounded-[6px] px-3 py-2 text-left text-[14px] leading-5 transition-colors duration-150 hover:bg-[#eff8fa] hover:text-[#1a95a1] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#26bac7] disabled:cursor-not-allowed disabled:opacity-50", className)}>{children}</button>;
+    className={cx("flex min-h-11 w-full items-center rounded-[6px] px-3 py-2 text-left text-[14px] leading-5 transition-colors duration-150 hover:bg-[#eff8fa] hover:text-[#1a95a1] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#26bac7] disabled:cursor-not-allowed disabled:opacity-50", className)}>{children}</button>;
 }

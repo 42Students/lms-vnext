@@ -99,12 +99,12 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
         </thead>
         <tbody className="block space-y-3 sm:table-row-group sm:space-y-0">
           {prepared.map(item=><tr key={item.key}
-            className="block min-w-0 overflow-hidden rounded-xl border border-border bg-surface p-4 sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:hover:bg-primary-subtle/50">
+            className="block min-w-0 overflow-hidden rounded-[12px] border border-[#e5e9f0] bg-surface p-4 sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:hover:bg-[rgba(38,186,199,0.045)]">
             {columns.map(col=>{
               const phoneVisible=visibleOnPhone.has(col.key);
               const content=cell(item,col);
               return <td key={col.key} className={cx(
-                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-[#e5e9f0] sm:px-4 sm:py-2.5 sm:align-middle sm:first:sticky sm:first:left-0 sm:first:z-10 sm:first:bg-surface",
+                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-[#e5e9f0] sm:px-4 sm:py-2.5 sm:align-middle sm:first:sticky sm:first:left-0 sm:first:z-10 sm:first:bg-inherit",
                 phoneVisible?"block":"hidden",col.className,
               )}>
                 {phoneVisible && col.mobilePriority!=="action" ?
