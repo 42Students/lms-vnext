@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Disclosure } from "@/components/ui/disclosure";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -147,10 +148,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                       ))}
                     </ul>
                   )}
-                  <details className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3">
-                    <summary className="cursor-pointer text-sm font-semibold text-foreground">
-                      All recorded round result versions ({item.resultVersions.length})
-                    </summary>
+                  <Disclosure title={`All recorded round result versions (${item.resultVersions.length})`} className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3">
                     {item.resultVersions.length === 0 ? (
                       <p className="mt-2 text-sm text-body">
                         No staged, superseded or applied result versions are recorded.
@@ -171,7 +169,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                         ))}
                       </ul>
                     )}
-                  </details>
+                  </Disclosure>
                 </section>
                 <section>
                   <h3 className="mb-2 font-semibold text-foreground">
