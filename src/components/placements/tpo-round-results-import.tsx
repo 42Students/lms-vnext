@@ -104,7 +104,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    <Disclosure title={`Not in file (${preview.notInFile.length})`} className="border-t border-border pt-3 text-sm">
     {preview.notInFile.length?<div className="mt-2 max-h-48 min-w-0 overflow-auto"><DataTable caption="Candidates absent from round import" rows={preview.notInFile} getRowKey={row=>row.applicationId} empty={<p>Every candidate in this round is represented in the file.</p>} columns={[{key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.name},{key:"application",header:"Application ID",mobilePriority:"secondary",cell:row=><span className="font-mono text-xs">{row.applicationId}</span>}]}/></div>:<p className="mt-2">Every candidate in this round is represented in the file.</p>}
    </Disclosure>
-   <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
+   <fieldset className="space-y-2 border-t border-border pt-3 text-sm">
     <legend className="font-semibold">Students not in the file</legend>
     <label className="flex gap-2"><Radio checked={missingPolicy==="LEAVE_PENDING"}
      onChange={()=>{setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/> Leave pending (do not change their result)</label>
