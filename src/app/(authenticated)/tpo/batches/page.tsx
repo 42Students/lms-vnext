@@ -14,6 +14,7 @@ import {countTpoLearnersWithoutClass} from "@/modules/placements/tpo-batch-unass
 import { listTpoBatchCardEligibility } from "@/modules/placements/tpo-batch-directory-counts-service";
 import { listTpoBatchJourneyCounts } from "@/modules/placements/tpo-batch-journey-service";
 import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
+import batchStyles from "@/components/tpo/legacy-batch-eligibility.module.css";
 import { PageHeader } from "@/components/ui/page-header";
 import { tpoBatchNextAction, tpoBatchNextActionLink } from "@/modules/placements/tpo-batch-next-action-model";
 import { tpoBatchCardDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
@@ -171,7 +172,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
             <dd className="font-semibold tabular-nums">{part.count}</dd>
           </div>)}
         </dl>
-        <StackedMetricBar className="w-full" maximum={summary.assessed}
+        <StackedMetricBar className={"w-full "+batchStyles.bar} maximum={summary.assessed}
           label={split.map(part=>part.label+": "+part.count).join(", ")}
           segments={split.map(part=>({
             label:part.label,value:part.count,
