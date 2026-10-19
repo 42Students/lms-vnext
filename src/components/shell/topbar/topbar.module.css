@@ -451,3 +451,7 @@
   .topbarNotificationDrawer[open],
   .topbarNotificationDrawer[open]::backdrop { animation:none; transition:none; }
 }
+
+@media (prefers-reduced-motion:no-preference) {
+  .dropdown { animation:topbarNotificationPanelIn .2s ease-out; }
+}
