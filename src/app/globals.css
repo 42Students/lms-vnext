@@ -1122,3 +1122,27 @@ body {
 /* Keep browser selection affordances with native inputs and range slider. */
 [data-slot="range-slider"] input[type="range"] { accent-color: var(--lms-primary); }
 [data-slot="file-dropzone"]:focus-within { border-color: var(--lms-primary); }
+
+
+/* Chat-17: loading remains branded while disabled prevents duplicate submits.
+   Legacy components___antddesign.scss:153-185, TPO shell spec:23. */
+[data-slot="button"][data-loading="true"],
+[data-slot="button"][data-loading="true"]:hover {
+  cursor: progress;
+  pointer-events: none;
+  opacity: 1;
+}
+[data-slot="button"][data-variant="primary"][data-loading="true"] {
+  color: var(--lms-on-primary);
+  background: var(--lms-button-primary);
+  border-color: var(--lms-button-primary);
+}
+[data-slot="button"][data-variant="danger"][data-loading="true"] {
+  color: var(--lms-on-primary);
+  background: var(--lms-error);
+  border-color: var(--lms-error);
+}
+[data-slot="button"]:disabled:not([data-variant="primary"]):not([data-loading="true"]) {
+  opacity: .5;
+  pointer-events: none;
+}
