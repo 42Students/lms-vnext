@@ -3,6 +3,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
@@ -67,13 +68,13 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
       {rows.length === 0 ? <p className="text-sm text-muted-foreground">No records added yet.</p> : null}
-      {rows.length>5?<label className="block text-sm font-semibold text-body">Find {title.toLowerCase()} records
+      {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find {title.toLowerCase()} records
         <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
           className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full" placeholder="Search section fields"/>
       </label>:null}
       {rows.length>5&&search.trim()?<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
-        <Button variant="secondary" type="button" className="min-h-11 rounded-[8px] border border-border px-3 text-sm font-medium min-[768px]:min-h-9" onClick={()=>setSearch("")}>Clear search</Button>
+        <Button variant="secondary" type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setSearch("")}>Clear search</Button>
       </div>:null}
       {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No matching records. Clear search to restore the full list.</p>:null}
       {rows.length>5 && !facultyProfileCanReorderVisible(rows.length,visibleRows.length)?<p className="text-xs text-muted-foreground">Clear search to reorder records in their full saved order.</p>:null}
@@ -91,7 +92,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                 const value = row[field.name];
                 const currentDegreeEndYear = section === "education" && field.name === "endYear" &&
                   "isCurrentlyPursuing" in row && row.isCurrentlyPursuing === true;
-                return <label key={field.name} className="block min-w-0 text-sm font-semibold text-body">
+                return <label key={field.name} className="block min-w-0 text-[13px] font-semibold leading-4 text-body">
                   {field.label}
                   {field.kind === "checkbox" ? (
                     <Checkbox  className="ml-3" checked={value === true} disabled={pending}
@@ -146,7 +147,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           {pending ? "Saving…" : "Save " + title.toLowerCase()}
         </Button>
       </div>
-      {changed && sectionIssue?<p role="alert" className="text-sm text-error">Review this section: {sectionIssue}</p>:null}
+      {changed && sectionIssue?<Alert tone="error">Review this section: {sectionIssue}</Alert>:null}
       {changed ? <Button variant="secondary" type="button" disabled={pending} className="min-h-11 min-[768px]:min-h-9 px-4"
         onClick={async()=>{if(!(await askConfirm("Discard unsaved changes to "+title+"?")))return;
           setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
