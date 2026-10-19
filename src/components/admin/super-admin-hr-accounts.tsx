@@ -836,7 +836,7 @@ export function SuperAdminHrAccounts({
                     Previous
                   </Link>
                 ) : (
-                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50">
+                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 sm:min-h-9">
                     Previous
                   </span>
                 )}
@@ -852,7 +852,7 @@ export function SuperAdminHrAccounts({
                     Next
                   </Link>
                 ) : (
-                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50">
+                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 sm:min-h-9">
                     Next
                   </span>
                 )}
