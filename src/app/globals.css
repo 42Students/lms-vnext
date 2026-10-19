@@ -1003,3 +1003,22 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   [data-slot="data-table"] tbody tr,
   [data-slot="button"] { transition: none; }
 }
+
+/* One shared old-LMS canvas reaches the bottom of short authenticated pages.
+ * Heights account for the existing 58px mobile / 68px desktop top bar and
+ * the authenticated shell's 24px / 32px vertical main padding. Longer pages
+ * expand naturally; dialogs, toasts and the navigation remain outside this
+ * minimum-height calculation. */
+.lms-authenticated-canvas {
+  min-height: calc(100dvh - 106px);
+  background: #fff;
+  border: 1px solid #e5e9f0;
+  border-radius: 12px;
+  box-shadow: none;
+}
+@media (min-width: 768px) {
+  .lms-authenticated-canvas { min-height: calc(100dvh - 116px); }
+}
+@media (min-width: 1024px) {
+  .lms-authenticated-canvas { min-height: calc(100dvh - 132px); }
+}

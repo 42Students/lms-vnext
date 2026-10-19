@@ -131,16 +131,16 @@ export default async function AnnouncementsPage({
         actions={
           <Link
             href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground sm:min-h-9"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
         }
       />
-      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         {includeDeleted ? <input type="hidden" name="deleted" value="1"/> : null}
         <label className="text-sm font-semibold text-body">Visibility
-          <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+          <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1">
             <option value="">All visible states</option>
             <option value="LIVE">Live</option>
             <option value="SCHEDULED">Scheduled</option>
@@ -149,26 +149,26 @@ export default async function AnnouncementsPage({
           </Select>
         </label>
         <label className="text-sm font-semibold text-body">Pinned
-          <Select name="pinned" defaultValue={params.pinned ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+          <Select name="pinned" defaultValue={params.pinned ?? ""} className="mt-1">
             <option value="">All notices</option><option value="PINNED">Pinned only</option><option value="UNPINNED">Not pinned</option>
           </Select>
         </label>
         <label className="text-sm font-semibold text-body">Published by
-          <Select name="senderType" defaultValue={params.senderType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+          <Select name="senderType" defaultValue={params.senderType ?? ""} className="mt-1">
             <option value="">All senders</option>{ANNOUNCEMENT_SENDER_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
           </Select>
         </label>
         <label className="text-sm font-semibold text-body">Audience type
-          <Select name="receiverType" defaultValue={params.receiverType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+          <Select name="receiverType" defaultValue={params.receiverType ?? ""} className="mt-1">
             <option value="">All audiences</option>
             {(["COLLEGE","PROGRAM","DEPARTMENT","CLASS","LEARNER","FACULTY"] as const).map(type => <option key={type} value={type}>{type}</option>)}
           </Select>
         </label>
         <label className="min-w-[14rem] flex-1 text-sm font-semibold text-body">Search announcement title or message
-          <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+          <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 w-full"/>
         </label>
-        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</Button>
-        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Clear</Link>
+        <Button type="submit">Search</Button>
+        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm sm:min-h-9">Clear</Link>
       </form>
       <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
         ...(includeDeleted ? {deleted:"1"} : {}),
@@ -179,7 +179,7 @@ export default async function AnnouncementsPage({
         ...(params.senderType ? {senderType:params.senderType} : {}),
         ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
-      }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export this filtered page (CSV)</Link>
+      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
       {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
        <h2 className="text-lg font-semibold">Placement-cell read receipts</h2>

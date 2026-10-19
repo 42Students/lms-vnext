@@ -92,22 +92,22 @@ export function LearnerJobsBrowse({
   const savedOpen=paged.filter(item=>!item.deadlinePassed);
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
 
-  const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
+  const selectClass = "mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] text-foreground outline-none focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9";
   return (
     <div className="space-y-5">
       <nav aria-label="Drive bookmarks" className="flex flex-wrap items-center gap-3">
         <button type="button" aria-pressed={!savedOnly}
           onClick={()=>updateQuery({saved:null})}
-          className={!savedOnly?"min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary":"min-h-11 rounded-md border border-border px-4 text-sm text-body"}>
+          className={!savedOnly?"min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-[14px] font-[650] text-on-primary sm:min-h-9":"min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-[14px] font-semibold text-body sm:min-h-9"}>
           All drives
         </button>
         <button type="button" aria-pressed={savedOnly}
           onClick={()=>updateQuery({saved:"1"})}
-          className={savedOnly?"min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary":"min-h-11 rounded-md border border-border px-4 text-sm text-body"}>
+          className={savedOnly?"min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-[14px] font-[650] text-on-primary sm:min-h-9":"min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-[14px] font-semibold text-body sm:min-h-9"}>
           Saved ({savedSummary.saved})
         </button>
       </nav>
-      <section className="rounded-xl border border-border bg-surface p-3 sm:p-5" aria-label="Find placement drives">
+      <section className="border-t border-border pt-4" aria-label="Find placement drives">
         <button type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
           onClick={()=>setMobileOpen(value=>!value)}
           className="flex min-h-11 sm:min-h-9 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">

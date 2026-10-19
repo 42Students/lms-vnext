@@ -162,3 +162,35 @@ Owner: chat-14 · branch: `chatgpt/chat-14-b` · reference: `docs/orchestrator/q
 - Mentor-facing Projects workspace primitives were also normalized without changing ownership, authorization, data flow, route structure or user-facing wording.
 - **Deliberately untouched:** global CSS, app shell, sidebar/top bar and shared UI kit (other lane ownership). Existing shared primary Button uses `bg-primary text-on-primary` -> `#0a7c88` with white text, 36px minimum and radius 9px.
 - **Verification limit:** No code execution, typecheck, test, CI or browser visual comparison was performed by instruction. Pixel-for-pixel parity and all mobile states require the orchestrator's final screenshot pass; no runtime completeness claim is made.
+
+## Follow-up source sweep (2026-10-19, chat-14)
+
+This follow-up was committed directly to `chatgpt/chat-14-b` after fast-forwarding the lane to the then-current `main`. Three batches of ten `[chat-14]` commits each were pushed through GitHub's branch-specific file updates; no commits were sent to main.
+
+### Batch 1 — mentor-facing project controls (10 commits)
+
+- `src/components/projects/project-resource-files-panel.tsx`: resource file list uses hairline rows, file-picker appearance uses semantic control tokens.
+- `src/components/projects/project-delivery-file-uploader.tsx`: remove duplicate inner-card wrapper and align file picker with tokens.
+- `src/components/projects/project-resource-open-link.tsx`: shared link color and control radius.
+- `src/components/projects/project-resource-list.tsx`, `project-resource-controls.tsx`, `project-team-controls.tsx`: remove the inappropriate `data-slot="input"` styling from native checkboxes and use a 16px checkbox with the primary accent token; preserve checked values and handlers.
+- `src/components/projects/mentor-calendar-load-failure.tsx`: error boundary content on the single canvas.
+- `src/components/projects/project-participant-list-controls.tsx`: control radius token and redundant empty class cleanup.
+- `src/components/projects/project-meeting-controls.tsx`: remove an unnecessary nested fieldset box; preserve meeting-note fieldset and legend.
+- `src/components/projects/project-workspace.tsx`: mentor overview sections use separators instead of a second white canvas; learner-specific layout preserved.
+
+### Batch 2 — mentor Projects details (10 commits)
+
+- `src/app/(authenticated)/mentor/projects/[projectId]/`: `team-history`, `team-meetings`, `timeline`, `activity-history`, `review-overview`, `review-completeness`, `risk-readiness`, `board-review` pages: list rows use hairlines instead of individual white cards; preserve summary/metric tiles and user workflows.
+- `src/app/(authenticated)/mentor/review-history/page.tsx` and `task-review-history/page.tsx`: recorded history uses the old-LMS continuous-list treatment.
+
+### Batch 3 — mentor portal lists and sections (10 commits)
+
+- `src/app/(authenticated)/mentor/`: `activity`, `notifications`, `reviews`, `task-reviews`, `sprint-progress`, `team-coverage`, `reports`, `calendar`: remove stacked-list cards and duplicated select skins where appropriate. Retain report metric tiles and semantic alerts.
+- `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`: resource tiles use the canonical card radius and border tokens, preserving the two-column directory.
+- `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx`: five information sections become one continuous white-canvas flow separated by hairlines; source data and review actions are unchanged.
+
+### Final static source check
+
+- Inspected a sample of ten edited files, including checkbox components and the large mentor workspace. Confirmed **no native checkbox retains `data-slot="input"`** among the sampled files; no duplicated `data-slot` input attributes; and brace counts matched in this sample.
+- No application code, build, typecheck, lint, tests, CI, or browser session was executed, by request. Static checks are not a TypeScript syntax validation or an assertion of pixel-perfect visual parity.
+- The shared global tokens, UI-kit, sidebar, topbar, and authenticated shell remain owned by their assigned lanes, not chat-14.

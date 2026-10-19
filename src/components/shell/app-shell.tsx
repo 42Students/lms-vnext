@@ -78,10 +78,10 @@ export async function AppShell({
             <ShellLogoMark />
           </Link>
         </div>
-        <div className="lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto py-2">
+        <div className="lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto pt-2 pb-4">
           <ShellWidgetBoundary name="Sidebar navigation" fallbackHref="/dashboard"><SidebarNav items={navigation} /></ShellWidgetBoundary>
         </div>
-        <div className="lms-sidebar-role-details border-t border-[var(--lms-sidebar-border)] px-4 py-4">
+        <div className="lms-sidebar-role-details border-t border-[var(--lms-sidebar-border)] px-4 py-[25px]">
           <p className="m-0 text-xs font-semibold text-muted-foreground">
             {getShellRoleLabel(context)}
           </p>
