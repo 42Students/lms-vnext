@@ -70,9 +70,12 @@ export function MobileNavigation({
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}
-        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-lg font-semibold text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text md:hidden"
+        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text md:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
       >
-        <span aria-hidden="true">☰</span>
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20"
+          fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+          <path d="M4 6h16 M4 12h16 M4 18h16" />
+        </svg>
       </button>
 
       {open ? (
