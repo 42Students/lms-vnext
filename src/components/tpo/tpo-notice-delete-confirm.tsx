@@ -14,8 +14,7 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
  },[open]);
  function dismiss(){setOpen(false);trigger.current?.focus();}
  return <div className="mt-4">
-  <Button ref={trigger} type="button" variant="secondary" onClick={()=>setOpen(true)}
-   className="min-h-11 sm:min-h-9">
+  <Button ref={trigger} variant="secondary" type="button" onClick={()=>setOpen(true)}>
    Delete
   </Button>
   {open?<div role="presentation" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
