@@ -1,7 +1,6 @@
 "use client";
-import { Button } from "@/components/ui/button";
-
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
@@ -46,7 +45,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
      </option>)}
     </Select>
    </label>
-   <input type="hidden" name="deliveryId" value={deliveryId}/>
+   <Input type="hidden" name="deliveryId" value={deliveryId}/>
    <Button type="submit" disabled={!deliveryId}
     className="min-h-11">
     Show progress
