@@ -164,6 +164,7 @@
   [data-slot="bottom-sheet"],
   [data-slot="dropdown"],
   [role="dialog"][aria-modal="false"],
+  [data-slot="notification-popover"],
   [data-slot="toast-stack"] > section {
     animation: none !important;
     transition: none !important;
