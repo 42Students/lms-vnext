@@ -20,12 +20,12 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [x] `src/app/(authenticated)/mentor/profile/page.tsx` (redirect-only; source scan: 0 JSX/HTML, 0 controls, 0 visual properties; 0 applicable pixel values; viewport-independent redirect; evidence below)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx` (greps: full-file JSX/hex/manual-dialog/manual-tabs=0; native checkbox exemption on closeout control; values: 18 matched properties + state table; responsive: 320/767px fluid, >=768px md, see audit below)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx` (greps: full-file JSX/hex/manual-dialog/manual-tabs=0; native checkbox exemption on closeout control; values: 18 matched properties + state table; responsive: 320/767px fluid, >=768px md, see audit below)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx` (greps: complete-file source regex raw/hex/hand-dialog/hand-tabs=0; values: 15 rows matched in shared/legacy table below; responsive: <=767px touch and wrap, >=768px standard; no runtime claims)
@@ -82,7 +82,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/components/projects/mentor-meetings-calendar.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-product-backlog.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-project-about-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/mentor-project-closeout-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/mentor-project-closeout-control.tsx` (greps: full-file JSX/hex/manual-dialog/manual-tabs=0; native checkbox exemption on closeout control; values: 18 matched properties + state table; responsive: 320/767px fluid, >=768px md, see audit below)
 - [x] `src/components/projects/mentor-project-tabs.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 12 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [x] `src/components/projects/mentor-projects-unavailable.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 10 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [ ] `src/components/projects/mentor-release-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -628,3 +628,52 @@ rg -n '<(button|input|select|textarea)\b|#[[:xdigit:]]{3,8}\b|window\.confirm|ro
 **Tracker personal report detail** (\`src/app/(authenticated)/tracker/mine/[publicId]/page.tsx\`, 40 lines): report-not-found/invalid IDs never render private content (notFound), inactive membership redirects, runtime-disabled renders shared warning Banner. Authorized detail is a single plain article with shared heading, 44px mobile/36px desktop underlined back Link, one hairline detail section (24px bottom space token), wrapped freeform description, and en-IN IST timestamp. No dialogs, filters, table or object card. No fixed width, hence breakpoint-independent article content.
 
 This is **source-level** parity: no local app runtime, screenshot comparison, browser CSS computation, CI or behavioral execution was performed in this batch. Shared PageHeader/Banner/ErrorState/EmptyState behavior is delegated to their owners; section J visual acceptance remains separate.
+
+## Completed: project closeout interaction and review completeness page
+
+### Repeatable source-grep and exemptions
+
+These three complete source files were fetched from the current chat-8 branch after the changes, with regex results for literal hex, native button/select/textarea, native confirm, role="dialog", fixed inset-0, role="tab" and aria-pressed all **zero per file**. The closeout control has exactly **one native input JSX source node, type="checkbox", mapped to 3 checkboxes**. Native checkbox is explicitly exempt from bulk text-field codemods; it is wrapped in a semantic label with a 44px minimum click area. All action buttons/overlays use the shared Button and ConfirmDialog.
+
+Orchestrator source repro: rg -n '<(button|input|select|textarea)\b|#[[:xdigit:]]{3,8}|window.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' on the three files listed in this section. Expected full source count: **1 exempt checkbox JSX line total**. The control has one shared Button and one shared ConfirmDialog; the review-completeness page has 2 mutually exclusive PageHeader branches, 1 EmptyState and 1 Pagination, and no raw form. The closeout page has exactly 1 PageHeader and its owned control delegation.
+
+### Legacy-to-vNext values (all three; asterisk marks a per-state applicable row)
+
+| Property | Legacy source and exact value | New source and effective value | Status |
+|---|---|---|---|
+| App backing | old-lms-shell-spec.md:18-20 #f1f4f9 | globals.css canvas/shell tokens inherited by authenticated layout | matches |
+| One canvas | old-lms-shell-spec.md:18-20 #fff, 1px solid #e5e9f0, radius 12px, padding24, no shadow | globals.css:339,344-346,364-370, bare page divs without additional card surfaces | matches |
+| Page title desktop | old-lms-shell-spec.md:26-27 30px / 600 / #172033 | ui/page-header.tsx:28-35 and globals.css:327 | matches |
+| Page title phone | legacy listing-page-header.scss:130-143 20px / stacked through 767px | ui/page-header.tsx:27-35 sets 20px and column below md | matches |
+| Subtitle alignment | old-lms-pages.md:7 inline title subtitle | ui/page-header.tsx:39-45 mobile stacked, md baseline inline | matches |
+| Hairline header | listing-page-header.scss:26-35 1px neutral-200, 16px bottom padding | ui/page-header.tsx:28 border-b/pb-4, globals.css:339 | matches |
+| Header action font | old-lms-shell-spec.md:22-24 14px / weight 650 | closeout/page.tsx:23 and review-completeness/page.tsx:31 text-sm font-[650] with data-unskin exemption | matches |
+| Secondary default foreground | variables.scss:25 #54505d | painted header Links use --lms-body-text (globals.css:73) | matches |
+| Secondary default background | old-lms-shell-spec.md:24 #ffffff | painted Links use bg-white, data-unskin prevents the general link skin | matches |
+| Secondary hairline and radius | old-lms-shell-spec.md:24 1px outline, radius 9px | border-border and --lms-control-radius (globals.css:339,343) | matches |
+| Secondary hover | listing-page-header.scss:123-127 brand teal border/ink, rgba teal 5% fill | explicit hover:border-primary, hover:text-primary, hover:bg rgba(38,186,199,0.05) | matches |
+| Secondary transition | listing-page-header.scss:120 200ms interaction | scoped Links use 150ms from old-lms-shell-spec/button system, reduced motion off; legacy shell 150ms global tokens | shell exception |
+| Phone action height | variables.scss:139,148 44px to 767px | action min-h-11; md overrides only at 768px | matches |
+| Desktop button height | old-lms-shell-spec.md:22-24 36px | md:min-h-9, md:py-0 if bordered py-2 (prevents 38px intrinsic box) | matches |
+| Focus outline | accessibility.scss:18-23 teal 2px outline with visible offset | action focus-visible:outline-2 outline-offset-2 focus-visible:outline-primary, shared Button and ConfirmDialog focus handling | matches |
+| Body and support text | variables.scss:25-28 #54505d body 14px, #6b7280 supporting | text-body/text-muted-foreground and shared global font base14 | matches |
+| Row separators | common.scss:700-713 1px #e5e9f0 | review-completeness ol border-y/divide-y canvas token, closeout labels/section border-b | matches |
+| Row vertical rhythm | common.scss:720-726 12px compact vertical | closeout labels and review version rows py-[var(--lms-space-3)], globals.css:352=12px | matches |
+| Disabled/empty/error | old-lms-pages.md:6,11-12 in-place message/blank list not invented | closeout canComplete false role=status, control disabled pending/unacknowledged; review-completeness EmptyState/role=status and invalid-filter role=alert | matches |
+| Responsive columns | listing-page-header.scss:130-159 one column through 767px | review-completeness dl grid one column below md, two from md; closeout li flex-wrap/min-w-0 | matches |
+| Mobile dialog* | legacy antddesign.scss:1037-1068 max-width viewport-32px, max-height 100dvh-48px, 12px radius, wrapping actions | ConfirmDialog -> ui/dialog.tsx:39-55, same viewport and responsive footer | matches |
+| Checkbox accent* | variables.scss:10 #26bac7 primary interactive | mentor-project-closeout-control.tsx:40 accent-[var(--lms-primary)], globals.css:21 | matches |
+| Checkbox tap* | variables.scss:139 >=44px target | checkbox itself 16px as legacy native control; parent label min-h-11 and full click semantics | matches |
+| Pagination* | old-lms-pages.md:10, data remains on one canvas | ui/pagination.tsx:44-84 shared compact mobile previous/next with md page links | matches |
+
+The global shared canvas, PageHeader, Button, EmptyState, Pagination and Dialog are reused without code modifications. No mutation or field-validation behavior was changed. Although runtime screenshots have not been run in this lane, the listed value matches are established through exact source tokens/classes and legacy SCSS measurements.
+
+### Per-file behavior, states and 320px / 767px / tablet proof
+
+**mentor-project-closeout-control.tsx (51 lines):** Three persisted acknowledgement controls each use a native checkbox inside a full-width 44px-minimum label with border-b hairline (except last) and 12px top/bottom padding. The user cannot activate Confirm until all three are checked; confirmed modal is the shared ConfirmDialog. Cancel has no mutation, pending blocks repeat, success refreshes, and failure creates a role=alert inline message. At 320px long labels wrap within min-w-0; 767px still retains 44px target; >=768px Button has default 36px shell geometry. No manual overlay.
+
+**closeout/page.tsx (50 lines):** Four-row checklist with existing persistent Recorded/Not satisfied status, rendered as wrapping flex items so statuses do not overflow at 320px or 767px. canComplete false shows a plain role=status reason. canComplete true mounts the separately audited control above. Exactly one header action is responsive 44px through 767px and 36px from tablet. No invented closed/reviewed state and no nested canvas cards.
+
+**review-completeness/page.tsx (83 lines):** Invalid query shows a shared header and a 44px return link, disabled-access shows status, enabled-empty shows shared EmptyState, nonempty shows one border-y + divide-y review list (12px rows) with review decision + feedback metadata. At 320/767px metadata grid stays one column, 768px+ two columns (md:grid-cols-2). Shared Pagination handles page window and disabled destinations; optional IST timestamps are only shown when recorded. All links preserve existing safe project-specific destinations and no write actions are added.
+
+Full device and screenshot parity remains section J orchestrator work, not asserted as executed here.
