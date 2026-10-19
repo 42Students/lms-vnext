@@ -310,7 +310,7 @@ export function LearnerCareerRoundsWorkspace({
               aria-pressed={filters.time === value}
               onClick={() => chooseTimeView(value)}
                className="min-h-11 shrink-0 whitespace-nowrap"
-            >{label}{interviewCounts ? ` (${interviewCounts[value]})` : ""}</FilterChip
+            >{label}{interviewCounts ? ` (${interviewCounts[value]})` : ""}</FilterChip>
           ))}
         </div>
         {kind==="INTERVIEW" ? (
@@ -326,22 +326,22 @@ export function LearnerCareerRoundsWorkspace({
               onClick={() => selectDueBucket("all")}
                className="min-h-11">
               All assessment rounds ({relevant.length})
-            </FilterChip
+            </FilterChip>
             <FilterChip type="button" aria-pressed={missingLinkOnly}
               onClick={()=>{const next=!missingLinkOnly;selectDueBucket("all");setMissingLinkOnly(next);}}
                className="min-h-11">
               Waiting on employer link ({relevant.filter(row=>learnerAssessmentLinkState(row)==="MISSING").length})
-            </FilterChip
+            </FilterChip>
             <FilterChip type="button" aria-pressed={dueBucket === "today"}
               onClick={() => selectDueBucket("today")}
                className="min-h-11">
               Due today ({dueCounts.today.length})
-            </FilterChip
+            </FilterChip>
             <FilterChip type="button" aria-pressed={dueBucket === "week"}
               onClick={() => selectDueBucket("week")}
                className="min-h-11">
               Due this week ({dueCounts.week.length})
-            </FilterChip
+            </FilterChip>
             {([
               ["later","Later",dueCounts.later.length],
               ["past","Scheduled time passed",dueCounts.past.length],
@@ -351,7 +351,7 @@ export function LearnerCareerRoundsWorkspace({
                 onClick={()=>selectDueBucket(value)}
                  className="min-h-11">
                 {label} ({count})
-              </FilterChip
+              </FilterChip>
             ))}
             <p className="w-full text-xs text-muted-foreground">
               IST schedule categories: Today and this week refer to the published
