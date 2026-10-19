@@ -42,7 +42,7 @@ export default async function LearnerProfilePage({
         title="Profile"
       />
       <LearnerVerificationLiveRefresh/>
-      <section aria-label="Profile verification summary" className="rounded-xl border border-border bg-surface p-4">
+      <section aria-label="Profile verification summary" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Profile verification</h2>
           <Badge  tone="neutral">
@@ -62,13 +62,13 @@ export default async function LearnerProfilePage({
             </p>;
           })}
           {verification.education.status==="UPDATE_PENDING"||verification.identity.status==="UPDATE_PENDING"?
-            <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3">
+            <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-warning bg-warning-subtle p-3">
               You changed this after it was verified. The verified details stay in use until you send the changes for review.
             </p>:null}
         </div>:<p role="status" className="mt-2 text-sm text-body">Verification status is temporarily unavailable.</p>}
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review verification status</Link>
       </section>
-      {sectionNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">{sectionNotice}</p> : null}
+      {sectionNotice ? <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-warning bg-warning-subtle p-3 text-sm text-body">{sectionNotice}</p> : null}
       <section aria-label="Academic identity" className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Academic identity</h2>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
@@ -101,14 +101,14 @@ export default async function LearnerProfilePage({
         )}
       </section>
       <Link href="/learn/profile/academic-record"
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         View my academic record →
       </Link>
       <Link href="/learn/profile/data-access"
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Who has my data →
       </Link>
-      <section aria-label="Verification status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+      <section aria-label="Verification status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Education and identity verification</h2>
         <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
         {verification?<div className="mt-4 space-y-3">
