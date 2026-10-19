@@ -114,7 +114,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);}}
      size="sm">Reset view</Button>
    </div>
-   <p role="status" className="text-xs text-muted-foreground">
+   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
    <div className="flex flex-wrap items-center gap-2 sm:hidden">
