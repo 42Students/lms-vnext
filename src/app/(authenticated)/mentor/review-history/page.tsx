@@ -43,7 +43,7 @@ export default async function MentorReviewHistoryPage({
         Pending reviews
       </Link>} />
     {!data.enabled ?
-      <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      <section role="status" className="border-b border-border pb-4 text-sm text-body">
         Projects access is disabled for this membership. No review history was loaded.
       </section>
     : <>
@@ -103,8 +103,8 @@ export default async function MentorReviewHistoryPage({
       {data.items.length===0
         ? <EmptyState title="No recorded delivery reviews"
             description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." />
-        : <ol className="grid gap-3">{data.items.map(item =>
-          <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+        : <ol className="divide-y divide-border">{data.items.map(item =>
+          <li key={item.id} className="py-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-semibold text-foreground">{item.projectTitle}</h2>
               <span className="text-sm font-semibold text-body">
