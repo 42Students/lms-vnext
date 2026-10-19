@@ -16,6 +16,7 @@ import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { AnnouncementFeedItem } from "@/components/announcements/announcement-feed";
 import { filterLearnerInbox,learnerNotificationInboxQuerySchema,
   type LearnerInboxQuery,learnerNotificationInboxHref } from "@/modules/activity/learner-notification-inbox-model";
@@ -121,14 +122,15 @@ export function LearnerNotificationsInbox({
       <nav aria-label="Filter notifications by type" className="min-w-0">
         <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           {learnerNotificationCategories.map(({ key, label }) => (
-            <Button variant="secondary"
+            <Button
               key={key}
+              variant={active === key ? "primary" : "secondary"}
               type="button"
               aria-pressed={active === key}
               onClick={() => selectCategory(key)}
               className={active === key
-                ? "min-h-[var(--lms-control-height)] min-w-0 rounded-full bg-[var(--lms-button-primary)] px-2 text-center text-sm font-semibold text-[var(--lms-on-primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-                : "min-h-[var(--lms-control-height)] min-w-0 rounded-full border border-border bg-surface px-2 text-center text-sm font-semibold text-body transition hover:border-primary hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"}
+                ? "min-h-11 min-w-0 text-center text-sm"
+                : "min-h-11 min-w-0 text-center text-sm"}
             >
               {label}
             </Button>
@@ -142,19 +144,19 @@ export function LearnerNotificationsInbox({
             onChange={event=>setSearch(event.target.value)}
             onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applySearch();}}}
             placeholder="Search title or message"
-            className="mt-1 min-h-[var(--lms-control-height)]  w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+            className="mt-1 min-h-11 sm:min-h-9 w-full"/>
         </label>
-        <Button variant="secondary" type="button" aria-pressed={unread==="unread"}
+        <Button type="button" aria-pressed={unread==="unread"}
           onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
-          className="min-h-[var(--lms-control-height)]  rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground">
+          variant="secondary" className="min-h-11 sm:min-h-9">
           {unread==="unread"?"Unread only ✓":"Unread only"}
         </Button>
-        <Button variant="secondary" type="button" onClick={applySearch}
-          className="min-h-[var(--lms-control-height)]  rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+        <Button type="button" onClick={applySearch}
+          variant="secondary" className="min-h-11 sm:min-h-9">
           Apply search
         </Button>
-        <Button variant="secondary" type="button" disabled={!filtered} onClick={resetFilters}
-          className="min-h-[var(--lms-control-height)]  rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+        <Button type="button" disabled={!filtered} onClick={resetFilters}
+          variant="secondary" className="min-h-11 sm:min-h-9">
           Clear filters
         </Button>
       </div>
@@ -176,7 +178,7 @@ export function LearnerNotificationsInbox({
       </p>
 
       {sourceStatus.state==="PARTIAL" ? (
-        <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+        <div role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 text-sm text-body">
           <p className="font-semibold text-foreground">Announcements not refreshed</p>
           <p className="mt-1">{sourceStatus.notice}</p>
           <Button size="sm" variant="secondary" onClick={()=>router.refresh()}>
@@ -185,7 +187,7 @@ export function LearnerNotificationsInbox({
         </div>
       ):null}
       {!announcementsEnabled && (active === "all" || active === "general") ? (
-        <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+        <div role="status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 text-sm text-body">
           College announcements are temporarily unavailable while their
           database rollout is being verified. Personal notifications remain available.
         </div>
@@ -197,8 +199,8 @@ export function LearnerNotificationsInbox({
             learnerInboxEmptyLabel({total:combined.length,category:active,unread,search})
           } />
           {filtered ? (
-            <Button variant="secondary" type="button" onClick={resetFilters}
-              className="min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline">
+            <Button type="button" onClick={resetFilters}
+              variant="ghost" className="min-h-11 sm:min-h-9 underline">
               View all
             </Button>
           ) : null}
