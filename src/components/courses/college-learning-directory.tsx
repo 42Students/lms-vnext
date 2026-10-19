@@ -542,7 +542,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
           id:item.id,name:item.name,visibleToStudents:item.visibleToStudents,
           updatedAt:item.updatedAt.toISOString(),
         }))}/> : null}
-      <section aria-label={title + " records"} className="overflow-x-auto rounded-xl border border-border bg-surface">
+      <section aria-label={title + " records"} className="min-w-0 overflow-x-auto border-y border-border">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {data.total} matching {lessons ? "lessons" : "course offerings"}
         </p>
