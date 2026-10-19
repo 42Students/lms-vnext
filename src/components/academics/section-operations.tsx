@@ -241,6 +241,7 @@ export function SectionOperations({
   const enrollmentColumns = [
     {
       key: "learner",
+      mobilePriority: "primary",
       header: "Learner",
       cell: (row: ProgramEnrollment) => (
         <span className="font-semibold text-foreground">
@@ -250,6 +251,7 @@ export function SectionOperations({
     },
     {
       key: "status",
+      mobilePriority: "secondary",
       header: "Program status",
       cell: (row: ProgramEnrollment) => (
         <StatusBadge tone={statusTone(row.status)}>
@@ -259,6 +261,7 @@ export function SectionOperations({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (row: ProgramEnrollment) =>
