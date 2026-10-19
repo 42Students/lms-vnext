@@ -126,3 +126,33 @@
   border-radius: 10px !important;
   font-size: 14px !important;
 }
+
+/* FORM INTERACTIONS
+ * Legacy: components___form.scss:130-143 (2px teal 15% focus halo,
+ * invalid #ef4444 border and 6% fill, invalid focus 20% red halo);
+ * components___variables.scss:10,71 and components___accessibility.scss:13-23.
+ * This preserves keyboard focus outlines supplied by shared components.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])
+         :not([type="file"]):not([type="range"]):not([type="color"])
+         :not([type="button"]):not([type="submit"]):not([type="reset"])
+         :not([type="image"]),
+    select, textarea
+  ):not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  border-color: var(--lms-primary) !important;
+  box-shadow: 0 0 0 2px rgba(38, 186, 199, 0.15) !important;
+}
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input, select, textarea):not(:where([data-unskin], [data-unskin] *))
+  :where([aria-invalid="true"]) {
+  border-color: var(--lms-error) !important;
+  background-color: rgba(239, 68, 68, 0.06) !important;
+}
+/* Legacy: components___form.scss:136-143 (red invalid focus). */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input, select, textarea)[aria-invalid="true"]:not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  border-color: var(--lms-error) !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+}
