@@ -47,7 +47,7 @@ export function FacultyReportDownload(props: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-3 print:hidden">
-      <Button type="button" variant="secondary" aria-haspopup={props.incomplete?"dialog":undefined} onClick={()=>{
+      <Button type="button" variant="secondary" aria-haspopup={props.incomplete?"dialog":undefined} className="min-h-11 md:min-h-9" onClick={()=>{
         if(props.incomplete){setError(null);setConfirmationOpen(true);}else downloadPdf();
       }}>{props.kind==="attendance"?"Download Report":"Download PDF"}</Button>
       <ConfirmDialog open={confirmationOpen} onOpenChange={setConfirmationOpen}
