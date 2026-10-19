@@ -4,19 +4,7 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import { SearchIcon } from "./icons";
 import style from "./topbar.module.css";
-
-export type TpoFindResult = { group: string; label: string; href: string };
-
-/** The same authorized TPO discovery backend previously used by the
- * duplicate in-page Find strip. Avoid treating a forged href as a link.
- */
-export function safeTpoFindResult(value: unknown): value is TpoFindResult {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
-  const row = value as Record<string, unknown>;
-  return typeof row.group === "string" && row.group.length <= 80 &&
-    typeof row.label === "string" && row.label.length <= 240 &&
-    typeof row.href === "string" && /^\/tpo\/(?!\/)[^\\]*$/.test(row.href);
-}
+import { safeTpoFindResult, type TpoFindResult } from "./tpo-find-model";
 
 export function TpoFindSuggestions({
   query, onOpen,

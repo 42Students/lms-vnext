@@ -23,7 +23,7 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
   <PageHeader eyebrow="TPO · Offer evidence" title={data.candidate.name+" · "+data.offer.role}
    description="Persisted offer and joining events. Recorded internal reasons are disclosed only within authorized college scope."/>
   <section aria-label="Current offer facts" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-   {facts.map(([name,value])=><div key={name} className="rounded-xl border border-border bg-surface p-4">
+   {facts.map(([name,value])=><div key={name} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <p className="text-xs text-muted-foreground">{name}</p><p className="mt-2 break-words font-semibold">{value}</p>
    </div>)}
   </section>

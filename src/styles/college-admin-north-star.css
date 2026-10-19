@@ -81,3 +81,12 @@
     min-height: 44px;
   }
 }
+
+/* Legacy admin-list .ant-card is 8px; the single shared page canvas stays 12px.
+ * Catch loading/error-state cards that do not have their own page component skin. */
+.lms-college-portal :is(article, section, div, ul)[class~="rounded-xl"][class~="border"] {
+  border-radius: 8px;
+}
+.lms-college-portal :is(a, button)[class~="rounded-xl"] {
+  border-radius: var(--lms-control-radius, 9px);
+}
