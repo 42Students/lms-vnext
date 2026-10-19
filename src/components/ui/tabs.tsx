@@ -66,7 +66,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
   }
   return (
     <div className={cx("min-w-0", className)} data-slot="tabs">
-      {renderPanel ? <ScrollCue axis="x" label={`${ariaLabel} tabs`}><div role="tablist" aria-label={ariaLabel} className="flex min-w-max gap-[var(--lms-tab-gap)] border-b border-[var(--lms-canvas-border)] pb-0">
+      {renderPanel ? <ScrollCue axis="x" label={`${ariaLabel} tabs`}><div role="tablist" aria-orientation="horizontal" aria-label={ariaLabel} className="flex min-w-max gap-[var(--lms-tab-gap)] border-b border-[var(--lms-canvas-border)] pb-0">
         {items.map((item, index) => (
           <button key={item.value} ref={node => { buttons.current[index] = node; }}
             id={`${id}-tab-${index}`} type="button" role="tab"
