@@ -1,3 +1,4 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {can} from "@/modules/permissions/policy";
@@ -14,7 +15,7 @@ export default async function NewSuperAdminTemplatePage(){
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Projects" title="New project template"
    description="Create a global draft with a valid starting blueprint. College-scoped administrators cannot publish global templates."
-   actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3.5 text-sm font-semibold text-primary-text sm:min-h-9">← Template catalogue</Link>}/>
+   actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
   <SuperAdminTemplateCreateForm/>
  </div>;
 }
