@@ -1,4 +1,5 @@
 "use client";
+import { MenuSeparator } from "@/components/ui/menu";
 import { Dropdown } from "@/components/ui/dropdown";
 
 import Link from "next/link";
@@ -21,7 +22,7 @@ export function TpoTopbarNewMenu({collegeId}:{collegeId:string}){
   <nav aria-label={companyName?"Create work for "+companyName:"Create placement work"}
    className="min-w-60 space-y-1">
    {links.map(item=><Link key={item.href} href={item.href} className={navClass}>{item.label}</Link>)}
-   {companyName?<div role="separator" className="my-1 border-t border-border"/>:null}
+   {companyName?<MenuSeparator />:null}
    <div className={navClass}><TpoNewFollowupModal collegeId={collegeId}/></div>
   </nav>
  </Dropdown>;

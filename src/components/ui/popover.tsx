@@ -10,13 +10,16 @@ import { cx } from "@/lib/class-names";
  */
 export type PopoverPanelProps = Omit<ComponentPropsWithoutRef<"section">, "role" | "aria-modal" | "aria-label"> & {
   label: string;
+  /** Used by nonmodal menus; callers still own their open state. */
+  onDismiss?: () => void;
 };
 
 export const PopoverPanel = forwardRef<HTMLElement, PopoverPanelProps>(
-  function PopoverPanel({ label, className, children, ...rest }, ref) {
+  function PopoverPanel({ label, className, children, onDismiss, onKeyDown, ...rest }, ref) {
     return <section {...rest} ref={ref} role="dialog" aria-modal={false} aria-label={label}
+      onKeyDown={event => { onKeyDown?.(event); if (!event.defaultPrevented && event.key === "Escape" && onDismiss) { event.preventDefault(); onDismiss(); } }}
       data-slot={rest["data-slot"] ?? "popover"}
-      className={cx("min-w-0 rounded-[12px] border border-[var(--lms-canvas-border)] bg-white shadow-[var(--lms-overlay-shadow)]", className)}>
+      className={cx("min-w-0 rounded-[6px] border border-[var(--lms-canvas-border)] bg-white shadow-[var(--lms-dropdown-shadow)]", className)}>
       {children}
     </section>;
   },
@@ -35,7 +38,8 @@ export function PopoverListbox({ label, children, className, onDismiss, onKeyDow
     if (event.key === "Escape") {
       event.preventDefault();
       onDismiss?.();
-      event.currentTarget.parentElement?.querySelector<HTMLInputElement>("input")?.focus();
+      const trigger = event.currentTarget.parentElement?.querySelector<HTMLElement>("input, button[aria-expanded], [role=combobox]");
+      trigger?.focus();
       return;
     }
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
