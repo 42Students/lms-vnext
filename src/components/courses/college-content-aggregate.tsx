@@ -1,4 +1,4 @@
-import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content-order-readiness";
 import { COLLEGE_COURSE_TAB_COPY } from "@/modules/courses/college-course-tabs-copy";
@@ -150,10 +150,10 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               <option value="SECTION">Section-specific</option>
             </Select>
           </label>
-          <button type="submit"
-            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          <Button variant="primary" type="submit"
+            >
             Filter
-          </button>
+          </Button>
           <Link href={path}
             className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Clear
