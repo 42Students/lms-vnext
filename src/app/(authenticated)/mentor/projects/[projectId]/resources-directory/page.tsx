@@ -16,7 +16,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  const [{projectId},raw]=await Promise.all([params,searchParams]);
  const parsed=parseMentorResourceDirectorySearch(projectId,raw);
  if(!parsed)return <section role="alert" className="space-y-3">
-  <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid resource filters</h1>
+  <PageHeader title="Invalid resource filters" />
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
    className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear invalid filters</Link>
  </section>;
