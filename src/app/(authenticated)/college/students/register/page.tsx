@@ -13,7 +13,7 @@ export default async function CollegeStudentRegisterPage() {
     <PageHeader eyebrow="College Admin · Students" title="Register students"
       description="Register a learner with a program and class, personal details and roll number."
       actions={<Link href="/college/students"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to students</Link>}/>
+        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to students</Link>}/>
     <CollegeStudentRegisterForm choices={choices}/>
   </main>;
 }
