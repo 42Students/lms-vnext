@@ -446,3 +446,8 @@
 @media (prefers-reduced-motion:no-preference) {
   .topbarNotificationDrawer[open]::backdrop { animation:topbarNotificationBackdropIn .15s ease-out; }
 }
+
+@media (prefers-reduced-motion:reduce) {
+  .topbarNotificationDrawer[open],
+  .topbarNotificationDrawer[open]::backdrop { animation:none; transition:none; }
+}
