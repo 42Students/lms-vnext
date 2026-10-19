@@ -490,3 +490,5 @@
 .learnerNotificationPopover ul[aria-label="Recent learner notifications"] a:hover { background:#fafbfc; border-color:#e5e9f0; box-shadow:0 1px 3px rgba(0,0,0,.04); }
 .learnerNotificationPopover ul[aria-label="Recent learner notifications"] a:active { background:rgba(0,0,0,.06); box-shadow:none; }
 .learnerNotificationPopover ul[aria-label="Recent learner notifications"] a:focus-visible { outline:1px solid #6b7280; outline-offset:1px; }
+
+.learnerNotificationPopover [data-learner-notification-state] { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:32px 20px; text-align:center; font-size:14px; line-height:1.5; }
