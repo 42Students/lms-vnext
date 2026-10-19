@@ -83,7 +83,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
     });
   }
 
-  return <section aria-label="Create batch" className="sm: border-t border-border pt-4">
+  return <section aria-label="Create batch" className="border-t border-border pt-4">
     <h2 className="m-0 text-lg font-semibold text-foreground">Create batch</h2>
     {programs.length === 0 || periods.length === 0
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
@@ -289,13 +289,13 @@ export function CollegeCohortRowActions({ row, periods }: {
           </select>
         </label>
         <label className="grid gap-1 text-sm">Academic Year
-          <input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/>
+          <input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">Start Date
-          <input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/>
+          <input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">End Date
-          <input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/>
+          <input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"/>
         </label>
         {endDateLocked && <p className="text-xs text-muted-foreground">
           End period is locked because the batch has enrolled learners or classes. Name and code remain editable.
