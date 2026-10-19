@@ -310,6 +310,7 @@ export function TpoCompanyMemoryWorkspace({
                           person.inviteClickedAt?"Invite opened, not joined yet":
                           person.inviteSentAt?"Invite sent, not opened":"No invite sent"}
                       </p>
+                      </div>
                     </div>
                     <Badge  tone="neutral">{person.stage==="DRIVE_PLANNED"?"Drive planned":person.stage==="NOT_NOW"?"Not now":person.stage==="RECRUITED"?"Recruited":person.stage==="JOINED"?"Joined":person.stage==="INVITED"?"Invited":person.stage==="CONTACTED"?"Contacted":"New"}</Badge>
                   </div>
