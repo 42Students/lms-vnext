@@ -1,3 +1,7 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
@@ -71,8 +75,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
     <div className="min-w-0 space-y-6">
       <div>
         <Link href="/learn/my-placements" className="text-sm text-primary-text underline">Back to My Placements</Link>
-        <h1 className="mt-3 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">{LEARNER_LEGACY_NOTICES_TITLE}</h1>
-        <p className="mt-2 text-sm text-body">Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown.</p>
+        <PageHeader title={LEARNER_LEGACY_NOTICES_TITLE}
+          description="Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown." />
         {hadInvalidNoticeFilters ? <p role="status" className="mt-2 text-sm text-warning">Some notice filters were invalid and have been reset to safe defaults.</p> : null}
       </div>
       <nav aria-label="Placement notice views" className="flex flex-wrap gap-3">
@@ -81,36 +85,36 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       </nav>
       <div id="college-notices" className="scroll-mt-24"/>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
-        {alertQ?<input type="hidden" name="alertQ" value={alertQ}/>:null}
-        {source==="placement-cell"?<input type="hidden" name="source" value={source}/>:null}
-        {pinnedOnly ? <input type="hidden" name="pinned" value="1" /> : null}
-        {recentOnly ? <input type="hidden" name="recent" value="1" /> : null}
-        {unreadOnly ? <input type="hidden" name="unread" value="1" /> : null}
-        {sortKey!=="pinned"?<input type="hidden" name="sort" value={sortKey}/>:null}
+        {alertQ?<Input type="hidden" name="alertQ" value={alertQ}/>:null}
+        {source==="placement-cell"?<Input type="hidden" name="source" value={source}/>:null}
+        {pinnedOnly ? <Input type="hidden" name="pinned" value="1" /> : null}
+        {recentOnly ? <Input type="hidden" name="recent" value="1" /> : null}
+        {unreadOnly ? <Input type="hidden" name="unread" value="1" /> : null}
+        {sortKey!=="pinned"?<Input type="hidden" name="sort" value={sortKey}/>:null}
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
           Search college notices
-          <input type="search" name="q" maxLength={100} defaultValue={queryText}
-            placeholder="Title or message" className="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9" />
+          <Input type="search" name="q" maxLength={100} defaultValue={queryText}
+            placeholder="Title or message" className="min-h-11 min-w-0" />
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Search</button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Search</Button>
         {queryText ? <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey,alertQ,source})}
           className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
-        {alertQ?<input type="hidden" name="alertQ" value={alertQ}/>:null}
-        {source==="placement-cell"?<input type="hidden" name="source" value={source}/>:null}
-        {pinnedOnly?<input type="hidden" name="pinned" value="1"/>:null}
-        {unreadOnly?<input type="hidden" name="unread" value="1"/>:null}
-        {recentOnly?<input type="hidden" name="recent" value="1"/>:null}
-        {queryText?<input type="hidden" name="q" value={queryText}/>:null}
+        {alertQ?<Input type="hidden" name="alertQ" value={alertQ}/>:null}
+        {source==="placement-cell"?<Input type="hidden" name="source" value={source}/>:null}
+        {pinnedOnly?<Input type="hidden" name="pinned" value="1"/>:null}
+        {unreadOnly?<Input type="hidden" name="unread" value="1"/>:null}
+        {recentOnly?<Input type="hidden" name="recent" value="1"/>:null}
+        {queryText?<Input type="hidden" name="q" value={queryText}/>:null}
         <label className="flex flex-col gap-1 text-sm font-medium text-foreground">Sort college notices
-          <select name="sort" defaultValue={sortKey} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="sort" defaultValue={sortKey} className="min-h-11">
             <option value="pinned">Pinned then newest</option>
             <option value="latest">Newest first</option>
             <option value="oldest">Oldest first</option>
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Apply sort</button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Apply sort</Button>
       </form>
       <nav aria-label="Notice filter" className="flex flex-wrap gap-3 text-sm">
         <Link href={learnerNoticeFilterHref({pinned:false,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-primary-text">All notices</Link>
@@ -220,18 +224,18 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text" aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
       </nav>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
-        {pinnedOnly?<input type="hidden" name="pinned" value="1"/>:null}
-        {recentOnly?<input type="hidden" name="recent" value="1"/>:null}
-        {unreadOnly?<input type="hidden" name="unread" value="1"/>:null}
-        {queryText?<input type="hidden" name="q" value={queryText}/>:null}
-        {sortKey!=="pinned"?<input type="hidden" name="sort" value={sortKey}/>:null}
-        {source==="placement-cell"?<input type="hidden" name="source" value={source}/>:null}
+        {pinnedOnly?<Input type="hidden" name="pinned" value="1"/>:null}
+        {recentOnly?<Input type="hidden" name="recent" value="1"/>:null}
+        {unreadOnly?<Input type="hidden" name="unread" value="1"/>:null}
+        {queryText?<Input type="hidden" name="q" value={queryText}/>:null}
+        {sortKey!=="pinned"?<Input type="hidden" name="sort" value={sortKey}/>:null}
+        {source==="placement-cell"?<Input type="hidden" name="source" value={source}/>:null}
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-semibold text-foreground">
           Search loaded personal alerts
-          <input type="search" name="alertQ" defaultValue={alertQ} maxLength={80}
+          <Input type="search" name="alertQ" defaultValue={alertQ} maxLength={80}
             placeholder="Title or message" className="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/>
         </label>
-        <button className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text" type="submit">Search alerts</button>
+        <Button className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text" type="submit">Search alerts</Button>
       </form>
       {alertQ ? (
         <div className="flex flex-wrap items-center gap-3">
