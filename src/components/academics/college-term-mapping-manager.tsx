@@ -130,7 +130,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         <select required value={programId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained for this semester.");
           setProgramId(event.target.value); setTermId("");
-        }} className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
+        }} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose program</option>
           {Array.from(new Map(data.terms.map(t => [t.programId, t.programName])).entries()).map(
             ([id, name]) => <option key={id} value={id}>{name}</option>)}
@@ -140,7 +140,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         <select required value={termId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained.");
           setTermId(event.target.value);
-        }} className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
+        }} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose semester</option>
           {termChoices.map(t => <option key={t.id} value={t.id}>{t.name} ({t.termNumber})</option>)}
         </select>
@@ -149,7 +149,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         <select multiple size={8} value={selectedIds}
           disabled={!termId} onChange={event => setDraftByTerm(current => ({
             ...current, [termId]: Array.from(event.target.selectedOptions).map(option => option.value),
-          }))} className="min-h-40 rounded-md border border-border bg-surface px-2 text-foreground">
+          }))} className="min-h-40 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2 text-foreground">
           {availableCourses.map(c => <option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
         </select>
         <span className="text-xs font-normal text-muted-foreground">
