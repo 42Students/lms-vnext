@@ -4,6 +4,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 
 
+import { DateInput } from "@/components/ui/date-input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -107,7 +111,7 @@ export function TpoOfferLifecyclePanel({
       </div>
       <label className="block text-sm font-semibold text-foreground">
         Administrative action
-        <select
+        <Select
           value={action}
           disabled={busy}
           onChange={(event) => {
@@ -120,7 +124,7 @@ export function TpoOfferLifecyclePanel({
           {TPO_OFFER_ACTIONS.map((value) => (
             <option key={value} value={value}>{value.replaceAll("_", " ")}</option>
           ))}
-        </select>
+        </Select>
       </label>
       {eligible.length === 0 ? (
         <p role="status" className="text-sm text-body">
@@ -131,7 +135,6 @@ export function TpoOfferLifecyclePanel({
           {eligible.map((offer) => (
             <label key={offer.id} className="flex min-h-11 items-center gap-3 px-2 text-sm hover:bg-muted md:min-h-9">
               <Checkbox
-                type="checkbox"
                 checked={ids.includes(offer.id)}
                 disabled={busy || (ids.length >= 200 && !ids.includes(offer.id)) ||
                   (statuses.length > 0 && !statuses.includes(offer.status))}
@@ -146,8 +149,8 @@ export function TpoOfferLifecyclePanel({
       {action === "EXTEND" ? (
         <label className="block text-sm font-semibold">
           New expiry (IST)
-          <Input
-            type="datetime-local"
+          <DateInput
+            mode="datetime-local"
             value={expiresAt}
             disabled={busy}
             onChange={(event) => setExpiresAt(event.target.value)}
@@ -158,8 +161,8 @@ export function TpoOfferLifecyclePanel({
       {action === "RECORD_JOINED" ? (
         <label className="block text-sm font-semibold">
           Confirmed joining date
-          <Input
-            type="date"
+          <DateInput
+            mode="date"
             value={joiningDate}
             disabled={busy}
             onChange={(event) => setJoiningDate(event.target.value)}
