@@ -127,7 +127,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   </section>:null}
   <section id="activity" aria-label="Drive activity" className="scroll-mt-24 border-b border-border pb-6">
    <h2 className="font-semibold">Recent activity · last {data.feed.length} (maximum 100)</h2>
-   {!data.feed.length?<p className="mt-3 text-sm text-body">No placement activity recorded for this drive.</p>:
+   {!data.feed.length?<EmptyState title="No placement activity recorded for this drive."/>:
    <ol className="mt-3 divide-y divide-border">{data.feed.map(event=><li key={event.id} className="py-3 text-sm">
     <span className="font-semibold">{event.summary}</span>
     <time className="ml-2 text-body" dateTime={event.occurredAt}>{when(event.occurredAt)}</time>
