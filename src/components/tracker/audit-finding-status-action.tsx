@@ -1,4 +1,5 @@
 "use client";
+import { Select } from "@/components/ui/select";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
@@ -28,10 +29,10 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
  }
  return <div className="flex flex-wrap items-end gap-2">
    <label className="grid gap-1 text-xs font-semibold text-body">Triage status
-    <select value={status} disabled={pending} onChange={e=>setStatus(e.target.value as BugStatus)}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground">
+    <Select value={status} disabled={pending} onChange={e=>setStatus(e.target.value as BugStatus)}
+    >
       {BUG_STATUSES.map(item=><option key={item} value={item}>{item}</option>)}
-    </select>
+    </Select>
    </label>
    <Button size="sm" variant="secondary" disabled={!canChangeAuditFindingStatus(current,status,pending)} onClick={()=>setReview(true)}>Review status</Button>
    {feedback?<p role="status" className="w-full text-xs text-body">{feedback}</p>:null}
