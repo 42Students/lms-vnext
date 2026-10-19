@@ -24,7 +24,7 @@ export function SuperAdminDriveDuplicate({jobId,title}:{jobId:string;title:strin
  }
  return <div className="space-y-2">
   <button type="button" onClick={()=>setConfirmOpen(true)} disabled={busy}
-   className="min-h-11 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+   className="min-h-9 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Creating draft…":"Duplicate as new drive"}</button>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={open=>{if(!open&&!busy)setConfirmOpen(false);}}

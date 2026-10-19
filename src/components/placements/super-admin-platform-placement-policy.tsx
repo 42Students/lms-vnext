@@ -54,7 +54,7 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
     <p className="text-sm text-muted-foreground">Platform-wide defaults. Clear the college selection to review global settings. Changes require Super Admin access.</p>
    </div>
    <button type="button" disabled={Boolean(busy)} onClick={()=>void refresh()}
-    className="min-h-10 rounded-md border border-border px-3 font-semibold text-primary-text">Reload</button>
+    className="min-h-10 rounded-[9px] border border-border px-3 font-semibold text-primary-text">Reload</button>
   </div>
   <div className="grid gap-4 md:grid-cols-2">
    {fields.map(field=><div key={field.key} className="space-y-2 rounded-lg border border-border p-3">
@@ -64,14 +64,14 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
       <input id={"policy-"+field.key} type="number" min={field.min} max={field.max} step={field.step}
        value={drafts[field.key]??String(field.value)}
        onChange={event=>setDrafts(current=>({...current,[field.key]:event.target.value}))}
-       className="min-h-10 min-w-28 flex-1 rounded-md border border-border bg-background px-2 text-foreground" />
+       className="min-h-10 min-w-28 flex-1 rounded-[9px] border border-border bg-[var(--lms-surface)] px-2 text-foreground" />
       <span className="text-xs text-muted-foreground">{field.unit}</span>
      </div>
      <div className="flex gap-2">
       <button type="button" disabled={Boolean(busy)} onClick={()=>void submit(field,false)}
-       className="min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-on-primary disabled:opacity-50">Save</button>
+       className="min-h-10 rounded-[9px] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-on-primary disabled:opacity-50 text-[var(--lms-on-primary)]">Save</button>
       <button type="button" disabled={Boolean(busy)||!field.isOverridden} onClick={()=>void submit(field,true)}
-       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">Reset to default</button>
+       className="min-h-10 rounded-[9px] border border-border px-3 text-sm font-semibold disabled:opacity-50">Reset to default</button>
      </div>
    </div>)}
   </div>

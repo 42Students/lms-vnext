@@ -37,10 +37,10 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   <h2 className="text-base font-semibold">Extend deadline</h2>
   <p className="text-sm text-body">Current deadline: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
   <label className="grid max-w-md gap-1 text-sm font-semibold">New application deadline (IST)
-   <input name="deadline" type="datetime-local" required className="min-h-11 rounded-md border border-border bg-background px-3 text-base sm:text-sm"/>
+   <input name="deadline" type="datetime-local" required className="min-h-9 rounded-[9px] border border-border bg-[var(--lms-surface)] px-3 text-base sm:text-sm"/>
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <button type="submit" disabled={busy} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
+  <button type="submit" disabled={busy} className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] disabled:opacity-50">
    {busy?"Saving…":"Extend deadline"}</button>
  </form>
  <ConfirmDialog open={pendingIso!==null} onOpenChange={next=>{if(!next&&!busy)setPendingIso(null);}}
