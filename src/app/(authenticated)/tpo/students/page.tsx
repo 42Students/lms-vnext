@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
@@ -424,12 +425,12 @@ export default async function TpoStudentsPage({
         <input type="hidden" name="programId" value={query.programId??""}/>
         <input type="hidden" name="classId" value={query.classId??""}/>
         <label className="text-sm font-semibold">Stage
-          <select name="legacyStage" defaultValue={query.legacyStage??""}
+          <Select name="legacyStage" defaultValue={query.legacyStage??""}
             className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All stages</option>
             {(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"] as const).map(stage=>
               <option key={stage} value={stage}>{stage.charAt(0)+stage.slice(1).toLowerCase()}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Interviewed with (company)
           <input type="search" name="interviewedWith" maxLength={100}
@@ -437,16 +438,16 @@ export default async function TpoStudentsPage({
            className="min-h-9 w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="text-sm font-semibold">Debarred
-          <select name="debarred" defaultValue={query.debarred===undefined?"":query.debarred?"YES":"NO"}
+          <Select name="debarred" defaultValue={query.debarred===undefined?"":query.debarred?"YES":"NO"}
             className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option><option value="YES">Debarred</option><option value="NO">Not debarred</option>
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold">Needs attention
-          <select name="needsAttention" defaultValue={query.needsAttention===undefined?"":query.needsAttention?"YES":"NO"}
+          <Select name="needsAttention" defaultValue={query.needsAttention===undefined?"":query.needsAttention?"YES":"NO"}
             className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option><option value="YES">Needs attention</option><option value="NO">No attention flags</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Furthest round reached (minimum)
           <input type="number" name="minRoundReached" min={0} max={10000} step={1}
@@ -457,9 +458,9 @@ export default async function TpoStudentsPage({
          <p className="mt-2 text-xs text-muted-foreground">Projects here are self-reported profile entries, not verified Projects workspace outcomes or released grades.</p>
          <div className="mt-3 flex flex-wrap gap-3">
           <label className="grid gap-1 text-sm">Gender
-           <select name="gender" defaultValue={query.gender??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+           <Select name="gender" defaultValue={query.gender??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
             <option value="">Any</option>{(["Male","Female","Other"] as const).map(v=><option key={v}>{v}</option>)}
-           </select>
+           </Select>
           </label>
           <label className="grid gap-1 text-sm">Skill name
            <input type="search" name="skillName" defaultValue={query.skillName??""} maxLength={100}
@@ -473,27 +474,27 @@ export default async function TpoStudentsPage({
             <input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/>
            </label>)}
           <label className="grid gap-1 text-sm">Profile links
-           <select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+           <Select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
             <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
-           </select>
+           </Select>
           </label>
           {([["hasResume","Resume"],["hasCodingProfiles","Coding profiles"]] as const).map(([key,label])=>
            <label key={key} className="grid gap-1 text-sm">{label}
-            <select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+            <Select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
              <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
-            </select>
+            </Select>
            </label>)}
          </div>
         </details>
         <label className="text-sm font-semibold">Profile verified
-          <select name="profileStatus" defaultValue={query.profileStatus??""}
+          <Select name="profileStatus" defaultValue={query.profileStatus??""}
             className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All verification states</option>
             <option value="VERIFIED">Verified</option>
             <option value="WAITING">Waiting to verify</option>
             <option value="SENT_BACK">Sent back</option>
             <option value="NOT_VERIFIED">Not verified</option>
-          </select>
+          </Select>
         </label>
         {([
           ["minCgpa","CGPA from",query.minCgpa],
@@ -534,40 +535,40 @@ export default async function TpoStudentsPage({
               ["marksVerified","Marks verified",query.marksVerified],
               ["isLateralEntry","Lateral entry",query.isLateralEntry],
             ] as const).map(([key,label,value])=><label key={key} className="grid gap-1 text-sm">{label}
-              <select name={key} defaultValue={value===undefined?"":value?"YES":"NO"}
+              <Select name={key} defaultValue={value===undefined?"":value?"YES":"NO"}
                 className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
                 <option value="">Any</option><option value="YES">Yes</option><option value="NO">No</option>
-              </select></label>)}
+              </Select></label>)}
           </div>
         </details>
         <label className="text-sm font-semibold">CGPA recorded
-          <select name="cgpaRecorded" defaultValue={query.cgpaRecorded===undefined?"":query.cgpaRecorded?"YES":"NO"}
+          <Select name="cgpaRecorded" defaultValue={query.cgpaRecorded===undefined?"":query.cgpaRecorded?"YES":"NO"}
             className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option><option value="YES">Recorded</option>
             <option value="NO">No recorded CGPA</option>
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold">Offer waiting on answer
-          <select name="offerWaiting" defaultValue={query.offerWaiting===undefined?"":query.offerWaiting?"YES":"NO"}
+          <Select name="offerWaiting" defaultValue={query.offerWaiting===undefined?"":query.offerWaiting?"YES":"NO"}
             className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option>
             <option value="YES">Yes</option><option value="NO">No</option>
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold">After college
-          <select name="afterCollege" defaultValue={query.afterCollege??""}
+          <Select name="afterCollege" defaultValue={query.afterCollege??""}
             className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All outcomes</option>
             {AFTER_COLLEGE_OUTCOMES.map(outcome=>
               <option key={outcome} value={outcome}>{AFTER_COLLEGE_LABELS[outcome]}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold">Batch
-          <select name="batchId" defaultValue={query.batchId??""}
+          <Select name="batchId" defaultValue={query.batchId??""}
             className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Current students</option>
             {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-          </select>
+          </Select>
         </label>
         {([
           ["minApplications","Applications from",query.minApplications],
@@ -580,7 +581,7 @@ export default async function TpoStudentsPage({
            defaultValue={value??""} placeholder="Any"
            className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
          </label>)}
-        <button className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4">Show students</button>
+        <Button variant="secondary" type="submit" className="min-h-9 px-4">Show students</Button>
       </form>
       {query.batchId?<p className="text-sm text-muted-foreground">
         Students from a finished batch include completed enrollments for follow-up and reporting.
@@ -764,8 +765,8 @@ export default async function TpoStudentsPage({
             No learners are available for this selection.
           </p>
         ) : (
-          <div className="hidden overflow-x-auto sm:block">
-            <table className="w-full min-w-[52rem] text-left text-sm">
+          <div className="hidden sm:block">
+            <Table scrollLabel="Branch intelligence" className="min-w-[52rem]">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-4 py-3">Branch</th>
@@ -817,7 +818,7 @@ export default async function TpoStudentsPage({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
         )}
 
@@ -873,7 +874,7 @@ export default async function TpoStudentsPage({
           {first(raw.columns)&&<input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Journey
-            <select
+            <Select
               name="journeyState"
               defaultValue={query.journeyState ?? ""}
               className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
@@ -884,12 +885,12 @@ export default async function TpoStudentsPage({
                   {JOURNEY_LABELS[state]}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Branch
-            <select
+            <Select
               name="branchId"
               defaultValue={query.branchId ?? ""}
               className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
@@ -900,7 +901,7 @@ export default async function TpoStudentsPage({
                   {branch.branchName}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
@@ -910,7 +911,7 @@ export default async function TpoStudentsPage({
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Page size
-            <select
+            <Select
               name="pageSize"
               defaultValue={String(query.pageSize)}
               className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
@@ -918,16 +919,16 @@ export default async function TpoStudentsPage({
               <option value="25">25 students</option>
               <option value="50">50 students</option>
               <option value="100">100 students</option>
-            </select>
+            </Select>
           </label>
 
           <div className="sm:col-span-2 lg:col-span-4">
-            <button
+            <Button variant="primary"
               type="submit"
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+              className="min-h-9 px-5"
             >
               Apply filters
-            </button>
+            </Button>
           </div>
         </form>
 

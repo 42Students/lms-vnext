@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {CollegeContentCsvExport} from "./college-content-csv-export";
@@ -25,34 +26,34 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     </label>
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
       Publication
-      <select name="status" defaultValue={data.query.status}
+      <Select name="status" defaultValue={data.query.status}
         className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
         <option value="ALL">All statuses</option><option value="DRAFT">Draft</option>
         <option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option>
-      </select>
+      </Select>
     </label>
     <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Section
-      <select name="deliveryId" defaultValue={data.query.deliveryId??""}
+      <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
         className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
         <option value="">All classes</option>
         {data.sectionOptions.map(option=><option key={option.deliveryId} value={option.deliveryId}>
           {option.courseCode} · {option.sectionName} ({option.sectionCode})
         </option>)}
-      </select>
+      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Session audience
-      <select name="scope" defaultValue={data.query.scope}
+      <Select name="scope" defaultValue={data.query.scope}
         className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
         <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option>
         <option value="SECTION">Section-specific</option>
-      </select>
+      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Timing
-      <select name="view" defaultValue={data.view}
+      <Select name="view" defaultValue={data.view}
         className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
         <option value="ALL">All sessions</option><option value="UPCOMING">Upcoming or ongoing</option>
         <option value="PAST">Past sessions</option>
-      </select>
+      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">From (IST)
       <input type="date" name="from" defaultValue={data.from??""}

@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
@@ -45,7 +46,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Program
-            <select name="programId" defaultValue={data.query.programId ?? ""}
+            <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="">All programs</option>
               {data.programs.map((program) => (
@@ -53,11 +54,11 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                   {program.name} ({program.code})
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Status
-            <select name="status" defaultValue={data.query.status}
+            <Select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All statuses</option>
               {semesters ? (
@@ -73,7 +74,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                   <option value="ARCHIVED">Archived</option>
                 </>
               )}
-            </select>
+            </Select>
           </label>
           <details className="col-span-full rounded-[var(--lms-control-radius)] border border-border p-3">
             <summary className="cursor-pointer text-sm font-semibold text-body">More filters</summary>
@@ -89,12 +90,12 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Progression record
-              <select name="progression" defaultValue={data.query.progression}
+              <Select name="progression" defaultValue={data.query.progression}
                 className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="RECORDED">Progression recorded</option>
                 <option value="MISSING">No progression record</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
@@ -131,56 +132,56 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           ) : null}
           {data.kind === "SEMESTERS" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Credits availability
-              <select name="creditState" defaultValue={data.query.creditState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="creditState" defaultValue={data.query.creditState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All terms</option>
                 <option value="CONFIGURED">Credits configured</option>
                 <option value="UNSET">No configured credits</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Program status
-              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active programs</option>
                 <option value="ARCHIVED">Archived programs</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Course mapping
-              <select name="mappingState" defaultValue={data.query.mappingState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="mappingState" defaultValue={data.query.mappingState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All terms</option>
                 <option value="MAPPED">Has mapped courses</option>
                 <option value="UNMAPPED">No mapped courses</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Expected end period
-              <select name="expectedEndState" defaultValue={data.query.expectedEndState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="expectedEndState" defaultValue={data.query.expectedEndState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="SET">End period recorded</option>
                 <option value="UNSET">No end period recorded</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Academic year
-              <select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="RECORDED">Year recorded</option>
                 <option value="UNRECORDED">No recorded year</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Program status
-              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All parent programs</option>
                 <option value="ACTIVE">Active</option>
                 <option value="ARCHIVED">Archived</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
@@ -197,20 +198,20 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Classes
-              <select name="activeClassState" defaultValue={data.query.activeClassState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="activeClassState" defaultValue={data.query.activeClassState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="HAS_ACTIVE">Has active classes</option>
                 <option value="NONE_ACTIVE">No active classes</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Students
-              <select name="activeLearnerState" defaultValue={data.query.activeLearnerState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="activeLearnerState" defaultValue={data.query.activeLearnerState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="HAS_ACTIVE">Has active learner enrollments</option>
                 <option value="NONE_ACTIVE">No active learner enrollments</option>
-              </select>
+              </Select>
             </label>
           ) : null}
             </div>
