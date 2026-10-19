@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {Select} from "@/components/ui/select";
 
 type InterviewRound={id:string;name:string;sequence:number};
@@ -64,7 +65,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   }finally{submitLock.current=false;setSubmitting(false);}
  }
  return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid gap-3 sm:grid-cols-2">
-  <input type="hidden" name="action" value="CREATE"/>
+  <Input type="hidden" name="action" value="CREATE"/>
   <label className="grid gap-1 text-sm text-body">Interview round
    <Select name="roundId" required defaultValue="" className="text-sm">
     <option value="" disabled>Select an interview round</option>
@@ -96,9 +97,9 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   <label className="grid gap-1 text-sm text-body sm:col-span-2">Meeting location
    <Input name="meetingLocation" maxLength={500} className="text-sm"/>
   </label>
-  {error?<p role="alert" className="sm:col-span-2 rounded-[var(--lms-control-radius)] border border-error/30 bg-error/5 p-3 text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="sm:col-span-2 text-sm text-body">{notice}</p>:null}
-  <Button type="submit" disabled={!rounds.length||submitting} aria-busy={submitting}
+  {error?<div className="sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
+  {notice?<div className="sm:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
+  <Button type="submit" disabled={!rounds.length||submitting} loading={submitting} aria-busy={submitting}
     variant="primary" className="sm:col-span-2">
     {submitting?"Sending time block…":"Propose slot"}
   </Button>
@@ -150,12 +151,12 @@ export function RecruiterInterviewSlotActions({action,slot}:{
     variant="secondary">Cancel time block</Button>:null}
   </div>
   {busy?<p role="status" className="text-xs text-body">Updating time block…</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  <ConfirmDialog open={confirmCancel} onOpenChange={setConfirmCancel}
      title="Cancel this proposed interview time block?" confirmLabel="Cancel time block"
      confirmVariant="danger" pending={busy!==null}
      onConfirm={()=>void act("CANCEL",true)}>
-     {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+     {error?<InlineNotice tone="error" message={error}/>:null}
    </ConfirmDialog>
   </div>;
 }
