@@ -81,7 +81,7 @@ export default async function IndependentFindingsPage({searchParams}:{
   <nav aria-label="Finding views" className="flex flex-wrap gap-3 border-b border-border">
    {(["OPEN","RELEASE","ALL"] as const).map(value=><Link key={value} aria-current={parsed.view===value?"page":undefined}
      href={independentFindingHref({...parsed,view:value,page:1})}
-     className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className={parsed.view===value ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
       {value==="OPEN"?"Open":value==="RELEASE"?"Release (critical & high)":"All"}
     </Link>)}
   </nav>
