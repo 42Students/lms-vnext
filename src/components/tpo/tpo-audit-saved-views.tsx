@@ -1,4 +1,5 @@
 "use client";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -116,8 +117,7 @@ export function TpoAuditSavedViews({filters}:{filters:{
   await mutate({action:"DELETE",id:selectedView.id,
    expectedRevision:selectedView.revision},"Saved view deleted.");
  }
- return <details className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-  <summary className="cursor-pointer font-semibold">Saved audit views ({views.length}/12)</summary>
+ return <Disclosure title={`Saved audit views (${views.length}/12)`} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <p className="mt-1 text-xs text-muted-foreground">
    {ready?"Saved audit views sync across your signed-in devices, privately for your TPO account and college.":
     loading?"Loading your saved audit views…":
@@ -155,5 +155,5 @@ export function TpoAuditSavedViews({filters}:{filters:{
   </div>:null}
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}
- </details>;
+ </Disclosure>;
 }
