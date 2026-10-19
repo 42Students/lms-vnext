@@ -136,8 +136,15 @@ export function TpoSpreadsheetGrid<Row>({
   }
   router.replace(pathname+(next.size?"?"+next.toString():""));
  }
+ function copyVisibleRows(){
+  const included=orderedRows.filter(row=>!selection?.selected.length||selection.selected.includes(rowKey(row)));
+  void navigator.clipboard.writeText(gridClipboardTsv(display,included,true))
+    .then(()=>setClipboardMessage("Visible grid rows copied as TSV."))
+    .catch(()=>setClipboardMessage("Clipboard unavailable. Use Export CSV instead."));
+ }
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
   <TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>
+  {rows.length>0?<Button variant="secondary" type="button" onClick={copyVisibleRows}>Copy visible TSV</Button>:null}
   {clipboardMessage?<p role="status" className="text-xs text-muted-foreground">{clipboardMessage}</p>:null}
   {rows.length===0?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-3">No matching records.</p>:<>
    <div className="hidden md:block" tabIndex={0} aria-label="TPO grid keyboard copy"
@@ -146,10 +153,7 @@ export function TpoSpreadsheetGrid<Row>({
      if(event.target instanceof HTMLElement&&event.target.closest("input,textarea,select,[contenteditable=true]"))return;
      if(window.getSelection()?.toString())return;
      event.preventDefault();event.stopPropagation();
-     const copied=orderedRows.filter(row=>!selection?.selected.length||selection.selected.includes(rowKey(row)));
-     void navigator.clipboard.writeText(gridClipboardTsv(display,copied,true))
-       .then(()=>setClipboardMessage("Visible grid rows copied as TSV."))
-       .catch(()=>setClipboardMessage("Clipboard unavailable. Use Export CSV instead."));
+     copyVisibleRows();
     }}><Table scrollLabel="TPO spreadsheet columns" className="w-full text-left text-sm"><caption className="sr-only">Current page TPO spreadsheet records</caption>
     <thead className="bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-700)]"><tr>{selection?<th scope="col" className="sticky left-0 z-30 w-12 min-w-12 bg-[var(--lms-table-header)] px-2 py-2" style={{width:48,minWidth:48,maxWidth:48,paddingInline:8}}><Checkbox aria-label="Select all filtered students" checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)} aria-sort={sort?.key===col.key?(sort.direction==="asc"?"ascending":"descending"):undefined}>
      {col.sortKind?<Button variant="ghost" type="button" aria-label={"Sort "+col.label}
