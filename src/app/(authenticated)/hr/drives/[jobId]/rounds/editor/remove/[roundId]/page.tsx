@@ -27,12 +27,12 @@ export default async function HrRoundRemovalConfirm({params}:{
   </div>
   <div className="flex flex-wrap gap-3">
    <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Keep round</Link>
+    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Keep round</Link>
    <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"}>
     <input type="hidden" name="action" value="REMOVE"/>
     <input type="hidden" name="roundId" value={round.id}/>
     <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
-    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      Confirm remove
     </button>
    </form>
