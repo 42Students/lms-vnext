@@ -15,7 +15,7 @@ export function RecruiterRequestFeedback({storageKey}:{storageKey:string}){
    queueMicrotask(()=>setNotice(verified));
   }catch{/* Storage unavailable: no unverified success claim. */}
  },[storageKey]);
- return notice?<p role="status" className="rounded-[9px] border border-border bg-primary-subtle p-4 text-sm font-semibold text-body">
+ return notice?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle p-4 text-sm font-semibold text-body">
   {notice}
  </p>:null;
 }

@@ -648,3 +648,17 @@ Full page list and reference measurements: `docs/audit/ux/north-star-sweep-chat-
 | NORTH-STAR-HR-02 | UX parity / consistency | Remaining 22 route sources and reusable recruiter controls used numeric 9px corners and inconsistent `outline-primary` / `outline-primary-text` focus tokens, while nine fallback screens added 20px padding inside the authenticated white canvas. | Use shared measured `--lms-control-radius` and `--lms-primary` outline tokens, and remove only redundant outer loading/error padding; all business sections, state labels and forms retained. | `tests/unit/chat19-sidebar-hr-value-parity.test.ts` with source audit of all 22 routes + HR widgets |
 
 **Validation status:** source review and authored tests only. No runtime test suites, typecheck, lint, CI or live browser walkthrough were executed under the owner's directive. See `docs/audit/ux/north-star-sweep-chat-19.md` for the value-by-value matrix and handoff.
+
+
+## 2026-10-19 third-source-pass NORTH STAR findings
+
+| ID | Severity | Findings | Correction | Evidence |
+|---|---|---|---|---|
+| NORTH-STAR-SIDEBAR-03 | UX parity | Calendar, attendance, notification and other legacy SVG icons lacking an explicit active variant silently fell back to generic outline glyphs; mobile section headings used desktop 12px geometry instead of measured 9px; repeated logo selector and uncropped horizontal content existed. | Use shipped icon asset regardless of whether `activeIcon` is supplied; port 9px mobile section headings and 46px indentation; deduplicate logo rule, constrain horizontal scroll, expose pending badge in accessible link name. | `tests/unit/chat19-sidebar-hr-original-icons-and-secondary-surfaces.test.ts`, `docs/design/old-lms-shell.css` |
+| NORTH-STAR-HR-03 | UX parity | Recruiter secondary components under `src/components/placements` and non-alias change requests route retained numeric 9px corners and old focus ring values; outside-platform recording wrapped its entire page form in another white bordered card; invalid conversation filters added redundant outer padding. | Reuse `--lms-control-radius`, measured 2px focus ring and `--lms-primary` outline; remove just duplicate outer canvas/card styling, keep all form fields and submit behavior. | `tests/unit/chat19-sidebar-hr-original-icons-and-secondary-surfaces.test.ts` |
+
+No runtime tests, CI, browser rendering or TypeScript compilation performed by this lane.
+
+### NORTH-STAR-HR-04 — imported styling regressions (2026-10-19)
+
+After latest main fast-forward, HR recruiter notification bell, recruiter bell, read button, unsent draft alert, conversation-read control, decision-read button, request feedback and a conversation inbox link again contained numeric `rounded-[9px]` or `focus-visible:outline-primary` even though the earlier pass had normalized them. Replaced only these classes with the measured shared radius and primary focus token; the existing source guards `tests/unit/chat19-north-star-hr-sweep.test.ts` and `tests/unit/chat19-sidebar-hr-value-parity.test.ts` cover the recurring drift. Tests authored but not executed, as directed.
