@@ -1,4 +1,6 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useRouter} from "next/navigation";
@@ -58,10 +60,10 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
   {open?<div className="space-y-3 border-t border-border pt-3">
    <p className="text-sm font-semibold">{release?"Edit release":"New release"}</p>
    <label className="block text-sm font-semibold">Title
-    <input data-slot="input" className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px]" maxLength={200}
+    <Input className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px]" maxLength={200}
      required value={title} onChange={e=>setTitle(e.target.value)}/></label>
    <label className="block text-sm font-semibold">What ships in this release?
-    <textarea data-slot="textarea" className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px]"
+    <Textarea className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px]"
      maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></label>
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={pending||!title.trim()} onClick={()=>void save()}
