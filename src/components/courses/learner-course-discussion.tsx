@@ -424,7 +424,7 @@ export function LearnerCourseDiscussion({
           {moderate && canPost ? (
             <button type="button" disabled={pinningId!==null}
               onClick={()=>void togglePin(pinned.id)}
-              className="mt-3 min-h-11 rounded-md border border-primary px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
+              className="mt-3 min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
               {pinningId===pinned.id?"Saving…":"Unpin pinned message"}
             </button>
           ) : null}
@@ -565,7 +565,7 @@ export function LearnerCourseDiscussion({
                       {row.item.messageText}
                     </p>
                     {canPost ? <button type="button"
-                      className="mt-2 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline"
+                      className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-xs font-semibold text-primary-text underline"
                       onClick={() => {
                         setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
                         composerRef.current?.focus();
@@ -582,7 +582,7 @@ export function LearnerCourseDiscussion({
                             onClick={() =>
                               void togglePin(row.item.id)
                             }
-                            className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline disabled:opacity-50"
+                            className="inline-flex min-h-11 sm:min-h-9 items-center text-xs font-semibold text-primary-text hover:underline disabled:opacity-50"
                           >
                             {pinningId === row.item.id
                               ? "Saving…"
@@ -595,7 +595,7 @@ export function LearnerCourseDiscussion({
                           type="button"
                           disabled={deletingId === row.item.id}
                           onClick={() => setDeleteTarget(row.item.id)}
-                          className="inline-flex min-h-11 items-center text-xs font-semibold text-error hover:underline disabled:opacity-50"
+                          className="inline-flex min-h-11 sm:min-h-9 items-center text-xs font-semibold text-error hover:underline disabled:opacity-50"
                         >
                           {deletingId === row.item.id ? "Deleting…" : "Delete"}
                         </button> : null}
@@ -638,7 +638,7 @@ export function LearnerCourseDiscussion({
           </p>
           {replyTo ? <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-surface-subtle p-3">
             <p className="min-w-0 break-words text-xs text-body">Replying to: {replyTo.text}</p>
-            <button type="button" className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline"
+            <button type="button" className="inline-flex min-h-11 sm:min-h-9 items-center text-xs font-semibold text-primary-text underline"
               onClick={() => setReplyTo(null)}>Cancel reply</button>
           </div> : null}
           <label className="text-xs font-semibold text-body" htmlFor="course-discussion-message">
@@ -662,7 +662,7 @@ export function LearnerCourseDiscussion({
             rows={3}
             maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
-            className="mt-1.5 min-h-11 w-full resize-y rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+            className="mt-1.5 min-h-11 sm:min-h-9 w-full resize-y rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-base text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
           />
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs text-muted-foreground">
@@ -670,7 +670,7 @@ export function LearnerCourseDiscussion({
               <span className="hidden sm:inline">Enter to send · Shift+Enter for a new line</span>
               {" · "}{draft.length}/{LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             </span>
-            <Button type="submit" className="min-h-11 w-full sm:w-auto" disabled={!learnerDiscussionDraftValid(draft) || posting}>
+            <Button type="submit" className="min-h-11 sm:min-h-9 w-full sm:w-auto" disabled={!learnerDiscussionDraftValid(draft) || posting}>
               {posting ? "Sending…" : "Send"}
             </Button>
           </div>
