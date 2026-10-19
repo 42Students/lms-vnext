@@ -1,7 +1,6 @@
 import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
-import { Disclosure } from "@/components/ui/disclosure";
 import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
 import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-model";
 import {mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
