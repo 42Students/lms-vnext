@@ -37,7 +37,7 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
   }
   return <div className="space-y-1">
     <Button variant="secondary" type="button" disabled={pending||candidates.length===0} onClick={()=>setOpen(true)}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
       Reassign
     </Button>
     <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Reassign "+facultyName} dismissible={!pending}>
@@ -45,18 +45,18 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
         <p className="text-sm text-body">Replace {facultyName}; existing teaching history will be retained.</p>
         <label className="grid gap-2 text-sm font-semibold text-body">Replacement Faculty
           <Select value={replacementMembershipId} onChange={e=>setReplacementMembershipId(e.target.value)}
-            className="min-h-[var(--lms-control-height)] min-w-0 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-[var(--lms-control-height)] min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="">Choose Faculty</option>
             {candidates.map(person=><option key={person.id} value={person.id}>{person.label}</option>)}
           </Select>
         </label>
-        {replacementMembershipId?<p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-muted p-3 text-sm">{teachingReassignPrompt(facultyName,candidates.find(person=>person.id===replacementMembershipId)?.label??"Faculty",role)}</p>:null}
+        {replacementMembershipId?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm">{teachingReassignPrompt(facultyName,candidates.find(person=>person.id===replacementMembershipId)?.label??"Faculty",role)}</p>:null}
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
         <div className="flex flex-wrap justify-end gap-2">
           <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Cancel</Button>
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Cancel</Button>
           <Button variant="primary" type="button" disabled={pending||!replacementMembershipId} onClick={submit}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
             {pending?"Reassigning…":"Confirm replacement"}
           </Button>
         </div>
