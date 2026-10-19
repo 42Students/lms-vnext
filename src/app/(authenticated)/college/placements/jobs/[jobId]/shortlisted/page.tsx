@@ -49,7 +49,7 @@ export default async function CollegeDriveShortlistedPage({
     <p role="status" className="text-sm">{data.total} shortlisted</p>
     {query.q&&data.total===0?<Link href={collegeShortlistedHref(jobId,{q:"",page:1})}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>:null}
-    <a className="text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center" href={
+    <a className="text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link" href={
       "/api/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications/export"+
       (driveApplicationsHref(jobId,query,true).split("/export")[1]??"")
     }>Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
