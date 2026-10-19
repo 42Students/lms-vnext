@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import {useState} from "react";
 import Link from "next/link";
@@ -27,10 +28,10 @@ export function TrackerIssueLogsPanel({publicId}:{publicId:string}){
   return <section className="space-y-3 border-b border-border pb-5">
     <h2 className="text-lg font-semibold">Logs around this report</h2>
     <p className="text-sm text-body">Find warnings and errors from the ten minutes before and after the report.</p>
-    <button type="button" disabled={busy} onClick={()=>void load()}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold disabled:opacity-50">
+    <Button variant="secondary" type="button" disabled={busy} onClick={()=>void load()}
+     >
       {busy?"Loading nearby logs…":"Load warnings and errors from that moment"}
-    </button>
+    </Button>
     {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
     {loaded&&!logs.length?<p className="text-sm text-body">No matching warnings or errors were found.</p>:null}
     {logs.length?<ul className="divide-y divide-border border-y border-border">{logs.map(entry=>
