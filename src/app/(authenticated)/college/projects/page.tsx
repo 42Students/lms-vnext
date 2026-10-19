@@ -32,7 +32,7 @@ export default async function CollegeProjectsPage({
   if (!collegeId) {
     return <div className="space-y-4"><PageHeader title="Workspaces"
      description="Select a college to continue."/>
-     <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+     <p role="alert" className="rounded-[8px] border border-border bg-surface p-4 text-sm text-body">
       Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page.
      </p>
      <Link href="/dashboard" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to dashboard</Link>

@@ -141,7 +141,7 @@ export default async function CollegeOverviewPage() {
             { label: "Held so far", value: attendance.today.held },
             { label: "With attendance taken", value: attendance.today.marked },
           ].map(item => <div key={item.label}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+            className="rounded-[8px] border border-border bg-surface p-4">
             <p className="text-sm text-muted-foreground">{item.label}</p>
             <p className="mt-2 text-2xl font-semibold tabular-nums text-primary-text">
               {item.value.toLocaleString("en-IN")}

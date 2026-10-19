@@ -28,7 +28,7 @@ export default async function CollegeBrandingPage() {
         title="Branding"
         description="Logo, colours and support details shown on your college's sign-in page."
       />
-      <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-sm text-body">
+      <p role="status" className="border-b border-border pb-3 text-sm text-body">
         College contact details are managed in College profile. Sign-in branding, domains and logo changes are controlled by a Super Admin.
       </p>
       <CollegeLogoUploader collegeId={membership.collegeId} currentUrl={branding.uploadedLogoUrl} canEdit={canEdit}/>

@@ -24,7 +24,7 @@ export type PlacementAcademicEvidenceValue = {
 };
 
 const inputClass =
-  "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] disabled:bg-muted disabled:text-muted-foreground";
+  "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:bg-muted disabled:text-muted-foreground sm:min-h-9";
 
 function numberOrNull(value: string) {
   if (!value.trim()) return null;

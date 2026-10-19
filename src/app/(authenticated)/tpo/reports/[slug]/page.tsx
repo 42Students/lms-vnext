@@ -21,13 +21,13 @@ export default async function UnknownTpoReportPage({
         title="Unknown report"
         description="This report is not available. Check the address or return to the report list."
       />
-      <section role="alert" className="rounded-xl border border-border bg-surface p-6">
+      <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
         <h2 className="text-lg font-semibold text-foreground">Unknown report</h2>
         <p className="mt-2 text-sm text-body">
           We could not find that report. Your existing placement data has not changed.
         </p>
         <Link href="/tpo/reports"
-          className="mt-4 inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">
+          className="mt-4 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
           Back to reports
         </Link>
       </section>

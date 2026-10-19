@@ -69,7 +69,7 @@ export function FacultyCourseHomeSignals({
           </Link>
         </section>
       ) : null}
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2">
@@ -105,7 +105,7 @@ export function FacultyCourseHomeSignals({
           </div>
           <Link
             href={reviewHref}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm text-on-primary hover:bg-primary-hover font-[650]"
           >
             {firstPending
               ? "Review work"
@@ -284,7 +284,7 @@ export function FacultyCourseHomeSignals({
             );
           })}
         </div>
-      </section> : <section aria-label="Performance" className="rounded-xl border border-border bg-surface p-5">
+      </section> : <section aria-label="Performance" className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Performance</h2>
         <p className="mt-2 text-sm text-body">Performance metrics are unavailable until assignment signals can be refreshed.</p>
       </section>}

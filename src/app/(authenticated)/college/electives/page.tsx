@@ -21,7 +21,7 @@ export default async function CollegeElectivesPage({
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
   const moduleAccess=await resolveOptionalModuleAccess(context);
-  if(!moduleAccess.electives.enabled)return <main role="status" className="space-y-3 rounded-xl border border-border bg-surface p-6">
+  if(!moduleAccess.electives.enabled)return <main role="status" className="space-y-3 rounded-[8px] border border-border bg-surface p-6">
     <h1 className="text-xl font-semibold">Electives is turned off for this college</h1>
     <p className="text-sm text-body">Your college administrator can ask 42Students to switch Electives back on.
       Existing elective records are kept; this page cannot create or change electives while the module is off.</p>
