@@ -8,7 +8,7 @@ export default function LearnerProjectDetailError({
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-xl border border-border bg-surface px-5 py-10 text-center">
+    <section role="alert" className="px-3 py-10 text-center">
       <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">We couldn&apos;t load this project&apos;s activity</h1>
       <p className="mx-auto mt-2 max-w-lg text-sm text-body">
         Please check your connection, then try again. Your project activity has not been changed.

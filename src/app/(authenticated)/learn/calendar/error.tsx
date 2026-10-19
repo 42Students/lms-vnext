@@ -9,7 +9,7 @@ export default function LearnerCalendarError({
   reset: () => void;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
+    <section className="px-3 py-10 text-center">
       <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
         Unable to load class schedule. Please try again.
       </h1>

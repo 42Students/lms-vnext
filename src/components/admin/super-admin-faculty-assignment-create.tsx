@@ -106,7 +106,7 @@ export function SuperAdminFacultyAssignmentCreate({
     </p>:null}
     {error?<p role="alert" className="sm:col-span-2 text-sm text-error">{error}</p>:null}
     <div className="flex flex-wrap gap-2 sm:col-span-2">
-      <button type="submit" disabled={pending} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+      <button type="submit" disabled={pending} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary sm:min-h-9 disabled:opacity-50">
        {pending?"Assigning…":"Assign faculty"}
       </button>
       <button type="button" disabled={pending} onClick={()=>setOpen(false)}

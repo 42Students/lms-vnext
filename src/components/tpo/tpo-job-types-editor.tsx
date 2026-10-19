@@ -1,4 +1,5 @@
 "use client";
+import {Radio} from "@/components/ui/radio";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Input} from "@/components/ui/input";
@@ -46,8 +47,8 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
      maxLength={40} minLength={2} value={label} disabled={busy} onChange={event=>setLabel(event.target.value)}/>
    </label>
    <fieldset className="space-x-3 text-sm"><legend>Does an offer of this type count as placed?</legend>
-    <label><input name="placed" type="radio" checked={countsAsPlaced===true} onChange={()=>setCountsAsPlaced(true)}/> Yes</label>
-    <label><input name="placed" type="radio" checked={countsAsPlaced===false} onChange={()=>setCountsAsPlaced(false)}/> No</label>
+    <label><Radio name="placed" checked={countsAsPlaced===true} onChange={()=>setCountsAsPlaced(true)}/> Yes</label>
+    <label><Radio name="placed" checked={countsAsPlaced===false} onChange={()=>setCountsAsPlaced(false)}/> No</label>
    </fieldset>
    <Button type="submit" disabled={label.trim().length<2||countsAsPlaced===null||atLimit||busy} className="min-h-11 sm:min-h-9">Add job type</Button>
   </form>
@@ -69,7 +70,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
   </div>
   <p role="status" className="text-xs text-muted-foreground">{visible.length} of {types.length} custom job types</p>
   {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{tpoJobTypesEmptyMessage(types.length,search,status)}</p>:
-   <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius,12px)] border border-border p-3">
+   <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border py-3">
     <div className="min-w-0 space-y-2"><span className="block break-words text-sm"><strong>{item.label}</strong> · {item.active?"Active":"Inactive"}</span>
      <TpoCustomJobTypeRename id={item.id} label={item.label} version={item.updatedAt}/>
      <TpoCustomJobTypePlaced id={item.id} label={item.label} version={item.updatedAt} value={item.countsAsPlaced}/>

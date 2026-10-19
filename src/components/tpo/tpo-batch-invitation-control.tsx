@@ -111,21 +111,21 @@ export function TpoBatchInvitationControl(props: Props) {
   if (props.invitedAt) {
     const deadlinePassed = props.deadlinePassed;
     const sameDeadline = date === (props.deadline?.slice(0,10) ?? "");
-    return <section aria-label="Registration deadline" className="space-y-3 rounded-[var(--radius)] border border-border bg-surface p-4">
+    return <section aria-label="Registration deadline" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <h2 className="font-semibold">{deadlinePassed ? "Registration closed" : "Registration is open"}</h2>
       <label htmlFor="batch-move-date" className="block text-sm">Register by</label>
       <input id="batch-move-date" aria-label="Registration deadline" type="date"
         value={date} min={props.minDate} onChange={event => setDate(event.target.value)}
-        className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3"/>
+        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
       <div className="flex flex-wrap gap-2">
         <button type="button" disabled={busy || !date || date < props.minDate || sameDeadline}
           onClick={() => void saveDeadline(false)}
-          className="min-h-11 rounded-[var(--radius)] border border-border px-4 disabled:opacity-50">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 disabled:opacity-50">
           {busy ? "Saving…" : deadlinePassed ? TPO_INVITATION_COPY.reopenAndTell : TPO_INVITATION_COPY.move}
         </button>
         <button type="button" disabled={busy || !props.deadline}
           onClick={() => setConfirmClear(true)}
-          className="min-h-9 rounded-[var(--radius)] border border-border px-4 disabled:opacity-50">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 disabled:opacity-50">
           {TPO_INVITATION_COPY.clear}
         </button>
       </div>
@@ -139,7 +139,7 @@ export function TpoBatchInvitationControl(props: Props) {
         </label>
         <button type="button" disabled={busy||!remindReview}
           onClick={()=>void remind()}
-          className="min-h-9 rounded-[var(--radius)] border border-border px-4 text-sm disabled:opacity-50">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm disabled:opacity-50">
           {busy?"Sending…":"Send reminder"}
         </button>
       </fieldset>:null}
@@ -153,14 +153,14 @@ export function TpoBatchInvitationControl(props: Props) {
        onConfirm={()=>{void saveDeadline(true).then(saved=>{if(saved)setConfirmClear(false);});}}/>
     </section>;
   }
-  return <section className="space-y-3 rounded-[var(--radius)] border border-border bg-surface p-4" aria-label="Invite batch">
+  return <section className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4" aria-label="Invite batch">
     <h2 className="font-semibold">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</h2>
     <label className="block text-sm" htmlFor="batch-register-by">{TPO_INVITATION_COPY.dateLabel}</label>
     <input id="batch-register-by" aria-label="Registration deadline" type="date" value={date} min={props.minDate}
       onChange={event => setDate(event.target.value)}
-      className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3" />
+      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
     <button type="button" onClick={() => void invite()}
-      disabled={busy || !ready} className="min-h-9 rounded-[var(--radius)] border border-border px-4 disabled:opacity-50">
+      disabled={busy || !ready} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 disabled:opacity-50">
       {busy ? "Inviting…" : TPO_INVITATION_COPY.invitation + " " + props.invitable}
     </button>
     {props.eligible === 0 ? <p className="text-sm">Nobody in this batch is eligible yet. Decide who is in placements first.</p> : null}

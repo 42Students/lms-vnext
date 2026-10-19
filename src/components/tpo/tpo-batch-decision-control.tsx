@@ -31,21 +31,21 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
   }catch(e){setError(e instanceof Error?e.message:"Unable to confirm the change.");}
   finally{setPending(false);}
  }
- return <section className="min-w-0 space-y-3 rounded-[var(--radius)] border border-border bg-surface p-4" aria-label="Batch eligibility decision">
+ return <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4" aria-label="Batch eligibility decision">
   <h2 className="font-semibold">Who is in placements?</h2>
   <p className="text-sm text-muted-foreground">This sets the default for this whole cohort. More specific class and student decisions override it.</p>
   <label className="block text-sm">Batch default decision
-   <select className="mt-1 min-h-9 w-full rounded-[var(--radius)] border border-border bg-surface px-3" value={decision} disabled={pending}
+   <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" value={decision} disabled={pending}
      onChange={e=>setDecision(e.target.value as Decision)}>
     <option value="NOT_DECIDED">Not decided</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
    </select>
   </label>
   {decision==="INELIGIBLE"?<label className="block text-sm">Reason required
-   <textarea className="mt-1 min-h-20 w-full rounded-[var(--radius)] border border-border bg-surface p-3" maxLength={200} value={reason}
+   <textarea className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" maxLength={200} value={reason}
     onChange={e=>setReason(e.target.value)} disabled={pending}/>
   </label>:null}
   <button type="button" onClick={()=>void submit()} disabled={pending||!valid}
-   className="min-h-9 rounded-[var(--radius)] bg-primary px-4 text-on-primary disabled:opacity-50">{pending?"Saving…":"Review and save batch decision"}</button>
+   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary disabled:opacity-50">{pending?"Saving…":"Review and save batch decision"}</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm">{message}</p>:null}
   {actionId?<TpoBatchUndoControl batchId={batchId} actionId={actionId}/>:null}

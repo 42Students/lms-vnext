@@ -210,7 +210,7 @@ export function LearnerVideoPlayer({
     <label className="flex flex-wrap items-center gap-2 text-xs font-medium text-body">
       Playback speed
       <select aria-label="Playback speed" defaultValue="1"
-        className="min-h-10 rounded-md border border-border bg-surface px-2"
+        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
         onChange={event=>{
           const rate=Number(event.target.value);
           playbackRateRef.current=rate;

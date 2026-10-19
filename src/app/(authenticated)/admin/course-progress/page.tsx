@@ -35,7 +35,7 @@ export default async function SuperAdminCourseProgressPage({
   return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress"
       description="Read-only recorded learner content activity by offering. This is not a completion rate, attendance summary, or count of eligible learners." />
-    <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
+    <p className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">
       Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
     </p>
     <a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
@@ -54,7 +54,7 @@ export default async function SuperAdminCourseProgressPage({
       <Button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</Button>
     </form>
     {filtersResult.status==="rejected"?<p role="status"
-      className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+      className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
       Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
     </p>:null}
     <Link className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text" href="/admin/course-progress">Clear filters</Link>
@@ -62,8 +62,8 @@ export default async function SuperAdminCourseProgressPage({
       {data.total} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
       {" "}{summary.completedContentRecords} completed rows. Learner counts are per-offering, not additive.
     </p>
-    {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
-      {data.items.map(item => <article key={item.offeringId} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    {data.items.length ? <div className="divide-y divide-border border-y border-border">
+      {data.items.map(item => <article key={item.offeringId} className="min-w-0 py-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h2 className="m-0 break-words font-semibold text-foreground">{item.courseName} ({item.courseCode})</h2>
           <StatusBadge tone={item.offeringStatus === "ACTIVE" ? "success" : "neutral"}>{item.offeringStatus}</StatusBadge>
@@ -75,11 +75,11 @@ export default async function SuperAdminCourseProgressPage({
           <div className="col-span-2"><dt className="text-xs text-muted-foreground">Learners with recorded activity</dt><dd className="text-lg font-semibold tabular-nums">{item.learnersWithRecords}</dd></div>
         </dl>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
           Open offering →
         </Link>
         <Link href={`/admin/course-progress/students?offeringId=${encodeURIComponent(item.offeringId)}`}
-         className="ml-3 mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+         className="ml-3 mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
           View student progress →
         </Link>
       </article>)}
@@ -88,9 +88,9 @@ export default async function SuperAdminCourseProgressPage({
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page - 1 })}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Previous</Link> : null}
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page + 1 })}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Next</Link> : null}
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Next</Link> : null}
       </div>
     </nav>
     <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>

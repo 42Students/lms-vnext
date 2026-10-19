@@ -65,7 +65,7 @@ export function RecruiterNotificationBell(){
   <button ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
     aria-expanded={isOpen} aria-haspopup="dialog"
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
-    className="relative inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    className="relative inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     <span aria-hidden="true">🔔</span>
     {data?.unread&&data.unread>0?<span aria-hidden="true"
       className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
@@ -86,7 +86,7 @@ export function RecruiterNotificationBell(){
      <button type="button" key={item.collegeId} onClick={()=>{
        requestGate.current.invalidate();setData(null);setError("");setCollegeId(item.collegeId);
       }}
-      className="block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border p-3 text-left text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-left text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       {item.collegeName}</button>)}</div>:null}
    {data?.status==="READY"&&data.rows?.length===0?
      <p role="status" className="mt-4 text-sm text-muted-foreground">No notifications yet</p>:null}

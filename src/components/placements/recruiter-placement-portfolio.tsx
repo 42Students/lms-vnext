@@ -130,11 +130,11 @@ export function RecruiterPlacementPortfolio({
           <nav aria-label={"Actions for "+item.job.title}
             className="mt-4 flex flex-wrap gap-3 border-t border-border pt-3">
             <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               {item.job.status==="CLOSED"?"Hire again":"Hire again with changes"}
             </Link>
             <Link href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"/messages"}
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Answer
             </Link>
           </nav>

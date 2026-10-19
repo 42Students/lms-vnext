@@ -422,7 +422,7 @@ export function CreateLessonForm({
   return (
     <form
       onSubmit={submit}
-      className="border-b border-border pb-4"
+      className="rounded-xl border border-dashed border-border bg-surface p-4"
     >
       <p className="m-0 text-sm font-semibold text-foreground">
         Add Lesson

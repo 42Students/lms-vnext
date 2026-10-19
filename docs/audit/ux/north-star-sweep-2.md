@@ -74,3 +74,106 @@ Public and people: `src/components/placements/tpo-recruiter-grant-controls.tsx`,
 **Main integration:** latest `main` at `a5d88d7cdfce161100ec7233f1d009e8e5b199d4` was merged into `chatgpt/chat-2-b` in commit `adf89b77`, keeping the lane ledger, required shared `Button` imports and round-preview radius. Only the lane branch was updated.
 
 **JSX integrity check:** every changed file was re-read from the pushed branch. Shared `<Select>` and `<Button>` opening/closing counts match; no truncated `</Select`, `</Button` or `</Textarea` closing tags, no obsolete `</select>` after component conversion, and no missing shared-component imports were found in the inspected files. Self-closing `Input`, `Textarea` and `Checkbox` fields stay self-closing. No application code, TypeScript compiler, tests, screenshots or CI were executed; integration/visual validation remains for the owner.
+
+## Further TPO settings, team and announcements sweep (2026-10-19)
+
+Fast-forwarded lane branch from `323ed01f` to then-current `main` `f7dd3e81786adf00538daebf63a075046d159b4c` before modifying source. Branch: `chatgpt/chat-2-b`; all ensuing commits prefixed `[chat-2]`.
+
+Completed source-file work:
+- [x] `src/components/tpo/tpo-team-assign-unowned.tsx` — shared `Select` and `Button`, control tokens
+- [x] `src/components/tpo/tpo-team-follow-controls.tsx` — shared secondary buttons
+- [x] `src/components/tpo/tpo-team-rename.tsx` — shared form fields and buttons
+- [x] `src/components/tpo/tpo-team-decision-toggle.tsx` — shared secondary action
+- [x] `src/components/tpo/tpo-team-search.tsx` — shared `Input`
+- [x] `src/components/tpo/tpo-my-notification-preferences-editor.tsx` — shared `Checkbox`
+- [x] `src/components/tpo/tpo-optional-emails-editor.tsx` — shared `Checkbox`
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx` — shared inputs, textarea and buttons; replace redundant outer/row cards with hairline sections
+- [x] `src/components/tpo/tpo-team-message-actions.tsx` — shared textarea and action buttons
+- [x] `src/components/tpo/tpo-team-thread-details.tsx` — shared detail-toggle button and canvas radius
+- [x] `src/components/tpo/tpo-notice-composer-dialog.tsx` — shared primary button
+- [x] `src/components/tpo/tpo-notice-schedule-controls.tsx` — shared accessible native-backed `Radio` controls
+- [x] `src/components/tpo/tpo-notice-read-progress.tsx` — shared secondary buttons and tokenized radius
+- [x] `src/components/tpo/tpo-notice-acknowledge.tsx` — shared secondary button
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx` — modal/control radii and overlay styling aligned
+- [x] `src/components/tpo/tpo-notice-undo-toast.tsx` — shared undo submit button and canonical radii
+- [x] `src/components/tpo/tpo-bell-panel.tsx` — remove literal hex colors, style the compact bell and notification row using shared tokens
+- [x] `src/components/tpo/tpo-notification-refresh.tsx` — shared retry button and radius token
+
+**Source verification:** all 18 changed TSX files re-read from the lane branch after their commits. Static inspection confirmed that every newly authored `</Select>`, `</Button>`, and `</Textarea>` closing tag is complete, `<Button>`/`<Select>` counts balance, and the referenced shared-control imports exist. Self-closing `Input`, `Checkbox`, `Radio`, and `Textarea` keep JSX self-closing syntax. **No app runtime, compiler, tests, screenshot verification or CI executed**, per lane instructions; final semantic/visual parity remains an owner integration task.
+
+## Further round, recruiter and reports component sweep (2026-10-19)
+- [x] `src/components/placements/tpo-round-check-in.tsx` — shared secondary attendance actions
+- [x] `src/components/placements/tpo-outside-participants-editor.tsx` — three fully closed shared `Select` controls, shared primary button, flat divider rows
+- [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx` — shared selector/textarea/buttons with canonical radii; preserve chooser focus and dialog behavior
+- [x] `src/components/placements/tpo-report-saved-filters.tsx` — shared input/selector/buttons; canonical report-section radius
+- [x] `src/components/placements/tpo-report-presentation.tsx` — shared secondary presentation-toggle button
+- [x] `src/components/placements/tpo-bulk-drive-reminder.tsx` — shared secondary bulk reminder and selection buttons preserving native form event semantics
+
+This continuation changes **24 production TSX files** (24 lane commits) plus the source-only tracker. Every changed source file was re-read from the branch and inspected for complete JSX shared-component closers, balanced `<Button>` / `</Button>` and `<Select>` / `</Select>`, and necessary imports; no truncated `</Select` was detected. This check does **not** replace TSX parser/typecheck or screenshot verification. **No CI, runtime, tests, TypeScript compilation or visual screenshots were run.**
+
+## Continued North Star source sweep — additional TPO files (2026-10-19)
+
+**Latest main merge:** `63eb159fa20a99b37eeaefd17729434e0fdedcfe` has parents `352dc658` (chat-2) and `a98732e8` (then-current main). Main won 8 overlapping TPO files to preserve concurrent fixes, while 10 non-overlapping lane files were retained. The overlapping TPO style-only gaps addressed below were re-reviewed from that merged source before editing.
+
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`: shared select, date input, textarea and old-LMS buttons; primary action corrected to white text
+- [x] `src/components/tpo/tpo-inbox-search.tsx`: shared search input retains slash-shortcut ref and debounced navigation
+- [x] `src/components/placements/tpo-report-invalid-filters.tsx`: one canvas and old-LMS 30px heading token
+- [x] `src/components/placements/tpo-round-check-in.tsx`: shared secondary attendance actions
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx`: shared buttons; flat divider-separated ask list
+- [x] `src/components/tpo/tpo-team-message-actions.tsx`: shared primary, secondary/ghost and danger actions
+- [x] `src/components/tpo/tpo-team-thread-details.tsx`: canonical canvas radius
+- [x] `src/components/tpo/tpo-notice-undo-toast.tsx`: canonical canvas radius
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx`: tokenized dialog radius and shadow
+- [x] `src/components/placements/tpo-outside-participants-editor.tsx`: shared three `Select` fields and primary action; flat participant rows
+- [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`: shared buttons with legacy primary Save styling
+- [x] `src/components/tpo/tpo-custom-job-type-rename.tsx`: shared input and button
+- [x] `src/components/tpo/tpo-builtin-job-types-editor.tsx`: shared checkbox
+- [x] `src/components/tpo/tpo-prep-readiness-editor.tsx`: shared checkbox and canonical course border radius
+- [x] `src/components/tpo/tpo-after-college-editor.tsx`: shared selector and buttons, remove duplicate responsive height utilities
+- [x] `src/components/tpo/tpo-custom-job-type-placed.tsx`: shared secondary choice buttons
+- [x] `src/components/tpo/tpo-job-types-editor.tsx`: shared radio controls and hairline-separated list
+- [x] `src/components/tpo/tpo-after-college-bulk-editor.tsx`: shared checkbox, select and buttons; canonical radius
+
+**JSX source verification:** all 18 TSX files re-read after push. Complete `</Select>`, `</Button>`, `</Textarea>` syntax checked; all `<Select>` and `<Button>` counts match closing counts and every referenced shared-control import is present. Old native closing tags not left after replacement. No application, tests, typecheck, CI, or screenshots run per lane instruction; owner must still perform complete compile and screenshot parity verification.
+
+## TPO settings and people page canvas continuation (2026-10-19)
+
+- Merged latest main `10ac677d5ab403f3c037d559c3321ac55c6cffa6` into lane branch, merge commit `4a9d92488efe7385a2c32d3c77f8a2a9eab833e2`. Retained 24 nonoverlapping lane files, kept main versions of 4 overlapping files pending independent review.
+- [x] `/tpo/settings/notifications`: link radius token and flat KPI metric rows
+- [x] `/tpo/settings/notices`: communication warning radius token
+- [x] `/tpo/settings/branding`: remove nested branding field card, radius token for logo and placeholders
+- [x] `/tpo/settings/season`: seasons shown as hairline sections rather than secondary cards
+- [x] `/tpo/settings/see`: metrics and permission fields flattened into the single canvas
+- [x] `/tpo/settings/rules`: border-separated policy details, canonical action radii
+- [x] `/tpo/settings/trusted`: canonical controls and unobtrusive status section
+- [x] `/tpo/settings/team`: canonical navigation control radius
+- [x] `/tpo/settings/public-page`: metric keys displayed as flat divided sections
+- [x] `/tpo/team`: canonical navigation, filters and conversation link radii
+- [x] `/tpo/team/[threadId]`: canonical chat bubble/canvas radii and whitespace
+- [x] `/tpo/team/everyone`: flat conversation list and inherited page canvas
+- [x] `/tpo/profile`: remove redundant outer profile card
+- [x] `/tpo/follow-ups`: flatten filter/empty-result containers
+- [x] `/tpo/messages`: flat KPI metrics and conversation filter section
+- [x] `/tpo/announcements`: shared `Checkbox` for pinned/notification targeting choices, white-on-teal selected tab, outlined secondary actions, hairline announcement rows
+- [x] `/tpo/notifications`: flat status/empty-state treatment
+
+**Validation:** 17 production TSX pages committed and individually re-read from `chatgpt/chat-2-b`. JSX closing-tag source checks found no truncated `</Select>`, `</Button>` or `</Textarea>`; original actions, routes, field names and messages retained. No runtime, compiler, tests, CI or screenshots were performed. Full React/TSX compile and visual acceptance remain the owner's integration step.
+
+## TPO reporting page continuation — North Star source review (2026-10-19)
+
+The reporting routes below now inherit the white page canvas instead of wrapping metrics, controls and grids in nested white cards. Existing page copy, filter names, URLs, query semantics and export behavior are preserved. Shared `Input`, `Select` and `Button` components replace native visible controls where applicable; hidden native inputs remain untouched.
+
+- [x] `/tpo/reports`: report gallery navigation, search and group controls, border-divided report cards
+- [x] `/tpo/reports/accreditation`: batch selector and scoped export, hairline-separated panels
+- [x] `/tpo/reports/after-college`: shared selectors/Filter action, flat filter toolbar
+- [x] `/tpo/reports/by-company`: shared search/select/Apply controls; dividers for KPI and drill-down
+- [x] `/tpo/reports/branch-season`: shared season selector and outlined button, flat summary statistics
+- [x] `/tpo/reports/ctc`: flat metric rows
+- [x] `/tpo/reports/failure-reasons`: flat failure metrics and source-scope notes
+- [x] `/tpo/reports/intelligence`: remove redundant nested summary cards
+- [x] `/tpo/reports/joining-status`: flat summary metrics
+- [x] `/tpo/reports/offers-acceptance`: flat status breakdown
+- [x] `/tpo/reports/leads`: shared company filter and action; divided recruiter engagement summaries
+- [x] `/tpo/reports/placement-summary`: shared company/work-mode/pay-category filters and Apply action; flat placement statistics
+
+**Source inspection only:** every TSX closing tag in the changed sections was re-read after push, especially full `</Select>` and `</Button>`; the next final source scan checks imports and pair counts across this full continuation. No application execution, CI, lint, TypeScript compiler, unit tests or screenshot checks. Owner verification is still needed.

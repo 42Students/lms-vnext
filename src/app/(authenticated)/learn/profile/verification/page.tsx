@@ -20,7 +20,7 @@ export default async function LearnerVerificationPage() {
     SENT_BACK: "Needs a change", VERIFIED: "Verified", UPDATE_PENDING: "Verified · update waiting",
   } as const;
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/profile" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Profile</Link>
+    <Link href="/learn/profile" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Profile</Link>
     <LearnerVerificationLiveRefresh />
     <header><h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Profile verification</h1>
       <p className="mt-2 text-sm text-body">Your own Education and Identity review status. A saved detail does not mean it is verified.</p>
@@ -59,7 +59,7 @@ export default async function LearnerVerificationPage() {
         {row.status === "SENT_BACK" ? <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
           Reason: {row.reason ?? "Contact the placement cell for the review reason."}
         </p> : null}
-        {row.missing.length>0?<section className="mt-4 rounded-lg border border-border bg-surface-subtle p-3"
+        {row.missing.length>0?<section className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3"
           aria-label={"What is still missing for "+item.heading}>
           <h3 className="text-sm font-semibold text-foreground">What is still missing</h3>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-body">
@@ -74,7 +74,7 @@ export default async function LearnerVerificationPage() {
           key={item.section+":"+row.version} section={item.section}
           expectedVersion={row.version}/> : null}
         {row.canResubmit ? <LearnerVerificationSubmit key={item.section+":"+row.version} section={item.section as "EDUCATION"|"IDENTITY"} expectedVersion={row.version} status={row.status} /> : null}
-        <Link href={item.edit} className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Review {item.heading.toLowerCase()} details</Link>
+        <Link href={item.edit} className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review {item.heading.toLowerCase()} details</Link>
       </section>;
     })}</div>
   </div>;

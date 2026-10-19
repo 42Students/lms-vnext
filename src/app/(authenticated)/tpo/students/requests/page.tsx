@@ -118,7 +118,7 @@ export default async function TpoStudentRequestsPage({
         />
         <section
           role="alert"
-          className="rounded-[12px] border border-border bg-surface p-6"
+          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6"
         >
           <h2 className="text-lg font-semibold text-foreground">
             Invalid request filters
@@ -174,7 +174,7 @@ export default async function TpoStudentRequestsPage({
         actions={
           <Link
             href="/tpo/students"
-            className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Students intelligence
           </Link>
@@ -187,14 +187,14 @@ export default async function TpoStudentRequestsPage({
       >
         <Link
           href="/tpo/students"
-          className="rounded-[var(--radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted"
+          className="rounded-[var(--lms-control-radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted"
         >
           Students roster
         </Link>
         <Link
           href="/tpo/students/requests"
           aria-current="page"
-          className="rounded-[var(--radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link"
+          className="rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link"
         >
           Requests
         </Link>
@@ -205,7 +205,7 @@ export default async function TpoStudentRequestsPage({
           href={requestsHref(tpoStudentRequestShortcutFilters(query.search,query.pageSize))}
           aria-current={!query.status ? "page" : undefined}
           className={
-            "rounded-[12px] border p-4 hover:border-primary " +
+            "rounded-[var(--lms-canvas-radius)] border p-4 hover:border-primary " +
             (!query.status
               ? "border-primary bg-primary-subtle"
               : "border-border bg-surface")
@@ -225,7 +225,7 @@ export default async function TpoStudentRequestsPage({
               query.status === status ? "page" : undefined
             }
             className={
-              "rounded-[12px] border p-4 hover:border-primary " +
+              "rounded-[var(--lms-canvas-radius)] border p-4 hover:border-primary " +
               (query.status === status
                 ? "border-primary bg-primary-subtle"
                 : "border-border bg-surface")
@@ -244,14 +244,14 @@ export default async function TpoStudentRequestsPage({
       <form
         action="/tpo/students/requests"
         method="get"
-        className="grid gap-3 rounded-[12px] border border-border bg-surface p-4 sm:grid-cols-3"
+        className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:grid-cols-3"
       >
         <label className="flex flex-col gap-1 text-sm font-semibold text-body">
           Status
           <select
             name="status"
             defaultValue={query.status ?? ""}
-            className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
           >
             <option value="">All statuses</option>
             {STATUSES.map((status) => (
@@ -270,7 +270,7 @@ export default async function TpoStudentRequestsPage({
             maxLength={150}
             defaultValue={query.search ?? ""}
             placeholder="Student, roll, job or company"
-            className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
           />
         </label>
 
@@ -279,7 +279,7 @@ export default async function TpoStudentRequestsPage({
           <select
             name="pageSize"
             defaultValue={String(query.pageSize)}
-            className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
           >
             <option value="25">25 requests</option>
             <option value="50">50 requests</option>
@@ -290,7 +290,7 @@ export default async function TpoStudentRequestsPage({
         <div className="sm:col-span-3">
           <button
             type="submit"
-            className="inline-flex min-h-9 items-center rounded-[var(--radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
           >
             Apply filters
           </button>
@@ -318,7 +318,7 @@ export default async function TpoStudentRequestsPage({
         </div>
 
         {data.requests.length === 0 ? (
-          <div className="rounded-[12px] border border-border bg-surface p-8">
+          <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-8">
             <p className="text-sm text-body">
               {data.total > 0
                 ? "This page is outside the matching result range."
@@ -365,7 +365,7 @@ export default async function TpoStudentRequestsPage({
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-[12px] border border-border bg-surface md:block">
+          <div className="hidden overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-border bg-surface md:block">
             <table className="w-full min-w-[65rem] text-left text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
@@ -468,7 +468,7 @@ export default async function TpoStudentRequestsPage({
                   ...baseFilters,
                   page: data.page - 1,
                 })}
-                className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Previous
               </Link>
@@ -480,7 +480,7 @@ export default async function TpoStudentRequestsPage({
                   ...baseFilters,
                   page: data.page + 1,
                 })}
-                className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Next
               </Link>

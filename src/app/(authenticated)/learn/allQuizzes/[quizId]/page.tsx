@@ -23,11 +23,11 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   const resolution=resolveLearnerOfferingDelivery(overview.quizzes,path.quizId,query.deliveryId);
   if(resolution.kind==="none") notFound();
   if(resolution.kind==="choose") return <div className="min-w-0 space-y-6">
-    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← All Quizzes</Link>
+    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
     <PageHeader title="Choose a course" description="This quiz is in more than one of your courses." />
     <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
       {resolution.options.map(option=><li key={option.deliveryId} className="p-4">
-        <Link className="font-semibold text-[var(--lms-teal-deep)] underline"
+        <Link className="font-semibold text-primary-text underline"
           href={"/learn/allQuizzes/"+encodeURIComponent(path.quizId)+"?deliveryId="+encodeURIComponent(option.deliveryId)}>
           {option.courseName}
         </Link>
@@ -44,7 +44,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   if(attemptId && !selected) notFound();
   const historyUrl="/learn/allQuizzes/"+encodeURIComponent(quiz.id)+"?deliveryId="+encodeURIComponent(quiz.deliveryId);
   return <div className="space-y-6">
-    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← All Quizzes</Link>
+    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
     <PageHeader title={quiz.title} />
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
       <h2 className="text-base font-semibold text-foreground">Attempt history</h2>
@@ -54,12 +54,12 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
       {attempts.length===0 ? <p className="mt-4 rounded-lg bg-surface-subtle p-4 text-sm text-body">
         Not attempted · No quiz attempt is recorded for you in this course.
       </p> : <ol className="mt-4 grid gap-3 sm:grid-cols-2">
-        {attempts.map(attempt=><li key={attempt.id} className="min-w-0 rounded-lg border border-border p-4">
+        {attempts.map(attempt=><li key={attempt.id} className="min-w-0 rounded-xl border border-border p-4">
           <h3 className="text-sm font-semibold text-foreground">Attempt {attempt.attemptNumber}</h3>
           <p className="mt-1 text-xs text-muted-foreground">{date(attempt.submittedAt)}</p>
           <p className="mt-2 text-sm text-body">{learnerAttemptResultLabel(attempt)}</p>
           <Link href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
-            className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
+            className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             {attempt.resultsVisible ? "View result" : "View attempt"}
           </Link>
         </li>)}
@@ -68,14 +68,14 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
     {selected ? <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-base font-semibold text-foreground">Attempt {selected.attemptNumber} result</h2>
-        <Link href={historyUrl} className="text-sm text-[var(--lms-teal-deep)] underline">Close detail</Link>
+        <Link href={historyUrl} className="text-sm text-primary-text underline">Close detail</Link>
       </div>
       <p role="status" className="mt-3 text-sm font-semibold text-body">{learnerAttemptResultLabel(selected)}</p>
       {selected.resultsVisible ? selected.answers.length===0 ? (
         <p className="mt-4 text-sm text-body">No question-level review was recorded for this attempt.</p>
       ) : <div className="mt-4 space-y-3">
         {selected.answers.map((answer,index)=><article key={answer.id}
-          className="rounded-lg border border-border p-4">
+          className="rounded-xl border border-border p-4">
           <h3 className="text-sm font-semibold text-foreground">
             Question {index+1}: {answer.prompt}
           </h3>

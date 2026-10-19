@@ -200,7 +200,7 @@ export function AssignmentSubmissionControl({
     return (
       <div
         role="status"
-        className="mt-4 rounded-lg bg-[var(--lms-success-subtle)] px-3 py-2 text-sm font-semibold text-success"
+        className="mt-4 rounded-[var(--lms-control-radius)] bg-[var(--lms-success-subtle)] px-3 py-2 text-sm font-semibold text-success"
       >
         Assignment submitted successfully.
       </div>
@@ -210,7 +210,7 @@ export function AssignmentSubmissionControl({
   return (
     <form
       onSubmit={submit}
-      className="mt-4 rounded-lg border border-border bg-[var(--lms-neutral-50)] p-4"
+      className="mt-4 rounded-xl border border-border bg-surface-subtle p-4"
     >
       <fieldset disabled={submitting && submissionType !== "FILE"}>
         <legend className="text-sm font-semibold text-foreground">
@@ -278,7 +278,7 @@ export function AssignmentSubmissionControl({
         {submissionType==="LINK"&&methodsEnabled&&mayLink?
           <label className="mt-3 grid gap-1 text-sm">Link type
             <select value={linkKind} disabled={submitting}
-              className="min-h-10 rounded border border-border bg-surface p-2"
+              className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
               onChange={event=>setLinkKind(event.target.value as typeof linkKind)}>
               {allowedMethods.includes("REPOSITORY_LINK")?<option value="REPOSITORY_LINK">Repository Link</option>:null}
               {allowedMethods.includes("EXTERNAL_LINK")?<option value="EXTERNAL_LINK">Website / External Link</option>:null}

@@ -136,3 +136,21 @@ The filter-memory and persistence helpers contain no competing visual styling an
 Ten additional `[chat-15]` file edits followed the tracker inventory (nine tracker file edits and one recruiter activity tab fix), bringing this pass to **65 file-edit commits** in total: **31 HR/recruiter edits** and **34 tracker edits**. The follow-up corrected the tracker Logs active environment tab, native report-form control radii, bulk status select typography, live-log input radius, issue screenshots/empty sections, independent finding import status, tracker quick-report control height, similar-issue radius, and recruiter Activity tab sizing. All route delegates and operational behavior were retained.
 
 A source-only pass verified that explicit `min-h-10`/`min-h-11` control classes, `rounded-md` control overrides, and raw deep-teal link colors in the inspected tracker TSX paths were replaced, excluding intentionally independent cards, badges and alerts. `src/components/tracker/audit-finding-filter-memory.tsx` and `audit-finding-filter-persistence.tsx` are nonvisual helpers. The scope still needs authenticated screenshot comparison and independent TypeScript verification; **no tests, typecheck, CI or dev server were run**.
+
+## 2026-10-19 continuation: HR/recruiter value-level cleanup
+
+Synced `origin/main` into `chatgpt/chat-15-b` after the preceding 20-file HR/recruiter batch. Both upstream and lane edited several HR routes. For identical upstream fixes the main version was retained; where the same JSX line changed differently, newer main content was preserved instead of overwriting it. Unique lane changes to calendar filters, offer tabs, result tabs, notification filters and recruiter controls were replayed as a merge commit. Main was not updated by this lane.
+
+A subsequent **17 individually pushed `[chat-15]` file commits** tightened visual consistency across:
+
+- Employer recorded-outside drive form: 36px inputs, 14px text, 9px token radius and white-on-teal confirmation.
+- Recruiter result-editor input sizing, resume download, decision mark-read button and college-access links.
+- Both recruiter notification-bell variants, including secondary read-all action states.
+- Recruiter Messages college selection, active indicator limited to the READY branch, and conversation-history pagination.
+- Drive request college choices, portfolio shortcuts and private review clearing.
+- Drive-conversation launch CTA, external-drive back navigation and interview-slot navigation.
+- Recruiter Notifications empty state and filter hover state.
+
+The updates touch visual classes and focus/hover states; existing data queries, visibility constraints, submit logic, redirects, and content remain intact. Shared shell/global CSS continues to be owned by the designated shell lanes. Status badges and meaningful contained interview/portfolio cards remain enclosed, avoiding flattening objects that have a genuine card role.
+
+**Source verification:** examined the touched markup and closing tags after edits; none of the inspected files contained a dangling standalone `</Select`/`</Button` or other truncated closing tag. **Not run:** application, TypeScript compiler, lint, tests, CI or browser screenshots. Full old-versus-vNext pixel verification remains pending.
