@@ -42,7 +42,7 @@ export default async function CollegeDepartmentsPage() {
         title="Departments"
         description="Create, find, export and manage the departments in your college."
       />
-      <Link href="/college/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Academic periods and sections →</Link>
+      <Link href="/college/academics" className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline">Academic periods and sections →</Link>
       <DepartmentCreateForm collegeId={membership.collegeId} />
       <DepartmentDirectory rows={rows} />
     </div>
