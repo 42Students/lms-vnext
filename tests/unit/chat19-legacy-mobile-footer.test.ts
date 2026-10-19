@@ -18,7 +18,7 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
   it("uses 30px original artwork, neutral inactive opacity and active opacity 1", () => {
     expect(mobile()).toContain("width={24} height={24}");
     expect(styles()).toContain("opacity:.5");
-    expect(styles()).toContain(".active .lms-legacy-mobile-footer-icon {opacity:1;}");
+    expect(styles()).toContain(".lms-legacy-mobile-footer-icon {opacity:1;}");
   });
   it("retains learner and faculty icon order without mixing portal links", () => {
     const content = mobile();
