@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
+import styles from "./legacy-timeline-filters.module.css";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Timeline, TimelineEntry } from "@/components/ui/timeline";
 import Link from "next/link";
@@ -39,12 +40,12 @@ export default async function MentorProjectTimelinePage({
       className="border-b border-border pb-5">
       Projects access is disabled; no timeline was loaded.
     </section>:<>
-      <NeedsDoingChips label="Release status filters:" selectedKey={data.query.releaseStatus}
+      <NeedsDoingChips className={styles.filters} label="Release status filters:" selectedKey={data.query.releaseStatus}
         items={(["ALL","PLANNED","IN_PROGRESS","SHIPPED"] as const).map(status=>({
           key: status, label: status.replaceAll("_"," "),
           href: mentorTimelineHref({...data.query,releaseStatus:status,page:1}),
         }))} />
-      <NeedsDoingChips label="Sprint status filters:" selectedKey={data.query.sprintStatus}
+      <NeedsDoingChips className={styles.filters} label="Sprint status filters:" selectedKey={data.query.sprintStatus}
         items={(["ALL","PLANNED","ACTIVE","COMPLETED"] as const).map(status=>({
           key: status, label: status==="ALL"?"All Sprint states":status,
           href: mentorTimelineHref({...data.query,sprintStatus:status,page:1}),
@@ -64,8 +65,8 @@ export default async function MentorProjectTimelinePage({
           </div>
           {release.sprints.length===0
             ?<p className="mt-3 text-sm text-body">No registered Sprints in this Release.</p>
-            :<ol className="mt-3 grid gap-3">{release.sprints.map(sprint=>
-              <li key={sprint.id} className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3">
+            :<ol className="mt-3 divide-y divide-[var(--lms-canvas-border)]">{release.sprints.map(sprint=>
+              <li key={sprint.id} className="min-w-0 py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="font-semibold text-foreground">
                     Sprint {sprint.sequence+1}: {sprint.title}
