@@ -12,7 +12,7 @@ type SelectedAudiencePreview={
  selected:number;eligible:number;leftOut:number;unavailable:number;
  suppressed:{NO_EMAIL:number;UNSUBSCRIBED:number;BOUNCED:number;NOT_NOW:number;DUPLICATE:number};
 };
-const field="mt-1 min-h-11 w-full md:min-h-9";
+const field="mt-1 min-h-11 w-full min-[768px]:min-h-9";
 const SEGMENTS=[
  {value:"ALL_ELIGIBLE",label:"All eligible contacts"},
  {value:"NEW",label:"New recruiter leads"},
@@ -76,17 +76,16 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   <h2 className="text-lg font-semibold text-foreground">Write a campaign</h2>
   <p className="text-sm text-body">Save a draft for your placement cell. No message is sent until a separate, verified dispatch action is enabled.</p>
   <form onSubmit={e=>{e.preventDefault();void save();}} className="space-y-4">
-   <label className="block text-sm font-semibold print:hidden">Campaign name
+   <label className="block text-sm font-semibold">Campaign name
     <Input value={title} maxLength={160} required className={field}
      onChange={e=>setTitle(e.target.value)}/>
    </label>
-   <p className="hidden break-words text-sm print:block"><strong>Campaign:</strong> {title || "Untitled draft"}</p>
    {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Draft for {selectedLeadIds.length} specifically selected recruiter contacts. Eligibility and suppression rules still apply; no email will be sent when saving.</p>:null}
    {selectedLeadIds.length?<section aria-label="Selected recruiter audience review" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
     <h3 className="font-semibold">Selected recruiter audience</h3>
     {audienceStatus==="loading"?<p role="status">Checking selected contacts and suppression rules…</p>:null}
     {audienceStatus==="error"?<div role="alert"><p>Could not check selected contacts. No emails have been sent.</p>
-      <Button variant="ghost" type="button" className="mt-2 min-h-11 underline md:min-h-9 print:hidden" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</Button>
+      <Button variant="ghost" type="button" className="mt-2 min-h-11 min-[768px]:min-h-9 underline" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</Button>
     </div>:null}
     {audienceStatus==="ready"&&audience?<div role="status" className="mt-2 space-y-1">
       <p><strong>{audience.eligible} potential recipients</strong> out of {audience.selected} selected · {audience.leftOut} left out.</p>
@@ -97,22 +96,21 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     </div>:null}
     <p className="mt-2 text-xs text-muted-foreground">This is a preview, not a send. Recipient eligibility is checked again when saving the draft.</p>
    </section>:null}
-   <label className="block text-sm font-semibold print:hidden">To
+   <label className="block text-sm font-semibold">To
     <Select className={field} value={selectedLeadIds.length?"ALL_ELIGIBLE":segment} disabled={selectedLeadIds.length>0} onChange={e=>setSegment(e.target.value as typeof segment)}>
      {SEGMENTS.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
     </Select>
    </label>
    {selectedLeadIds.length?<p className="text-xs text-muted-foreground">Audience is fixed to the selected leads from Engage. Return there to change the selection.</p>:null}
-   <label className="block text-sm font-semibold print:hidden">Subject
+   <label className="block text-sm font-semibold">Subject
     <Input value={subject} maxLength={200} required className={field}
      onChange={e=>setSubject(e.target.value)}/>
    </label>
-   <label className="block text-sm font-semibold print:hidden">Message
+   <label className="block text-sm font-semibold">Message
     <Textarea value={body} maxLength={10000} required rows={6}
      className={field} onChange={e=>setBody(e.target.value)}/>
    </label>
-   <p className="hidden break-words text-sm print:block"><strong>Subject:</strong> {subject || "No subject"}</p>
-   <p className="text-xs text-muted-foreground print:hidden" aria-live="polite">{body.length} / 10,000 characters</p>
+   <p className="text-xs text-muted-foreground" aria-live="polite">{body.length} / 10,000 characters</p>
    <p className="text-xs text-muted-foreground">
      Write {`{name}`} or {`{company}`} and each person sees their own. This preview uses example text;
      sending, signature and unsubscribe-link delivery have not been enabled.
@@ -123,7 +121,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
        {previewTpoCampaignText(body,{name:"Sample recruiter",company:"Example company"})}
      </p>
    </section>
-   <label className="block text-sm font-semibold print:hidden">Approved campaign template key
+   <label className="block text-sm font-semibold">Approved campaign template key
     <Input value={templateKey} maxLength={160} required className={field}
      placeholder="tpo-campaign-general" onChange={e=>setTemplateKey(e.target.value)}/>
     <span className="mt-1 block text-xs font-normal text-muted-foreground">
@@ -131,18 +129,18 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     </span>
    </label>
    {!selectedLeadIds.length?<Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
+    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">
     Preview audience
    </Link>:<Link href="/tpo/recruiters"
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
+    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">
     Change selected recruiters in Engage
    </Link>}
    {!deliveryReady?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}
-   <Button variant="primary" type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="min-h-11 md:min-h-9 print:hidden">
-    {busy?"Saving…":"Save draft"
+   <Button variant="primary" type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="min-h-11 min-[768px]:min-h-9">
+    {busy?"Saving…":"Save draft"}
    </Button>
   </form>
   {done?<p role="status" className="text-sm text-body">{done}</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
  </section>;
 }
