@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
@@ -64,11 +65,11 @@ export function SuperAdminFacultyScheduleReassignAction({
         <Button disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Review transfer</Button>
       </>}>
       <label htmlFor={id} className="mb-2 block text-sm font-semibold text-body">Replacement faculty</label>
-      <select id={id} className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
+      <Select id={id} className="min-h-9 w-full"
         value={replacementMembershipId} onChange={event=>setReplacementMembershipId(event.target.value)}>
         <option value="">Select faculty</option>
         {choices.map(item=><option key={item.membershipId} value={item.membershipId}>{item.displayName}</option>)}
-      </select>
+      </Select>
       {truncated?<p role="status" className="mt-2 text-xs text-muted-foreground">
         Only the first 500 active faculty choices are shown. Use the faculty roster filters to find other colleagues.
       </p>:null}
