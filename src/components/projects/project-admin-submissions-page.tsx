@@ -189,8 +189,8 @@ export async function ProjectAdminSubmissionsPage({
         query={query}
         includeSubmissionStatus
       />
-      <ListToolbar label="Project submissions" viewCount={result.total} />
-      <ProjectSubmissionsPageExport rows={result.items.map(submission=>({
+      <ListToolbar label="Project submissions" viewCount={result.total}
+        exportAction={<ProjectSubmissionsPageExport rows={result.items.map(submission=>({
         workspace:submission.projectTitle,
         version:submission.version,
         status:submission.lockedAt?"Locked":submission.reopenedAt?"Draft (revising)":submission.status,
@@ -203,7 +203,7 @@ export async function ProjectAdminSubmissionsPage({
         reviewedBy:submission.reviewedBy,
         sourceUrl:safeProjectExternalHref(submission.sourceUrl),
         demoUrl:safeProjectExternalHref(submission.demoUrl),
-      }))}/>
+      }))}/>} />
 
       {!result.items.length ? (
         <section className="border-b border-border py-6 text-sm text-muted-foreground">
