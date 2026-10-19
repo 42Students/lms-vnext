@@ -53,7 +53,7 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
     onChange={event=>event.target.checked?selectVisible():setSelected([])}/>
    Select all learners on this page
   </label>
-  <div className="grid max-h-44 gap-1 overflow-y-auto sm:grid-cols-2" aria-label="Visible batch learners">
+  <div className="grid max-h-44 min-w-0 grid-cols-1 gap-1 overflow-y-auto overscroll-contain md:grid-cols-2" aria-label="Visible batch learners">
    {rows.map(row=><label key={row.id} className="flex min-h-9 items-center gap-2 text-sm">
     <Checkbox checked={valid.includes(row.id)}
      onChange={event=>setSelected(ids=>event.target.checked?
