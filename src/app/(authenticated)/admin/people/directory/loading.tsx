@@ -1,1 +1,1 @@
-export default function Loading(){return <div role="status" aria-label="Loading user directory" className="animate-pulse space-y-4"><div className="h-10 rounded bg-muted"/><div className="h-48 rounded bg-muted"/></div>;}
+export default function Loading(){return <div role="status" aria-label="Loading user directory" className="animate-pulse space-y-4 py-4"><div className="h-10 rounded-[var(--lms-control-radius)] bg-surface-subtle"/><div className="h-48 rounded-[var(--lms-control-radius)] bg-surface-subtle"/></div>;}
