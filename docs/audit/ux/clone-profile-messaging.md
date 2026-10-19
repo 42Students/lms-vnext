@@ -377,3 +377,58 @@ The most recent source sweep covered previously omitted controls and resolved th
 - [ ] **G3 strict acceptance** — still missing authentic legacy message-bubble source/visual comparison and all focus/disabled/read/sent/empty/loading states, full grep+exemptions, real phone/tablet/pixel proof.
 - [ ] **Next targeted source scan:** `src/components/people/faculty-profile-metadata.tsx`, then `src/components/people/faculty-profile-repeatable.tsx`, `src/components/profile/learner-skill-catalog-input.tsx`, and `src/components/profile/learner-verification-submit.tsx`. Complete the rest of the G2/G3 imported-profile list before claiming category coverage.
 
+## Replacement lane continuation — profile/settings source files (2026-10-19)
+
+**18 source files closed for this focused source-level batch** (not category-level STRICT TICK RULE). GitHub readback verified every resulting source write on `chatgpt/chat-11-b`. All edited JSX component tag names, form state, request payloads, validation, submit/read/confirm handlers, permissions, message chronology, and screen copy were retained. No `src/components/ui/**` files were edited. Tests, typecheck, CI, browser and legacy live screenshots were not run.
+
+### Measured legacy values used in this batch
+
+| Source property | Exact legacy source | Local vNext source result |
+| --- | --- | --- |
+| Mobile action target | `docs/design/legacy-styles/components___notification-drawer.scss:21-24,31-33`: `$nd-touch-min: 44px`; `components___learn-notifications.scss:10-12,90-102`: 44px and 14px/500 filter action | Owned interactive actions and inputs now use `min-h-11` (44px in Tailwind spacing) when on narrow screens. The metadata Clear search button uses `rounded-[8px]`, `text-sm font-medium` and a minimum 44px touch target. |
+| Responsive switch | `docs/design/legacy-styles/components___notification-drawer.scss:23,89-92,355-360` and `components___learn-notifications.scss:10,64-84`: mobile rules through 767px; desktop starts at 768px | Changed responsive action height classes now use `min-[768px]:min-h-9` (36px). Faculty metadata, repeatable records, faculty text sections and recruiter details switch to two-column layouts at 768px rather than 640px. |
+| Desktop action size | `docs/design/old-lms-shell-spec.md:24-27`: button and search/control height 36px; 9px outer radius; primary 14px/650 | Shared `Button`/`Input`/`Select` inherit global tokens at desktop. Explicit `min-[768px]` overrides are added only to avoid prematurely shrinking at 640px. |
+| Hover/active/focus/disabled | `docs/design/legacy-styles/components___form.scss:14-23` and `components___learn-notifications.scss:101-127`: mouse focus suppression vs keyboard-visible focus; selected, hover and disabled treatments | Existing shared `Button`, `Input`, `Select`, `Textarea` classes and state props are retained, not hand-rolled. Static source matches the shared API; actual computed hover, active, focus-visible, disabled, invalid, pending and empty states still await rendered verification. |
+| Existing page composition | `docs/design/old-lms-pages.md:5-6`: one main white canvas, no duplicate outer card, page-specific sections preserved | These changes target inner form controls, not the authenticated canvas or page header. No new nested page canvases, custom modals, or page content changes. |
+
+### Per-file source-value / scoped responsive evidence
+
+All file:line references below are for `chatgpt/chat-11-b` after this batch. "Completed" means a source migration and readback only.
+
+| Completed source file | Control / layout source lines and inspected value | Source-level mobile/tablet proof |
+| --- | --- | --- |
+| `src/components/people/faculty-profile-metadata.tsx` | :38,42,47,51,54,63,71-72 — search, clear, fields, remove, add, discard/save all 44px mobile; :42 clear action 8px pill radius | :45 stays one-column through 767px; `min-[768px]:grid-cols-[1fr_2fr_auto]` on tablet/desktop |
+| `src/components/people/faculty-profile-repeatable.tsx` | :72,76,84,105,115-131,144-150 — search, collapse, field input, reorder, duplicate/remove, add, save, discard now mobile touch-safe | :82-89 fieldset padding and 2-column form begin at 768px; phone has a single column |
+| `src/components/profile/learner-skill-catalog-input.tsx` | :48 input and :60 suggestion action both 44px mobile | 36px min beginning at 768px; real suggestion keyboard semantics preserved |
+| `src/components/profile/learner-verification-submit.tsx` | :39 submit and :44 refresh 44px on mobile | Same controls 36px min at 768px; pending and stale flags unchanged |
+| `src/components/profile/learner-verification-withdraw.tsx` | :40,46,50,57 — withdraw, confirm, cancel and refresh buttons | All 44px mobile/36px tablet+ min; confirmation flow untouched |
+| `src/components/people/faculty-profile-text-section.tsx` | :50 Input and :58-59 discard/save controls; shared Textarea remains multiline | :43 two-column form only `min-[768px]`; Input now 44px phone |
+| `src/components/hr/recruiter-profile-details-editor.tsx` | :81 four shared Input fields and :87 save action | :75 one-column phone / two columns 768px+, actions 44px phone |
+| `src/components/people/faculty-profile-editor.tsx` | :78 reload button, :88 navigation link | Profile section nav horizontally scrolls through 767px; button/link 44px phone, shared desktop height from 768px |
+| `src/components/tpo/tpo-notification-refresh.tsx` | :36 retry action 44px mobile | Uses legacy breakpoint at 768px, no changes to failed/refreshing states |
+| `src/components/admin/tenant-directory-csv-control.tsx` | :20 export action 44px mobile | Desktop 36px; export request and pending gating retained |
+| `src/components/admin/tenant-settings-other-keys.tsx` | :55 remove, :65 Input, :69 Textarea, :73 add setting | Minimum 44px phone and desktop override at 768px; confirmation semantics unchanged |
+| `src/components/admin/tenant-settings-editor.tsx` | :60 Textarea, :66 Input, :74 save settings action | All phone form targets minimum 44px; existing `md:grid-cols-2` remains tablet+ |
+| `src/components/tpo/tpo-notice-acknowledge.tsx` | :9 shared acknowledgement button | Minimum 44px through 767px; disabled/read logic unchanged |
+| `src/components/tpo/tpo-notice-undo-toast.tsx` | :23 shared undo-send submit | 44px through 767px; :21-22 are **hidden** form payload inputs, not visible controls |
+| `src/components/tpo/tpo-notice-read-progress.tsx` | :41,47 show more / unread read actions | 44px phone/36px tablet+; read status retained |
+| `src/components/tpo/tpo-trusted-domain-editor.tsx` | :38,41,45 domain entry, add/remove actions | 44px phone/36px tablet+; permission/confirmation logic unchanged |
+| `src/components/tpo/tpo-notice-audience-picker.tsx` | :30,41,60,65 shared audience, search, drive inputs/selects | 44px phone/36px tablet+; :50 raw input is **hidden** selected-target payload (exempt). Multiselect semantics preserved |
+| `src/components/tpo/tpo-notice-schedule-controls.tsx` | :23 datetime input, :26 schedule action | 44px through 767px; required/minimum schedule values remain unchanged |
+
+### Scoped grep-equivalent results, exact batch files
+
+Every one of the **18** fully retrieved lane-branch files listed in the table above was scanned against these regular expressions after its update, equivalent to `grep -nE` within only that explicit file set (not a full repository or generated CSS scan):
+
+| Scan pattern | Matches across the 18 source files | Findings / exemptions |
+| --- | ---: | --- |
+| `<(button\|input\|select\|textarea)\\b` | 3 | Two `type="hidden"` fields in `tpo-notice-undo-toast.tsx:21-22`; one `type="hidden"` in `tpo-notice-audience-picker.tsx:50`. **0 visible raw controls** |
+| `#[[:xdigit:]]{3,8}\\b` | 0 | No literal hex styling values in the batch |
+| `fixed inset-0\|role="dialog"` | 0 | No hand-rolled overlays found in the batch; shared confirmation/dialog components retained |
+| `sm:min-h-9` | 0 | No premature 640px switch remains among these 18 files |
+| `sm:grid-cols` | 0 | Fields migrated to `min-[768px]` or already at a tablet breakpoint |
+| `min-h-11` and `min-[768px]` | See per-file rows above | Source proof of 44px phone and 36px tablet/desktop action minima, without claiming browser-rendered sizes |
+
+**Proof boundary:** These are actual source regex counts obtained from retrieved GitHub file contents, not executed terminal `grep` against all `src`, not computed-style browser measurements and not pixel diffs. The JSX source was re-fetched after each write; no opening/closing tag renames were made. These files retain existing success/error/empty/loading affordances where present, but they were not executed. The terminal repository-wide raw-control/hex/overlay scan and live responsive comparison are still required by STRICT TICK RULE; therefore **G2 and G3 category-level checkboxes remain [ ]**.
+
+**Exact next file for continuation:** `src/components/tpo/tpo-notice-composer-dialog.tsx`, then remaining imported TPO notification authoring/receipt components and cross-portal profile/notification error/loading routes. Scan the whole owned scope once repository checkout / compiled-style proof is available.
