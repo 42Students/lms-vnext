@@ -39,7 +39,11 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     </div>;
   const raw=await searchParams;
   const parsed=parseAdminInventoryQuery(raw);
-  if(!parsed) return <ErrorState title="Invalid setting filter" description="Use a valid section or search query." action={<Link href="/admin/settings">Clear filters</Link>}/>;
+  if(!parsed) return <div className="min-w-0 space-y-6">
+    <PageHeader title="Tenant Settings"/>
+    <ErrorState title="Invalid setting filter" description="Use a valid section or search query."
+      action={<Link href="/admin/settings" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+  </div>;
   const retryParams=new URLSearchParams();
   if(parsed.q)retryParams.set("q",parsed.q);
   if(parsed.section!=="ALL")retryParams.set("section",parsed.section);
