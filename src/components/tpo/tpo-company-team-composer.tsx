@@ -50,7 +50,7 @@ export function TpoCompanyTeamComposer({companyId,actorUserId}:{
    setError(reason instanceof Error?reason.message:"Message not sent. Your draft is still here; try again.");
   }finally{pending.current=false;setBusy(false);}
  }
- return <form className="space-y-3" onSubmit={event=>{event.preventDefault();void submit();}}>
+ return <form className="min-w-0 space-y-3 border-t border-border pt-3" onSubmit={event=>{event.preventDefault();void submit();}}>
   <label className="grid gap-1 text-sm text-body">Message
    <Textarea required maxLength={4000} rows={4} value={body} disabled={busy}
     onChange={event=>update(event.target.value)}
@@ -58,7 +58,7 @@ export function TpoCompanyTeamComposer({companyId,actorUserId}:{
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <p className="text-xs text-muted-foreground">Only active placement-team members in this college can read and reply.</p>
-  <Button type="submit" className="min-h-11 min-[768px]:min-h-9" disabled={busy||!body.trim()}
+  <Button type="submit" className="min-h-11 md:min-h-9" disabled={busy||!body.trim()}
    >
    {busy?"Sending…":"Send"}
   </Button>
