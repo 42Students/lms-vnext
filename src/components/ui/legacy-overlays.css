@@ -112,6 +112,18 @@
   height: 10px;
   background: #1a1d21;
 }
+/* docs/design/legacy-styles/components___antddesign.scss:66-79 */
+@media (max-width: 767px) {
+  [data-slot="info-popover"] [role="tooltip"] {
+    max-width: calc(100vw - 32px);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  [data-slot="info-popover"] [role="tooltip"] .ant-table-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
 @media (max-width: 639px) {
   [data-slot="dropdown-root"][data-mobile-sheet="true"][open]::before {
     content: "";
