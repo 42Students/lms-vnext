@@ -84,7 +84,7 @@ export function HrRecruiterBell(){
  }
 
  const unread=state?.unread??0;
- return <div ref={rootRef} className="relative">
+ return <div ref={rootRef} className="relative"
   <Button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
    aria-expanded={open} aria-haspopup="dialog" aria-controls={open?(mobile?"hr-topbar-mobile-notifications":"hr-topbar-desktop-notifications"):undefined}
    onClick={()=>setOpen(value=>!value)}
