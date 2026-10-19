@@ -84,7 +84,7 @@ export function MobileNavigation({
           <button
             type="button"
             aria-label="Close navigation"
-            className="absolute inset-0 h-full w-full bg-foreground/20"
+            className="absolute inset-0 h-full w-full bg-black/45"
             onClick={() => setOpen(false)}
           />
           <aside
@@ -92,17 +92,17 @@ export function MobileNavigation({
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="lms-mobile-sidebar absolute inset-y-0 left-0 flex max-h-[var(--lms-visual-height)] w-[min(16rem,88vw)] flex-col border-r-0 bg-surface shadow-[var(--lms-overlay-shadow)]"
+            className="lms-mobile-sidebar absolute inset-y-0 left-0 flex max-h-[var(--lms-visual-height)] w-[min(82vw,300px)] flex-col border-r-0 bg-surface shadow-[var(--lms-overlay-shadow)] overscroll-contain"
           >
-            <div className="flex min-h-20 items-center justify-between gap-4 border-b border-[var(--lms-sidebar-border)] px-5">
-              <div className="inline-flex h-11 w-11 items-center justify-center" aria-label="42Students LMS">
+            <div className="flex min-h-[calc(52px+env(safe-area-inset-top,0px))] shrink-0 items-center justify-between gap-2 border-b border-[#f0f0f0] pt-[calc(10px+env(safe-area-inset-top,0px))] pr-1 pb-[10px] pl-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center" aria-label="42Students LMS">
                 <ShellLogoMark />
               </div>
               <button
                 type="button"
                 aria-label="Close navigation"
                 onClick={() => setOpen(false)}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
               >
                 <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20"
                   fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
