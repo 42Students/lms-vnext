@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { Dialog } from "@/components/ui/dialog";
 import Link from "next/link";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
 import { ProjectTaskComments } from "./project-task-comments";
