@@ -11,7 +11,6 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toast";
 import { describePrimaryDomainSwitch, canConfirmPrimaryDomainDelete } from "@/modules/tenant-domains/admin-confirmation-model";
 
@@ -317,7 +316,8 @@ export function TenantDomainManager({
 
                 {!domain.isVerified &&
                 domain.verificationToken ? (
-                  <Card as="section" title="DNS ownership record" className="mt-5">
+                  <section aria-label="DNS ownership record" className="mt-5 border-t border-border pt-4">
+                    <h3 className="mb-2 text-sm font-semibold text-foreground">DNS ownership record</h3>
                     <p className="text-xs leading-5 text-body">
                       Publish this TXT record with your DNS
                       provider. Verification requires an exact
@@ -351,7 +351,7 @@ export function TenantDomainManager({
                         </dd>
                       </div>
                     </dl>
-                  </Card>
+                  </section>
                 ) : null}
               </section>
             );
