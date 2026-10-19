@@ -24,11 +24,11 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
   <PageHeader eyebrow="Super Admin · Tenant" title={item.name} description="Read-only tenant identity and setup links in the authorized scope."/>
   <nav aria-label="College tabs" className="flex flex-wrap items-center gap-3">
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}`}
-     aria-current="page" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">College</Link>
+     aria-current="page" className="inline-flex min-h-11 items-center font-semibold text-primary-text">College</Link>
    <Link href={`/activity?collegeId=${encodeURIComponent(item.id)}`}
-     className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Activity</Link>
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Activity</Link>
    <Link href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}
-     className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Export activity CSV</Link>
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Export activity CSV</Link>
   </nav>
   <dl className="grid gap-4 border-t border-border pt-4 sm:grid-cols-2">
    {fields.map(([label,value])=><div key={label}><dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
@@ -45,15 +45,15 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
    </p>:null}
   <div className="flex flex-wrap gap-3">
    {tenantSetupLinksAvailable(item.status,item.organizationStatus) ? <>
-   {context.adminScope?.collegeId===item.id ? <Link href="/admin/tenants/setup" className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Set up this college</Link> : null}
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/readiness`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Readiness</Link>
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/branding`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Branding</Link>
-   {superAdminVerificationHref(item.id,item.status,item.organizationStatus) ? <Link href={superAdminVerificationHref(item.id,item.status,item.organizationStatus)!} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Profile Verification</Link> : null}
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/admins`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Admins</Link>
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/signin`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Sign-in Methods</Link>
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Web address</Link>
+   {context.adminScope?.collegeId===item.id ? <Link href="/admin/tenants/setup" className="rounded-[9px] border border-border px-4 py-3 text-sm font-semibold text-primary-text">Set up this college</Link> : null}
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/readiness`} className="rounded-[9px] border border-border px-4 py-3 text-sm font-semibold text-primary-text">Readiness</Link>
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/branding`} className="rounded-[9px] border border-border px-4 py-3 text-sm font-semibold text-primary-text">Branding</Link>
+   {superAdminVerificationHref(item.id,item.status,item.organizationStatus) ? <Link href={superAdminVerificationHref(item.id,item.status,item.organizationStatus)!} className="rounded-[9px] border border-border px-4 py-3 text-sm font-semibold text-primary-text">Profile Verification</Link> : null}
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/admins`} className="rounded-[9px] border border-border px-4 py-3 text-sm font-semibold text-primary-text">Admins</Link>
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/signin`} className="rounded-[9px] border border-border px-4 py-3 text-sm font-semibold text-primary-text">Sign-in Methods</Link>
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="rounded-[9px] border border-border px-4 py-3 text-sm font-semibold text-primary-text">Web address</Link>
    </> : <p className="text-sm text-muted-foreground">Setup links are unavailable while this college or its organization is archived.</p>}
-   <Link href="/admin/tenants" className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Tenant directory</Link>
+   <Link href="/admin/tenants" className="rounded-[9px] border border-border px-4 py-3 text-sm font-semibold text-primary-text">Tenant directory</Link>
   </div>
  </div>;
 }
