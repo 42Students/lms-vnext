@@ -42,4 +42,9 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(route()).toContain("key={pathname}");
  expect(route()).not.toContain("useSearchParams");
 });
+ it("keeps route animation inside main instead of shell chrome",()=>{
+ const shell=source("src/components/shell/app-shell.tsx");
+ expect(shell).toContain("<RouteTransition>{children}</RouteTransition>");
+ expect(shell.indexOf("<RouteTransition>")).toBeGreaterThan(shell.indexOf("<LegacyTopbar"));
+});
 });
