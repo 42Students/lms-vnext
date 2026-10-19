@@ -129,6 +129,11 @@
     overscroll-behavior: contain;
   }
 }
+@media (prefers-reduced-motion: no-preference) {
+  [data-slot="info-popover"][open] [role="tooltip"] {
+    animation: lms-legacy-popup-enter .2s ease-out both;
+  }
+}
 [data-slot="menu"] [role="menuitem"][aria-disabled="true"] {
   cursor: not-allowed;
   pointer-events: none;
