@@ -195,9 +195,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Close</button>
    </Dialog>:null}
   {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
-  {slot?<div role="dialog" aria-modal="true" aria-label="New recruiter follow-up" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <div className="w-full max-w-md space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-[var(--lms-space-5)]" onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();cancelDraft();}}}>
-    <h2 className="text-lg font-semibold">New recruiter follow-up</h2>
+  {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next)cancelDraft();}} title="New recruiter follow-up" className="max-w-md">
+   <div className="space-y-3">
     {slot&&blocked.has(slot.slice(0,10))?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-warning px-3 py-2 text-sm text-[var(--lms-gold-accent)]">This day is blocked for placement scheduling. Choose another date if possible.</p>:null}
     {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}
     <label className="grid gap-1 text-sm">Date and time (IST)
