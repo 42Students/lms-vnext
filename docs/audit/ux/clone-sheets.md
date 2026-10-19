@@ -650,3 +650,26 @@ All six complete files fetched from branch and checked for raw `<button|input|se
 | tpo-due-followup-workspace.tsx | 0/0/0 | 3/3; 1/1 | 113/113 | sm 0; md 10 |
 
 The TPO recruiter/message/follow-up scoped visual text is **source reviewed**, not pixel-certified. No app, CI, typecheck, lint, browser clicks, screenshot at 360px/767px/768px/1024px or real clipboard/send testing. Global A5–A7 and E8 remain unchecked.
+
+## chat-12 TPO server page parity — 2026-10-20
+
+- [x] src/app/(authenticated)/tpo/batches/page.tsx — protected membership/filter and server data untouched; six batch selects, paging, status links and link actions use 44px phone/36px md, list and metric strip cross at legacy 768px, numbers consolidated into one bordered strip rather than four independent cards.
+- [x] src/app/(authenticated)/tpo/team/page.tsx — authenticated people/conversation data untouched; sort/filter tabs, conversation and paging links get 44px phone tap, keyboard focus and md 768px classes; existing avatar sizing left unchanged for global A6.
+
+### Legacy/vNext value comparison
+Reference docs/design/old-lms-pages.md:6,9,14-17 one canvas, contiguous metric strip, hairlines; docs/design/old-lms-shell.css:23,73 phone <768px and 44px touch; old-lms-shell-spec.md:24-25 36px action; components___common.scss:68-75 teal links.
+| File | VNext authored values/source | Result |
+|---|---|---|
+| src/app/(authenticated)/tpo/batches/page.tsx | 43:return <div role="alert">Invalid batch filters. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline ; 50:if(!pageParsed.success)return <div role="alert">Invalid batch page. <Link className="lms-inline-link inline-flex min-h-11 items-center ; 51:if(!deadlineParsed.success)return <div role="alert">Invalid deadline filter. <Link className="lms-inline-link inline-flex min-h-11 item; 52:if(!departmentParsed.success)return <div role="alert">Invalid department filter. <Link className="lms-inline-link inline-flex min-h-11 ; 53:if(!programParsed.success)return <div role="alert">Invalid program filter. <Link className="lms-inline-link inline-flex min-h-11 items- | Source-aligned; screenshots pending |
+| src/app/(authenticated)/tpo/team/page.tsx | 101:{people.length?<ul className="grid gap-3 md:grid-cols-2">; 119:{ownerWorkload?.ready?<dl aria-label="Placement workload" className="mt-3 grid grid-cols-2 gap-2 text-xs md:grid-cols-3">; 130:className="lms-inline-link inline-flex min-h-11 items-center text-link underline underline-offset-2 focus-visible:outline-2 focus-visib; 158:<Link href="/tpo/team/everyone" className="lms-inline-link mt-3 block min-h-11 border-b border-border py-4 font-semibold text-link unde; 165:<Link className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus | Source-aligned; screenshots pending |
+
+### Scoped grep and responsive source proof
+Full contents scanned using regex equivalent of grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE, paired JSX Button/Link tokens and braces; responsive tokens `sm:` and `md:`.
+| File | Raw/SVG/hex | Button/Link pairs | Braces | sm/md |
+|---|---|---|---|---|
+| src/app/(authenticated)/tpo/batches/page.tsx | 0/0/0 | 1/1; 15/15 | 145/145 | 0/24 |
+| src/app/(authenticated)/tpo/team/page.tsx | 0/0/0 | 0/0; 10/10 | 140/140 | 0/7 |
+
+No app execution or CI/browser/screenshot verification. Global A5–A7/E8 remain unchecked; changed scoped file styles only.
+
+**Next unticked TPO page:** src/app/(authenticated)/tpo/students/page.tsx (large source file; whole-file UI and source parity, not patched/ticked in this batch).
