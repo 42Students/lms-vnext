@@ -35,7 +35,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin · Academic Setup" title="Batches"/>
       {data ? <AcademicSetupSteps step={5} /> : null}
-    {!selected ? <p role="status" className="rounded-xl border border-border bg-surface p-5">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
+    {!selected ? <p role="status" className="text-sm text-body">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
     {data ? <>
       <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} />
       <section aria-label="Filter managed batches" className="border-b border-border pb-4">
