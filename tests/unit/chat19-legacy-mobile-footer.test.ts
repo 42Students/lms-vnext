@@ -23,15 +23,18 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
   it("retains learner and faculty icon order without mixing portal links", () => {
     const content = mobile();
     const learner = content.slice(content.indexOf("const learnerLinks"), content.indexOf("const facultyLinks"));
-    const faculty = content.slice(content.indexOf("const facultyLinks"), content.indexOf("/** The original LMS"));
+    const faculty = content.slice(content.indexOf("const facultyLinks"), content.indexOf("const recruiterLinks"));
     expect(learner).toContain('href:"/learn/courses"');
     expect(learner).toContain('href:"/learn/notifications"');
     expect(learner).toContain('href:"/learn/profile"');
     expect(faculty).toContain('href:"/teacher/allQuizzes"');
     expect(faculty).toContain('href:"/teacher/allAssignments"');
     expect(faculty).not.toContain("/tpo/");
+    expect(content).toContain('href:"/hr/conversations"');
+    expect(content).toContain('href:"/college/placements"');
+    expect(content).toContain("items.some(item=>item.href===link.href)");
     expect(content).toContain("if (!learner && !faculty && !recruiter && !college && !mentor) return null");
-    const imagePaths = [...content.matchAll(/icon: "(\/assets\/images\/[^"]+)"/g)];
+    const imagePaths = [...content.matchAll(/icon:\s*"(\/assets\/images\/[^"]+)"/g)];
     for (const match of imagePaths) expect(existsSync("public" + match[1]), match[1]).toBe(true);
   });
   it("mounts once outside main and keeps route-level TPO footer separate", () => {
