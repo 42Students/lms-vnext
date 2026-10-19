@@ -20,7 +20,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   sort:first(raw.sort)??"UPCOMING",page:first(raw.page)??"1"};
  const valid=collegeInterviewFilters.safeParse(input);
  if(!valid.success)return <div className="space-y-4"><p role="alert">Invalid interview filters.</p>
-  <Link href="/college/placements/interviews" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Clear filters</Link></div>;
+  <Link href="/college/placements/interviews" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Clear filters</Link></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data);
  const build=(page:number,format:"html"|"ics"|"csv"="html")=>{
   const query=new URLSearchParams({q:valid.data.q,status:valid.data.status,
@@ -89,14 +89,14 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       <option value="STUDENT">Student name</option>
      </Select>
     </label>
-    <div className="flex items-end gap-3"><button className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply filters</button>
-     <Link href="/college/placements/interviews" className="min-h-[var(--lms-control-height)] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Clear</Link>
+    <div className="flex items-end gap-3"><button className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply filters</button>
+     <Link href="/college/placements/interviews" className="min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center lms-inline-link">Clear</Link>
     </div>
    </form>
    <div className="flex flex-wrap items-center gap-3">
     <p role="status" className="text-sm">{data.total} matching appointments</p>
-    <a href={build(1,"ics")} className="min-h-[var(--lms-control-height)] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Download .ics</a>
-    <a href={build(1,"csv")} className="min-h-[var(--lms-control-height)] text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Export CSV</a>
+    <a href={build(1,"ics")} className="min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center lms-inline-link">Download .ics</a>
+    <a href={build(1,"csv")} className="min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center lms-inline-link">Export CSV</a>
    </div>
    {data.limited?<p role="status" className="text-sm text-warning-text">Results and summary are capped at the first 5,000 records. Narrow filters for a complete view.</p>:null}
    <section aria-label="College interview appointments">
@@ -105,9 +105,9 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       empty={<p role="status" className="text-sm text-body">No interviews match these filters.</p>} />
    </section>
    <nav aria-label="Interview result pages" className="flex gap-4 text-sm">
-    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Previous</Link>:null}
+    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Previous</Link>:null}
     <span>Page {valid.data.page} of {data.pageCount}</span>
-    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Next</Link>:null}
+    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Next</Link>:null}
    </nav>
   </>}
  </div>;
