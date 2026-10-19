@@ -174,13 +174,6 @@ export async function SuperAdminTemplateSubviewPage({
         active="templates"
       />
 
-      <Link
-        href="/admin/projects/templates"
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
-      >
-        ← Template catalogue
-      </Link>
-
       <PageHeader
         eyebrow={`Super Admin · Project Template · ${sectionTitle}`}
         title={detail.template.title}
@@ -190,6 +183,16 @@ export async function SuperAdminTemplateSubviewPage({
         }
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            <Link href="/admin/projects/templates"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+              ← Template catalogue
+            </Link>
+            {detail.template.status === "PUBLISHED" ? (
+              <Link href={"/admin/projects/workspaces/new?templateId=" + encodeURIComponent(detail.template.id)}
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">
+                Use this template · Create workspace →
+              </Link>
+            ) : null}
             <StatusBadge
               tone={
                 detail.template.status === "PUBLISHED"
@@ -210,11 +213,6 @@ export async function SuperAdminTemplateSubviewPage({
         }
       />
 
-      {detail.template.status==="PUBLISHED"?
-        <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
-          Use this template · Create workspace →
-        </Link>:null}
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active={section}
