@@ -30,6 +30,9 @@ export function LearnerNotificationBell(){
   }catch{ /* Existing personal notification inbox remains available. */ }
  },[]);
  const refresh=useCallback(async()=>{
+  if(refreshInFlight.current)return;
+  refreshInFlight.current=true;
+  setLoading(true);
   try{
    const body=await apiFetch<{notifications?:Row[]}>("/api/notifications?limit=40",{cache:"no-store"});
    if(!Array.isArray(body.notifications))throw new Error("Invalid notification response");
