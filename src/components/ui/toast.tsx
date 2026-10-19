@@ -61,7 +61,7 @@ export function ToastStack({ toasts, onDismiss, viewport }: {
     style={bounds}
     className="lms-toast-scroll-cue pointer-events-auto fixed inset-x-4 z-50 flex min-w-0 max-w-sm flex-col gap-2 overflow-y-auto overscroll-contain rounded-[9px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:inset-x-auto sm:right-4">
     {toasts.map(toast => <section key={toast.id} role={toast.tone === "error" ? "alert" : "status"}
-      className={cx("min-w-0 shrink-0 rounded-[12px] border border-l-4 bg-surface p-3 text-foreground shadow-[var(--lms-overlay-shadow)]", toneClasses[toast.tone])}>
+      className={cx("min-w-0 shrink-0 rounded-[12px] border border-l-4 bg-surface p-3 text-foreground shadow-[var(--lms-elevation-3)]", toneClasses[toast.tone])}>
       <div className="flex items-start gap-3">
         <span aria-hidden="true" className={cx("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[toast.tone])} />
         <div className="min-w-0 flex-1">
@@ -70,7 +70,7 @@ export function ToastStack({ toasts, onDismiss, viewport }: {
         </div>
         <button type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
           onClick={() => onDismiss(toast.id)}
-          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-md text-lg font-semibold text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">×</button>
+          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[9px] text-lg font-semibold text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">×</button>
       </div>
     </section>)}
   </div>;

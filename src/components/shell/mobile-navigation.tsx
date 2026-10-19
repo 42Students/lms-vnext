@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SidebarNav } from "./sidebar-nav";
+import {ShellLogoMark} from "./shell-nav-icons";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
 import type { CSSProperties } from "react";
 import type { ShellNavItem } from "./shell-model";
@@ -91,13 +92,8 @@ export function MobileNavigation({
             className="absolute inset-y-0 left-0 flex max-h-[var(--lms-visual-height)] w-[min(20rem,88vw)] flex-col border-r border-[var(--lms-sidebar-border)] bg-surface shadow-xl"
           >
             <div className="flex min-h-20 items-center justify-between gap-4 border-b border-[var(--lms-sidebar-border)] px-5">
-              <div>
-                <p className="m-0 text-xs font-bold uppercase tracking-[0.16em] text-primary-text">
-                  42Students
-                </p>
-                <p className="mt-1 text-base font-semibold text-foreground">
-                  LMS
-                </p>
+              <div className="inline-flex h-11 w-11 items-center justify-center" aria-label="42Students LMS">
+                <ShellLogoMark />
               </div>
               <button
                 type="button"

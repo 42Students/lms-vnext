@@ -11,6 +11,14 @@ export type LearnerNavigationAccess = {
   driveDayEnabled?: boolean;
 };
 
+export type ShellNavIconName =
+ | "home" | "dashboard" | "school" | "building" | "sliders"
+ | "puzzle" | "settings" | "history" | "mail" | "book"
+ | "users" | "shield" | "briefcase" | "folder" | "calendar"
+ | "checklist" | "clipboard" | "messages" | "bell" | "megaphone"
+ | "chart" | "contact" | "search" | "layers" | "user"
+ | "award" | "target" | "clock" | "table" | "inbox" | "help";
+
 export type ShellNavItem = {
   label: string;
   href: string;
@@ -27,6 +35,67 @@ export const TPO_SECTION_LABELS = {
   insights: "Insights",
   administration: "Administration",
 } as const;
+
+
+/** Icon keys live with route/group data, not with visual layout. The old
+ * application ships image icons for some learner rows; remaining rows use
+ * inline SVG because this repository does not depend on lucide-react. */
+export const SHELL_NAV_ICON_KEYS:ReadOnly<Record<string,ShellNavIconName>>={
+ "/dashboard":"dashboard",
+ "/admin/tenants":"building", "/admin/features":"sliders",
+ "/admin/module-access":"puzzle", "/admin/settings":"settings",
+ "/admin/audit":"history", "/admin/inbound-mail":"mail",
+ "/admin/departments":"school", "/admin/courses":"book",
+ "/admin/faculty":"users", "/admin/verification":"shield",
+ "/admin/placements":"briefcase", "/admin/projects/templates":"folder",
+ "/learn/courses":"book", "/learn/allQuizzes":"clipboard",
+ "/learn/allAssignments":"checklist", "/learn/calendar":"calendar",
+ "/learn/attendance":"table", "/learn/my-placements":"briefcase",
+ "/learn/projects":"folder", "/learn/notifications":"bell", "/learn/profile":"user",
+ "/teacher/courses":"book", "/teacher/contacts/allContacts":"contact",
+ "/teacher/notifications":"bell", "/teacher/calendar":"calendar",
+ "/teacher/allQuizzes":"clipboard", "/teacher/allAssignments":"checklist",
+ "/teacher/profile":"user",
+ "/mentor/projects":"folder", "/mentor/calendar":"calendar",
+ "/mentor/notifications":"bell",
+ "/tpo/home":"home", "/tpo/batches":"target", "/tpo/recruiters":"contact",
+ "/tpo/placements":"briefcase", "/tpo/team":"users",
+ "/tpo/students":"school", "/tpo/requests":"inbox",
+ "/tpo/verification":"shield", "/tpo/calendar":"calendar",
+ "/tpo/announcements":"megaphone", "/tpo/reports":"chart",
+ "/tpo/messages":"messages", "/tpo/settings":"settings",
+ "/tpo/audit":"history", "/tpo/notifications":"bell",
+ "/hr/home":"home", "/hr/drives":"briefcase", "/hr/calendar":"calendar",
+ "/hr/conversations":"messages", "/hr/company":"building",
+ "/college":"dashboard", "/college/activity":"history",
+ "/college/departments":"school", "/college/courses":"book",
+ "/college/faculty":"users", "/college/verification":"shield",
+ "/college/placements":"briefcase", "/college/projects":"folder",
+ "/college/profile":"user",
+};
+export function shellNavIconKey(item:ShellNavItem):ShellNavIconName{
+ return SHELL_NAV_ICON_KEYS[item.href]??"layers";
+}
+export const SHELL_SECTION_LABELS:ReadOnly<Record<NonNullable<ShellNavItem["group"]>,string>>={
+ learning:"Learning",tracking:"Tracking",career:"Career",account:"Account",
+ operate:"Operate",coordinate:"Coordinate",insights:"Insights",
+ administration:"Administration",
+};
+/** A multi-role identity may enter TPO and teaching in separate workspaces.
+ * The rail must not interleave Faculty and TPO routes as one menu. Do not
+ * prune any single-role menu or the intentionally linked College placement cell. */
+export function scopedShellNavigation(items:readonly ShellNavItem[],pathname:string):ShellNavItem[]{
+ const teaching=items.some(item=>item.href.startsWith("/teacher/"));
+ const placement=items.some(item=>item.href.startsWith("/tpo/"));
+ if(!teaching||!placement)return [...items];
+ const isTeacher=pathname==="/teacher"||pathname.startsWith("/teacher/");
+ const isTpo=pathname==="/tpo"||pathname.startsWith("/tpo/");
+ const scope=isTeacher?"/teacher/":isTpo?"/tpo/":
+  (items.find(item=>item.href.startsWith("/teacher/")||item.href.startsWith("/tpo/"))
+   ?.href.startsWith("/teacher/")?"/teacher/":"/tpo/");
+ return items.filter(item=>item.href.startsWith(scope)||
+  (!item.href.startsWith("/teacher/")&&!item.href.startsWith("/tpo/")));
+}
 
 const dashboard: ShellNavItem = {
   label: "Dashboard",
