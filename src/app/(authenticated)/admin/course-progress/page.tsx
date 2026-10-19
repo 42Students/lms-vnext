@@ -21,19 +21,19 @@ export default async function SuperAdminCourseProgressPage({
   requirePermission(context,"admin-scope.select");
   const parsed = parseSuperAdminCourseProgressParams(await searchParams);
   if (!parsed) return <div className="min-w-0 space-y-5">
-    <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
+    <PageHeader title="Course Progress" />
     <ErrorState title="Invalid course progress filters" description="Search, status or page is invalid."
       action={<Link href="/admin/course-progress" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-5">
-    <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
+    <PageHeader title="Course Progress" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its course progress." />
   </div>;
   const [data,filtersResult] = await Promise.all([listCollegeCourseProgress(context, parsed),getSuperAdminLearningFilterOptions(context).then(value=>({status:"fulfilled" as const,value}),()=>({status:"rejected" as const}))]);
   const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};
   const summary = adminProgressStats(data.items);
   return <div className="min-w-0 space-y-5">
-    <PageHeader eyebrow="Super Admin · Courses" title="Course Progress"
+    <PageHeader title="Course Progress"
       description="Read-only recorded learner content activity by offering. This is not a completion rate, attendance summary, or count of eligible learners." />
     <p className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">
       Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
