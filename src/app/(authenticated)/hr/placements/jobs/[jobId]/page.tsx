@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
@@ -484,8 +485,8 @@ export default async function HrPlacementJobPage({
           <Link href={"/hr/conversations/"+selectedThread!.id}
             className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Browse full conversation history</Link>
         </div>:<form method="post" action="/api/placements/recruiter/conversations/open" className="space-y-3">
-          <input type="hidden" name="collegeId" value={workspace.college.id}/>
-          <input type="hidden" name="jobId" value={workspace.job.id}/>
+          <Input type="hidden" name="collegeId" value={workspace.college.id}/>
+          <Input type="hidden" name="jobId" value={workspace.job.id}/>
           <p className="text-sm text-body">No private drive discussion exists yet.</p>
           <Button type="submit">Open drive discussion</Button>
         </form>}
