@@ -1,7 +1,5 @@
 "use client";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-
+import { Button } from "@/components/ui/button";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -78,12 +76,12 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  if(quiz.status==="ARCHIVED")return null;
  return <div className="mt-2 space-y-2">
   <div className="flex flex-wrap gap-2">
-   <button type="button" disabled={busy||loading} onClick={()=>void beginEdit()}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
-    {loading?"Loading…":"Edit metadata"}</button>
-   <button type="button" disabled={busy} onClick={()=>void act("ARCHIVE")}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error">
-    Delete</button>
+   <Button variant="secondary" type="button" disabled={busy||loading} onClick={()=>void beginEdit()}
+    className="text-primary-text">
+    {loading?"Loading…":"Edit metadata"}</Button>
+   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void act("ARCHIVE")}
+    className="text-error">
+    Delete</Button>
   </div>
   {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
   {editing?<div className="grid gap-2 rounded border border-border p-3">
@@ -113,9 +111,9 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     Quiz deadlines cannot be changed after learner attempts or after the quiz closes.
     Other immutable quiz fields stay unchanged.
    </p>:null}
-   <button type="button" disabled={busy} onClick={()=>void act("EDIT")}
-    className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
-    {busy?"Saving…":"Save quiz"}</button>
+   <Button variant="primary" type="button" disabled={busy} onClick={()=>void act("EDIT")}
+    >
+    {busy?"Saving…":"Save quiz"}</Button>
   </div>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-success">{notice}</p>:null}
