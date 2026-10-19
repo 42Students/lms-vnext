@@ -119,7 +119,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
       <Button variant="secondary" type="button" onClick={()=>editMessage("")} disabled={!message||busy}
        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Discard draft</Button>
       <Button variant="primary" type="submit" disabled={!id||!message.trim()||busy}
-       className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+       className="min-h-11 sm:min-h-9">
        {busy?"Sending…":"Send"}
       </Button>
      </div>
