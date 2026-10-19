@@ -97,7 +97,7 @@ export async function ProjectAdminReadinessPage({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-base font-semibold">Active overrides ({activeOverrides.length})</h2>
           <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
-            className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">
             Export overrides CSV
           </a>
         </div>

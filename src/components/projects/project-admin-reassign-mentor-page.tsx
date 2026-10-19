@@ -76,7 +76,7 @@ export async function ProjectAdminReassignMentorPage({
         title="Bulk mentor reassignment"
         description="Move selected non-archived project workspaces to a new primary mentor."
       />
-      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold" href={basePath}>Back to workspaces</Link>
+      <Link className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle" href={basePath}>Back to workspaces</Link>
       <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold">Mentor workload</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -107,7 +107,7 @@ export async function ProjectAdminReassignMentorPage({
             placeholder="Enter mentor name or email" className="w-full"/>
         </label>
         <Button type="submit" className="">Find mentor</Button>
-        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="min-h-11 rounded-md border px-4 py-3 text-sm">Clear mentor search</Link>:null}
+        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">Clear mentor search</Link>:null}
         <p className="w-full text-xs text-muted-foreground">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
       <ProjectAdminFilters query={query} />

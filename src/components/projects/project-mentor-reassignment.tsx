@@ -3,6 +3,8 @@
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
@@ -180,22 +182,22 @@ export function ProjectMentorReassignment({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Select workspaces
         </h2>
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <button type="button" disabled={pending || !matchingWorkspaces.length}
+          <Button variant="secondary" type="button" disabled={pending || !matchingWorkspaces.length}
             onClick={() => setSelected(matchingWorkspaces.map(row => row.id))}
-            className="rounded-md border border-border px-3 py-2 text-sm font-semibold">
+            className="">
             {matchingCapped?"Select first "+matchingWorkspaces.length+" matching workspaces":
               "Select all "+matchingWorkspaces.length+" matching workspaces"}
-          </button>
-          <button type="button" disabled={pending || !selected.length}
+          </Button>
+          <Button variant="secondary" type="button" disabled={pending || !selected.length}
             onClick={() => setSelected([])}
-            className="rounded-md border border-border px-3 py-2 text-sm font-semibold">
+            className="">
             Clear selection
-          </button>
+          </Button>
           <span className="text-sm text-body">{selected.length} selected across pages</span>
           {matchingCapped?<p role="status" className="w-full text-sm text-warning-text">
             More than 1,000 workspaces match. Selection is limited to the first 1,000;
@@ -243,31 +245,31 @@ export function ProjectMentorReassignment({
         )}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Reassign to mentor
         </h2>
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Search mentors
-            <input
+            <Input
               type="search"
               value={search}
               onChange={(event) =>
                 setSearch(event.target.value)
               }
               placeholder="Name or email"
-              className="rounded-lg border border-border bg-background px-3 py-2 font-normal"
+              className="w-full"
             />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             New primary mentor
-            <select
+            <Select
               value={mentorMembershipId}
               onChange={(event) =>
                 setMentor(event.target.value)
               }
-              className="rounded-lg border border-border bg-background px-3 py-2 font-normal"
+              className="w-full"
             >
               <option value="">
                 Select a mentor
@@ -281,17 +283,17 @@ export function ProjectMentorReassignment({
                     mentor.email}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Role label
-            <input
+            <Input
               value={roleLabel}
               maxLength={120}
               onChange={(event) =>
                 setRoleLabel(event.target.value)
               }
-              className="rounded-lg border border-border bg-background px-3 py-2 font-normal"
+              className="w-full"
             />
           </label>
         </div>
@@ -331,7 +333,7 @@ export function ProjectMentorReassignment({
       </section>
 
       {result ? (
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <section className="border-b border-border pb-5">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Last result
           </h2>

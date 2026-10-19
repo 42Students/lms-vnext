@@ -130,10 +130,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
 
       <form className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
-          <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+          <Input name="q" defaultValue={parsed.q} maxLength={100} className="w-full"/>
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section
-          <Select name="section" defaultValue={parsed.section} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="section" defaultValue={parsed.section} className="w-full">
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
           </Select>
         </label>
@@ -149,7 +149,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle"
           >
             {section.title}
           </a>

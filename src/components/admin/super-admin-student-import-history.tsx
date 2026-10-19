@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 "use client";
 
 import { useRef } from "react";
@@ -10,17 +11,17 @@ export function SuperAdminStudentImportHistory({runs}:{runs:readonly Run[]}) {
   const dialogRef=useRef<HTMLDialogElement>(null);
   const triggerRef=useRef<HTMLButtonElement>(null);
   return <>
-    <button ref={triggerRef} type="button" onClick={()=>dialogRef.current?.showModal()}
-      className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+    <Button variant="secondary" ref={triggerRef} type="button" onClick={()=>dialogRef.current?.showModal()}
+      className="">
       Import History
-    </button>
+    </Button>
     <dialog ref={dialogRef} aria-label="Bulk import history"
       onClose={()=>triggerRef.current?.focus()}
-      className="w-[min(92vw,48rem)] max-h-[calc(100dvh-2rem)] overflow-hidden overscroll-contain rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50 [&[open]]:flex [&[open]]:flex-col">
+      className="w-[min(92vw,48rem)] max-h-[calc(100dvh-2rem)] overflow-hidden overscroll-contain rounded-[12px] border border-border bg-surface p-5 text-foreground shadow-[0_8px_30px_rgba(26,45,72,.1)] backdrop:bg-black/50 [&[open]]:flex [&[open]]:flex-col">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">Bulk import history</h2>
-        <button type="button" onClick={()=>dialogRef.current?.close()}
-          className="min-h-11 rounded border border-border px-4 font-semibold">Close</button>
+        <Button variant="secondary" type="button" onClick={()=>dialogRef.current?.close()}
+          className="">Close</Button>
       </div>
       <div role="region" aria-label="Bulk import history records" tabIndex={0}
         className="mt-4 min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain [mask-image:linear-gradient(to_bottom,black_92%,transparent_100%)]">
