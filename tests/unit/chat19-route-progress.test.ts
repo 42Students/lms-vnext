@@ -39,6 +39,25 @@ describe("chat-19 route progress and shell ownership", () => {
     expect(progress()).toContain('window.removeEventListener("popstate", onPopState)');
     expect(progress()).toContain("window.clearTimeout(value.current)");
   });
+  it("clears progress for query-only browser history without pathname commits", () => {
+    const source = progress();
+    expect(source).toContain('const onPopState = () => {');
+    expect(source).toContain('if (window.location.pathname === pathname)');
+    expect(source).toContain('clearPending();');
+    expect(source).toContain('window.addEventListener("popstate", onPopState)');
+  });
+  it("keeps the legacy large AntD four-dot delay pattern", () => {
+    const source = css();
+    expect(source).toContain("font-size:32px");
+    expect(source).toContain("width:14px");
+    expect(source).toContain("height:14px");
+    expect(source).toContain("transform:scale(.75)");
+    expect(source).toContain("animation:lms-legacy-spin-move 1s infinite linear alternate");
+    for (const delay of [".4s", ".8s", "1.2s"]) {
+      expect(source).toContain("animation-delay:"+delay);
+    }
+    expect(source).toContain(".lms-legacy-loader-dots,.lms-legacy-loader-dots i {animation:none;}");
+  });
   it("mounts exactly once after topbar and outside main", () => {
     const x = shell();
     expect(x).toContain('import { RouteProgress } from "./route-progress"');
