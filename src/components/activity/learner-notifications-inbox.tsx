@@ -119,7 +119,7 @@ export function LearnerNotificationsInbox({
     <section className="space-y-5" aria-label="Learner notifications inbox">
       <p role="status" className="text-sm text-body sm:hidden">{mobileSummary}</p>
       <nav aria-label="Filter notifications by type" className="min-w-0">
-        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+        <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
           {learnerNotificationCategories.map(({ key, label }) => (
             <Button
               key={key}
@@ -127,9 +127,7 @@ export function LearnerNotificationsInbox({
               type="button"
               aria-pressed={active === key}
               onClick={() => selectCategory(key)}
-              className={active === key
-                ? "min-h-11 min-w-0 text-center text-sm"
-                : "min-h-11 min-w-0 text-center text-sm"}
+              className="min-h-11 shrink-0 rounded-[8px] px-4 text-center text-sm font-medium whitespace-nowrap"
             >
               {label}
             </Button>
@@ -147,7 +145,7 @@ export function LearnerNotificationsInbox({
         </label>
         <Button type="button" aria-pressed={unread==="unread"}
           onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
-          variant="secondary" className="min-h-11 sm:min-h-9">
+          variant={unread==="unread" ? "primary" : "secondary"} className="min-h-11 sm:min-h-9">
           {unread==="unread"?"Unread only ✓":"Unread only"}
         </Button>
         <Button type="button" onClick={applySearch}
