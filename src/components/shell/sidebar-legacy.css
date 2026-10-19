@@ -218,12 +218,6 @@
  }
  .lms-mobile-sidebar [data-slot="scroll-cue"][data-axis="y"] > div:first-child::-webkit-scrollbar {display:none;}
  .lms-mobile-sidebar .lms-sidebar-nav {padding-inline:0;overflow-x:hidden;scrollbar-width:none;}
- .lms-mobile-sidebar [data-slot="mobile-sidebar-scroll"] {
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-  -ms-overflow-style:none;
- }
- .lms-mobile-sidebar [data-slot="mobile-sidebar-scroll"]::-webkit-scrollbar {display:none;}
  .lms-mobile-sidebar .lms-sidebar-item {
   padding:10px;
   margin-bottom:2px;
