@@ -32,6 +32,6 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
   <p role="status" className="rounded border border-border bg-surface p-3 text-sm">
    {lifecycle?.finishedAt?"This batch is finished. Eligibility decisions are read-only.":"Batch eligibility decisions are temporarily unavailable. Retry when the rules are available."}
   </p>}
- <Link href="/tpo/settings/rules" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm">View college placement rules</Link>
+ <Link href="/tpo/settings/rules" className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-sm">View college placement rules</Link>
  </div>;
 }
