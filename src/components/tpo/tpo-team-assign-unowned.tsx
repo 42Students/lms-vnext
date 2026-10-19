@@ -37,15 +37,15 @@ export function TpoTeamAssignUnowned({drives,companies,members}:{
   <h2 className="font-semibold">Nobody owns {drives} drives and {companies} companies</h2>
   <p className="text-xs text-muted-foreground">Give the unassigned active drives and company relationships to one placement team member. Work with an owner is not moved.</p>
   <div className="flex flex-wrap items-end gap-3">
-   <label className="grid min-w-48 flex-1 gap-1 text-sm">Who takes them?
+   <label className="grid min-w-0 flex-[1_1_180px] gap-1 text-sm">Who takes them?
     <Select disabled={busy} value={assignee} onChange={event=>setAssignee(event.target.value)}
-     className="min-h-11 min-[768px]:min-h-9">
+     className="min-h-11 md:min-h-9">
      <option value="">Choose a team member</option>
      {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
     </Select>
    </label>
    <Button type="button" disabled={busy||!assignee} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 min-[768px]:min-h-9">
+    className="min-h-11 md:min-h-9">
     {busy?"Assigning…":"Assign work"}
    </Button>
   </div>
