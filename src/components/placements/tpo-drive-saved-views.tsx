@@ -38,9 +38,9 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   <div className="mt-3 flex flex-wrap gap-2">
    <input aria-label="Saved view name" maxLength={50} value={name}
     onChange={e=>setName(e.target.value)} placeholder="e.g. Interviews this week"
-    className="min-h-11 md:min-h-9 rounded border border-border bg-surface px-3 text-sm"/>
+    className="min-h-11 md:min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm"/>
    <button type="button" onClick={save}
-    className="min-h-11 md:min-h-9 rounded border border-primary px-3 text-sm font-semibold text-primary-text">
+    className="min-h-11 md:min-h-9 rounded-[9px] border border-primary px-3 text-sm font-semibold text-primary-text">
     Save current filters
    </button>
   </div>
