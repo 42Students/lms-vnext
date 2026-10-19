@@ -105,3 +105,16 @@ Source-only JSX opening/closing checks across **12 modified TSX files** in this 
 - [ ] Required viewport verification **NOT RUN**: 375px/767px phone, 768px tablet and desktop sizes; focus trap/recovery, Escape, outside click, Back history, safe areas, exit/reduced-motion, footer alignment, scroll containment and error/disabled/loading states.
 
 F1 and F2 stay **unticked under STRICT TICK RULE** until exact per-state value proof, complete branch-coverage proof and responsive/no-regression evidence are available. No app, CI, lint, typecheck, unit test, or browser was run in this turn.
+
+## Follow-on F1 source comparison — phone and dialog variants
+
+| State/property | Legacy source and exact value | vNext source and effective value | Result |
+| --- | --- | --- | --- |
+| Legacy mobile dialog body | `docs/design/legacy-styles/components___common.scss:1083-1091` — `padding:24px`, vertical scroll, hidden scrollbar | `src/components/ui/dialog.tsx:53` — `p-6` = 24px phone; `sm:p-[var(--lms-canvas-padding)]` desktop; ScrollCue controls scroll | Padding matches the cited modal variant; scrollbar and all modal variants still unverified |
+| Legacy dialog header | `components___common.scss:1093-1103` — 16px 24px and 50px right title clearance | `src/components/ui/legacy-overlays.css:17-27` — 16px 24px, 50px clearance | Match static dimensions, pending real responsive screenshot |
+| Confirmation semantic/disabled | `components___antddesign.scss:899-906` — confirmation buttons block with 21px top margin and modal content 15px 15px 5px | `src/components/ui/confirm-action-dialog.tsx:12-19` — `role="alertdialog"`, pending-disabled actions within generic footer | **Mismatch** in confirmation-specific action spacing; semantics strengthened, no F1 tick |
+| Notification drawer phone header top | `components___notification-drawer.scss:408-414` — `calc(16px + env(safe-area-inset-top))`, touch minimum | `src/components/ui/legacy-overlays.css:66-73` — same top padding and minimum 44px for right drawer | Match base right-drawer mobile header; content variants not all checked |
+| Legacy drawer left phone | `components___antddesign.scss:305-310,335-346` — width 82% max 300px and 44px close target | `src/components/ui/legacy-overlays.css:47-54,78-86` and `src/components/shell/mobile-navigation.tsx` — 82vw/300px and 44px | Match selected navigation variant only |
+| Modal exit | Old bundled SCSS has multiple entrance rules and commented transitions `components___antddesign.scss:1-15`; no unified exit proof | `src/components/ui/use-overlay-exit.ts` plus CSS `lms-legacy-dialog-exit` / drawer exits | **Unproven** animation equivalence; no F1 tick |
+
+These are source observations, **not** a replacement for the strict per-state/property matrix or phone/tablet browser proof.
