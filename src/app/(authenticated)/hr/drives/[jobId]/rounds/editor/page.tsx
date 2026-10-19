@@ -3,6 +3,7 @@ import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Input} from "@/components/ui/input";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
@@ -33,7 +34,7 @@ export default async function HrRoundsEditorPage({params}:{
    <form action={endpoint} method="post" className="grid gap-3 sm:grid-cols-2">
     <input type="hidden" name="action" value="CREATE"/>
     <label className="grid gap-1 text-sm text-body">Round name
-     <input name="name" required maxLength={100} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/>
+     <Input name="name" required maxLength={100} className="w-full"/>
     </label>
     <label className="grid gap-1 text-sm text-body">Round kind
      <select name="kind" required defaultValue="INTERVIEW" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -46,7 +47,7 @@ export default async function HrRoundsEditorPage({params}:{
      </select>
     </label>
     <label className="grid gap-1 text-sm text-body">Duration (minutes)
-     <input name="durationMinutes" type="number" min={1} max={1440} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/>
+     <Input name="durationMinutes" type="number" min={1} max={1440} className="w-full"/>
     </label>
     <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:col-span-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Add round</button>
    </form>
@@ -63,7 +64,7 @@ export default async function HrRoundsEditorPage({params}:{
       <input type="hidden" name="action" value="UPDATE"/><input type="hidden" name="roundId" value={round.id}/>
       <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
       <label className="grid gap-1 text-sm text-body">Name
-       <input name="name" required defaultValue={round.name} maxLength={100} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/>
+       <Input name="name" required defaultValue={round.name} maxLength={100} className="w-full"/>
       </label>
       <label className="grid gap-1 text-sm text-body">Kind
        <select name="kind" defaultValue={round.kind} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
