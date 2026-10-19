@@ -10,8 +10,9 @@ export function Menu({ className, onKeyDown, children, ...props }: MenuProps) {
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     onKeyDown?.(event);
     if (event.defaultPrevented) return;
-    const items = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button[role="menuitem"]:not(:disabled)'));
+    const items = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button[role="menuitem"]:not(:disabled):not([aria-disabled="true"])'));
     const current = items.indexOf(document.activeElement as HTMLButtonElement);
+    if (items.length === 0 && event.key !== "Escape") return;
     let target = current;
     if (event.key === "ArrowDown") target = (current + 1) % items.length;
     else if (event.key === "ArrowUp") target = (current - 1 + items.length) % items.length;
@@ -22,7 +23,6 @@ export function Menu({ className, onKeyDown, children, ...props }: MenuProps) {
       if (details) { details.open = false; details.querySelector("summary")?.focus(); event.preventDefault(); }
       return;
     } else return;
-    if (!items.length) return;
     event.preventDefault();
     items[target]?.focus();
   }
