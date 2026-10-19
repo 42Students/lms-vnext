@@ -140,7 +140,7 @@
  line-height:1;
  opacity:.55;
 }
-.lms-sidebar-nav .lms-sidebar-item-icon svg {display:block;width:20px;height:20px;}
+.lms-sidebar-nav .lms-sidebar-item-icon svg {display:block;width:20px;height:20px;flex-shrink:0;}
 /* The original legacy icon box keeps 0.55 opacity in every state:
  * active/hover recolor its inherited foreground, not its opacity. */
 .lms-sidebar-nav .lms-nav-label {
