@@ -126,6 +126,37 @@
   font-weight: 600 !important;
   box-shadow: inset 0 0 0 1px #26bac7 !important;
 }
+/* Career event accent pairs: lms2-fe@prod-2026/
+ * src/components/Placements/careerEventVisuals.js:11-48.
+ * These are the represented vNext event types; do not invent other types.
+ */
+.legendChip[data-kind="ASSESSMENT"]:hover:not(:disabled),
+.legendChip[data-kind="ASSESSMENT"][aria-pressed="true"] {
+  background: #e6f4ff !important;
+  color: #1e40af !important;
+  border-color: #1d4ed8 !important;
+}
+.legendChip[data-kind="ASSESSMENT"][aria-pressed="true"] {
+  box-shadow: inset 0 0 0 1px #1d4ed8 !important;
+}
+.legendChip[data-kind="INTERVIEW"]:hover:not(:disabled),
+.legendChip[data-kind="INTERVIEW"][aria-pressed="true"] {
+  background: #ecfdf5 !important;
+  color: #065f46 !important;
+  border-color: #047857 !important;
+}
+.legendChip[data-kind="INTERVIEW"][aria-pressed="true"] {
+  box-shadow: inset 0 0 0 1px #047857 !important;
+}
+.legendChip[data-kind="OTHER"]:hover:not(:disabled),
+.legendChip[data-kind="OTHER"][aria-pressed="true"] {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border-color: #475569 !important;
+}
+.legendChip[data-kind="OTHER"][aria-pressed="true"] {
+  box-shadow: inset 0 0 0 1px #475569 !important;
+}
 .gridFrame {
   position: relative;
   overflow-x: auto;
