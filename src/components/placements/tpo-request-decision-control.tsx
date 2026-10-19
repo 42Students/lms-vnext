@@ -1,4 +1,5 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -92,12 +93,12 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
               "min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-body"}>{choice}</button>)}
         </div>
         {reason==="Other"?<label className="block text-sm font-semibold">Explain the rejection
-          <textarea value={note} onChange={e=>setNote(e.target.value)} minLength={3} maxLength={2000}
+          <Textarea value={note} onChange={e=>setNote(e.target.value)} minLength={3} maxLength={2000}
             disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
         </label>:null}
         {!valid&&reason?"Enter a rejection reason of at least 3 characters.":null}
       </div>:mode==="APPROVE"?<label className="block text-sm font-semibold">Approval note (optional)
-        <textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
+        <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
           disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
       </label>:null}
       {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}
