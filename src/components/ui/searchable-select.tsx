@@ -42,6 +42,8 @@ export function SearchableSelect({
     option.value.toLocaleLowerCase().includes(normalized) ||
     (option.label ?? option.value).toLocaleLowerCase().includes(normalized));
   const enabledIndices = matches.map((option, index) => option.disabled ? -1 : index).filter(index => index >= 0);
+  // A changed option list must not leave aria-activedescendant on a disabled or missing row.
+  const validActiveIndex = enabledIndices.includes(activeIndex) ? activeIndex : -1;
   const describedBy = [props["aria-describedby"], selectionError ? validationId : null]
     .filter(Boolean).join(" ") || undefined;
 
@@ -108,17 +110,17 @@ export function SearchableSelect({
       event.preventDefault();
       setOpen(true);
       if (!enabledIndices.length) return;
-      const position = enabledIndices.indexOf(activeIndex);
+      const position = enabledIndices.indexOf(validActiveIndex);
       const next = event.key === "ArrowDown"
         ? enabledIndices[(position + 1) % enabledIndices.length]
         : enabledIndices[(position <= 0 ? enabledIndices.length : position) - 1];
       setActiveIndex(next);
     }
-    if (event.key === "Enter" && open && activeIndex >= 0 && matches[activeIndex]) {
+    if (event.key === "Enter" && open && validActiveIndex >= 0 && matches[validActiveIndex]) {
       event.preventDefault();
-      select(matches[activeIndex].value);
+      select(matches[validActiveIndex].value);
     }
-    if (event.key === "Enter" && !creatable && activeIndex < 0) validate(event.currentTarget.value);
+    if (event.key === "Enter" && !creatable && validActiveIndex < 0) validate(event.currentTarget.value);
     if (event.key === "Tab") { setOpen(false); validate(event.currentTarget.value); }
   }
 
@@ -129,7 +131,7 @@ export function SearchableSelect({
       aria-describedby={describedBy} aria-errormessage={selectionError ? validationId : undefined}
       role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
       aria-controls={open && !disabled && !readOnly ? listId : undefined} aria-expanded={open && !disabled && !readOnly}
-      aria-activedescendant={open && activeIndex >= 0 ? `${listId}-option-${activeIndex}` : undefined}
+      aria-activedescendant={open && validActiveIndex >= 0 ? `${listId}-option-${validActiveIndex}` : undefined}
       className={cx(clearable ? "pr-12" : "", className)} onChange={change} onFocus={focus} onBlur={blur} onKeyDown={keyDown} />
     {clearable && Boolean(visibleQuery) && !disabled && !readOnly
       ? <Button type="button" variant="ghost" size="icon-sm" aria-label="Clear selection"
@@ -138,13 +140,13 @@ export function SearchableSelect({
     {open && !disabled && !readOnly
       ? <PopoverListbox id={listId} label={String(props["aria-label"] ?? "Available options")}
           onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
-          className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[44px] w-full min-w-0 overflow-y-auto pt-[5px]">
+          className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[120px] w-full min-w-0 overflow-y-auto pt-[5px]">
           {matches.length
             ? matches.map((option, index) =>
               <Button key={option.value} id={`${listId}-option-${index}`} type="button" variant="ghost" size="md" role="option"
                 aria-selected={option.value === visibleQuery} disabled={option.disabled} tabIndex={-1}
                 onPointerEnter={() => { if (!option.disabled) setActiveIndex(index); }}
-                className={cx("!flex !min-h-11 !w-full !items-center !justify-start !rounded-none !border-0 !px-[10px] !py-[5px] !text-left !text-[14px] !font-normal !leading-5 !text-[var(--lms-body-text)] !shadow-none enabled:hover:!bg-[#d1f1f1] focus-visible:!outline-2 focus-visible:!outline-[var(--lms-primary)] disabled:!opacity-50", index === activeIndex ? "!bg-[#d1f1f1]" : "!bg-transparent")}
+                className={cx("!flex !min-h-11 !w-full !items-center !justify-start !rounded-none !border-0 !px-[10px] !py-[5px] !text-left !text-[14px] !font-normal !leading-5 !text-[var(--lms-body-text)] !shadow-none enabled:hover:!bg-[#d1f1f1] focus-visible:!outline-2 focus-visible:!outline-[var(--lms-primary)] disabled:!opacity-50", index === validActiveIndex ? "!bg-[#d1f1f1]" : "!bg-transparent")}
                 onPointerDown={event => event.preventDefault()} onClick={() => select(option.value)}>
                 {option.label ?? option.value}
               </Button>)

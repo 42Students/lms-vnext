@@ -412,3 +412,22 @@
     min-height: 44px;
   }
 }
+
+
+/* Legacy searchable dropdown surface: docs/design/legacy-styles/components___form.scss:63-94.
+ * This is a form option list, NOT the 420px notification listbox. */
+[data-slot="searchable-select"] > [data-slot="popover-listbox"] {
+  max-width: 100%;
+  min-height: 120px;
+  max-height: 200px;
+  box-shadow: 0 14px 16px rgba(0, 0, 0, .04);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+[data-slot="searchable-select"] > [data-slot="popover-listbox"]::-webkit-scrollbar {
+  display: none;
+}
+[data-slot="searchable-select"] [role="option"] {
+  min-height: 44px;
+  transition: background-color .2s ease-in-out;
+}
