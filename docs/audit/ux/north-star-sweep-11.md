@@ -73,6 +73,10 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 - Existing repeated metrics, item cards, distinct placement-range tiles, college preview mockups and object evidence regions remain separate by design and were not flattened.
 - The orchestrator has concurrently merged earlier chat-11 changes into `main` while this lane continued. Current branch divergence is **not** a failed push and no force update was attempted. The final owner merge should reconcile the remaining branch-side commits with the latest main.
 
+## Final source-token spot-check
+
+After the 54 source commits, the 41 touched TSX paths were read back from `chatgpt/chat-11-b` and scanned without executing the app. No occurrences remained of the targeted literal `rounded-[9px]`, old `rounded-[var(--radius)]`, blue/slate/gray utility palettes, literal six-digit hex palette declarations, misplaced foreground-on-primary combinations, or the previously malformed leading-hyphen class tokens. This is **limited static source inspection**, not a TypeScript compile, complete CSS audit, snapshot diff, or guarantee of identical rendering.
+
 ## Remaining verification and ownership boundaries
 
 - [ ] Compare against old LMS at 320/360/390/768/1280px: page canvas spacing, date filters, native focus rings, tenant setup tabs, branding uploads, sign-in selection rows, course progress pagination, module filters, and TPO settings navigation.
