@@ -9,6 +9,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {TpoGridColumnChooser} from "@/components/tpo/tpo-grid-column-chooser";
 import {TpoGridFilterPanel,type TpoFilterField} from "@/components/tpo/tpo-grid-filter-panel";
 import {chosenTpoGridColumns,exportTpoGridCsv,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import {gridExportFilename} from "@/modules/placements/grid-export-filename";
 
 type Selection={selected:readonly string[];onChange:(ids:string[])=>void};
 type GridWorkspaceProps<Row>={
@@ -131,7 +132,7 @@ export function GridWorkspace<Row>({
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const link=document.createElement("a");
-    link.href=url;link.download=exportName.replace(/[^a-z0-9_-]/gi,"-")+".csv";
+    link.href=url;link.download=gridExportFilename(exportName,"csv");
     document.body.appendChild(link);link.click();link.remove();
    }finally{URL.revokeObjectURL(url);}
    setNotice("Exported "+exportedRows.length+" authorized row(s) from this page.");
