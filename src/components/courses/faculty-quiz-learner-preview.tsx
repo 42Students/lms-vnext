@@ -2,6 +2,7 @@
 import {Checkbox} from "@/components/ui/checkbox";
 import {CourseChoiceControl} from "./course-choice-control";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
 
