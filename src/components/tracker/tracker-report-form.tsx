@@ -228,7 +228,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         {similarError?<p role="alert" className="mt-2 text-sm text-error">{similarError}</p>:null}
         {similarSearched?<div role="status" className="mt-2 text-sm">
           {similarResults.length?<ul className="space-y-2">
-            {similarResults.map(issue=><li key={issue.publicId} className="rounded border border-border p-2">
+            {similarResults.map(issue=><li key={issue.publicId} className="rounded-[var(--lms-control-radius)] border border-border p-2">
               <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{issue.publicId}</Link>
               <span className="ml-2 text-xs text-muted-foreground">{issue.status}</span>
               <p className="mt-1 break-words text-xs text-body">{issue.description.slice(0,160)}</p>
