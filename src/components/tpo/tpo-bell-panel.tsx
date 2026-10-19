@@ -99,7 +99,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
    bodyClassName={compact ? style.topbarNotificationBody : undefined} title="Notifications"
    description="Most recent notifications from your own college.">
 
-   {refreshing?<p role="status" className="text-xs text-muted-foreground">Refreshing notifications…</p>:null}
+   {refreshing?<p role="status" className="text-sm text-muted-foreground">Refreshing notifications…</p>:null}
    {!refreshing&&displayedItems.length===0&&!error?<div role="status" className="text-sm"><p className="font-medium">Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul role="list" aria-label="Recent placement notifications" className="space-y-0">
     {displayedItems.slice(0,20).map(item=><li key={item.id} className="mb-1.5 overflow-hidden rounded-[8px] text-sm">
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
