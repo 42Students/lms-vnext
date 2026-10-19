@@ -96,13 +96,13 @@ export function NotificationList({
         <section key={group.label} aria-label={group.label} className="grid gap-3">
           <h2 className="text-sm font-semibold text-muted-foreground">{group.label}</h2>
           {group.items.map((item) => (
-            variant==="tpo"?<button type="button" key={item.id} disabled={pendingId!==null}
+            variant==="tpo"?<Button variant="secondary" type="button" key={item.id} disabled={pendingId!==null}
               onClick={()=>{
                if(item.readAt){if(item.actionHref)router.push(item.actionHref);return;}
                void markRead(item.id,item.actionHref??undefined);
               }}
               aria-label={"Open notification: "+item.title}
-              className="w-full min-h-12 rounded-xl border border-border bg-surface p-4 text-left hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50">
+              className="w-full text-left">
               <div className="flex items-start gap-3">
                {!item.readAt?<span aria-hidden="true" className="mt-2 inline-block h-2 w-2 shrink-0 rounded-full bg-primary"/>:null}
                <div className="min-w-0 flex-1">
@@ -114,7 +114,7 @@ export function NotificationList({
                 <time className="mt-2 block text-xs text-muted-foreground" dateTime={item.createdAt}>{formatWhen(item.createdAt)}</time>
                </div><span aria-hidden="true" className="text-primary-text">→</span>
               </div>
-             </button>:<article
+             </Button>:<article
               key={item.id}
               className="rounded-xl border border-border bg-surface p-5"
             >
@@ -129,14 +129,14 @@ export function NotificationList({
                   </div>
                   <h3 className="mt-3 text-base font-semibold text-foreground">
                     {onSelect ? (
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => onSelect(item)}
-                        className="inline-flex min-h-11 items-center text-left underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                        className="text-left underline-offset-2 hover:underline"
                         aria-label={`View notification: ${item.title}`}
                       >
                         {item.title}
-                      </button>
+                      </Button>
                     ) : item.title}
                   </h3>
                   {item.contextLine?<p className="mt-1 text-xs font-semibold text-muted-foreground">{item.contextLine}</p>:null}
