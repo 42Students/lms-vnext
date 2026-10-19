@@ -231,7 +231,7 @@ export function PlacementEmployerRelationships({
                   </p> : null}
                   {item.websiteUrl ? (
                     <a
-                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:text-primary-hover"
+                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:text-primary-hover md:min-h-9"
                       href={item.websiteUrl}
                       
                       rel="noopener noreferrer"
@@ -247,7 +247,7 @@ export function PlacementEmployerRelationships({
                       Relationship owner
                     </span>
                     <select
-                      className="min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+                      className="min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)] md:min-h-9"
                       value={
                         draft.ownerMembershipId
                       }
