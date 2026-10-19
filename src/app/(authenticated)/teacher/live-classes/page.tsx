@@ -48,7 +48,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
      {data.courses.map(c=><option key={c.deliveryId} value={c.deliveryId}>
       {c.courseName} · {c.sectionName}
      </option>)}
-    </select></label>
+    </Select></label>
    <Button variant="primary" type="submit" className="min-h-9 px-4 py-2">Filter</Button>
    <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
   </form>

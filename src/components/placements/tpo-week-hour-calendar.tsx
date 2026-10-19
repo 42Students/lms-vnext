@@ -172,7 +172,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         <button key={event.id} type="button"
          aria-label={"Move follow-up: "+event.title}
          onClick={()=>setMove({id:event.followupId!,currentIst:calendarDueAtToIstLocal(new Date(event.startsAt))})}
-         style={position} className={"absolute z-10 overflow-hidden rounded-[var(--lms-control-radius)] border border-border px-1 py-0.5 text-left text-[11px] leading-tight "+tone(event.kind)}>{inner}</Button>:
+         style={position} className={"absolute z-10 overflow-hidden rounded-[var(--lms-control-radius)] border border-border px-1 py-0.5 text-left text-[11px] leading-tight "+tone(event.kind)}>{inner}</button>:
        event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title}
         draggable={canCreate&&Boolean(event.followupId)}
         onDragStart={dragEvent=>{
@@ -194,8 +194,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
       <Button variant="secondary" type="button" onClick={()=>setMove(null)}
         className="mt-3 min-h-11 md:min-h-9 px-4">Close</Button>
-    </section>
-   </div>:null}
+  </Dialog>:null}
   {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
   {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next)cancelDraft();}} title="New recruiter follow-up" className="max-w-md">
    <div className="space-y-3">
