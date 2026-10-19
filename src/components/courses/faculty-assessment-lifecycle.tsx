@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 "use client";
 import { Alert } from "@/components/ui/alert";
 
@@ -70,20 +71,9 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
      {pending===action?"Saving…":action==="CLOSE"?"Close quiz":
        action==="PUBLISH"?"Publish":"Delete"}
    </Button>)}
-   {saved?<span role="status" className="text-xs text-success">
+   {saved?<Alert tone="success">
      {lastAction==="ARCHIVE"?(kind==="QUIZ"?"Quiz deleted successfully.":"Assignment deleted."):"Change saved. Refreshing Section state…"}
-   </span>:null}
-   {error?<span role="alert" className="text-xs font-semibold text-error">{error}</span>:null}
- </div>
- <ConfirmDialog
-   open={confirmAction!==null}
-   onOpenChange={open=>{if(!open && pending===null)setConfirmAction(null);}}
-   title={confirmAction==="ARCHIVE"?"Delete assessment":confirmAction==="CLOSE"?"Close assessment":"Publish assessment"}
-   description={confirmAction===null?undefined:facultyAssessmentLifecycleWarning(kind,confirmAction)}
-   confirmLabel={confirmAction==="ARCHIVE"?"Delete":confirmAction==="CLOSE"?"Close":"Publish"}
-   confirmVariant={confirmAction==="ARCHIVE"?"danger":"primary"}
-   pending={pending!==null}
-   onConfirm={()=>{if(confirmAction)void run(confirmAction);}}
- />
- </>;
+   </Alert>:null}
+   {error?<Alert tone="error">{error}</Alert>:null}
+ </div>;
 }
