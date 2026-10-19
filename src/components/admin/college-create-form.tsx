@@ -169,6 +169,7 @@ export function CollegeCreateForm({
       </div>
       <Button
         type="submit"
+        loading={pending}
         disabled={
           pending ||
           !organizationId ||
