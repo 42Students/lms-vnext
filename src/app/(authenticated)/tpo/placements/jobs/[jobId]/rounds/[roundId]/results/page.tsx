@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -21,7 +23,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
  const {jobId,roundId}=await params;
  const raw=await searchParams;
  const selected=tpoRoundResultViewSchema.safeParse({q:first(raw.q),status:first(raw.status)});
- if(!selected.success)return <div role="alert" className="space-y-3 p-4"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="text-link underline">Clear filters</Link></div>;
+ if(!selected.success)return <Alert tone="error"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="text-link underline">Clear filters</Link></Alert>;
  let data:Awaited<ReturnType<typeof getTpoRoundResultTable>>;
  try{data=await getTpoRoundResultTable(context,{jobId,roundId});}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_ROUND_NOT_FOUND")notFound();throw error;}
@@ -40,11 +42,11 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
     rows={data.rows.map(row=>({applicationId:row.applicationId,
       displayName:row.student??"Learner",rollNumber:row.rollNumber,
       resultStatus:row.resultStatus}))}/>:
-   <p role="status">Bulk staging is unavailable when the eligible roster exceeds 500. Use the reviewed result-import workflow instead.</p>}
+   <Alert tone="warning">Bulk staging is unavailable when the eligible roster exceeds 500. Use the reviewed result-import workflow instead.</Alert>}
   <TpoRoundResultsImport jobId={jobId} roundId={roundId}/>
   <TpoRoundApplyControl jobId={jobId} roundId={roundId}/>
   <p className="text-sm text-body">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
-  {data.truncated?<p role="status" className="text-sm text-body">Source capped at 500 application records; counts may be incomplete.</p>:null}
+  {data.truncated?<Alert tone="warning">Source capped at 500 application records; counts may be incomplete.</Alert>:null}
   <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="min-w-0 flex-1 text-sm">Student or role
     <Input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9"/>
@@ -57,7 +59,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-primary-foreground md:min-h-9">Filter</Button>
   </form>
   <p role="status" className="text-sm text-body">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
-  {visibleRows.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm text-body">No eligible shortlisted submitted applicants match this round result filter.</p>:
+  {visibleRows.length===0?<EmptyState title="No eligible shortlisted submitted applicants match this round result filter."/>:
    <section className="grid gap-3" aria-label="Round result entries">
     {visibleRows.map(row=><article key={row.applicationId} className="border-b border-border py-4">
      <div className="mb-3">
