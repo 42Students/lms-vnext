@@ -1152,3 +1152,26 @@ body {
   background-color: var(--lms-primary);
   color: var(--lms-white);
 }
+
+/* Split actions reuse the shared Dropdown (chat-16 owns menu/overlay styling).
+   Keep the 36px desktop and 44px touch targets and the legacy border seam. */
+[data-slot="split-button"] > [data-slot="button"]:first-child {
+  border-radius: var(--lms-control-radius) 0 0 var(--lms-control-radius);
+}
+[data-slot="split-button"] > [data-slot="button"] + [data-slot="button"] {
+  margin-left: -1px;
+  border-radius: 0 var(--lms-control-radius) var(--lms-control-radius) 0;
+}
+[data-slot="split-button"] > [data-slot="dropdown-root"] { margin-left: -1px; }
+[data-slot="split-button"] > [data-slot="dropdown-root"] > summary {
+  border-radius: 0 var(--lms-control-radius) var(--lms-control-radius) 0;
+  min-width: var(--lms-control-height);
+  justify-content: center;
+  padding-inline: var(--lms-space-2);
+}
+@media (max-width: 767px) {
+  [data-slot="split-button"] > [data-slot="dropdown-root"] > summary {
+    min-height: var(--lms-touch-target);
+    min-width: var(--lms-touch-target);
+  }
+}
