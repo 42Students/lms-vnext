@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import "server-only";
 import type {RequestContext} from "@/modules/identity/context";
 import {getTpoDriveLifecycleList} from "./tpo-drive-lifecycle-list-service";
@@ -29,13 +30,13 @@ export async function exportTpoDriveLifecycle(context:RequestContext,raw:unknown
  if(query.view==="REQUESTS"){
   const rows=all.flatMap(p=>p.requestRows).filter(r=>scope!=="SELECTED"||selectedIds.includes(r.id));
   if(scope==="SELECTED"&&rows.length!==selectedIds.length)throw Error("Selection is stale or outside your permitted filter. Refresh the list.");
-  return {fileName:scope==="SELECTED"?"drives-requests-selected.csv":"drives-requests.csv",csv:placementReportCsv([
+  return {fileName:gridExportFilename(scope==="SELECTED"?"drives-requests-selected":"drives-requests","csv"),csv:placementReportCsv([
    "Request ID","Company","Role","Status","Requested at (UTC)","Approved draft ID",
   ],rows.map(r=>[r.id,r.company,r.title,r.status,r.createdAt,r.approvedJobId]))};
  }
  const rows=all.flatMap(p=>p.rows).filter(r=>scope!=="SELECTED"||selectedIds.includes(r.id));
  if(scope==="SELECTED"&&rows.length!==selectedIds.length)throw Error("Selection is stale or outside your permitted filter. Refresh the list.");
- return {fileName:"drives-"+query.view.toLowerCase()+(scope==="SELECTED"?"-selected":"")+".csv",
+ return {fileName:gridExportFilename("drives-"+query.view.toLowerCase()+(scope==="SELECTED"?"-selected":""),"csv"),
   csv:placementReportCsv(["Drive ID","Company","Role","Status","Job type","Mode",
    "Applications","Active offers","Rounds completed","Rounds total","Where it is","Pay minimum (INR)","Pay maximum (INR)","Stipend/month (INR)","Dream drive","Created by","Deadline (UTC)"],
    rows.map(r=>[r.id,r.company,r.title,r.status,r.employmentType,r.workMode,r.appliedCount,
