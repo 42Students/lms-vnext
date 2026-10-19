@@ -66,7 +66,7 @@ function run() {
     if (routeKind) stats.routeFiles[routeKind]++;
     const targetRoute = !!routeKind && (onlyValue === "all" || onlyValue === routeKind);
     const targetInline = onlyValue === "all" || onlyValue === "inline" || onlyValue === "empty" ||
-      onlyValue === "error" || onlyValue === "not-found";
+      ((onlyValue === "error" || onlyValue === "not-found") && routeKind === onlyValue);
     if (!targetRoute && !targetInline) continue;
     const src = fs.readFileSync(file, "utf8");
     if (!src.includes("animate-pulse") && !src.includes('role="status"') &&
