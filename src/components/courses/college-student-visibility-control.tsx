@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import {Button} from "@/components/ui/button";
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {collegeStudentVisibilityAction} from "@/modules/courses/college-student-visibility-control-model";
@@ -39,9 +39,9 @@ export function CollegeStudentVisibilityControl({contentId,initialVisible,initia
     });
   }
   return <div className="mt-2 min-w-0 space-y-1">
-    <Button variant="secondary" type="button" disabled={pending} onClick={toggle}
+    <Button type="button" variant="secondary" disabled={pending} onClick={toggle}
       aria-label={action.label} aria-pressed={visible}
-      className="max-w-full text-primary-text">
+      className="min-h-11 max-w-full text-xs">
       {pending?"Saving…":action.label}
     </Button>
     {notice?<p role="alert" className="break-words text-xs text-error">{notice}</p>:null}
