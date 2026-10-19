@@ -22,7 +22,7 @@ export default async function FacultyTeachingProfilePage({
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid teaching profile filters</h1>
-    <Link href="/teacher/profile/teaching" className="text-primary-text underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    <Link href="/teacher/profile/teaching" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Clear filters
     </Link>
   </section>;
@@ -35,7 +35,7 @@ export default async function FacultyTeachingProfilePage({
         className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Profile overview
       </Link>} />
-    <section className="border-b border-border pb-5">
+    <section className="border-b border-border py-5">
       <h2 className="text-base font-semibold text-foreground">College-managed employment details</h2>
       <dl className="mt-3 grid gap-3 sm:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Academic title</dt>
@@ -57,7 +57,7 @@ export default async function FacultyTeachingProfilePage({
       <Button type="submit" variant="primary">
         Search
       </Button>
-      <Link href="/teacher/profile/teaching" className="inline-flex min-h-9 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      <Link href="/teacher/profile/teaching" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Clear
       </Link>
     </form>
@@ -65,7 +65,7 @@ export default async function FacultyTeachingProfilePage({
     {data.items.length===0 ? <EmptyState title="No current teaching assignments"
       description="No persisted active teaching deliveries match this search. Expired, revoked or unassigned teaching roles are not reconstructed." />
       : <div className="grid gap-3">{data.items.map(row=>
-        <article key={row.deliveryId} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <article key={row.deliveryId} className="border-b border-border py-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-semibold text-foreground">{row.courseName}</h2>
             <span className="text-xs font-semibold text-body">{row.teachingRole}</span>
@@ -77,7 +77,7 @@ export default async function FacultyTeachingProfilePage({
             Academic period status: {row.academicPeriodStatus}
           </p>
           <Link href={"/teacher/courses/"+encodeURIComponent(row.deliveryId)+"/home"}
-            className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Open assigned course →
           </Link>
         </article>)}</div>}
@@ -85,9 +85,9 @@ export default async function FacultyTeachingProfilePage({
       <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page>1 && <Link href={ownFacultyTeachingHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
         {data.page<data.totalPages && <Link href={ownFacultyTeachingHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">
