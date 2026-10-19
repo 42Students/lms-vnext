@@ -63,7 +63,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
       </> : null}
       {pageLinks.map(({item,href}) => item === current ?
         <span key={item} aria-current="page" aria-label={`Current page ${item} of ${total}`}
-          className={cx(buttonClass, "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]")}>{item}</span> :
+          className={cx(buttonClass, "cursor-default border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]")}>{item}</span> :
         href ? <Link key={item} href={href}
           aria-label={`Page ${item} of ${total}`}
           className={cx(buttonClass, "hidden md:inline-flex hover:bg-[var(--lms-primary-subtle)]")}>
