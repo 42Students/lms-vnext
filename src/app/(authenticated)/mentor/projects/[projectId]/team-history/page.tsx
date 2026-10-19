@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -101,15 +102,7 @@ export default async function MentorTeamHistoryPage({
                   </div>
                 </dl>
               </article>)}</div>}
-        <nav aria-label="Team history pagination" className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
-          <div className="flex gap-3">
-            {data.page > 1 ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:data.page-1})}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link> : null}
-            {data.page < data.totalPages ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:data.page+1})}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link> : null}
-          </div>
-        </nav>
+        <Pagination label="Team history pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,order:data.query.order,page})}/>
       </>}
     <p className="text-xs leading-5 text-muted-foreground">
       Open membership rows can contain deactivated accounts; those are labeled Inactive.
