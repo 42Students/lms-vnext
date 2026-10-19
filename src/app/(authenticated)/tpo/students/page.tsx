@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Dropdown } from "@/components/ui/dropdown";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
@@ -408,14 +409,13 @@ export default async function TpoStudentsPage({
         description="Everyone in placements, from the batches you made eligible."
         actions={manageAllowed?<TpoAcademicImportWorkspace />:undefined}
       />
-      <details className="border-b border-border pb-3">
-       <summary className="min-h-11 cursor-pointer text-sm font-semibold">More student tools</summary>
-       <nav aria-label="Student roster tools" className="mt-3 flex flex-wrap items-center gap-2">
+      <Dropdown mobileSheet align="start" label="Student roster tools" trigger="More student tools">
+        <nav aria-label="Student roster tools" className="flex min-w-52 flex-col gap-2">
         <Link href="/tpo/students/requests" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Student Requests</Link>
         <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Preparation support</Link>
         <TpoSafeCsvDownload href={exportHref} filename="tpo-students.csv" label="Export filtered CSV" />
        </nav>
-      </details>
+      </Dropdown>
 
       <form action="/tpo/students" method="get"
         className="flex flex-wrap items-end gap-3 border-b border-border py-4">
