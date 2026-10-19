@@ -79,7 +79,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
     })} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Update selected</button>
    </div>
    <ul className="space-y-2">{views.map(view=><li key={view.id}
-    className="flex flex-wrap items-center gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
+    className="flex flex-wrap items-center gap-2 rounded-[var(--lms-canvas-radius)] border border-border p-2 text-sm">
     <label className="flex min-h-11 items-center gap-2">
      <input type="radio" name="selected-batch-view" checked={selected===view.id}
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>

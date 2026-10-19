@@ -1,4 +1,6 @@
 "use client";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import {useEffect,useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {apiFetch} from "@/lib/api-fetch";
@@ -44,19 +46,19 @@ export function TpoStudentsAssignPrep(){
   <p role="status" className="text-xs">{picked.length} students selected. {picked.length>100?"The first 100 will be checked in this batch.":""}</p>
   <div className="flex flex-wrap gap-3">
    <label className="grid gap-1 text-sm">Preparation course
-    <select value={offeringId} onChange={e=>setOfferingId(e.target.value)} disabled={pending}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
+    <Select value={offeringId} onChange={e=>setOfferingId(e.target.value)} disabled={pending}
+     >
      <option value="">Choose a course</option>
      {courses.map(course=><option key={course.id} value={course.id}>{course.name} · {course.code}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-sm">Due date and time (IST, optional)
-    <input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2"/>
+    <Input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)} />
    </label>
   </div>
   {dueAt&&!tpoPrepDueAtUtc(dueAt)?<p role="alert" className="text-error">Choose a valid IST due date.</p>:null}
-  <button type="button" disabled={pending||!picked.length||!offeringId||Boolean(dueAt&&!tpoPrepDueAtUtc(dueAt))} onClick={()=>setConfirm(true)}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text disabled:opacity-50">Review prep assignments</button>
+  <Button variant="secondary" type="button" disabled={pending||!picked.length||!offeringId||Boolean(dueAt&&!tpoPrepDueAtUtc(dueAt))} onClick={()=>setConfirm(true)}
+   >Review prep assignments</Button>
   <Dialog open={confirm} onOpenChange={v=>{if(!pending)setConfirm(v);}}
    title="Assign preparation course?"
    description={"Assign this course to the first "+Math.min(100,picked.length)+" selected students, skipping existing assignments? Learners will be notified."}
