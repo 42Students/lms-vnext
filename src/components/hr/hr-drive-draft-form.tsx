@@ -460,11 +460,10 @@ export function HrDriveDraftForm({
           Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
-          <Button type="button" 
+          <Button type="button" variant="secondary"
             onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</Button>
           <Button type="button" disabled={!result.success||submitting}
-            aria-busy={submitting}
-            variant="secondary"
+            loading={submitting} aria-busy={submitting}
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </Button>
