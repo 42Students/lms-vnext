@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {Button} from "@/components/ui/button";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { AdminScope } from "@/modules/identity/context";
