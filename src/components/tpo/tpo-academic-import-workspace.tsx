@@ -107,15 +107,17 @@ export function TpoAcademicImportWorkspace() {
       className="mt-3 max-w-4xl space-y-3">
       <h2 className="text-lg font-semibold">Import academic details</h2>
       <p className="text-sm text-muted-foreground">
-        Upload a CSV with student membership IDs, CGPA (0–10), and active backlogs.
-        Review all matches before importing. Academic data is verified for your college only.
+        One row per student, matched by student membership ID. Upload a CSV with
+        CGPA (0–10) and active backlogs. The first row must be the column headings.
+        Nothing is saved until you review the matches and confirm import.
+        A roll number alone cannot identify a membership in this vNext workflow.
       </p>
       <a download="academic-import-template.csv"
         href="data:text/csv;charset=utf-8,studentCode%2Ccgpa%2CactiveBacklogs%0A"
         className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
-        Download template
+        Download a template
       </a>
-      <FileUpload label="Choose CSV file" accept=".csv,text/csv" maxBytes={200_000}
+      <FileUpload label="Drop a CSV file here, or click to choose" accept=".csv,text/csv" maxBytes={200_000}
          disabled={busy} onFiles={files => void upload(files?.[0] ?? null)}/>
       <label className="block text-sm font-semibold">Or paste CSV rows
         <Textarea value={csv} onChange={event => {
@@ -125,16 +127,17 @@ export function TpoAcademicImportWorkspace() {
       </label>
       <Button variant="secondary" disabled={busy} type="button" onClick={() => void validate()}
         >
-        {busy ? "Checking…" : "Preview matches"}
+        {busy ? "Checking…" : "Preview import"}
       </Button>
       {preview && <div className="space-y-3">
         <p role="status" className="text-sm">
-          {preview.filter(row => row.match === "WILL_UPDATE").length} will update;
-          {" "}{preview.filter(row => row.match === "CANT_MATCH").length} can&apos;t match.
+          Will update {preview.filter(row => row.match === "WILL_UPDATE").length}
+          {" · "}Can&apos;t match {preview.filter(row => row.match === "CANT_MATCH").length}.
+          Unmatched rows are excluded from confirmation.
         </p>
         <DataTable rows={preview} getRowKey={row=>row.studentCode}
           caption="Academic import preview"
-          empty={<p>No students were found in the import preview.</p>}
+          empty={<p>No rows found. The first row must be the column headings.</p>}
           columns={[
             {key:"include",header:"Include",mobilePriority:"action",cell:row=>
               <Checkbox aria-label={"Include "+row.studentCode}
