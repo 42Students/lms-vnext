@@ -26,14 +26,14 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
  return <div className="min-w-0 space-y-5">
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
     className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline md:min-h-9">← Back to drive</Link>
-  <header><h1 className="font-semibold text-[30px] text-[#172033]">Interview slot proposals</h1>
+  <header><h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Interview slot proposals</h1>
    <p className="mt-2 text-sm text-body">{data.job.title} · Employer-proposed time blocks for your college.</p>
   </header>
-  <p className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+  <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
    Proposals and employer-internal reservations are not confirmed student interviews. The placement cell must arrange its own rooms, candidates and confirmed schedule separately.
   </p>
   {data.slots.length?<ol className="space-y-3">{data.slots.map(slot=><li key={slot.id}
-    className="rounded-lg border border-border bg-surface p-4">
+    className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">{slot.roundName}</h2>
     <p className="mt-1 text-sm text-body">{when(slot.startAt)} – {when(slot.endAt)}</p>
     <p className="mt-1 text-sm text-body">{slot.status==="PROPOSED"?"Not sent yet":
@@ -46,7 +46,7 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
       <div><dt className="text-muted-foreground">Panel</dt><dd>{slot.panelLabel??"Not recorded"}</dd></div>
       <div><dt className="text-muted-foreground">Venue</dt><dd>{slot.meetingLocation??"Room not confirmed"}</dd></div>
     </dl>
-  </li>)}</ol>:<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">
+  </li>)}</ol>:<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
     No recruiter interview slot proposals were recorded for this drive.
   </p>}
   {data.capReached?<p role="status" className="text-sm text-body">Showing the first 200 proposals. Contact the placement cell administrator for older records.</p>:null}
