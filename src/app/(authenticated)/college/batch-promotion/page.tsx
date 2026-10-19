@@ -39,7 +39,7 @@ export default async function CollegeBatchPromotionPage({
     )),
   );
   if (!parsed.success) return <div className="space-y-4">
-    <PageHeader eyebrow="College Admin · Academic Setup" title="Batch Promotion" />
+    <PageHeader title="Batch Promotion" />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
       action={<Link href="/college/batch-promotion" className="font-semibold text-link">Clear filters</Link>} />
@@ -53,7 +53,7 @@ export default async function CollegeBatchPromotionPage({
       parsed.data.cohortId, preview.plan.targetTermNumber)
     : null;
   return <div className="min-w-0 overflow-x-clip space-y-6">
-    <PageHeader eyebrow="College Admin · Academic Setup" title="Batch Promotion"
+    <PageHeader title="Batch Promotion"
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<Link href="/college/batches"
         className="rounded-[var(--lms-control-radius,9px)] border border-border px-4 py-2 text-sm font-semibold text-link">Batches</Link>} />
