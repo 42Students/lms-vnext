@@ -23,7 +23,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
 }) {
   const context=await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
-    <PageHeader eyebrow="Super Admin" title="Placement Drives" description="Placement administration requires a college safety scope." />
+    <PageHeader title="Placement Drives" description="Placement administration requires a college safety scope." />
     <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
   </div>;
   // Validate the platform actor and selected tenant before reading private rounds.
@@ -47,7 +47,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   ];
   return <div className="min-w-0 space-y-6">
     <SuperAdminDriveTabs jobId={jobId} active="Schedule"/>
-    <PageHeader eyebrow="Super Admin · Placements" title={"Interviews · "+data.job.title}
+    <PageHeader title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-4 border-b border-border pb-4">
