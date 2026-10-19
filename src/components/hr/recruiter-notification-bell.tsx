@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import { Button } from "@/components/ui/button";
+import { ShellNavGlyph } from "@/components/shell/shell-nav-icons";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {recruiterBellAriaLabel,recruiterBellPreview,createRecruiterBellRequestGate,type RecruiterBellItem}
  from "@/modules/placements/recruiter-bell-model";
@@ -68,7 +69,7 @@ export function RecruiterNotificationBell(){
     aria-expanded={isOpen} aria-haspopup="dialog"
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
     className="relative min-h-11 min-w-11 rounded-[8px] px-2">
-    <span aria-hidden="true">🔔</span>
+    <ShellNavGlyph name="bell" />
     {data?.unread&&data.unread>0?<span aria-hidden="true"
       className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#ff7576] px-1 text-[10px] leading-3 text-white">
       {data.unread>99?"99+":data.unread}</span>:null}
