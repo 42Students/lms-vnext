@@ -17,11 +17,14 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(legacy()).toContain("transition: width 0.15s cubic-bezier(0.2, 0, 0, 1)");
  expect(sidebar()).toContain("transition:width .15s cubic-bezier(.2,0,0,1)");
 });
- it("pushes the full content column from 96 to 256 pixels",()=>{
+ it("pushes the content column by expanding a relative flex sibling",()=>{
  const css=sidebar();
- expect(css).toContain("padding-left:96px;");
- expect(css).toContain("padding-left:256px;");
- expect(css).toContain("~ .lms-shell-page");
+ expect(css).toContain(".lms-shell-frame {display:flex;align-items:stretch;}");
+ expect(css).toContain(".lms-shell-page {min-width:0;flex:1 1 0%;}");
+ expect(css).toContain("width:96px;");
+ expect(css).toContain("width:256px;");
+ expect(css).not.toContain("padding-left:256px;");
+ expect(css).toContain(".lms-desktop-sidebar:is(:hover,:focus-within)");
 });
  it("keeps the legacy white panel and light border",()=>{
  expect(legacy()).toContain("background: rgb(255, 255, 255); border-right: 1px solid rgb(241, 244, 249)");
@@ -86,11 +89,14 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(mobile).toContain("<ShellLogoMark />");
  expect(icons).toContain('width="38" height="36"');
 });
- it("preserves AntD mobile drawer width and safe-area body padding",()=>{
+ it("preserves AntD phone drawer width, safe-area body padding and native focus",()=>{
  const mobile=read("src/components/shell/mobile-navigation.tsx");
- expect(mobile).toContain("w-[min(82vw,300px)]");
- expect(mobile).toContain("env(safe-area-inset-bottom,0px)");
- expect(sidebar()).toContain("padding-inline:12px;");
+ expect(mobile).toContain('import { Drawer } from "@/components/ui/drawer"');
+ expect(mobile).toContain('side="left"');
+ expect(mobile).toContain("!px-3 !pt-2 !pb-[calc(24px+env(safe-area-inset-bottom,0px))]");
+ expect(sidebar()).toContain("width:82vw;");
+ expect(sidebar()).toContain("max-width:300px;");
+ expect(sidebar()).toContain(".lms-mobile-sidebar .lms-sidebar-nav {padding-inline:0;");
 });
  it("has one TPO footer implementation rather than two diverging copies",()=>{
  const primary=read("src/components/tpo/tpo-mobile-footer.tsx");
@@ -105,21 +111,26 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(announcer).toContain('role="status" aria-live="polite"');
  expect(announcer).toContain("main?.focus({preventScroll:true})");
 });
- it("keeps the modal mobile menu Escape and Tab cycle",()=>{
+ it("delegates mobile Escape, trap and return-focus to shared native Drawer",()=>{
  const mobile=read("src/components/shell/mobile-navigation.tsx");
- expect(mobile).toContain('event.key === "Escape"');
- expect(mobile).toContain('event.key !== "Tab"');
- expect(mobile).toContain("lastItem.focus()");
- expect(mobile).toContain("firstItem.focus()");
+ const drawer=read("src/components/ui/drawer.tsx");
+ expect(mobile).toContain('import { Drawer } from "@/components/ui/drawer"');
+ expect(mobile).toContain('aria-haspopup="dialog"');
+ expect(mobile).toContain("useEffect(() => { setOpen(false); }, [pathname]);");
+ expect(drawer).toContain("<dialog ref={ref}");
+ expect(drawer).toContain("onCancel={event =>");
+ expect(drawer).toContain("onClose={() =>");
+ expect(drawer).toContain("opener.current.focus()");
+ expect(drawer).toContain("useOverlayExit(ref, opener, open, 200)");
 });
- it("does not tick B3 before repository-wide grep proof",()=>{
+ it("does not prematurely tick B3 before checkout grep and viewport proof",()=>{
  const report=read("docs/audit/ux/clone-sidebar.md");
- expect(report).toContain("- [ ] **B3 sidebar**");
- expect(report).toContain("coverage proof fails");
+ expect(report).toContain("- [ ] **B3 Sidebar**");
+ expect(report).toContain("full-checkout");
 });
- it("does not tick B4 without measured route loader and transitions",()=>{
+ it("does not tick B4 while route bar/loader visuals are not certified",()=>{
  const report=read("docs/audit/ux/clone-sidebar.md");
- expect(report).toContain("- [ ] **B4 footer, route progress bar and transitions**");
- expect(report).toContain("cannot infer absent means parity");
+ expect(report).toContain("- [ ] **B4 Footer, progress and route transitions**");
+ expect(report).toContain("not executed");
 });
 });
