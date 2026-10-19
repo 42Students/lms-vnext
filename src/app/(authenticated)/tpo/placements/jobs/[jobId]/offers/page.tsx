@@ -40,7 +40,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">← Back to drive</Link>
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."
    actions={<a href={csvHref} className="inline-flex min-h-11 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground md:min-h-9">Export filtered CSV</a>}/>
-  <p className="rounded-md border border-border bg-surface-subtle p-3 text-sm text-body">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</p>
+  <p className="rounded-md border border-border bg-muted p-3 text-sm text-body">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</p>
   <nav aria-label="Offer status" className="flex flex-wrap gap-2">{tabs.map(([value,label,count])=>
    <Link key={value} href={root+"/offers?status="+value+searchSuffix} aria-current={data.status===value?"page":undefined}
     className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">{label} ({count})</Link>)}</nav>
