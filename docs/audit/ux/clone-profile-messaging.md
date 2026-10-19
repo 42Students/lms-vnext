@@ -173,3 +173,132 @@ Every source update in this turn was followed by a GitHub fetch from `chatgpt/ch
 - [ ] **No runtime claim**: no CI, typecheck, app run, screenshot, screenshot-diff, or browser accessibility verification was performed. Do **not** tick these categories until the `docs/design/ui-clone-checklist.md` STRICT TICK RULE gates are met.
 
 **Exact next source:** `src/app/(authenticated)/hr/conversations/page.tsx` — recruiter general-thread/detail/notification-preview parity, then `src/app/(authenticated)/hr/notifications/page.tsx` and `src/components/admin/tenant-settings-editor.tsx` focus/disabled/spacing state proof.
+
+## File-by-file Work queue — completed static source packages (2026-10-19)
+
+**Meaning of [x] in this subsection:** source-layer migration and scoped static readback complete — shared page head where rendered, shared controls for visible inputs, semantic palette, pill/selected-state judgement, card-in-card review, and shared state or explicit route-error fallback. These ticks **DO NOT** certify the four-part STRICT TICK RULE: no rendered screenshot, pixel diff, complete repo grep, or full responsive browser audit was performed. Therefore the original category-level G2/G3 items above remain **[ ]**. This split avoids presenting inspected JSX as verified visual parity. The source scan tested raw visible controls, literal UI hex, standalone h1, duplicate PageHeader eyebrows, rounded-full/border-b-2/aria-pressed judgment cases. Hidden POST form inputs, redirects and domain-owned brand color values are justified exceptions.
+
+### G2/G3 routes — static source-pass complete (52)
+
+- [x] `src/app/(authenticated)/account/security/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/profile/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/season/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/rules/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/branding/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/notifications/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/team/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/trusted/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/after-college/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/job-types/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/notices/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/public-link/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/public-page/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/see/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/settings/templates/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/messages/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/tpo/notifications/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/hr/profile/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/hr/conversations/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/hr/notifications/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/learn/profile/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/learn/profile/academic-record/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/learn/profile/completeness/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/learn/profile/verification/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/learn/profile/data-access/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/learn/notifications/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/learn/notifications/history/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/college/profile/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/college/college-profile/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/college/branding/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/teacher/profile/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/teacher/profile/details/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/teacher/profile/contacts/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/teacher/profile/teaching/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/teacher/notifications/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/mentor/notifications/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/notifications/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/admin/settings/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/admin/settings/auth/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/admin/tenants/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/admin/tenants/create/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` — source header/control/token/state scan; imported editor separately checked where owned
+
+### Alias and redirect routes — no independent page UI (6)
+
+- [x] `src/app/(authenticated)/tpo/settings/page.tsx` — redirect/re-export; real rendered target audited separately
+- [x] `src/app/(authenticated)/tpo/messages/notifications/page.tsx` — redirect/re-export; real rendered target audited separately
+- [x] `src/app/(authenticated)/hr/messages/page.tsx` — redirect/re-export; real rendered target audited separately
+- [x] `src/app/(authenticated)/recruiter/profile/page.tsx` — redirect/re-export; real rendered target audited separately
+- [x] `src/app/(authenticated)/recruiter/messages/page.tsx` — redirect/re-export; real rendered target audited separately
+- [x] `src/app/(authenticated)/mentor/profile/page.tsx` — redirect/re-export; real rendered target audited separately
+
+### Imported editors, notification lists, composers and controls — source-pass complete (49)
+
+- [x] `src/components/tpo/tpo-after-college-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-blocked-dates-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-builtin-job-types-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-job-types-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-prep-readiness-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-company-visibility-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-inbox-search.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-rename.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-away-form.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-follow-controls.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-message-actions.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-open-read.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-search.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-assign-unowned.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-handover.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-company-team-composer.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-company-team-conversation.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-my-notification-preferences-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-optional-emails-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-communication-settings-editors.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-custom-job-type-placed.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-decision-toggle.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-thread-details.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-team-forms.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/tpo/tpo-recruiter-message-reply.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/hr/recruiter-conversation-reply-form.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/hr/recruiter-conversation-read-control.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/hr/hr-notification-read-button.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/hr/recruiter-display-name-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/hr/recruiter-designation-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/hr/recruiter-profile-details-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/hr/recruiter-profile-access.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/admin/college-signin-method-form.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/admin/tenant-settings-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/admin/tenant-settings-other-keys.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/admin/college-branding-form.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/admin/college-logo-uploader.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/people/faculty-profile-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/people/faculty-profile-text-section.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/people/faculty-profile-skills.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/people/faculty-profile-metadata.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/people/faculty-profile-repeatable.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/placements/learner-placement-notification-settings.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/placements/tpo-settings-nav.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/activity/notification-list.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/activity/notification-toolbar.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/activity/learner-notifications-inbox.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+- [x] `src/components/college/college-admin-profile-editor.tsx` — inspected shared controls, state-dependent styles, semantic colors, and source geometry
+
+### Remaining category-level checks (not falsely ticked)
+
+- [ ] Full G2 browser proof: 320/360/390px phone, 768px tablet, 1280px desktop, complete focus/hover/disabled/saved/empty/error/loading states; full-property values across all owned and shared controls.
+- [ ] Full G3 browser proof: real legacy chat bubble reference, sender alignment/color/spacing, read marker and composer states, notification overlay and menu focus, receipt handling and responsive interaction.
+- [ ] Complete repository grep for all portals and generated CSS with documented exemptions (scoped GitHub source-regex scans are not terminal grep or compiled class inspection).
+- [ ] Exact screenshot/pixel comparison against the legacy local stack; shared UI component runtime not changed or tested.
+
+**Exceptions:** `hr/conversations/page.tsx` (6 raw hidden form inputs) and `hr/notifications/page.tsx` (2 hidden fields) use hidden request parameters, not user-visible raw controls. `tpo/settings/branding/page.tsx` renders persisted brand colors as data (not invented CSS literals). `src/components/admin/college-branding-form.tsx` retains literal default sample swatch values (`#26BAC7` and placeholder `#1A95A1`) because those are actual editable branding data, not styling tokens. `src/components/hr/recruiter-notification-bell.tsx` has a circular count bubble, which is not a hand-rolled tab/filter control. Link-based nav (e.g. faculty profile anchor jumps) is not semantically a Tabs widget; selected persistent Boolean settings instead use shared checked controls and semantic active tints. Core `src/components/ui/**` is outside lane ownership.
