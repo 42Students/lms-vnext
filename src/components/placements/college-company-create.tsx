@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
@@ -51,15 +52,15 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
   {open?<form onSubmit={submit} className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2">
     <h2 className="font-semibold sm:col-span-2">Add company</h2>
     <label className="grid gap-1 text-sm font-semibold">Company name
-      <input required minLength={2} maxLength={150} value={name} onChange={e=>setName(e.target.value)}
+      <Input required minLength={2} maxLength={150} value={name} onChange={e=>setName(e.target.value)}
         className={field} />
     </label>
     <label className="grid gap-1 text-sm font-semibold">Website (HTTPS, optional)
-      <input type="url" pattern="https://.*" value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)}
+      <Input type="url" pattern="https://.*" value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)}
         placeholder="https://example.com" className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Company email domain (optional)
-      <input value={primaryDomain} maxLength={255} onChange={e=>setPrimaryDomain(e.target.value)}
+      <Input value={primaryDomain} maxLength={255} onChange={e=>setPrimaryDomain(e.target.value)}
         placeholder="example.com" className={field}/>
     </label>
     <p className="text-sm text-muted-foreground sm:col-span-2">
