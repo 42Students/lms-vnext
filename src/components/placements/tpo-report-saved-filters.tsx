@@ -54,7 +54,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
   if(!picked)return;
   if(persist(views.filter(v=>v.name!==picked))){setPicked("");setMessage("Saved filter removed.");}
  }
- return <Disclosure title={`Saved filters (${views.length}/12)`} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ return <Disclosure title={`Saved filters (${views.length}/12)`} className="min-w-0 border-t border-border pt-4">
   <p className="mt-2 text-xs text-muted-foreground">Save this report&apos;s active filters in this browser for your account. Nothing is sent to other users or devices.</p>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Name this view
