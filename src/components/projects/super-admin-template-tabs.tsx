@@ -1,4 +1,5 @@
 import { Tabs } from "@/components/ui/tabs";
+import styles from "./legacy-project-tabs.module.css";
 import {
   TEMPLATE_SUBVIEW_TABS,
   templateSubviewHref,
@@ -15,7 +16,7 @@ export function SuperAdminTemplateTabs({
   active: TemplateSubview;
   counts?: Partial<Record<TemplateSubview, number>>;
 }) {
-  return <Tabs ariaLabel="Project template sections" value={active} renderPanel={false}
+  return <Tabs className={styles.legacy} ariaLabel="Project template sections" value={active} renderPanel={false}
     items={TEMPLATE_SUBVIEW_TABS.map(tab=>({
       value:tab.id,
       label:tab.label,
