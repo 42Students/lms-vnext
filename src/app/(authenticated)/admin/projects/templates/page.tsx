@@ -54,11 +54,11 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <PageHeader eyebrow="Super Admin · Projects" title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
-   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground">New template →</Link>:undefined}/>
+   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-9 items-center rounded-[9px] border border-primary bg-primary px-3.5 text-[14px] font-[650] text-on-primary hover:bg-primary-hover">New template →</Link>:undefined}/>
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-     className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+     className="w-full"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Status
     <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -70,7 +70,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <SuperAdminTemplatePageExport items={data.items}/>
   <p className="text-xs text-muted-foreground">{data.total} templates · page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
   {data.items.length?<div className="grid gap-4 md:grid-cols-2">
-   {data.items.map(item=><article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
+   {data.items.map(item=><article key={item.id} className="min-w-0 rounded-[12px] border border-border bg-surface p-4">
     <div className="flex flex-wrap items-start justify-between gap-2">
      <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
      <StatusBadge tone={tone(item.status)}>{item.status}</StatusBadge>
