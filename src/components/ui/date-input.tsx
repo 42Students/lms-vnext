@@ -85,12 +85,14 @@ export function DateInput({
   const [open, setOpen] = useState(false);
   const [viewMonth, setViewMonth] = useState(() => initialMonth(value ?? defaultValue));
   const [draftHour, setDraftHour] = useState(0);
+  const [draftDate, setDraftDate] = useState(() => String(value ?? defaultValue ?? "").slice(0, 10));
+  const [draftTime, setDraftTime] = useState(() => String(value ?? defaultValue ?? "").split("T")[1]?.slice(0, 5) || "00:00");
   const requestedStep = props.step === "any" ? NaN : Number(props.step ?? 60);
   // Second-level precision remains the browser's native picker; the legacy
   // time panel is minute-based, like components___antddesign.scss:204-211.
   const minuteStep = Number.isInteger(requestedStep) && requestedStep >= 60 && requestedStep % 60 === 0
     ? requestedStep / 60 : null;
-  const hasPanel = mode === "date" || mode === "week" || mode === "month" || (mode === "time" && minuteStep !== null);
+  const hasPanel = mode === "date" || mode === "week" || mode === "month" || ((mode === "time" || mode === "datetime-local") && minuteStep !== null);
   const enabled = hasPanel && calendarPopup && !disabled && !readOnly;
   const selected = String(value ?? (inputRef.current?.value || defaultValue || ""));
   const today = localISO(new Date());
@@ -98,6 +100,23 @@ export function DateInput({
   const minimumMinute = minuteOf(String(props.min ?? ""));
   const maximumMinute = minuteOf(String(props.max ?? ""));
   const stepBaseMinute = minimumMinute ?? 0;
+  const dateTimeCandidate = `${draftDate}T${draftTime}`;
+  const dateTimeMin = String(props.min ?? "");
+  const dateTimeMax = String(props.max ?? "");
+  function dateTimeMinuteNumber(raw: string): number | null {
+    const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(raw);
+    if (!match) return null;
+    const [, year, month, day, hour, minute] = match.map(Number);
+    const utc = Date.UTC(year, month - 1, day, hour, minute);
+    return Number.isFinite(utc) ? utc / 60000 : null;
+  }
+  const candidateMinutes = dateTimeMinuteNumber(dateTimeCandidate);
+  const stepBaseDateTime = dateTimeMinuteNumber(dateTimeMin) ?? dateTimeMinuteNumber(String(defaultValue ?? "")) ??
+    dateTimeMinuteNumber("1970-01-01T00:00") ?? 0;
+  const canApplyDateTime = mode === "datetime-local" && candidateMinutes !== null && minuteStep !== null &&
+    (dateTimeMin === "" || dateTimeCandidate >= dateTimeMin) &&
+    (dateTimeMax === "" || dateTimeCandidate <= dateTimeMax) &&
+    (candidateMinutes - stepBaseDateTime) % minuteStep === 0;
   function timeAllowed(hour: number, minute: number) {
     const time = hour * 60 + minute;
     // Native time inputs allow a min-to-max interval that crosses midnight.
@@ -142,6 +161,8 @@ export function DateInput({
       const raw = String(inputRef.current?.value ?? value ?? defaultValue ?? "");
       setViewMonth(initialMonth(raw));
       setDraftHour(Math.floor((minuteOf(raw) ?? 0) / 60));
+      setDraftDate(/^\d{4}-\d{2}-\d{2}/.test(raw) ? raw.slice(0, 10) : localISO(new Date()));
+      setDraftTime(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(raw) ? raw.slice(11, 16) : "00:00");
     }
     setOpen(!open);
   }
@@ -187,7 +208,7 @@ export function DateInput({
       }}>
       {native}
       <Button type="button" variant="ghost" size="icon-sm"
-        aria-label={mode === "time" ? "Open time picker" : mode === "month" ? "Open month picker" : mode === "week" ? "Open week picker" : "Open date calendar"}
+        aria-label={mode === "time" ? "Open time picker" : mode === "datetime-local" ? "Open date and time picker" : mode === "month" ? "Open month picker" : mode === "week" ? "Open week picker" : "Open date calendar"}
         aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? popupId : undefined}
         disabled={!enabled} onClick={toggle}
         className="absolute right-1 top-0 !h-9 !w-9 !min-w-9 !rounded-[9px] !border-0 !p-0 max-[767px]:!h-11 max-[767px]:!w-11">
@@ -198,10 +219,10 @@ export function DateInput({
         </svg>
       </Button>
       {open && enabled
-        ? <PopoverPanel id={popupId} label={mode === "time" ? "Choose time" : mode === "month" ? "Choose month" : mode === "week" ? "Choose week" : "Choose date"}
+        ? <PopoverPanel id={popupId} label={mode === "time" ? "Choose time" : mode === "datetime-local" ? "Choose date and time" : mode === "month" ? "Choose month" : mode === "week" ? "Choose week" : "Choose date"}
             onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
             onKeyDown={mode === "date" ? handleCalendarKey : undefined}
-            data-slot={mode === "time" ? "legacy-time-picker" : mode === "month" ? "legacy-month-picker" : mode === "week" ? "legacy-week-picker" : "legacy-date-calendar"}
+            data-slot={mode === "time" ? "legacy-time-picker" : mode === "datetime-local" ? "legacy-datetime-picker" : mode === "month" ? "legacy-month-picker" : mode === "week" ? "legacy-week-picker" : "legacy-date-calendar"}
             className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] !rounded-[12px] border border-[var(--lms-neutral-200)] bg-white p-3 !shadow-[var(--lms-search-dropdown-shadow)]">
             {mode !== "time"
               ? <div className="mb-3 flex items-center justify-between gap-2">
@@ -262,21 +283,36 @@ export function DateInput({
                 const iso = localISO(day);
                 const candidate = weekMode ? isoWeek(day) : iso;
                 const outsideMonth = day.getMonth() !== viewMonth.getMonth();
-                const limited = (props.min != null && candidate < String(props.min)) ||
-                  (props.max != null && candidate > String(props.max));
+                const minValue = mode === "datetime-local" ? dateTimeMin.slice(0, 10) : String(props.min ?? "");
+                const maxValue = mode === "datetime-local" ? dateTimeMax.slice(0, 10) : String(props.max ?? "");
+                const limited = Boolean((minValue && candidate < minValue) || (maxValue && candidate > maxValue));
                 return <Button key={iso} type="button" variant="ghost" size="icon-sm"
                   data-calendar-day={iso} aria-label={`${day.toLocaleDateString(undefined, { dateStyle: "full" })}${weekMode ? `, ${candidate}` : ""}`}
-                  aria-current={iso === today ? "date" : undefined} aria-pressed={selected === candidate}
+                  aria-current={iso === today ? "date" : undefined} aria-pressed={mode === "datetime-local" ? draftDate === candidate : selected === candidate}
                   disabled={Boolean(limited)}
-                  onClick={() => choose(candidate)}
+                  onClick={() => { if (mode === "datetime-local") setDraftDate(candidate); else choose(candidate); }}
                   className={cx("!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px]",
                     outsideMonth ? "!text-[var(--lms-neutral-400)]" : "",
-                    selected === candidate ? "!bg-[var(--lms-primary)] !text-white" :
+                    (mode === "datetime-local" ? draftDate === candidate : selected === candidate) ? "!bg-[var(--lms-primary)] !text-white" :
                     iso === today ? "!text-[var(--lms-primary-text)] !underline" : "hover:!bg-[var(--lms-primary-subtle)]")}>
                   {day.getDate()}
                 </Button>;
               })}
             </CalendarGrid>}
+            {mode === "datetime-local"
+              ? <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2 border-t border-[var(--lms-neutral-200)] pt-3">
+                  <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                    Time
+                    <Input type="time" step={Number(props.step ?? 60)} value={draftTime}
+                      min={dateTimeMin.slice(0, 10) === draftDate ? dateTimeMin.slice(11, 16) : undefined}
+                      max={dateTimeMax.slice(0, 10) === draftDate ? dateTimeMax.slice(11, 16) : undefined}
+                      onChange={event => setDraftTime(event.currentTarget.value)}
+                      className="max-[767px]:min-h-11" />
+                  </label>
+                  <Button type="button" variant="primary" size="sm"
+                    disabled={!canApplyDateTime} onClick={() => choose(dateTimeCandidate)}
+                    className="max-[767px]:min-h-11">Apply</Button>
+                </div> : null}
           </PopoverPanel> : null}
     </div>
   );
