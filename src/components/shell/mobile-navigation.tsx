@@ -94,7 +94,7 @@ export function MobileNavigation({
             aria-label="Navigation menu"
             className="lms-mobile-sidebar absolute inset-y-0 left-0 flex max-h-[var(--lms-visual-height)] w-[min(82vw,300px)] flex-col border-r-0 bg-surface shadow-[var(--lms-overlay-shadow)]"
           >
-            <div className="flex min-h-20 items-center justify-between gap-4 border-b border-[var(--lms-sidebar-border)] px-5">
+            <div className="flex min-h-[calc(52px+env(safe-area-inset-top,0px))] shrink-0 items-center justify-between gap-2 border-b border-[#f0f0f0] pt-[calc(10px+env(safe-area-inset-top,0px))] pr-1 pb-[10px] pl-4">
               <div className="inline-flex h-11 w-11 items-center justify-center" aria-label="42Students LMS">
                 <ShellLogoMark />
               </div>
