@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { and, eq, ilike, or } from "drizzle-orm";
 import { z } from "zod";
@@ -9,6 +8,8 @@ import {
 } from "@/db/schema";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { EmptyState } from "@/components/ui/empty-state";
 import { DataTable } from "@/components/ui/data-table";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -72,8 +73,8 @@ export default async function CollegeBatchStudentsPage({
   return <main className="min-w-0 overflow-x-clip space-y-5">
     <PageHeader title={"Students · " + batch.name}
       description={batch.program + " · Search the batch roster and move students to another class."}
-      actions={<Link href="/college/batches" className="font-semibold text-[var(--lms-teal-deep)]">Back to batches</Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border bg-surface p-4">
+      actions={<PageBackLink href="/college/batches" label="Back to batches"/>} />
+    <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-t border-border pt-4">
       <label className="grid flex-1 gap-1 text-sm font-semibold">Name, roll or email
         <Input type="search" name="q" defaultValue={q} maxLength={100}
           />
@@ -86,7 +87,7 @@ export default async function CollegeBatchStudentsPage({
             {item.name} ({item.capacity ?? "No cap"} seats)</option>)}
         </Select>
       </label>
-      <Button >Search</Button>
+      <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
     </form>
     <section aria-label="Students in this batch" className="min-w-0 space-y-3">
       <p className="text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
@@ -94,7 +95,7 @@ export default async function CollegeBatchStudentsPage({
         caption="Students in this batch"
         rows={students}
         getRowKey={item => item.membershipId}
-        empty={<p className="text-sm text-muted-foreground">No matching students.</p>}
+        empty={<EmptyState title="No matching students" description="No matching students."/>}
         columns={[
           { key: "name", header: "Name", mobilePriority: "primary", cell: item => item.name ?? item.membershipId },
           { key: "roll", header: "Roll Number", mobilePriority: "secondary", cell: item => item.roll ?? "—" },
