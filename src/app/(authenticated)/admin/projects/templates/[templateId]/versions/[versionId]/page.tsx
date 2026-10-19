@@ -52,7 +52,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
               <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] whitespace-pre-wrap break-all rounded-lg bg-muted p-3 text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{value.value}</pre></div>)}
         </div>
       </article>)}
-    </section> : <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">No content differences from the current version.</p>}
+    </section> : <p className="border-b border-border py-4 text-sm text-body">No content differences from the current version.</p>}
     {can(context,"project-template.manage")?<SuperAdminTemplateRollbackControl
       templateId={detail.template.id} selectedVersion={{
         id:detail.selected.id,version:detail.selected.version,title:detail.selected.title,

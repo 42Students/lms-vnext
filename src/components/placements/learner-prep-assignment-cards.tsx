@@ -14,7 +14,7 @@ export function LearnerPrepAssignmentCards(){
   <h2 className="font-semibold">Assigned preparation</h2>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {!items.length?<p className="text-sm">No preparation courses assigned yet.</p>:
-   <ul className="space-y-2">{items.map(item=><li key={item.id} className="rounded border border-border p-3">
+   <ul className="space-y-2">{items.map(item=><li key={item.id} className="rounded-[var(--lms-control-radius)] border border-border p-3">
     <h3 className="font-semibold">{item.title} · {item.courseCode}</h3>
     <p className="text-sm">Due {new Date(item.dueAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</p>
     <Link href="/learn/courses" className="text-primary-text underline">Open My Courses</Link>

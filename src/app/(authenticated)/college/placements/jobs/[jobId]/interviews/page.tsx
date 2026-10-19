@@ -38,7 +38,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     <PageHeader eyebrow="College Admin · Placements" title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Drive overview</Link>} />
-    <form method="get" role="search" aria-label="Interview round filters" className="flex flex-wrap items-end gap-4 rounded-xl border border-border p-4">
+    <form method="get" role="search" aria-label="Interview round filters" className="flex flex-wrap items-end gap-4 rounded-[8px] border border-border p-4">
       <label className="grid gap-1 text-sm">Round kind
         <select name="kind" defaultValue={query.kind} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm">
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>

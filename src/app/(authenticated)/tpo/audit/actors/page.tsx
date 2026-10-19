@@ -44,8 +44,8 @@ export default async function TpoActorAuditPage({
   };
   const parsed = tpoActorAuditQuerySchema.safeParse(filters);
   if (!parsed.success) {
-    return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
-      <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Invalid audit filters</h1>
+    return <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+      <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Invalid audit filters</h1>
       <Link className="mt-2 inline-block text-[var(--lms-teal-deep)] underline" href="/tpo/audit/actors">
         Clear filters
       </Link>
@@ -72,7 +72,7 @@ export default async function TpoActorAuditPage({
     <PageHeader eyebrow="TPO · Oversight" title="Actor and entity audit"
       description="Canonical placement activity events with exact persisted actor, entity and IST date filters."
       actions={<a href={exportHref}
-        className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
         Export matching CSV (first 2,000)
       </a>} />
     <p className="text-sm leading-6 text-body">
@@ -81,7 +81,7 @@ export default async function TpoActorAuditPage({
       does not prove no action occurred in a domain without an activity writer.
     </p>
     <form action="/tpo/audit/actors" method="get"
-      className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 lg:grid-cols-3">
+      className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:grid-cols-2 lg:grid-cols-3">
       {([
         ["actorId", "Actor user UUID", "00000000-0000-4000-8000-000000000000"],
         ["entityType", "Entity type", "placement_offer"],
@@ -90,25 +90,25 @@ export default async function TpoActorAuditPage({
         className="grid gap-1 text-sm font-semibold text-foreground">
         {label}
         <Input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
       </label>)}
       {(["from", "to"] as const).map((name) => <label key={name}
         className="grid gap-1 text-sm font-semibold text-foreground">
         {name === "from" ? "From (IST)" : "Through (IST)"}
         <Input type="date" name={name} defaultValue={parsed.data[name] ?? ""}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
       </label>)}
       <label className="grid gap-1 text-sm font-semibold text-foreground">
        Sort date
        <Select name="sort" defaultValue={parsed.data.sort}
-        className="min-h-11 rounded-md border border-border bg-surface px-3">
+        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
         <option value="NEWEST">Newest first</option><option value="OLDEST">Oldest first</option>
        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-foreground">
         Page size
         <Select name="pageSize" defaultValue={String(parsed.data.pageSize)}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground">
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal text-foreground">
           {[25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
         </Select>
       </label>

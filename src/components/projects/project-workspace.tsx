@@ -346,7 +346,7 @@ export function ProjectWorkspace({
 
       {mode === "ADMIN" && show("readiness") ? (
         <Link href={"/admin/projects/readiness?projectId=" + encodeURIComponent(workspace.project.id)}
-          className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link">
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-link">
           Manage override
         </Link>
       ) : null}

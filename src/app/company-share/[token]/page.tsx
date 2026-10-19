@@ -23,11 +23,11 @@ export default async function CompanySharePage({
  if(result===null)return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-10`}>
   <ErrorState title="Shared applicants" description="This page is temporarily unavailable. Try again."
     action={<Link href={"/company-share/"+encodeURIComponent(token)}
-      className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Try again</Link>}/>
+      className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Try again</Link>}/>
  </main>;
  if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:py-10`}>
-  <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-5 sm:p-6">
-   <h1 className="text-xl font-semibold">Enter the 6-digit share code</h1>
+  <section className="min-w-0 space-y-4 rounded-[12px] border border-border bg-surface p-5 sm:p-6">
+   <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">Enter the 6-digit share code</h1>
    <p className="text-sm text-body">Ask the placement cell for the code sent separately with this company share link.</p>
    {access==="invalid"?<p role="alert" className="text-sm text-error">
     That code did not work, or this share is no longer available.</p>:null}
@@ -43,8 +43,8 @@ export default async function CompanySharePage({
   </section>
  </main>;
  if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-10`}>
-  <section role="alert" className="space-y-4 rounded-xl border border-border bg-surface p-6">
-   <h1 className="text-xl font-semibold">This link is not valid any more.</h1>
+  <section role="alert" className="space-y-4 rounded-[12px] border border-border bg-surface p-6">
+   <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">This link is not valid any more.</h1>
    <p className="text-sm text-body">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
    <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Home</Link>
   </section>
@@ -64,7 +64,7 @@ export default async function CompanySharePage({
   </div>
   <header>
    <p className="text-sm text-muted-foreground">42Students · Company applicant share</p>
-   <h1 className="mt-2 break-words text-2xl font-semibold text-foreground sm:text-3xl">Shared with {result.companyName}</h1>
+   <h1 className="mt-2 break-words text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">Shared with {result.companyName}</h1>
    <p className="mt-1 break-words text-lg font-medium text-foreground">{result.title}</p>
    <p className="mt-2 text-sm text-body">
     Shared by {result.collegeName} on {new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))}
@@ -79,7 +79,7 @@ export default async function CompanySharePage({
    {result.shortlistBy?<p role="status" className="mt-2 rounded border border-border bg-surface-subtle p-3 text-sm font-semibold">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}
   </header>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
-    className="flex min-w-0 flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+    className="flex min-w-0 flex-wrap items-end gap-3 rounded-[12px] border border-border bg-surface p-4">
     <label className="grid gap-2 text-sm font-semibold text-body">Search learner name
      <Input name="q" type="search" defaultValue={result.search} maxLength={80}
       className="w-full sm:w-64" placeholder="Name contains..." />

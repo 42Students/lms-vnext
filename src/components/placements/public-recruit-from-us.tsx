@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { PUBLIC_RECRUIT_COPY,publicRecruitThanks } from "@/modules/placements/public-enquiry/public-copy";
 import {publicRecruiterWorkEmailSchema} from "@/modules/placements/public-college-join-model";
 
@@ -45,28 +47,28 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
     e.preventDefault();void submit(sent?"recruit":"send-code");
    }}>
     <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.workEmail}
-     <input className={control+" mt-1"} required type="email" maxLength={150} autoComplete="email"
+     <Input className={control+" mt-1"} required type="email" maxLength={150} autoComplete="email"
       disabled={Boolean(sent)} value={email} onChange={e=>setEmail(e.target.value)}/>
      <span className="block mt-1 text-xs font-normal">Your company email. We send a code to it.</span>
     </label>
     <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.name}
-     <input className={control+" mt-1"} required maxLength={120} disabled={Boolean(sent)}
+     <Input className={control+" mt-1"} required maxLength={120} disabled={Boolean(sent)}
       value={name} onChange={e=>setName(e.target.value)}/>
     </label>
     <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.company}
-     <input className={control+" mt-1"} required maxLength={150} disabled={Boolean(sent)}
+     <Input className={control+" mt-1"} required maxLength={150} disabled={Boolean(sent)}
       value={company} onChange={e=>setCompany(e.target.value)}/>
     </label>
     <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.mobile}
-     <input className={control+" mt-1"} type="tel" maxLength={30} disabled={Boolean(sent)}
+     <Input className={control+" mt-1"} type="tel" maxLength={30} disabled={Boolean(sent)}
       value={mobile} onChange={e=>setMobile(e.target.value)}/>
     </label>
     <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.hiringFor}
-     <textarea className={control+" mt-1 py-2"} maxLength={1500} disabled={Boolean(sent)}
+     <Textarea className={control+" mt-1 py-2"} maxLength={1500} disabled={Boolean(sent)}
       value={hiringFor} onChange={e=>setHiringFor(e.target.value)}/>
     </label>
     {sent?<label className="block text-sm font-semibold text-body">Code sent to {sent}
-      <input className={control+" mt-1"} inputMode="numeric" pattern="[0-9]{6}"
+      <Input className={control+" mt-1"} inputMode="numeric" pattern="[0-9]{6}"
        required maxLength={6} value={code} onChange={e=>setCode(e.target.value)}/>
       <span className="block mt-1 text-xs font-normal">{PUBLIC_RECRUIT_COPY.code}</span>
      </label>:null}

@@ -74,7 +74,7 @@ export default async function CollegeDriveSettingsPage({
           missingEvidencePolicy:eligibilityPolicy.missingEvidencePolicy as "ALLOW_WITH_FLAG"|"REQUIRE_COMPLETE",
         }}}/>
       </section>:
-      <p role="status" className="rounded-xl border border-border bg-muted p-4 text-sm text-body">
+      <p role="status" className="rounded-[8px] border border-border bg-muted p-4 text-sm text-body">
         This drive is read-only. Only drafts in an active placement season are editable.
         Published-drive changes use the guarded lifecycle and deadline actions.
       </p>}
