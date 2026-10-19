@@ -1,6 +1,7 @@
 "use client";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FileUpload } from "@/components/ui/file-upload";
@@ -140,7 +141,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         rows={report.results} getRowKey={item=>String(item.row)}
         columns={[
           {key:"row",header:"Row",cell:item=>item.row,mobilePriority:"primary"},
-          {key:"status",header:"Status",cell:item=>item.status,mobilePriority:"secondary"},
+          {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="IMPORTED"||item.status==="VALID"?"success":item.status==="FAILED"||item.status==="INVALID"?"error":"warning"}>{item.status}</StatusBadge>,mobilePriority:"secondary"},
           {key:"reason",header:"Reason",cell:item=>item.detail,mobilePriority:"secondary"},
         ]}
         empty={<p className="text-sm text-body">No row-level results are available.</p>}/>
