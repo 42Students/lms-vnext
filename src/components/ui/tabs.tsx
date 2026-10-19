@@ -6,7 +6,7 @@ import Link from "next/link";
 import { isSafeInternalHref } from "@/lib/safe-internal-href";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 
-export type TabItem = { value: string; label: string; content?: ReactNode; disabled?: boolean; href?: string };
+export type TabItem = { value: string; label: string; count?: number; content?: ReactNode; disabled?: boolean; href?: string };
 export type TabsProps = {
   items: readonly TabItem[];
   value: string;
@@ -15,6 +15,12 @@ export type TabsProps = {
   className?: string;
   renderPanel?: boolean;
 };
+
+/** Counts remain part of the tab name for assistive technology, not a separate control. */
+function tabLabel(item: TabItem) {
+  return <>{item.label}{typeof item.count === "number" && Number.isFinite(item.count) ?
+    <span className="tabular-nums text-[12px] font-semibold text-current opacity-75">{Math.max(0, Math.trunc(item.count))}</span> : null}</>;
+}
 
 export function tabNextEnabled(items: readonly Pick<TabItem, "disabled">[], current: number, direction: 1 | -1) {
   if (!items.length) return -1;
@@ -61,16 +67,16 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
             tabIndex={interactive && index === activeIndex ? 0 : -1}
             onKeyDown={event => keyDown(event, index)}
             onClick={() => { if (interactive) onValueChange?.(item.value); }}
-            className={cx("inline-flex min-h-9 shrink-0 items-center justify-center whitespace-nowrap border-b-[3px] px-0 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none text-[13px] leading-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50",
+            className={cx("inline-flex min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap border-b-[3px] px-0 pb-[13px] pt-[13px] transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none text-[13px] leading-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50",
               index === activeIndex ? "border-[var(--lms-primary)] text-[var(--lms-primary-text)]" : "border-transparent text-[var(--lms-body-text)] hover:bg-transparent hover:text-[var(--lms-primary-text)]")}>
-            {item.label}
+            {tabLabel(item)}
           </button>
         ))}
       </div></ScrollCue> : <ScrollCue axis="x" label={`${ariaLabel} navigation`}><nav aria-label={ariaLabel} className="flex min-w-max gap-[20px] border-b border-[var(--lms-canvas-border)] pb-0">
-        {items.map(item => item.disabled || !item.href || !isSafeInternalHref(item.href) ? <span key={item.value} aria-disabled="true" className="inline-flex min-h-9 items-center whitespace-nowrap border-b-[3px] border-transparent px-0 text-[13px] leading-4 text-[var(--lms-body-text)] opacity-60">{item.label}</span> : <Link key={item.value} href={item.href} aria-current={item.value === value ? "page" : undefined}
-            className={cx("inline-flex min-h-9 shrink-0 items-center justify-center whitespace-nowrap border-b-[3px] px-0 text-[13px] leading-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]",
+        {items.map(item => item.disabled || !item.href || !isSafeInternalHref(item.href) ? <span key={item.value} aria-disabled="true" className="inline-flex min-h-9 items-center gap-2 whitespace-nowrap border-b-[3px] border-transparent px-0 pb-[13px] pt-[13px] text-[13px] leading-4 text-[var(--lms-body-text)] opacity-60">{tabLabel(item)}</span> : <Link key={item.value} href={item.href} aria-current={item.value === value ? "page" : undefined}
+            className={cx("inline-flex min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap border-b-[3px] px-0 pb-[13px] pt-[13px] text-[13px] leading-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]",
               item.value === value ? "border-[var(--lms-primary)] text-[var(--lms-primary-text)]" : "border-transparent text-[var(--lms-body-text)] hover:bg-transparent hover:text-[var(--lms-primary-text)]")}>
-              {item.label}</Link>)}
+              {tabLabel(item)}</Link>)}
       </nav></ScrollCue>}
       {renderPanel ? <section id={`${id}-panel`} role="tabpanel" tabIndex={0} aria-labelledby={activeIndex >= 0 ? `${id}-tab-${activeIndex}` : undefined} className="min-w-0 pt-4">{selected?.content}</section> : null}
     </div>
