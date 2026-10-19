@@ -133,7 +133,8 @@ export function SearchableSelect({
           {matches.length
             ? matches.map((option, index) =>
               <button key={option.value} id={`${listId}-option-${index}`} type="button" role="option"
-                aria-selected={index === activeIndex} disabled={option.disabled} tabIndex={-1}
+                aria-selected={option.value === visibleQuery} disabled={option.disabled} tabIndex={-1}
+                onPointerEnter={() => { if (!option.disabled) setActiveIndex(index); }}
                 className={cx("flex min-h-11 w-full items-center px-[10px] py-[5px] text-left text-[14px] leading-5 text-[var(--lms-body-text)] transition-colors duration-200 hover:bg-[#d1f1f1] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50", index === activeIndex ? "bg-[#d1f1f1]" : "")}
                 onPointerDown={event => event.preventDefault()} onClick={() => select(option.value)}>
                 {option.label ?? option.value}
