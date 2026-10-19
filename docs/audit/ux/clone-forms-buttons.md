@@ -458,3 +458,19 @@ Grep equivalent on full fetched file text: `/<(button|input|select|textarea)(?=[
 At the old LMS SCSS `components___variables.scss:148-156` phone boundary 767px and tablet start 768px, shared `globals.css:618-624` sets input/select/button tap heights >=44px on phones. OTP and password-visibility controls also explicitly enforce >=44px at 767px; date/time and plain textarea remain native responsive form controls. No extra tablet grid/property overrides are introduced in these five files; they inherit the parent page and global skin rules. Source code shows input/select remain `w-full min-w-0` and textarea `w-full min-w-0`, preventing rigid desktop widths. This is **source-only responsive proof**: 375px and 768px computed-style/browser snapshots have NOT been executed.
 
 **STRICT category tick rule remains unchanged:** C1 and C2, as well as A1–A4 / C3–C7 / D, stay open until a whole-tree raw-control grep and per-page/mobile comparison are actually performed. Native system select dropdown appearance is not equivalent to a rendered AntD popup on every OS, so C2 is not falsely completed.
+
+
+### Additional completed file: shared Button
+
+- [x] `src/components/ui/button.tsx` — verified primary/secondary/ghost/link/danger, sm/md/lg/icon/icon-sm, disabled/loading/keyboard focus contracts, and corrected the icon widths and heights to use the legacy phone cutoff at **767px**, not Tailwind's 640px `sm` cutoff. Native button implementation preserved with matched `<button>...</button>` tags, `type="button"` default, disabled double-submit prevention and pending indicator.
+
+| Button property/state | Legacy reference | Shared source value | Result |
+| --- | --- | --- | --- |
+| Measured primary | `old-lms-shell-spec.md:22-24`: solid #0a7c88/white, 36px high, 9px, 14px/650 | `button.tsx:10-12,24-29` + `globals.css:17-19,341-346` | Match source role |
+| Secondary | `components___button.scss:97-126`: outlined #bfc9da, dark copy, teal/white hover | `button.tsx:11`, `globals.css:627-656` | Match measured shell variant |
+| Hover/active | `components___antddesign.scss:160-169` darker teal hover and pressed feedback | `button.tsx:10-15,28`, `globals.css:621-628` | Source transition and paint aligned |
+| Keyboard focus | `components___antddesign.scss:171-174` teal 35% ring / 2px offset | `button.tsx:28`, `globals.css:629-635`, `legacy-skin.css:226-251` | Source paint aligned; actual native accessibility not browser-proven |
+| Disabled/loading | `components___button.scss:146-149` 50% secondary opacity; `components___antddesign.scss:176-185` primary disabled/loading | `button.tsx:25-29`, `globals.css:1140-1162` | Source state separately identified; no runtime click proof |
+| Touch target | `components___variables.scss:139,148` 44px phone target at 767px | `button.tsx:19-23` icon sizing uses `max-[767px]`; `globals.css:618-624` min-height >=44px | Matched breakpoint declarations |
+
+**Exact fetched-file grep:** `button.tsx`: raw `<button>` **1** (intentional shared primitive), `<input>` **0**, `<select>` **0**, `<textarea>` **0**; 2 existing `#dc2626` danger-hover color tokens remain in the shared-component file, and the global skin's source colors are separate. **Phone/tablet source proof:** at 767px and narrower, icon buttons now meet 44px in *both dimensions*; 768px and above retain the 36px desktop action role. Whole-repository raw-button grep and browser interaction/rendered measurements are outstanding, so strict D stays **[ ]**.
