@@ -4,6 +4,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
+import { DateInput } from "@/components/ui/date-input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {CollegeQuizQuestionsEditor} from "./college-quiz-questions-editor";
@@ -100,7 +104,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
      onChange={e=>setMaxAttempts(Number(e.target.value))} className="min-h-10 rounded border border-border px-2"/>
    </label>:null}
    <label className="grid gap-1 text-xs font-semibold">Deadline (IST)
-    <Input type="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
+    <DateInput mode="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
      className="min-h-10 rounded border border-border px-2"/></label>
    {quiz.status==="DRAFT"?<div className="grid gap-2 text-xs font-semibold">
     <label className="flex items-center gap-2"><Checkbox checked={shuffleQuestions}
