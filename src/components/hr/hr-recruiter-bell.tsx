@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
+import {Button} from "@/components/ui/button";
 import {createRecruiterBellRequestGate} from "@/modules/placements/recruiter-bell-model";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {HR_BELL_EMPTY,HR_BELL_EMPTY_HELP,relativeHrBellTime,createHrBellMutationGate,parseHrBellResponse,type HrBellResponse} from "@/modules/placements/hr-recruiter-bell-model";
@@ -74,17 +75,17 @@ export function HrRecruiterBell(){
  },[open]);
  const unread=state?.unread??0;
  return <div className="relative">
-  <button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
+  <Button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
    aria-expanded={open} aria-haspopup="dialog"
    onClick={()=>setOpen(value=>!value)}
-   className="relative min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+   variant="secondary" className="relative">
    Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
-  </button>
+  </Button>
   {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 w-[400px] max-w-[calc(100vw-2rem)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="flex items-center justify-between gap-2">
     <h2 className="font-semibold">Notifications</h2>
-    <button type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
-     className="min-h-9 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
+    <Button type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
+     variant="ghost">Close</Button>
    </div>
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
    {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
@@ -98,8 +99,8 @@ export function HrRecruiterBell(){
      </Link></li>)}</ul></ScrollCue>}
    <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
     <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
-    {unread>0?<button type="button" disabled={loading} onClick={()=>void markAll()}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50">{loading?"Saving…":"Mark all read"}</button>:null}
+    {unread>0?<Button type="button" disabled={loading} onClick={()=>void markAll()}
+      variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>
    {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}
   </section>:null}
