@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { facultyGradebookPrivateNotFound } from "@/modules/courses/faculty-gradebook-model";
@@ -24,9 +24,7 @@ export default async function FacultyLearnerGradebookPage({
   }
   const root="/teacher/courses/"+encodeURIComponent(query.deliveryId)+"/gradebook";
   return <div className="min-w-0 max-w-full space-y-6">
-    <Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-      ← Published gradebook
-    </Link>
+    <PageBackLink href={root} label="Published gradebook" />
     <PageHeader eyebrow="Faculty · Published learner scores"
       title={data.learner.displayName||data.learner.email||"Unnamed learner"}
       description={data.delivery.courseName+" · "+data.delivery.sectionName}/>
