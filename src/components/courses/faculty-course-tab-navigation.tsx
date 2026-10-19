@@ -1,4 +1,5 @@
 "use client";
+import {Select} from "@/components/ui/select";
 
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
@@ -58,7 +59,7 @@ export function FacultyCourseTabNavigation({
               id="faculty-course-section"
               value={deliveryId}
               onChange={(event) => router.push(facultyCourseTabHref(event.target.value, activeTab))}
-              className="ml-2 min-h-11 sm:min-h-9"
+              className="ml-2 min-h-11 w-auto"
             >
               {teachingSections.map((section) => (
                 <option key={section.deliveryId} value={section.deliveryId}>{section.label}</option>
