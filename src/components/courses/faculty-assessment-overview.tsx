@@ -62,7 +62,7 @@ export function FacultyAssessmentOverview({
     return Number.isNaN(value.getTime())
       ? "Date unavailable"
       : new Intl.DateTimeFormat("en-IN", {
-          dateStyle: "medium", timeStyle: "short",
+          timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
         }).format(value);
   };
 
