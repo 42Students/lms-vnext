@@ -22,7 +22,7 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 - [x] I: notification panel open 200ms ease-out from 8px, backdrop 150ms — `components___notification-drawer.scss:83-102,112-143`; micro CSS 296-321.
 - [x] I: active-tab underline width and opacity 200ms ease-in-out — `components___common.scss:381-415`; micro CSS 394-396 (same native tab pseudo-element; no layout changes).
 - [x] I: selected menu option #26bac7/white (separate from nav tint) — `components___antddesign.scss:134-137`; micro CSS 142-147.
-- [x] I: sticky shadow paint on **already sticky** table cells — `old-lms-shell.css:56`: 0 1px 3px rgba(26,45,72,.035); micro CSS 151-154,290-297. No sticky positioning added.
+- [ ] I: **sticky table shadow parity** — corrected the earlier false source mapping: `old-lms-shell.css:55-56` applies `0 1px 3px rgba(26,45,72,.035)` to `.tpo-shell-header.ln-head` **only**, not `thead`/`th`. Removed ungrounded sticky-table shadows from micro CSS (comments `micro-details.css:149-155,291-296`); table header shadow, if any, requires a real legacy table selector or browser measurement. Topbar styling belongs to chat-13.
 - [x] I: reduced-motion preference — `components___accessibility.scss:116-124`, `components___antddesign.scss:184-189`; existing `globals.css:304-312`; micro CSS 173-177,379-386.
 - [x] I: print interaction paint only, no layout — `components___accessibility.scss:116-124`; micro CSS 355-372; `src/app/(authenticated)/authenticated-print.css` owns paper/layout rules.
 - [ ] A4: text-selection **legacy exact parity** — `components___variables.scss:10-13,24` supplies colours but no `::selection` selector; micro CSS 122-127 uses those tokens. Actual legacy selection paint unverified.
@@ -68,7 +68,7 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 | Notification panel enter | `components___notification-drawer.scss:125-143` 200ms ease-out, -8px | `micro-details.css:308-314` same | Equal |
 | Notification backdrop enter | `components___notification-drawer.scss:90-102` 150ms ease-out | `micro-details.css:304-307,316-318` same | Equal declaration |
 | Selected option | `components___antddesign.scss:134-137` teal + white | `micro-details.css:142-147` teal + white | Equal |
-| Sticky shadow | `old-lms-shell.css:56` 0 1px 3px rgba(26,45,72,.035) | `micro-details.css:290-296` same | Equal shadow |
+| Sticky **topbar** shadow, not a table rule | `old-lms-shell.css:55-56` `.tpo-shell-header.ln-head` only: `0 1px 3px rgba(26,45,72,.035)` | `micro-details.css:149-155,291-296` deliberately carries **no** table shadow; chat-13 owns header | Previous table application was incorrect; corrected, table-specific value unverified |
 | Reduced motion | `components___accessibility.scss:116-124` .01ms and scroll auto | `globals.css:304-312`, `micro-details.css:379-386` | Equal |
 | Print interaction | No legacy print-specific declarations in copied SCSS | `micro-details.css:355-372`: transition/animation none, no geometry | Unverifiable |
 
@@ -137,6 +137,8 @@ The current pass also inspected the **original legacy repository** `42Students/l
 - Responsive: baseline hidden scrollbars and focus rules apply on mobile and desktop; the thin scrollbar exceptions are for horizontally overflowing table/tab viewport only. Touch press is guarded by `@media (hover:none)`; reduced motion is guarded by the OS setting; print rules are in `@media print`. No widths, paddings, grid/flex, positioning or modal dimensions changed.
 - No CI, TypeScript checks or app execution were performed, as requested. GitHub code search is not a substitute for a whole-repo grep; **do not claim zero hand-rolled instances**. Full paired-screen verification is a separate future orchestrator step.
 
+**Correction to earlier audit evidence:** `docs/design/old-lms-shell.css:56` does **not** establish a sticky *table* header shadow. It specifically styles the TPO top bar. The two `box-shadow` declarations formerly assigned to table headers in `micro-details.css` were unsupported and have been removed without changing `position`, `z-index` or responsive breakpoints. Preserve a table-header-specific shadow only when independently proven from legacy code or computed styles. The topbar's shadow stays under chat-13 ownership.
+
 ## Focused CSS-only compatibility closure — dark-theme selected state
 
 This is a **vNext-only regression prevention**, not an assertion that the old LMS had a dark theme. The legacy light-theme colours and focus geometry remain unchanged. The opt-in tracker mode declares the following values in `src/app/globals.css:168-181`, while `micro-details.css:12-18` defines legacy light-only fallback tokens.
@@ -159,7 +161,7 @@ This is a deliberately finite list of the **unticked requirements**. The source-
 | Open requirement | Missing proof or required non-CSS change | Next action / owner |
 | --- | --- | --- |
 | A4 text selection | Legacy browser-computed `::selection` foreground/background and selected-range screenshot; SCSS did not define it | Orchestrator old-LMS browser comparison; update `micro-details.css` only if measured paint differs |
-| Table selected row | AntD legacy selected-cell background, focus-within and hover-over-selected computed properties; source `_common.scss:849-855` specifies only ordinary hover | chat-14 table owner or orchestrator browser; never substitute the sidebar tint for a selected table value |
+| Table selected row and sticky-header shadow | AntD legacy selected-cell background, focus-within, hovered-selected and **table** sticky-header shadow computed properties; `_common.scss:849-855` specifies only ordinary hover, while `old-lms-shell.css:56` belongs to the **top bar** | chat-14 table owner or orchestrator browser; never substitute the sidebar tint or topbar shadow for table paint |
 | Checkbox/radio/switch glyph | Checkmark/dot/thumb motion and disabled/indeterminate state recordings on same browser/device | chat-17 shared controls owner + orchestrator; native glyph is not CSS-interpolable |
 | Browser autofill | Chrome/Safari/Firefox user-agent paint and inherited ink measured against the old portal | Orchestrator; avoid forced background overrides until verified |
 | Tooltip delay | Mouse-enter and mouse-leave timers from legacy AntD tooltip rendered behavior, then JS `InfoPopover` trigger semantics | chat-16/17 tooltip owner; CSS animation is not a mouse delay |
