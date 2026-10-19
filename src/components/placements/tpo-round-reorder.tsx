@@ -44,7 +44,7 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
    const round=roundsById.get(id);
    if(!round)return null;
    return <li key={id}
-    className="flex flex-wrap items-center gap-2 border-b border-border px-1 py-3"
+    className="flex flex-wrap items-center gap-2 border-b border-border py-3"
     onDragOver={event=>{if(readiness.allowed)event.preventDefault();}}
     onDrop={event=>{event.preventDefault();if(!readiness.allowed||!dragged||busy)return;setIds(current=>moveRound(current,dragged,index));markDirty();setDragged(null);setSaved(false);}}>
     <span draggable={readiness.allowed&&!busy} onDragStart={()=>setDragged(id)} onDragEnd={()=>setDragged(null)}
