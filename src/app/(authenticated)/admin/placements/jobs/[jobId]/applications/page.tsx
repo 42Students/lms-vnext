@@ -24,7 +24,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
 }) {
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
-    <PageHeader eyebrow="Super Admin" title="Placement Drives" description="Placement administration requires a college safety scope." />
+    <PageHeader title="Placement Drives" description="Placement administration requires a college safety scope." />
     <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
   </div>;
   requireSuperAdminSelectedCollege(context,"placements.manage");
@@ -37,7 +37,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
   ]);
   return <div className="min-w-0 space-y-6">
     <SuperAdminDriveTabs jobId={jobId} active="Applications"/>
-    <PageHeader eyebrow="Super Admin · Placements" title={"Applications · " + data.drive.title}
+    <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
