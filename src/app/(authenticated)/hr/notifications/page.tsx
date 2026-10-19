@@ -30,7 +30,7 @@ export default async function HrMessagesPage({searchParams}:{
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Recruiter" title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."/>
-  <Link href="/hr/conversations" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+  <Link href="/hr/conversations" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
    Open recruiter conversations
   </Link>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
@@ -39,13 +39,13 @@ export default async function HrMessagesPage({searchParams}:{
     href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
     className="block rounded-[var(--lms-control-radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{grant.collegeName}</Link>)}
   </section>:<>
-   <nav aria-label="Inbox filters" className="flex flex-wrap gap-2">
+   <nav aria-label="Inbox filters" className="flex flex-wrap gap-3 border-b border-[#e5e9f0]">
     {result.choices.length>1?result.choices.map(grant=><Link key={grant.id}
      href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
-     className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary"}>{grant.collegeName}</Link>):null}
+     className={grant.collegeId===result.collegeId ? "inline-flex min-h-11 items-center border-b-[3px] border-[#26bac7] px-3 py-2 text-sm font-semibold text-[#1a95a1] sm:min-h-9" : "inline-flex min-h-11 items-center border-b-[3px] border-transparent px-3 py-2 text-sm text-body hover:text-[#1a95a1] sm:min-h-9"}>{grant.collegeName}</Link>):null}
     <Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+
       (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
-     className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className="inline-flex min-h-11 items-center border-b-[3px] border-transparent px-3 py-2 text-sm text-primary-text hover:border-[#26bac7] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      {query.data.unreadOnly==="true"?"Show all":"Unread only"}
     </Link>
    </nav>
@@ -70,16 +70,16 @@ export default async function HrMessagesPage({searchParams}:{
        aria-label={"Notifications for "+group.title}
        className="border-b border-border pb-4">
        <div className="flex flex-wrap items-center justify-between gap-2">
-         <h2 className="font-semibold text-foreground">
+         <h2 className="text-[18px] font-semibold leading-[1.35] text-[var(--lms-heading)]">
            <Link href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}
              className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{group.title}</Link>
          </h2>
          <span className="text-xs text-muted-foreground">{group.items.length} on this page · {group.unread} unread</span>
        </div>
        <ol className="mt-3 divide-y divide-border">{group.items.map(row=>
-         <li key={row.id} className="py-3">
+         <li key={row.id} className="rounded-[8px] px-2 py-3 transition-colors hover:bg-[#fafbfc]">
            <div className="flex flex-wrap justify-between gap-2">
-             <span className="text-sm text-body">{row.label}{row.unread?" · Unread":""}</span>
+             <span className="text-sm text-body">{row.label}{row.unread?<span className="ml-2 inline-flex rounded-full bg-[#eff8fa] px-2 py-0.5 text-xs font-semibold text-[#1a95a1]">Unread</span>:null}</span>
              <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
            </div>
            {row.unread?<HrNotificationReadButton notificationId={row.id}
