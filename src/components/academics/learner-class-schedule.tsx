@@ -176,7 +176,7 @@ function LearnerHourlyGrid({days,eventsForDay,courseBasePath,onSelectDay}:{
 }){
   const columns=days.map(day=>({day,rows:eventsForDay(day)}));
   const hours=learnerHourlySlots(columns.flatMap(col=>col.rows));
-  return <div className="overflow-x-auto rounded-[var(--lms-control-radius,9px)] border border-border" aria-label="Hourly class schedule">
+  return <div className="overflow-x-auto rounded-[var(--lms-control-radius)] border border-border" aria-label="Hourly class schedule">
     <div className="grid min-w-max gap-px bg-border"
       style={{gridTemplateColumns:`5rem repeat(${days.length}, minmax(${days.length===1?280:150}px,1fr))`}}>
       <div className="bg-surface-subtle px-2 py-3 text-xs font-semibold text-body">ALL DAY</div>
@@ -198,7 +198,7 @@ function LearnerHourlyGrid({days,eventsForDay,courseBasePath,onSelectDay}:{
             </div>:<button type="button"
               onClick={()=>onSelectDay(col.day)}
               aria-label={"See "+dayHeading(col.day)+" at "+learnerHourLabel(hour)}
-              className="min-h-12 w-full rounded-[var(--lms-control-radius,9px)] text-left text-xs text-muted-foreground hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-primary">
+              className="min-h-12 w-full rounded-[var(--lms-control-radius)] text-left text-xs text-muted-foreground hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-primary">
               <span className="sr-only">No class scheduled. Open this day.</span>
             </button>}
           </div>;
@@ -222,8 +222,8 @@ function EventCard({
       title={scheduleEventTooltip(event)}
       className={
         (compact
-          ? "rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 "
-          : "rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 ") +
+          ? "rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 "
+          : "rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 ") +
         "border-l-4 " + learnerCourseTint(event)
       }
     >
@@ -259,10 +259,10 @@ function EventCard({
   );
 
   return event.deliveryId ? (
-    <div className="overflow-hidden rounded-[var(--lms-control-radius,9px)] border border-border bg-surface">
+    <div className="overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface">
       <Link
         href={`${courseBasePath}/${event.deliveryId}${courseBasePath === "/learn/courses" || courseBasePath === "/teacher/courses" ? "/home" : ""}`}
-        className="block rounded-[var(--lms-control-radius,9px)] outline-none transition hover:-translate-y-px hover:shadow-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+        className="block rounded-[var(--lms-control-radius)] outline-none transition hover:-translate-y-px hover:shadow-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
       >
         {content}
       </Link>
@@ -278,7 +278,7 @@ function EventCard({
       ) : null}
     </div>
   ) : (
-    <div className="min-w-0 overflow-hidden rounded-[var(--lms-control-radius,9px)] border border-border bg-surface">
+    <div className="min-w-0 overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface">
       {content}
       <EventNotes description={event.description} />
     </div>
@@ -532,15 +532,15 @@ export function LearnerClassSchedule({
               <input type="search" value={sessionSearch} maxLength={100}
                 onChange={event=>setSessionSearch(event.target.value)}
                 placeholder="Class title, faculty, location or course"
-                className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-sm font-normal text-foreground" />
+                className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm font-normal text-foreground" />
             </label>
             {sessionSearch ? <button type="button" onClick={()=>setSessionSearch("")}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
               Clear search
             </button> : null}
             <label className="min-w-44 text-xs font-semibold text-body">Session kind
               <select value={sessionKind} onChange={event=>setSessionKind(event.target.value as LearnerScheduleKind)}
-                className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-sm text-foreground">
+                className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm text-foreground">
                 <option value="ALL">All sessions</option>
                 <option value="COURSE">Course classes only</option>
                 <option value="SECTION">General section events</option>
@@ -549,8 +549,8 @@ export function LearnerClassSchedule({
             <button type="button" aria-pressed={upcomingOnly}
               onClick={()=>setUpcomingOnly(value=>!value)}
               className={upcomingOnly
-                ? "min-h-11 rounded-[var(--lms-control-radius,9px)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text"
-                : "min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-body"}>
+                ? "min-h-11 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text"
+                : "min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body"}>
               Upcoming sessions only
             </button>
             <button type="button" onClick={() => {
@@ -558,7 +558,7 @@ export function LearnerClassSchedule({
               setSessionSearch(reset.search);setSessionKind(reset.kind);
               setSectionId(reset.sectionId);setUpcomingOnly(reset.upcomingOnly);
               setSelectedDeliveryIds(reset.deliveryIds);
-            }} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">
+            }} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
               Clear schedule filters
             </button>
             <span role="status" className="w-full text-xs text-muted-foreground">
@@ -641,7 +641,7 @@ export function LearnerClassSchedule({
           <>
             {view === "month" ? (
               <div className="mt-5 space-y-4" aria-label="Monthly class schedule">
-                <div className="grid grid-cols-7 gap-px overflow-hidden rounded-[var(--lms-control-radius,9px)] border border-border bg-border"
+                <div className="grid grid-cols-7 gap-px overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-border"
                   role="group" aria-label="42 day month grid">
                   {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day=>(
                     <span key={day} className="bg-surface p-1 text-center text-[10px] font-semibold text-muted-foreground sm:p-2 sm:text-xs">
@@ -680,7 +680,7 @@ export function LearnerClassSchedule({
                     </h3>
                     {agenda.length ? <a download={"classes-"+chosenDay+".ics"}
                       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
-                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
                       Download selected day (.ics)
                     </a> : null}
                   </div>
@@ -692,11 +692,11 @@ export function LearnerClassSchedule({
               </div>
             ) : null}
             {courseBasePath === "/learn/courses" && learnerScheduleWeekdayExportAvailable(view,calendarMode,agenda.length) ? (
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface-subtle p-3" aria-label="Selected day class export">
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3" aria-label="Selected day class export">
                 <p className="min-w-0 text-sm font-semibold text-body">{chosenDay} · {agenda.length} authorized sessions</p>
                 <a download={"classes-"+chosenDay+".ics"}
                   href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
-                  className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+                  className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
                   Download selected day (.ics)
                 </a>
                 {dayIcs.truncated ? <p className="w-full text-xs text-warning-foreground">Export includes the first 100 selected sessions only.</p> : null}
