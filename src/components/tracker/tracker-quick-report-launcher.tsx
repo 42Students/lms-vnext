@@ -27,7 +27,7 @@ export function TrackerQuickReportLauncher(){
   return ()=>{live=false;};
  },[open]);
  return <>
-  <Button variant="primary" className="fixed bottom-5 right-5 z-40 shadow-[var(--lms-overlay-shadow)]" type="button" aria-haspopup="dialog" onClick={()=>setOpen(true)}
+  <Button variant="primary" className="fixed bottom-5 right-5 z-40 min-h-11 shadow-[var(--lms-overlay-shadow)] md:min-h-9" type="button" aria-haspopup="dialog" onClick={()=>setOpen(true)}
    >
     Report issue · Alt+B
   </Button>
