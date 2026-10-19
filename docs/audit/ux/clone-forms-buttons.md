@@ -353,3 +353,23 @@ GitHub indexed searches for `<button`, `<input`, `<select`, `<textarea` returned
 
 **Remaining material gaps (not source-complete):** native AntD-equivalent date/time calendar popups (C3), native select/menu and removable tag parity in every browser (C2), Jodit/rich-text editing (C7), image editing/crop and end-to-end upload adoption (C5), and repo-wide raw-control/code-style searches plus phone/tablet comparisons (A1–A4, C1, C4, C6, D). The orchestrator's computed-style parity report is still not available in this branch.
 
+
+
+## Final source additions in this bounded pass
+
+- [x] `src/components/ui/date-input.tsx` — real date-input behavior retained with an additional old-LMS-style calendar from shared `PopoverPanel` and `CalendarGrid`. Includes day selection, prev/next months, keyboard Escape and arrow navigation, min/max bounds and focus return. Existing `mode`, input attributes, `onChange` and ref remain supported.
+- [x] `src/components/ui/date-range-picker.tsx` — converted labels that contained a nested calendar button into explicit `htmlFor`/input ID associations, retained both values and limits, and attached reversed-range validation to both fields.
+- [x] `scripts/audit/chat17-form-skin-coverage.cjs` — committed a source-only inventory script using the TypeScript JSX AST. It reports exact raw `<button>`, `<input>`, `<select>`, `<textarea>` occurrences, hex-color matches and responsive source references; it does not run tests, CI, or browser code.
+
+**Source evidence for date popup:** `docs/design/legacy-styles/components___antddesign.scss:93-97,191-203,219-224` gives teal focus, selected day and time-pick colors. `docs/design/legacy-styles/components___form.scss:117-143` supplies field radius/text/error rules, while `components___variables.scss:148-157` supplies the phone/tablet breakpoint. The new `date-input.tsx` implements date-mode calendar selection on the existing native input. Non-date modes remain native; a browser-verified time/month/week popup comparison is still an **open C3 gap**.
+
+**Remaining audit commands** (not run here, as the code checkout is not mounted in this session):
+
+```bash
+node scripts/audit/chat17-form-skin-coverage.cjs --json
+grep -rlE '<button([[:space:]]|>)' src --include='*.tsx'
+grep -rlE '<select([[:space:]]|>)' src --include='*.tsx'
+grep -rnE '#[0-9A-Fa-f]{3,8}\\b' src --include='*.tsx' --include='*.css'
+```
+
+Do not check the strict C3 category until date/time/month/week popup parity and phone/tablet keyboard behavior are actually verified. The file checkmarks above describe reviewed source updates only, not complete category proof.
