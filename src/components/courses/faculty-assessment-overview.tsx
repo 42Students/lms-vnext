@@ -1,5 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
+import { Disclosure } from "@/components/ui/disclosure";
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -89,10 +90,7 @@ export function FacultyAssessmentOverview({
         </Badge>
       </div>
 
-      <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
-        <summary className="cursor-pointer text-sm font-semibold">
-          {kind==="QUIZ"?"Quizzes by Course":"Assignments by Course"}
-        </summary>
+      <Disclosure title={kind==="QUIZ"?"Quizzes by Course":"Assignments by Course"} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
         <ul className="mt-3 grid gap-2 text-sm text-body sm:grid-cols-2">
           {Array.from(new Set(items.map(item=>item.courseCode))).sort().map(code=>
             <li key={code} className="flex justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border px-3 py-2">
@@ -100,7 +98,7 @@ export function FacultyAssessmentOverview({
               <strong>{items.filter(item=>item.courseCode===code).length}</strong>
             </li>)}
         </ul>
-      </details>
+      </Disclosure>
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="text-sm font-semibold text-body">
           Course / Section
