@@ -49,7 +49,7 @@ export default async function TpoPlacementTeamPage() {
         actions={
           <Link
             href="/tpo/settings/trusted"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Trusted Companies
           </Link>
@@ -124,7 +124,7 @@ export default async function TpoPlacementTeamPage() {
       </section>
 
       <section className="border-t border-border">
-        <div className="border-b border-border px-5 py-4">
+        <div className="border-b border-border py-4">
           <h2 className="text-lg font-semibold text-foreground">
             Active team memberships
           </h2>
@@ -137,7 +137,7 @@ export default async function TpoPlacementTeamPage() {
         </div>
 
         {members.length === 0 ? (
-          <div className="p-6 text-sm text-body">
+          <div className="py-4 text-sm text-body">
             No matching active TPO or coordinator memberships were
             found in the available sources.
           </div>

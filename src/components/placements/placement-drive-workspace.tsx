@@ -303,7 +303,7 @@ export async function PlacementDriveWorkspace({
               <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground md:min-h-9">
                 More ▾
               </summary>
-              <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-[6px] border border-border bg-surface p-3 shadow-[9px_11px_28px_rgba(0,0,0,0.1)]">
+              <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 shadow-[var(--lms-overlay-shadow)]">
                 <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
                   className="min-h-9 rounded-[var(--lms-control-radius)] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] md:min-h-9">
                   Export applicants
@@ -441,7 +441,7 @@ export async function PlacementDriveWorkspace({
         </section>
       ):null}
       {nextStep ? (
-        <section aria-label="Next step" className="rounded-xl border border-border bg-surface p-5">
+        <section aria-label="Next step" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
           <h2 className="text-base font-semibold text-foreground">Next step</h2>
           <p className="mt-2 text-sm text-body">{nextStep.primary.description}</p>
           <Link href={nextStep.primary.href}
@@ -464,9 +464,9 @@ export async function PlacementDriveWorkspace({
       {journey?<section aria-label="Drive applicant journey" className="border-b border-border pb-6">
         <h2 className="font-semibold text-foreground">Journey</h2>
         <p className="mt-1 text-xs text-body">{journey.definition}</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-4 grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-3 lg:grid-cols-6">
           {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
-            className="rounded-[var(--lms-control-radius)] border border-border p-3 text-foreground hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]">
+            className="border-b border-border p-3 text-foreground hover:bg-primary-subtle sm:border-r sm:border-b-0 sm:last:border-r-0">
             <span className="block text-xs text-body">{stage.name}</span>
             <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
           </Link>)}
@@ -485,7 +485,7 @@ export async function PlacementDriveWorkspace({
                 row.request.status==="PENDING"&&row.request.requestType==="ROUND_RESCHEDULE"&&
                 row.request.roundId===round.id).length;
               return (
-                <article key={round.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
+                <article key={round.id} className="border-b border-border py-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
                     <span className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs font-semibold">{round.status}</span>

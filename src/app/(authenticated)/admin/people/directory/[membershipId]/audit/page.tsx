@@ -20,6 +20,6 @@ export default async function MembershipAuditPage({params}:{params:Promise<{memb
     </div>
     <p className="mt-2 text-xs text-muted-foreground">{event.module} · {event.eventType} · {event.importance}</p>
    </li>)}</ol>
-  {!data.events.length?<p role="status" className="rounded-[9px] border border-border p-4">No matching membership activity events have been recorded.</p>:null}
+  {!data.events.length?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4">No matching membership activity events have been recorded.</p>:null}
  </div>;
 }

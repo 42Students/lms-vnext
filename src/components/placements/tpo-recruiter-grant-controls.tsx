@@ -52,23 +52,23 @@ export function TpoRecruiterGrantForm({ companies }: {
             <label className="grid gap-1 text-sm font-semibold text-body">Company
               <Select value={relationshipId} disabled={busy}
                 onChange={(event) => setRelationshipId(event.target.value)}
-                className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+                className="min-h-11 md:min-h-9">
                 {companies.map((company) => <option key={company.relationshipId} value={company.relationshipId}>{company.name}</option>)}
               </Select>
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">Existing user email
               <Input type="email" value={email} disabled={busy}
                 onChange={(event) => setEmail(event.target.value)}
-                className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" required />
+                className="min-h-11 md:min-h-9" required />
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">Recruiter title (optional)
               <Input type="text" value={title} maxLength={160} disabled={busy}
                 onChange={(event) => setTitle(event.target.value)}
-                className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+                className="min-h-11 md:min-h-9" />
             </label>
           </div>
           <Button variant="primary" type="button" disabled={busy || !email.trim()} onClick={() => setConfirmOpen(true)}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60">
+            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60">
             {busy ? "Saving..." : "Review and confirm grant"}
           </Button>
         </>
@@ -80,7 +80,7 @@ export function TpoRecruiterGrantForm({ companies }: {
         description="Grant the existing user recruiter access to this college/company? This changes real recruiter permissions."
         confirmLabel="Grant recruiter college access" confirmVariant="primary" pending={busy}
         onConfirm={()=>void save()}>
-        {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+        {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
       </ConfirmDialog>
     </section>
   );
@@ -112,7 +112,7 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
   }
   return <div className="mt-2">
     <button type="button" disabled={busy} onClick={() => setConfirmOpen(true)}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
       {busy ? "Revoking..." : "Revoke access"}
     </button>
     {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}
@@ -121,7 +121,7 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
       title={"Remove "+displayName+"\'s access?"}
       description="They will no longer be able to use this college\'s recruiter workspace."
       confirmLabel="Revoke access" pending={busy} onConfirm={()=>void revoke()}>
-      {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     </ConfirmDialog>
   </div>;
 }
@@ -150,12 +150,12 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
   <label className="text-xs">{ended?"Give access again":"Extend access"}
    <Select value={months} disabled={busy}
     onChange={e=>setMonths(Number(e.target.value) as 3|6|12)}
-    className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+    className="ml-2 min-h-11 md:min-h-9">
     <option value={3}>3 months</option><option value={6}>6 months</option><option value={12}>12 months</option>
    </Select>
   </label>
   <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs text-link disabled:opacity-50">
+   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs text-link disabled:opacity-50">
    {busy?"Saving…":ended?"Give access again":"Extend"}
   </button>
   {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}
@@ -164,7 +164,7 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
     title={"Extend "+displayName+"\'s access by "+months+" months?"}
     confirmLabel={ended?"Give access again":"Extend"} confirmVariant="primary"
     pending={busy} onConfirm={()=>void extend()}>
-    {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </ConfirmDialog>
  </div>;
 }

@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
@@ -43,7 +44,7 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
   <div className="divide-y divide-border">
    {TPO_NOTIFICATION_PREFERENCE_FIELDS.map(field=><label key={field.key} className="flex min-h-14 items-center justify-between gap-4 py-3">
     <span><strong className="block text-sm">{field.label}</strong><span className="text-xs text-body">{field.description}</span></span>
-    <input type="checkbox" aria-label={field.label} checked={value[field.key]} disabled={busy}
+    <Checkbox aria-label={field.label} checked={value[field.key]} disabled={busy}
      onChange={e=>setValue(previous=>({...previous,[field.key]:e.target.checked}))}/>
    </label>)}
   </div>

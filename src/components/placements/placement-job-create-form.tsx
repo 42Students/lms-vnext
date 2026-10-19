@@ -58,8 +58,8 @@ export type PlacementCompanyChoice = {
   memory:{pastDrives:number;joinedLearners:number;lastDriveAt:Date;recentRoles:string[];existingRoles:Array<{jobId:string;title:string;status:string}>} | null;
 };
 
-const inputClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
-const textareaClass = "min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9";
+const textareaClass = "min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
 
 function splitList(value: string) {
   return value
@@ -687,9 +687,9 @@ export function PlacementJobCreateForm({
       </p>
       <nav aria-label="Drive setup review" className="border-b border-border pb-6">
         <h2 className="text-base font-semibold text-foreground">Setup review</h2>
-        <ol className="mt-3 grid gap-3 sm:grid-cols-4">
+        <ol className="mt-3 grid gap-3 border-y border-border sm:grid-cols-4">
           {["Company","Drive details","Eligibility","Publish review"].map((label,index)=>(
-            <li key={label} className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
+            <li key={label} className="border-l-2 border-border py-3 pl-3 text-sm">
               <span className="block text-xs font-semibold text-primary-text">Step {index+1} of 4</span>
               <span className="mt-1 block font-semibold text-foreground">{label}</span>
             </li>
@@ -1197,7 +1197,7 @@ export function PlacementJobCreateForm({
             Configure explainable numeric requirements now. Program/cohort scoping can remain empty when the opportunity is open across the college.
           </p>
         </div>
-        <div className="grid gap-5 p-5">
+        <div className="grid gap-5 pt-4">
           <label className="grid gap-1 text-sm font-semibold">Department · Target Audience
             <select className={inputClass} value={departmentFilter} onChange={event=>{
               setDepartmentFilter(event.target.value);setSelectedProgramIds([]);

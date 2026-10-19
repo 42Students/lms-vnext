@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Select } from "@/components/ui/select";
 import {resolveSuperAdminAuthoringLesson} from "@/modules/courses/super-admin-selected-lesson-model";
 import { FacultyLessonAuthoring } from "@/components/courses/faculty-lesson-authoring";
 import { FacultyLessonVideoManager } from "@/components/courses/faculty-lesson-video-manager";
@@ -16,10 +17,10 @@ export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=true}:
   <h2 className="font-semibold">Add {kind==="VIDEOS"?"video":kind==="LIVE_CLASSES"?"live class":"resource"}</h2>
   {!lessons.length?<p className="text-sm text-muted-foreground">Create a course offering, learning path and lesson before adding content.</p>:<>
    <label className="grid gap-1 text-sm font-semibold text-body">Lesson
-    <select value={selected?.id??""} onChange={e=>setLessonId(e.target.value)}
-     className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select value={selected?.id??""} onChange={e=>setLessonId(e.target.value)}
+     className="min-h-11 w-full sm:min-h-9">
      {lessons.map(x=><option value={x.id} key={x.id}>{x.courseCode} · {x.courseName} · {x.name}</option>)}
-    </select>
+    </Select>
    </label>
    {selected?<FacultyLessonAuthoring key={selected.id} lessonId={selected.id}
      deliveryId={null} audience="OFFERING" nextContentSequence={selected.nextContentSequence}

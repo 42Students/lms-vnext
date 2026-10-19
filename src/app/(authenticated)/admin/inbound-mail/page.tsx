@@ -60,7 +60,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
      <option value="ALL">All</option><option value="NEW">To read</option><option value="TRIAGED">Being handled</option><option value="RESOLVED">Done</option>
     </Select></label>
    <Button type="submit">Filter</Button>
-   <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm">Clear</Link>
+   <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Clear</Link>
   </form>
   <InboundMailList rows={data.items.map(x=>({
    id:x.id,receivedAt:x.receivedAt.toISOString(),fromAddress:x.fromAddress,
@@ -69,9 +69,9 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <nav aria-label="Inbox pages" className="flex flex-wrap justify-between gap-3 text-sm">
    <span>{data.total===null?"Page "+data.page:data.total+" matching messages · Page "+data.page+" of "+totalPages}</span><div className="flex flex-wrap gap-3">
    {pageNumbers.map(n=><Link key={n} href={next(n)} aria-current={n===data.page?"page":undefined}
-     className={n===data.page?"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[9px] border border-[var(--lms-button-primary)] bg-[var(--lms-primary-subtle)] px-3 py-2 text-[var(--lms-primary-text)]":"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[9px] border border-border px-3 py-2"}>{n}</Link>)}
-   {data.page>1?<Link className="inline-flex min-h-9 items-center rounded-[9px] border px-3" href={next(data.page-1)}>Previous</Link>:null}
-   {data.hasMore?<Link className="inline-flex min-h-9 items-center rounded-[9px] border px-3" href={next(data.page+1)}>Next</Link>:null}
+     className={n===data.page?"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-primary-subtle)] px-3 py-2 text-[var(--lms-primary-text)]":"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2"}>{n}</Link>)}
+   {data.page>1?<Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3" href={next(data.page-1)}>Previous</Link>:null}
+   {data.hasMore?<Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3" href={next(data.page+1)}>Next</Link>:null}
    </div>
   </nav>
  </div>;

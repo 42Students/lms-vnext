@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 export function TpoTeamAwayForm({until}:{until:string|null}){
  const pending=useRef(false),router=useRouter();
  const [date,setDate]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
@@ -28,13 +30,13 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
    void submit(parsed.toISOString());}}>
   <label className="grid gap-1 text-xs font-semibold">Away until (IST)
    <Input type="datetime-local" value={date} disabled={busy} onChange={event=>setDate(event.target.value)}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+    className="min-h-11 sm:min-h-9" />
   </label>
-  {error?<p role="alert" className="text-xs text-danger">{error}</p>:null}
+  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-body">{notice}</p>:null}
   <div className="flex flex-wrap gap-2">
-   <Button type="submit" disabled={busy||!date} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm font-[650] text-on-primary">{busy?"Saving…":"Set away"}</Button>
-   {until?<Button variant="secondary" type="button" disabled={busy} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold"
+   <Button type="submit" variant="secondary" disabled={busy||!date} className="min-h-11 sm:min-h-9 text-xs">{busy?"Saving…":"Set away"}</Button>
+   {until?<Button type="button" variant="secondary" disabled={busy} className="min-h-11 sm:min-h-9 text-xs"
     onClick={()=>void submit(null)}>Back now</Button>:null}
   </div>
  </form>;

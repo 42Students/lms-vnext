@@ -272,20 +272,20 @@ export function AdminCourseCreatePanel({
        <a href="#setup-delivery" className="font-semibold text-primary-text underline">3. Section Delivery</a>
        <a href="#setup-faculty" className="font-semibold text-primary-text underline">4. Assign Course Faculty</a>
       </nav>
-      <p role="status" className="rounded border border-border bg-surface p-3 text-sm text-body xl:col-span-2">
+      <p role="status" className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body xl:col-span-2">
        {nextSetupStep==="COURSE"?"Start by creating or choosing a Course.":
         nextSetupStep==="OFFERING"?"Course created. Choose a Cohort and Academic Period for its Offering.":
         nextSetupStep==="DELIVERY"?"Offering created. Choose the compatible Section for the Delivery.":
         nextSetupStep==="FACULTY"?"Section Delivery created. Assign Faculty to that Section.":
         "Teaching assignment saved. The Course setup flow is complete."}
       </p>
-      <form id="setup-course" onSubmit={createCourse} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-course" onSubmit={createCourse} className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">{COLLEGE_COURSES_COPY.createTitle}</h2>
         {departments.length===0?<p role="status" className="mt-3 text-sm text-body">
           No departments in this college yet. Create a department before adding a course.{" "}
           <Link className="font-semibold text-primary-text underline" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
         </p>:null}
-        {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded border border-border bg-surface-subtle p-3">
+        {copy?<div className="mt-3 flex flex-wrap items-center gap-3 border-y border-border bg-surface-subtle px-3 py-3">
           <strong>Duplicating “{copy.name}”</strong>
           <button type="button" className="font-semibold text-primary-text underline" onClick={()=>router.replace(courseBasePath)}>Cancel copy</button>
           <p className="w-full text-xs text-muted-foreground">Only catalog name, code, description and department are copied. Existing course content, offerings and assignments are not copied.</p>
@@ -335,7 +335,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form id="setup-offering" onSubmit={createOffering} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-offering" onSubmit={createOffering} className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">New Course Offering</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Place a Course into one Cohort and Academic Period.</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -381,7 +381,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form id="setup-delivery" onSubmit={createDelivery} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-delivery" onSubmit={createDelivery} className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Add Section Delivery</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Connect an Offering to an exact Section. Only structurally compatible Sections are shown.</p>
         <div className="mt-4 grid gap-3">
@@ -405,7 +405,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form id="setup-faculty" onSubmit={assignTeacher} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-faculty" onSubmit={assignTeacher} className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Assign Course Faculty</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Assign an active Faculty Membership to one exact Section Delivery.</p>
         <div className="mt-4 grid gap-3">

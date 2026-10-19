@@ -260,7 +260,7 @@ export function PersonMembershipActions({
         description="Roles are membership-scoped. SUPER_ADMIN is never assigned here."
       >
         <p className="mb-3 text-sm text-body">The College Admin role can only be assigned or removed by a Super Admin.</p>
-        <div className="space-y-2">
+        <div className="divide-y divide-border border-y border-border">
           {MEMBERSHIP_ROLES.map((role) => {
             const checked = currentRoles.includes(role);
             const pending = rolePending === role;
@@ -268,7 +268,7 @@ export function PersonMembershipActions({
             return (
               <label
                 key={role}
-                className="flex min-h-11 cursor-pointer items-center justify-between gap-4 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 hover:bg-primary-subtle"
+                className="flex min-h-11 cursor-pointer items-center justify-between gap-4 px-3 py-2 hover:bg-primary-subtle"
               >
                 <span className="text-sm font-semibold text-body">
                   {roleLabel(role)}

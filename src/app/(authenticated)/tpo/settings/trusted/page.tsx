@@ -38,7 +38,7 @@ export default async function TpoTrustedCompaniesPage() {
         actions={
           <Link
             href="/tpo/settings/team"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Placement Team
           </Link>
@@ -100,7 +100,7 @@ export default async function TpoTrustedCompaniesPage() {
       </section>
 
       <section className="border-t border-border">
-        <div className="border-b border-border px-5 py-4">
+        <div className="border-b border-border py-4">
           <h2 className="text-lg font-semibold text-foreground">
             Company trust
           </h2>
@@ -112,7 +112,7 @@ export default async function TpoTrustedCompaniesPage() {
         </div>
 
         {data.companies.length === 0 ? (
-          <p className="p-6 text-sm text-body">
+          <p className="py-4 text-sm text-body">
             No active placement company relationships are
             available for this college.
           </p>

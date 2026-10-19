@@ -235,7 +235,7 @@ export default async function RecruiterCompanyReportsPage({
 
       <section
         aria-label="Hiring portfolio summary"
-        className="grid gap-3 sm:grid-cols-3"
+        className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-3"
       >
         {[
           {
@@ -253,7 +253,7 @@ export default async function RecruiterCompanyReportsPage({
         ].map((metric) => (
           <article
             key={metric.label}
-            className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5"
+            className="border-b border-border p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {metric.label}
@@ -266,7 +266,7 @@ export default async function RecruiterCompanyReportsPage({
         ))}
       </section>
 
-      <section aria-label="All your drives at this college" className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 sm:p-5">
+      <section aria-label="All your drives at this college" className="border-b border-border pb-4 sm:pb-5">
         <h2 className="font-semibold text-foreground">All your drives at this college</h2>
         <p className="mt-1 text-sm text-body">Hiring progress of applicants already shared by the placement cell, across all your authorized drives. Private applications are not counted.</p>
         <div className="mt-4 space-y-3">
