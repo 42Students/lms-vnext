@@ -37,7 +37,7 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
    <div><p className="text-xs font-semibold uppercase text-muted-foreground">Mentor · Task details</p>
     <h2 id="mentor-board-task-title" className="text-lg font-semibold">{task.title}</h2></div>
    <button type="button" onClick={()=>ref.current?.close()}
-    className="min-h-11 rounded border border-border px-3 text-sm font-semibold">Close</button>
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Close</button>
   </div>
   <p className="mt-3 text-xs text-muted-foreground">Scroll for more task details and activity.</p>
    <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
@@ -69,7 +69,7 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
   <section className="mt-4">
    <h3 className="font-semibold">Submissions · {attempts.length}</h3>
    {attempts.length?<ul className="mt-2 space-y-2">{attempts.map(row=>
-    <li key={row.id} className="rounded border border-border p-2 text-xs">
+    <li key={row.id} className="border-b border-border py-2 text-xs">
      Version {row.version} · {row.status} · {new Date(row.createdAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}
      {row.submittedByMembershipId ? " · Submitted by "+(members.find(member=>member.membershipId===row.submittedByMembershipId)?.displayName??"Project member") : ""}
      {safeProjectExternalHref(row.submissionUrl)?

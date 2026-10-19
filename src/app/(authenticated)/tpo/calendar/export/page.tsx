@@ -37,7 +37,7 @@ export default async function TpoCalendarExportPage({
     : null;
   const params = parsed.success ? new URLSearchParams(parsed.data) : null;
   return <div className="space-y-6">
-    <Link href="/tpo/calendar" className="font-semibold text-[var(--lms-link-text)] hover:underline">
+    <Link href="/tpo/calendar" className="font-semibold text-link hover:underline">
       ← TPO calendar
     </Link>
     <PageHeader eyebrow="TPO · Calendar" title="Export upcoming placement rounds"
@@ -45,17 +45,17 @@ export default async function TpoCalendarExportPage({
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="text-sm font-semibold text-foreground">From (IST)
         <Input type="date" name="from" required defaultValue={first(query.from) ?? today}
-          className="mt-2 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3" />
+          className="mt-2 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
       <label className="text-sm font-semibold text-foreground">Through (IST)
         <Input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
-          className="mt-2 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3" />
+          className="mt-2 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
-      <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-white">
+      <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
         Preview range
       </Button>
     </form>
-    {!parsed.success ? <p role="alert" className="rounded-md border border-border bg-surface p-5 text-sm text-body">
+    {!parsed.success ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 text-sm text-body">
       Invalid date range. Select real IST dates with a maximum inclusive span of 93 days.
     </p> : result ? <section className="space-y-4">
       <p className="text-sm text-body">
@@ -64,12 +64,12 @@ export default async function TpoCalendarExportPage({
           ? " More than 500 matched: this export is truncated, narrow the range."
           : ""}
       </p>
-      {result.rows.length === 0 ? <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      {result.rows.length === 0 ? <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
         No future scheduled rounds were found in this college for the chosen dates.
         Unscheduled, cancelled, completed and non-published drives are not inferred.
       </p> : null}
       <a href={"/api/placements/tpo/calendar/export?" + params?.toString()}
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-white">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
         Download rounds CSV
       </a>
     </section> : null}

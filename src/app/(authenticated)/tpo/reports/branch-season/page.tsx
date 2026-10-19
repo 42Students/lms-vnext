@@ -27,7 +27,7 @@ export default async function TpoBranchSeasonPage({
     <div data-tpo-presentation-report className="space-y-6">
       <TpoReportPresentation />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/branch-season" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <Link href="/tpo/reports/by-branch" className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
+      <Link href="/tpo/reports/by-branch" className="text-sm font-semibold text-link hover:underline">
         ← By Branch report
       </Link>
       <PageHeader
@@ -38,7 +38,7 @@ export default async function TpoBranchSeasonPage({
           <a
             href={"/api/placements/tpo/reports/branch-season/export?seasonId=" +
               encodeURIComponent(dashboard.season.id)}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-white"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white"
           >
             Export season CSV
           </a>
@@ -51,7 +51,7 @@ export default async function TpoBranchSeasonPage({
             <select
               name="seasonId"
               defaultValue={dashboard.season?.id ?? ""}
-              className="mt-2 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface p-2 text-sm font-normal"
+              className="mt-2 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm font-normal"
             >
               {dashboard.seasons.map((season) => (
                 <option key={season.id} value={season.id}>
@@ -62,37 +62,37 @@ export default async function TpoBranchSeasonPage({
           </label>
           <button
             type="submit"
-            className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-foreground"
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground"
           >
             View season
           </button>
         </form>
       ) : null}
       {!dashboard.season ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
           No placement seasons are recorded for this college. No branch rate can be calculated.
         </p>
       ) : (
         <>
           <section className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border border-border bg-surface p-5">
+            <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
               <p className="text-sm text-body">Distinct applicants (all application states)</p>
               <p className="mt-2 text-3xl font-bold tabular-nums">{dashboard.totalApplicants}</p>
             </div>
-            <div className="rounded-xl border border-border bg-surface p-5">
+            <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
               <p className="text-sm text-body">Distinct learners with currently accepted offers</p>
               <p className="mt-2 text-3xl font-bold tabular-nums">{dashboard.totalAcceptedLearners}</p>
             </div>
           </section>
           {!dashboard.registrationAvailable ? (
-            <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+            <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
               No migrated placement-pool registration table is available.
               Registered denominator and placement rate are unknown, not zero.
               The accepted-applicants / applicant ratio below is an explicitly different metric.
             </p>
           ) : null}
           {dashboard.rows.length === 0 ? (
-            <p role="status" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
+            <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
               This season has no persisted applicant, accepted-offer or registered-pool
               branch evidence. Rates cannot be inferred.
             </p>

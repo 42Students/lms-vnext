@@ -45,7 +45,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    (status==="APPROVED"&&!allowLock))return null;
  return <section aria-label="Review final submission" className="mt-3">
   <Button type="button" variant="secondary" onClick={()=>setOpen(true)}
-   className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+   className="text-primary-text">
    Review
   </Button>
   {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}
@@ -53,16 +53,16 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    description="Review the current submission and record feedback for the learner."
    footer={<>
     <Button type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}
-     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm">Cancel</Button>
+     >Cancel</Button>
     {canAdminSettleDelivery(status,locked,projectStatus,"CHANGES_REQUESTED")?
      <Button type="button" variant="secondary" disabled={pending||!feedback.trim()} onClick={()=>{void decide("CHANGES_REQUESTED")}}
-      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Request changes</Button>:null}
+      >Request changes</Button>:null}
     {canAdminSettleDelivery(status,locked,projectStatus,"APPROVED")?
      <Button type="button" variant="primary" disabled={pending} onClick={()=>{void decide("APPROVED")}}
       className="text-sm">Accept submission</Button>:null}
     {allowLock&&canAdminSettleDelivery(status,locked,projectStatus,"LOCK")?
      <Button type="button" variant="secondary" disabled={pending} onClick={()=>setConfirmLock(true)}
-      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Lock submission</Button>:null}
+      >Lock submission</Button>:null}
    </>}>
    <label className="block text-sm font-medium">Feedback for the learner
     <Textarea maxLength={6000} value={feedback} disabled={pending}

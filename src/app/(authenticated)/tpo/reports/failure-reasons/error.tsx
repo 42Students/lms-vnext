@@ -9,7 +9,7 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-xl border border-border bg-surface p-6">
+    <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
       <h1 className="text-lg font-semibold text-foreground">
         Couldn&apos;t load Reports · Failure Reasons
       </h1>

@@ -90,8 +90,8 @@ export function TopbarAccountMenu({
         <p className="m-0 truncate text-[13px] font-semibold text-[#172033]">{roleLabel}</p>
         <p className="mt-1 truncate text-[12px] text-[#64748b]">{organizationName}</p>
       </div>
-      <Link href={copy.accountHref ?? "/account/security"}
-        onClick={() => setOpen(false)} className={style.menuItem}>{copy.accountLabel ?? "My Account"}</Link>
+      {copy.accountHref ? <Link href={copy.accountHref}
+        onClick={() => setOpen(false)} className={style.menuItem}>{copy.accountLabel}</Link> : null}
       {adminScopeChoices || memberships.length > 1 ? <>
         <hr className={style.menuDivider}/>
         <p className="px-2 pb-2 text-left text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">Switch workspace</p>
