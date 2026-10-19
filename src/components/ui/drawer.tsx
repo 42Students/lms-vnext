@@ -41,7 +41,7 @@ export function Drawer({ open, onOpenChange, title, description, children, foote
         {dismissible ? <Button className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] text-[var(--lms-muted-text)]" variant="ghost" aria-label="Close drawer" onClick={() => onOpenChange(false)}><span aria-hidden="true">×</span></Button> : null}
       </header>
       <ScrollCue axis="y" label={`${title} drawer content`} className="min-h-0 flex-1" viewportClassName="h-full min-h-0 overscroll-contain p-4 sm:p-[var(--lms-canvas-padding)]">{children}</ScrollCue>
-      {footer ? <footer className="flex shrink-0 flex-wrap justify-end gap-2 border-t border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">{footer}</footer> : null}
+      {footer ? <footer className="flex shrink-0 flex-wrap justify-end gap-2 border-t border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-[var(--lms-canvas-padding)]">{footer}</footer> : null}
     </div>
   </dialog>;
 }
