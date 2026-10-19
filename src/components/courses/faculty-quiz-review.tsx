@@ -339,7 +339,7 @@ export function FacultyQuizReview({
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h4 className="m-0 text-sm font-semibold text-foreground">
+                  <h4 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
                     {learnerLabel(attempt)}
                   </h4>
                   {attempt.learnerEmail ? (
@@ -366,7 +366,7 @@ export function FacultyQuizReview({
                   (answer, index) => (
                     <div
                       key={answer.id}
-                      className="rounded-md border border-border p-3"
+                      className="rounded-[var(--lms-control-radius)] border border-border p-3"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <p className="m-0 text-sm font-semibold text-foreground">
