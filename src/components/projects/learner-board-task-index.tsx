@@ -19,7 +19,7 @@ export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
   <div role="region" aria-label="Project board columns; scroll sideways to see all task lanes" tabIndex={0}
     className={styles.scrollRegion+" min-w-0 overscroll-x-contain pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"}>
    <div className={styles.track}>
-    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label} width="compact" className={styles.lane}>
+    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label} width="compact" className={styles.lane+(lane.id==="BACKLOG"?" "+styles.backlogLane:"")}>
       <h2 className={styles.header+" flex min-w-0 items-center justify-between font-semibold text-foreground"}>
        <span>{lane.label}</span><Badge tone="neutral" className="tabular-nums">{lane.tasks.length}</Badge>
       </h2>
