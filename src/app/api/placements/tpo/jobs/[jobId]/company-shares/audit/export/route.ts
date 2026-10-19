@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoCompanyShareAudit} from "@/modules/placements/company-share/manage-service";
@@ -13,7 +14,7 @@ export async function GET(request:Request,{params}:{params:Promise<{jobId:string
   });
   return new Response("\uFEFF"+tpoCompanyShareAuditCsv(result.entries,result.limited),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="company-share-access-audit.csv"',
+    "Content-Disposition":'attachment; filename="' + gridExportFilename("company-share-access-audit", "csv") + '"',
     "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"},
   });
  }catch(error){return apiErrorResponse(error);}
