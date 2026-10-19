@@ -290,7 +290,7 @@ function JobActions({
           <StatusBadge tone="success">
             Applied · {humanize(application.channel)}
           </StatusBadge>
-          <Button className="max-sm:min-h-11"
+          <Button className="max-md:min-h-11"
             size="sm"
             variant="secondary"
             disabled={pendingAction !== null}
@@ -308,11 +308,11 @@ function JobActions({
           description={`Request to withdraw ${roleOption.title} at this employer. The placement team must review your request.`}
           footer={
             <>
-              <Button className="max-sm:min-h-11" variant="secondary" disabled={pendingAction !== null}
+              <Button className="max-md:min-h-11" variant="secondary" disabled={pendingAction !== null}
                 onClick={() => setConfirmation(null)}>
                 Keep application
               </Button>
-              <Button className="max-sm:min-h-11"
+              <Button className="max-md:min-h-11"
                 disabled={!validWithdrawalReason || pendingAction !== null}
                 onClick={() => void requestWithdrawal()}
               >
@@ -376,8 +376,8 @@ function JobActions({
       {missing.length>0?<p className="text-xs text-body">Missing: {missing.map(row=>row.criterion).join(", ")}</p>:null}
       {failed.length>0?<p className="text-xs text-body">Not met: {failed.map(row=>row.criterion).join(", ")}</p>:null}
       <div className="flex flex-wrap gap-3">
-        <Link href="/learn/my-placements#registration" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9">Check registration</Link>
-        <Link href="/learn/my-placements#placement-academic-evidence" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9">Review academic evidence</Link>
+        <Link href="/learn/my-placements#registration" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Check registration</Link>
+        <Link href="/learn/my-placements#placement-academic-evidence" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Review academic evidence</Link>
       </div>
     </div>;
   }
@@ -394,7 +394,7 @@ function JobActions({
   return (
     <div className="flex flex-wrap items-center gap-2">
       {internalAvailable ? (
-        <Button className="max-sm:min-h-11"
+        <Button className="max-md:min-h-11"
           size="sm"
           disabled={pendingAction !== null}
           onClick={() => setConfirmation("INTERNAL")}
@@ -410,11 +410,11 @@ function JobActions({
             href={safeExternalUrl!}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle sm:min-h-9"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle md:min-h-9"
           >
             Open employer form
           </a>
-          <Button className="max-sm:min-h-11"
+          <Button className="max-md:min-h-11"
             size="sm"
             variant="secondary"
             disabled={pendingAction !== null}
@@ -432,14 +432,14 @@ function JobActions({
         title="Ready to apply?"
         description="We'll send your profile to the recruiter. You can withdraw later from Applications."
         footer={<>
-          <Button className="max-sm:min-h-11" variant="secondary" disabled={pendingAction!==null} onClick={()=>setConfirmation(null)}>Not yet</Button>
-          <Button className="max-sm:min-h-11" disabled={pendingAction!==null} onClick={()=>void apply("INTERNAL")}>
+          <Button className="max-md:min-h-11" variant="secondary" disabled={pendingAction!==null} onClick={()=>setConfirmation(null)}>Not yet</Button>
+          <Button className="max-md:min-h-11" disabled={pendingAction!==null} onClick={()=>void apply("INTERNAL")}>
             {pendingAction==="INTERNAL"?"Submitting…":"Confirm & apply"}
           </Button>
         </>}
       >
         <div className="space-y-4">
-          <dl className="grid grid-cols-1 gap-3 rounded-lg border border-border bg-surface-subtle p-3 text-sm sm:grid-cols-3">
+          <dl className="grid grid-cols-1 gap-3 rounded-lg border border-border bg-surface-subtle p-3 text-sm md:grid-cols-3">
             <div><dt className="font-semibold text-muted-foreground">Role</dt>
               <dd className="mt-1 text-foreground">{roleOption.title}</dd></div>
             <div><dt className="font-semibold text-muted-foreground">Company</dt>
@@ -447,9 +447,9 @@ function JobActions({
             <div><dt className="font-semibold text-muted-foreground">Resume</dt>
               <dd className="mt-1 text-foreground">Not attached</dd></div>
           </dl>
-          <Button className="max-sm:min-h-11" type="button" variant="link" aria-expanded={showSharedDetails}
+          <Button className="max-md:min-h-11" type="button" variant="link" aria-expanded={showSharedDetails}
             onClick={()=>setShowSharedDetails(open=>!open)}
-            className="max-sm:min-h-11 font-semibold text-primary-text underline">
+            className="max-md:min-h-11 font-semibold text-primary-text underline">
             {showSharedDetails?"Hide what gets shared":"What exactly gets shared?"}
           </Button>
           {showSharedDetails?<ul className="list-disc space-y-2 pl-5 text-sm text-body">
@@ -471,11 +471,11 @@ function JobActions({
         description={`Record your application for ${roleOption.title} at ${item.company.name} in your LMS journey.`}
         footer={
           <>
-            <Button className="max-sm:min-h-11" variant="secondary" disabled={pendingAction !== null}
+            <Button className="max-md:min-h-11" variant="secondary" disabled={pendingAction !== null}
               onClick={() => setConfirmation(null)}>
               Not yet
             </Button>
-            <Button className="max-sm:min-h-11" disabled={pendingAction !== null}
+            <Button className="max-md:min-h-11" disabled={pendingAction !== null}
               onClick={() => void apply("EXTERNAL")}>
               {pendingAction === "EXTERNAL" ? "Recording…" : "Yes, I submitted externally"}
             </Button>
@@ -532,7 +532,7 @@ export function LearnerPlacementJobs({
         return (
           <article
             key={item.roleOption.id}
-            className="min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] motion-reduce:transition-none sm:p-6"
+            className="min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] motion-reduce:transition-none md:p-6"
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
@@ -575,7 +575,7 @@ export function LearnerPlacementJobs({
               </div>
             </div>
 
-            <div className="mt-4 grid min-w-0 gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-4 grid min-w-0 gap-3 text-sm md:grid-cols-2 xl:grid-cols-4">
               <div>
                 <p className="m-0 text-xs font-semibold text-muted-foreground">
                   Work
