@@ -485,7 +485,7 @@ export async function PlacementDriveWorkspace({
                 row.request.status==="PENDING"&&row.request.requestType==="ROUND_RESCHEDULE"&&
                 row.request.roundId===round.id).length;
               return (
-                <article key={round.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
+                <article key={round.id} className="border-b border-border py-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
                     <span className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs font-semibold">{round.status}</span>
