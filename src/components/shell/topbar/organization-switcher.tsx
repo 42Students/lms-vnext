@@ -25,6 +25,7 @@ export function TopbarOrganizationSwitcher({
   const canSwitch=Boolean(choices)||memberships.filter(item=>item.status==="ACTIVE").length>1;
   useEffect(()=>{
     if(!open)return;
+    root.current?.querySelector<HTMLElement>("input, select")?.focus();
     const onPointer=(event:PointerEvent)=>{
       if(root.current&&!root.current.contains(event.target as Node))setOpen(false);
     };
