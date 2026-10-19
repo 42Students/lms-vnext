@@ -179,7 +179,7 @@ export default async function TpoAuditPage({
            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
            Export audit log CSV
           </a>
-          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">
             Actor / entity filters and CSV →
           </Link>
         </div>}
@@ -327,7 +327,7 @@ export default async function TpoAuditPage({
           <div className="flex flex-wrap items-center gap-3 sm:col-span-2 xl:col-span-5">
             <Button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-foreground hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             >
               Apply filters
             </Button>
