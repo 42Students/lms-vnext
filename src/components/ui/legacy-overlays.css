@@ -34,6 +34,11 @@
 [data-slot="dialog"] > div > div:last-child:not(:first-child) {
   background: #fff;
 }
+@media (max-width: 767px) {
+  [data-slot="dialog"] > div > div:last-child:not(:first-child):has(button) {
+    gap: 8px;
+  }
+}
 [data-slot="drawer"] > div > header {
   background: var(--lms-neutral-50);
   border-bottom: 1px solid var(--lms-canvas-border);
