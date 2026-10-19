@@ -474,3 +474,5 @@
 .topbarNotificationDrawer [data-slot="drawer-footer"] a { min-height:44px; display:inline-flex; align-items:center; }
 
 .topbarNotificationBody ul[aria-label^="Notifications for "] { padding:0; margin:0; list-style:none; }
+
+.topbarNotificationBody ul[aria-label="Recent placement notifications"] > li > p { margin:0; padding:12px 12px 8px; color:var(--lms-muted-text); font-size:12px; font-weight:600; }
