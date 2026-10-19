@@ -41,7 +41,7 @@ export default async function TpoRecruiterConversationPage({params}:{
       <p className="py-2 text-center text-xs font-semibold text-muted-foreground">
        {new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)}
       </p>:null}
-    <article className={"max-w-3xl rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 "+(item.senderType==="TPO"?"ml-auto":"mr-auto")}>
+    <article className={"max-w-3xl rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 "+(item.senderType==="TPO"?"ml-auto":"mr-auto")}>
      <p className="text-xs text-muted-foreground">{item.senderType==="TPO"?"You":"Recruiter"}</p>
      <p className="text-xs font-semibold text-muted-foreground">
       {item.senderType==="RECRUITER"?"Recruiter":"Placement cell"} ·
