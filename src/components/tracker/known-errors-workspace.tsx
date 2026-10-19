@@ -57,7 +57,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
   }
 
   return (
-    <article id={"known-error-"+item.id} className="scroll-mt-4 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+    <article id={"known-error-"+item.id} className="scroll-mt-4 space-y-4 py-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="m-0 break-all font-mono text-xs text-muted-foreground">
@@ -263,7 +263,7 @@ export function KnownErrorsWorkspace({
           No tracked errors yet. This does not prove that live Cloud Logging contains no errors.
         </p>
       ) : (
-        <div className="grid gap-4">
+        <div className="divide-y divide-border border-y border-border">
           {items.map((item) => <KnownErrorCard key={item.id} item={item} />)}
         </div>
       )}
