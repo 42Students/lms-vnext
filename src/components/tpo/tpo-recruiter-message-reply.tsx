@@ -72,7 +72,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
    </div>
   <form onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
    <label className="block text-sm text-body">Message
-    <textarea className="mt-1 min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"
+    <Textarea className="mt-1 min-h-28 w-full"
       maxLength={4000} required aria-label="Message" placeholder="Write a message" value={body}
       onFocus={restoreDraft} onChange={e=>persistDraft(e.target.value)}
       onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent.isComposing){

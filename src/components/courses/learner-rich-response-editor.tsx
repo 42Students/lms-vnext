@@ -26,7 +26,7 @@ export function LearnerRichResponseEditor({value,onChange,disabled=false}:{
   <textarea ref={input} name="writtenResponse" rows={6} maxLength={50000}
    disabled={disabled} required value={value} onChange={event=>onChange(event.target.value)}
    placeholder="Write your assignment response…" aria-label="Written response"
-   className="min-h-32 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] disabled:bg-surface-subtle"/>
+   className="min-h-32 w-full resize-y rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3 py-2 text-[var(--lms-font-base)] text-[var(--lms-form-ink)] focus-visible:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]"/>
   <p className="text-xs text-muted-foreground">Formatting is kept with your answer: bold, italic and list items. Review your response before final submission.</p>
  </div>;
 }

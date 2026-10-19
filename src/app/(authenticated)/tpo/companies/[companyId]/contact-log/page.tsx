@@ -65,7 +65,7 @@ export default async function TpoCompanyContactLogPage({
         description="Read-only CRM interaction history for contacts explicitly linked to this college-company relationship."
       />
       {!log.available ? (
-        <section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
+        <section role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
           Contact-activity tables are not available in this database. No zero
           activity count is inferred.
         </section>
@@ -78,12 +78,12 @@ export default async function TpoCompanyContactLogPage({
               contacts={log.contacts}
             />
           ) : log.contacts.length === 0 ? (
-            <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
+            <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
               No active, explicitly linked recruiter contacts are available
               for a new activity. Link a contact before recording one.
             </p>
           ) : (
-            <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
+            <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
               The CRM write gate is unavailable for this company. Existing
               activity remains read-only.
             </p>

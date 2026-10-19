@@ -40,7 +40,7 @@ export default async function TpoCalendarPage({
   });
   if(!parsed.success)return <div className="space-y-4">
     <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Invalid calendar filters</h1>
-    <p role="alert" className="rounded border border-border bg-surface p-4 text-sm text-body">
+    <p role="alert" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
       Enter a valid day, calendar view, event kind and company filter. No events were queried.
     </p>
     <Link href="/tpo/calendar" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Reset calendar filters</Link>

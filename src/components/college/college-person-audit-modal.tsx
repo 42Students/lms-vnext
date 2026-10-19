@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 type Event={id:string;summary:string;kind:string;at:string;importance:string;authorId:string|null;authorName:string|null};
@@ -17,13 +18,13 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
  }
  const date=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
  return <>
-  <button type="button" onClick={()=>void show()}
-   className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text">Audit trail</button>
+  <Button variant="secondary" type="button" onClick={()=>void show()}
+   className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text">Audit trail</Button>
   <Dialog open={open} onOpenChange={setOpen} title={"Audit trail for "+name}>
     <div className="flex items-center justify-between">
      <h2 className="font-semibold">Audit trail · {name}</h2>
-     <button type="button" className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3"
-      onClick={()=>setOpen(false)}>Close</button>
+     <Button variant="secondary" type="button" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3"
+      onClick={()=>setOpen(false)}>Close</Button>
     </div>
     {busy?<p role="status">Loading audit trail…</p>:null}
     {error?<p role="alert" className="text-error">{error}</p>:null}

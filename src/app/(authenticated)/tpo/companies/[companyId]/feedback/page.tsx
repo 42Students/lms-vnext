@@ -55,12 +55,12 @@ export default async function TpoCompanyFeedbackPage({
       ) : (
         <>
           {!data.writeEnabled ? (
-            <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
+            <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
               CRM writes are not enabled for this deployment. Existing notes remain
               readable, but new feedback cannot be recorded.
             </p>
           ) : data.contacts.length === 0 ? (
-            <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
+            <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
               No recruiter contacts are explicitly linked to this company. Link
               a contact before recording company feedback.
             </p>

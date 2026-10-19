@@ -1,4 +1,5 @@
 "use client";
+import {Input} from "@/components/ui/input";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -94,9 +95,9 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
     </select>
    </label>
    {duration==="DATE"?<label className="grid gap-1 text-sm">Last date
-    <input type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)} className="min-h-9 max-w-xs rounded-[var(--lms-control-radius)] border border-border p-2"/>
+    <Input type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)} className="max-w-xs"/>
    </label>:duration==="DRIVES"?<label className="grid gap-1 text-sm">Number of drives
-    <input type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)} className="min-h-9 max-w-xs rounded-[var(--lms-control-radius)] border border-border p-2"/>
+    <Input type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)} className="max-w-xs"/>
    </label>:null}
   </>:null}
   {!check.ok&&picked.length>0?<p role="alert" className="text-sm text-error">{check.message}</p>:null}

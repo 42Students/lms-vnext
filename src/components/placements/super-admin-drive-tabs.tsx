@@ -12,7 +12,7 @@ export function SuperAdminDriveTabs({jobId,active}:{
  const base="/admin/placements/jobs/"+encodeURIComponent(jobId);
  return <div className="space-y-3">
   <nav aria-label="Drive breadcrumb" className="flex flex-wrap gap-2 text-sm">
-   <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline" href="/admin/placements/drives">Drives</Link>
+   <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/admin/placements/drives">Drives</Link>
    <span aria-hidden="true">›</span><span>Drive workspace</span>
   </nav>
   <nav aria-label="Drive tabs" className="flex flex-wrap gap-2 border-b border-border">

@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { LEARNER_LEGACY_NOTICES_TITLE } from "@/modules/placements/learner-placement-copy-model";
@@ -174,10 +175,10 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           {pages.items.map((notice) => (
             <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 rounded-xl border border-border bg-surface p-5">
               <div className="flex flex-wrap items-center gap-2">
-                {notice.isPinned ? <span className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">Pinned</span> : null}
-                {notice.updatedAt ? <span className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">Updated</span> : null}
+                {notice.isPinned ? <Badge  tone="info">Pinned</Badge> : null}
+                {notice.updatedAt ? <Badge  tone="info">Updated</Badge> : null}
                 {noticeNow-Date.parse(notice.createdAt)<7*24*60*60*1000 && noticeNow>=Date.parse(notice.createdAt)
-                  ? <span className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">New</span>:null}
+                  ? <Badge  tone="info">New</Badge>:null}
               </div>
               <h2 className="break-words text-lg font-semibold text-foreground">{notice.title}</h2>
               <p className="mt-1 text-xs text-muted-foreground">

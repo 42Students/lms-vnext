@@ -1,3 +1,6 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -143,85 +146,85 @@ export async function CollegeRoleDirectoryWorkspace({
         <form method="get" action={path} className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-48 flex-1 gap-2 text-sm font-semibold text-body">
             {collegeDirectorySearchHint(kind)}
-            <input
+            <Input
               type="search"
               name="q"
               maxLength={100}
               defaultValue={result.filter.q}
               placeholder="Search this college"
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm"
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm"
             />
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Membership status
-            <select
+            <Select
               name="status"
               defaultValue={result.filter.status}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm"
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm"
             >
               <option value="ALL">All statuses</option>
               <option value="ACTIVE">Active</option>
               <option value="SUSPENDED">Suspended</option>
               <option value="ENDED">Ended</option>
-            </select>
+            </Select>
           </label>
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active class / section
-            <select name="sectionId" defaultValue={result.filter.sectionId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="sectionId" defaultValue={result.filter.sectionId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="">All classes</option>
               {selectedDirectoryValueNotListed(result.filter.sectionId,result.sectionOptions.map(row=>row.id)) ?
                 <option value={result.filter.sectionId}>Selected class (outside first 200)</option> : null}
               {result.sectionOptions.map(row=><option key={row.id} value={row.id}>{row.batchName} · {row.name}</option>)}
-            </select>
+            </Select>
             {result.sectionOptionsTruncated ? <span className="text-xs text-muted-foreground">First 200 classes shown.</span> : null}
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active program
-            <select name="programId" defaultValue={result.filter.programId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="programId" defaultValue={result.filter.programId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="">All programs</option>
               {selectedDirectoryValueNotListed(result.filter.programId,result.programOptions.map(row=>row.id)) ?
                 <option value={result.filter.programId}>Selected program (outside first 200)</option> : null}
               {result.programOptions.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
-            </select>
+            </Select>
             {result.programOptionsTruncated ? <span className="text-xs text-muted-foreground">First 200 programs shown.</span> : null}
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active batch
-            <select name="cohortId" defaultValue={result.filter.cohortId ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="cohortId" defaultValue={result.filter.cohortId ?? ""}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="">All batches</option>
               {selectedDirectoryValueNotListed(result.filter.cohortId,result.cohortOptions.map(c=>c.id)) ?
                 <option value={result.filter.cohortId}>Selected batch (outside first 200)</option> : null}
               {result.cohortOptions.map(cohort=><option key={cohort.id} value={cohort.id}>
                 {cohort.programName} · {cohort.name}
               </option>)}
-            </select>
+            </Select>
             {result.cohortOptionsTruncated ? <span className="text-xs text-muted-foreground">
               First 200 batches shown; search by name for others.
             </span> : null}
           </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Department
-            <select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="">All departments</option>
               {selectedDirectoryValueNotListed(result.filter.facultyDepartmentId,result.departmentOptions.map(d=>d.id)) ?
                 <option value={result.filter.facultyDepartmentId}>Selected department (outside first 200)</option> : null}
               {result.departmentOptions.map(dept=><option key={dept.id} value={dept.id}>{dept.name}</option>)}
-            </select>
+            </Select>
             {result.departmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
               Only first 200 departments shown; use name search for others.
             </span> : null}
           </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Employment type
-            <select name="employmentType" defaultValue={result.filter.employmentType ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="employmentType" defaultValue={result.filter.employmentType ?? ""}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="">All employment types</option>
               {selectedDirectoryValueNotListed(result.filter.employmentType,result.employmentOptions) ?
                 <option value={result.filter.employmentType}>Selected type (outside first 100)</option> : null}
               {result.employmentOptions.map(value=><option key={value} value={value}>{value}</option>)}
-            </select>
+            </Select>
             {result.employmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
               First 100 distinct types shown.
             </span> : null}
@@ -232,120 +235,120 @@ export async function CollegeRoleDirectoryWorkspace({
             <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Platform account
-            <select name="accountStatus" defaultValue={result.filter.accountStatus}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="accountStatus" defaultValue={result.filter.accountStatus}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All accounts</option>
               <option value="ACTIVE">Active accounts</option>
               <option value="DISABLED">Disabled accounts</option>
-            </select>
+            </Select>
           </label>
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active enrollment
-            <select name="enrollment" defaultValue={result.filter.enrollment}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="enrollment" defaultValue={result.filter.enrollment}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All learners</option>
               <option value="ACTIVE">Has active program enrollment</option>
               <option value="NONE">No active program enrollment</option>
-            </select>
+            </Select>
           </label> : null}
 
 
 
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Roll number coverage
-            <select name="rollPresence" defaultValue={result.filter.rollPresence}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="rollPresence" defaultValue={result.filter.rollPresence}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All learners</option>
               <option value="PRESENT">Roll recorded</option>
               <option value="MISSING">Roll missing</option>
-            </select>
+            </Select>
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Registration number coverage
-            <select name="registrationPresence" defaultValue={result.filter.registrationPresence}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="registrationPresence" defaultValue={result.filter.registrationPresence}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All learners</option>
               <option value="PRESENT">Registration recorded</option>
               <option value="MISSING">Registration missing</option>
-            </select>
+            </Select>
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active class placement
-            <select name="classPresence" defaultValue={result.filter.classPresence}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="classPresence" defaultValue={result.filter.classPresence}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All learners</option>
               <option value="ASSIGNED">Has active class</option>
               <option value="NONE">No active class</option>
-            </select>
+            </Select>
           </label> : null}
 
 
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Academic title coverage
-            <select name="titlePresence" defaultValue={result.filter.titlePresence}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="titlePresence" defaultValue={result.filter.titlePresence}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All faculty</option>
               <option value="PRESENT">Title recorded</option>
               <option value="MISSING">Title missing</option>
-            </select>
+            </Select>
           </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Primary department coverage
-            <select name="departmentPresence" defaultValue={result.filter.departmentPresence}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="departmentPresence" defaultValue={result.filter.departmentPresence}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All faculty</option>
               <option value="ASSIGNED">Department recorded</option>
               <option value="MISSING">Department missing</option>
-            </select>
+            </Select>
           </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Course teaching
-            <select name="teaching" defaultValue={result.filter.teaching}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="teaching" defaultValue={result.filter.teaching}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All faculty</option>
               <option value="ASSIGNED">Has active teaching</option>
               <option value="NONE">No active teaching</option>
-            </select>
+            </Select>
           </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active course teaching role
-            <select name="teachingRole" defaultValue={result.filter.teachingRole}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="teachingRole" defaultValue={result.filter.teachingRole}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">Any role</option>
               <option value="PRIMARY">Primary</option>
               <option value="CO_TEACHER">Co-teacher</option>
               <option value="TA">Teaching assistant</option>
-            </select>
+            </Select>
           </label> : null}
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Joined from (IST)
-            <input type="date" name="joinedFrom" defaultValue={result.filter.joinedFrom??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm" />
+            <Input type="date" name="joinedFrom" defaultValue={result.filter.joinedFrom??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm" />
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Joined through (IST)
-            <input type="date" name="joinedThrough" defaultValue={result.filter.joinedThrough??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm" />
+            <Input type="date" name="joinedThrough" defaultValue={result.filter.joinedThrough??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm" />
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Order
-            <select name="sort" defaultValue={result.filter.sort}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="sort" defaultValue={result.filter.sort}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="NAME">Name A–Z</option>
               <option value="NAME_DESC">Name Z–A</option>
               <option value="NEWEST">Newest membership</option>
               <option value="OLDEST">Oldest membership</option>
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Rows per page
-            <select name="pageSize" defaultValue={result.filter.pageSize} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
+            <Select name="pageSize" defaultValue={result.filter.pageSize} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="10">10</option><option value="25">25</option><option value="50">50</option>
-            </select>
+            </Select>
           </label>
             </div>
           </details>
-          <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Apply
-          </button>
+          </Button>
           <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Clear
           </Link>

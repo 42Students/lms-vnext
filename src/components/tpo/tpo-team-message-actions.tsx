@@ -4,7 +4,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {Textarea} from "@/components/ui/textarea";
-import {Button} from "@/components/ui/button";
+import {Dialog} from "@/components/ui/dialog";
 type Props={threadId:string;messageId:string;body:string;expectedBodyHash:string;canEdit:boolean};
 export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,canEdit}:Props){
  const router=useRouter(),pending=useRef(false);
@@ -39,13 +39,12 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
    <Button variant="primary" type="submit" disabled={busy||!draft.trim()} >{busy?"Saving…":"Save edit"}</Button>
    <Button variant="ghost" type="button" disabled={busy} onClick={()=>setMode(null)} >Cancel</Button>
   </form>:null}
-  {mode==="DELETE"?<div role="alertdialog" aria-modal="false" aria-label="Delete this message?"
-   className="w-full space-y-2 border-t border-border pt-3 text-xs">
-   <p>Delete this message? Other team members will see Message removed.</p>
+  {<Dialog open={mode==="DELETE"} onOpenChange={next=>{if(!next&&!busy)setMode(null);}} dismissible={!busy} role="alertdialog"
+    title="Delete this message?" description="Other team members will see Message removed." className="max-w-md">
    {error?<p role="alert" className="text-error">{error}</p>:null}
    <Button variant="danger" type="button" disabled={busy}
     onClick={()=>void submit("DELETE")}>{busy?"Removing…":"Delete message"}</Button>
-   <Button variant="ghost" type="button" disabled={busy} onClick={()=>setMode(null)} >Cancel</Button>
-  </div>:null}
+   <Button variant="ghost" type="button" disabled={busy} onClick={()=>{setMode(null);setError("");}} >Cancel</Button>
+  </Dialog>}
  </div>;
 }

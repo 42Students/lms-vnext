@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -42,15 +44,15 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
       <form action="/tpo/reports/offers-expiry" method="get"
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="text-sm font-semibold text-body">Expiring in the next N calendar days
-          <select name="days" defaultValue={String(data.days)}
+          <Select name="days" defaultValue={String(data.days)}
             className="mt-2 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             {[1, 3, 7, 14, 30, 60, 90].map((value) =>
               <option key={value} value={value}>{value} days</option>)}
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary">
+        <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary">
           Apply window
-        </button>
+        </Button>
       </form>
       <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
         {data.scopeNote} Window: {data.asOfIst} through {data.throughIst} (IST, inclusive).

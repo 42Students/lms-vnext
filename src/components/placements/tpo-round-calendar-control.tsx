@@ -124,13 +124,13 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
       </label>
       <div className="flex flex-wrap gap-3">
         <Button variant="primary" disabled={pending} type="button" onClick={() => void submit("SCHEDULE")}
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50 text-primary-foreground">
+          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50 text-on-primary">
           {round.status === "PENDING" ? "Confirm schedule" : "Confirm reschedule"}
         </Button>
-        <button disabled={pending} type="button" onClick={() => void submit("CANCEL")}
+        <Button variant="secondary" disabled={pending} type="button" onClick={() => void submit("CANCEL")}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
           Confirm cancellation
-        </button>
+        </Button>
       </div>
     </> : null}
     {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}

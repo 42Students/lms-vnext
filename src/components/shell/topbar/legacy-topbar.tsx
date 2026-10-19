@@ -53,10 +53,10 @@ export function LegacyTopbar({
             <PlusIcon/> <span className={style.newLabel}>New</span>
           </Link> : null}
       <TopbarCommandSearch key={pathname} items={navigation}/>
+      <ShellWidgetBoundary name="Header notifications" fallbackHref={config.notificationsHref}>
+        <TopbarNotifications key={config.portal} config={config}/>
+      </ShellWidgetBoundary>
     </div>
-    <ShellWidgetBoundary name="Header notifications" fallbackHref={config.notificationsHref}>
-      <TopbarNotifications key={config.portal} config={config}/>
-    </ShellWidgetBoundary>
     <div className={style.accountArea}>
       <p className={style.orgName} title={organizationName}>{organizationName}</p>
       <ShellWidgetBoundary name="Account actions" fallbackHref="/account/security">

@@ -1,0 +1,88 @@
+/*
+ * Checkpoint 4: old LMS overlay skin.
+ * Sources: legacy-styles/components___antddesign.scss,
+ * components___notification-drawer.scss and components___common.scss.
+ * Scope selectors strictly to overlay primitives and popup dialogs.
+ */
+[data-slot="dialog"],
+[data-slot="drawer"],
+[data-slot="bottom-sheet"] {
+  color: var(--lms-body-text);
+}
+[data-slot="dialog"]::backdrop,
+[data-slot="drawer"]::backdrop,
+[data-slot="bottom-sheet"]::backdrop {
+  background: rgba(30, 54, 63, .1);
+}
+[data-slot="dialog"] > div > div:first-child {
+  border-bottom: 1px solid var(--lms-canvas-border);
+  padding: 16px 24px;
+  background: #fff;
+}
+[data-slot="dialog"] > div > div:last-child:not(:first-child) {
+  background: #fff;
+}
+[data-slot="drawer"] > div > header {
+  background: var(--lms-neutral-50);
+  border-bottom: 1px solid var(--lms-canvas-border);
+}
+[data-slot="drawer"] > div > footer {
+  padding: 12px 20px max(12px, env(safe-area-inset-bottom));
+  background: var(--lms-neutral-50);
+}
+[data-slot="bottom-sheet"] > div > header {
+  padding: 16px 20px;
+  background: var(--lms-neutral-50);
+  border-bottom: 1px solid var(--lms-canvas-border);
+}
+[data-slot="bottom-sheet"] > div > footer {
+  padding: 12px 20px max(12px, env(safe-area-inset-bottom));
+  background: var(--lms-neutral-50);
+}
+[data-slot="dropdown"] {
+  border-radius: 6px;
+  border-color: var(--lms-canvas-border);
+}
+[role="dialog"][aria-modal="false"]:not([data-slot]) {
+  border: 1px solid var(--lms-canvas-border);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .04);
+}
+@keyframes lms-legacy-dialog-enter {
+  from { opacity: 0; scale: .985; }
+  to { opacity: 1; scale: 1; }
+}
+@keyframes lms-legacy-drawer-enter {
+  from { opacity: 0; translate: 20px 0; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes lms-legacy-popup-enter {
+  from { opacity: 0; translate: 0 -8px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-slot="dialog"][open],
+  [data-slot="bottom-sheet"][open] {
+    animation: lms-legacy-dialog-enter 180ms ease-out both;
+  }
+  [data-slot="drawer"][open] {
+    animation: lms-legacy-drawer-enter 200ms ease-out both;
+  }
+  [data-slot="dropdown-root"][open] > [data-slot="dropdown"],
+  [role="dialog"][aria-modal="false"]:not([data-slot]),
+  [data-slot="toast-stack"] > section {
+    animation: lms-legacy-popup-enter 200ms ease-out both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="dialog"],
+  [data-slot="drawer"],
+  [data-slot="bottom-sheet"],
+  [data-slot="dropdown"],
+  [role="dialog"][aria-modal="false"],
+  [data-slot="toast-stack"] > section {
+    animation: none !important;
+    transition: none !important;
+  }
+}
