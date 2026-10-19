@@ -303,7 +303,7 @@ Do not edit shared `src/app/globals.css`, `src/components/ui/**`, `src/component
 ## Progress log
 
 - Inventory created against latest main tree after fast-forwarding chat-7 branch to main.
-- UI edits: in progress. First 27 files below have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
+- UI edits: in progress. 62 files listed in the two completed visual batches have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
 
 
 ## Completed visual edits — 2026-10-19 (first sweep batch)
@@ -337,3 +337,43 @@ Do not edit shared `src/app/globals.css`, `src/components/ui/**`, `src/component
 - [x] `src/app/(authenticated)/admin/assignments/page.tsx`
 
 Changes include 9px semantic control radii, 36px desktop / 44px mobile touch heights, teal-white primary actions and tab focus treatments, input focus rings, 12px card radii for distinct objects, and removal of redundant outer surface wrappers. Course Progress filter button's malformed doubled-radius class was fixed. Individual course/lesson object cards remain distinct; page data, section order, wording, and actions are unchanged. Static JSX closing-tag spot checks performed on modified source text; no code execution, typecheck, tests, or CI performed. Remaining inventory is not claimed complete.
+
+## Completed visual edits — continued batch (35 files)
+
+- [x] `src/components/courses/assignment-multipart-parts-editor.tsx`
+- [x] `src/components/courses/quiz-attempt-control.tsx`
+- [x] `src/components/courses/learner-video-player.tsx`
+- [x] `src/components/courses/learner-youtube-player.tsx`
+- [x] `src/components/courses/assignment-file-submission-control.tsx`
+- [x] `src/components/courses/assignment-file-open-control.tsx`
+- [x] `src/components/courses/super-admin-content-authoring.tsx`
+- [x] `src/components/courses/admin-learning-structure-actions.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/page.tsx`
+- [x] `src/app/(authenticated)/learn/calendar/page.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/profile/learner-skill-catalog-input.tsx`
+- [x] `src/components/profile/learner-verification-submit.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/app/(authenticated)/learn/profile/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/academic-record/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/completeness/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/verification/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/page.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/error.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/error.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/error.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/error.tsx`
+- [x] `src/app/(authenticated)/learn/calendar/error.tsx`
+- [x] `src/app/(authenticated)/learn/profile/error.tsx`
+
+Additional controls now use semantic colors/radii and mobile touch targets; learner quiz/assignment detail links no longer use raw teal aliases, and one course-workspace back link no longer renders white text on a white button. Attendance/calendar and profile pages shed redundant shell-like filter/intro cards. Eight learner error pages now use the shared outer canvas instead of nesting another full-page white card. Loading/error routes that delegate to shared graceful components were inspected without altering shared ownership files. Static edited-source JSX close-tag checks only; project tests, typecheck, execution, and CI not run. The rest of the inventory remains for follow-on audit.
