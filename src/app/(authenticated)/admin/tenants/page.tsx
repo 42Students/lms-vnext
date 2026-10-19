@@ -12,6 +12,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import { parseTenantLifecycleSearchParams, tenantLifecycleHref } from "@/modules/colleges/admin-tenant-lifecycle-model";
 import { getSuperAdminTenantLifecycleDirectory } from "@/modules/colleges/admin-tenant-lifecycle-service";
 export default async function TenantDirectory({searchParams}:{
@@ -81,17 +82,22 @@ export default async function TenantDirectory({searchParams}:{
    <Button type="submit" className="self-end">Filter</Button>
   </form>
   <p className="text-xs text-muted-foreground">{data.total} matching colleges · page {data.query.page} of {data.totalPages}</p>
-  {data.items.length?<div className="grid gap-3 md:grid-cols-2">
-   {data.items.map(x=><article key={x.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-    <h2 className="m-0 break-words font-semibold text-foreground">{x.name}</h2>
-    <p className="mt-1 text-sm text-body">{x.organizationName} · {x.code}</p>
-    <div className="mt-2 flex flex-wrap gap-2"><StatusBadge tone={x.status==="ACTIVE"?"success":"neutral"}>College {x.status}</StatusBadge>
-     <StatusBadge tone={x.organizationStatus==="ACTIVE"?"success":"neutral"}>Organization {x.organizationStatus}</StatusBadge></div>
-    <p className="mt-2 text-xs text-muted-foreground">{[x.city,x.state,x.country].filter(Boolean).join(", ")||"Location not recorded"}</p>
-    <Link href={`/admin/colleges/${encodeURIComponent(x.id)}`}
-     className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Tenant details →</Link>
-   </article>)}
-  </div>:<EmptyState title="No matching tenants" description="No colleges in the current scope match these lifecycle filters."/>}
+  <DataTable<(typeof data.items)[number]> caption="Tenant directory" rows={data.items}
+   getRowKey={row=>row.id}
+   empty={<EmptyState title="No matching tenants" description="No colleges in the current scope match these lifecycle filters."/>}
+   columns={[
+    {key:"name",header:"College",mobilePriority:"primary",cell:row=><div className="min-w-0">
+     <Link href={`/admin/colleges/${encodeURIComponent(row.id)}`} className="break-words font-semibold text-primary-text underline-offset-4 hover:underline">{row.name}</Link>
+     <p className="mt-1 text-xs text-body">{row.organizationName} · {row.code}</p>
+    </div>},
+    {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><div className="flex flex-wrap items-center gap-2">
+     <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>College {row.status}</StatusBadge>
+     <StatusBadge tone={row.organizationStatus==="ACTIVE"?"success":"neutral"}>Organization {row.organizationStatus}</StatusBadge>
+    </div>},
+    {key:"location",header:"Location",mobilePriority:"secondary",cell:row=>[row.city,row.state,row.country].filter(Boolean).join(", ")||"Location not recorded"},
+    {key:"actions",header:"Details",mobilePriority:"action",cell:row=><Link href={`/admin/colleges/${encodeURIComponent(row.id)}`}
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 sm:min-h-9">Tenant details →</Link>},
+   ]}/>
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={url} label="Tenant pages" />
  </div>;
 }
