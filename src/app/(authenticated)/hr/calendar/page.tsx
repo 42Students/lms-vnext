@@ -517,7 +517,7 @@ export default async function HrCalendarPage({
                   </p>
                 ) : null}
               </div>
-              <CalendarGrid className="hidden min-w-[56rem] gap-2 md:grid">
+              <CalendarGrid variant="hairline" className={"hidden min-w-[56rem] md:grid "+calendarStyles.calendarHairline}>
                 {[
                   "Mon",
                   "Tue",
@@ -529,7 +529,7 @@ export default async function HrCalendarPage({
                 ].map((label,index) => (
                   <div
                     key={label}
-                    className={"py-3 text-center text-xs font-bold uppercase text-muted-foreground "+(index===6?calendarStyles.calendarSunday:"")}
+                    className={"py-3 text-center text-xs font-bold uppercase text-muted-foreground "+calendarStyles.calendarWeekday+(index===6?" "+calendarStyles.calendarSunday:"")}
                   >
                     {label}
                   </div>
@@ -553,10 +553,9 @@ export default async function HrCalendarPage({
                       key={day}
                       aria-label={`${dateLabel(day)}: ${events.length + resultsDue.length} events`}
                       className={
-                        "min-h-32 rounded-[var(--lms-control-radius)] border border-border p-2 " +
-                        (outsideMonth
-                          ? "bg-muted/40"
-                          : "bg-muted")
+                        "min-h-32 min-w-0 p-2 "+calendarStyles.calendarDay+
+                        (isToday?" "+calendarStyles.calendarCurrentDay:"")+
+                        (outsideMonth?" opacity-60":"")
                       }
                     >
                       <p
