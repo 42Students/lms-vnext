@@ -47,9 +47,15 @@ export function SidebarNav({
  const pathname=usePathname();
  const [tpoCounts,setTpoCounts]=useState<TpoShellCounters|null>(null);
  const visibleItems=scopedShellNavigation(items,pathname);
- const sidebarPortal=pathname==="/tpo"||pathname.startsWith("/tpo/")
-  ?"tpo":pathname==="/hr"||pathname.startsWith("/hr/")||
-   pathname==="/recruiter"||pathname.startsWith("/recruiter/")?"recruiter":"other";
+ // A college-only Placement cell shortcut still renders the college menu
+ // while the URL is /tpo/home. Derive rail styling from the visible role,
+ // not only the URL, so it does not acquire TPO headings/scrollbar chrome.
+ const collegeSelected=visibleItems.some(item=>
+  item.href==="/college"||item.href.startsWith("/college/"));
+ const sidebarPortal=collegeSelected?"other":
+  pathname==="/tpo"||pathname.startsWith("/tpo/")
+   ?"tpo":pathname==="/hr"||pathname.startsWith("/hr/")||
+    pathname==="/recruiter"||pathname.startsWith("/recruiter/")?"recruiter":"other";
  useEffect(()=>{
   if(!pathname.startsWith("/tpo/"))return;
   let active=true;
