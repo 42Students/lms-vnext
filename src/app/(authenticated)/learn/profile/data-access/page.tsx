@@ -12,13 +12,13 @@ export default async function LearnerProfileDataAccessPage(){
   getOwnLearnerAcademicSummary(context),
  ]);
  return <main className="min-w-0 space-y-6">
-  <Link href="/learn/profile" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
+  <Link href="/learn/profile" className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
   <PageHeader title="Who has my data" description="Your saved academic details, access boundaries and recorded changes."/>
   <section className="border-t border-border pt-5">
    <h2 className="font-semibold text-foreground">Academic record</h2>
    <p className="mt-2 text-sm text-body">Your current college may manage your program enrollment and class records. This is not a published transcript or proof of degree completion.</p>
    <p className="mt-2 text-sm text-body">Current program: {academic.enrollment?.program??"Not recorded"}</p>
-   <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">View academic record →</Link>
+   <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">View academic record →</Link>
   </section>
   <section className="border-t border-border pt-5">
    <h2 className="font-semibold text-foreground">Who may use your information</h2>
