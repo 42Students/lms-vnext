@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SidebarNav } from "./sidebar-nav";
+import { Button } from "@/components/ui/button";
 import {ShellLogoMark} from "./shell-nav-icons";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
 import type { CSSProperties } from "react";
