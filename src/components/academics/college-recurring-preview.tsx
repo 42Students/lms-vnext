@@ -1,5 +1,7 @@
 "use client";
 
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -128,43 +130,43 @@ export function CollegeRecurringPreview({
       ) : (
         <form onSubmit={preview} className="space-y-4 border-t border-border pt-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Session title
-            <input required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+            <Input required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Class
-            <select required value={sectionId} onChange={(e) => onClass(e.target.value)}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            <Select required value={sectionId} onChange={(e) => onClass(e.target.value)}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="">Select a class</option>
               {classes.map((c) => <option key={c.id} value={c.id}>{c.name} · {c.cohortName}</option>)}
-            </select>
+            </Select>
           </label>
           {selected ? <p className="text-xs text-muted-foreground">Academic period: {selected.periodStart} to {selected.periodEnd}</p> : null}
           <label className="grid gap-1 text-sm font-semibold text-body">Course (optional)
-            <select value={deliveryId} onChange={e => setDeliveryId(e.target.value)}
-              disabled={!sectionId} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            <Select value={deliveryId} onChange={e => setDeliveryId(e.target.value)}
+              disabled={!sectionId} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="">No course linked</option>
               {deliveries.filter(item => item.sectionId === sectionId).map(item =>
                 <option key={item.id} value={item.id}>{item.name} ({item.code})</option>)}
-            </select>
+            </Select>
           </label>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <label className="grid gap-1 text-sm font-semibold text-body">From
-              <input type="date" required value={from} min={selected?.periodStart} max={selected?.periodEnd}
+              <Input type="date" required value={from} min={selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setFrom(e.target.value)}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">To (up to 93 days)
-              <input type="date" required value={to} min={from || selected?.periodStart} max={selected?.periodEnd}
+              <Input type="date" required value={to} min={from || selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setTo(e.target.value)}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">Start (IST)
-              <input type="time" required value={startTime} onChange={(e) => setStartTime(e.target.value)}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input type="time" required value={startTime} onChange={(e) => setStartTime(e.target.value)}
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">End (IST)
-              <input type="time" required value={endTime} onChange={(e) => setEndTime(e.target.value)}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input type="time" required value={endTime} onChange={(e) => setEndTime(e.target.value)}
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           </div>
           <fieldset className="space-y-2">
@@ -183,18 +185,18 @@ export function CollegeRecurringPreview({
           </fieldset>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="grid gap-1 text-sm font-semibold text-body">Faculty (optional)
-              <select value={facultyId} onChange={(e) => setFacultyId(e.target.value)}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select value={facultyId} onChange={(e) => setFacultyId(e.target.value)}
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="">No faculty selected</option>
                 {faculty.map((f) => <option key={f.id} value={f.id}>{f.displayName || "Unnamed faculty"}</option>)}
-              </select>
+              </Select>
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">Lecture hall (optional)
-              <select value={hallId} onChange={(e) => setHallId(e.target.value)}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select value={hallId} onChange={(e) => setHallId(e.target.value)}
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="">No lecture hall selected</option>
                 {halls.map((h) => <option key={h.id} value={h.id}>{h.name}</option>)}
-              </select>
+              </Select>
             </label>
           </div>
           <Button type="submit" disabled={pending || !sectionId || !from || !to || weekdays.length === 0}>
