@@ -566,7 +566,7 @@ export async function SuperAdminTemplateSubviewPage({
                 {key:"assigned",header:"Assigned on",mobilePriority:"secondary",cell:assignment=>
                   <time dateTime={assignment.assignedAt.toISOString()}>{formatDate(assignment.assignedAt)}</time>},
               ]}
-              empty={<p className="text-sm text-body">No active college assignments.</p>}
+              empty={<EmptyState title="No active assignments" description="No active college assignments." />}
             />
           </section>
         )
