@@ -672,8 +672,8 @@ export default async function HrPlacementJobPage({
               <Link key={status} href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status+returnQuery}
                 aria-current={status===filters.offerState ? "page" : undefined}
                 className={status===filters.offerState ?
-                  "rounded-full bg-primary px-3 py-2 text-xs font-semibold text-on-primary" :
-                  "rounded-full border border-border px-3 py-2 text-xs text-body"}>
+                  "border-b-[3px] border-primary px-3 py-2 text-xs font-semibold text-primary-text" :
+                  "border-b-[3px] border-transparent px-3 py-2 text-xs text-body hover:text-primary-text"}>
                 {status==="ALL" ? "All statuses" : status==="PENDING_VERIFICATION"?"Verified, awaiting release":status==="REVOKED"?"Selection cancelled":recruiterOfferStatusLabel(status)}
               </Link>
             ))}
@@ -856,8 +856,8 @@ export default async function HrPlacementJobPage({
                     <Link key={option.value} href={hrInlineRoundResultsHref(workspace.job.id,inlineResults.round.id,option.value)}
                       aria-current={filters.outcome === option.value ? "page" : undefined}
                       className={filters.outcome === option.value
-                        ? "rounded-full bg-primary px-3 py-2 text-xs font-semibold text-on-primary"
-                        : "rounded-full border border-border px-3 py-2 text-xs text-body"}>
+                        ? "border-b-[3px] border-primary px-3 py-2 text-xs font-semibold text-primary-text"
+                        : "border-b-[3px] border-transparent px-3 py-2 text-xs text-body hover:text-primary-text"}>
                       {option.label} ({option.count})
                     </Link>
                   ))}
