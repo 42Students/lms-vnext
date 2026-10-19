@@ -196,6 +196,11 @@
   [data-slot="drawer"][open] {
     animation: lms-legacy-drawer-enter 200ms ease-out both;
   }
+  @media (max-width: 767px) {
+    [data-slot="drawer"][data-side="left"][open] {
+      animation: lms-legacy-drawer-left-enter 200ms ease-out both;
+    }
+  }
   [data-slot="dropdown-root"][open] > [data-slot="dropdown"],
   [role="dialog"][aria-modal="false"]:not([data-slot]),
   [data-slot="notification-popover"],
