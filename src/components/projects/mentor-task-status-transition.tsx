@@ -51,7 +51,7 @@ export function MentorTaskStatusTransition(props:{
       <label className="grid gap-1 text-xs font-semibold text-body">Task state
         <Select aria-label={"Next task state for task "+props.taskId} value={selected}
           onChange={event=>{setSelected(event.target.value);setError(null);}}
-          disabled={pending} className="min-h-11 sm:min-h-9">
+          disabled={pending} className="min-h-11 md:min-h-9">
           {options.map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
         </Select>
       </label>
@@ -61,9 +61,9 @@ export function MentorTaskStatusTransition(props:{
           <Input type="text" value={newBlockerReason} maxLength={2000}
             onChange={event=>setNewBlockerReason(event.target.value)}
             aria-label={"Blocker note for task "+props.taskId} disabled={pending}
-            className="min-h-11 sm:min-h-9"/>
+            className="min-h-11 md:min-h-9"/>
         </label>:null}
-      <Button variant="secondary" size="sm" aria-label={"Review status change: "+mentorTaskQuickActionLabel(selected)} disabled={!valid||pending||
+      <Button variant="secondary" aria-label={"Review status change: "+mentorTaskQuickActionLabel(selected)} disabled={!valid||pending||
         (selected==="BLOCKED"&&!props.blockerReason?.trim()&&!newBlockerReason.trim())}
         onClick={()=>{setError(null);setConfirm(true);}}>{mentorTaskQuickActionLabel(selected)}</Button>
     </div>
