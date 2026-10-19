@@ -1,7 +1,5 @@
-import { Input } from "@/components/ui/input";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { Button } from "@/components/ui/button";
-import { Tabs } from "@/components/ui/tabs";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
@@ -448,16 +446,16 @@ export default async function HrPlacementJobPage({
           Request another drive
         </Link>
       </div>
-      <Tabs ariaLabel="Hiring workspace tabs" renderPanel={false} value={requestsTab?"requests":discussionTab?"discussion":filters.tab}
-          items={[
-            {value:"overview",label:"Overview",href:"/recruiter/drives/"+workspace.job.id+"?tab=overview"+returnQuery},
-            {value:"applicants",label:"Applicants",count:applicants.counts.all,href:"/recruiter/drives/"+workspace.job.id+"?tab=applicants"+returnQuery},
-            {value:"rounds",label:"Rounds & interviews",href:"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery},
-            {value:"offers",label:"Offers",count:offersTotal,href:"/recruiter/drives/"+workspace.job.id+"?tab=offers"+returnQuery},
-            {value:"requests",label:"Requests",count:requestData?.requests.length,href:"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery},
-            {value:"discussion",label:"Discussion",href:"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery},
-            {value:"messages",label:"Messages",href:hrDriveMessagesHref(workspace.job.id)},
-          ]} />
+      <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={filters.tab}
+        items={[{value:"overview",label:"Overview",href:`/recruiter/drives/${workspace.job.id}?tab=overview${returnQuery}`},
+          {value:"applicants",label:"Applicants",count:applicants.counts.all,
+           href:`/recruiter/drives/${workspace.job.id}?tab=applicants${returnQuery}`},
+          {value:"rounds",label:"Rounds & interviews",href:`/recruiter/drives/${workspace.job.id}?tab=rounds${returnQuery}`},
+          {value:"offers",label:"Offers",count:offersTotal,href:`/recruiter/drives/${workspace.job.id}?tab=offers${returnQuery}`},
+          {value:"requests",label:"Requests",count:requestData?.requests.length,
+           href:`/recruiter/drives/${workspace.job.id}?tab=requests${returnQuery}`},
+          {value:"discussion",label:"Discussion",href:`/recruiter/drives/${workspace.job.id}?tab=discussion${returnQuery}`},
+          {value:"messages",label:"Messages",href:hrDriveMessagesHref(workspace.job.id)}]}/>
       {discussionTab?<section aria-label="Drive discussion" className="space-y-4 border-b border-border pb-4 sm:pb-5">
         <RecruiterConversationLiveRefresh/>
         <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
@@ -485,8 +483,8 @@ export default async function HrPlacementJobPage({
           <Link href={"/hr/conversations/"+selectedThread!.id}
             className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Browse full conversation history</Link>
         </div>:<form method="post" action="/api/placements/recruiter/conversations/open" className="space-y-3">
-          <Input type="hidden" name="collegeId" value={workspace.college.id}/>
-          <Input type="hidden" name="jobId" value={workspace.job.id}/>
+          <input type="hidden" name="collegeId" value={workspace.college.id}/>
+          <input type="hidden" name="jobId" value={workspace.job.id}/>
           <p className="text-sm text-body">No private drive discussion exists yet.</p>
           <Button type="submit">Open drive discussion</Button>
         </form>}

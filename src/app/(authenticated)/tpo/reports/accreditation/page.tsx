@@ -91,14 +91,14 @@ export default async function TpoAccreditationReportPage({
        <p role="status" className="text-sm">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
        <form method="get" className="flex flex-wrap items-end gap-3">
         <label className="text-sm">Batch
-         <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-11 sm:min-h-9">
+         <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border bg-background px-3">
           <option value="">Pick a batch</option>
           {batches.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.name}</option>)}
          </Select>
         </label>
         {report.selectedSeasonId&&<input type="hidden" name="seasonId" value={report.selectedSeasonId}/>}
         {report.selectedJobId&&<input type="hidden" name="jobId" value={report.selectedJobId}/>}
-        <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9">Show students</Button>
+        <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-4 text-sm">Show students</Button>
        </form>
        {batchId&&!selectedBatch&&<p role="alert" className="text-sm">Choose a batch from this college.</p>}
        {selectedBatch&&studentReport?.rows.length===0?<p role="status" className="text-sm text-muted-foreground">No placed students in this batch. Export is unavailable until a recorded placement exists.</p>:null}

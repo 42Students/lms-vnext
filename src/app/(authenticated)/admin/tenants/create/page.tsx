@@ -14,7 +14,7 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
   return <div className="min-w-0 space-y-5">
-   <PageHeader title="Create the customer, then make one college launch-ready"/>
+   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Create the customer, then make one college launch-ready"/>
    <ErrorState title="Tenant creation access denied"
     description="Your account cannot create or configure platform tenants."
     action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
@@ -24,7 +24,7 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
   organizations=await listOrganizations(context);
  }catch{
   return <div className="min-w-0 space-y-5">
-   <PageHeader title="Create the customer, then make one college launch-ready"/>
+   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Create the customer, then make one college launch-ready"/>
    <ErrorState title="Organization directory unavailable"
     description="Organization choices could not be verified. College creation remains unavailable until your authorized organizations can be loaded."
     action={<Link href="/admin/tenants/create" className="font-semibold text-primary-text">Retry organization directory</Link>}/>
@@ -35,7 +35,7 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
  const params=await searchParams;
  const preferredId=preferredNewTenantOrganization(params.organizationId,creatable);
  return <div className="min-w-0 space-y-6">
-  <PageHeader title="Create the customer, then make one college launch-ready"
+  <PageHeader eyebrow="Super Admin · Tenant Setup" title="Create the customer, then make one college launch-ready"
    description="Creating organizations and colleges is a platform-level action. Domains, branding and readiness checks are college-specific, so the current scope is always visible before you edit."
    actions={<PageBackLink href="/admin/tenants" label="Tenant directory" />}/>
   <section className="space-y-3 border-b border-border pb-5" aria-label="Create organization">

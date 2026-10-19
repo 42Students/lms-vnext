@@ -47,7 +47,7 @@ export default async function TpoWhatCompaniesSeePage() {
       <TpoSettingsNav active="see" />
 
       <section className="space-y-2">
-        <PageHeader title="What Companies See" />
+        <PageHeader eyebrow="TPO · Settings" title="What Companies See" />
         <p className="text-sm leading-6 text-body">
           Review the data-sharing permissions configured
           for recruiters viewing learner information

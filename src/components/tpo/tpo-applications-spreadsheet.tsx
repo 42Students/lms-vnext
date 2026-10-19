@@ -4,15 +4,8 @@ import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {applicantStage} from "@/modules/placements/tpo-applicant-pipeline-model";
 import {tpoGridTimeLabel} from "@/modules/placements/tpo-grid-time-label";
 import {TpoApplicantReviewDrawer} from "@/components/placements/tpo-applicant-review-drawer";
-import dynamic from "next/dynamic";
-import type { TpoGrid } from "./grid/tpo-grid";
+import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
-
-const TpoGridClient = dynamic(
-  () => import("./grid/tpo-grid").then(module => module.TpoGrid),
-  { ssr: false },
-) as unknown as typeof TpoGrid;
-
 
 type Row={
  id:string;student:string|null;role:string;rollNumber:string|null;email:string|null;phone:string|null;batchName:string|null;branchName:string|null;cgpaHundredths:number|null;activeBacklogs:number|null;pastBacklogs:number|null;tenthPctBasisPoints:number|null;twelfthPctBasisPoints:number|null;lastRound:string|null;lastResult:string|null;applicationStatus:string;screeningStatus:string|null;
@@ -26,11 +19,11 @@ const columns:readonly TpoGridColumn<Row>[]=[
  {key:"phone",label:"Phone",read:r=>r.phone??"Not recorded"},
  {key:"batch",label:"Batch",read:r=>r.batchName??"Not recorded"},
  {key:"branch",label:"Branch",read:r=>r.branchName??"Not recorded"},
- {key:"cgpa",sortKind:"number",label:"CGPA",read:r=>r.cgpaHundredths===null?"Not recorded":(r.cgpaHundredths/100).toFixed(2)},
- {key:"activeBacklogs",sortKind:"number",label:"Active backlogs",read:r=>r.activeBacklogs===null?"Not recorded":String(r.activeBacklogs)},
- {key:"pastBacklogs",sortKind:"number",label:"Past backlogs",read:r=>r.pastBacklogs===null?"Not recorded":String(r.pastBacklogs)},
- {key:"tenth",sortKind:"number",label:"10th %",read:r=>r.tenthPctBasisPoints===null?"Not recorded":(r.tenthPctBasisPoints/100).toFixed(2)+"%"},
- {key:"twelfth",sortKind:"number",label:"12th %",read:r=>r.twelfthPctBasisPoints===null?"Not recorded":(r.twelfthPctBasisPoints/100).toFixed(2)+"%"},
+ {key:"cgpa",label:"CGPA",read:r=>r.cgpaHundredths===null?"Not recorded":(r.cgpaHundredths/100).toFixed(2)},
+ {key:"activeBacklogs",label:"Active backlogs",read:r=>r.activeBacklogs===null?"Not recorded":String(r.activeBacklogs)},
+ {key:"pastBacklogs",label:"Past backlogs",read:r=>r.pastBacklogs===null?"Not recorded":String(r.pastBacklogs)},
+ {key:"tenth",label:"10th %",read:r=>r.tenthPctBasisPoints===null?"Not recorded":(r.tenthPctBasisPoints/100).toFixed(2)+"%"},
+ {key:"twelfth",label:"12th %",read:r=>r.twelfthPctBasisPoints===null?"Not recorded":(r.twelfthPctBasisPoints/100).toFixed(2)+"%"},
  {key:"lastRound",label:"Last assessed round",read:r=>r.lastRound??"Not recorded"},
  {key:"lastResult",label:"Last applied result",read:r=>r.lastResult??"Not recorded"},
  {key:"stage",label:"Stage",read:r=>applicantStage(r)},
@@ -38,7 +31,7 @@ const columns:readonly TpoGridColumn<Row>[]=[
  {key:"channel",label:"Channel",read:r=>r.channel},
  {key:"eligibility",label:"Eligibility evidence",read:r=>r.eligibilityStatus},
  {key:"flags",label:"Flags",read:r=>r.flags.length?r.flags.join(" · "):"None"},
- {key:"submitted",label:"Submitted (IST)",sortKind:"date",sortValue:r=>Date.parse(r.submittedAt),read:r=>tpoGridTimeLabel(r.submittedAt)},
+ {key:"submitted",label:"Submitted (IST)",read:r=>tpoGridTimeLabel(r.submittedAt)},
  {key:"screening",label:"Screening",read:r=>r.screeningStatus??"Pending"},
  {key:"screeningUpdated",label:"Screening updated",read:r=>r.screeningUpdatedAt,exportOnly:true},
 ];
@@ -55,7 +48,7 @@ const filters:TpoFilterField[]=[
 ];
 export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly Row[];jobId:string;jobStatus:string}){
  return <div className="space-y-3"><TpoGridFilterPanel fields={filters} mobileSheet/>
-  <TpoGridClient rows={rows} columns={columns} rowKey={row=>row.id}
+  <TpoSpreadsheetGrid rows={rows} columns={columns} rowKey={row=>row.id}
    mobileActionsCollapsible storageKey={"tpo-drive-applicant-grid:"+jobId}
    rowActions={row=><div className="space-y-1">
     <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}
@@ -64,5 +57,5 @@ export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly
       nextId={rows[rows.findIndex(candidate=>candidate.id===row.id)+1]?.id}/>
     <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+row.id} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline">Open applicant</Link>
    </div>}/>
- </GridWorkspace>;
+ </div>;
 }

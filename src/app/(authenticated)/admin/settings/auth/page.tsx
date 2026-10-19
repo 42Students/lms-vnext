@@ -13,13 +13,13 @@ export default async function SuperAdminAuthSettings(){
  // be presented to a disabled actor or a college-only account on a deep link.
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
   return <div className="min-w-0 space-y-6">
-   <PageHeader title="Authentication settings"/>
+   <PageHeader eyebrow="Super Admin · Platform Security" title="Authentication settings"/>
    <ErrorState title="Authentication settings access denied"
     description="Your account cannot view privileged authentication policies."
     action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
   </div>;
  return <div className="min-w-0 space-y-6">
-  <PageHeader title="Authentication settings"
+  <PageHeader eyebrow="Super Admin · Platform Security" title="Authentication settings"
    description="Read-only checklist of deployment-managed privileged login policies. This page neither inspects secrets nor changes authentication."
    actions={<PageBackLink href="/admin/settings" label="Platform settings" />} />
   <div role="status" className="border-b border-border pb-4 text-sm text-body">

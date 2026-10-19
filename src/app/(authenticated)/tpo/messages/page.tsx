@@ -81,6 +81,7 @@ export default async function TpoMessagesPage({
     return (
       <div className="space-y-6">
         <PageHeader
+          eyebrow="TPO · Communication"
           title="Messages"
           description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         />
@@ -127,7 +128,7 @@ export default async function TpoMessagesPage({
   // TPO-inbox-team-11: do not disguise notification deliveries as messages
   // when the recruiter-thread tables are not available.
   if(!isRecruiterInbox)return <div className="space-y-6">
-   <PageHeader title="Messages"
+   <PageHeader eyebrow="TPO · Communication" title="Messages"
     description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
    <ErrorState title="Recruiter conversations are temporarily unavailable"
     description="Your placement notifications remain available separately. No recruiter messages were loaded."
@@ -160,6 +161,7 @@ export default async function TpoMessagesPage({
     <div className="space-y-6">
       <TpoLiveRefresh intervalMs={4000}/>
       <PageHeader
+        eyebrow="TPO · Communication"
         title="Messages"
         description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         actions={

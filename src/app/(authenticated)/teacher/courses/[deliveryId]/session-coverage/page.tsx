@@ -1,4 +1,4 @@
-import { PageBackLink } from "@/components/ui/page-back-link";
+import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -10,7 +10,7 @@ export default async function FacultySessionCoveragePage({
   const data=await getFacultySessionCoverage(await getCurrentRequestContext(),{deliveryId});
   const base="/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail";
   return <div className="min-w-0 max-w-full space-y-5">
-    <PageBackLink href={base} label="Attendance" />
+    <Link href={base} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Attendance</Link>
     <PageHeader title="Attendance session coverage"/>
     <section aria-label="Session state counts" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {([["Scheduled sessions",data.total],["Marked",data.marked],

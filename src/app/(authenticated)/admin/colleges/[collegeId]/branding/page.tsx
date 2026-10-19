@@ -42,7 +42,7 @@ export default async function SuperAdminCollegeBrandingPage({
     <p className="border-t border-border pt-3 text-xs text-muted-foreground">
       This preview uses stored brand details. Actual login appearance and tenant-domain routing require separate browser verification.
     </p>
-    <PageHeader title="Look and feel"/>
+    <PageHeader eyebrow="Super Admin · Tenant" title="Look and feel"/>
     <CollegeBrandingPreview branding={branding}/>
     <section aria-label="Edit college branding" className="min-w-0 space-y-3 border-t border-border pt-4">
      <h2 className="text-lg font-semibold">Look and feel</h2>

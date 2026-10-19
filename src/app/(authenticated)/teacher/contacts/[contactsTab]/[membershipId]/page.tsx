@@ -1,4 +1,4 @@
-import { PageBackLink } from "@/components/ui/page-back-link";
+import Link from "next/link";
 import {notFound} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -29,7 +29,10 @@ export default async function FacultyContactDetailPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Faculty · Contacts" title={name}
       description="Active college directory contact · Read-only"
-      actions={<PageBackLink href={back} label="Back to Contacts" />} />
+      actions={<Link href={back}
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        Back to Contacts
+      </Link>} />
     <section className="border-b border-border pb-5">
       <h2 className="text-lg font-semibold text-foreground">Public department</h2>
       <p className="mt-3 text-sm text-body">

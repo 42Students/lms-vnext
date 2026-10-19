@@ -1,5 +1,4 @@
 import { PageHeader } from "@/components/ui/page-header";
-import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { PageHeader } from "@/components/ui/page-header";
@@ -35,12 +34,14 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
    Back to company-share preview
   </Link>
   <PageHeader title="Company-share access history" />
-  <Tabs ariaLabel="Company-share event filters" renderPanel={false} value={kind}
-     items={tpoCompanyAuditKindSchema.options.map(option=>({
-       value:option,
-       label:option==="ALL"?"All events":option==="VIEW"?"Page views":option==="LOCKED"?"Locked shares":"CSV downloads",
-       href:tpoCompanyAuditHref(jobId,option),
-     }))} />
+  <nav aria-label="Company-share event filters" className="flex flex-wrap gap-1 border-b border-border">
+   {tpoCompanyAuditKindSchema.options.map(option=><Link key={option}
+    href={tpoCompanyAuditHref(jobId,option)}
+    aria-current={kind===option?"page":undefined}
+    className={"inline-flex min-h-11 items-center border-b-2 px-3 py-2 text-sm font-semibold md:min-h-9 "+(kind===option?"border-primary text-primary-text":"border-transparent text-body hover:border-border hover:text-primary-text")}>
+    {option==="ALL"?"All events":option==="VIEW"?"Page views":option==="LOCKED"?"Locked shares":"CSV downloads"}
+   </Link>)}
+  </nav>
   {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)}
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary md:min-h-9">
     Export access history CSV

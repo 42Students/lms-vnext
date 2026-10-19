@@ -2,8 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { getCollegeFacultyDetail } from "@/modules/people/college-faculty-detail-service";
 import { CollegePersonNotFoundError } from "@/modules/people/college-person-detail-model";
@@ -47,24 +45,24 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
         <label className="grid gap-2 text-sm font-semibold text-body">
           Assignment history
-          <Select name="status" defaultValue={data.filter.status}
-            >
+          <select name="status" defaultValue={data.filter.status}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All assignments</option>
             <option value="ACTIVE">Active only</option>
             <option value="ENDED">Ended only</option>
-          </Select>
+          </select>
         </label>
         <label className="grid gap-2 text-sm font-semibold text-body">
           Teaching role
-          <Select name="role" defaultValue={data.filter.role}
-            >
+          <select name="role" defaultValue={data.filter.role}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All teaching roles</option>
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
             <option value="TA">Teaching assistant</option>
-          </Select>
+          </select>
         </label>
-        <Button variant="primary" type="submit">Filter</Button>
+        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
       </form>
       <p className="mt-2 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·

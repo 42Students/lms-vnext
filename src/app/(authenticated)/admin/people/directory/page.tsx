@@ -1,6 +1,4 @@
-import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
-import { Tabs } from "@/components/ui/tabs";
 import { SuperAdminPeopleCsvControl } from "@/components/admin/super-admin-people-csv-control";
 import { superAdminPeopleExportHref } from "@/modules/people/admin-users-export-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -64,11 +62,12 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
   {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
    <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Users without college memberships →</Link> : null}
-  <Tabs ariaLabel="People directory tabs" renderPanel={false} value={data.query.tab}
-    items={tabs.map(tab=>({
-      value:tab.id,label:tab.label,
-      href:adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1}),
-    }))} />
+  <nav aria-label="People directory tabs" className="flex flex-wrap gap-2 border-b border-border">
+   {tabs.map(tab=><Link key={tab.id} href={adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}
+    aria-current={data.query.tab===tab.id?"page":undefined}
+    className={"inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-semibold sm:min-h-9 "+
+     (data.query.tab===tab.id?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>{tab.label}</Link>)}
+  </nav>
   <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 text-sm">
    <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Student accounts</Link>
    <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Faculty accounts</Link>
@@ -127,6 +126,6 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   </div>:<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
   <Pagination label="Users pages" page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminUsersHref({...data.query,page})}/>
-  <PageBackLink href="/admin/people" label="Membership management" />
+  <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Membership management</Link>
  </div>;
 }

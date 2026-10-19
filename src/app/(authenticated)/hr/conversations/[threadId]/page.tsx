@@ -32,7 +32,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   result=await readRecruiterThreadMessages(context,parsedId.data,parsedPage.data);
  }catch(error){
   if(error instanceof TpoMessagingError && error.code==="TPO_MESSAGE_FORBIDDEN"){
-   return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Messages"/>
+   return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Messages"/>
     <ErrorState title="No access to this college"
      description="Your access to this college has ended or was removed. Ask the placement cell to give it again."
      action={<Link href="/hr/home" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Return to Today</Link>}/>
@@ -67,7 +67,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
  }));
  return <div className="min-w-0 max-w-full space-y-5">
   <RecruiterConversationLiveRefresh/>
-  <PageHeader title={conversationSubject}
+  <PageHeader eyebrow="Recruiter · Conversations" title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
   {driveLookupResult && !driveLookupResult.ok?
     <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-sm text-body">

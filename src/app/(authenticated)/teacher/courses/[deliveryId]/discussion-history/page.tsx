@@ -1,4 +1,3 @@
-import { PageBackLink } from "@/components/ui/page-back-link";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -18,7 +17,7 @@ export default async function FacultyDiscussionHistoryPage({
   const parsed=parseFacultyDiscussionHistoryLocation(deliveryId,raw);
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid discussion history filters"} />
-    <PageBackLink href="/teacher/courses" label="Back to Courses" />
+    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to Courses</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getFacultyDiscussionHistory(context,parsed.data);

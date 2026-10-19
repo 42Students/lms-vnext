@@ -1,4 +1,4 @@
-import { PageBackLink } from "@/components/ui/page-back-link";
+import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 import {facultyAssignmentParamsSchema} from "@/modules/courses/faculty-assignment-authoring-model";
@@ -20,6 +20,7 @@ export default async function Page({params}:{params:Promise<{deliveryId:string}>
      methodsEnabled={true}
      lessons={workspace.lessons.map(x=>({id:x.id,name:x.name}))} assignments={assignments}/>
    :<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">No registered lessons yet. Create and publish a learning path before authoring assignments.</p>}
-  <PageBackLink href={"/teacher/courses/"+encodeURIComponent(deliveryId)} label="Back to course" />
+  <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to course</Link>
  </div>;
 }

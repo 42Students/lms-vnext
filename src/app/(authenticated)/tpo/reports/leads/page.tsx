@@ -132,13 +132,13 @@ export default async function TpoLeadsReportPage({
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-60 flex-1 gap-1 text-sm font-semibold">Company
-         <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9">
+         <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="">All companies</option>
           {companyEngagement.filter(row=>row.companyId).map(row=>
            <option key={row.companyId!} value={row.companyId!}>{row.companyName}</option>)}
          </Select>
         </label>
-        <Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
+        <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Filter</Button>
         {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
          className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">Clear company</Link>:null}
        </form>

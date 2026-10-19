@@ -1,6 +1,5 @@
 import {PageBackLink} from "@/components/ui/page-back-link";
 import Link from "next/link";
-import { Tabs } from "@/components/ui/tabs";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -27,14 +26,14 @@ export default async function SuperAdminTenantSetup({
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
   return <div className="min-w-0 space-y-5">
-   <PageHeader title="Tenant Setup"/>
+   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"/>
    <ErrorState title="Tenant setup access denied"
     description="Your account cannot configure Super Admin tenants."
     action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
   </div>;
  const parsed=parseSuperAdminTenantSetupQuery(await searchParams);
  if(!parsed.success)return <div className="min-w-0 space-y-5">
-  <PageHeader title="Tenant Setup"/>
+  <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"/>
   <ErrorState title="Invalid tenant setup step"
    description="Select a valid Tenant structure or Launch setup step."
    action={<Link href="/admin/tenants/setup"
@@ -42,6 +41,8 @@ export default async function SuperAdminTenantSetup({
  </div>;
  const id=context.adminScope?.collegeId??null;
  const tab=selectedSuperAdminTenantSetupTab(parsed.data,id!==null);
+ const active="border-primary text-primary-text";
+ const inactive="border-transparent text-body hover:bg-surface-subtle";
  const tabLink=(next:Tab)=>"/admin/tenants/setup?tab="+next;
  // Read failures must never present a partial college creation path as an
  // authorized empty organization directory or a safe-to-launch college.
@@ -63,7 +64,7 @@ export default async function SuperAdminTenantSetup({
  }catch(error){
   if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();
   return <div className="min-w-0 space-y-5">
-   <PageHeader title="Tenant Setup"/>
+   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"/>
    <ErrorState title="Tenant setup unavailable"
     description="The authorized organization or college readiness information could not be verified. Setup actions are unavailable until the read succeeds."
     action={<Link href={tabLink(tab)} className="font-semibold text-primary-text">Retry tenant setup</Link>}/>
@@ -74,7 +75,7 @@ export default async function SuperAdminTenantSetup({
  const orgCreate=can(context,"organization.manage");
  const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
  return <div className="min-w-0 space-y-6">
-  <PageHeader title="Tenant Setup"
+  <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."
    actions={<PageBackLink href="/admin/tenants" label="Tenant directory" />} />
   <section aria-label="Tenant setup overview" className="grid gap-3 sm:grid-cols-3">
@@ -91,11 +92,16 @@ export default async function SuperAdminTenantSetup({
     <p className="mt-2 break-words text-sm font-semibold">{college?.name??(id?"Selected college":"No college selected")}</p>
    </article>
   </section>
-  <Tabs ariaLabel="Tenant Setup steps" renderPanel={false} value={tab}
-    items={[
-      {value:"STRUCTURE",label:"1. Tenant structure",href:tabLink("STRUCTURE")},
-      {value:"LAUNCH",label:"2. Launch setup",href:tabLink("LAUNCH")},
-    ]} />
+  <nav aria-label="Tenant Setup steps" className="flex flex-wrap gap-2 border-b border-border">
+   <Link href={tabLink("STRUCTURE")} aria-current={tab==="STRUCTURE"?"page":undefined}
+    className={"inline-flex min-h-[var(--lms-control-height)]  items-center border-b-[3px] px-3 text-sm font-semibold "+ (tab==="STRUCTURE"?active:inactive)}>
+    1. Tenant structure
+   </Link>
+   <Link href={tabLink("LAUNCH")} aria-current={tab==="LAUNCH"?"page":undefined}
+    className={"inline-flex min-h-[var(--lms-control-height)]  items-center border-b-[3px] px-4 text-sm font-semibold "+(tab==="LAUNCH"?active:inactive)}>
+    2. Launch setup
+   </Link>
+  </nav>
   {tab==="STRUCTURE"?<>
    <section aria-label="Create organization and college" className="grid min-w-0 gap-4 xl:grid-cols-2">
     <div className="min-w-0 space-y-3 border-b border-border pb-5">
