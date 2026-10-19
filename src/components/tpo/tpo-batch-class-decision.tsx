@@ -35,9 +35,9 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
   }catch(e){setError(e instanceof Error?e.message:"Class decision failed.");}
   finally{inFlightRef.current=false;setBusy(false);}
  }
- return <div className="space-y-2">
-  <div className="flex flex-wrap items-end gap-2">
-   <label className="grid gap-1 text-sm font-semibold">Who is in
+ return <div className="min-w-0 space-y-2">
+  <div className="flex min-w-0 flex-wrap items-end gap-2">
+   <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold">Who is in
     <Select value={choice} onChange={e=>{setChoice(e.target.value as Decision);setError("");}} disabled={busy||finished}
      >
      <option value="NOT_DECIDED">Follows the batch</option>
