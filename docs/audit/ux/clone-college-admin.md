@@ -332,18 +332,18 @@
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Branding)
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Readiness Gate)
@@ -352,14 +352,14 @@
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Sign-in methods)
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/app/(authenticated)/admin/colleges/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/layout.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/page.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/app/(authenticated)/admin/domains/error.tsx`
 - [ ] `src/app/(authenticated)/admin/domains/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/domains/page.tsx`
@@ -378,7 +378,7 @@
 - [ ] `src/app/(authenticated)/admin/tenants/error.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/layout.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/page.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/page.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/app/(authenticated)/admin/tenants/setup/error.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/setup/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
@@ -412,7 +412,7 @@
 ### Tenant-related admin components (23 TSX files)
 - [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
 - [ ] `src/components/admin/college-archive-button.tsx`
-- [ ] `src/components/admin/college-at-glance-panel.tsx`
+- [ ] `src/components/admin/college-at-glance-panel.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/components/admin/college-branding-form.tsx`
 - [ ] `src/components/admin/college-branding-preview.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Embedded branding preview)
 - [ ] `src/components/admin/college-bulk-import.tsx`
@@ -425,7 +425,7 @@
 - [ ] `src/components/admin/college-logo-uploader.tsx`
 - [ ] `src/components/admin/college-setup-checklist.tsx`
 - [ ] `src/components/admin/college-signin-method-form.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Sign-in method controls)
-- [ ] `src/components/admin/managed-college-subdomain.tsx`
+- [ ] `src/components/admin/managed-college-subdomain.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
 - [ ] `src/components/admin/super-admin-college-company-actions.tsx`
 - [ ] `src/components/admin/super-admin-company-verification.tsx`
 - [ ] `src/components/admin/tenant-directory-csv-control.tsx`
@@ -647,3 +647,29 @@ Regex family applied to the complete source text of each named file:
 **Strict missing evidence:** cannot claim file checkbox completion until shared PageHeader's 28/30px title/line-height discrepancy is reconciled by its owner, all legacy-specific responsive/style states (hover, error, busy, disabled, keyboard) are value-matched, and the actual phone/tablet browser rendering is compared. No CI, tests, screenshots, TypeScript compilation or interaction replay performed. No Section H box ticked.
 
 **Exact next file:** `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`, followed by administrators/session, subdomain/verification and tenant setup pages.
+
+
+### Replacement chat-4 bounded turn — after fast-forward to current main (2026-10-19)
+
+**Synchronization:** `chatgpt/chat-4-b` was 666 commits behind `main`, 0 ahead; safely fast-forwarded from `07059a526337272114f99c41ab32144bc7fc15be` to `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` before editing. The historical `[chat-4]` commits remain reachable. All edits were committed directly to `chatgpt/chat-4-b`; no edits to `src/components/ui/*`, no CI, application runtime or build executed.
+
+**Files source-refactored this turn (11):** `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`; `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`; `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`; `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`; `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`; `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`; `src/components/admin/college-at-glance-panel.tsx`; `src/components/admin/managed-college-subdomain.tsx`; `src/app/(authenticated)/admin/organizations/page.tsx`; `src/app/(authenticated)/admin/colleges/page.tsx`; `src/app/(authenticated)/admin/tenants/page.tsx`.
+
+**Changes:** the administrators directory, device sessions, history, subdomain, verification and college setup use the shared `PageHeader` action slot with `PageBackLink` where appropriate; three administrative list empty states use `EmptyState`; verification failures use `ErrorState`; administrator lifecycle state uses `StatusBadge`. College at-a-glance switched home-grown metric cards, placeholders and error copy to `StatTile`, `Skeleton`, and `Alert`. Managed subdomain warnings and response messages now use shared `Alert` with an explicit success/error tone. Organization directory no longer duplicates the empty-state panel. Tenant lifecycle directory uses shared `DataTable` instead of nested cards, retaining all original field values and routes.
+
+**Source-only scan (re-read all 11 complete GitHub files after last update):** `/<(button|input|select|textarea|table)\\b/g` => **0**; `/#[a-f\\d]{6}\\b/gi` => **0**; `/<h1\\b/g` => **0**. No closing tags without a corresponding opening tag were found in the scanned local JSX tag-name families (`PageHeader`, `PageBackLink`, `StatusBadge`, `EmptyState`, `DataTable`, `ErrorState`, `Alert`, `StatTile`, `Skeleton`, `Link`, `Select`, `Button`, `section`, `nav`, `table`, `form`, `article`, `div`). This is a **bounded source scan**, **not** an exhaustive repo-wide grep, balanced TypeScript parse, source execution, or pixel proof.
+
+| Checked property | Legacy source:value | Current vNext source:value | Strict result |
+| --- | --- | --- | --- |
+| Page heading in continuous canvas | `docs/design/old-lms-pages.md:6-7`: one 24px-padded canvas and inline title/subtitle/actions | All six scoped detail routes use `PageHeader` and `PageBackLink` within inherited `PageCanvas`; see `src/components/ui/page-header.tsx:22-53`, `page-back-link.tsx:17-32` | Source structure aligned; actual rendering unverified |
+| Heading font on desktop | `docs/design/legacy-styles/components___listing-page-header.scss:52-58`: **28px**, 600, line-height 1.3 | `src/components/ui/page-header.tsx:28-35`: **30px**, 600, line-height 1.35 | **OPEN discrepancy owned by shared UI** |
+| Mobile heading breakpoint | `components___listing-page-header.scss:128-154`: <=767px, 20px heading, actions stacked | `page-header.tsx:28-49`: 20px below md 768px, full-width stacked actions | Source-layout match; viewport interaction unverified |
+| Back target | `legacy-styles/learn-layout.scss:361-383`: 44px tappable link, icon-only on mobile | `src/components/ui/page-back-link.tsx:17-32`: `min-h-11 min-w-11`, label hidden below md | Source values match; keyboard and visual verification open |
+| List table and pill anatomy | `docs/design/old-lms-pages.md:11`: hairline list tables with compact coloured status pills | `src/app/(authenticated)/admin/tenants/page.tsx`: `DataTable` and `StatusBadge`; shared `data-table.tsx:61-98` supplies hairline rows, `status-badge.tsx:8-20` supplies pill | Exact legacy row/pill colour and hover property table not yet complete |
+| Table on phone | `legacy-styles/components___listing-page-header.scss:128-154`: general mobile breakpoint 767px | `src/components/ui/data-table.tsx:61-103`: responsive `sm:` table at **640px**, cards on smaller screens | **OPEN** differing breakpoint and legacy mobile table proof |
+| Empty, error and loading states | `old-lms-pages.md:6,11`: states remain within one canvas; do not add nested page canvases | Shared `EmptyState`, `ErrorState`, `Alert`, `Skeleton` and `StatTile` used in affected files | Matching legacy per-state spacing, colours, focus and transitions not proven |
+| Route links and data | Existing vNext paths and data descriptions intentionally retained as required by owner | Admin session-history export, managed subdomain confirmation, organization filters, college lifecycle statuses and tenant detail links preserved | Source review only; runtime journey not executed |
+
+**Strict tick outcome:** **0 ticks**. All 11 work entries remain unchecked because global zero-grep, exact value table for every state, 767px breakpoint comparison, interactions and responsive viewport proof are incomplete. No app execution, TypeScript compilation, tests, screenshots, or CI were performed. This is progress on shared-component migration, **not certified pixel parity**.
+
+**Next exact file:** `src/app/(authenticated)/admin/tenants/create/page.tsx` followed by `src/app/(authenticated)/admin/tenants/setup/page.tsx`, then remaining Tenant Admin components and College Admin Work queue entries.
