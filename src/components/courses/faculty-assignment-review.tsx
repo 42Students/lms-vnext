@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import { Drawer } from "@/components/ui/drawer";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -358,6 +359,7 @@ function SubmissionGradeCard({
             max={maxPoints}
             step={1}
             value={points}
+            disabled={saving || publishing}
             onChange={(event) =>
               setPoints(event.target.value)
             }
@@ -372,6 +374,7 @@ function SubmissionGradeCard({
             aria-required={submission.gradePublished}
             className="min-h-24"
             value={feedback}
+            disabled={saving || publishing}
             onChange={(event) =>
               setFeedback(
                 event.target.value,
@@ -430,18 +433,13 @@ function SubmissionGradeCard({
       </form>
 
       {error ? (
-        <p
-          role="alert"
-          className="mt-3 text-sm font-semibold text-error"
-        >
-          {error}
-        </p>
+        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
       ) : null}
       {needsRefresh?<Button variant="secondary" type="button" onClick={()=>onUpdated(submission)}
-       className="mt-2 inline-flex min-h-11 items-center text-primary-text md:min-h-[var(--lms-control-height)]">
+       className="mt-[var(--lms-space-2)] min-h-11 md:min-h-[var(--lms-control-height)]">
         Reload current submission revision
        </Button>:null}
-      {success?<p role="status" className="mt-2 text-sm text-body">{success}</p>:null}
+      {success?<Alert tone="success" className="mt-[var(--lms-space-2)]">{success}</Alert>:null}
       <ConfirmDialog
         open={confirmAction !== null}
         onOpenChange={nextOpen => { if (!nextOpen && !saving && !publishing) setConfirmAction(null); }}
@@ -605,12 +603,7 @@ export function FacultyAssignmentReview({
       ) : null}
 
       {error ? (
-        <p
-          role="alert"
-          className="mt-3 text-sm font-semibold text-error"
-        >
-          {error}
-        </p>
+        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
       ) : null}
 
       {!loading &&
