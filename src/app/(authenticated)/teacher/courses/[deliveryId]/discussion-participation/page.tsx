@@ -12,7 +12,7 @@ export default async function FacultyDiscussionParticipationPage({
   const data=await getFacultyDiscussionParticipation(context,{deliveryId});
   const base="/teacher/courses/"+encodeURIComponent(deliveryId);
   return <div className="min-w-0 max-w-full space-y-5">
-    <Link href={base+"/discussions"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <Link href={base+"/discussions"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       ← Discussions
     </Link>
     <PageHeader eyebrow="Faculty · Section" title="Discussion participation"
