@@ -153,6 +153,10 @@ export async function ProjectAdminAuditPage({
         eyebrow="Projects"
         title="Project audit"
         description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
+        actions={<div className="flex flex-wrap items-center justify-end gap-2">
+          <a href={basePath + "/audit"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Refresh</a>
+          {basePath === "/admin/projects" ? <a href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">View activity log</a> : null}
+        </div>}
       />
 
       {filters.ignoredInvalidFilters ? (
@@ -161,13 +165,6 @@ export async function ProjectAdminAuditPage({
         </p>
       ) : null}
 
-      <div className="flex flex-wrap gap-2">
-        <a href={basePath + "/audit"} className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">Refresh</a>
-        {basePath === "/admin/projects" ? <a href="/admin/audit"
-          className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">
-          View activity log
-        </a> : null}
-      </div>
       <nav aria-label="Audit time range" className="flex flex-wrap gap-2 text-sm">
         {([{label:"Today",days:0},{label:"7 days",days:6},
            {label:"30 days",days:29},{label:"All time",days:null}]).map(item=>{
