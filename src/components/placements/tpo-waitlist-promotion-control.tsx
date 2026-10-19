@@ -52,7 +52,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
     <textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>setReason(e.target.value)}
      className="rounded border border-border bg-surface p-3"/></label>
    <button type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 md:min-h-9 rounded bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-50">
+    className="min-h-11 md:min-h-9 rounded bg-primary px-4 font-[650] text-primary-foreground disabled:opacity-50">
     {busy?"Verifying…":"Verify and release next offer"}</button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
