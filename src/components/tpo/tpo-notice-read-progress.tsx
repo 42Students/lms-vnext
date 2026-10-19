@@ -1,4 +1,5 @@
 "use client";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -46,10 +47,10 @@ export function TpoNoticeReadProgress({id}:{id:string}){
     className="min-h-11 sm:min-h-9"
     onClick={()=>void remind()}>{busy?"Sending…":"Remind them"}</Button>:null}
    {reminder?<p role="status">{reminder}</p>:null}
-   {data.unread.length?<details><summary className="min-h-11 sm:min-h-9 cursor-pointer text-primary-text">Who hasn&apos;t read</summary>
+   {data.unread.length?<Disclosure title="Who hasn\u0027t read">
     <ul className="max-h-48 overflow-auto">{data.unread.map((name,index)=>
      <li key={index} className="break-words py-0.5">{name}</li>)}</ul>
-   </details>:null}
+   </Disclosure>:null}
   </div>:null}
   {error?<p role="alert" className="mt-2 break-words text-sm text-error">{error}</p>:null}
  </section>;
