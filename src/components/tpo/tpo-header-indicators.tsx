@@ -31,7 +31,7 @@ export function TpoHeaderIndicators({initial}:{initial:TpoHeaderSnapshot}){
  const {messages,items,unread}=snapshot.value;
  return <div className="flex min-w-0 items-center gap-3">
   <Link href="/tpo/messages" aria-label={"Messages"+(messages?", "+messages+" unread":"")}
-   className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-border text-primary-text"
+   className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border text-primary-text"
    title="Messages">
    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
      strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
