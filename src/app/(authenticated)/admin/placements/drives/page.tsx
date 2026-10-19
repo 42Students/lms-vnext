@@ -12,6 +12,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { SuperAdminBulkDriveActions } from "@/components/placements/super-admin-bulk-drive-actions";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, filterAdminDriveDirectory, adminDriveIstDate } from "@/modules/placements/admin-drive-directory-model";
 
 export default async function SuperAdminDrivesPage({searchParams}:{
@@ -57,7 +58,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  const columns:DataTableColumn<(typeof data.items)[number]>[]=[
   {key:"job",header:"Job Title",mobileLabel:"Job Title",mobilePriority:"primary",
    cell:row=><><strong className="break-words">{row.job.title}</strong>
-    <p className="mt-1 text-xs text-body">{row.company.name} · {adminDriveStatus(row.job,today)}</p></>},
+    <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2"><span className="text-xs text-body">{row.company.name}</span><StatusBadge tone={row.job.status==="ACTIVE"||row.job.status==="PUBLISHED"?"success":row.job.status==="DRAFT"?"info":"neutral"}>{adminDriveStatus(row.job,today)}</StatusBadge></div></>},
   {key:"type",header:"Type",mobilePriority:"secondary",cell:row=>row.job.employmentType.replaceAll("_"," ")},
   {key:"location",header:"Location",mobilePriority:"secondary",cell:row=>row.job.locations.join(", ")||"Not specified"},
   {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:row=>row.job.applicationDeadline?
