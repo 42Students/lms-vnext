@@ -1193,3 +1193,27 @@ body {
   }
 }
 [data-slot="form-grid"] > * { min-width: 0; }
+
+/* Legacy .ln-btn:disabled dims non-primary actions by 50%.
+   AntD's loading control remains branded but never accepts double submits. */
+[data-slot="button"]:disabled:not([data-variant="primary"]):not([data-loading="true"]) {
+  opacity: .5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+[data-slot="button"][data-variant="primary"][data-loading="true"] {
+  color: var(--lms-on-primary);
+  background: var(--lms-button-primary);
+  border-color: var(--lms-button-primary);
+  opacity: 1;
+}
+[data-slot="button"][data-variant="danger"][data-loading="true"] {
+  color: var(--lms-on-primary);
+  background: var(--lms-error);
+  border-color: var(--lms-error);
+  opacity: 1;
+}
+[data-slot="button"][data-loading="true"] {
+  cursor: progress;
+  pointer-events: none;
+}
