@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -167,7 +168,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
    <Button type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 sm:min-h-9">
     {busy?"Saving…":"Save"}</Button>
   </fieldset>:null}
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-xs text-success">{notice}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {notice?<Alert tone="success">{notice}</Alert>:null}
  </div>;
 }
