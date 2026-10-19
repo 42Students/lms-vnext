@@ -1,4 +1,5 @@
 "use client";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
@@ -36,7 +37,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   {rows.length===0?<p className="text-sm text-muted-foreground">No skills added yet.</p>:null}
   {rows.length>5?<label className="block text-sm text-body">Find skill
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-     className="mt-1 w-full bg-background p-3"/>
+     className="mt-1 w-full rounded-md border border-border bg-background p-3"/>
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleSkills.length)}</span>
@@ -47,11 +48,11 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   <div className="space-y-3">
    {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
     <label className="min-w-0 text-sm font-semibold text-body">Skill {index+1}
-     <Input className="mt-1.5 w-full min-w-0 p-3" value={skill.skill}
+     <Input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" value={skill.skill}
       maxLength={120} required disabled={pending} onChange={event=>edit(skill.id,"skill",event.target.value)}/>
     </label>
     <label className="min-w-0 text-sm font-semibold text-body">Proficiency
-     <Input className="mt-1.5 w-full min-w-0 p-3" value={skill.proficiency}
+     <Input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" value={skill.proficiency}
       maxLength={64} disabled={pending} onChange={event=>edit(skill.id,"proficiency",event.target.value)}/>
     </label>
     <div className="flex flex-wrap gap-2 sm:col-span-3">
