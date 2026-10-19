@@ -441,3 +441,8 @@
 @media (min-width:768px) and (prefers-reduced-motion:no-preference) {
   .topbarNotificationDrawer[open] { animation:topbarNotificationPanelIn .2s ease-out; }
 }
+
+@keyframes topbarNotificationBackdropIn { from { opacity:0; } to { opacity:1; } }
+@media (prefers-reduced-motion:no-preference) {
+  .topbarNotificationDrawer[open]::backdrop { animation:topbarNotificationBackdropIn .15s ease-out; }
+}
