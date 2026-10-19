@@ -64,13 +64,13 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {peopleFilters&&!peopleSummary?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
-  {peopleSummary?<section aria-label={title+" overview"} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+  {peopleSummary?<section aria-label={title+" overview"} className="grid divide-y divide-border border-y border-border sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">
    {[
     {label:peopleFilters?.kind==="FACULTY"?"Faculty":"Students",value:peopleSummary[0].total},
     {label:"Active",value:peopleSummary[1].total},
     {label:"Suspended",value:peopleSummary[2].total},
     {label:"Visible now",value:data.items.length},
-   ].map(stat=><article key={stat.label} className="rounded-xl border border-border bg-surface p-4">
+   ].map(stat=><article key={stat.label} className="p-4">
     <p className="text-xs font-semibold text-muted-foreground">{stat.label}</p>
     <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{stat.value}</p>
    </article>)}
