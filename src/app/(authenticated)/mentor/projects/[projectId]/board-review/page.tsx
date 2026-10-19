@@ -21,8 +21,8 @@ export default async function MentorBoardReviewPage({
     normalized?{projectId,...normalized}:null,
   );
   if(!validated.success)return <section role="alert" className="space-y-3">
-    <h1>Invalid board filters</h1>
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
+    <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid board filters</h1>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>
   </section>;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -30,7 +30,7 @@ export default async function MentorBoardReviewPage({
     <PageHeader eyebrow="Mentor · Project" title="Task board status"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no tasks were loaded."}
       actions={<Link href={base+"?tab=board"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Full task workspace
       </Link>}/>
     {!data.enabled?
@@ -49,28 +49,28 @@ export default async function MentorBoardReviewPage({
           " "+data.completedPercent+"% recorded DONE tasks"}
       </p>
       <form method="get" action={base+"/board-review"}
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm">Search tasks or sprints
-          <input type="search" name="search" maxLength={100} defaultValue={data.query.search}
-            className="min-h-11 rounded border border-border bg-background p-2"/>
+          <input data-slot="input" type="search" name="search" maxLength={100} defaultValue={data.query.search}
+            className="min-h-11 rounded border border-border bg-surface p-2"/>
         </label>
         <label className="grid gap-1 text-sm">Status
-          <select name="status" defaultValue={data.query.status}
-            className="min-h-11 rounded border border-border bg-background p-2">
+          <select data-slot="select" name="status" defaultValue={data.query.status}
+            className="min-h-11 rounded border border-border bg-surface p-2">
             {(["ALL","TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(state=>
               <option key={state} value={state}>{state.replaceAll("_"," ")}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm">Priority
-          <select name="priority" defaultValue={data.query.priority??"ALL"}
-            className="min-h-11 rounded border border-border bg-background p-2">
+          <select data-slot="select" name="priority" defaultValue={data.query.priority??"ALL"}
+            className="min-h-11 rounded border border-border bg-surface p-2">
             {(["ALL","LOW","MEDIUM","HIGH","CRITICAL"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm">Sprint
-          <select name="sprintId" defaultValue={data.query.sprintId??"ALL"}
-            className="min-h-11 rounded border border-border bg-background p-2">
+          <select data-slot="select" name="sprintId" defaultValue={data.query.sprintId??"ALL"}
+            className="min-h-11 rounded border border-border bg-surface p-2">
             <option value="ALL">All sprints</option>
             {data.sprints.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
           </select>
@@ -78,13 +78,13 @@ export default async function MentorBoardReviewPage({
         <Button type="submit" variant="primary">
           Filter
         </Button>
-        <Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
           (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
             "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-          download className="min-h-11 rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          download className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Download filtered CSV (max 500)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -97,7 +97,7 @@ export default async function MentorBoardReviewPage({
           <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
             (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
               "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-            download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Download filtered Sprint summary CSV (max 100)
           </Link>
         </div>
@@ -106,7 +106,7 @@ export default async function MentorBoardReviewPage({
           Every Sprint also shows its total registered task count.
         </p>
         {data.sprintSummaries.length===0?
-          <p className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+          <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
             No registered Sprint matches the selected Sprint filter.
           </p>:
           <div className="grid gap-3 sm:grid-cols-2">
@@ -148,9 +148,9 @@ export default async function MentorBoardReviewPage({
         <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page>1?<Link href={mentorBoardReviewHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
           {data.page<data.totalPages?<Link href={mentorBoardReviewHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
         </div>
       </nav>
     </>}
