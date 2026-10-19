@@ -133,7 +133,7 @@ export function CollegeEditDialog({
            ["Pin Code",postalCode,setPostalCode,32],
           ] as const).map(([field,value,setter,maxLength])=><label key={field}
            className="grid gap-1 text-xs font-semibold text-body">{field}
-           <Input value={value} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
+           <Input value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
           </label>)}
 
           <div className="sm:col-span-2">
