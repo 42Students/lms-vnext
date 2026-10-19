@@ -47,31 +47,31 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
    className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
    <label className="text-sm font-semibold">Task title
     <input required maxLength={200} value={title} onChange={e=>setTitle(e.target.value)}
-     className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
+     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3"/></label>
    <label className="text-sm font-semibold">Sprint
     <select value={sprintId} onChange={e=>{setSprintId(e.target.value);setStatus("TODO")}}
-     className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3">
      <option value="">Leave blank for the backlog</option>
      {available.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
    <label className="text-sm font-semibold sm:col-span-2">Description
     <textarea maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded-md border border-border bg-background p-2"/></label>
+      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/></label>
    <label className="text-sm font-semibold sm:col-span-2">Approach (optional)
     <textarea maxLength={4000} value={approach} onChange={e=>setApproach(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded-md border border-border bg-background p-2"/></label>
+      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/></label>
    <label className="text-sm font-semibold sm:col-span-2">Done when
     <textarea maxLength={4000} value={acceptance} onChange={e=>setAcceptance(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded-md border border-border bg-background p-2"/></label>
+      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/></label>
    <label className="text-sm font-semibold">Priority
     <select value={priority} onChange={e=>setPriority(e.target.value)}
-     className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3">
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(x=><option key={x} value={x}>{x}</option>)}
     </select></label>
    <label className="text-sm font-semibold">Status
     <select value={status} disabled={!sprintId}
       onChange={e=>setStatus(e.target.value as typeof status)}
-      className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3">
       <option value="TODO">To Do</option>
       {sprintId?<><option value="IN_PROGRESS">In Progress</option>
         <option value="BLOCKED">Blocked</option></>:null}
@@ -79,18 +79,18 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
    </label>
    <label className="text-sm font-semibold">Type
     <select value={type} onChange={e=>setType(e.target.value)}
-     className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3">
      <option value="">Not set</option>{["STORY","BUG","CHORE","SPIKE"].map(x=><option key={x} value={x}>{x}</option>)}
     </select></label>
    <label className="text-sm font-semibold">Estimate points
     <input type="number" min={0} max={1000} value={estimate} onChange={e=>setEstimate(e.target.value)}
-     className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
+     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3"/></label>
    <label className="text-sm font-semibold">Due date
     <input type="date" value={due} onChange={e=>setDue(e.target.value)}
-     className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
+     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3"/></label>
    <label className="text-sm font-semibold sm:col-span-2">What&apos;s blocking this task?
     <textarea maxLength={4000} value={blockerReason} onChange={e=>setBlockerReason(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded-md border border-border bg-background p-2"/></label>
+      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/></label>
    {status==="BLOCKED"&&!blockerReason.trim()?
      <p role="alert" className="text-sm text-error sm:col-span-2">
        Explain what&apos;s blocking this task before saving.</p>:null}
@@ -99,10 +99,10 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
     <button type="submit" disabled={busy||!title.trim()||
       (status==="BLOCKED"&&!blockerReason.trim())||
       (estimate!==""&&(!Number.isInteger(Number(estimate))||Number(estimate)<0||Number(estimate)>1000))}
-     className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+     className="min-h-9 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)]">
      {busy?"Saving…":"Add task"}</button>
     <button type="button" disabled={busy} onClick={()=>setOpen(false)}
-     className="rounded-md border border-border px-4 py-2 text-sm">Cancel</button>
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</button>
    </div>
   </form>:null}
  </section>;

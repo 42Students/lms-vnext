@@ -75,7 +75,7 @@ export function LearnerProjectBoardSearch({
       </form>
   );
   return (
-    <section aria-label="Project Board filters" className="rounded-xl border border-border bg-surface p-4">
+    <section aria-label="Project Board filters" className="border-b border-border pb-5">
       <details>
         <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 text-sm font-semibold text-foreground">
           <span>Filters</span>

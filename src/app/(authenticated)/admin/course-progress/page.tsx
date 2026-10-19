@@ -42,10 +42,10 @@ export default async function SuperAdminCourseProgressPage({
     <form className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Course or cohort
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
-          className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground sm:min-h-9" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Offering status
-        <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
+        <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground sm:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
       </label>
@@ -61,8 +61,8 @@ export default async function SuperAdminCourseProgressPage({
       {data.total} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
       {" "}{summary.completedContentRecords} completed rows. Learner counts are per-offering, not additive.
     </p>
-    {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
-      {data.items.map(item => <article key={item.offeringId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+    {data.items.length ? <div className="divide-y divide-border border-y border-border">
+      {data.items.map(item => <article key={item.offeringId} className="min-w-0 py-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h2 className="m-0 break-words font-semibold text-foreground">{item.courseName} ({item.courseCode})</h2>
           <StatusBadge tone={item.offeringStatus === "ACTIVE" ? "success" : "neutral"}>{item.offeringStatus}</StatusBadge>
@@ -87,9 +87,9 @@ export default async function SuperAdminCourseProgressPage({
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page - 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link> : null}
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page + 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Next</Link> : null}
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Next</Link> : null}
       </div>
     </nav>
     <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>

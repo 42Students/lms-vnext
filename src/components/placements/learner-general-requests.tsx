@@ -9,7 +9,7 @@ const kinds:readonly [Kind,string][]=[
  ["OFF_CAMPUS_OFFER","Off-campus offer"],["REGISTRATION_CHANGE","Registration change"],
  ["ABSENCE_DISPUTE","Absence dispute"],["OFFER_ACCEPTANCE_DISPUTE","Externally reported acceptance"],["CORRECTION_WITH_PROOF","Correction with proof"],
  ["PLACEMENT_AFTER_PLACEMENT","Placement after placement"]];
-const box="min-h-11 rounded border border-border bg-surface p-2";
+const box="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground sm:min-h-9";
 export function LearnerGeneralRequests({
  initialKind="OFF_CAMPUS_OFFER",initialApplicationId="",initialRoundId="",initialOfferId="",
 }:{initialKind?:Kind;initialApplicationId?:string;initialRoundId?:string;initialOfferId?:string}){
@@ -49,7 +49,7 @@ export function LearnerGeneralRequests({
    });
   }catch{setError("The request could not be sent. Your entered details are still here; please retry.");}
  }
- return <section aria-label="Other placement requests" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Other placement requests" className="space-y-3 border-b border-border pb-5">
   <h2 className="text-lg font-semibold">Other placement requests</h2>
   <p className="text-sm">Tell your placement cell about an off-campus offer, registration change, disputed absence, record correction or a request to apply after placement.</p>
   <label className="grid gap-1 text-sm">Request kind<select className={box} disabled={pending} value={kind}
@@ -81,12 +81,12 @@ export function LearnerGeneralRequests({
    <textarea className={box} rows={3} maxLength={2000} value={reason} onChange={e=>setReason(e.target.value)}/>
   </label>
   <button type="button" disabled={pending} onClick={()=>void submit()}
-   className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">{pending?"Sending…":"Send request"}</button>
+   className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] disabled:opacity-50 sm:min-h-9">{pending?"Sending…":"Send request"}</button>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <h3 className="font-semibold">Request history</h3>
   {!rows.length?<p role="status" className="text-sm">No other placement requests recorded yet.</p>:
-   <ul className="space-y-2">{rows.map(row=><li key={row.id} className="rounded border border-border p-3 text-sm">
+   <ul className="divide-y divide-border border-y border-border">{rows.map(row=><li key={row.id} className="py-3 text-sm">
     <strong>{row.kind.replaceAll("_"," ")}</strong> · {row.status.replaceAll("_"," ")}
     <p className="break-words">{row.reason}</p>
     {row.decisionNote?<p>Placement cell: {row.decisionNote}</p>:null}
