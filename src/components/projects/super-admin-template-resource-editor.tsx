@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -70,9 +71,9 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
      <Textarea maxLength={2000} value={row.accessNotes??""}
       onChange={e=>change(i,{accessNotes:e.target.value||undefined})}
       className={cls+" min-h-16"}/></label>
-    <label className="flex items-center gap-2 text-xs font-semibold"><input type="checkbox" className="size-4 accent-[var(--lms-button-primary)]"
+    <label className="flex items-center gap-2 text-xs font-semibold"><Checkbox className="size-5"
       checked={row.required} onChange={e=>change(i,{required:e.target.checked})}/>Required</label>
-    <label className="flex items-center gap-2 text-xs font-semibold"><input type="checkbox" className="size-4 accent-[var(--lms-button-primary)]"
+    <label className="flex items-center gap-2 text-xs font-semibold"><Checkbox className="size-5"
       checked={row.pinned??false} onChange={e=>change(i,{pinned:e.target.checked})}/>Pinned</label>
     <div className="flex flex-wrap gap-2 sm:col-span-2">
       <Button type="button" variant="secondary" disabled={i===0} onClick={()=>setRows(r=>{const n=[...r];[n[i-1],n[i]]=[n[i],n[i-1]];return n;})}

@@ -1,6 +1,7 @@
 "use client";
 
 import {useState} from "react";
+import { Select } from "@/components/ui/select";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
@@ -84,14 +85,14 @@ export function MentorTaskCreate({
       </>}>
       <div className="grid gap-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint
-          <select data-slot="select" value={selectedSprintId} disabled={busy} onChange={event=>{
+          <Select value={selectedSprintId} disabled={busy} onChange={event=>{
             setSelectedSprintId(event.target.value);setStatus("TODO");
-          }} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          }} className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="">Leave blank for the backlog</option>
             {choices.map(item=><option key={item.id} value={item.id}>
               {item.title} ({item.status.replaceAll("_"," ").toLowerCase()})
             </option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Task title
           <Input value={title} maxLength={200} required onChange={e=>setTitle(e.target.value)} />
@@ -106,48 +107,48 @@ export function MentorTaskCreate({
           <Textarea value={criteria} maxLength={4000} onChange={e=>setCriteria(e.target.value)} />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Priority
-          <select data-slot="select" value={priority} onChange={e=>setPriority(e.target.value as typeof priority)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          <Select value={priority} onChange={e=>setPriority(e.target.value as typeof priority)}
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Status
-          <select data-slot="select" value={status} disabled={busy||!selectedSprintId}
+          <Select value={status} disabled={busy||!selectedSprintId}
             onChange={event=>setStatus(event.target.value as typeof status)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="TODO">To Do</option>
             {chosenSprint?.status==="ACTIVE"?<>
               <option value="IN_PROGRESS">In Progress</option>
               <option value="BLOCKED">Blocked</option>
             </>:null}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Estimate ({mentorEstimateLabel(1,estimationUnit).replace(/^1 /,"")})
-          <select data-slot="select" value={estimate} onChange={e=>setEstimate(e.target.value)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          <Select value={estimate} onChange={e=>setEstimate(e.target.value)}
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="">Not estimated</option>
             {mentorEstimateOptions(estimationUnit).map(value=>
               <option key={value} value={String(value)}>{mentorEstimateLabel(value,estimationUnit)}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Type
-          <select data-slot="select" value={taskType} onChange={e=>setTaskType(e.target.value)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          <Select value={taskType} onChange={e=>setTaskType(e.target.value)}
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="">Not specified</option><option value="STORY">Story</option>
             <option value="BUG">Bug</option><option value="CHORE">Chore</option>
             <option value="SPIKE">Spike</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assignee
-          <select data-slot="select" value={assigneeMembershipId} disabled={busy}
+          <Select value={assigneeMembershipId} disabled={busy}
             onChange={event=>setAssigneeMembershipId(event.target.value)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             <option value="">Unassigned</option>
             {learners.map(member=><option key={member.membershipId} value={member.membershipId}>
               {member.displayName??"Learner"}
             </option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Due date
           <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>

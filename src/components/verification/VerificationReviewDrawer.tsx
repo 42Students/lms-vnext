@@ -6,6 +6,9 @@ import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
 import { verificationEducationRows } from "@/modules/verification/education-rows";
 import { DataTable } from "@/components/ui/data-table";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
 import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
 import {canDismissVerificationDialog} from "@/modules/verification/review-dialog-keyboard";
@@ -99,17 +102,17 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     <div className="min-w-0"><h2 className="break-words text-lg font-semibold">{row.learnerName}</h2>
      {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
      <p className="text-sm">{row.section==="EDUCATION"?"Education":"Identity"} · {row.status.replaceAll("_"," ")}</p></div>
-    <button type="button" ref={closeButton} disabled={saving} onClick={onClose} className="min-h-11 rounded-md border px-3 py-2 disabled:opacity-50">Close</button>
+    <Button variant="secondary" type="button" ref={closeButton} disabled={saving} onClick={onClose} className="min-h-11">Close</Button>
    </header>
    {sequenceProgress&&<nav aria-label="Sequential verification progress" className="flex flex-wrap items-center gap-3 border-b py-3 text-sm">
      <span role="status">{sequenceProgress}</span>
-     <button type="button" disabled={saving} onClick={onNext} className="min-h-11 rounded border px-3 py-2">Next</button>
-     <button type="button" disabled={saving} onClick={onFinish} className="min-h-11 rounded border px-3 py-2">Finish</button>
+     <Button variant="secondary" type="button" disabled={saving} onClick={onNext} className="min-h-11">Next</Button>
+     <Button variant="secondary" type="button" disabled={saving} onClick={onFinish} className="min-h-11">Finish</Button>
    </nav>}
    {loading?<p role="status" className="py-4">Loading submitted details…</p>:null}
    {error?<div role="alert" className="my-3 space-y-2 rounded-md border p-3"><p>{error}</p>
-    {canRetryVerificationReview(error,loading)&&<button type="button" onClick={retryReview}
-     className="min-h-11 rounded-md border px-3 py-2 text-sm">Retry loading review</button>}</div>:null}
+    {canRetryVerificationReview(error,loading)&&<Button variant="secondary" type="button" onClick={retryReview}
+     className="min-h-11">Retry loading review</Button>}</div>:null}
    {detail?<div className="space-y-5 py-4">
     <section className="rounded-md border p-3" aria-label="Previous verification decision">
      <h3 className="font-semibold">Recorded decision history</h3>
@@ -176,23 +179,23 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     {detail.review.status==="SUBMITTED"||detail.review.status==="UPDATE_PENDING"?<>
      <section className="space-y-2"><h3 className="font-semibold">Send {row.section==="EDUCATION"?"Education":"Identity"} back</h3>
       <label className="block text-sm">Reason
-       <select disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 w-full rounded-md border bg-background p-2" value={reason} onChange={e=>setReason(e.target.value)}>
+       <Select disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 w-full" value={reason} onChange={e=>setReason(e.target.value)}>
         {reasonChoices.map(item=><option key={item} value={item}>{item}</option>)}
         <option value="">Or write what needs to change</option>
-       </select></label>
+       </Select></label>
       <label className="block text-sm">Additional details
-       <textarea disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
+       <Textarea disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 w-full" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
      </section>
      <div className="flex flex-wrap gap-2">
-      <button type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("VERIFY")} className="rounded-md border px-4 py-2 disabled:opacity-50">Verify</button>
-      <button type="button" disabled={!canEditVerificationDecision(saving,pendingAction)||[reason,additional.trim()].filter(Boolean).join(": ").trim().length<3} onClick={()=>setPendingAction("SEND_BACK")} className="rounded-md border px-4 py-2 disabled:opacity-50">Send back</button>
+      <Button variant="secondary" type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("VERIFY")} className="min-h-11">Verify</Button>
+      <Button variant="secondary" type="button" disabled={!canEditVerificationDecision(saving,pendingAction)||[reason,additional.trim()].filter(Boolean).join(": ").trim().length<3} onClick={()=>setPendingAction("SEND_BACK")} className="min-h-11">Send back</Button>
      </div>
      {pendingAction&&<section aria-label="Confirm verification decision" className="w-full space-y-2 rounded-md border p-3">
       <h3 className="font-semibold">{(isTpo||apiBase==="/api/admin/verification")&&pendingAction==="SEND_BACK"?"Send "+(row.section==="EDUCATION"?"Education":"Identity")+" back":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
       <p className="break-words text-sm">{pendingAction==="SEND_BACK"?"The student sees your reason and fixes it on their profile.":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
       <div className="flex flex-wrap gap-2">
-       <button type="button" disabled={saving||guardedPending} onClick={()=>void runGuarded(()=>decide(pendingAction))} className="min-h-11 rounded-md border px-3 py-2 font-semibold disabled:opacity-50">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</button>
-       <button type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="min-h-11 rounded-md border px-3 py-2 disabled:opacity-50">Cancel</button>
+       <Button variant="primary" type="button" disabled={saving||guardedPending} onClick={()=>void runGuarded(()=>decide(pendingAction))} className="min-h-11">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</Button>
+       <Button variant="secondary" type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="min-h-11">Cancel</Button>
       </div>
      </section>}
      {saving&&<p role="status">Saving decision…</p>}

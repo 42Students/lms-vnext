@@ -13,8 +13,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
-export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters}:{
- title:string;path:string;description:string;
+export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters,headingMode="page"}:{
+ title:string;path:string;description:string;headingMode?:"page"|"section";
  statuses:readonly string[];
  searchParams:Promise<Record<string,string|string[]|undefined>>;
  loader:(raw:unknown)=>Promise<SuperAdminReadResult>;
@@ -24,27 +24,33 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  applicationFilters?:{jobs:readonly {id:string;name:string}[];departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[]};
  peopleFilters?:{kind:"FACULTY"|"LEARNER";departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[]};
 }) {
+ // Student registration owns the page h1; the directory then has a section
+ // heading. Other callers retain the original PageHeader by default.
+ const heading=(eyebrow:string,detail?:string)=>headingMode==="section"
+  ? <div><h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
+     {detail?<p className="mt-1 text-sm text-body">{detail}</p>:null}</div>
+  : <PageHeader eyebrow={eyebrow} title={title} description={detail}/>;
  const parsed=readAdminQuery(await searchParams);
  if(!parsed.success || !statuses.includes(parsed.data.status))
- return <div className="space-y-5"><PageHeader eyebrow="Super Admin" title={title}/>
+ return <div className="space-y-5">{heading("Super Admin")}
   <ErrorState title="Invalid directory filters" description="Check the search, status or page."
-   action={<Link href={path} className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/></div>;
+   action={<Link href={path} className="font-semibold text-primary-text">Clear filters</Link>}/></div>;
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin" title={title}/>
+  {heading("Super Admin")}
   <ErrorState title="Directory access denied"
    description="Your account cannot access Super Admin directory records."
    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin" title={title}/>
+  {heading("Super Admin")}
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+(title==="Faculty"?"faculty":title==="Students"?"students":title==="Faculty Assignment"?"faculty assignments":"people directory")+"."}/>
  </div>;
  const directory=await loader(parsed.data)
   .then(value=>({ok:true as const,value}))
   .catch(()=>({ok:false as const}));
  if(!directory.ok)return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin" title={title}/>
+  {heading("Super Admin")}
   <ErrorState title="Directory unavailable"
    description="The selected college's directory could not be loaded. Your filters have not changed."
    action={<Link href={superAdminReadHref(path,parsed.data)}
@@ -60,7 +66,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   summaries[1].status==="fulfilled"&&summaries[2].status==="fulfilled"
   ?[summaries[0].value,summaries[1].value,summaries[2].value]:null;
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow={peopleFilters?"People":"Super Admin · Read-only"} title={title} description={description}/>
+  {heading(peopleFilters?"People":"Super Admin · Read-only",description)}
   {peopleFilters&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
@@ -79,7 +85,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-4">
-   {!applicationFilters&&data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
+   {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
    </label>
@@ -151,15 +157,15 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    <Button type="submit" variant="primary" className="self-end">Filter</Button>
   </form>
   <form method="get" action={path} aria-label="Refresh directory">
-    {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
-    <input type="hidden" name="status" value={data.query.status} />
-    {!applicationFilters&&data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
-    {data.query.pipelineStage!=="ALL"?<input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
-    {data.query.channel!=="ALL"?<input type="hidden" name="channel" value={data.query.channel}/>:null}
-    {data.query.source!=="ALL"?<input type="hidden" name="source" value={data.query.source}/>:null}
-    {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
-    <input type="hidden" name="page" value={String(data.query.page)} />
-    <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
+    {data.query.q ? <Input type="hidden" name="q" value={data.query.q} /> : null}
+    <Input type="hidden" name="status" value={data.query.status} />
+    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
+    {data.query.pipelineStage!=="ALL"?<Input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
+    {data.query.channel!=="ALL"?<Input type="hidden" name="channel" value={data.query.channel}/>:null}
+    {data.query.source!=="ALL"?<Input type="hidden" name="source" value={data.query.source}/>:null}
+    {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<Input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
+    <Input type="hidden" name="page" value={String(data.query.page)} />
+    <Input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
     <Button type="submit" variant="secondary" className="self-end">Refresh</Button>
   </form>
   {applicationFilters?<p role="status" className="text-sm text-body">
@@ -182,17 +188,17 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <p className="break-words text-sm text-body">{row.subtitle}</p>
     {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground">{value}</p>)}
     {renderRowActions?<div className="border-t border-border pt-3">{renderRowActions(row)}</div>:null}
-    {row.href?<Link href={row.href} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open details →</Link>:null}
-    {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{row.secondaryLabel??"Manage →"}</Link>:null}
+    {row.href?<Link href={row.href} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open details →</Link>:null}
+    {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{row.secondaryLabel??"Manage →"}</Link>:null}
    </article>)}
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
   <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9">Clear search</Link>
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline sm:min-h-9">Clear search</Link>
   <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
    <div className="flex flex-wrap gap-3">
-    {data.query.page>1?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9">Previous</Link>:null}
-    {data.query.page<data.totalPages?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9">Next</Link>:null}
+    {data.query.page>1?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9">Previous</Link>:null}
+    {data.query.page<data.totalPages?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9">Next</Link>:null}
    </div>
   </nav>
  </div>;

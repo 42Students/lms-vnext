@@ -12,9 +12,9 @@ export default async function NewSuperAdminTemplatePage(){
    action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>}/>
  </div>;
  return <div className="min-w-0 space-y-5">
-  <Link href="/admin/projects/templates" className="text-sm font-semibold text-primary-text">← Template catalogue</Link>
   <PageHeader eyebrow="Super Admin · Projects" title="New project template"
-   description="Create a global draft with a valid starting blueprint. College-scoped administrators cannot publish global templates."/>
+   description="Create a global draft with a valid starting blueprint. College-scoped administrators cannot publish global templates."
+   actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3.5 text-sm font-semibold text-primary-text sm:min-h-9">← Template catalogue</Link>}/>
   <SuperAdminTemplateCreateForm/>
  </div>;
 }

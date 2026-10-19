@@ -2,7 +2,9 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import type {AcademicModuleScope} from "@/modules/module-access/admin-descendant-rule-write";
 type Observed={enabled:boolean;locked:boolean}|null;
 export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string;scopes:readonly AcademicModuleScope[]}){
@@ -58,7 +60,7 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
    <Select value={choice} className="min-h-11 sm:min-h-9" onChange={e=>setChoice(e.target.value)}>
     <option value="INHERIT">Inherit</option><option value="ON">On</option><option value="OFF">Off</option>
    </Select></label>
-   <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={locked} disabled={choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock</label>
+   <label className="flex min-h-11 items-center gap-2 text-sm"><Checkbox checked={locked} disabled={choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock</label>
    <Button type="button" className="min-h-11 sm:min-h-9" disabled={busy} onClick={()=>void save()}>Save rule</Button>
   </>}
   {message&&<p role="status" className="w-full text-sm text-body">{message}</p>}

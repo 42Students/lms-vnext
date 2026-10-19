@@ -1,4 +1,6 @@
 "use client";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
 
 import Link from "next/link";
@@ -179,7 +181,7 @@ export function TpoCompanyMemoryWorkspace({
         </p>
         {phase === "error" || phase === "not-found" || phase === "migration-pending" ? (
           <div className="mt-4 flex flex-wrap gap-3">
-            <button className={buttonStyle} onClick={retry}>Retry</button>
+            <Button variant="secondary" onClick={retry}>Retry</Button>
             <Link className={buttonStyle} href="/tpo/recruiters?view=companies">Back to companies</Link>
           </div>
         ) : null}
@@ -339,7 +341,7 @@ export function TpoCompanyMemoryWorkspace({
         <div className="space-y-5">
           <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">Drives</h2>
-            <button type="button" className={buttonStyle+" mt-3"}
+            <Button variant="secondary" type="button" className="mt-3"
               disabled={visibleDrives.length===0}
               onClick={()=>{
                 const blob=new Blob([companyDriveCsv(visibleDrives)],{type:"text/csv;charset=utf-8"});
@@ -350,9 +352,9 @@ export function TpoCompanyMemoryWorkspace({
                 document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
               }}>
               Export drives CSV
-            </button>
+            </Button>
             <label className="mt-3 block text-sm text-body">Search drives
-              <input className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
+              <Input className="mt-1"
                 type="search" value={driveSearch} onChange={e=>setDriveSearch(e.target.value)}
                 placeholder="Search role, status or year"/>
             </label>

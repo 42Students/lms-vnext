@@ -6,6 +6,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -292,8 +293,7 @@ export function PlacementEmployerRelationships({
                   </label>
 
                   <label className="flex items-center gap-2 text-sm font-semibold text-body">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={draft.isTrusted}
                       onChange={(event) =>
                         setDrafts(

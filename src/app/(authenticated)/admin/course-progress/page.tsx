@@ -75,11 +75,11 @@ export default async function SuperAdminCourseProgressPage({
           <div className="col-span-2"><dt className="text-xs text-muted-foreground">Learners with recorded activity</dt><dd className="text-lg font-semibold tabular-nums">{item.learnersWithRecords}</dd></div>
         </dl>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
           Open offering →
         </Link>
         <Link href={`/admin/course-progress/students?offeringId=${encodeURIComponent(item.offeringId)}`}
-         className="ml-3 mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+         className="ml-3 mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
           View student progress →
         </Link>
       </article>)}
@@ -88,9 +88,9 @@ export default async function SuperAdminCourseProgressPage({
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page - 1 })}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Previous</Link> : null}
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page + 1 })}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Next</Link> : null}
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Next</Link> : null}
       </div>
     </nav>
     <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
