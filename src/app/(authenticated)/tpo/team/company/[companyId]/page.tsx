@@ -14,7 +14,7 @@ export default async function CompanyTeamPage({params}:{params:Promise<{companyI
  try{state=await readTpoCompanyTeam(context,companyId);}
  catch(error){if(error instanceof TpoCompanyTeamError&&error.code==="NOT_FOUND")notFound();throw error;}
  return <main className="space-y-5">
-  <PageHeader eyebrow="TPO · Team" title={state.companyName}
+  <PageHeader title={state.companyName}
     description="Private placement-team company conversation. Recruiters and learners cannot view it."/>
   <Link href={"/tpo/companies/"+encodeURIComponent(companyId)}
     className="font-semibold text-primary-text underline">Open company</Link>
