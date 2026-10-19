@@ -160,7 +160,7 @@ export function CollegeCreateForm({
           ["Landmark",landmark,setLandmark,255],["Pin Code",postalCode,setPostalCode,32],
           ["Country",country,setCountry,128],
          ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-1 text-xs font-semibold">
-          {label}<Input value={value} onChange={e=>setter(e.target.value)} maxLength={maxLength}
+          {label}<Input value={value} disabled={pending} onChange={e=>setter(e.target.value)} maxLength={maxLength}
            className="min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] w-full"/>
          </label>)}
         </div>
