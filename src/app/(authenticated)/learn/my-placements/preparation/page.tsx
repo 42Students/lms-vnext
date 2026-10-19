@@ -21,10 +21,10 @@ export default async function LearnerPlacementPreparationPage({
 }:{searchParams:Promise<Params>}) {
   const raw=await searchParams;
   const parsed=learnerPreparationQuerySchema.safeParse({view:first(raw.view)??undefined});
-  if(!parsed.success) return <section role="alert" className="space-y-3">
+  if(!parsed.success) return <section role="alert" className="min-w-0 space-y-4">
     <PageHeader title="Invalid preparation filter" />
     <Link href="/learn/my-placements/preparation"
-      className="text-primary-text underline">Clear filters</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   if(!hasMembershipRole(context,"LEARNER")) redirect("/dashboard");
