@@ -23,12 +23,12 @@ export function FacultyIstQuarterHourPicker({label,value,onChange,disabled=false
    <label className="grid min-w-0 gap-1 text-xs">Date
     <Input type="date" required aria-label={label+" date"} value={parts.date}
      onChange={event=>emit(event.target.value)}
-     className="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:min-h-9"/>
+     className="min-h-11 min-w-0 px-2 sm:min-h-9"/>
    </label>
    <label className="grid gap-1 text-xs">Hour
     <Select aria-label={label+" hour (12-hour clock)"} value={hour}
      onChange={event=>emit(parts.date,event.target.value)}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-1 sm:min-h-9">
+     className="min-h-11 px-1 sm:min-h-9">
      {Array.from({length:12},(_,i)=>String(i+1)).map(h=>
       <option key={h} value={h}>{h}</option>)}
     </Select>
@@ -36,14 +36,14 @@ export function FacultyIstQuarterHourPicker({label,value,onChange,disabled=false
    <label className="grid gap-1 text-xs">Minute
     <Select aria-label={label+" minute (15-minute steps)"} value={minute}
      onChange={event=>emit(parts.date,hour,event.target.value)}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-1 sm:min-h-9">
+     className="min-h-11 px-1 sm:min-h-9">
      {FACULTY_IST_QUARTER_MINUTES.map(m=><option key={m} value={m}>{m}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-xs">AM/PM
     <Select aria-label={label+" AM or PM"} value={parts.period}
      onChange={event=>emit(parts.date,hour,minute,event.target.value as "AM"|"PM")}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-1 sm:min-h-9">
+     className="min-h-11 px-1 sm:min-h-9">
      <option value="AM">AM</option><option value="PM">PM</option>
     </Select>
    </label>
