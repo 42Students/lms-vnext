@@ -19,7 +19,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
  return <div className="space-y-4">
     <SuperAdminDriveTabs jobId={jobId} active="Settings"/>
   <PageHeader eyebrow="Super Admin · Drive workspace" title="Settings" description="Drive status, deadline and policy controls for the selected college."/>
-  <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
+  <section className="space-y-2 border-b border-border pb-5">
    <h2 className="font-semibold">{job.title}</h2>
    <p className="text-sm text-body">Status: {job.status}</p>
    <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? driveSettingsIstDate(job.applicationDeadline) : "Not configured"}</p>
@@ -33,7 +33,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       openings:job.openings,minCtc:job.minimumAnnualCtcInr,maxCtc:job.maximumAnnualCtcInr,
       updatedAt:job.updatedAt.toISOString(),
     }} />:null}
-  {job.legacyPostingDetails?<section className="space-y-3 rounded-xl border border-border bg-surface p-5"
+  {job.legacyPostingDetails?<section className="space-y-3 border-b border-border pb-5"
     aria-label="Additional job details">
     <h2 className="font-semibold">Additional job details</h2>
     <p className="text-xs text-muted-foreground">Informational posting terms; enforceable learner eligibility remains in the drive policy.</p>

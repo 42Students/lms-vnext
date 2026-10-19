@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 type Lesson={id:string;name:string;courseName:string;contentCount:number;publishedContentCount:number;publishedAndVisibleFlagCount:number};
@@ -22,7 +23,7 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{setPending(false);}
  }
- return <section aria-label="Lesson bulk visibility" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Lesson bulk visibility" className="space-y-3 border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <h2 className="font-semibold">Bulk lesson visibility</h2>
    <span role="status" className="text-sm text-muted-foreground">{selected.length} of {lessons.length} lessons selected</span>
@@ -33,7 +34,7 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
       onChange={e=>setSelected(e.target.checked?lessons.map(l=>l.id):[])} disabled={pending}/> Select all on this page
   </label>
   <div className="grid max-h-48 gap-2 overflow-y-auto sm:grid-cols-2">
-   {lessons.map(lesson=><label key={lesson.id} className="flex min-h-10 items-center gap-3 rounded-[9px] border border-border px-3 text-sm">
+   {lessons.map(lesson=><label key={lesson.id} className="flex min-h-10 items-center gap-3 border-b border-border px-3 py-2 text-sm">
     <input type="checkbox" checked={selected.includes(lesson.id)} disabled={pending}
      onChange={e=>setSelected(list=>e.target.checked?[...list,lesson.id]:list.filter(id=>id!==lesson.id))}/>
     <span className="min-w-0"><span className="block truncate font-semibold">{lesson.name}</span>
@@ -42,10 +43,8 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
    </label>)}
   </div>
   <div className="flex flex-wrap gap-2">
-   <button type="button" disabled={pending||!selected.length} onClick={()=>void mutate(true)}
-    className="min-h-10 rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-[var(--lms-on-primary)]">{pending?"Saving…":"Show selected"}</button>
-   <button type="button" disabled={pending||!selected.length} onClick={()=>void mutate(false)}
-    className="min-h-10 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">Hide selected</button>
+   <Button type="button" disabled={pending||!selected.length} onClick={()=>void mutate(true)}>{pending?"Saving…":"Show selected"}</Button>
+   <Button type="button" variant="secondary" disabled={pending||!selected.length} onClick={()=>void mutate(false)}>Hide selected</Button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {report?<div role="status" className="space-y-1 rounded-[9px] border border-border p-3 text-sm">

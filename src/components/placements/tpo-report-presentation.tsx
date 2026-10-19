@@ -21,10 +21,10 @@ export function TpoReportPresentation(){
  }
  return <div className="inline-flex flex-wrap items-center gap-2">
   <button type="button" onClick={()=>void toggle()}
-   aria-pressed={active} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+   aria-pressed={active} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
    {active?"Exit presentation view":"Presentation view"}
   </button>
   {error?<span role="alert" className="text-xs text-[var(--lms-gold-accent)]">{error}</span>:null}
-  <style>{`[data-tpo-presentation-report]:fullscreen { background: var(--surface, #fff); color: var(--foreground, #111); min-height: 100vh; overflow-y: auto; padding: 1.25rem; }`}</style>
+  <style>{`[data-tpo-presentation-report]:fullscreen { background: var(--surface); color: var(--foreground); min-height: 100vh; overflow-y: auto; padding: 1.25rem; }`}</style>
  </div>;
 }

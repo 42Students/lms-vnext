@@ -9,6 +9,8 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -166,10 +168,10 @@ export default async function TpoMyNotificationsPage({
         >
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Read status
-            <select
+            <Select
               name="view"
               defaultValue={query.view}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 sm:min-h-9"
             >
               {TPO_NOTIFICATION_VIEWS.map((view) => (
                 <option key={view} value={view}>
@@ -180,28 +182,28 @@ export default async function TpoMyNotificationsPage({
                       : "Read"}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
 
           <label className="grid min-w-28 gap-1 text-sm font-semibold text-body">
             Page size
-            <select
+            <Select
               name="pageSize"
               defaultValue={String(pageSize)}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 sm:min-h-9"
             >
               <option value="25">25</option>
               <option value="50">50</option>
               <option value="100">100</option>
-            </select>
+            </Select>
           </label>
 
-          <button
+          <Button
             type="submit"
-            className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+            className="min-h-11 sm:min-h-9"
           >
             Apply
-          </button>
+          </Button>
 
           <Link
             href="/tpo/settings/notifications"

@@ -61,10 +61,10 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
     <section className="border-b border-border pb-4 sm:pb-5">
       <h2 className="font-semibold text-foreground">Choose round</h2>
-      <nav aria-label="Hiring rounds" className="mt-3 flex flex-wrap gap-2">{rounds.map(round=>
+      <nav aria-label="Hiring rounds" className="mt-3 flex flex-wrap gap-3 border-b border-border">{rounds.map(round=>
        <Link key={round.id} href={recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id})}
          aria-current={round.id===selectedRound?.id?"page":undefined}
-         className={round.id===selectedRound?.id?"inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]":"inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
+         className={round.id===selectedRound?.id?"inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]":"inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
         {round.sequence}. {round.name}</Link>)}</nav>
     </section>
     {results?<section className="space-y-4 border-b border-border pb-4 sm:pb-5">
@@ -77,7 +77,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
        <nav aria-label="Outcome" className="flex flex-wrap gap-2">{filters.map(filter=>
         <Link key={filter} href={recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:filter})}
           aria-current={query.data.outcome===filter?"page":undefined}
-          className={query.data.outcome===filter?"inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-xs font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]":"inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-xs text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
+          className={query.data.outcome===filter?"inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]":"inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
           {filter.replaceAll("_"," ")} ({countValues[filter]})</Link>)}</nav>
        {results.rows.length?<div className="grid gap-3 md:grid-cols-2">
          {results.rows.map(row=><article key={row.key} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">

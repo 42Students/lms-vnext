@@ -68,9 +68,9 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
   return <div className="flex flex-col gap-2 text-sm">
     <div className="flex flex-wrap gap-2">
       <button type="button" disabled={pending||guardedPending} onClick={()=>open("APPROVE")}
-        className="min-h-11 rounded-[9px] border border-border px-3 font-semibold text-foreground disabled:opacity-50">Approve</button>
+        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-foreground disabled:opacity-50">Approve</button>
       <button type="button" disabled={pending||guardedPending} onClick={()=>open("REJECT")}
-        className="min-h-11 rounded-[9px] border border-border px-3 font-semibold text-foreground disabled:opacity-50">Reject</button>
+        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-foreground disabled:opacity-50">Reject</button>
     </div>
     {!mode&&error?<p role="alert" className="text-error">{error}</p>:null}
     <Dialog open={mode!==null} onOpenChange={value=>{if(!value&&!pending)setMode(null);}}
@@ -88,17 +88,17 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
         <div role="group" aria-label="Rejection reasons" className="flex flex-wrap gap-2">
           {rejectionReasons.map(choice=><button key={choice} type="button" disabled={pending||guardedPending}
             aria-pressed={reason===choice} onClick={()=>{setReason(choice);setError(null);}}
-            className={reason===choice?"min-h-11 rounded border border-primary bg-primary-subtle px-3 text-sm font-semibold text-[var(--lms-teal-deep)]":
-              "min-h-11 rounded border border-border px-3 text-sm text-body"}>{choice}</button>)}
+            className={reason===choice?"min-h-11 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-[var(--lms-teal-deep)]":
+              "min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-body"}>{choice}</button>)}
         </div>
         {reason==="Other"?<label className="block text-sm font-semibold">Explain the rejection
           <textarea value={note} onChange={e=>setNote(e.target.value)} minLength={3} maxLength={2000}
-            disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[9px] border border-border bg-surface p-3 text-sm"/>
+            disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
         </label>:null}
         {!valid&&reason?"Enter a rejection reason of at least 3 characters.":null}
       </div>:mode==="APPROVE"?<label className="block text-sm font-semibold">Approval note (optional)
         <textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
-          disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[9px] border border-border bg-surface p-3 text-sm"/>
+          disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
       </label>:null}
       {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}
     </Dialog>

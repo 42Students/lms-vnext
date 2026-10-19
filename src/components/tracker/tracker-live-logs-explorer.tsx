@@ -140,7 +140,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         "Could not update this known error. Try again.");
     }finally{setMutating(false);}
   }
-  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5" aria-label="Live logs">
+  return <section className="space-y-4 border-b border-border pb-5" aria-label="Live logs">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div><h2 className="text-lg font-semibold">Live Google Cloud Logging</h2>
         <p className="mt-1 text-sm text-body">Redacted error entries (ERROR and above) from the configured deployment namespace.</p>
@@ -152,32 +152,32 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     <div className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">Time window
         <select value={windowMinutes} onChange={event=>setWindowMinutes(event.target.value)}
-          className="min-h-11 rounded-md border border-border bg-background px-3">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3">
           <option value="15">Last 15 minutes</option><option value="60">Last hour</option>
           <option value="360">Last 6 hours</option><option value="1440">Last 24 hours</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold">Minimum severity
         <select value={minimumSeverity} onChange={event=>setMinimumSeverity(event.target.value as "ERROR"|"WARNING")}
-          className="min-h-11 rounded-md border border-border bg-background px-3">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3">
           <option value="ERROR">Error and above</option>
           <option value="WARNING">Warning and above</option>
         </select>
       </label>
       <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold">Search this page
         <input type="search" maxLength={150} value={query} onChange={event=>setQuery(event.target.value)}
-          placeholder="Message, route, reference" className="min-h-11 rounded-md border border-border bg-background px-3"/>
+          placeholder="Message, route, reference" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3"/>
       </label>
       <button type="button" onClick={()=>void load()} disabled={pending||exporting}
-        className="min-h-11 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+        className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm font-[650] text-on-primary disabled:opacity-50">
         {pending?"Loading…":"Refresh newer"}
       </button>
       <button type="button" onClick={()=>void downloadRange("csv")} disabled={pending||exporting||configured!==true}
-        className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
+        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold disabled:opacity-50">
         {exporting?"Exporting…":"Download logs"}
       </button>
       <button type="button" onClick={()=>setReportOpen(true)} disabled={!items.length}
-        className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold">
+        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
         Report for Claude
       </button>
     </div>
@@ -186,35 +186,35 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       {items.map(item=><li key={item.id} id={"log-"+item.requestId}
         className="rounded-lg border border-border p-3 text-sm">
         <details>
-          <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold">
+          <summary className="inline-flex min-h-9 cursor-pointer items-center font-semibold">
             {new Date(item.time).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} · {item.event} · {item.path}
           </summary>
           <p className="mt-2 whitespace-pre-wrap break-words text-body">{item.message}</p>
           <p className="mt-2 text-xs text-muted-foreground">Reference: {item.requestId??"Not recorded"} · {item.component??"server"}</p>
           <div className="mt-3 flex flex-wrap gap-3">
             <button type="button" onClick={()=>void copy(trackerLogMarkdown([item]))}
-              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Copy for Claude</button>
+              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Copy for Claude</button>
             <button type="button" onClick={()=>void copy(window.location.origin+"/tracker/logs?query="+encodeURIComponent(item.requestId??item.event))}
-              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Copy permalink</button>
+              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Copy permalink</button>
             <Link href={"/tracker?context="+encodeURIComponent(
               [item.event,item.path,item.message,"Reference: "+(item.requestId??"none")].join("\n").slice(0,450))}
-              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Report this</Link>
+              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Report this</Link>
             {item.knownErrorId?<>
               <Link href={"/tracker/logs#known-error-"+item.knownErrorId}
-                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Known error details</Link>
+                className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Known error details</Link>
               <button type="button" disabled={mutating}
                 onClick={()=>{setMuteReason("");setMuteTarget({id:item.knownErrorId!,muted:item.muted===true});}}
-                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline disabled:opacity-50">
+                className="inline-flex min-h-9 items-center font-semibold text-primary-text underline disabled:opacity-50">
                 {item.muted?"Unmute this error":"Mute this error"}
               </button>
             </>:<Link href="/tracker/logs#known-errors"
-              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open Known Errors</Link>}
+              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Open Known Errors</Link>}
           </div>
         </details>
       </li>)}
     </ol>:<p role="status" className="text-sm text-body">No live errors loaded.</p>}
     {nextPage?<button type="button" onClick={()=>void load(true)} disabled={pending||exporting}
-      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
+      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold disabled:opacity-50">
       Load older
     </button>:null}
     <ConfirmDialog open={muteTarget!==null} onOpenChange={next=>{if(!next&&!mutating)setMuteTarget(null);}}
@@ -225,20 +225,20 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       {!muteTarget?.muted?<label className="grid gap-1 text-sm font-semibold">
         Reason (optional)
         <input value={muteReason} maxLength={255} onChange={event=>setMuteReason(event.target.value)}
-          className="min-h-11 rounded border border-border bg-background px-3"/>
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
       </label>:null}
     </ConfirmDialog>
     <Dialog open={reportOpen} onOpenChange={setReportOpen} title="Report for Claude">
       <p className="mt-1 text-sm text-body">Copy a redacted report or download the selected time range.</p>
       <textarea readOnly aria-label="Redacted tracker log report" value={trackerLogMarkdown(items)} rows={8}
-        className="mt-3 w-full rounded border border-border bg-surface p-3 text-xs"/>
+        className="mt-3 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-xs"/>
       <div className="mt-3 flex flex-wrap gap-3">
         <button type="button" onClick={()=>void copy(trackerLogMarkdown(items))}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Copy report</button>
+          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Copy report</button>
         <button type="button" onClick={()=>void downloadRange("markdown")} disabled={exporting}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Download report</button>
+          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Download report</button>
         <button type="button" onClick={()=>setReportOpen(false)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Close</button>
+          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Close</button>
       </div>
     </Dialog>
   </section>;

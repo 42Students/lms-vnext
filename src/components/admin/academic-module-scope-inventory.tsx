@@ -50,7 +50,7 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
    </div>
   </div>
   <p className="text-xs text-muted-foreground">{scopes.length} academic scopes loaded (including inheriting scopes). Effective values trace the configured scope hierarchy and locks; an individual learner still needs active enrollment and participation. Student counts include active learners with current enrollment in this college.</p>
-  <div className="max-h-96 overflow-auto rounded-[var(--lms-control-radius,9px)] border border-border">
+  <div className="max-h-96 overflow-auto">
    <DataTable columns={columns} rows={visible}
     getRowKey={scope=>scope.scopeType+":"+scope.scopeId}
     caption="Academic hierarchy and effective module rules"
