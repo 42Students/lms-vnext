@@ -1,7 +1,5 @@
 "use client";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-
+import { Button } from "@/components/ui/button";
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -133,7 +131,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
         <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-5">Moving a student into a full section is refused.</p>
         <div className="sm:col-span-2 lg:col-span-5">
           <Button variant="primary" disabled={pending} type="submit"
-            className="min-h-[var(--lms-control-height)] ">
+            >
             {pending ? "Creating…" : "Create class"}
           </Button>
         </div>
@@ -186,7 +184,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
   return <div>
     <Button variant="secondary" type="button" disabled={pending || row.status !== "ACTIVE"}
       onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); }}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      >
       Edit
     </Button>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
@@ -217,11 +215,11 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
         <div className="flex justify-end gap-2">
           <Button variant="secondary" disabled={pending} type="button" onClick={cancel}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+            >
             Cancel
           </Button>
           <Button variant="primary" disabled={pending || !changed} type="submit"
-            className="min-h-[var(--lms-control-height)] ">
+            >
             {pending ? "Saving…" : "Save changes"}
           </Button>
         </div>
