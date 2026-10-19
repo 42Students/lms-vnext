@@ -6,7 +6,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LoginForm } from "@/components/auth/login-form";
 import styles from "./login-shell.module.css";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
-import { brandStyleVariables } from "@/modules/colleges/branding";
+import { brandStyleVariables, deriveBrandTokens } from "@/modules/colleges/branding";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import {effectiveCollegeSignInCapabilities} from "@/modules/colleges/public-signin-policy-service";
 
@@ -107,13 +107,14 @@ export default async function HomePage({
   const themeStyle = brandStyleVariables(
     branding?.primaryColor,
   ) as React.CSSProperties;
+  const authPrimary = branding?.primaryColor ? deriveBrandTokens(branding.primaryColor).text : "#0a7c88";
   const desktopBackground = branding?.loginBackgroundUrl ?? null;
   const mobileBackground =
     branding?.loginBackgroundUrlMobile ?? desktopBackground;
 
   return (
     <main
-      style={{ ...themeStyle, "--auth-primary": branding?.primaryColor ?? "#0a7c88" } as React.CSSProperties}
+      style={{ ...themeStyle, "--auth-primary": authPrimary } as React.CSSProperties}
       className={styles.viewport}
     >
       {desktopBackground ? (
