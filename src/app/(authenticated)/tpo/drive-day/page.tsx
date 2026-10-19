@@ -5,6 +5,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
@@ -45,11 +47,11 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
   if (hasMembershipRole(context, "TPO") && !hasMembershipRole(context, "LEARNER")) {
     const raw=await searchParams;
     const search=tpoLiveRoundSearchSchema.safeParse(Array.isArray(raw.q)?raw.q[0]:raw.q);
-    if(!search.success)return <section role="alert">Invalid search. <Link href="/tpo/drive-day">Clear filters</Link></section>;
+    if(!search.success)return <Alert tone="error">Invalid search. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
     const issue=tpoDriveDayIssueSchema.safeParse(Array.isArray(raw.issue)?raw.issue[0]:raw.issue);
     const sort=tpoDriveDaySortSchema.safeParse(Array.isArray(raw.sort)?raw.sort[0]:raw.sort);
-    if(!sort.success)return <section role="alert">Invalid Drive Day sorting. <Link href="/tpo/drive-day">Clear filters</Link></section>;
-    if(!issue.success)return <section role="alert">Invalid Drive Day filter. <Link href="/tpo/drive-day">Clear filters</Link></section>;
+    if(!sort.success)return <Alert tone="error">Invalid Drive Day sorting. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
+    if(!issue.success)return <Alert tone="error">Invalid Drive Day filter. <Link href="/tpo/drive-day">Clear filters</Link></Alert>;
     const snapshot = await getTpoLiveDriveDaySummary(context);
     const liveTotals=summarizeTpoLiveTriage(snapshot.rows);
     const liveRows=sortTpoDriveDayRows(filterTpoDriveDayIssues(filterTpoLiveRoundSearch(snapshot.rows,search.data),issue.data),sort.data);
@@ -70,18 +72,10 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
         ].map(([name,count])=><div key={name} className="border-b border-border px-1 py-3"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
         <p className="text-xs text-muted-foreground">Counts describe the full retrieved live-round sample before these screen filters, not every round in the college or verified attendance.</p>
         {snapshot.truncated ? (
-          <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
-            Only the first 20 live rounds are shown; more records may exist.
-          </p>
+          <Alert tone="warning">Only the first 20 live rounds are shown; more records may exist.</Alert>
         ) : null}
         {liveRows.length === 0 ? (
-          <section className="border-b border-border py-6">
-            <h2 className="text-base font-semibold text-foreground">{snapshot.rows.length===0?"No verified round happening now":"No live rounds match this filter"}</h2>
-            <p className="mt-2 text-sm text-body">
-              Only published scheduled rounds with a recorded start and duration count as live.
-              A round without duration is not assumed active. No check-ins or no-shows are inferred.
-            </p>
-          </section>
+          <EmptyState title={snapshot.rows.length===0?"No verified round happening now":"No live rounds match this filter"} description="Only published scheduled rounds with a recorded start and duration count as live. A round without duration is not assumed active. No check-ins or no-shows are inferred."/>
         ) : (
           <div className="grid gap-4">
             {liveRows.map((round) => (
