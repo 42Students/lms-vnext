@@ -533,3 +533,5 @@
 .hrNotificationFooter a:hover { color:#18212f; background:rgba(0,0,0,.06); }
 
 .hrNotificationFooter a:active { background:rgba(0,0,0,.05); }
+
+@media (max-width:767px) { .hrNotificationDrawer [data-slot="drawer-footer"] { padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px)); border-top:1px solid #e5e9f0; background:#fafbfc; } }
