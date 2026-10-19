@@ -26,7 +26,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
  return <div className="min-w-0 space-y-5">
   <Link href="/tracker/audit-findings" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Back to audit findings</Link>
   <PageHeader title={finding.title} description={finding.externalId+" · "+finding.area+" · "+finding.kind}/>
-  <div className="flex flex-wrap gap-2"><StatusBadge>{finding.severity}</StatusBadge><StatusBadge>{finding.status}</StatusBadge>
+  <div className="flex flex-wrap gap-2"><StatusBadge tone={finding.severity==="CRITICAL"?"error":finding.severity==="HIGH"?"warning":"neutral"}>{finding.severity}</StatusBadge><StatusBadge tone={finding.status==="VERIFIED"||finding.status==="RELEASED_PROD"?"success":finding.status==="NEW"||finding.status==="NEEDS_INFO"?"warning":"info"}>{finding.status}</StatusBadge>
    <StatusBadge>{finding.assignee??"Unassigned"}</StatusBadge></div>
   {details.map(([label,value])=><section key={label} className="border-b border-border pb-4">
    <h2 className="font-semibold">{label}</h2><p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{value??"Not recorded"}</p>
