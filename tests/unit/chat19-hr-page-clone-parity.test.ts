@@ -19,4 +19,5 @@ describe("chat-19 HR pages use shared old-LMS chrome",()=>{
  it("shares legacy controls and title chrome: conversations",()=>assertClonedPage("conversations"));
  it("shares legacy controls and title chrome: drives/[jobId]/interview-slots",()=>assertClonedPage("drives/[jobId]/interview-slots"));
  it("shares legacy controls and title chrome: drives/[jobId]/messages",()=>assertClonedPage("drives/[jobId]/messages"));
+ it("shares legacy controls and title chrome: drives/[jobId]/rounds/editor",()=>assertClonedPage("drives/[jobId]/rounds/editor"));
 });
