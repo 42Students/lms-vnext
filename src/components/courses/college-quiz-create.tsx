@@ -1,5 +1,6 @@
 "use client";
 
+import { ChoiceInput } from "@/components/ui/choice-input";
 import { DateInput } from "@/components/ui/date-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
@@ -155,7 +156,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      aria-label={"Question "+(i+1)+" prompt"} onChange={e=>replaceQuestion(i,{...question,prompt:e.target.value})}
      className="w-full rounded border border-border p-2"/>
     {question.options.map((option,j)=><label key={j} className="flex items-center gap-2 text-sm">
-     <input type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
+     <ChoiceInput type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
       name={"quiz-correct-"+i} checked={option.correct} disabled={busy}
       aria-label={"Correct answer "+(j+1)} onChange={e=>replaceQuestion(i,{...question,
        options:question.options.map((o,k)=>({...o,correct:question.type==="SINGLE_CHOICE"?
