@@ -161,3 +161,50 @@ Reference facts: `docs/design/old-lms-pages.md` prescribes one #fff canvas radiu
 
 **Commit handoff:** 31 commits ahead of `main` at `d915bd67b20838f496d2a5b25b4365e748a35dd5`, 0 behind when checked immediately before this audit update. GitHub Contents API writes each commit directly to `chatgpt/chat-3-b`; no main push. 
 **Next file:** `src/components/admin/admin-program-directory.tsx`. Check Super Admin academic program filter/button variants, responsive breakpoints, and exact legacy values. Do not alter shared `ui` files.
+
+
+## Bounded turn 2 — value/state sweep (2026-10-19)
+
+Starting point: `main` at `46cd0161a0e289e7da68e615359589b03ee463e9`. Lane had 0 lane-only commits / 1,029 behind and was fast-forwarded before changes. **37 new [chat-3] commits** were pushed directly to the lane branch during this turn. Main advanced concurrently and already incorporated the first 10 commits; its later sync must preserve the remaining commits and unrelated upstream files.
+
+### Paths and changes
+
+- `src/components/admin/admin-program-directory.tsx`: replaced custom rows-per-page control with shared `PageSizeSelect`; made toolbar fit narrow canvases; defined DataTable primary/secondary/action column priorities; made form and pagination actions touch-sized.
+- `src/components/courses/faculty-course-tab-navigation.tsx`: removed codemod duplicate Select import; used shared `PageBackLink`; matched section selector responsive widths and shortcuts to outlined control tokens; preserved route destinations and actions.
+- `src/components/attendance/faculty-attendance-workspace.tsx`: replaced hand-made two-button mode pill with `SegmentedControl`; the confirmation-before-discard callback remains in the onChange path; kept Present/Absent as accessible, tone-distinct `aria-pressed` buttons with larger mobile hit areas.
+- `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx` and `src/app/(authenticated)/admin/people/directory/page.tsx`: moved hand-rolled active tab links to shared link-mode `Tabs`; removed nested contact directory canvas styling, retained URLs and counts.
+- `src/components/people/faculty-profile-editor.tsx`: flattened profile section jump navigation and matched in-page anchors to shared token palette and focus/touch rules. These remain **anchors, not tabs**, because they scroll to headings on one page.
+- `src/app/(authenticated)/teacher/calendar/page.tsx`: placed live-class shortcut in shared `PageHeader.actions`; adjusted month navigation, filters, and grid day border/surface tokens.
+- `src/app/(authenticated)/teacher/results/page.tsx` and `src/app/(authenticated)/teacher/response-followups/page.tsx`: switched hand-rolled link pagers to `Pagination` with existing server href builders; used responsive form grids, shared control states, and consistent heading shortcuts.
+- `src/app/(authenticated)/admin/academics/page.tsx`: moved scoped and unscoped shortcuts into shared `PageHeader.actions`, keeping permission-specific content; normalized outlined action states and mobile targets.
+- `src/app/(authenticated)/admin/people/page.tsx`: rendered role labels as shared neutral `Badge` pills; moved CSV action into header beside onboarding; matched filter layout and Search hit target to token system.
+- `src/components/courses/faculty-assessment-overview.tsx`: normalized assessment dates to Asia/Kolkata, matched secondary action links, delayed three-column filter layout until md, kept pager wrapping on phones.
+
+### Partial legacy-to-vNext value review (NOT completion proof)
+
+| Item/property | Legacy source and value | Current source/state | Assessment |
+|---|---|---|---|
+| Page canvas | `docs/design/old-lms-pages.md:6`: white, 12px radius, 1px #e5e9f0 border, 24px padding over #f1f4f9 | Inherited from shared canvas; this lane did not modify `src/components/ui/page-canvas.tsx` | Shared-owner verification and screenshot comparison outstanding |
+| Shell neutral border/background | `docs/design/legacy-styles/components___variables.scss:30-31`: #e5e9f0 / #f1f4f9 | Route panels use `var(--lms-canvas-border)` and `var(--lms-neutral-50)` / `var(--lms-surface)`; verify values resolved from globals | Token-resolution proof missing |
+| Page heading | `docs/design/old-lms-pages.md:7`: approx. 30px/600; `components___listing-page-header.scss:52-54`: 28px/600 | `src/components/ui/page-header.tsx:28,33-34`: 20px mobile / 30px desktop, 600 | Source specs differ; follow global owner choice, no tick |
+| Responsive threshold | `components___variables.scss:148-156`: 767px and 992px breakpoint definitions | `src/components/ui/page-header.tsx:28` and migrated routes use Tailwind sm/md breakpoints | Visual breakpoint-by-breakpoint comparison missing |
+| Legacy listing tab text | `docs/design/legacy-styles/pages___admin-list-pages.scss:239-241`: 0.875rem | `src/components/ui/tabs.tsx:89-90`: 13px link-mode tabs with 3px underline | Value mismatch/owner-level shared component work; leave unticked |
+| Listing metric text | `components___listing-page-header.scss:171-178`: 13px | `src/components/ui/badge.tsx`: `var(--lms-font-xs)` | Resolve token before claiming equality |
+| Faculty attendance mode | Legacy selected pills not independently proven; source `components___variables.scss` defines shared palette | `src/components/attendance/faculty-attendance-workspace.tsx:502-510` delegates to `SegmentedControl` and `src/components/ui/segmented-control.tsx:17-23` | Behavior preserved in source; no visual claim |
+| Program page size | `pages___admin-list-pages.scss:9,39`: filter width 220px in a specific admin list | `src/components/admin/admin-program-directory.tsx:194`: shared PageSizeSelect auto width | Different control role; compare in browser, no tick |
+| Tab strip/selection | `pages___admin-list-pages.scss:235-245` gives inset/padding rules | `src/components/ui/tabs.tsx:88-90` owns the underline and focus states | This lane only migrated consumers; shared-owner parity pending |
+
+### Strict statuses — unchanged
+
+- [ ] Teacher/Faculty Section H (missing full transitive-component raw-control/hex/overlay grep totals, exact per-property legacy/current values for all states, device-width screenshot proof).
+- [ ] Super Admin academics/people/recruiters Section H (missing full portal-wide coverage and 767px/tablet behavior; recruiters aliases an HR-owned implementation).
+- [ ] Regression proof (no build, lint, typecheck, browser or CI executed by user instruction; all changed JSX opening/closing tags were inspected in touched snippets).
+- [ ] Pixel parity: orchestrator-owned side-by-side visual verification.
+
+**Next file:** `src/components/academics/academics-overview.tsx` — inspect table/status badges and accordion/tabs of the Super Admin academic workspace, then `src/components/academics/section-operations.tsx`. Do not edit shared `src/components/ui/*`.
+
+### Upstream synchronization after turn
+
+While this turn was underway, `main` moved from `46cd0161a0e289e7da68e615359589b03ee463e9` to `55a3efe0a5917631ab26e17e158a29f6e5282e25`. Three same-path upstream edits (`admin-program-directory.tsx`, `faculty-course-tab-navigation.tsx`, `faculty-attendance-workspace.tsx`) had **identical Git blob SHA** on both sides, reflecting commits already picked up by main. The remaining ten lane-only changed files were overlaid onto main's tree and recorded in the two-parent merge commit `5e6d093b7725f88b5240bbf7d2547a52b89153b8`, pushed **only** to `chatgpt/chat-3-b`. This preserves both upstream changes and the lane's prior commit history; it is a **merge sync, not a rebase**. No change to `main` was made by this lane.
+
+Turn total after this audit update: 40 pushed commits (37 UI/code commits, two audit updates, one upstream merge commit); no CI or application execution.
