@@ -31,17 +31,17 @@ export function ThirdPartyLink({ href, label, ariaLabel }: { href: string; label
   }
 
   return <span className="inline-flex min-w-0 flex-col gap-[var(--lms-space-2)]">
-    {safeHref ? <a href={safeHref} aria-label={ariaLabel} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] underline underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{label}</a> :
+    {safeHref ? <a href={safeHref} aria-label={ariaLabel} className="inline-flex min-h-11 sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] underline underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{label}</a> :
       <span role="alert" className="text-[13px] leading-5 text-[var(--lms-body-text)]">This link is unavailable.</span>}
     {safeHref ? <span className="block select-text break-all text-[12px] leading-[18px] text-[var(--lms-muted-text)]" aria-label="Destination URL">{safeHref}</span> : null}
     {safeHref ? <span className="flex flex-wrap gap-3">
       <button type="button" onClick={() => { setCopyStatus("");setShowFallback(value=>!value); }}
         aria-expanded={showFallback}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-2 text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] underline underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none">
+        className="inline-flex min-h-11 sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] px-2 text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] underline underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none">
         {showFallback ? "Hide link" : "Show link to copy"}
       </button>
       <button type="button" onClick={() => void copyLink()}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-2 text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] underline hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] px-2 text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] underline hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Copy link
       </button>
     </span> : null}
