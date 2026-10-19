@@ -76,7 +76,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
    <h2 className="font-semibold text-foreground">Lessons</h2>
    <Button type="button" onClick={()=>{setOpen(value=>!value);setError("");}}
     disabled={!options.length||busy}
-    className="min-h-11">
+    className="min-h-11 md:min-h-9">
     Create New Lesson
    </Button>
   </div>
@@ -85,7 +85,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
   </p>:null}
   {open&&chosen?<div className="grid gap-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Course
-    <Select className="min-h-11"
+    <Select className="min-h-11 md:min-h-9"
      value={chosen.offeringId} disabled={busy}
      onChange={event=>{setOfferingId(event.target.value);setError("");}}>
      {options.map(item=><option key={item.offeringId} value={item.offeringId}>
@@ -100,24 +100,24 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
    </p>
    <label className="grid gap-1 text-sm font-semibold text-body">Lesson Name
     <Input value={name} onChange={event=>setName(event.target.value)} maxLength={255}
-     className="min-h-11" required/>
+     className="min-h-11 md:min-h-9" required/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Description (optional)
     <Textarea value={description} onChange={event=>setDescription(event.target.value)}
      maxLength={5000} rows={3}
-     className="min-h-11"/>
+     className="min-h-11 md:min-h-9"/>
    </label>
    <div className="flex flex-wrap gap-2">
     <Button type="button" disabled={busy||!name.trim()} onClick={()=>void create(false)}
-     className="min-h-11">
+     className="min-h-11 md:min-h-9">
      {busy?"Saving…":"Create Lesson"}
     </Button>
     <Button type="button" disabled={busy||!name.trim()} onClick={()=>void create(true)}
-     className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+     variant="secondary" className="min-h-11 md:min-h-9">
      Create Lesson & Add Another
     </Button>
     <Button type="button" disabled={busy} onClick={()=>setOpen(false)}
-     className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body">
+     variant="secondary" className="min-h-11 md:min-h-9">
      Cancel
     </Button>
    </div>
