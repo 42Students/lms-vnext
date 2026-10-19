@@ -100,8 +100,8 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
    </label>:null}
   </>:null}
   {!check.ok&&picked.length>0?<p role="alert" className="text-sm text-error">{check.message}</p>:null}
-  <button type="button" disabled={!check.ok||pending} onClick={()=>setConfirm(true)}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">Review {action==="DEBAR"?"debarment":"lifting"} for {picked.length} student(s)</button>
+  <Button variant="secondary" type="button" disabled={!check.ok||pending} onClick={()=>setConfirm(true)}
+   className="min-h-9 px-4">Review {action==="DEBAR"?"debarment":"lifting"} for {picked.length} student(s)</Button>
   <Dialog open={confirm} onOpenChange={open=>{if(!pending)setConfirm(open);}}
    title={action==="DEBAR"?"Confirm bulk debarment":"Confirm bulk lift"}
    description={"Apply "+action.toLowerCase()+" to up to "+picked.length+" students? Each decision records the named reason and the learner is notified."}
