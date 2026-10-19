@@ -117,7 +117,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
       {linkIssueError?<p role="alert" className="text-sm text-body">{linkIssueError}</p>:null}
       {knownErrorId&&linkIssueError?<Button type="button"
-        className="min-h-9 rounded border border-border px-4 text-sm font-semibold"
+        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold"
         onClick={()=>void linkCreatedIssue(created)}>Retry linking Known Error</Button>:null}
 
       <div className="flex flex-wrap gap-3">
@@ -133,7 +133,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
     <form onSubmit={submit} onKeyDown={onFormKeyDown}
       className="space-y-5">
       {restored?<div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
-        <span>Unsaved report restored.</span><Button type="button" onClick={()=>{setDraft(initial);clearDraft();}} className="min-h-9 rounded border border-border px-3 font-semibold">Discard draft</Button>
+        <span>Unsaved report restored.</span><Button type="button" onClick={()=>{setDraft(initial);clearDraft();}} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Discard draft</Button>
       </div>:null}
       {dirty?<p className="text-xs text-muted-foreground">Unsaved changes are kept on this device until your report is submitted.</p>:null}
       <div className="grid gap-4 md:grid-cols-3">
@@ -221,7 +221,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             className={field+" min-w-48 flex-1"}/>
           <Button type="button" onClick={()=>void checkSimilar()}
             disabled={similarLoading||similarQuery.trim().length<3}
-            className="min-h-9 rounded border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
             {similarLoading?"Searching…":"Find similar issues"}
           </Button>
         </div>
