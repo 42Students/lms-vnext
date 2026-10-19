@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { useToast } from "@/components/ui/toast";
 import {
   adminProgramsCsv,
@@ -189,14 +190,10 @@ export function AdminProgramDirectory({
               placeholder="Search program, code or department" />
           </div>
           <div className="flex flex-wrap items-end gap-2">
-            <label htmlFor="admin-program-page-size" className="grid gap-1 text-xs font-semibold text-body">
-              Rows per page
-              <Select id="admin-program-page-size" value={pageSize}
-                onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
-                className="w-full">
-                {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
-              </Select>
-            </label>
+            <PageSizeSelect id="admin-program-page-size" label="Rows per page"
+              options={[10, 25, 50, 100]} value={pageSize}
+              onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
+              wrapperClassName="w-full sm:w-auto" />
             {filtered.length ? (
               <a
                 href={csvHref} download="programs.csv"
