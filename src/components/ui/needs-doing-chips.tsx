@@ -43,12 +43,12 @@ export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs d
         const content = <><span>{item.label}</span>{count !== null ? <span className="tabular-nums">{count}</span> : null}</>;
         if (item.href !== undefined) {
           if (!item.disabled && item.href && isSafeInternalHref(item.href)) {
-            return <Link key={item.key} href={item.href} aria-label={accessibleLabel} aria-current={selected ? "page" : undefined} className={classes}>{content}</Link>;
+            return <Link key={item.key} href={item.href} data-selected={selected} aria-label={accessibleLabel} aria-current={selected ? "page" : undefined} className={classes}>{content}</Link>;
           }
-          return <span key={item.key} aria-disabled="true" className={cx(classes, "cursor-not-allowed opacity-50")}>{content}</span>;
+          return <span key={item.key} aria-disabled="true" className={cx(classes, "cursor-not-allowed opacity-50 hover:brightness-100")}>{content}</span>;
         }
         if (onSelect) {
-          return <button key={item.key} type="button" aria-label={accessibleLabel} disabled={item.disabled} aria-pressed={selected} onClick={() => onSelect(item.key)} className={classes}>{content}</button>;
+          return <button key={item.key} type="button" data-selected={selected} aria-label={accessibleLabel} disabled={item.disabled} aria-pressed={selected} onClick={() => onSelect(item.key)} className={classes}>{content}</button>;
         }
         return <span key={item.key} aria-disabled={item.disabled || undefined} className={cx(classes, "cursor-default hover:brightness-100")}>{content}</span>;
       })}
