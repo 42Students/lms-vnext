@@ -4,6 +4,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 const labels={
@@ -19,6 +20,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
 }){
  const router=useRouter(),[values,setValues]=useState(initial);
  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
+ const {askConfirm,dialog}=useConfirmFlow();
  async function save(){
   if(busy||!window.confirm("Save what companies can see? These choices control the college's recruiter-visible information policy."))return;
   setBusy(true);setMessage("");
@@ -50,7 +52,8 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
     </label>)}
   </Disclosure>
   <Button type="button" disabled={busy} onClick={()=>void save()}
-   >{busy?"Saving…":"Save"}</Button>
+   className="min-h-11 min-[768px]:min-h-9">{busy?"Saving…":"Save"}</Button>
   {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message} onDismiss={()=>setMessage("")}/>:null}
+  {dialog}
  </section>;
 }
