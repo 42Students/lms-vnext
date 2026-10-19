@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import { Select } from "@/components/ui/select";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {MentorTaskDetailsEdit} from "./mentor-task-details-edit";
@@ -79,11 +80,11 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       <label className="text-sm font-semibold">Title<input data-slot="input" required maxLength={200} value={title}
         onChange={e=>setTitle(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="text-sm font-semibold">Priority<select data-slot="select" value={priority}
+      <label className="text-sm font-semibold">Priority<Select value={priority}
         onChange={e=>setPriority(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
-      </select></label>
+      </Select></label>
       <label className="text-sm font-semibold">Description<textarea data-slot="textarea" maxLength={4000}
         value={description} onChange={e=>setDescription(e.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
@@ -97,12 +98,12 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         value={points} onChange={e=>setPoints(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
       <label className="text-sm font-semibold">Task type
-        <select data-slot="select" value={taskType} onChange={e=>setTaskType(e.target.value)}
+        <Select value={taskType} onChange={e=>setTaskType(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="">Not specified</option>
           <option value="STORY">Story</option><option value="BUG">Bug</option>
           <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
-        </select>
+        </Select>
       </label>
       <label className="text-sm font-semibold">Due date
         <input data-slot="input" type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
@@ -142,11 +143,11 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           dueDate={task.dueDate} blockerReason={task.blockerReason}/>
       </div>:null}
     {!readOnly?<label className="mt-2 block text-sm font-semibold">Pull into sprint
-     <select data-slot="select" disabled={busy} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
+     <Select disabled={busy} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       <option value="">Choose sprint</option>
       {targets.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
-     </select>
+     </Select>
     </label>:null}
    </article>)}
    {!backlog.length?<p className="py-4 text-sm text-muted-foreground">Backlog is empty.</p>:null}
