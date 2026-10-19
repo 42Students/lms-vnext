@@ -58,10 +58,8 @@ export type PlacementCompanyChoice = {
   memory:{pastDrives:number;joinedLearners:number;lastDriveAt:Date;recentRoles:string[];existingRoles:Array<{jobId:string;title:string;status:string}>} | null;
 };
 
-const inputClass =
-  "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
-const textareaClass =
-  "min-h-28 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const textareaClass = "min-h-28 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
 
 function splitList(value: string) {
   return value
@@ -878,11 +876,11 @@ export function PlacementJobCreateForm({
                   placeholder="https://example.com"
                 />
               </label>
-              {matchingEmployer?<div role="status" className="rounded border border-border bg-surface-subtle p-3 text-sm">
+              {matchingEmployer?<div role="status" className="rounded border border-border bg-muted p-3 text-sm">
                 <p className="font-semibold">This may already be {matchingEmployer.name}</p>
                 <p className="mt-1 text-xs text-body">Reuse the existing college employer to keep recruiter and drive history together.</p>
                 <button type="button" onClick={()=>{setCompanyRelationshipId(matchingEmployer.relationshipId);setCompanyMode("EXISTING");setCompanySearch("");}}
-                  className="mt-2 min-h-10 rounded-md border border-primary px-3 font-semibold text-primary-text">
+                  className="mt-2 min-h-11 rounded-[9px] border border-primary px-3 font-semibold text-primary-text md:min-h-9">
                   Use {matchingEmployer.name}
                 </button>
               </div>:null}
@@ -1422,7 +1420,7 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <section aria-label="Planned rounds" className="rounded-xl border border-border bg-surface p-4">
+      <section aria-label="Planned rounds" className="border-b border-border pb-6">
         <h2 className="font-semibold text-foreground">Interview rounds</h2>
         <label className="mt-3 block text-sm font-semibold text-body">
           Round template
@@ -1443,13 +1441,13 @@ export function PlacementJobCreateForm({
           venues and dates in the drive workspace before inviting candidates.
         </p>
       </section>
-      <section aria-label="Who this reaches" className="rounded-xl border border-border bg-surface p-4">
+      <section aria-label="Who this reaches" className="border-b border-border pb-6">
         <h2 className="font-semibold text-foreground">Who this reaches</h2>
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
         <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace. Recruiter lead invitations are managed separately under Engage. No rounds are created on this form.</p>
       </section>
 
-      <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
+      <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
         <p className="text-sm text-body">Review the drive and confirm who is told before publishing.</p>
         <div className="flex flex-wrap gap-3">
           <Button type="submit" disabled={pending || !activeSeason || uncertainCreate}>
@@ -1460,7 +1458,7 @@ export function PlacementJobCreateForm({
             value="review-publish"
             aria-label="Publish after reviewing the drive"
             disabled={pending || !activeSeason || uncertainCreate}
-            className="min-h-10 rounded-md border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
+            className="min-h-11 rounded-[9px] border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50 md:min-h-9"
           >
             Publish
           </button>
@@ -1478,7 +1476,7 @@ export function PlacementJobCreateForm({
         clearedBackup.current=true;
         try{localStorage.removeItem(backupKey);}catch{}
         setRestoredBackup(false);
-      }} className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">Discard saved browser backup</button>:null}
+      }} className="min-h-11 rounded-[9px] border border-border px-3 text-xs font-semibold text-primary-text md:min-h-9">Discard saved browser backup</button>:null}
       {partialJobId?<p role="alert" className="text-sm text-body">A draft exists. If setup did not finish, retry without changing the form or
         <a className="ml-1 font-semibold text-primary-text underline" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
         Do not submit a second drive.

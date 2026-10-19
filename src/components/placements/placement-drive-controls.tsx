@@ -151,10 +151,8 @@ type ResultDraft = {
   internalComment: string;
 };
 
-const inputClass =
-  "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
-const textareaClass =
-  "min-h-20 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const textareaClass = "min-h-20 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
 
 function humanize(value: string) {
   return value
@@ -1516,7 +1514,7 @@ export function PlacementDriveControls({
               {scheduleWarnings?.warnings
                 .find((entry) => entry.roundId === round.id)?.messages.map((message) => (
                   <p key={message} role="status"
-                    className="mt-3 rounded-md border border-border bg-surface-secondary p-3 text-sm text-warning">
+                    className="mt-3 rounded-md border border-border bg-muted p-3 text-sm text-warning">
                     {message}
                   </p>
                 ))}
