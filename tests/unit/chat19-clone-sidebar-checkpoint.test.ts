@@ -13,4 +13,8 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
   expect(sidebar()).toContain("min-width:96px;");
   expect(sidebar()).toContain("width:256px;");
  });
+ it("uses the legacy 150ms cubic bezier expansion",()=>{
+ expect(legacy()).toContain("transition: width 0.15s cubic-bezier(0.2, 0, 0, 1)");
+ expect(sidebar()).toContain("transition:width .15s cubic-bezier(.2,0,0,1)");
+});
 });
