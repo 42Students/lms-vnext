@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useId, useRef, type ReactNode, type CSSProperties } from "react";
+import { useId, useRef, type ReactNode, type CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { OverlayCloseIcon } from "@/components/ui/overlay-close-icon";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
+import { useOverlayExit } from "@/components/ui/use-overlay-exit";
 
 export type BottomSheetProps = {
   open: boolean;
@@ -22,17 +23,7 @@ export function BottomSheet({ open, onOpenChange, title, description, children, 
   const titleId = useId();
   const descriptionId = useId();
   const { availableHeight, viewportTop, viewportBottom } = useOverlayWebview({ open, dismissible, onDismiss: () => onOpenChange(false) });
-  useEffect(() => {
-    const modal = ref.current;
-    if (!modal) return;
-    if (open && !modal.open) {
-      opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      modal.showModal();
-    } else if (!open && modal.open) {
-      modal.close();
-      opener.current?.focus();
-    }
-  }, [open]);
+  useOverlayExit(ref, opener, open, 180);
   return (
     <dialog data-slot="bottom-sheet" ref={ref} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
       onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
