@@ -193,9 +193,6 @@ export function TpoCompanyMemoryWorkspace({
   }
 
   const latest = company.timeline[0] ?? null;
-  const visibleDrives=company.drives.filter(drive=>
-    [drive.jobTitle,drive.status,String(new Date(drive.createdAt).getFullYear())]
-      .join(" ").toLowerCase().includes(driveSearch.trim().toLowerCase()));
 
   return (
     <section className="space-y-5" aria-label={"Company Memory for " + company.name}>
