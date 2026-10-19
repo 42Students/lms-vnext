@@ -628,3 +628,13 @@ No runtime browser or CI run performed.
 | HR-BREAK-CONVO-ACK-53 | MAJOR | `src/components/hr/recruiter-conversation-read-control.tsx` marked unread TPO messages as acknowledged on any `response.ok` during on-open POST; manually clicked updates trusted a redirected 200 to the page. Either could be a stale login fallback with no stored read state. | `src/app/api/placements/recruiter/conversations/[threadId]/acknowledge/route.ts` emits an exact thread-scoped JSON acknowledgement **after** the authorized transaction for JSON clients, preserving native 303. Both client paths require this receipt; accept count 0 for genuinely idempotent retries. `src/modules/placements/recruiter-thread-ack-receipt-model.ts`. | `tests/unit/HR-BREAK-chat19-conversation-ack-receipt.test.ts` directly invokes origin, role, invalid ID, persisted receipt and native fallback cases. |
 
 **Verification boundary:** These are source-authored changes on `chatgpt/chat-19-b`; Vitest, TypeScript, PostgreSQL and real browsers were not run by chat-19. On-device accessibility, transient network failures, and integration replay remain part of the final cloud acceptance pass. No on-hold shared one-canvas restyling was attempted.
+
+
+## 2026-10-19 NORTH STAR shell + HR appearance pass
+
+| ID | Severity before fix | Source-level evidence | Change | Test |
+|---|---|---|---|---|
+| NORTH-STAR-SIDEBAR-01 | HIGH / UX parity | `src/components/shell/sidebar-nav.tsx`, `shell-model.ts`, `app-shell.tsx` had a permanently expanded 256px text sidebar, text initials instead of icons, no old-LMS group/active behavior and no layout push. | 96px rail expanding to 256px by pointer hover and focus, CSS-synchronized content padding, 15px labels, inline SVG icon map across 61 routes, original 42LMS logo vector, collapsed group dividers and icon badges; mobile drawer remains. `scopedShellNavigation` separates mixed Faculty/TPO menus. | `tests/unit/chat19-north-star-legacy-sidebar.test.ts` |
+| NORTH-STAR-HR-01 | UX parity | The 22-route HR inventory and child components retained bespoke deep-teal link/focus, generic `--radius` controls and strong notification panel shadows. | Semantic `text-link`, old LMS teal focus outline, 9px controls, old overlay shadow token; 18 pages + 7 HR widgets changed and four already-compatible pages inspected. No content reflow or legacy copy changes. | `tests/unit/chat19-north-star-hr-sweep.test.ts` |
+
+Full page list and reference measurements: `docs/audit/ux/north-star-sweep-chat-19.md`. **CI, typecheck, browser and accessibility execution was deliberately not performed**. Chat-13 should reconcile its topbar-only changes to `app-shell.tsx` without resetting this sidebar layout.
