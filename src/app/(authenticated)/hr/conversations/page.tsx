@@ -70,10 +70,10 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   {result.status!=="READY"?<section className="space-y-3 rounded-xl border border-border p-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
    {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
-    className="block rounded-[var(--radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11">{g.collegeName}</Link>)}
+    className="block rounded-[var(--lms-control-radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11">{g.collegeName}</Link>)}
   </section>:<>
    {decisionNoticeResult && !decisionNoticeResult.ok?
-     <p role="status" className="rounded-[var(--radius)] border border-border bg-surface p-3 text-sm text-body">
+     <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
        Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
      </p>:null}
    {decisionNotices.length>0?<section aria-label="Drive request decisions"
@@ -93,7 +93,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    </section>:null}
    {result.choices.length>1?<nav aria-label="College conversations" className="flex flex-wrap gap-2">
     {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
-     className="rounded-[var(--radius)] border border-border px-4 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{g.collegeName}</Link>)}
+     className="rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{g.collegeName}</Link>)}
    </nav>:null}
    <section className="rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
@@ -138,31 +138,31 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     <input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <input type="hidden" name="scope" value={parsed.data.scope}/>
     <label className="text-sm text-body">Order
-     <select name="sort" defaultValue={parsed.data.sort} className="mt-1 min-h-11 rounded-[var(--radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     <select name="sort" defaultValue={parsed.data.sort} className="mt-1 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </select>
     </label>
     <label className="flex-1 text-sm text-body">Search by drive or message
      <input name="q" maxLength={120} defaultValue={parsed.data.q}
-      className="mt-1 min-h-11 w-full rounded-[var(--radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-    <button type="submit" className="self-end rounded-[var(--radius)] border border-border px-4 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11">Search</button>
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
+    <button type="submit" className="self-end rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11">Search</button>
    </form>
    <nav aria-label="Conversation kind" className="flex flex-wrap gap-2">
     {HR_CONVERSATION_KINDS.map(item=><Link key={item.value}
      href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,
       unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:item.value,page:1})}
      aria-current={parsed.data.scope===item.value?"page":undefined}
-     className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       {item.label}
     </Link>)}
    </nav>
    <nav aria-label="Conversation status" className="flex flex-wrap gap-2">
     <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"false",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}
      aria-current={parsed.data.unreadOnly==="false"?"page":undefined}
-     className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">All</Link>
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">All</Link>
     <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"true",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}
      aria-current={parsed.data.unreadOnly==="true"?"page":undefined}
-     className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Unread</Link>
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Unread</Link>
    </nav>
    <p role="status" className="text-sm text-body">
     {result.unreadInView} unread placement cell messages in these conversations
@@ -176,7 +176,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,
       sort:parsed.data.sort,scope:parsed.data.scope,page:result.page,
      })}/>
-     <button type="submit" className="min-h-11 rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Mark visible unread conversations as read
      </button>
      <span className="text-xs text-muted-foreground">Only incoming placement-cell messages on this page.</span>
@@ -198,9 +198,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    </ol>:<p role="status" className="rounded-xl border border-border p-5 text-body">No matching conversations with the placement cell for this college.</p>}
    <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">
     {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
-      className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
     {result.page<result.pages?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page+1})}
-      className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
    </nav>
   </>}
  </div>;
