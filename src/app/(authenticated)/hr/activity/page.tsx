@@ -1,4 +1,5 @@
 import { Tabs } from "@/components/ui/tabs";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -33,11 +34,12 @@ export default async function HrJobActivityPage({searchParams}:{
     href={"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId)}
     className="block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{grant.collegeName}</Link>)}
   </section>:<>
-   {result.choices.length>1?<nav aria-label="College activity filter" className="flex flex-wrap gap-2">
-    {result.choices.map(grant=><Link key={grant.id}
-     href={"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId)}
-     className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary"}>{grant.collegeName}</Link>)}
-   </nav>:null}
+   {result.choices.length>1?<NeedsDoingChips label="College activity:"
+    selectedKey={result.collegeId}
+    items={result.choices.map(grant=>({
+     key:grant.collegeId,label:grant.collegeName,
+     href:"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId),
+    }))}/>:null}
    <form action="/hr/activity" method="get" className="flex flex-wrap gap-2">
      <input type="hidden" name="collegeId" value={result.collegeId}/>
      <input type="hidden" name="kind" value={input.data.kind}/>

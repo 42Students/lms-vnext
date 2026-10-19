@@ -37,7 +37,7 @@ export default async function CollegeDriveShortlistedPage({
     {key:"role",header:"Role",cell:item=>item.roleTitle},
   ];
   return <div className="space-y-6">
-    <PageHeader eyebrow="Drives" title="Shortlisted"
+    <PageHeader title="Shortlisted"
       description={data.drive.title}
       actions={<Link href={driveApplicationsHref(jobId,{...query,screening:"ALL"})}
         className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Applications</Link>} />

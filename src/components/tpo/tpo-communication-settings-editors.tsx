@@ -78,7 +78,7 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
     className="mt-2 w-full"/>
   </label>
   <p className="text-right text-xs text-muted-foreground">{value.length}/300</p>
-  <div className="rounded-[var(--lms-canvas-radius,12px)] border border-dashed border-border p-4">
+  <div className="rounded-[var(--lms-canvas-radius)] border border-dashed border-border p-4">
    <p className="mb-2 text-sm text-muted-foreground">How the end of an invite looks</p>
    <p className="whitespace-pre-line text-sm text-body">{value.trim()||"No signature yet"}</p>
   </div>

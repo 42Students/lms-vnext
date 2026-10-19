@@ -29,7 +29,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
         description={lessons ? undefined : COLLEGE_COURSE_TAB_COPY.progressDescription}
         actions={
           <Link href="/college/courses"
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
             Course offerings
           </Link>
         }
@@ -530,8 +530,8 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           <Button type="submit"
-            className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</Button>
-          <Link href={href} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="min-h-11 px-5 sm:min-h-9">Filter</Button>
+          <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
             Clear
           </Link>
         </form>
@@ -662,10 +662,10 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
           </form>:null}
           {data.query.page > 1 ? <Link
             href={collegeLearningHref(data.kind, { ...data.query, page: data.query.page - 1 })}
-            className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link> : null}
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Previous</Link> : null}
           {data.query.page < data.totalPages ? <Link
             href={collegeLearningHref(data.kind, { ...data.query, page: data.query.page + 1 })}
-            className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Next</Link> : null}
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Next</Link> : null}
         </div>
       </nav>
       <p className="text-xs leading-5 text-muted-foreground">
