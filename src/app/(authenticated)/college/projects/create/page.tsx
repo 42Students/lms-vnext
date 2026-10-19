@@ -21,7 +21,7 @@ export default async function CollegeCreateProjectPage() {
     <ProjectAdminNav basePath="/college/projects" active="workspaces"/>
     <PageHeader eyebrow="College Admin · Projects" title="Create workspace"
       description="Choose the published template and learners for this workspace."/>
-    <Link href="/college/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">
+    <Link href="/college/projects" className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline">
       Back to workspaces
     </Link>
     <CreateProjectControl standalone collegeId={collegeId} basePath="/college/projects"
