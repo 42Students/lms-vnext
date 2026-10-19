@@ -73,7 +73,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
    </div>
   <form onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
    <label className="block text-sm text-body">Message
-    <Textarea className="mt-1 min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"
+    <Textarea className="mt-1 min-h-28 w-full"
       maxLength={4000} required aria-label="Message" placeholder="Write a message" value={body}
       onFocus={restoreDraft} onChange={e=>persistDraft(e.target.value)}
       onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent.isComposing){
@@ -84,7 +84,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
     <Button variant="secondary" type="button" disabled={busy||!body.trim()} onClick={discardDraft}
      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold">Discard draft</Button>
     <Button variant="primary" type="submit" disabled={busy||!body.trim()}
-     className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+     className="min-h-11 sm:min-h-9">
       Send message
     </Button>
     {discardReview?<p role="status" className="w-full text-sm">Discard your unsent message? Select Discard draft again to confirm, or keep typing to cancel.</p>:null}
