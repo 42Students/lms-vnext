@@ -1,6 +1,6 @@
+import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -93,7 +93,7 @@ export default async function CollegeActivityPage({
         <label className="grid gap-1 text-sm font-semibold text-body">
           Module
           <Select name="module" defaultValue={data.query.module ?? ""}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="">All modules</option>
             {ACTIVITY_MODULES.map(v =>
               <option key={v} value={v}>{v}</option>)}
@@ -102,7 +102,7 @@ export default async function CollegeActivityPage({
         <label className="grid gap-1 text-sm font-semibold text-body">
           Importance
           <Select name="importance" defaultValue={data.query.importance ?? ""}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="">All importance levels</option>
             {ACTIVITY_IMPORTANCE.map(v =>
               <option key={v} value={v}>{v}</option>)}
@@ -146,18 +146,18 @@ export default async function CollegeActivityPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           From date (IST)
-          <Input name="from" type="date" defaultValue={data.query.from ?? ""}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+          <DateInput name="from" mode="date" defaultValue={data.query.from ?? ""}
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           To date (IST)
-          <Input name="to" type="date" defaultValue={data.query.to ?? ""}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+          <DateInput name="to" mode="date" defaultValue={data.query.to ?? ""}
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Events per page
           <Select name="pageSize" defaultValue={data.query.pageSize ?? "25"}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="10">10 events</option>
             <option value="25">25 events</option>
             <option value="50">50 events</option>
