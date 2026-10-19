@@ -45,6 +45,23 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
     expect(css()).toContain('-webkit-overflow-scrolling:touch');
   });
 
+  it("matches the original 82 percent mobile drawer shadow, dividers and readable long labels", () => {
+    const legacy = read("docs/design/legacy-styles/components___antddesign.scss");
+    expect(legacy).toContain("box-shadow: 4px 0 16px rgba(0, 0, 0, 0.12)");
+    expect(legacy).toContain("word-break: break-word");
+    expect(legacy).toContain("overflow-wrap: break-word");
+    expect(legacy).toContain("margin: 6px 8px !important");
+    expect(css()).toContain("box-shadow:4px 0 16px rgba(0,0,0,.12)");
+    expect(css()).toContain(".lms-mobile-sidebar .lms-nav-label {");
+    expect(css()).toContain("white-space:normal;");
+    expect(css()).toContain("overflow-wrap:break-word;");
+    expect(css()).toContain("word-break:break-word;");
+    expect(css()).toContain("margin:6px 8px;");
+    // Desktop's original ellipsis remains intact; mobile overrides it only
+    // inside the Drawer, without changing any portal's navigation labels.
+    expect(css()).toContain("text-overflow:ellipsis;");
+  });
+
   it("maps every sidebar destination to a real glyph or existing image", () => {
     const source = model();
     const mapped = new Set(
