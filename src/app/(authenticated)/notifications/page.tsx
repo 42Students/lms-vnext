@@ -64,7 +64,6 @@ export default async function NotificationsPage({
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Inbox"
         title="Notifications"
         description="Deterministic workflow updates that need your attention, separate from noisy technical events."
       />

@@ -47,7 +47,7 @@ export default async function LearnerNotificationHistoryPage({
         className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Notifications
       </Link>
-      <PageHeader eyebrow="Learner · Notifications"
+      <PageHeader
         title="Personal notification history"
         description="Browse your recorded personal notifications beyond the latest inbox items. College announcements use the main Notifications page."
       />
