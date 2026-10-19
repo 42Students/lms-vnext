@@ -18,7 +18,8 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
   <Button ref={trigger} variant="secondary" type="button" onClick={()=>setOpen(true)}>
    Delete
   </Button>
-  {<Dialog open={open} onOpenChange={next=>{if(!next)dismiss();else setOpen(true);}} role="alertdialog" className="max-w-md"
+  {<Dialog open={open} onOpenChange={next=>{if(!pending.current){if(!next)dismiss();else setOpen(true);}}} dismissible={!pending.current}
+    role="alertdialog" className="max-w-md"
    title="Delete this announcement?" description="Students stop seeing it, and its notices are taken back.">
     <form method="post" action={"/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/lifecycle"}
      className="mt-5 flex flex-wrap gap-3"
