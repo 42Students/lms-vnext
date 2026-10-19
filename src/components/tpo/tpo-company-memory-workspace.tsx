@@ -1,4 +1,5 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
@@ -313,7 +314,7 @@ export function TpoCompanyMemoryWorkspace({
                           person.inviteSentAt?"Invite sent, not opened":"No invite sent"}
                       </p>
                     </div>
-                    <span className="rounded-full border border-border px-2 py-1 text-xs">{person.stage==="DRIVE_PLANNED"?"Drive planned":person.stage==="NOT_NOW"?"Not now":person.stage==="RECRUITED"?"Recruited":person.stage==="JOINED"?"Joined":person.stage==="INVITED"?"Invited":person.stage==="CONTACTED"?"Contacted":"New"}</span>
+                    <Badge  tone="neutral">{person.stage==="DRIVE_PLANNED"?"Drive planned":person.stage==="NOT_NOW"?"Not now":person.stage==="RECRUITED"?"Recruited":person.stage==="JOINED"?"Joined":person.stage==="INVITED"?"Invited":person.stage==="CONTACTED"?"Contacted":"New"}</Badge>
                   </div>
                 ))}
               </div>
