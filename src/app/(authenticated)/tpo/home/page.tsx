@@ -39,7 +39,7 @@ export default async function TpoHome(){
  </div>;
  const moduleAccess=await resolveOptionalModuleAccess(ctx);
  if(!moduleAccess.placements.enabled)return <div role="status" className="min-w-0 rounded-xl border border-border bg-surface p-6">
-  <h1 className="text-lg font-semibold">Placements is switched off for this college</h1>
+  <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Placements is switched off for this college</h1>
   <p className="mt-2 text-sm text-body">Placement work is not available until your college enables the Placements module.</p>
  </div>;
  const collegeId=ctx.membership!.collegeId;
@@ -195,9 +195,9 @@ export default async function TpoHome(){
   {next?<div className="mt-2 space-y-2">
    <p className="break-words font-semibold">{next.title}</p>
    <p className="text-sm text-muted-foreground">{next.text}</p>
-   <Link href={next.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-foreground">{next.action}</Link>
+   <Link href={next.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">{next.action}</Link>
   </div>:rows.find(row=>row.needsAttention)?<div className="mt-2 space-y-2"><p className="text-sm">{rows.find(row=>row.needsAttention)?.status}</p>
-   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-foreground">Open</Link>
+   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">Open</Link>
   </div>:<div className="mt-2 space-y-1"><p className="font-semibold">Nothing is waiting on you.</p><p className="text-sm text-muted-foreground">New requests, results and replies show up here first.</p></div>}
  </section>
  <section className="min-w-0 space-y-2" aria-label="Your placement work">

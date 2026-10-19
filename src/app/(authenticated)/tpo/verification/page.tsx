@@ -12,7 +12,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const params=await searchParams;
  const parsed=parseTpoVerificationParams(params);
  if(!parsed)return <div className="space-y-3 p-5">
-  <h1 className="text-lg font-semibold">Invalid verification filters</h1>
+  <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Invalid verification filters</h1>
   <p role="alert">No verification records were loaded. Choose a supported status or reset the filters.</p>
   <Link href="/tpo/verification" className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
  </div>;
@@ -93,11 +93,11 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    ((query.tab==="WAITING"?queue.counts?.WAITING:query.tab==="VERIFIED"?queue.counts?.VERIFIED:queue.counts?.SENT_BACK)??0)>1000?
     <p role="status" className="rounded border border-border p-3 text-sm">Showing the first 1,000 students in this view. Narrow the filters to find more students.</p>:null}
   {!queue.available?<section role="status" className="rounded border border-border p-4">
-   <h1 className="font-semibold">Verification</h1>
+   <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Verification</h1>
    <p>Verification records are not available right now. Please try again or contact your college admin.</p>
    <Link href="/tpo/verification" className="font-semibold text-[var(--lms-teal-deep)] underline">Retry</Link>
   </section>:!queue.enabled||!queue.permitted?<section role="status" className="rounded border border-border p-4">
-   <h1 className="font-semibold">You cannot verify profiles here</h1>
+   <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">You cannot verify profiles here</h1>
    <p className="text-sm">{!queue.enabled
     ?"Your college admin has not allowed the placement cell to verify profiles"
     :"Your verification access has been removed. Ask your college admin."}</p>
