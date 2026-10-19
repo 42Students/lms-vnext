@@ -130,10 +130,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
 
       <form className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
-          <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground"/>
+          <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 sm:min-h-9"/>
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section
-          <Select name="section" defaultValue={parsed.section} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground">
+          <Select name="section" defaultValue={parsed.section} className="min-h-11 sm:min-h-9">
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
           </Select>
         </label>
