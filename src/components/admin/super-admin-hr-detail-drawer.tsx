@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -217,7 +218,7 @@ export function SuperAdminHrDetailDrawer({
             </div>
 
             {account.grants.length === 0 ? (
-              <p className="mt-4 rounded-lg bg-muted p-4 text-sm text-muted-foreground">
+              <p className="mt-4 border-l-2 border-border bg-muted px-4 py-3 text-sm text-muted-foreground">
                 No colleges yet.
               </p>
             ) : (
@@ -225,7 +226,7 @@ export function SuperAdminHrDetailDrawer({
                 {account.grants.map((grant) => (
                   <li
                     key={grant.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border px-3 py-3"
+                    className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3"
                   >
                     <div className="min-w-0">
                       <p className="m-0 font-semibold text-foreground">
@@ -298,8 +299,8 @@ export function SuperAdminHrDetailDrawer({
 
                 <label className="mb-1.5 mt-3 block text-xs font-semibold text-body">
                  Until (optional)
-                 <input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
-                  className="mt-1 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+                 <Input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
+                  className="mt-1 min-h-11 w-full sm:min-h-9"/>
                  {expiryError?<span role="alert" className="mt-1 block text-error">{expiryError}</span>:null}
                  <span className="mt-1 block font-normal text-muted-foreground">If blank, access expires in three months. An expired or unverified grant cannot authorize recruiter actions.</span>
                 </label>
