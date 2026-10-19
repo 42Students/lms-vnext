@@ -65,7 +65,7 @@ export default async function LearnerPlacementJobsPage() {
     <div className="min-w-0 space-y-6">
       <PageHeader title="Drives" actions={(
         <Link href="/learn/my-placements/rules?from=drives"
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         Review placement rules and preparation →
       </Link>
       )} />
