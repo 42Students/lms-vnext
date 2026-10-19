@@ -8,7 +8,7 @@ export type InlineNoticeProps = { tone: "error" | "success" | "info"; message: s
 const toneClasses = {
   error: "border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
   success: "border-[rgba(5,150,105,0.25)] bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
-  info: "border-[var(--lms-info-border)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
+  info: "border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] text-[var(--lms-primary-text)]",
 } as const;
 
 export function InlineNotice({ tone, message, onDismiss, successDismissMs = 5_000 }: InlineNoticeProps) {
