@@ -37,7 +37,7 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
   <div className="flex flex-wrap gap-2">{[
    "Round scheduled or changed","Offer released, expiring, expired or withdrawn",
    "Drive cancelled","Application deadline today","Debarred or marked absent",
-  ].map(label=><span key={label} className="rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-1 text-xs">{label}</span>)}</div>
+  ].map(label=><span key={label} className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">{label}</span>)}</div>
   <label className="block text-sm font-semibold">Monthly limit on optional SMS
    <Input type="number" min={0} max={100000} step={1} value={value} disabled={busy}
     onChange={event=>setValue(event.target.value===""?-1:Number(event.target.value))}
@@ -77,7 +77,7 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
     className="mt-2 w-full"/>
   </label>
   <p className="text-right text-xs text-muted-foreground">{value.length}/300</p>
-  <div className="rounded-[var(--lms-control-radius,9px)] border border-dashed border-border p-4">
+  <div className="rounded-[var(--lms-control-radius)] border border-dashed border-border p-4">
    <p className="mb-2 text-sm text-muted-foreground">How the end of an invite looks</p>
    <p className="whitespace-pre-line text-sm text-body">{value.trim()||"No signature yet"}</p>
   </div>

@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -38,7 +41,7 @@ async function submitFollowup(
 }
 
 const inputClass =
-  "min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground";
+  "min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground";
 
 export function TpoCalendarCreateFollowup({
   leads,
@@ -84,7 +87,7 @@ export function TpoCalendarCreateFollowup({
   }
 
   return (
-    <section aria-label="Create recruiter follow-up" className="border-t border-border pt-4 sm:p-5">
+    <section aria-label="Create recruiter follow-up" className="border-t border-border pt-4">
       <h2 className="m-0 text-base font-semibold text-foreground">Create recruiter follow-up</h2>
       <p className="mt-1 text-sm text-body">
         Schedule for an existing recruiter lead. Enter the due date and time in IST.
@@ -102,10 +105,10 @@ export function TpoCalendarCreateFollowup({
         <form onSubmit={onSubmit} className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Recruiter lead
-            <input type="search" value={leadQuery} className={inputClass}
+            <Input type="search" value={leadQuery} className={inputClass}
               placeholder="Search name, company or email" aria-label="Search recruiter leads"
               onChange={(event) => { setLeadQuery(event.target.value); setLeadId(""); }} />
-            <select name="leadId" required value={leadId} disabled={matchingLeads.length===0}
+            <Select name="leadId" required value={leadId} disabled={matchingLeads.length===0}
               onChange={(event) => setLeadId(event.target.value)} className={inputClass}>
               <option value="">Select a matching lead</option>
               {matchingLeads.map((lead) => (
@@ -114,23 +117,23 @@ export function TpoCalendarCreateFollowup({
                   {lead.email ? " · " + lead.email : ""}
                 </option>
               ))}
-            </select>
+            </Select>
             {search.length>=2&&matchingLeads.length===0 ? (
               <span role="status" className="text-xs text-muted-foreground">No matching recruiter leads.</span>
             ) : null}
           </label>
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Due date and time (IST)
-            <input name="dueAt" type="datetime-local" required className={inputClass} />
+            <Input name="dueAt" type="datetime-local" required className={inputClass} />
           </label>
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Note (optional)
-            <input name="note" maxLength={500} className={inputClass} />
+            <Input name="note" maxLength={500} className={inputClass} />
           </label>
           <div className="flex items-end">
-            <button type="submit" disabled={busy || !leadId} className="min-h-10 w-full rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+            <Button type="submit" disabled={busy || !leadId} className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
               {busy ? "Saving…" : "Create follow-up"}
-            </button>
+            </Button>
           </div>
         </form>
       )}
@@ -195,7 +198,7 @@ export function TpoCalendarMoveFollowup({
     <form onSubmit={onSubmit} className="mt-4 flex flex-wrap items-end gap-2 border-t border-border pt-4">
       <label className="flex min-w-48 flex-1 flex-col gap-1 text-xs font-semibold text-body">
         Move follow-up (IST)
-        <input
+        <Input
           name="dueAt"
           type="datetime-local"
           key={currentIst}
@@ -204,21 +207,21 @@ export function TpoCalendarMoveFollowup({
           className={inputClass}
         />
       </label>
-      <button
+      <Button variant="secondary"
         type="submit"
         disabled={busy}
-        className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50"
+        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50"
       >
         {busy ? "Moving…" : "Reschedule"}
-      </button>
-      <button
+      </Button>
+      <Button variant="secondary"
         type="button"
         disabled={busy}
         onClick={() => void onDone()}
-        className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50"
+        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50"
       >
         {busy ? "Saving…" : "Done"}
-      </button>
+      </Button>
       <p role="status" aria-live="polite" className="w-full text-xs text-body">{message}</p>
     </form>
   );
