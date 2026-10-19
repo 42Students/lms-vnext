@@ -131,12 +131,12 @@ export default async function TpoCompanyContactLogPage({
             <span className="text-body">Page {log.page} of {log.pages}</span>
             <div className="flex gap-3">
               {log.page > 1 ? (
-                <Link href={href(log.page - 1)} className="font-semibold text-link hover:underline">
+                <Link href={href(log.page - 1)} className="font-semibold text-link hover:underline lms-inline-link">
                   ← Previous
                 </Link>
               ) : null}
               {log.pages !== null && log.page < log.pages ? (
-                <Link href={href(log.page + 1)} className="font-semibold text-link hover:underline">
+                <Link href={href(log.page + 1)} className="font-semibold text-link hover:underline lms-inline-link">
                   Next →
                 </Link>
               ) : null}
