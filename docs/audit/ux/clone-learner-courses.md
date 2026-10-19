@@ -370,3 +370,38 @@ Checked full contents of 99 course TSX files using tag-pattern equivalents of th
 | Mobile/tablet page layout, focus order, touch targets | `docs/design/old-lms-pages.md` + legacy rules (comparison pending) | Each learner and admin page (screenshots pending) | OPEN |
 
 Do not tick any item until each value and state has exact legacy/vNext file:line proof and match; record negative findings as missing, not as completed. Pixel screenshots are orchestrator's separate section J.
+
+## 2026-10-19 replacement chat-7 — bounded source-judgement batch 3
+
+**Branch synchronization:** live GitHub comparison found `main@12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` ahead of `chatgpt/chat-7-b@0133c651f849492ab7441ce5520491a87942c888` by 1,611 commits and branch-only ahead count zero. Branch ref fast-forwarded with an expected-SHA lease before writes; no commits were discarded.
+
+**10 source commits pushed to `chatgpt/chat-7-b`, plus this audit commit. Eight distinct owned TSX files received changes** (the first two files each had multiple commits):
+
+| Source file | Judgment-case outcome | Commit(s) |
+| --- | --- | --- |
+| `src/components/courses/admin-offering-learning-page.tsx` | Added matching anchor scroll offset/heading text token and shared `PageBackLink`; removed handmade Back link. Hash anchor targets remain unchanged. | `c637742`, `cd8c4f5` |
+| `src/components/courses/college-live-classes-directory.tsx` | Restored missing Button import; moved original CSV action into shared page header; replaced raw uppercase status text with shared StatusBadge; flattened list surface; migrated manual Previous/Next to shared Pagination. | `c3eb8ab`, `fc5204c` |
+| `src/components/courses/super-admin-lesson-bulk-visibility.tsx` | Removed duplicate Checkbox import and aligned heading token; retained native Checkbox selection behavior. | `17ef188` |
+| `src/components/courses/super-admin-course-bulk-visibility.tsx` | Removed variant-overriding secondary styles and primary `text-primary-text` class that conflicted with the shared button's white text; preserved all bulk action handlers, pending and disabled states. | `9da1499` |
+| `src/components/courses/admin-assessment-read-directory.tsx` | Replaced local prev/next buttons with shared Pagination; retained query, 25-per-page label, and destination. | `7165b0e` |
+| `src/components/courses/admin-course-overview.tsx` | Replaced course catalogue pager for admin and college contexts; preserved search/query/page-size and route base. | `a838eeb` |
+| `src/components/courses/college-content-aggregate.tsx` | Replaced custom resources/videos pager; preserved 25-per-page label and current filter values. | `a4b84e1` |
+| `src/components/courses/college-learning-directory.tsx` | Replaced custom lesson/progress prev/next pager while preserving all query parameters and the separate lesson Jump to page form; removed `Go` button's primary contrast override. | `a71835b` |
+
+### Source value/state/responsive evidence (not whole-area H sign-off)
+
+| Property / state | Old LMS source + exact rule | vNext reference / inspected outcome | Qualification |
+| --- | --- | --- | --- |
+| Pagination active border/hover | `legacy-styles/components___antddesign.scss:233-239` `$clrThird` for active, border and hover; `components___variables.scss:10` `#26bac7` | `src/components/ui/pagination.tsx:68-75` active border/hover on `--lms-primary`; consuming pages listed above use shared Pagination | CSS variable resolved value and real viewport not measured |
+| Pagination mobile target | `components___antddesign.scss:242-262` at <=767px min 44×44 px, radius 8px, centred | `src/components/ui/pagination.tsx:53-57` min-h-11/min-w-11/rounded-[8px], md:min-h-9, flex-wrap | Source-rule width/height/radius match; screenshot and focus order pending |
+| Pagination mobile simplified links | `components___antddesign.scss:268-280` hide options and inactive numbers/jump shortcuts | `src/components/ui/pagination.tsx:60-85` mobile `hidden md:inline-flex` for inactive numbers; previous/next persist, current persists | Source conditional paths inspected, not browser-tested |
+| Course back mobile target | `components___learn-layout.scss:361-383` minimum 44px, icon and mobile label hidden below 768px; hover `$clrThird` | `src/components/ui/page-back-link.tsx:16-30` min-h-11/min-w-11, hidden md:inline label with aria-label, token hover; `admin-offering-learning-page.tsx:77` consuming | Source match for target and label; runtime focus/state proof pending |
+| Course tabs deep anchors | `components___learn-layout.scss:361-383,484-512` accessible touch/scroll rules; header offset | `admin-offering-section-tabs.tsx` remains route/hash-backed shared Tabs; `admin-offering-learning-page.tsx:81,105` course-home/course-syllabus both scroll-mt-24; two child sections already scroll-mt-24 | Anchor continuity checked in source; active indicator after hash change not browser-tested |
+| Live session publication badge | `components___variables.scss:63+` status color palette; `old-lms-pages.md:10` compact status pills | `college-live-classes-directory.tsx:87` shared StatusBadge tone for published/archived/draft; `src/components/ui/status-badge.tsx:9-17` token tones, 22px+ height | Shared component matches intended pill treatment, exhaustive state/value table not yet measured |
+| Bulk action states | `docs/design/ui-clone-checklist.md:D` primary #0a7c88/white and secondary outlined, hover/focus/disabled | `super-admin-course-bulk-visibility.tsx:67-82` now inherits `Button` variant classes without local foreground/background override | Native `Button` owned by chat-17; exact desktop hover/focus disabled computed values not verified |
+
+**Scoped source-probe record:** fetched and re-read complete latest GitHub file contents for all eight TSX paths after writes. In these eight files only, text-pattern equivalents of `<button([[:space:]>])`, `<select([[:space:]>])`, `<input([[:space:]>])`, `<textarea([[:space:]>])`, six-digit CSS hex literals and `<nav>` mismatch found **0 matches** for each raw control or hex category, and **0 native nav openings / 0 native nav closings** (all shared pagination components are self-closing JSX). Checked shared `Button` open/close tag counts in all edited files; each count matched. All five new `Pagination` uses are self-closing. This is connector source inspection, **not** a local `rg` run and **not** a statement of whole-area zero coverage.
+
+**STRICT TICK:** H1–H6 remain **unticked**. Work-queue paths were source-edited but cannot be marked parity-complete without exhaustive 247-file path coverage, all-property source/value+state proofs, and phone/tablet side-by-side computed verification. No app code, tests, typecheck, lint, screenshots, or CI were executed. The legacy-selected color mismatch noted in batch 1 is still owned by shared-skin chat-17.
+
+**Exact next file:** `src/components/courses/learner-course-overview.tsx` — review the mobile section-jump nav and Recent updates category links for shared chip/tab and focus styles, then `src/components/courses/learner-course-discussion.tsx` for focus/status source review.
