@@ -56,12 +56,12 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       <Metric label="Needs screening" value={operations.summary.pendingScreening} description="Candidates waiting for a placement-cell screening decision." />
       <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Jobs with an unresolved operational action." />
     </div>
-    <section className="rounded-xl border border-border bg-surface">
-      <div className="border-b border-border px-5 py-4">
+    <section className="border-b border-border pb-6">
+      <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">Placement funnel</h2>
         <p className="mt-1 text-sm text-body">{operations.analytics.season ? `${operations.analytics.season.name} · durable season-to-date conversion` : "Start a placement season to establish a durable funnel baseline."}</p>
       </div>
-      <div className="grid gap-5 px-5 py-5 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid gap-5 py-4 sm:grid-cols-2 xl:grid-cols-5">
         <FunnelMetric label="Applications" value={operations.analytics.funnel.applications} />
         <FunnelMetric label="Shortlisted" value={operations.analytics.funnel.shortlisted} previous={operations.analytics.funnel.applications} />
         <FunnelMetric label="Offered" value={operations.analytics.funnel.offered} previous={operations.analytics.funnel.shortlisted} />
@@ -70,8 +70,8 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       </div>
     </section>
     {showDriveSearch?<SuperAdminNeedsAttention items={operations.workQueue} basePath={basePath}/>:
-    <section className="rounded-xl border border-border bg-surface">
-      <div className="border-b border-border px-5 py-4">
+    <section className="border-b border-border pb-6">
+      <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>
         <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
         {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
@@ -82,7 +82,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
           <button type="submit" className="min-h-11 rounded-[9px] border border-border px-4 font-semibold md:min-h-9">Apply</button>
         </form>:null}
       </div>
-      {operations.workQueue.length === 0 ? <div className="p-5"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." /></div> :
+      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." /></div> :
         <div className="divide-y divide-border">{operations.workQueue.map((item, index) =>
           <div key={item.jobId + item.code + index} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
@@ -93,8 +93,8 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
             <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
           </div>)}</div>}
     </section>}
-    <section className="rounded-xl border border-border bg-surface">
-      <div className="border-b border-border px-5 py-4"><h2 className="m-0 text-base font-semibold text-foreground">Upcoming rounds</h2><p className="mt-1 text-sm text-body">Scheduled rounds across the active college.</p></div>
+    <section className="border-b border-border pb-6">
+      <div className="border-b border-border pb-3"><h2 className="m-0 text-base font-semibold text-foreground">Upcoming rounds</h2><p className="mt-1 text-sm text-body">Scheduled rounds across the active college.</p></div>
       {operations.upcomingRounds.length === 0 ? <p className="m-0 px-5 py-6 text-sm text-muted-foreground">No future rounds are scheduled.</p> :
         <div className="divide-y divide-border">{operations.upcomingRounds.map(round =>
           <div key={round.roundId} className="flex flex-col gap-2 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
@@ -107,8 +107,8 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         id:item.job.id,title:item.job.title,companyName:item.job.company.name,
         status:item.job.status,applicants:item.metrics.submittedApplications,
       }))} /> : null}
-    <section className="rounded-xl border border-border bg-surface">
-      <div className="border-b border-border px-5 py-4"><h2 className="m-0 text-base font-semibold text-foreground">Job portfolio</h2><p className="mt-1 text-sm text-body">Operational state for every non-archived placement job in this college.</p></div>
+    <section className="border-b border-border pb-6">
+      <div className="border-b border-border pb-3"><h2 className="m-0 text-base font-semibold text-foreground">Job portfolio</h2><p className="mt-1 text-sm text-body">Operational state for every non-archived placement job in this college.</p></div>
       <div className="divide-y divide-border">{operations.jobs.map(item =>
         <div key={item.job.id} className="flex flex-col gap-3 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
           <div><div className="flex flex-wrap items-center gap-2"><p className="m-0 font-semibold text-foreground">{item.job.title}</p><StatusBadge tone={item.job.status === "PUBLISHED" ? "success" : item.job.status === "DRAFT" ? "warning" : "neutral"}>{item.job.status}</StatusBadge></div><p className="mt-1 text-sm text-body">{item.job.company.name} · {item.metrics.submittedApplications} applications · {item.metrics.roundCount} rounds</p></div>

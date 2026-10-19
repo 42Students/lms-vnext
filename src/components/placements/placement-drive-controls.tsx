@@ -810,8 +810,8 @@ export function PlacementDriveControls({
   return (
     <>
     <div className="space-y-6">
-      <section className="rounded-xl border border-border bg-surface">
-        <div className="border-b border-border px-5 py-4">
+      <section className="border-b border-border pb-6">
+        <div className="border-b border-border pb-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="m-0 text-base font-semibold text-foreground">
@@ -1197,8 +1197,8 @@ export function PlacementDriveControls({
         </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface">
-        <div className="border-b border-border px-5 py-4">
+      <section className="border-b border-border pb-6">
+        <div className="border-b border-border pb-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="m-0 text-base font-semibold text-foreground">
@@ -1221,7 +1221,7 @@ export function PlacementDriveControls({
             </StatusBadge>
           </div>
         </div>
-        <div className="grid gap-4 p-5">
+        <div className="grid gap-4 pt-4">
           {evaluationRounds.map(
             (round, index) => (
               <div
