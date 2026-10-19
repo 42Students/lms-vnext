@@ -1,5 +1,6 @@
-import { Input } from "@/components/ui/input";
 "use client";
+import { Input } from "@/components/ui/input";
+
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
