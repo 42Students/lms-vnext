@@ -145,7 +145,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
        onClick={()=>{if(sort===col.index)setDescending(!descending);else{setSort(col.index);setDescending(false);}}}
        aria-pressed={sort===col.index}
        aria-label={"Sort "+col.heading+(sort===col.index?(descending?" descending":" ascending"):"")}
-       className="justify-start text-left text-foreground underline-offset-4 hover:underline">
+       className={"justify-start text-left underline-offset-4 hover:underline "+(sort===col.index?"text-[var(--lms-primary-text)] underline":"text-foreground")}>
        {col.heading} {sort===col.index?(descending?"↓":"↑"):""}
       </Button>,
       cell:(row:(typeof visibleRows)[number])=>{
