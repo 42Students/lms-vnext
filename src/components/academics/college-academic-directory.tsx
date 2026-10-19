@@ -220,7 +220,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             <Button variant="primary" type="submit" >
               Filter
             </Button>
-            <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+            <Link href={path} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
               Clear
             </Link>
           </div>
