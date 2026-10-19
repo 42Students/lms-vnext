@@ -150,10 +150,10 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       {member.displayName??"Learner"}</option>)}
     </Select>
    </label>
-   <button type="button" onClick={()=>{
+   <Button variant="link" type="button" onClick={()=>{
     setRelease("");setSprint("");setPriority("");setStatus("");setAssignmentScope("");
     ["release","sprint","priority","status","assignment"].forEach(key=>remember(key,""));
-   }} className="min-h-11 text-sm font-semibold text-link underline">Clear all</button>
+   }} className="min-h-11">Clear all</Button>
   </div>:null}
   {activeFilterCount>0?<p role="status" className="text-xs text-body">
     {activeFilterCount} active {activeFilterCount===1?"filter":"filters"} ·
