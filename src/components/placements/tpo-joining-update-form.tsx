@@ -123,7 +123,7 @@ export function TpoJoiningUpdateForm({
       ) : null}
       <div className="sm:col-span-2">
         <button type="button" disabled={busy} onClick={() => void save()}
-          className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+          className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
           {busy ? "Saving..." : corrected ? "Confirm corrected outcome" : "Confirm joining outcome"}
         </button>
         {error ? <p role="alert" className="mt-2 text-sm text-foreground">{error}</p> : null}
