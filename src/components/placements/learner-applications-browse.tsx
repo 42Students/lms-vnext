@@ -189,17 +189,17 @@ export function LearnerApplicationsBrowse({
       {learnerApplicationSelectionMissing(items,url.applicationId) ? (
         <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
           The linked application is not available in your current learner history.
-          <button type="button" onClick={()=>updateQuery({applicationId:null})}
-            className="ml-2 min-h-11 font-semibold text-primary-text underline">Return to application list</button>
+          <Button variant="ghost" type="button" onClick={()=>updateQuery({applicationId:null})}
+            className="ml-2 min-h-11">Return to application list</Button>
         </div>
       ) : null}
       {selectedStage.stale ? (
         <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
           That screening stage is no longer present in your applications. Showing all stages while keeping your other filters.
-          <button type="button" onClick={()=>updateQuery({stage:null})}
-            className="ml-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">
+          <Button variant="ghost" type="button" onClick={()=>updateQuery({stage:null})}
+            className="ml-2 min-h-11 sm:min-h-9">
             Update stage link
-          </button>
+          </Button>
         </p>
       ) : null}
       {withdrawNotice ? (
@@ -236,12 +236,12 @@ export function LearnerApplicationsBrowse({
         </section>
       ) : null}
       <section aria-label="Application list filters" className="border-t border-border pt-4">
-        <button type="button" aria-controls="learner-app-filters" aria-expanded={mobileOpen}
+        <Button variant="ghost" type="button" aria-controls="learner-app-filters" aria-expanded={mobileOpen}
           onClick={()=>setMobileOpen(open=>!open)}
-          className="flex min-h-11 sm:min-h-9 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">
+          className="flex min-h-11 sm:min-h-9 w-full gap-3 text-left sm:hidden">
           <span>{mobileOpen?"Hide application filters":learnerApplicationMobileSummary(filters)}</span>
           <span aria-hidden="true">{mobileOpen?"−":"+"}</span>
-        </button>
+        </Button>
         <div id="learner-app-filters" className={(mobileOpen?"block":"hidden")+" space-y-4 sm:block"}>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Application stage views">
           {viewOptions.map((option) => (
@@ -309,10 +309,10 @@ export function LearnerApplicationsBrowse({
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
         <p role="status">{rows.length} of {items.length} applications</p>
         {rows.length>0 ? (
-          <button type="button" onClick={downloadOwnApplications}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+          <Button variant="secondary" type="button" onClick={downloadOwnApplications}
+            className="min-h-11 sm:min-h-9 px-3">
             Export matching applications CSV
-          </button>
+          </Button>
         ) : null}
         {rows.length>LEARNER_APPLICATION_CSV_LIMIT ? (
           <p role="status" className="w-full text-xs text-muted-foreground">
@@ -320,18 +320,18 @@ export function LearnerApplicationsBrowse({
           </p>
         ) : null}
         {(search || view!=="all" || filters.stage!=="all" || sort!=="activity") ? (
-          <button type="button"
+          <Button variant="ghost" type="button"
             onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
-            className="min-h-10 font-semibold text-primary-text hover:underline">
+            className="min-h-10">
             Clear filters
-          </button>
+          </Button>
         ):null}
       </div>
 
       {pagination.corrected && rows.length>0 ? <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
         The requested application page is outside the matching results; showing page {page} of {totalPages}.
-        <button type="button" className="ml-2 min-h-11 font-semibold text-primary-text underline"
-          onClick={()=>updateQuery({page:String(page)})}>Use this page in the link</button>
+        <Button variant="ghost" type="button" className="ml-2 min-h-11"
+          onClick={()=>updateQuery({page:String(page)})}>Use this page in the link</Button>
       </p> : null}
       {emptyKind==="NO_APPLICATIONS" ? (
         <div className="space-y-3">
@@ -348,26 +348,26 @@ export function LearnerApplicationsBrowse({
       ) : emptyKind==="FILTERED_OUT" ? (
         <div className="rounded-xl border border-border bg-surface p-6 text-center">
           <p className="font-semibold text-foreground">No applications match these filters.</p>
-          <button type="button" onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
-            className="mt-3 min-h-10 text-sm font-semibold text-primary-text hover:underline">
+          <Button variant="ghost" type="button" onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
+            className="mt-3 min-h-10">
             View all applications
-          </button>
+          </Button>
         </div>
       ) : <LearnerPlacementJourney items={paged} scheduledRounds={scheduledRounds} />}
 
       {totalPages>1 ? (
         <nav aria-label="Application results pages" className="flex items-center justify-between gap-3">
-          <button type="button" disabled={page<=1}
+          <Button variant="secondary" type="button" disabled={page<=1}
             onClick={() => updateQuery({page:String(page-1)})}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body disabled:opacity-40">
+            className="min-h-9 px-4">
             Previous
-          </button>
+          </Button>
           <span className="text-sm tabular-nums text-body">Page {page} of {totalPages}</span>
-          <button type="button" disabled={page>=totalPages}
+          <Button variant="secondary" type="button" disabled={page>=totalPages}
             onClick={() => updateQuery({page:String(page+1)})}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body disabled:opacity-40">
+            className="min-h-9 px-4">
             Next
-          </button>
+          </Button>
         </nav>
       ) : null}
 

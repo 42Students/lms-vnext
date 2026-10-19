@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -57,22 +58,22 @@ export default async function CollegeDrivesPage({ searchParams }: {
           className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm">Status
-        <select name="status" defaultValue={query.status} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="status" defaultValue={query.status} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           {["PUBLISHED","DRAFT","CLOSED","ARCHIVED","ALL"].map(s=><option key={s} value={s}>{s==="PUBLISHED"?"Active":s}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm">Season
-        <select name="seasonId" defaultValue={query.seasonId ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="seasonId" defaultValue={query.seasonId ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           <option value="">All seasons</option>
           {data.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm">Company
-        <select name="relationshipId" defaultValue={query.relationshipId ?? ""}
+        <Select name="relationshipId" defaultValue={query.relationshipId ?? ""}
           className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           <option value="">All companies</option>
           {data.companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm">Deadline from
         <input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
@@ -88,10 +89,10 @@ export default async function CollegeDrivesPage({ searchParams }: {
           className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
       </label>
       <label className="grid gap-1 text-sm">Sort
-        <select name="sort" defaultValue={query.sort} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="sort" defaultValue={query.sort} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
           <option value="TITLE">Title A–Z</option><option value="DEADLINE">Deadline first</option>
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
-        </select>
+        </Select>
       </label>
       <button type="submit" className="min-h-11 self-end rounded-[var(--lms-control-radius)] bg-primary px-3 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
     </form>

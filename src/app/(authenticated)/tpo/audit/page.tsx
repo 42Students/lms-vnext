@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
@@ -232,18 +233,7 @@ export default async function TpoAuditPage({
         {look.label}
        </Link>)}
       </nav>
-      <nav aria-label="Filter audit by category" className="flex flex-wrap gap-2">
-        {[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},
-          ...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))]
-         .map(item=><Link key={item.kind}
-          href={tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}
-          aria-current={query.kind===item.kind?"page":undefined}
-          className={query.kind===item.kind
-           ?"inline-flex min-h-11 items-center rounded-full bg-primary px-3 text-xs font-semibold text-foreground"
-           :"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-teal-deep)]"}>
-          {item.label}{item.count===null?"":` (${item.count})`}
-         </Link>)}
-      </nav>
+      <Tabs ariaLabel="Filter audit by category" renderPanel={false} value={query.kind} items={[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))].map(item=>({value:item.kind,label:item.label,count:item.count??undefined,href:tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}))}/>
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Audit filters

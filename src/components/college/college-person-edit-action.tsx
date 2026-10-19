@@ -1,4 +1,8 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
@@ -67,16 +71,16 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
     });
   }
   return <div className="inline-block">{confirmation}
-    <button type="button" onClick={()=>void load()}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text">
+    <Button variant="secondary" type="button" onClick={()=>void load()}
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text">
       {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
-    </button>
+    </Button>
     {success&&<span role="status" className="ml-2 text-xs text-body">{success}</span>}
     <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending}>
         <div className="flex items-start justify-between gap-3">
           <h2 className="text-lg font-semibold">{kind==="FACULTY"?"Edit Faculty":"Edit Student"}</h2>
-          <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3">Close</button>
+          <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3">Close</Button>
         </div>
         {loading&&<p role="status" className="mt-4 text-sm">Loading profile…</p>}
         {error&&<p role="alert" className="my-2 text-sm text-error">{error}</p>}
@@ -85,79 +89,79 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             Canonical identity name, login phone and login email are managed separately to protect access to other memberships.
           </p>
           <label className="grid gap-1 text-sm">Name
-            <input value={person.name} readOnly className={field+" opacity-70"}/>
+            <Input value={person.name} readOnly className={field+" opacity-70"}/>
           </label>
           <label className="grid gap-1 text-sm">Login Mobile
-            <input value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
+            <Input value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
           </label>
           <label className="grid gap-1 text-sm">Login Email
-            <input value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
+            <Input value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
           </label>
           {kind==="FACULTY"?<>
             <label className="grid gap-1 text-sm">Department
-              <select className={field} value={person.primaryDepartmentId??""}
+              <Select className={field} value={person.primaryDepartmentId??""}
                 onChange={e=>patch("primaryDepartmentId",e.target.value)}>
                 <option value="">No department</option>
                 {person.primaryDepartmentId&&!departments.some(d=>d.id===person.primaryDepartmentId)&&
                   <option value={person.primaryDepartmentId}>Current department</option>}
                 {departments.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
-              </select>
+              </Select>
             </label>
             <label className="grid gap-1 text-sm">Faculty Type
-              <select className={field} value={person.employmentType??""}
+              <Select className={field} value={person.employmentType??""}
                 onChange={e=>patch("employmentType",e.target.value)}>
                 <option value="">Not specified</option>
                 {person.employmentType&&!LEGACY_FACULTY_TYPES.some(v=>v===person.employmentType)&&
                   <option value={person.employmentType}>{person.employmentType} (existing)</option>}
                 {LEGACY_FACULTY_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
-              </select>
+              </Select>
             </label>
             <label className="grid gap-1 text-sm">Academic title
-              <input className={field} maxLength={128} value={person.academicTitle??""}
+              <Input className={field} maxLength={128} value={person.academicTitle??""}
                 onChange={e=>patch("academicTitle",e.target.value)}/>
             </label>
           </>:<>
             <label className="grid gap-1 text-sm">Roll Number
-              <input className={field} maxLength={128} value={person.rollNumber??""}
+              <Input className={field} maxLength={128} value={person.rollNumber??""}
                 onChange={e=>patch("rollNumber",e.target.value)}/>
             </label>
             <label className="grid gap-1 text-sm">Registration Number
-              <input className={field} maxLength={128} value={person.registrationNumber??""}
+              <Input className={field} maxLength={128} value={person.registrationNumber??""}
                 onChange={e=>patch("registrationNumber",e.target.value)}/>
             </label>
           </>}
           <label className="grid gap-1 text-sm">Gender
-            <select className={field} value={person.gender} onChange={e=>patch("gender",e.target.value)}>
+            <Select className={field} value={person.gender} onChange={e=>patch("gender",e.target.value)}>
               {["","Male","Female","Other","Prefer not to say"].map(value=>
                 <option key={value} value={value}>{value||"Not specified"}</option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm">Date of Birth
-            <input className={field} type="date" value={person.dateOfBirth}
+            <Input className={field} type="date" value={person.dateOfBirth}
               onChange={e=>patch("dateOfBirth",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm">Contact mobile
-            <input className={field} maxLength={32} value={person.contactPhone}
+            <Input className={field} maxLength={32} value={person.contactPhone}
               onChange={e=>patch("contactPhone",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm">Contact email
-            <input className={field} type="email" value={person.contactEmail}
+            <Input className={field} type="email" value={person.contactEmail}
               onChange={e=>patch("contactEmail",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm sm:col-span-2">Address
-            <textarea className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-base sm:text-sm" rows={2} maxLength={1000}
+            <Textarea className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-base sm:text-sm" rows={2} maxLength={1000}
               value={person.address} onChange={e=>patch("address",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm sm:col-span-2">Bio
-            <textarea className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-base sm:text-sm" rows={3} maxLength={3000}
+            <Textarea className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-base sm:text-sm" rows={3} maxLength={3000}
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
           </label>
           <div className="flex gap-2 sm:col-span-2">
-            <button type="submit" disabled={pending} className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-on-primary disabled:opacity-50">
+            <Button variant="primary" type="submit" disabled={pending} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-on-primary disabled:opacity-50">
               {pending?"Saving…":"Save changes"}
-            </button>
-            <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-4">Cancel</button>
+            </Button>
+            <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-4">Cancel</Button>
           </div>
         </form>}
     </Dialog>

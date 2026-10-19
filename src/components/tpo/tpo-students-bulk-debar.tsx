@@ -1,6 +1,4 @@
 "use client";
-import {Textarea} from "@/components/ui/textarea";
-import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useState} from "react";
@@ -83,18 +81,18 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
   <p className="text-sm">Uses the same students selected in the roster. Each student is checked and updated separately. Existing applications are not deleted.</p>
   <p role="status" className="text-sm">{picked.length} selected from the filtered roster (maximum {MAX} per batch).</p>
   <label className="grid max-w-xs gap-1 text-sm">Action
-   <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as "DEBAR"|"LIFT")} >
+   <select value={action} disabled={pending} onChange={e=>setAction(e.target.value as "DEBAR"|"LIFT")} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
     <option value="DEBAR">Debar</option><option value="LIFT">Lift</option>
-   </Select>
+   </select>
   </label>
   <label className="grid gap-1 text-sm">Reason (required)
-   <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500} disabled={pending} />
+   <textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500} disabled={pending} className="min-h-20 rounded-[var(--lms-control-radius)] border border-border p-2"/>
   </label>
   {action==="DEBAR"?<>
    <label className="grid max-w-xs gap-1 text-sm">Until
-    <Select value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")} >
+    <select value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="DATE">A specific date (IST)</option><option value="DRIVES">A number of drives</option><option value="MANUAL">Lifted by placement team</option>
-    </Select>
+    </select>
    </label>
    {duration==="DATE"?<label className="grid gap-1 text-sm">Last date
     <Input type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)} className="max-w-xs"/>
@@ -104,7 +102,7 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
   </>:null}
   {!check.ok&&picked.length>0?<p role="alert" className="text-sm text-error">{check.message}</p>:null}
   <Button variant="secondary" type="button" disabled={!check.ok||pending} onClick={()=>setConfirm(true)}
-   >Review {action==="DEBAR"?"debarment":"lifting"} for {picked.length} student(s)</Button>
+   className="min-h-9 px-4">Review {action==="DEBAR"?"debarment":"lifting"} for {picked.length} student(s)</Button>
   <Dialog open={confirm} onOpenChange={open=>{if(!pending)setConfirm(open);}}
    title={action==="DEBAR"?"Confirm bulk debarment":"Confirm bulk lift"}
    description={"Apply "+action.toLowerCase()+" to up to "+picked.length+" students? Each decision records the named reason and the learner is notified."}
