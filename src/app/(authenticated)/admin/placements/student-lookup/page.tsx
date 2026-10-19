@@ -35,7 +35,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
    action={<Link href="/admin/placements/student-lookup" className="font-semibold text-[var(--lms-teal-deep)]">Clear search</Link>}/>:null}
   {!ctx.adminScope?.collegeId?<p id="placement-student-scope-hint" role="status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">Select a college to continue. Choose a college in the header above to look up student placements.</p>:null}
   {data&&!data.students.length?<EmptyState title="No matching college students." description="Name, roll number or email" />:null}
-  {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 border-b border-border py-5">
+  {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 border-b border-border py-5 last:border-0">
    <div className="flex flex-wrap items-center justify-between gap-2">
     <div><h2 className="font-semibold">{person.name??person.roll??"Student"}</h2>
      <p className="text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p></div>
