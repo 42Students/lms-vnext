@@ -71,7 +71,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h2 className="font-semibold text-foreground">{results.round.name}</h2>
         <p className="mt-1 text-sm text-body">{results.round.kind} · {results.round.status} · {counts?.all??0} eligible, shared candidates</p></div>
-        <StatusBadge>{results.round.status}</StatusBadge>
+        <StatusBadge tone={results.round.status==="APPLIED"?"success":results.round.status==="STAGED"?"warning":"neutral"}>{results.round.status}</StatusBadge>
       </div>
       {results.round.kind==="TALK"?<p className="text-sm text-muted-foreground">Informational rounds do not collect outcomes.</p>:<>
        <Tabs renderPanel={false} ariaLabel="Outcome" value={query.data.outcome}
