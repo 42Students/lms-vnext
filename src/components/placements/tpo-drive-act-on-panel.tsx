@@ -91,7 +91,7 @@ export function TpoDriveActOnPanel(){
    setNotice("Failed drive IDs copied.");
   }catch{setNotice("Clipboard unavailable. Failed drives remain listed below.");}
  }
- return <section aria-label="Act on selected drives" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+ return <section aria-label="Act on selected drives" className="space-y-3 border-t border-border pt-4">
   <button type="button" onClick={()=>setOpen(!open)} aria-expanded={open}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold">Act on selected drives</button>
   {open?<div className="space-y-4">
