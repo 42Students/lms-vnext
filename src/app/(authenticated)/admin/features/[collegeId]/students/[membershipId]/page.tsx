@@ -15,11 +15,11 @@ export default async function SuperAdminStudentRules({params}:{params:Promise<{c
  const student=result.selected;
  return <div className="min-w-0 space-y-6">
   <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(membershipId)}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Learner access trace</Link>
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">← Learner access trace</Link>
   <PageHeader eyebrow="Super Admin · Module Access" title="Student overrides and locks"
    description={"Stored membership rules for "+(student.displayName||"Unnamed learner")+" in "+result.college.name+". No email or mobile details are exposed."}/>
   <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/history"}
-    className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+    className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
     View module override and lock history →
   </Link>
   <p className="rounded-xl border border-border bg-surface-subtle p-4 text-sm text-body">

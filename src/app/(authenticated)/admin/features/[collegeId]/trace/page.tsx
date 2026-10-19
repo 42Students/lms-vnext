@@ -111,7 +111,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           action={
             <Link
               href={basePath}
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
             >
               Clear filters
             </Link>
@@ -161,7 +161,7 @@ export default async function SuperAdminLearnerAccessTracePage({
     <div className="min-w-0 space-y-6">
       <Link
         href={`/admin/features/${encodeURIComponent(college.id)}`}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
       >
         ← {college.name} access hierarchy
       </Link>
@@ -172,7 +172,7 @@ export default async function SuperAdminLearnerAccessTracePage({
         description={`Explain why an active learner's Projects, Placements and Electives module settings resolve to On or Off. The selected college is fixed to ${college.code}.`}
       />
 
-      <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-5">
+      <section className="min-w-0 space-y-4 - border-t border-border pt-5">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Find a learner
@@ -228,7 +228,7 @@ export default async function SuperAdminLearnerAccessTracePage({
 
           <Link
             href={basePath}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
           >
             Clear
           </Link>
@@ -258,7 +258,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                 membershipId:learner.membershipId,
               })}
               aria-current={selected?.membershipId===learner.membershipId?"true":undefined}
-              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
               {selected?.membershipId===learner.membershipId?"Selected":"Explain access →"}
             </Link>},
           ]}/>
@@ -284,7 +284,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                       query.membershipId,
                   },
                 )}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
               >
                 ← Previous
               </Link>
@@ -302,7 +302,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                       query.membershipId,
                   },
                 )}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
               >
                 Next →
               </Link>
@@ -329,7 +329,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             </p>
 
             <Link href={`/admin/features/${encodeURIComponent(college.id)}?scope=MEMBERSHIP&scopeId=${encodeURIComponent(selected.membershipId)}`}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Inspect this learner&apos;s stored rules in the hierarchy →</Link>
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Inspect this learner&apos;s stored rules in the hierarchy →</Link>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               Resolution checks the current membership,
               section, cohort, program, department,
@@ -341,7 +341,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             </p>
           </div>
 
-          <section aria-label="Placement cell decision" className="rounded-xl border border-border bg-surface p-5">
+          <section aria-label="Placement cell decision" className="- border-t border-border pt-5">
             <h3 className="font-semibold">Placement cell decision</h3>
             <p className="mt-2 text-sm text-body">{
               selected.placementParticipation.status==="NOT_DECIDED"?"Not decided yet":
@@ -376,10 +376,10 @@ export default async function SuperAdminLearnerAccessTracePage({
            ].join(String.fromCharCode(10))),
            ].join(String.fromCharCode(10,10))}/>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/students/"+encodeURIComponent(selected.membershipId)}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
             Inspect membership overrides and locks →
           </Link>
-          <section className="min-w-0 rounded-xl border border-border bg-surface p-5" aria-label="Student overrides and locks">
+          <section className="min-w-0 - border-t border-border pt-5" aria-label="Student overrides and locks">
             <h3 className="text-base font-semibold text-foreground">Student overrides and locks</h3>
             <p className="mt-2 text-sm text-body">Persisted member-specific rules for this active learner. An inherited or masked rule does not mean the learner&apos;s final access is enabled.</p>
             <dl className="mt-3 grid min-w-0 gap-3 sm:grid-cols-3">
@@ -459,7 +459,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           </p>
         </section>
       ) : (
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <section className="- border-t border-border pt-5">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Select a learner to explain access
           </h2>
