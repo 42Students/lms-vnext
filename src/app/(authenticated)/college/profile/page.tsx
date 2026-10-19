@@ -25,10 +25,10 @@ export default async function CollegeAdminProfilePage({
   ]);
   if(profileResult.status==="rejected")return <main className="mx-auto w-full min-w-0 max-w-5xl space-y-4 p-4">
     <PageHeader eyebrow="College Admin" title="Profile"/>
-    <div role="alert" className="space-y-2 rounded-xl border border-border bg-surface p-5">
+    <div role="alert" className="space-y-2 border-b border-border pb-5">
       <p className="font-semibold">Failed to load profile.</p>
       <p className="text-sm text-body">Couldn&apos;t refresh profile. Your existing details have not been changed.</p>
-      <Link href="/college/profile" prefetch={false} className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Retry</Link>
+      <Link href="/college/profile" prefetch={false} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Retry</Link>
     </div>
   </main>;
   const profile=profileResult.value;
@@ -37,17 +37,17 @@ export default async function CollegeAdminProfilePage({
     <PageHeader eyebrow="College Admin" title="Profile"
       description="Your personal and contact details. College contact information is managed separately."
       actions={<Link href="/account/security"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
         Signed-in devices
       </Link>} />
     <CollegeAdminProfileEditor initial={profile}
       email={account?.email ?? null} phone={account?.phoneE164 ?? null}
       college={account?.college?.name ?? null} />
     <div className="flex flex-wrap gap-3">
-      <Link href="/college/domains" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+      <Link href="/college/domains" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
         Tenant domains
       </Link>
-      <Link href="/college/college-profile" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+      <Link href="/college/college-profile" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
         Edit college display and support contacts
       </Link>
     </div>
