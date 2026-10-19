@@ -158,13 +158,14 @@ export function FacultyCourseRoster({
             disabled={filtered.length === 0}
             onClick={exportFiltered}
             aria-label="Download roster CSV"
+            className="min-h-11 md:min-h-9 print:hidden"
           >
             Download roster CSV (names and roll numbers)
           </Button>
-          <label className="w-full max-w-md text-[13px] leading-4 font-semibold text-body">
+          <label className="w-full max-w-md text-xs font-semibold text-body print:hidden">
             Search students
             <Input
-              className="mt-1.5"
+              className="mt-1.5 min-h-11 md:min-h-9"
               value={search}
               onChange={(event) => {
                 setSearch(event.target.value);
@@ -199,9 +200,10 @@ export function FacultyCourseRoster({
                 cell:(learner)=><div className="flex min-w-0 items-center gap-3">
                   <Button type="button" variant="ghost" onClick={()=>setPreview(learner)}
                     aria-label={"Preview avatar for "+nameOf(learner)}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text">
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text print:hidden">
                     {initials(nameOf(learner))}
                   </Button>
+                  <span aria-hidden="true" className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text print:inline-flex">{initials(nameOf(learner))}</span>
                   <div className="min-w-0">
                     <p className="m-0 break-words font-semibold text-foreground">{nameOf(learner)}</p>
                     <StatusBadge tone={learner.rollNumber?"info":"warning"}>
@@ -209,19 +211,19 @@ export function FacultyCourseRoster({
                     </StatusBadge>
                     {deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+
                       "/students/"+encodeURIComponent(learner.membershipId)}
-                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline md:min-h-[var(--lms-control-height)]">
+                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline md:min-h-9">
                       View student details →
                     </Link>:null}
                   </div>
                 </div>},
               {key:"phone",header:"Phone",mobilePriority:"secondary" as const,
                 cell:(learner)=>learner.phoneE164?<a href={`tel:${learner.phoneE164}`}
-                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text md:min-h-[var(--lms-control-height)]"
+                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text md:min-h-9"
                   aria-label={`Call ${nameOf(learner)}`}>{learner.phoneE164}</a>:
                   <span className="text-muted-foreground">No number</span>},
               {key:"email",header:"Email",mobilePriority:"secondary" as const,
                 cell:(learner)=>learner.email?<a href={`mailto:${learner.email}`}
-                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text md:min-h-[var(--lms-control-height)]"
+                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text md:min-h-9"
                   aria-label={`Email ${nameOf(learner)}`}>{learner.email}</a>:
                   <span className="text-muted-foreground">No email</span>},
             ]}
@@ -230,12 +232,12 @@ export function FacultyCourseRoster({
           {totalPages > 1 ? (
             <nav
               aria-label="Student roster pages"
-              className="flex flex-wrap items-center justify-between gap-3"
+              className="flex items-center justify-between gap-3 print:hidden"
             >
               <Button
                 variant="secondary"
-                size="md"
-                className="min-h-11 md:min-h-[var(--lms-control-height)]"
+                size="sm"
+                className="min-h-11 md:min-h-9"
                 disabled={currentPage === 1}
                 onClick={() =>
                   setPage((value) =>
@@ -250,8 +252,8 @@ export function FacultyCourseRoster({
               </span>
               <Button
                 variant="secondary"
-                size="md"
-                className="min-h-11 md:min-h-[var(--lms-control-height)]"
+                size="sm"
+                className="min-h-11 md:min-h-9"
                 disabled={
                   currentPage === totalPages
                 }
