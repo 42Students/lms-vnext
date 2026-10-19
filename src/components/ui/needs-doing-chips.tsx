@@ -22,10 +22,10 @@ export type NeedsDoingChipsProps = {
 
 const tones = {
   neutral: "border-[var(--lms-canvas-border)] bg-white text-[var(--lms-body-text)]",
-  info: "border-[var(--lms-primary)]/25 bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
-  success: "border-[var(--lms-success-text)]/20 bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
-  warning: "border-[var(--lms-warning-text)]/20 bg-[var(--lms-warning-subtle)] text-[var(--lms-warning-text)]",
-  error: "border-[var(--lms-error-text)]/20 bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
+  info: "border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
+  success: "border-[var(--lms-canvas-border)] bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
+  warning: "border-[var(--lms-canvas-border)] bg-[var(--lms-warning-subtle)] text-[var(--lms-warning-text)]",
+  error: "border-[var(--lms-canvas-border)] bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
 } as const;
 
 /** The old LMS's compact "Needs doing:" chips: genuine links or quick filters, never inert buttons. */
