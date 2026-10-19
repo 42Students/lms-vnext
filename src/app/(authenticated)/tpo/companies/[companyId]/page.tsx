@@ -1,4 +1,6 @@
 import {DataTable} from "@/components/ui/data-table";
+import {MetricBar} from "@/components/ui/metric-bar";
+import yearStyles from "@/components/tpo/legacy-company-year-chart.module.css";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
@@ -246,13 +248,11 @@ export default async function TpoCompanyDetailPage({
              </p>
             :<ol className="mt-3 space-y-2" aria-label="Confirmed joined learners per year">
               {hiringPulse.hiredPerYear.map(row=><li key={row.year}
-                className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3 text-sm">
-                <span className="font-medium tabular-nums">{row.year}</span>
-                <div className="h-4 rounded-sm bg-surface-secondary" aria-hidden="true">
-                  <div className="h-full rounded-sm bg-primary"
-                    style={{width:Math.max(3,row.joinedLearners/maxYearlyHires*100)+"%"}}/>
-                </div>
-                <strong className="text-right tabular-nums">{row.joinedLearners}</strong>
+                className={yearStyles.yearRow}>
+                <span className={yearStyles.year}>{row.year}</span>
+                <MetricBar role="img" className={yearStyles.track} label={row.year+": "+row.joinedLearners+" confirmed joined learners"}
+                  value={row.joinedLearners} maximum={maxYearlyHires} unit="learners" />
+                <strong className={yearStyles.count}>{row.joinedLearners}</strong>
               </li>)}
             </ol>}
         </div>
