@@ -58,7 +58,7 @@ export function DepartmentCreateForm({
       <div className="min-w-48 flex-1">
         <label
           htmlFor="department-name"
-          className="mb-1.5 block text-xs font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold text-body"
         >
           {DEPARTMENT_COPY.nameLabel}
         </label>
