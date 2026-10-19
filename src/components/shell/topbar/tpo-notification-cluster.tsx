@@ -14,7 +14,8 @@ export function TpoNotificationCluster() {
   const refreshInFlight = useRef(false);
 
   const refresh = useCallback(async () => {
-    if (document.visibilityState === "hidden") return;
+    if (document.visibilityState === "hidden" || refreshInFlight.current) return;
+    refreshInFlight.current = true;
     try {
       const raw = await apiFetch<unknown>("/api/tpo/header-snapshot", {
         cache: "no-store", credentials: "same-origin", timeoutMs: 12000,
@@ -27,7 +28,7 @@ export function TpoNotificationCluster() {
       }));
     } catch {
       // Keep the previous confirmed unread count. Never invent a zero.
-    }
+    } finally { refreshInFlight.current = false; }
   }, []);
 
   useEffect(() => {
