@@ -100,6 +100,15 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain("scrollbar-width:none");
   expect(css).toContain("transform:scale(.72)");
  });
+ it("uses the legacy thin TPO scrollbar only on expanded rails",()=>{
+  const css=source("src/components/shell/sidebar-legacy.css");
+  const nav=source("src/components/shell/sidebar-nav.tsx");
+  expect(nav).toContain("data-sidebar-portal={sidebarPortal}");
+  expect(css).toContain('.lms-sidebar-nav[data-sidebar-portal="tpo"]');
+  expect(css).toContain("scrollbar-width:thin;");
+  expect(css).toContain("width:4px;");
+  expect(css).toContain("scrollbar-color:rgba(107,114,128,.28) transparent;");
+ });
  it("hides expanded headings and labels in collapsed desktop mode, keeps mobile labels",()=>{
   const css=source("src/components/shell/sidebar-legacy.css");
   expect(css).toContain(".lms-nav-heading::after");
