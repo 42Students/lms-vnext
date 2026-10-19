@@ -408,10 +408,10 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)):hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
-  @media (prefers-reduced-motion: no-preference) {
-    [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)) {
-      transition: box-shadow 200ms ease;
-    }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)) {
+    transition: box-shadow 200ms ease;
   }
 }
 @media (prefers-reduced-motion: reduce) {
