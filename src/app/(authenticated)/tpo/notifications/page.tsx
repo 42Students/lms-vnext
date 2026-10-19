@@ -86,7 +86,7 @@ export default async function TpoNotificationsPage({
         markAllEndpoint="/api/tpo/notifications/read-all"
       />
       {inbox.cursor.invalid ? (
-        <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-foreground">
+        <div role="alert" className="border-t border-border py-4 text-sm text-foreground">
           The notification page link is invalid.{" "}
           <Link href={tpoInboxPageHref(inbox.query.view)} className="font-semibold text-[var(--lms-teal-deep)] underline">
             Return to newest notifications
@@ -103,7 +103,7 @@ export default async function TpoNotificationsPage({
           {firstPage&&olderUnread>0?<p role="status" className="text-sm text-muted-foreground">
             {olderUnread} unread {olderUnread===1?"is":"are"} older than what is shown. Show older to view the history; Mark all as read clears older ones too.
           </p>:null}
-          {emptyNavigation?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+          {emptyNavigation?<p role="status" className="border-t border-border py-4">
             Your unread inbox is clear. <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link>
           </p>:null}
           {nextHref ? (
