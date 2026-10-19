@@ -1,16 +1,17 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 
 export function MentorProjectsUnavailable({loadFailed=false}:{loadFailed?:boolean}) {
   return <div className="space-y-6">
     <PageHeader title={loadFailed?"Projects could not be loaded":"Projects is currently unavailable"}
       description={loadFailed?"Check your connection and try again. This does not mean Projects is disabled.":"Projects is currently unavailable for your account. Contact your administrator if you need access."} />
-    <div className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] text-sm text-body">
-      {loadFailed?<Link href="/mentor/projects?retry=1" className="mr-3 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Retry access check</Link>:null}
+    <Banner tone={loadFailed?"error":"warning"}
+      action={<div className="flex flex-wrap items-center gap-3">
+        {loadFailed?<Link href="/mentor/projects?retry=1" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Retry access check</Link>:null}
+        <Link href="/mentor/notifications" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">View notifications</Link>
+      </div>}>
       Notifications are still available.
-      <Link href="/mentor/notifications" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">
-        View notifications
-      </Link>
-    </div>
+    </Banner>
   </div>;
 }
