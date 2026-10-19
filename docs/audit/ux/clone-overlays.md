@@ -545,3 +545,18 @@ GitHub default-branch index searches made this turn: `"ToastAction"` yielded **2
 | Escape from nonmodal PopoverPanel | Old menu stylesheet gives no bubbling contract | `src/components/ui/popover.tsx:18-28`: where a panel has an onDismiss callback, own Escape handles and stops event propagation | Source behavior reviewed; caller-specific global Escape also remains |
 
 **File-level source checkpoint:** `src/components/ui/menu.tsx` and `src/components/ui/popover.tsx` reviewed/updated, JSX pairing unchanged. F1/F2 remain unticked until local grep, complete old states and responsive actual device proof.
+
+
+### Generic action trigger and split-menu state checkpoint
+
+| Property/state | Old LMS source | vNext source | Scope verdict |
+| --- | --- | --- | --- |
+| Notification/action touch target on phone | `components___notification-drawer.scss:21,27-39`: 44px minimum square interactive trigger | `src/components/ui/dropdown.tsx:124`: generic summary now 44px through 767px, default desktop 36px | Mobile minimum matches comparable legacy notification action; generic header's desktop trigger size not specified in dropdown SCSS |
+| Action-sheet trigger desktop distinction | Legacy mobile boundary `components___notification-drawer.scss:23-24`: 767px | `src/components/ui/dropdown.tsx:124`: mobileSheet summary retains 44px at 768px+ via explicit desktop override, preserving prior caller behavior | Responsive branch preserved |
+| SplitButton active/disabled menu touch | Comparable touch target `components___notification-drawer.scss:21`: 44px | `src/components/ui/split-button.tsx:28-36`: active Dropdown and disabled menu button both 44px through 767px; desktop min36px | Mobile minimum matches; disabled appearance remains Button-owned and is not old-SCSS-proven |
+| SplitButton accessible states | Legacy dropdown CSS does not define React loading/disabled semantics | `split-button.tsx:20-37`: primary/loading/disabled, proper labelled active summary, disabled companion button and no false open menu | Source behavior reviewed, runtime pending |
+| Toast timer handle release | Legacy SCSS does not define JavaScript timer IDs | `src/components/ui/toast.tsx:32-41,101-119`: clear `0`-valued and nonzero timeout handles on eviction/dismiss/reschedule | Source correctness; no legacy visual parity claim |
+
+**Responsive static handoff:** 375/640/767px: Dropdown trigger and both SplitButton menu variants min44px; 768/1024px: generic summary and active/disabled SplitButton menu 36px, mobileSheet variant still 44px. Only CSS/JS expressions inspected; no screenshots or computed-style check.
+
+**Source-completed files:** `src/components/ui/split-button.tsx`, and additional final review of `src/components/ui/dropdown.tsx` / `src/components/ui/toast.tsx`. F1/F2 remain unticked because the legacy desktop action trigger is not universally 36px in SCSS, all consumer states are not exact matches, and local grep and runtime verification are absent.
