@@ -1,4 +1,6 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Radio } from "@/components/ui/radio";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -395,19 +397,14 @@ export function QuizAttemptControl({
                           question.id
                         ] ?? []
                       ).includes(option.id);
+                      const ChoiceControl = question.type === "SINGLE_CHOICE" ? Radio : Checkbox;
 
                       return (
                         <label
                           key={option.id}
                           className="flex cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2.5 text-sm text-body transition hover:border-primary hover:bg-primary-subtle"
                         >
-                          <input
-                            type={
-                              question.type ===
-                              "SINGLE_CHOICE"
-                                ? "radio"
-                                : "checkbox"
-                            }
+                          <ChoiceControl
                             name={`quiz-${quizId}-${question.id}`}
                             checked={checked}
                             onChange={() =>
@@ -416,7 +413,7 @@ export function QuizAttemptControl({
                                 option.id,
                               )
                             }
-                            className="mt-0.5 h-4 w-4 accent-[var(--lms-primary)]"
+                            className="mt-0.5"
                           />
                           <span>
                             {option.text}
