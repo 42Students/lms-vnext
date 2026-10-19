@@ -45,8 +45,11 @@ export function LearnerNotificationBell(){
  useEffect(()=>{
   // eslint-disable-next-line react-hooks/set-state-in-effect -- initial and 30s polling load.
   void refresh();
-  const interval=window.setInterval(()=>{if(document.visibilityState==="visible")void refresh();},30000);
-  return ()=>window.clearInterval(interval);
+  const check=()=>{if(document.visibilityState==="visible")void refresh();};
+  const interval=window.setInterval(check,30000);
+  window.addEventListener("focus",check);
+  document.addEventListener("visibilitychange",check);
+  return ()=>{window.clearInterval(interval);window.removeEventListener("focus",check);document.removeEventListener("visibilitychange",check);};
  },[refresh]);
  useEffect(()=>{
   function clickOutside(event:PointerEvent){
