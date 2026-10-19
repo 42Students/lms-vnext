@@ -74,7 +74,6 @@ export default async function TpoRecruiterAccessPage({
         <TpoSettingsNav active="recruiters" />
 
         <PageHeader
-          eyebrow="TPO · Settings"
           title="Recruiter access"
           description="Read-only recruiter college-grant history."
         />
@@ -130,7 +129,6 @@ export default async function TpoRecruiterAccessPage({
       <TpoSettingsNav active="recruiters" />
 
       <PageHeader
-        eyebrow="TPO · Settings"
         title="Recruiter access"
         description="Review active and revoked recruiter college-access grants for your current college. This is historical grant data, not a live recruiter-session or login-status check."
       />
