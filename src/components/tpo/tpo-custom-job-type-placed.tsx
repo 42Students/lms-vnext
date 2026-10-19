@@ -24,9 +24,9 @@ export function TpoCustomJobTypePlaced({id,label,version,value}:{id:string;label
   <p className="text-xs text-muted-foreground">Counts as placed</p>
   <div className="flex gap-2">
    <button type="button" disabled={busy} aria-pressed={value===true} onClick={()=>void update(true)}
-    className={"min-h-10 rounded-[var(--lms-control-radius,9px)] border px-3 "+(value===true?"border-primary bg-primary-subtle":"border-border")}>Yes</button>
+    className={"min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border px-3 "+(value===true?"border-primary bg-primary-subtle":"border-border")}>Yes</button>
    <button type="button" disabled={busy} aria-pressed={value===false} onClick={()=>void update(false)}
-    className={"min-h-10 rounded-[var(--lms-control-radius,9px)] border px-3 "+(value===false?"border-primary bg-primary-subtle":"border-border")}>No</button>
+    className={"min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border px-3 "+(value===false?"border-primary bg-primary-subtle":"border-border")}>No</button>
   </div>
   {value===null?<p className="text-xs text-muted-foreground">Not decided</p>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
