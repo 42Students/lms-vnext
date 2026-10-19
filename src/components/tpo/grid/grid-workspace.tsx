@@ -51,7 +51,8 @@ export function GridWorkspace<Row>({
  rows,columns,rowKey,children,filters=[],selection,rollOf,savedViews,extraActions,act,
  exportName="tpo-grid",xlsxHref,searchPlaceholder="Search name, roll no., anything",
  searchParam="search",filterTitle="Filters",columnScope="url",columnStorageKey,
- searchMaxLength=120,
+ searchMaxLength=120,searchMode="url",searchValue,onSearchChange,
+ columnKeys,onColumnKeysChange,onExportCsv,onExportXlsx,onCopyRows,
 }:GridWorkspaceProps<Row>){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const id=useId();
