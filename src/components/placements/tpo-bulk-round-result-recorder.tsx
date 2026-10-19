@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -240,7 +241,7 @@ export function TpoBulkRoundResultRecorder({
             {outcome==="HOLD"?<p>Ranks {firstWaitlistRank}–{firstWaitlistRank+selected.length-1} in selection order. Existing rank collisions are rejected.</p>:null}
             <p>Saved as staged only. Learners are not told until the separate Apply results step.</p>
           </div>:null}
-          <button
+          <Button variant="primary"
             type="button"
             onClick={() => void stageSelected()}
             disabled={busy || selected.length === 0 ||
@@ -250,7 +251,7 @@ export function TpoBulkRoundResultRecorder({
             className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50"
           >
             {busy ? "Staging..." : "Review and confirm staged results"}
-          </button>
+          </Button>
         </>
       )}
       <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
