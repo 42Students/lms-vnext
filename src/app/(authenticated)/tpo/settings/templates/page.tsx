@@ -12,7 +12,7 @@ export default async function TpoCommunicationTemplatesPage() {
   await requireTpoBatchActor(await getCurrentRequestContext());
   return <div className="min-w-0 space-y-5">
     <TpoSettingsNav active="templates" />
-    <PageHeader eyebrow="TPO · Settings" title="Communication templates" />
+    <PageHeader title="Communication templates" />
     <p className="text-sm text-body">Safe draft text for manual use. These are source-provided examples, not stored college templates. Copying text does not send email, SMS, WhatsApp or a portal notice.</p>
     <div className="grid gap-4 lg:grid-cols-2">{TPO_MANUAL_MESSAGE_TEMPLATES.map(item=><section key={item.kind} className="min-w-0 space-y-3 border-t border-border pt-5">
       <h2 className="font-semibold">{item.label}</h2>

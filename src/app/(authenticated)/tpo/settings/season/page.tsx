@@ -28,7 +28,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
       <TpoSettingsNav active="season" />
 
       <section className="space-y-2">
-        <PageHeader eyebrow="TPO · Settings" title="Placement Season" />
+        <PageHeader title="Placement Season" />
         <p className="text-sm leading-6 text-body">
           College-specific placement seasons and their
           recorded dates and lifecycle status. A season

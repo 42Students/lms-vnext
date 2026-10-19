@@ -36,7 +36,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  const raw=await searchParams;
  const parsed=hrConversationQuerySchema.safeParse({collegeId:raw.collegeId,q:raw.q,page:raw.page,unreadOnly:raw.unreadOnly,sort:raw.sort,scope:raw.scope});
  if(!parsed.success)return <div role="alert" className="space-y-3">
-  <PageHeader eyebrow="Recruiter" title="Conversations"/>
+  <PageHeader title="Conversations"/>
   <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link></div>;
  const result=await listHrConversations(context,parsed.data);
  const generalLookup=result.status==="READY"
@@ -67,7 +67,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   :result.items;
  return <div className="min-w-0 max-w-full space-y-5">
   <RecruiterConversationLiveRefresh/>
-  <PageHeader eyebrow="Recruiter · Messages" title="Messages"
+  <PageHeader title="Messages"
    description={result.status==="READY"
     ? result.unreadInView+" unread across "+result.items.filter(row=>row.unread>0).length+" conversation(s) on this page"
     : "Conversations with the placement cell, one per drive, plus a general one."}/>
