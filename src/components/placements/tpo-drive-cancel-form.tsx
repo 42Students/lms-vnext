@@ -2,6 +2,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { FilterChip } from "@/components/ui/filter-chip";
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { TpoDriveCancelImpact } from "@/modules/placements/tpo-drive-cancel-model";
@@ -88,18 +89,15 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             <p className="text-sm font-semibold text-body">Reason for cancellation (audited)</p>
             <div className="flex flex-wrap gap-2" aria-label="Common cancellation reasons">
               {CANCEL_REASONS.map((preset) => (
-                <button
+                <FilterChip
                   key={preset}
                   type="button"
                   disabled={pending}
                   aria-pressed={reason === preset}
                   onClick={() => setReason(preset)}
-                  className={`min-h-11 md:min-h-9 rounded-full border px-3 text-sm font-medium ${reason === preset
-                    ? "border-primary bg-primary-subtle text-foreground"
-                    : "border-border bg-surface text-body hover:border-primary"}`}
                 >
                   {preset}
-                </button>
+                </FilterChip>
               ))}
             </div>
             <label className="block text-sm font-semibold text-body">
