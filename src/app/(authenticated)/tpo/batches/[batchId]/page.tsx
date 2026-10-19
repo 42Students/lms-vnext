@@ -131,6 +131,6 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  </section>
 
 
- <p className="rounded border border-border p-4 text-sm">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
+ <p className="text-sm text-muted-foreground">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
  </div>;
 }
