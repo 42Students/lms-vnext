@@ -99,7 +99,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   <Button variant="secondary" type="button" disabled={busy||guardedPending||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
    onClick={()=>{setPreview(true);setError("");setOutcomes([]);}}
    >Preview selected</Button>
-  {preview?<div className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 sm:px-4">
+  {preview?<div className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 md:px-4">
    <h3 className="font-semibold">Review {eligible.length} eligible, {skipped.length} left out</h3>
    {skipped.length?<p className="text-sm text-warning-text">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
    {action==="VERIFY"?<label className="flex gap-2 text-sm"><Checkbox  checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
