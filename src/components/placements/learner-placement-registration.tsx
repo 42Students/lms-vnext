@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
   learnerPlacementChoices, LEARNER_REGISTRATION_COPY,
@@ -62,8 +63,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
     </fieldset>
     {registration.stage==="OPEN"?<>
       {registration.deadline?<p className="text-sm">{LEARNER_REGISTRATION_COPY.deadline} {new Date(registration.deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"})}.</p>:null}
-      <button type="button" disabled={busy} onClick={()=>void submit()}
-        className="min-h-11 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] disabled:opacity-50 sm:min-h-9">
+      <Button type="button" disabled={busy} onClick={()=>void submit()}>
         {busy?"Saving…":registration.choice?LEARNER_REGISTRATION_COPY.update:LEARNER_REGISTRATION_COPY.register}
       </Button>
     </>:<p className="text-sm" role="status">{registration.stage==="NOT_INVITED"?
