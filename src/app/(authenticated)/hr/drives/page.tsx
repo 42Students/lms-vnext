@@ -1,3 +1,4 @@
+import {StatusBadge} from "@/components/ui/status-badge";
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
@@ -183,7 +184,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         const editable=req.status==="REQUEST"||req.status==="SENT_BACK";
         return <li key={req.id} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <p className="font-semibold text-foreground">{title}</p>
-          <p className="mt-1 text-sm text-body">{requestStageLabel(req.status)}</p>
+          <p className="mt-1"><StatusBadge tone={req.status==="REJECTED"||req.status==="CANCELLED"?"error":req.status==="SENT_BACK"?"warning":req.status==="DRAFT"?"success":"info"}>{requestStageLabel(req.status)}</StatusBadge></p>
           {req.status==="SENT_BACK"?<p className="mt-2 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
             Placement-cell feedback: {req.decisionNote??"Please contact the placement cell for the requested changes."}
           </p>:null}
