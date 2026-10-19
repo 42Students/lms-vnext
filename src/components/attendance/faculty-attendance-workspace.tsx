@@ -684,7 +684,7 @@ export function FacultyAttendanceWorkspace({
                           type="button"
                           onClick={() => setSelectedLearnerId(membershipId)}
                           aria-label={`Inspect monthly attendance for ${learner ? learnerName(learner) : membershipId}`}
-                          className="text-left text-sm font-semibold text-primary-text hover:underline"
+                          className="text-left text-primary-text hover:underline"
                         >
                           {learner ? learnerName(learner) : "Learner"} · {summary?.percentage ?? "—"}%
                         </Button>
@@ -745,7 +745,7 @@ export function FacultyAttendanceWorkspace({
                           type="button"
                           onClick={() => setSelectedLearnerId(learner.membershipId)}
                           aria-label={`View attendance details for ${learnerName(learner)}`}
-                          className="m-0 text-left font-semibold text-primary-text hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-primary"
+                          className="m-0 text-left text-primary-text hover:underline focus-visible:rounded"
                         >
                           {learnerName(learner)}
                         </Button>
