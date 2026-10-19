@@ -59,7 +59,7 @@ export default async function TpoPlacementTeamPage() {
       {!sources.teamAssignmentsAvailable ? (
         <section
           role="status"
-          className="- border-t border-border pt-5"
+          className="border-t border-border pt-5"
         >
           <h2 className="font-semibold text-foreground">
             Faculty team assignments unavailable
@@ -78,7 +78,7 @@ export default async function TpoPlacementTeamPage() {
       {!sources.studentAssignmentsAvailable ? (
         <section
           role="status"
-          className="- text-sm leading-6 text-body border-t border-border pt-5"
+          className="text-sm leading-6 text-body border-t border-border pt-5"
         >
           Drive Day student-coordinator assignments are unavailable
           in the registered database. No zero-assignment conclusion
