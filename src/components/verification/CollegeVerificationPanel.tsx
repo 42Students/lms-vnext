@@ -1,5 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
@@ -172,8 +175,8 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
           </Button>)}
     </div>}
     {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
-     <textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
-      className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" placeholder="Describe the correction required"/>
+     <Textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
+      className="mt-1 min-h-20 w-full" placeholder="Describe the correction required"/>
      <span className="mt-1 block text-xs">A shared reason of at least 3 characters is required and will be recorded for each learner.</span>
     </label>}
     {bulkAction==="SEND_BACK"&&<Button variant="secondary" type="button" disabled={bulkBusy||selectedRows.length===0||bulkReason.trim().length<3}
@@ -183,7 +186,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
      <h3 className="font-semibold">Verify without opening</h3>
      <p className="text-sm">Only do this when you have checked these students&apos; documents another way (for example against the college&apos;s own records). Each one is recorded with your name.</p>
      <label className="flex items-start gap-2 text-sm">
-       <input type="checkbox" checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}/>
+       <Checkbox checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}/>
        I have checked their documents another way (for example the college&apos;s own records).
      </label>
      <p className="text-xs text-muted-foreground">A missing marksheet or ID document blocks blind verification. The server rechecks document receipts before any decision.</p>
@@ -204,12 +207,12 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </section>}
   {bulkError&&<p role="alert" className="rounded-md border p-3 text-sm">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</p>}
   <nav aria-label="Verification pagination" className="flex flex-wrap items-center gap-4 text-sm">
-   <label>Sort by <select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="ml-2 rounded-md border bg-background p-2">
+   <label>Sort by <Select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="ml-2 w-auto">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option><option value="NAME">Learner name A–Z</option>
-   </select></label>
-   <label>Requests per page <select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="ml-2 rounded-md border bg-background p-2">
+   </Select></label>
+   <label>Requests per page <Select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="ml-2 w-auto">
     <option value="10">10</option><option value="25">25</option><option value="50">50</option>
-   </select></label>
+   </Select></label>
    <span>Showing {rows.length} of {total} requests in the selected view</span>
    {page>1&&<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page-1)})} className="underline">Previous page</Button>}
    {hasMore&&<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page+1)})} className="underline">Next page</Button>}
