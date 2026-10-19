@@ -68,3 +68,18 @@ The second pass re-read `docs/design/old-lms-shell.css` and checked the actual d
 **HR portal second pass:** All 22 canonical `/hr` page files and the 19 reusable `src/components/hr` client components were inspected for numeric `rounded-[9px]`, generic focus outline classes and raw hex/ambiguous colors. The remaining numeric 9px corners were changed to `rounded-[var(--lms-control-radius)]`, and control focus classes to `focus-visible:outline-[var(--lms-primary)]`. The round-builder's formerly `rounded-md` buttons/links were aligned to the same 9px token. The 48 loading/error/not-found route-level surfaces were audited by their source patterns; nine conversation, messages and draft/proposal fallbacks had duplicate outer `p-5` removed so they sit on the single authenticated page canvas without added padding. No HR data behavior, form schema, permission boundary or content organization was intentionally changed.
 
 Source-only adversarial checks: `tests/unit/chat19-sidebar-hr-value-parity.test.ts`. **Not executed**, per no-CI directive. Browser rendering, mobile/touch accessibility and compile integration remain for the final verification pass. These source checks do not claim visual pixel-parity proven on a running browser.
+
+
+## Third pass: exact legacy asset and mobile-shell details
+
+Measured against `docs/design/old-lms-shell.css` and `old-lms-shell-spec.md`:
+
+- Removed the duplicated desktop logo-hover rule, so the rail's 20px expanded logo alignment is defined once.
+- Navigation items with original asset SVGs now **always** use their legacy `icon` property; previously calendar/attendance/notifications without an `activeIcon` were silently replaced by a generic outline glyph. Original active variants are still used when available. Routes with no packaged SVG retain inline icons.
+- Added the mobile-specific sidebar section heading rules from the measured old LMS: at viewports below 768px, headings remain readable and are 9px high, indented with `margin:12px 12px 6px 46px`, without desktop collapsed divider lines. The existing focus-trapped mobile dialog is maintained.
+- Clipped horizontal scroll overflow without disabling vertical wheel, touch or keyboard scrolling. The visual collapsed count badge remains scaled to .72 at the icon, and the link's accessible name includes the pending count.
+- Audited the non-alias `/recruiter/drives/[jobId]/change-requests` route in addition to the 22 canonical `/hr` routes. Its outline and radius are aligned with the old LMS.
+- Swept HR-specific shared recruiter components in `src/components/placements/`: interview slots, placement portfolio, result controls, resume download, outside-platform recording, and applicant notes. Form and button corner radius now uses the shared 9px token; input focus uses the old 2px ring.
+- Removed the full-size rounded/bordered/white wrapping card from `RecordedOutsideForm`, allowing the shared one-white-canvas contract to own the surface; preserved its grid, fields, validation and action. Removed only the duplicate outer `p-5` on the invalid-conversation-filters state.
+
+These refinements are captured in `tests/unit/chat19-sidebar-hr-original-icons-and-secondary-surfaces.test.ts` alongside previous chat-19 source contracts. They were authored, not executed; no CI/typecheck/browser work was run.
