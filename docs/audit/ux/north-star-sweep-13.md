@@ -210,3 +210,18 @@ Every row refers to a full source file, not to an arbitrary commit. The checked 
 
 - [ ] Actual browser rendering, computed CSS, functionality, typecheck, unit tests and CI remain unverified by instruction. Do not claim final pixel parity from source-only evidence.
 - [ ] **Next file**: `src/components/projects/class-team-workspace-creator.tsx` (review any remaining hand-styled controls in Super Admin workspace creation), then untouched Super Admin first-third nested admin components.
+
+
+### Class-team workspace creation source parity (Super Admin Projects)
+
+| Item | Legacy value and source | vNext source proof |
+| --- | --- | --- |
+| [x] Field labels | `components___form.scss:110-112`: 13px/600 | `src/components/projects/class-team-workspace-creator.tsx:165-201,240-249` ten visible class/team labels use `text-[13px] font-semibold text-body` |
+| [x] Separate team objects | `old-lms-pages.md:14` separate record cards allowed; `globals.css:345` 12px canvas radius | `class-team-workspace-creator.tsx:234` team records retain their own `border-border bg-surface rounded-[var(--lms-canvas-radius)]` (not page-level wrappers) |
+| [x] Focus and summary headings | `components___form.scss:23-35` keyboard focus, `globals.css:21` primary highlight | `class-team-workspace-creator.tsx:215,274` keyboard scroll regions use `focus-visible:outline-primary`, headings use `text-foreground` |
+| [x] Responsive | `pages___admin-list-pages.scss:8,193` phone touch 44px, ≤767px; content adapts | Class/team creation uses existing `grid-cols-1 md:grid-cols-2`; shared `Button`/`Input`/`Select` preserve their accessibility, with phone target sizes governed by shared skin |
+
+**Grep proof (source scan, no local execution):** `rg -o '<(button|input|select|textarea)\\b' src/components/projects/class-team-workspace-creator.tsx | wc -l` => `0`; hard-coded hex pattern => `0`; inline `style={` => `0`; `rounded-lg` => `0`; JSX `<Button>` 4/4, `<Select>` 6/6, no truncated closing tags. All team-moving/swap logic, class scope, optimistic preview, download and create actions retained.
+
+- [ ] Computed styles and click-through functional checks remain pending under owner no-runtime directive.
+- [ ] **Next**: `src/components/admin/super-admin-batch-roster-manager.tsx` and `src/components/admin/super-admin-batch-graduate-action.tsx` (first-third academic admin components).
