@@ -70,7 +70,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <SuperAdminTemplatePageExport items={data.items}/>
   <p className="text-xs text-muted-foreground">{data.total} templates · page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
   {data.items.length?<div className="grid gap-4 md:grid-cols-2">
-   {data.items.map(item=><article key={item.id} className="min-w-0 rounded-[12px] border border-border bg-surface p-4">
+   {data.items.map(item=><article key={item.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <div className="flex flex-wrap items-start justify-between gap-2">
      <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
      <StatusBadge tone={tone(item.status)}>{item.status}</StatusBadge>
