@@ -18,7 +18,7 @@ export function PageHeader({ eyebrow, title, description, actions }: PageHeaderP
   return (
     <header
       data-slot="page-header"
-      className="flex min-w-0 items-start justify-between gap-4 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]"
+      className="flex min-w-0 items-start justify-between gap-4 pb-[var(--lms-space-4)]"
     >
       <div className="flex min-w-0 flex-1 items-baseline gap-3 overflow-hidden">
         <h1
