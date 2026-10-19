@@ -1,4 +1,7 @@
 "use client";
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -82,13 +85,13 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
     <p className="text-xs text-body">College: {college[key]} {suffix}</p>
    </div>
    <div className="flex flex-wrap items-center gap-2">
-    <input type="number" min={min} max={max} step={1} disabled={busy||readOnly}
+    <Input className="w-24" type="number" min={min} max={max} step={1} disabled={busy||readOnly}
      aria-label={label} value={draft[key]??college[key]}
      onChange={event=>setRule(key,Number(event.target.value))}
-     className="min-h-9 w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
-    {draft[key]!==undefined?<button type="button" disabled={busy||readOnly}
+     />
+    {draft[key]!==undefined?<Button variant="ghost" className="underline text-link" type="button" disabled={busy||readOnly}
      onClick={()=>setRule(key,college[key])}
-     className="min-h-9 text-sm text-link underline">Use the college&apos;s</button>:null}
+     >Use the college&apos;s</Button>:null}
    </div>
   </div>;
  return <section aria-label="Batch placement rules" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
@@ -100,16 +103,16 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
     <p className="text-xs text-body">College: {college.countsAsPlacedAt==="OFFER_ACCEPTED"?"the offer is accepted":"the offer is released"}</p>
    </div>
    <div className="flex flex-wrap items-center gap-2">
-    <select aria-label="Counts as placed when" disabled={busy||readOnly}
+    <Select className="w-auto" aria-label="Counts as placed when" disabled={busy||readOnly}
      value={draft.countsAsPlacedAt??college.countsAsPlacedAt}
      onChange={event=>setRule("countsAsPlacedAt",event.target.value as TpoBatchRuleFields["countsAsPlacedAt"])}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
+     >
      <option value="OFFER_RELEASED">the offer is released</option>
      <option value="OFFER_ACCEPTED">the offer is accepted</option>
-    </select>
-    {draft.countsAsPlacedAt!==undefined?<button type="button" disabled={busy||readOnly}
+    </Select>
+    {draft.countsAsPlacedAt!==undefined?<Button variant="ghost" className="underline text-link" type="button" disabled={busy||readOnly}
      onClick={()=>setRule("countsAsPlacedAt",college.countsAsPlacedAt)}
-     className="min-h-9 text-sm text-link underline">Use the college&apos;s</button>:null}
+     >Use the college&apos;s</Button>:null}
    </div>
   </div>
   {number("maxHeldOffers","Offers a student can hold",1,5,"offers")}
@@ -117,12 +120,12 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
   {number("minResponseHours","Time to respond to an offer",12,168,"hours")}
   {readOnly?<p role="status" className="text-sm">Finished batches cannot change placement rules.</p>:null}
   <div className="flex flex-wrap gap-3">
-   <button type="button" disabled={readOnly||busy||!changed}
-    onClick={()=>void save(draft)} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
-    {busy?"Saving…":"Save"}</button>
-   {Object.keys(draft).length>0?<button type="button" disabled={busy||readOnly}
-    onClick={()=>void save({})} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link">
-    Follow the college rules</button>:null}
+   <Button type="button" disabled={readOnly||busy||!changed}
+    onClick={()=>void save(draft)} >
+    {busy?"Saving…":"Save"}</Button>
+   {Object.keys(draft).length>0?<Button variant="secondary" type="button" disabled={busy||readOnly}
+    onClick={()=>void save({})} >
+    Follow the college rules</Button>:null}
   </div>
   {changed?<p role="status" className="text-xs text-warning">Unsaved batch-rule changes. Review before leaving.</p>:null}
   {error?<p role="alert" className="text-sm text-error">Batch rules were not saved. {error}</p>:null}
