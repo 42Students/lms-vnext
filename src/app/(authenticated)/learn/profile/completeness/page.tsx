@@ -49,9 +49,9 @@ export default async function ProfileCompleteness({searchParams}:{
         href={"/learn/profile/completeness?show="+option.value}
         aria-current={readiness.show===option.value ? "page" : undefined}
         className={
-          "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border px-4 text-sm font-semibold sm:min-h-9 " +
-          (readiness.show===option.value ? "border-primary bg-primary-subtle text-primary-text" :
-            "border-border bg-surface text-foreground")
+          "inline-flex min-h-11 items-center rounded-[8px] border px-4 text-sm font-medium transition-colors duration-150 sm:min-h-9 " +
+          (readiness.show===option.value ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" :
+            "border-border bg-surface text-body hover:border-primary hover:bg-primary-subtle")
         }>
         {option.label}
       </Link>)}

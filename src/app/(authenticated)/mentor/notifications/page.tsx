@@ -45,7 +45,7 @@ export default async function MentorNotificationsPage({
   const projectId=mentorAttentionProjectSchema.safeParse(first(raw.projectId)??undefined);
   const attentionOrder=mentorAttentionOrderSchema.safeParse(first(raw.attentionOrder)??"RECENT");
   if (!parsed.success||!kind.success||!projectId.success||!attentionOrder.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid notification filters</h1>
+    <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid notification filters</h1>
     <Link href={MENTOR_INBOX} className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Return to newest notifications</Link>
   </section>;
 
@@ -113,21 +113,21 @@ export default async function MentorNotificationsPage({
         className="flex flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
         <label className="grid gap-1 text-sm font-semibold">Project with recorded attention
           <Select name="projectId" defaultValue={projectId.data??""}
-            className="min-h-11 sm:min-h-9 max-w-full rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 max-w-full sm:min-h-9">
             <option value="">All assigned Projects</option>
             {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention order
           <Select name="attentionOrder" defaultValue={attentionOrder.data}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 sm:min-h-9">
             <option value="RECENT">Most recent recorded first</option>
             <option value="REVIEW_FIRST">Reviews and requests first</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention type
           <Select name="kind" defaultValue={kind.data}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 sm:min-h-9">
             <option value="ALL">All</option><option value="REVIEW">Reviews</option>
             <option value="STALLED">Stalled</option>
             <option value="REQUESTED">Meeting requests</option>
