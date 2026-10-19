@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {DataTable} from "@/components/ui/data-table";
+import {TpoCompanyMemoryDriveGrid} from "./tpo-company-memory-drive-grid";
 
 import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
