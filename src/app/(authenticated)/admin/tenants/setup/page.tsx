@@ -27,14 +27,14 @@ export default async function SuperAdminTenantSetup({
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
   return <div className="min-w-0 space-y-5">
-   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"/>
+   <PageHeader title="Tenant Setup"/>
    <ErrorState title="Tenant setup access denied"
     description="Your account cannot configure Super Admin tenants."
     action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
   </div>;
  const parsed=parseSuperAdminTenantSetupQuery(await searchParams);
  if(!parsed.success)return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"/>
+  <PageHeader title="Tenant Setup"/>
   <ErrorState title="Invalid tenant setup step"
    description="Select a valid Tenant structure or Launch setup step."
    action={<Link href="/admin/tenants/setup"
@@ -63,7 +63,7 @@ export default async function SuperAdminTenantSetup({
  }catch(error){
   if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();
   return <div className="min-w-0 space-y-5">
-   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"/>
+   <PageHeader title="Tenant Setup"/>
    <ErrorState title="Tenant setup unavailable"
     description="The authorized organization or college readiness information could not be verified. Setup actions are unavailable until the read succeeds."
     action={<Link href={tabLink(tab)} className="font-semibold text-primary-text">Retry tenant setup</Link>}/>
@@ -74,7 +74,7 @@ export default async function SuperAdminTenantSetup({
  const orgCreate=can(context,"organization.manage");
  const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
  return <div className="min-w-0 space-y-6">
-  <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"
+  <PageHeader title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."
    actions={<PageBackLink href="/admin/tenants" label="Tenant directory" />} />
   <section aria-label="Tenant setup overview" className="grid gap-3 sm:grid-cols-3">
@@ -152,7 +152,7 @@ export default async function SuperAdminTenantSetup({
      {label:"Sign-in",href:"/signin",description:"Review login methods and account access."},
      {label:"Look and feel",href:"/branding",description:"Set visible college branding and identity."},
     ].map(card=><Link key={card.label} href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
-     className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] p-4 hover:border-primary">
+     className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] p-4 hover:border-primary">
      <h3 className="font-semibold text-primary-text">{card.label}</h3>
      <p className="mt-2 text-sm text-body">{card.description}</p>
     </Link>)}
@@ -163,7 +163,7 @@ export default async function SuperAdminTenantSetup({
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="text-sm font-semibold text-primary-text underline">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-3 sm:grid-cols-2">
-     {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
+     {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <h3 className="mt-1 break-words font-semibold text-foreground">{step.title}</h3>
       <p className="mt-2 text-sm text-body">{step.description}</p>
