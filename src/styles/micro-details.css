@@ -398,3 +398,35 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
     transition: none !important;
   }
 }
+
+/* CHAT-20 SOURCE-VERIFIED REMAINING MICRO STATES */
+/* Legacy: components___accessibility.scss:13-23 applies the 2px #1a95a1
+   keyboard outline with 3px offset to every focus-visible element. Extend
+   the original fallback to explicit focusable regions (ScrollCue viewports,
+   editable surfaces, option/checkbox/radio roles) while retaining the
+   stronger component-specific overrides and the [data-unskin] escape hatch.
+   No tab-index, keyboard event or element dimensions are changed. */
+:where([tabindex]:not([tabindex="-1"]), [contenteditable="true"],
+  [role="checkbox"], [role="radio"], [role="option"]):not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  outline: 2px solid var(--lms-micro-focus);
+  outline-offset: 3px;
+}
+
+/* Legacy: components___common.scss:697-714,849-855. Ordinary .ln-table
+   clears the CELL background on row hover (background:none !important);
+   existing row surface/stripes show through, without a new teal fill.
+   Separate .ln-table-no-hover cells explicitly stay white (130-139).
+   Selected rows are excluded because legacy selected-row paint is unknown.
+   The mobile DataTable retains its current card layout. Match the old LMS\n   767px mobile breakpoint for this hover treatment (old-lms-shell.css:23). */
+:where(main, [data-slot="page-canvas"]) [data-slot="table"] table tbody
+  tr:hover:not([aria-selected="true"]):not([data-state="selected"])
+  > td:not(:where(.ln-table-no-hover, .ln-table-no-hover *)) {
+  background: none !important;
+}
+@media (min-width: 768px) {
+  :where(main, [data-slot="page-canvas"]) [data-slot="data-table"] table tbody
+    tr:hover:not([aria-selected="true"]):not([data-state="selected"])
+    > td:not(:where(.ln-table-no-hover, .ln-table-no-hover *)) {
+    background: none !important;
+  }
+}

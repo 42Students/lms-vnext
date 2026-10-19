@@ -18,7 +18,7 @@ export function AdminScopedCsvControl({href,filename}:{href:string;filename:stri
   }catch(caught){setError(caught instanceof Error?caught.message:"Unable to export this directory.");}
   finally{setPending(false);}
  }
- return <div className="space-y-2"><Button size="sm" variant="secondary" disabled={pending} onClick={()=>void download()}>
+ return <div className="space-y-2 print:hidden"><Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>void download()}>
   {pending?"Preparing CSV…":"Export matching CSV (max 250)"}</Button>
   {error?<p role="alert" className="max-w-sm text-sm text-error">{error}</p>:null}
  </div>;

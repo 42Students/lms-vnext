@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import {TenantRestoreAction} from "@/components/admin/tenant-restore-action";
 import { CollegeServiceError } from "@/modules/colleges/service";
 import { getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-tenant-lifecycle-service";
@@ -21,7 +22,8 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
   ["Created (IST)",new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.createdAt)],
  ];
  return <div className="min-w-0 space-y-5">
-  <PageHeader title={item.name} description="Read-only tenant identity and setup links in the authorized scope."/>
+  <PageHeader title={item.name} description="Read-only tenant identity and setup links in the authorized scope."
+   actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
   <nav aria-label="College tabs" className="flex flex-wrap items-center gap-3">
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}`}
      aria-current="page" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text">College</Link>
@@ -53,7 +55,6 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/signin`} className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Sign-in Methods</Link>
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Web address</Link>
    </> : <p className="text-sm text-muted-foreground">Setup links are unavailable while this college or its organization is archived.</p>}
-   <Link href="/admin/tenants" className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Tenant directory</Link>
   </div>
  </div>;
 }

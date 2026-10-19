@@ -19,8 +19,8 @@ export function SuperAdminPeopleCsvControl({href}:{href:string}) {
   } catch(caught){setError(caught instanceof Error?caught.message:"Export failed.");}
   finally{setPending(false);}
  }
- return <div className="space-y-2">
-  <Button size="sm" variant="secondary" disabled={pending} onClick={()=>void download()}>
+ return <div className="space-y-2 print:hidden">
+  <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>void download()}>
    {pending?"Preparing CSV…":"Export filtered CSV (max 500)"}
   </Button>
   <p className="text-xs text-muted-foreground">Names, roles and membership statuses only. No phone or email.</p>

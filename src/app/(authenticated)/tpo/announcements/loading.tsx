@@ -1,1 +1,10 @@
-export default function Loading(){return <main aria-busy="true" className="space-y-3 p-4"><div className="h-8 w-44 animate-pulse rounded bg-surface-secondary"/><div className="h-28 animate-pulse rounded-xl bg-surface-secondary"/></main>;}
+import { Skeleton } from "@/components/ui/skeleton";
+
+export default function Loading() {
+  return (
+    <main aria-busy="true" aria-label="Loading TPO announcements" className="space-y-3 p-4">
+      <Skeleton variant="row" height={32} width={176} label="Loading TPO announcements" />
+      <Skeleton variant="row" height={112} label="Loading TPO announcements" />
+    </main>
+  );
+}

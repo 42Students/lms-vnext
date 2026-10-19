@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {isVerifiedRecruiterDecisionReadReceipt} from "@/modules/placements/recruiter-decision-read-model";
 import {useRouter} from "next/navigation";
-import {Button} from "@/components/ui/button";
 export function RecruiterDecisionReadButton({id}:{id:string}){
  const router=useRouter();
  const [busy,setBusy]=useState(false);
