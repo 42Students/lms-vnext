@@ -40,7 +40,7 @@ export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs d
         const selected = selectedKey === item.key;
         const classes = cx(base, tones[item.tone ?? "neutral"], selected && "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]");
         const accessibleLabel = count !== null ? `${item.label} ${count}` : item.label;
-        const content = <><span>{item.label}</span>{count !== null ? <span aria-hidden="true" className="tabular-nums">{count}</span> : null}</>;
+        const content = <><span>{item.label}</span>{count !== null ? <span className="tabular-nums">{count}</span> : null}</>;
         if (item.href) {
           if (!item.disabled && isSafeInternalHref(item.href)) {
             return <Link key={item.key} href={item.href} aria-label={accessibleLabel} aria-current={selected ? "page" : undefined} className={classes}>{content}</Link>;
