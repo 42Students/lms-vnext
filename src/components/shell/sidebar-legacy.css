@@ -93,6 +93,7 @@
 .lms-desktop-sidebar::-webkit-scrollbar,
 .lms-desktop-sidebar *::-webkit-scrollbar {display:none;width:0;height:0;}
 .lms-sidebar-nav {min-width:0; padding:0 8px;}
+.lms-sidebar-nav.flex-row .lms-sidebar-item {width:auto;margin-bottom:0;}
 .lms-sidebar-nav .lms-sidebar-item {
  position:relative;
  width:100%;
