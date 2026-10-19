@@ -67,7 +67,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   <h2 className="font-semibold text-foreground">Reply</h2>
   <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
     {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
-      className="min-h-11 min-[768px]:min-h-9 shrink-0 rounded-[8px] px-3 text-sm font-medium"
+      className="min-h-11 md:min-h-9 shrink-0 rounded-[var(--lms-control-radius)] px-3 text-sm font-medium"
       onClick={()=>persistDraft(body?body+" "+reply:reply)}>{reply}</Button>)}
    </div>
   <form onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
@@ -81,14 +81,14 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
    <p className="text-xs text-muted-foreground" aria-live="polite">Enter to send · Shift + Enter for a new line · {body.length}/4000</p>
    <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={busy||!body.trim()} onClick={discardDraft}
-     className="min-h-11 min-[768px]:min-h-9 px-4">Discard draft</Button>
+     className="min-h-11 md:min-h-9 px-4">Discard draft</Button>
     <Button variant="primary" type="submit" disabled={busy||!body.trim()}
-     className="min-h-11 min-[768px]:min-h-9 px-4">
+     className="min-h-11 md:min-h-9 px-4">
       Send message
     </Button>
     {discardReview?<p role="status" className="w-full text-sm">Discard your unsent message? Select Discard draft again to confirm, or keep typing to cancel.</p>:null}
     {unread?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void post("read")}
-     className="min-h-11 min-[768px]:min-h-9 px-4">
+     className="min-h-11 md:min-h-9 px-4">
       Mark as read
     </Button>:null}
    </div>
