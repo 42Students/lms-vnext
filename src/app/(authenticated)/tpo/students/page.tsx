@@ -1,3 +1,4 @@
+import { Table } from "@/components/ui/table";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
@@ -764,8 +765,8 @@ export default async function TpoStudentsPage({
             No learners are available for this selection.
           </p>
         ) : (
-          <div className="hidden overflow-x-auto sm:block">
-            <table className="w-full min-w-[52rem] text-left text-sm">
+          <div className="hidden sm:block">
+            <Table scrollLabel="Branch intelligence" className="min-w-[52rem]">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-4 py-3">Branch</th>
@@ -817,7 +818,7 @@ export default async function TpoStudentsPage({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
         )}
 
