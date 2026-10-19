@@ -2,6 +2,7 @@
 import {Checkbox} from "@/components/ui/checkbox";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {Disclosure} from "@/components/ui/disclosure";
 import {tpoStudentMarksVerificationLabel} from "@/modules/placements/tpo-student-marks-label";
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
@@ -187,8 +188,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     Export selected CSV
   </Button>
   {downloadError?<p role="alert" className="text-xs text-error">{downloadError}</p>:null}
-  <details className="rounded-[var(--lms-canvas-radius)] border border-border p-4">
-   <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
+  <Disclosure title="Bulk Add a note" className="rounded-[var(--lms-canvas-radius)] border border-border p-4">
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
    <label className="mt-3 flex min-h-11 items-center gap-2 text-sm"><Checkbox 
      checked={rows.length>0&&rows.every(r=>noteSelection.includes(r.membershipId))}
@@ -202,7 +202,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    </div>
    <p className="text-sm">{noteSelection.length} selected</p>
    <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
-  </details>
+  </Disclosure>
   <label className="inline-flex items-center gap-3 text-sm font-semibold">Sort visible roster page
    <Select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}
     >
