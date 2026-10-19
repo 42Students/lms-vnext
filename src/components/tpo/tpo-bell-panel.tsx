@@ -135,7 +135,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
    {error?<p role="alert" className={style.topbarNotificationError}>{error}</p>:null}
 </>;
  return <div ref={root} className="relative min-w-0">
-  <Button ref={trigger} variant="secondary" size="sm" type="button" aria-controls={open?(compact&&!mobile?"tpo-desktop-notifications":"tpo-mobile-notifications"):undefined} aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending} disabled={pending} onClick={()=>changeOpen(!open)}
+  <Button ref={trigger} variant="secondary" size="sm" type="button" aria-controls={open?(compact?(mobile?"tpo-mobile-notifications":"tpo-desktop-notifications"):"tpo-page-notifications"):undefined} aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending} disabled={pending} onClick={()=>changeOpen(!open)}
    className={compact
     ? "relative inline-flex h-9 w-9 min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"}>
@@ -157,7 +157,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
    </div>
    <div className={style.topbarNotificationBody}>{panelBody}</div>
    <footer className={style.topbarNotificationFooter}>{panelFooter}</footer>
-  </PopoverPanel>:null : <Drawer id={compact?"tpo-mobile-notifications":undefined} open={open} onOpenChange={changeOpen}
+  </PopoverPanel>:null : <Drawer id={compact?"tpo-mobile-notifications":"tpo-page-notifications"} open={open} onOpenChange={changeOpen}
    className={compact?style.topbarNotificationDrawer:undefined}
    bodyClassName={compact?style.topbarNotificationBody:undefined}
    title="Notifications" description="Most recent notifications from your own college."
