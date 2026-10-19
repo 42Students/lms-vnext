@@ -536,7 +536,7 @@ export function FacultyAttendanceWorkspace({
 
       {mode === "REPORT" ? (
         <>
-          <section className="rounded-xl border border-border bg-surface p-4">
+          <section className="border-b border-border pb-5">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div className="flex flex-wrap gap-2">
                 <StatusBadge tone="info">
@@ -663,7 +663,7 @@ export function FacultyAttendanceWorkspace({
               ))}
             </dl>
             <section aria-label="Attendance threshold guidance" className="mt-5 rounded-lg border border-border bg-surface-subtle p-4">
-              <h3 className="text-sm font-semibold text-foreground">
+              <h3 className="text-sm font-semibold text-[var(--lms-heading)]">
                 College attendance guidance: {attendanceRisk.threshold}%
               </h3>
               <p className="mt-2 text-sm text-body">
@@ -705,9 +705,9 @@ export function FacultyAttendanceWorkspace({
             <section className="rounded-xl border border-border bg-surface p-4">
               <ScrollCue axis="x" label="Faculty attendance monthly grid" className="min-w-0">
               <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
-                <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
+                <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
-                    <th className="sticky left-0 z-10 bg-surface px-3 py-3">
+                    <th className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-3">
                       Learner
                     </th>
                     {monthDays.map((day) => (
@@ -1038,7 +1038,7 @@ export function FacultyAttendanceWorkspace({
                   {attendanceConfirmation ?? "No recorded marks have changed. Choose a changed mark to correct attendance."}
                 </p>
               ) : null}
-              <div className="sticky bottom-0 z-20 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface p-3 shadow-sm sm:static sm:border-0 sm:bg-surface-subtle sm:shadow-none">
+              <div className="sticky bottom-0 z-20 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 sm:static sm:border-0 sm:bg-surface-subtle">
                 <span className="text-sm font-semibold text-body">
                   {absent.size} absent ·{" "}
                   {Math.max(
@@ -1134,7 +1134,7 @@ export function FacultyAttendanceWorkspace({
                 </div>
               ))}
             </div>
-            <h3 className="text-base font-semibold text-foreground">Session history</h3>
+            <h3 className="text-base font-semibold text-[var(--lms-heading)]">Session history</h3>
             {learnerDetail.rows.length === 0 ? (
               <p className="text-sm text-body">No class sessions are scheduled for this month.</p>
             ) : (
