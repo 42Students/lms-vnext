@@ -60,7 +60,6 @@ export default async function TpoMyNotificationsPage({
         <TpoSettingsNav active="notifications" />
 
         <PageHeader
-          eyebrow="TPO · Settings"
           title="My Notifications"
           description="Your own college-scoped notification deliveries and saved notification preferences."
         />
@@ -112,7 +111,6 @@ export default async function TpoMyNotificationsPage({
       <TpoSettingsNav active="notifications" />
 
       <PageHeader
-        eyebrow="TPO · Settings"
         title="My Notifications"
         description="Only in-app notifications addressed to your signed-in account and recorded against your current college. Read-only; no notification is marked read by visiting this page."
       />
