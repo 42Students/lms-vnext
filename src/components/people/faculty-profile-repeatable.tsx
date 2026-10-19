@@ -77,7 +77,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         {visibleRows.map(({row,index}) => (
           <fieldset key={row.id} className="min-w-0 rounded-lg border border-border p-3 sm:p-4">
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
-            <button type="button" className="mb-3 min-h-11 rounded-md border border-border px-3 text-sm"
+            <button type="button" className="mb-3 min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm"
               aria-expanded={!collapsedIds.includes(row.id)}
               onClick={()=>setCollapsedIds(current=>toggleFacultyProfileCollapsed(current,row.id))}>
               {collapsedIds.includes(row.id)?"Show record fields":"Hide record fields"}
@@ -93,12 +93,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                     <input type="checkbox" className="ml-3" checked={value === true} disabled={pending}
                       onChange={event => update(row.id, field.name, event.target.checked)} />
                   ) : field.multiline ? (
-                    <textarea className="mt-1.5 min-h-24 w-full min-w-0 rounded-md border border-border bg-background p-3"
+                    <textarea className="mt-1.5 min-h-24 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
                       maxLength={field.maxLength} value={typeof value === "string" ? value : ""}
                       disabled={pending || currentDegreeEndYear} required={field.required}
                       onChange={event => update(row.id, field.name, event.target.value)} />
                   ) : (
-                    <input className="mt-1.5 w-full min-w-0 rounded-md border border-border bg-background p-3"
+                    <input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
                       type={field.kind ?? "text"} maxLength={field.maxLength}
                       value={typeof value === "string" ? value : ""}
                       disabled={pending || currentDegreeEndYear} required={field.required}
@@ -138,12 +138,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           Add {title.toLowerCase()} record
         </button>
         <button type="submit" disabled={!changed || pending || missingRequired || Boolean(sectionIssue)}
-          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+          className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
           {pending ? "Saving…" : "Save " + title.toLowerCase()}
         </button>
       </div>
       {changed && sectionIssue?<p role="alert" className="text-sm text-error">Review this section: {sectionIssue}</p>:null}
-      {changed ? <button type="button" disabled={pending} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
+      {changed ? <button type="button" disabled={pending} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold"
         onClick={async()=>{if(!(await askConfirm("Discard unsaved changes to "+title+"?")))return;
           setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
         Discard unsaved edits
