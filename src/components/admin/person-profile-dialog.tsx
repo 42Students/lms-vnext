@@ -7,6 +7,8 @@ import {
 import type { MembershipRole } from "@/modules/identity/constants";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { Alert } from "@/components/ui/alert";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -125,6 +127,7 @@ export function PersonProfileDialog({
   }
 
   function save() {
+    if (pending || loading || loadError) return;
     startTransition(async () => {
       const requests: Promise<Response>[] = [];
 
@@ -156,7 +159,14 @@ export function PersonProfileDialog({
         );
       }
 
-      const responses = await Promise.all(requests);
+      let responses: Response[];
+      try {
+        responses = await Promise.all(requests);
+      } catch {
+        showToast({ tone: "error", title: "Profile update could not be confirmed",
+          description: "The connection was interrupted. Reload the profile before retrying." });
+        return;
+      }
       const failed = responses.find((response) => !response.ok);
 
       if (failed) {
@@ -190,6 +200,7 @@ export function PersonProfileDialog({
       <Button
         variant="secondary"
         size="sm"
+        className="min-h-11 md:min-h-[var(--lms-control-height)]"
         disabled={disabled}
         onClick={openDialog}
       >
@@ -198,19 +209,23 @@ export function PersonProfileDialog({
 
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next => { if (!pending) setOpen(next); }}
+        dismissible={!pending}
         title={`Profile · ${displayName}`}
         description="Profile fields are membership-scoped and do not change authorization roles."
         footer={
           <>
             <Button
               variant="secondary"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               disabled={pending}
               onClick={() => setOpen(false)}
             >
               Cancel
             </Button>
             <Button
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
+              loading={pending}
               disabled={
                 loading ||
                 pending ||
@@ -224,17 +239,13 @@ export function PersonProfileDialog({
         }
       >
         {loading ? (
-          <p className="m-0 text-sm text-body">
-            Loading profile…
-          </p>
+          <LoadingState label="Loading profile…" />
         ) : loadError ? (
-          <p role="alert" className="m-0 text-sm font-semibold text-error">
-            {loadError}
-          </p>
+          <Alert tone="error">{loadError}</Alert>
         ) : (
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-[var(--lms-space-5)]">
             {hasLearner ? (
-              <fieldset className="grid gap-4 sm:grid-cols-2">
+              <fieldset className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
                 <legend className="mb-3 text-sm font-semibold text-[var(--lms-heading)]">
                   Learner profile
                 </legend>
@@ -274,11 +285,11 @@ export function PersonProfileDialog({
             ) : null}
 
             {hasFaculty ? (
-              <fieldset className="grid gap-4 sm:grid-cols-2">
+              <fieldset className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
                 <legend className="mb-3 text-sm font-semibold text-[var(--lms-heading)]">
                   Faculty profile
                 </legend>
-                <div className="sm:col-span-2">
+                <div className="md:col-span-2">
                   <label
                     htmlFor={`department-${membershipId}`}
                     className="mb-1.5 block text-xs font-semibold text-body"
