@@ -364,3 +364,52 @@ All ten files fetched from GitHub and scanned for raw control opening elements m
 Responsive source proof: no sm: (<768px mismatches) in any of these ten edited components. md: uses Tailwind's 768px boundary from old-lms-shell.css:68-85. Source cannot substitute for actual phone/tablet screenshots, browser click/focus checks, runtime/CI or integration tests; leave global E8 unchecked.
 
 Exact next scope: TPO remaining Team/Companies links and buttons and detailed icon review, starting with src/components/tpo/tpo-team-search.tsx and src/components/tpo/tpo-team-handover.tsx (coordinate with chat-11 if scope already claimed).
+
+
+## chat-12 continued — inline/bulk recruiter and student action controls (2026-10-19)
+
+Queue source-file status (the global E8 checkbox is still open; no app/browser/CI executed):
+
+- [x] src/components/tpo/recruiter-bulk-stage-controls.tsx — retained 100-lead scoped selection, optimistic stage check, review/signature, undo and audit; converted five raw buttons, four native input/select controls to shared components, flattened ordinary stage panel and warning review.
+- [x] src/components/tpo/recruiter-bulk-owner-controls.tsx — retained eligible owner lookup, selection/revision guards, undo/copy/retry; migrated seven raw buttons, select and checkbox to shared, flattened panel and warnings.
+- [x] src/components/tpo/recruiter-bulk-invite-controls.tsx — retained preview/confirm/retry, one-time invite URLs and email-delivery disclaimer; converted raw Cancel action to shared Button, flattened panel and improved focus.
+- [x] src/components/tpo/recruiter-inline-stage.tsx — retained original API, stage reason guard and mutation; shared reason input/select/buttons source-styled to legacy control radius and 44px phone/36px tablet.
+- [x] src/components/tpo/recruiter-inline-owner.tsx — retained scoped owner loader/mutation; matching legacy select and 44px phone/36px tablet actions.
+- [x] src/components/tpo/tpo-student-clipboard-actions.tsx — preserved CSV-safe TSV paste/copy and missing-roll notice; clipboard controls now sit on a plain border-separated section rather than a nested white card.
+- [x] src/components/tpo/tpo-student-note-editor.tsx — retained guarded permanent-note API and Ctrl+Enter; nested card removed, multiline input has min-height 128px and width 100%.
+- [x] src/components/tpo/tpo-student-nudge-panel.tsx — preserved message selection cap (25), template, dialog, confirmation, optimistic lock and audit; flat separator and 44px selection target.
+
+### Value table (legacy source vs current source, each file)
+
+| File | Legacy measured/source value | Current vNext source | Source comparison |
+|---|---|---|---|
+| recruiter-bulk-stage-controls.tsx | old-lms-pages.md:5 ordinary controls on one canvas; legacy-styles/components___form.scss:117-143 radius 10px, teal focus; shell.css:68-85 44px phone, md 768px | :26 fieldClass min-h-11 md:min-h-9, control radius token, :158 border-y, :177 44px selection row, :242 warning left-strip, shared Input/Select/Checkbox/Button | Matched source |
+| recruiter-bulk-owner-controls.tsx | same SCSS field and white canvas rules, old-lms-pages.md:9 compact bulk/list | :25 fieldClass, :163 border-y, :174/180 shared buttons, :192 Select, :214 Checkbox labels, :229 slim review warning | Matched source |
+| recruiter-bulk-invite-controls.tsx | old-lms-pages.md:5,7 no ordinary nested cards and pale-yellow notification | :56 border-y, :72 warning strip, :74 shared ghost link-style Cancel, :83 read-only results field, immutable invite guards untouched | Matched source |
+| recruiter-inline-stage.tsx | old-lms-shell-spec.md:24-25: radius 9px buttons, 36px desktop; shell.css:68-85 phone min 44px | :33-45 Select/Input (radius token), Button primary/ghost, min-h-11 md:min-h-9, source stage mutation untouched | Matched source |
+| recruiter-inline-owner.tsx | same 9px/36px desktop, 44px touch and shared form | :48-57 shared Select and primary/ghost Button, min-h-11 md:min-h-9; source-scoped owner request unchanged | Matched source |
+| tpo-student-clipboard-actions.tsx | old-lms-pages.md:5,9 toolbar and advanced actions inside single canvas | :26-46 flat border-y section with shared Textarea/Buttons and raw roll-number matching unchanged | Matched source |
+| tpo-student-note-editor.tsx | old-lms-pages.md:5 ordinary content no embedded card, form.scss:117-143 typed field | :31-45 flat border-t, :34 text area min-h-32, original locked save paths and keyboard handler | Matched source |
+| tpo-student-nudge-panel.tsx | old-lms-pages.md:5,7 slim sections and confirmation, shell.css:31-32 44px touch | :50-94 flat border-y, :54/60 min-h-11 checkbox labels, original accessible Dialog and template action | Matched source |
+
+### Scoped grep and JSX integrity
+
+Full current branch files were individually fetched and inspected with source equivalents of:
+grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE
+and grep -nE 'sm:|md:' FILE.
+All eight returned raw native form tags **0**, inline svg **0** and literal six-digit colors **0**. JSX and braces verified as follows:
+
+| File | Shared Button open/close | Shared Select open/close | Curly braces | Responsive source |
+|---|---|---|---|---|
+| recruiter-bulk-stage-controls.tsx | 6/6 | 1/1 | 109/109 | sm 0; md 2 |
+| recruiter-bulk-owner-controls.tsx | 8/8 | 1/1 | 106/106 | sm 0; md 1 |
+| recruiter-bulk-invite-controls.tsx | 6/6 | 0/0 | 68/68 | sm 0; flex-wrapped content |
+| recruiter-inline-stage.tsx | 3/3 | 1/1 | 38/38 | sm 0; md 4 |
+| recruiter-inline-owner.tsx | 3/3 | 1/1 | 41/41 | sm 0; md 3 |
+| tpo-student-clipboard-actions.tsx | 3/3 | 0/0 | 28/28 | sm 0; wrapping flex |
+| tpo-student-note-editor.tsx | 1/1 | 0/0 | 32/32 | sm 0; 100%-width textarea |
+| tpo-student-nudge-panel.tsx | 3/3 | 1/1 | 69/69 | sm 0; one-column mobile |
+
+Source-only breakpoint basis: old-lms-shell.css:68-85 uses max-width 767px, whereas Tailwind md is min-width 768px; every edited explicit breakpoint uses md not sm. Exact rendered viewport, pointer, keyboard focus and end-to-end mutation verification remain unperformed; no tests/CI/app run. Shared Quartz 44px header versus legacy 40px and DataTable 640px fallback vs 768px remain unowned mismatches. Never globally tick A5/A6/A7/E8 for these scoped checks.
+
+**Next queued area:** remaining TPO company/learner controls, legacy link/icon families and batch/team support components; begin with src/components/tpo/tpo-student-quick-panel.tsx.
