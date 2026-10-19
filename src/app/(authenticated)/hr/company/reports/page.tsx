@@ -1,4 +1,6 @@
 import { DataTable } from "@/components/ui/data-table";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -298,10 +300,10 @@ export default async function RecruiterCompanyReportsPage({
 
           <label className="grid min-w-44 gap-1 text-sm font-semibold text-body">
             Drive status
-            <select
+            <Select
               name="status"
               defaultValue={query.status}
-              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+              className="w-full"
             >
               <option value="ALL">
                 All visible drives
@@ -312,28 +314,23 @@ export default async function RecruiterCompanyReportsPage({
               <option value="CLOSED">
                 Closed
               </option>
-            </select>
+            </Select>
           </label>
 
           <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">
             Rows per page
-            <select
+            <Select
               name="pageSize"
               defaultValue={String(pageSize)}
-              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+              className="w-full"
             >
               <option value="10">10</option>
               <option value="25">25</option>
               <option value="50">50</option>
-            </select>
+            </Select>
           </label>
 
-          <button
-            type="submit"
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-          >
-            Apply filters
-          </button>
+          <Button type="submit">Apply filters</Button>
 
           <Link
             href={recruiterCompanyReportsHref({
