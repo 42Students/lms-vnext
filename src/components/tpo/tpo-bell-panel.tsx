@@ -99,7 +99,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
 
    {refreshing?<p role="status" className="text-xs text-muted-foreground">Refreshing notifications…</p>:null}
    {!refreshing&&displayedItems.length===0&&!error?<div role="status" className="text-sm"><p>Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul aria-label="Recent placement notifications" className="space-y-2">
-    {displayedItems.slice(0,20).map(item=><li key={item.id} className="border-b border-border text-sm">
+    {displayedItems.slice(0,20).map(item=><li key={item.id} className="mb-1.5 overflow-hidden rounded-[8px] text-sm">
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
       className="w-full min-h-11">
      <span className="block text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-notification-unread)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
