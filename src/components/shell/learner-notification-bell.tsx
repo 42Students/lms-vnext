@@ -89,6 +89,7 @@ export function LearnerNotificationBell(){
    </div>:null}
    {loading&&!everLoaded?<div data-learner-notification-state="" role="status"><GracefulPageLoading/></div>:null}
    {error&&everLoaded?<p className="mt-2 text-xs text-muted-foreground">Showing the last successful notifications.</p>:null}
+   {loading&&everLoaded?<p role="status" className="px-4 py-2 text-xs text-muted-foreground">Refreshing notifications…</p>:null}
    {items.length===0&&!error&&!loading?<p data-learner-notification-state="" role="status" className="text-muted-foreground">No notifications yet</p>:null}
    {due.length>0?<section aria-label="Assignments due soon" className="mt-3">
     <h3 className="text-sm font-semibold text-foreground">Assignments due within 48 hours</h3>
