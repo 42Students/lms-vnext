@@ -136,13 +136,13 @@ export default async function TpoCompanyMemoryPage({
             <TpoCompanyCreateForm />
             <Link
               href="/tpo/companies/archived"
-              className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
             >
               Archived relationships
             </Link>
             <Link
               href="/tpo/recruiters"
-              className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
             >
               Recruiter leads
             </Link>
@@ -153,7 +153,7 @@ export default async function TpoCompanyMemoryPage({
       {!data.contactsAvailable ? (
         <section
           role="status"
-          className="rounded-[var(--radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm leading-6 text-body"
+          className="rounded-[var(--lms-canvas-radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm leading-6 text-body"
         >
           Recruiter CRM tables are not available in the registered
           database. Contact counts and companies known only from
@@ -171,7 +171,7 @@ export default async function TpoCompanyMemoryPage({
         ].map(([label, value]) => (
           <div
             key={label}
-            className="rounded-[12px] border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
           >
             <p className="text-sm font-semibold text-body">{label}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
@@ -185,7 +185,7 @@ export default async function TpoCompanyMemoryPage({
         <form
           action="/tpo/companies"
           method="get"
-          className="grid gap-3 rounded-[12px] border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
+          className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Search companies
@@ -195,14 +195,14 @@ export default async function TpoCompanyMemoryPage({
               maxLength={150}
               defaultValue={query.search ?? ""}
               placeholder="Company name or website"
-              className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
             />
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Sort by
             <Select name="sort" defaultValue={query.sort}
-              className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground">
+              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
               <option value="NAME">Company name</option>
               <option value="CONTACTS">Most contacts</option>
               <option value="DRIVES">Most drives</option>
@@ -214,7 +214,7 @@ export default async function TpoCompanyMemoryPage({
             <Select
               name="pageSize"
               defaultValue={String(query.pageSize)}
-              className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
             >
               <option value="25">25</option>
               <option value="50">50</option>
@@ -224,7 +224,7 @@ export default async function TpoCompanyMemoryPage({
 
           <Button
             type="submit"
-            className="self-end inline-flex min-h-9 items-center justify-center rounded-[var(--radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+            className="self-end inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
           >
             Search
           </Button>
@@ -235,7 +235,7 @@ export default async function TpoCompanyMemoryPage({
             href={"/api/placements/tpo/companies/export?"+new URLSearchParams({
               ...(query.search?{search:query.search}:{}),sort:query.sort,
             }).toString()}
-            className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
             Export companies CSV ({page.total})
           </Link>:<p role="status" className="text-xs text-muted-foreground">
             Narrow your search to 2,000 companies to export all matching rows.
@@ -255,7 +255,7 @@ export default async function TpoCompanyMemoryPage({
         </div>
 
         {page.items.length === 0 ? (
-          <div className="rounded-[12px] border border-border bg-surface p-8">
+          <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-8">
             <p className="text-sm text-body">
               {page.total > 0
                 ? "This page is outside the available results."
@@ -320,7 +320,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page - 1,
                 })}
-                className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-body hover:text-link"
+                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Previous
               </Link>
@@ -334,7 +334,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page + 1,
                 })}
-                className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-body hover:text-link"
+                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Next
               </Link>
