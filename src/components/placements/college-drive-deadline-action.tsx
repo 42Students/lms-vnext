@@ -2,6 +2,8 @@
 import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
  jobId:string;title:string;currentDeadline:string|null;
 }){
@@ -33,24 +35,24 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
   finally{setBusy(false);}
  }
  return <div className="inline-block">
-  <button type="button" onClick={()=>{setOpen(true);setError("");}}
-   className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text">Extend deadline</button>
+  <Button variant="secondary" type="button" onClick={()=>{setOpen(true);setError("");}}
+   >Extend deadline</Button>
   {done?<p role="status" className="text-xs">{done}</p>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}} title={"Extend deadline — "+title} dismissible={!busy}>
     <h2 className="text-lg font-semibold">Extend deadline — {title}</h2>
     <p className="text-sm">Current deadline: {current}</p>
     <p className="text-sm text-body">Extend deadline for {title}?</p>
     <label className="grid gap-1 text-sm">New application deadline (IST)
-     <input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
-      className="min-h-11 rounded border border-border bg-surface px-3 text-base sm:text-sm"/>
+     <Input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
+      />
     </label>
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     <div className="flex gap-3">
-     <button type="button" disabled={busy||!value} onClick={()=>void save()}
-      className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
-      {busy?"Extending…":"Extend"}</button>
-     <button type="button" disabled={busy} onClick={()=>setOpen(false)}
-      className="min-h-11 rounded border border-border px-4">Cancel</button>
+     <Button type="button" disabled={busy||!value} onClick={()=>void save()}
+      >
+      {busy?"Extending…":"Extend"}</Button>
+     <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
+      >Cancel</Button>
     </div>
   </Dialog>
  </div>;

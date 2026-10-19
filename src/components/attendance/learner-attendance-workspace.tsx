@@ -30,6 +30,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
+import {Input} from "@/components/ui/input";
 
 type Course = {
   deliveryId: string;
@@ -314,9 +315,9 @@ export function LearnerAttendanceWorkspace({
             </Button>
             <label className="text-xs font-semibold text-body">
               Jump to month
-              <input
+              <Input
                 type="month"
-                className="mt-1.5 min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+                className="mt-1.5"
                 value={monthKey(month)}
                 onChange={(event) =>
                   changeMonth(
@@ -446,7 +447,7 @@ export function LearnerAttendanceWorkspace({
         </h2>
         <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {summaries.map((item) => (
-            <button
+            <Button variant="secondary"
               key={item.deliveryId}
               type="button"
               onClick={() =>
@@ -454,7 +455,7 @@ export function LearnerAttendanceWorkspace({
                   item.deliveryId,
                 )
               }
-              className="rounded-lg border border-border bg-surface-subtle p-4 text-left outline-none transition hover:border-primary focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              
             >
               <p className="m-0 text-sm font-semibold text-foreground">
                 {item.courseName}
@@ -485,7 +486,7 @@ export function LearnerAttendanceWorkspace({
                   </StatusBadge>
                 ) : null}
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       </section>
@@ -510,10 +511,10 @@ export function LearnerAttendanceWorkspace({
           </Select>
         </label>
         {(historyFilter !== "ALL" || historyOrder !== "NEWEST") ? (
-          <button type="button" onClick={() => router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false})}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+          <Button variant="secondary" type="button" onClick={() => router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false})}
+            >
             Reset history filters
-          </button>
+          </Button>
         ) : null}
         </div>
       </div>

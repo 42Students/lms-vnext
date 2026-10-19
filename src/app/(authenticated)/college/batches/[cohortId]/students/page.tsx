@@ -12,6 +12,9 @@ import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import { requirePermission } from "@/modules/permissions/policy";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 
 export default async function CollegeBatchStudentsPage({
   params, searchParams,
@@ -72,18 +75,18 @@ export default async function CollegeBatchStudentsPage({
       actions={<Link href="/college/batches" className="font-semibold text-[var(--lms-teal-deep)]">Back to batches</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border bg-surface p-4">
       <label className="grid flex-1 gap-1 text-sm font-semibold">Name, roll or email
-        <input type="search" name="q" defaultValue={q} maxLength={100}
-          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm" />
+        <Input type="search" name="q" defaultValue={q} maxLength={100}
+          />
       </label>
       <label className="grid gap-1 text-sm font-semibold">Class/Section
-        <select name="sectionId" defaultValue={sectionId ?? ""}
-          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm">
+        <Select name="sectionId" defaultValue={sectionId ?? ""}
+          >
           <option value="">All classes</option>
           {classes.map(item => <option key={item.id} value={item.id}>
             {item.name} ({item.capacity ?? "No cap"} seats)</option>)}
-        </select>
+        </Select>
       </label>
-      <button className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Search</button>
+      <Button >Search</Button>
     </form>
     <section aria-label="Students in this batch" className="min-w-0 space-y-3">
       <p className="text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>

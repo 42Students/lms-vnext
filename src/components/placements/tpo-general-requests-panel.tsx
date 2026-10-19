@@ -5,6 +5,8 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {tpoGeneralRequestReviewFacts} from "@/modules/placements/tpo-general-request-review-facts";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 type Request={id:string;kind:string;status:string;reason:string;payload:Record<string,unknown>;
  studentName:string|null;version:string;requestedAt:string;decisionNote:string|null};
 function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<string,unknown>}){
@@ -73,13 +75,13 @@ export function TpoGeneralRequestsPanel(){
       {pending?"Saving…":"Confirm decision"}</Button></>}>
    <p className="break-words text-sm">{selection?.reason}</p>
    <label className="mt-3 grid gap-1 text-sm">Decision
-    <select value={action} onChange={e=>setAction(e.target.value as "APPROVE"|"REJECT")} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border p-2">
+    <Select value={action} onChange={e=>setAction(e.target.value as "APPROVE"|"REJECT")} >
      {approveSupported(selection?.kind??"")?<option value="APPROVE">Approve and apply</option>:null}
      <option value="REJECT">Decline with reason</option>
-    </select>
+    </Select>
    </label>
    <label className="mt-3 grid gap-1 text-sm">Reason / decision note
-    <textarea value={note} onChange={e=>setNote(e.target.value)} className="min-h-24 rounded-[var(--lms-control-radius)] border border-border p-2" maxLength={2000}/>
+    <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}/>
    </label>
    {!approveSupported(selection?.kind??"")?<p className="text-sm">A specialist review is required before this kind can be approved. No placement record will be silently changed.</p>:null}
   </Dialog>

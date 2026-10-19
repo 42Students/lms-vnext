@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Textarea } from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 
 export function TpoTrustToggle({
   relationshipId, companyName, isTrusted,
@@ -36,10 +37,10 @@ export function TpoTrustToggle({
     }finally{setPending(false);}
   }
   return <div className="mt-2">
-    <button type="button" disabled={pending} onClick={()=>{setError(null);setReview(true);}}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+    <Button variant="secondary" type="button" disabled={pending} onClick={()=>{setError(null);setReview(true);}}
+      >
       {pending?"Saving...":isTrusted?"Remove company trust":"Mark company trusted"}
-    </button>
+    </Button>
     <ConfirmDialog open={review} onOpenChange={value=>{if(!pending)setReview(value);}}
       title={"Confirm "+(nextTrusted?"mark trusted":"remove trust")+" for "+companyName+"?"}
       description={"This changes only this college-company relationship, not recruiter-domain allowlisting or direct login permissions."}

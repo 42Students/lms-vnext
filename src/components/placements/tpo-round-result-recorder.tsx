@@ -219,14 +219,14 @@ export function TpoRoundResultRecorder({
         </>
       ) : null}
       {applicable ? (
-        <button
+        <Button variant="secondary"
           type="button"
           disabled={busy}
           onClick={() => void submitApply()}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-3 font-semibold text-primary-text disabled:opacity-50 md:min-h-9"
+          
         >
           {busy ? "Applying..." : "Confirm and apply staged result"}
-        </button>
+        </Button>
       ) : null}
       {error ? <p role="alert" className="text-error">{error}</p> : null}
     </div>

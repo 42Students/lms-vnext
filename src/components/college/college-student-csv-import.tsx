@@ -1,6 +1,5 @@
 "use client";
 import { Select } from "@/components/ui/select";
-import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";

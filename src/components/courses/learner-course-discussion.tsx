@@ -22,6 +22,7 @@ import {
   mergeDiscussionHistory,
   reconcileLatestDiscussionPage,
 } from "./learner-course-discussion-model";
+import {Textarea} from "@/components/ui/textarea";
 
 type DiscussionCursor = { beforeCreatedAt: string; beforeId: string };
 
@@ -644,7 +645,7 @@ export function LearnerCourseDiscussion({
           <label className="text-xs font-semibold text-body" htmlFor="course-discussion-message">
             Write a message
           </label>
-          <textarea
+          <Textarea
             ref={composerRef}
             id="course-discussion-message"
             value={draft}
@@ -662,7 +663,7 @@ export function LearnerCourseDiscussion({
             rows={3}
             maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
-            className="mt-1.5 min-h-28 w-full resize-y rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3 py-2 text-[var(--lms-font-base)] text-[var(--lms-form-ink)] focus-visible:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]"
+            className="mt-1.5 w-full"
           />
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs text-muted-foreground">

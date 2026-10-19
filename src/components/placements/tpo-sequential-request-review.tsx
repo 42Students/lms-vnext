@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {TpoRequestDecisionControl} from "./tpo-request-decision-control";
+import {Button} from "@/components/ui/button";
 
 type Row={
  id:string;studentName:string;requestType:string;reason:string;
@@ -29,11 +30,11 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
  }
  return <section aria-label="Review one by one" className="space-y-3 border-b border-border pb-6">
   <h2 className="font-semibold">Review one by one</h2>
-  {!sequence.length?<button type="button" disabled={!requests.length} onClick={()=>{
+  {!sequence.length?<Button variant="secondary" type="button" disabled={!requests.length} onClick={()=>{
    setSequence(requests.map(item=>item.id));setPosition(0);setDecided(0);setMessage("");
-  }} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+  }} >
    Start with the first of {requests.length}
-  </button>:current?<div className="space-y-3 border-t border-border pt-4">
+  </Button>:current?<div className="space-y-3 border-t border-border pt-4">
    <p role="status" className="text-sm font-semibold">{position+1} of {sequence.length} · {decided} decided</p>
    <p className="font-semibold">{current.studentName} · {current.requestType.replaceAll("_"," ")}</p>
    <p className="text-sm text-body">{current.companyName} · {current.jobTitle}</p>
@@ -42,15 +43,15 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
     expectedUpdatedAt={current.expectedUpdatedAt} requestType={current.requestType}
     onSuccess={()=>advance(true)} />
    <div className="flex flex-wrap gap-2">
-    <button type="button" onClick={()=>advance(false)}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold">{position+1===sequence.length?"Finish":"Next"}</button>
-    <button type="button" onClick={stop}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold">Stop and return to queue</button>
+    <Button variant="secondary" type="button" onClick={()=>advance(false)}
+     >{position+1===sequence.length?"Finish":"Next"}</Button>
+    <Button variant="secondary" type="button" onClick={stop}
+     >Stop and return to queue</Button>
    </div>
   </div>:<div className="space-y-2">
    <p role="status" className="text-sm">This request is no longer pending on the visible page.</p>
-   <button type="button" onClick={()=>advance(false)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4">Next</button>
-   <button type="button" onClick={stop} className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4">Finish</button>
+   <Button variant="secondary" type="button" onClick={()=>advance(false)} >Next</Button>
+   <Button variant="secondary" type="button" onClick={stop} className="ml-2">Finish</Button>
   </div>}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   <p className="text-xs text-muted-foreground">This session covers the pending requests on the visible page. Each decision is independently persisted and rechecked on the server.</p>

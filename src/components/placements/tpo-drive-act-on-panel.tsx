@@ -3,6 +3,9 @@ import {useState,type MouseEvent} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {TpoBulkDriveReminder} from "./tpo-bulk-drive-reminder";
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 type Action="CLOSE"|"CANCEL";
 type Preview={id:string;title:string;allowed:boolean;reason:string;
  expectedUpdatedAt:string|null;expectedCounts?:{applications:number;rounds:number;offers:number};
@@ -92,37 +95,37 @@ export function TpoDriveActOnPanel(){
   }catch{setNotice("Clipboard unavailable. Failed drives remain listed below.");}
  }
  return <section aria-label="Act on selected drives" className="space-y-3 border-t border-border pt-4">
-  <button type="button" onClick={()=>setOpen(!open)} aria-expanded={open}
-   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold">Act on selected drives</button>
+  <Button variant="secondary" type="button" onClick={()=>setOpen(!open)} aria-expanded={open}
+   >Act on selected drives</Button>
   {open?<div className="space-y-4">
    <p className="text-sm text-body">Actions only apply to checked rows on this page. Every drive is rechecked by the placement server before applying a change.</p>
    <TpoBulkDriveReminder/>
    <label className="grid max-w-sm gap-1 text-sm font-semibold">Action
-    <select value={action} onChange={e=>{setAction(e.target.value as Action);setRows([]);setResults([]);}}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3">
+    <Select value={action} onChange={e=>{setAction(e.target.value as Action);setRows([]);setResults([]);}}
+     >
      <option value="CLOSE">Close selected live drives</option>
      <option value="CANCEL">Cancel selected drives</option>
-    </select>
+    </Select>
    </label>
-   <button type="button" disabled={pending} onClick={e=>void preview(e)}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold">Preview applicable drives</button>
+   <Button variant="secondary" type="button" disabled={pending} onClick={e=>void preview(e)}
+    >Preview applicable drives</Button>
    {rows.length?<div className="space-y-2">
     <p role="status" className="text-sm">{rows.filter(row=>row.allowed).length} applicable · {rows.filter(row=>!row.allowed).length} left out</p>
     <ul className="space-y-1 text-sm">{rows.map(row=><li key={row.id}>{row.title} · {row.reason}</li>)}</ul>
     <label className="grid max-w-lg gap-1 text-sm font-semibold">Reason (audited)
-     <textarea value={reason} onChange={e=>setReason(e.target.value)} rows={2} maxLength={1000}
-      className="rounded-[var(--lms-control-radius)] border border-border p-3"/>
+     <Textarea value={reason} onChange={e=>setReason(e.target.value)} rows={2} maxLength={1000}
+      />
     </label>
-    <button type="button" disabled={pending||!rows.some(row=>row.allowed)}
-      onClick={()=>void apply()} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold">
-     {pending?"Applying…":"Confirm selected action"}</button>
+    <Button variant="secondary" type="button" disabled={pending||!rows.some(row=>row.allowed)}
+      onClick={()=>void apply()} >
+     {pending?"Applying…":"Confirm selected action"}</Button>
    </div>:null}
    {results.length?<div className="space-y-2">
     <p className="text-sm font-semibold">Per-drive results and retry</p>
     <ul className="space-y-1 text-sm">{results.map(row=><li key={row.id}>{row.id} · {row.status} · {row.reason}</li>)}</ul>
     {results.some(row=>row.status==="failed")?<div className="flex flex-wrap gap-3">
-     <button type="button" disabled={pending} onClick={()=>void apply(true)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Retry failed</button>
-     <button type="button" onClick={()=>void copyFailed()} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Copy failed</button>
+     <Button variant="secondary" type="button" disabled={pending} onClick={()=>void apply(true)} >Retry failed</Button>
+     <Button variant="secondary" type="button" onClick={()=>void copyFailed()} >Copy failed</Button>
     </div>:null}
    </div>:null}
    {notice?<p role="status" className="text-sm">{notice}</p>:null}

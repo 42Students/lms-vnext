@@ -30,6 +30,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {Dialog} from "@/components/ui/dialog";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
 
 type Lead = {
   id: string;
@@ -644,11 +646,11 @@ export function RecruiterLeadsWorkspace({
       ) : (
         <>
           <section aria-label="Needs doing" className="space-y-2 border-b border-border py-4">
-            <button type="button" aria-expanded={needsExpanded}
-              className="flex min-h-11 w-full items-center justify-between gap-3 text-sm font-semibold text-foreground"
+            <Button variant="ghost" type="button" aria-expanded={needsExpanded}
+              className="w-full"
               onClick={()=>setNeedsExpanded(open=>!open)}>
               Needs doing <span className="text-xs font-normal">{needsExpanded?"Hide":"Show"}</span>
-            </button>
+            </Button>
             {needsExpanded?<div className="flex flex-wrap gap-2">
               {([
                 ["OVERDUE","Follow-ups due",rows.filter(row=>row.chips?.includes("OVERDUE")).length],
@@ -708,12 +710,12 @@ export function RecruiterLeadsWorkspace({
             </button>
             {filterChips.length?<div role="group" aria-label="Active recruiter filters"
               className="flex flex-wrap gap-2">
-              {filterChips.map(chip=><button type="button" key={chip.key}
-                className="rounded-[9px]-full border border-border bg-primary-subtle px-3 py-1 text-xs text-on-primary"
+              {filterChips.map(chip=><Button type="button" key={chip.key}
+                
                 title={"Clear "+chip.label+" filter"}
                 onClick={()=>updateFilter(chip.key,"ALL")}>
                 {chip.label}: {chip.value} ×
-              </button>)}
+              </Button>)}
             </div>:null}
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
               className="grid gap-3 border-b border-border py-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -936,8 +938,8 @@ export function RecruiterLeadsWorkspace({
                         Also {company.aliases.length} other spellings</p>:null}
                     </div>},
                     {key:"Communication",header:"Communication",mobilePriority:"action",cell:company=>
-                      <select aria-label={"Communication for "+company.name}
-                        className="min-h-11 rounded-[9px] border border-border bg-surface px-2 text-base"
+                      <Select aria-label={"Communication for "+company.name}
+                        
                         value={communication[company.key]??deriveLegacyCompanyCommunication(company.drivesRan,
                           rows.filter(row=>company.people.some(person=>person.id===row.id)))}
                         disabled={!communicationReady}
@@ -945,7 +947,7 @@ export function RecruiterLeadsWorkspace({
                         <option value="NOT_CONTACTED">Not contacted</option><option value="EMAILED">Emailed</option>
                         <option value="REPLIED">Replied</option><option value="MEETING_SET">Meeting set</option>
                         <option value="NOT_INTERESTED">Not interested</option>
-                      </select>},
+                      </Select>},
                     {key:"People",header:"People",mobilePriority:"secondary",cell:company=><div className="flex flex-wrap gap-2">
                       {company.people?.length?company.people.map(person=>
                         <Link key={person.id} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline"

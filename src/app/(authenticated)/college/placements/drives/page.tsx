@@ -10,6 +10,8 @@ import { listCollegeDrives } from "@/modules/placements/college-drive-read-servi
 import {CollegeDriveBulkActions} from "@/components/placements/college-drive-bulk-actions";
 import {CollegeDriveDeadlineAction} from "@/components/placements/college-drive-deadline-action";
 import {CollegeDriveRowLifecycleAction} from "@/components/placements/college-drive-row-lifecycle-action";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -54,8 +56,8 @@ export default async function CollegeDrivesPage({ searchParams }: {
       actions={<Link href="/college/placements" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Operations workspace</Link>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 rounded-[8px] border border-border p-4 sm:grid-cols-3 lg:grid-cols-6">
       <label className="grid gap-1 text-sm">Title or company
-        <input name="q" defaultValue={query.q} maxLength={100}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm" />
+        <Input name="q" defaultValue={query.q} maxLength={100}
+          />
       </label>
       <label className="grid gap-1 text-sm">Status
         <Select name="status" defaultValue={query.status} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
@@ -76,17 +78,17 @@ export default async function CollegeDrivesPage({ searchParams }: {
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Deadline from
-        <input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
+        <Input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
+          />
       </label>
       <label className="grid gap-1 text-sm">Deadline on or before
-        <input type="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
+        <Input type="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
+          />
       </label>
       <label className="grid gap-1 text-sm">At least N applicants
-        <input type="number" name="minimumApplicants" min={0} max={100000}
+        <Input type="number" name="minimumApplicants" min={0} max={100000}
           defaultValue={query.minimumApplicants??""}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
+          />
       </label>
       <label className="grid gap-1 text-sm">Sort
         <Select name="sort" defaultValue={query.sort} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
@@ -94,7 +96,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
         </Select>
       </label>
-      <button type="submit" className="min-h-[var(--lms-control-height)] self-end rounded-[var(--lms-control-radius)] bg-primary px-3 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
+      <Button type="submit" className="self-end">Filter</Button>
     </form>
     <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="space-y-2" aria-label="Persisted drives">

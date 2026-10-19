@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 "use client";
 
 export default function FacultyProfileError({
@@ -14,13 +15,13 @@ export default function FacultyProfileError({
       <p className="mt-2 text-sm text-body">
         Your Faculty profile could not be loaded. Try again.
       </p>
-      <button
+      <Button
         type="button"
         onClick={reset}
-        className="mt-5 min-h-11 rounded-lg bg-primary px-5 text-sm font-semibold text-on-primary"
+        className="mt-5"
       >
         Retry
-      </button>
+      </Button>
     </section>
   );
 }

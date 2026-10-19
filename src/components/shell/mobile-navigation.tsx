@@ -5,6 +5,7 @@ import { SidebarNav } from "./sidebar-nav";
 import { ShellLogoMark } from "./shell-nav-icons";
 import { Drawer } from "@/components/ui/drawer";
 import type { ShellNavItem } from "./shell-model";
+import {Button} from "@/components/ui/button";
 
 /** Shares the native focus trap, Back and backdrop with every LMS overlay. */
 export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) {
@@ -21,14 +22,14 @@ export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) 
   }, []);
 
   return <>
-    <button type="button" aria-label="Open navigation menu"
+    <Button type="button" aria-label="Open navigation menu"
       aria-expanded={open} aria-haspopup="dialog" onClick={() => setOpen(true)}
-      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text md:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="w-11 shrink-0 md:hidden">
       <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20"
         fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
         <path d="M4 6h16 M4 12h16 M4 18h16" />
       </svg>
-    </button>
+    </Button>
     <Drawer open={open} onOpenChange={setOpen} side="left" title="Navigation menu"
       headerLeading={<ShellLogoMark />} className="lms-mobile-sidebar md:hidden"
       bodyClassName="!p-0">

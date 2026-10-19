@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {tpoBulkFailedLines,tpoBulkFailedSummary} from "@/modules/placements/tpo-bulk-failed-result-model";
+import {Button} from "@/components/ui/button";
 
 type LeadChoice = {
   id: string;
@@ -231,14 +232,14 @@ export function RecruiterBulkOwnerControls({
           </p>:null}
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <span className="text-body">{selections.length} / 100 selected</span>
-            <button
+            <Button
               type="button"
               onClick={() => void submit()}
               disabled={!canSubmit}
-              className="min-h-10 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50"
+              
             >
               {busy ? "Assigning…" : reviewOpen&&reviewSignature===currentSignature ? "Confirm assignment" : "Review and confirm assignment"}
-            </button>
+            </Button>
           </div>
         </>
       )}

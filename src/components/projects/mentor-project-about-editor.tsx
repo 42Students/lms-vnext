@@ -4,6 +4,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {mentorOverviewEditSchema} from "@/modules/projects/mentor-overview-edit-model";
+import {Button} from "@/components/ui/button";
 export function MentorProjectAboutEditor({project}:{project:{
  id:string;summary:string|null;dueLabel:string|null;blocker:string|null;
  nextAction:string|null;updatedAt:Date|string;
@@ -33,10 +34,10 @@ export function MentorProjectAboutEditor({project}:{project:{
   }finally{setBusy(false);}
  }
  return <section className="mt-3" aria-label="Edit about this project">
-  <button type="button" disabled={busy} onClick={()=>setEditing(v=>!v)}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+  <Button variant="secondary" type="button" disabled={busy} onClick={()=>setEditing(v=>!v)}
+   >
     {editing?"Close editor":"Edit details"}
-  </button>
+  </Button>
   {editing?<div className="mt-3 space-y-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
    <h3 className="font-semibold">Edit about this project</h3>
    {([
@@ -50,12 +51,12 @@ export function MentorProjectAboutEditor({project}:{project:{
    </label>)}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    <div className="flex gap-2">
-    <button type="button" disabled={busy} onClick={()=>void save()}
-     className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm font-semibold text-on-primary disabled:opacity-50">
+    <Button type="button" disabled={busy} onClick={()=>void save()}
+     >
      {busy?"Saving…":"Save details"}
-    </button>
-    <button type="button" disabled={busy} onClick={()=>setEditing(false)}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm text-[var(--lms-body-text)]">Cancel</button>
+    </Button>
+    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setEditing(false)}
+     >Cancel</Button>
    </div>
   </div>:null}
  </section>;

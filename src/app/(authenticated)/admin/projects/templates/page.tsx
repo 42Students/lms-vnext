@@ -10,7 +10,6 @@ import { Pagination } from "@/components/ui/pagination";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Badge } from "@/components/ui/badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {SuperAdminTemplatePageExport} from "@/components/projects/super-admin-template-page-export";
 import {SuperAdminTemplateArchiveControl} from "@/components/projects/super-admin-template-archive-control";

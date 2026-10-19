@@ -1,6 +1,5 @@
 import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
-import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {redirect} from "next/navigation";

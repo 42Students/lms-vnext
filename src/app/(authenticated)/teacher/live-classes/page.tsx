@@ -7,6 +7,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
 import {facultyLiveClassesHref,facultyLiveClassesQuerySchema} from "@/modules/courses/faculty-live-classes-model";
 import {getFacultyLiveClasses} from "@/modules/courses/faculty-live-classes-service";
+import {Button} from "@/components/ui/button";
 type Params={view?:string|string[];deliveryId?:string|string[];page?:string|string[]};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function Page({searchParams}:{searchParams:Promise<Params>}){
@@ -49,7 +50,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
       {c.courseName} · {c.sectionName}
      </option>)}
     </Select></label>
-   <button type="submit" className="min-h-9 rounded bg-primary px-4 py-2 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-on-primary">Filter</button>
+   <Button type="submit" >Filter</Button>
    <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
   </form>
   <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching registered live session{data.total===1?"":"s"}</p>

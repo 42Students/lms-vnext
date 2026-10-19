@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
 
 /** TPO-drives-26 / GR-04 / GR-35: cloning is an explicit, guarded draft mutation. */
 export function TpoDriveCloneAction({jobId,label="Run it again"}:{jobId:string;label?:string}){
@@ -33,10 +34,10 @@ export function TpoDriveCloneAction({jobId,label="Run it again"}:{jobId:string;l
  }
  return <>
   <div className="inline-flex flex-col gap-1">
-   <button type="button" disabled={pending} onClick={()=>setOpen(true)}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+   <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(true)}
+    >
     {pending?"Creating draft…":label}
-   </button>
+   </Button>
    {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
   </div>
   <ConfirmDialog open={open} onOpenChange={setOpen} title="Run this drive again as a new draft?"

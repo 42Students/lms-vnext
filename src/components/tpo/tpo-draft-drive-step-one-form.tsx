@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
+import {Button} from "@/components/ui/button";
 
 type Company = { relationshipId: string; name: string };
 type Season = { id: string; name: string; startDate: string; endDate: string };
@@ -134,10 +135,10 @@ export function TpoDraftDriveStepOneForm({
       </label>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {unknownCreate?<p role="alert" className="text-sm text-body">Review <Link href="/tpo/placements/lifecycle" className="text-primary-text underline">Drives</Link> before creating again. <button type="button" className="underline" onClick={()=>setUnknownCreate(false)}>I checked for duplicates</button></p>:null}
-      <button type="submit" disabled={pending || unknownCreate || !companyRelationshipId}
-        className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+      <Button type="submit" disabled={pending || unknownCreate || !companyRelationshipId}
+        >
         {pending ? "Saving draft…" : "Review and save draft"}
-      </button>
+      </Button>
     </form>
   );
 }

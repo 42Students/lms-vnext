@@ -2,20 +2,17 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
 
 
 import { DateInput } from "@/components/ui/date-input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { canRecordTpoOfferAction, parseTpoOfferExpiryIstInput, TPO_OFFER_ACTIONS, type TpoOfferAction } from "@/modules/placements/tpo-offer-lifecycle-model";
+import {Button} from "@/components/ui/button";
 
 type CandidateOffer = {
   id: string;
@@ -191,14 +188,14 @@ export function TpoOfferLifecyclePanel({
           I reviewed the {selected.length} affected offer(s) and supporting evidence.
           This is an audited administrative action, not a learner self-response.
         </label>
-        <button
+        <Button
           type="button"
           disabled={!valid || busy || !reviewed}
           onClick={() => void submit()}
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground"
+          
         >
           {busy ? "Recording..." : "Review and confirm action"}
-        </button>
+        </Button>
       </div>
       {notice ? <p role={notice.includes("updated and audited")?"status":"alert"} className="text-sm text-body">{notice}</p> : null}
     </section>

@@ -43,6 +43,7 @@ import {
   TPO_STUDENT_JOURNEY_STATES,
   type TpoStudentJourneyState,
 } from "@/modules/placements/tpo-students-model";
+import {Input} from "@/components/ui/input";
 
 type SearchParams = {
   journeyState?: string | string[];
@@ -433,9 +434,9 @@ export default async function TpoStudentsPage({
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Interviewed with (company)
-          <input type="search" name="interviewedWith" maxLength={100}
+          <Input type="search" name="interviewedWith" maxLength={100}
            defaultValue={query.interviewedWith??""} placeholder="Company name"
-           className="min-h-9 w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+           className="w-40"/>
         </label>
         <label className="text-sm font-semibold">Debarred
           <Select name="debarred" defaultValue={query.debarred===undefined?"":query.debarred?"YES":"NO"}
@@ -450,8 +451,8 @@ export default async function TpoStudentsPage({
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Furthest round reached (minimum)
-          <input type="number" name="minRoundReached" min={0} max={10000} step={1}
-           defaultValue={query.minRoundReached??""} className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+          <Input type="number" name="minRoundReached" min={0} max={10000} step={1}
+           defaultValue={query.minRoundReached??""} className="w-28"/>
         </label>
         <details className="w-full rounded-[var(--lms-canvas-radius)] border border-border p-3">
          <summary className="cursor-pointer font-semibold">Profile strength filters</summary>
@@ -463,15 +464,15 @@ export default async function TpoStudentsPage({
            </Select>
           </label>
           <label className="grid gap-1 text-sm">Skill name
-           <input type="search" name="skillName" defaultValue={query.skillName??""} maxLength={100}
-            placeholder="e.g. Java" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2"/>
+           <Input type="search" name="skillName" defaultValue={query.skillName??""} maxLength={100}
+            placeholder="e.g. Java" />
           </label>
           <label className="grid gap-1 text-sm">Birth year
-           <input name="birthYear" type="number" min={1900} max={2100} defaultValue={query.birthYear??""} className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/>
+           <Input name="birthYear" type="number" min={1900} max={2100} defaultValue={query.birthYear??""} className="w-28"/>
           </label>
           {([["minSkills","Skills"],["minProjects","Projects"],["minCertifications","Certifications"],["minExperiences","Experience entries"]] as const).map(([key,label])=>
            <label key={key} className="grid gap-1 text-sm">Minimum {label}
-            <input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/>
+            <Input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="w-28"/>
            </label>)}
           <label className="grid gap-1 text-sm">Profile links
            <Select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
@@ -501,18 +502,18 @@ export default async function TpoStudentsPage({
           ["maxCgpa","CGPA to",query.maxCgpa],
         ] as const).map(([name,label,value])=>
          <label key={name} className="grid gap-1 text-sm font-semibold">{label}
-          <input type="number" name={name} min={0} max={10} step="0.01"
+          <Input type="number" name={name} min={0} max={10} step="0.01"
            defaultValue={value??""} placeholder="Any"
-           className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+           className="w-28"/>
          </label>)}
         {([
           ["maxActiveBacklogs","Max active backlogs",query.maxActiveBacklogs],
           ["maxPastBacklogs","Max past backlogs",query.maxPastBacklogs],
         ] as const).map(([name,label,value])=>
          <label key={name} className="grid gap-1 text-sm font-semibold">{label}
-          <input type="number" name={name} min={0} max={100} step={1}
+          <Input type="number" name={name} min={0} max={100} step={1}
            defaultValue={value??""} placeholder="Any"
-           className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+           className="w-28"/>
          </label>)}
         <details className="w-full rounded-[var(--lms-canvas-radius)] border border-border p-3">
           <summary className="cursor-pointer font-semibold">Academic marks and passing year filters</summary>
@@ -523,14 +524,14 @@ export default async function TpoStudentsPage({
               ["minDiplomaPct","Diploma % from",query.minDiplomaPct],
               ["minUgPct","UG % from",query.minUgPct],
             ] as const).map(([key,label,value])=><label key={key} className="grid gap-1 text-sm">{label}
-              <input type="number" min={0} max={100} step="0.01" name={key} defaultValue={value??""}
-               className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/></label>)}
+              <Input type="number" min={0} max={100} step="0.01" name={key} defaultValue={value??""}
+               className="w-28"/></label>)}
             <label className="grid gap-1 text-sm">Passing year
-              <input name="passingYear" type="number" min={1950} max={2100} defaultValue={query.passingYear??""}
-                className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
+              <Input name="passingYear" type="number" min={1950} max={2100} defaultValue={query.passingYear??""}
+                className="w-28"/></label>
             <label className="grid gap-1 text-sm">Maximum gap years
-              <input name="maxGapYears" type="number" min={0} max={100} defaultValue={query.maxGapYears??""}
-                className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
+              <Input name="maxGapYears" type="number" min={0} max={100} defaultValue={query.maxGapYears??""}
+                className="w-28"/></label>
             {([
               ["marksVerified","Marks verified",query.marksVerified],
               ["isLateralEntry","Lateral entry",query.isLateralEntry],
@@ -577,9 +578,9 @@ export default async function TpoStudentsPage({
           ["maxOffers","Offers to",query.maxOffers],
         ] as const).map(([name,label,value])=>
          <label key={name} className="grid gap-1 text-sm font-semibold">{label}
-          <input type="number" name={name} min={0} max={10000} step={1}
+          <Input type="number" name={name} min={0} max={10000} step={1}
            defaultValue={value??""} placeholder="Any"
-           className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+           className="w-28"/>
          </label>)}
         <Button variant="secondary" type="submit" className="min-h-9 px-4">Show students</Button>
       </form>

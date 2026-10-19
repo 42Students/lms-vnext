@@ -94,8 +94,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       <Button type="button" disabled={busy || !preview.eligible} onClick={()=>setConfirmOpen(true)}>
         Confirm {action.toLowerCase()}
       </Button>
-      <button type="button" disabled={busy} onClick={()=>setPreview(null)}
-        className="ml-2 min-h-9 rounded-[9px] border border-border px-3">Cancel</button>
+      <Button variant="secondary" type="button" disabled={busy} onClick={()=>setPreview(null)}
+        className="ml-2">Cancel</Button>
     </div>:null}
     {result?<div role="status" className="space-y-2 text-sm">
       <p>{result.updated} updated, {result.skipped} failed. Retry will target only failed drives.</p>

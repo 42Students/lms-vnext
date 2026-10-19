@@ -8,6 +8,8 @@ import { driveInterviewsHref, driveInterviewsParams, driveRoundTime } from "@/mo
 import { listCollegeDriveInterviews } from "@/modules/placements/college-drive-interviews-service";
 import { getCollegeRoundSlotAppointments } from "@/modules/placements/college-round-slot-action-service";
 import { CollegeInterviewAppointments } from "@/components/placements/college-interview-appointments";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   params:Promise<{jobId:string}>;
@@ -40,17 +42,17 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Drive overview</Link>} />
     <form method="get" role="search" aria-label="Interview round filters" className="flex flex-wrap items-end gap-4 rounded-[8px] border border-border p-4">
       <label className="grid gap-1 text-sm">Round kind
-        <select name="kind" defaultValue={query.kind} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="kind" defaultValue={query.kind} >
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm">Status
-        <select name="status" defaultValue={query.status} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="status" defaultValue={query.status} >
           {["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"].map(status=>
             <option key={status} value={status}>{status}</option>)}
-        </select>
+        </Select>
       </label>
-      <button type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
+      <Button type="submit" >Filter</Button>
     </form>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointments.interviews}

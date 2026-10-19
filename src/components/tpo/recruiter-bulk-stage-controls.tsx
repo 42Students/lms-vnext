@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {tpoBulkFailedLines,tpoBulkFailedSummary} from "@/modules/placements/tpo-bulk-failed-result-model";
+import {Button} from "@/components/ui/button";
 
 type LeadChoice = {
   id: string;
@@ -227,14 +228,14 @@ export function RecruiterBulkStageControls({
                 </label>
               </>
             ) : null}
-            <button
+            <Button
               type="button"
               disabled={!isValid || busy}
               onClick={() => void apply()}
-              className="min-h-10 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
+              
             >
               {busy ? "Applying…" : reviewOpen&&reviewSignature===currentSignature ? "Confirm stage changes" : "Review and confirm"}
-            </button>
+            </Button>
           </div>
           {reviewOpen&&reviewSignature===currentSignature?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
             Confirm {selected.length} recruiter lead stage changes to {action==="CONTACTED"?"Contacted":action==="NEW"?"New":"Not now"}.

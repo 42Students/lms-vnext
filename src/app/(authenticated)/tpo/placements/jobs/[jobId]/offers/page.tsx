@@ -8,6 +8,9 @@ import {getTpoDriveOfferRegister} from "@/modules/placements/tpo-drive-offer-reg
 import {offerRegisterQuery} from "@/modules/placements/tpo-drive-offer-register-model";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -47,40 +50,40 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <form method="get" action={root+"/offers"} className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <input type="hidden" name="status" value={data.status}/>
    <label className="grid gap-1 text-sm font-semibold text-body">Joining outcome
-    <select name="joining" defaultValue={parsed.data.joining} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+    <Select name="joining" defaultValue={parsed.data.joining} >
      <option value="ALL">All joining outcomes</option><option value="PENDING">Accepted / pending</option>
      <option value="JOINED">Confirmed joined</option><option value="DEFERRED">Deferred</option>
      <option value="DID_NOT_JOIN">Did not join</option>
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Offer type
-    <select name="kind" defaultValue={parsed.data.kind} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+    <Select name="kind" defaultValue={parsed.data.kind} >
      <option value="ALL">All kinds</option><option value="OFFER">Offer</option><option value="LOI">Letter of intent</option>
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Response deadline
-    <select name="expiry" defaultValue={parsed.data.expiry}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9">
+    <Select name="expiry" defaultValue={parsed.data.expiry}
+      >
      <option value="ALL">Any response deadline</option>
      <option value="DUE_SOON">Due within 7 days</option>
      <option value="EXPIRED">Time is up</option>
      <option value="OPEN">More than 7 days left</option>
      <option value="UNKNOWN">No expiry recorded</option>
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Minimum package (LPA)
-    <input type="number" name="minCtcLpa" min={0} max={1000} step="0.01"
+    <Input type="number" name="minCtcLpa" min={0} max={1000} step="0.01"
       defaultValue={parsed.data.minCtcLpa??""}
-      className="min-h-11 w-36 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+      className="w-36"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Maximum package (LPA)
-    <input type="number" name="maxCtcLpa" min={0} max={1000} step="0.01"
+    <Input type="number" name="maxCtcLpa" min={0} max={1000} step="0.01"
       defaultValue={parsed.data.maxCtcLpa??""}
-      className="min-h-11 w-36 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
+      className="w-36"/>
    </label>
    <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner, email, roll, batch, branch or role
-    <input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground md:min-h-9"/>
-   </label><button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Search</button>
+    <Input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="w-full min-w-0"/>
+   </label><Button type="submit" >Search</Button>
    {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Clear filters</Link>:null}
   </form>
   <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>

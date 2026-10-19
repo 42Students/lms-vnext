@@ -13,6 +13,7 @@ import {
   listTpoStudentRequests,
   tpoStudentRequestsQuerySchema,
 } from "@/modules/placements/tpo-students-service";
+import {Input} from "@/components/ui/input";
 
 type SearchParams = {
   status?: string | string[];
@@ -265,13 +266,13 @@ export default async function TpoStudentRequestsPage({
 
         <label className="flex flex-col gap-1 text-sm font-semibold text-body">
           Search
-          <input
+          <Input
             name="search"
             type="search"
             maxLength={150}
             defaultValue={query.search ?? ""}
             placeholder="Student, roll, job or company"
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+            
           />
         </label>
 

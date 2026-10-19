@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
-import { Button } from "@/components/ui/button";
 import type {LearnerVerificationState} from "@/modules/placements/learner-verification-status-model";
 import {learnerVerificationSubmitLabel} from "@/modules/placements/learner-verification-submit-label";
 import {learnerVerificationSubmissionFeedback} from "@/modules/placements/learner-verification-submit-feedback-model";

@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {attendanceParentContactInputSchema} from "@/modules/attendance/parent-sms-model";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 export function AdminAttendanceParentContactEditor({collegeId,learners}:{collegeId:string;
  learners:readonly {membershipId:string;displayName:string|null}[]}){
  const [open,setOpen]=useState(false);
@@ -66,21 +68,21 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
    >Guardian attendance SMS</Button>
   {open?<div className="grid gap-3 text-sm sm:grid-cols-2">
    <p className="sm:col-span-2">Only record a separately verified parent or guardian phone with documented consent. Never use the learner&apos;s alternate contact as a parent number.</p>
-   <label>Student<select className="mt-1 block min-h-10 w-full rounded border border-border px-2"
+   <label>Student<Select className="mt-1 block w-full"
     value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
     <option value="">Choose a learner</option>
     {learners.map(row=><option value={row.membershipId} key={row.membershipId}>
      {row.displayName?.trim()||row.membershipId.slice(0,8)}
     </option>)}
-   </select></label>
+   </Select></label>
    <label>Verified parent phone (E.164)
-    <input type="tel" value={phoneE164} maxLength={20} placeholder="+919876543210"
+    <Input type="tel" value={phoneE164} maxLength={20} placeholder="+919876543210"
      onChange={e=>setPhoneE164(e.target.value)}
-     className="mt-1 block min-h-10 w-full rounded border border-border px-2"/>
+     className="mt-1 block w-full"/>
    </label>
    <label className="sm:col-span-2">Consent evidence reference (no phone or personal secrets)
-    <input value={evidence} maxLength={200} onChange={e=>setEvidence(e.target.value)}
-     className="mt-1 block min-h-10 w-full rounded border border-border px-2"/>
+    <Input value={evidence} maxLength={200} onChange={e=>setEvidence(e.target.value)}
+     className="mt-1 block w-full"/>
    </label>
    <label className="flex items-center gap-2">
     <input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>

@@ -27,6 +27,7 @@ import {
   type CareerCalendarSourceRound,
   type CareerCalendarView,
 } from "@/modules/placements/learner-career-calendar-model";
+import {Button} from "@/components/ui/button";
 
 const views: CareerCalendarView[] = ["agenda", "month", "week", "day"];
 type EventFilter = "ALL" | CareerCalendarEvent["kind"];
@@ -137,14 +138,14 @@ export function LearnerCareerCalendar({
               Approved reschedules replace the original slot.
             </p>
           </div>
-          <button
+          <Button
             type="button"
             onClick={downloadCalendar}
             disabled={period.events.length === 0}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            
           >
             Export selected period .ics
-          </button>
+          </Button>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2" role="group" aria-label="Calendar view">
           {views.map((option) => (
@@ -162,25 +163,25 @@ export function LearnerCareerCalendar({
           ))}
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <button
+          <Button variant="secondary"
             type="button"
             aria-label="Previous calendar period"
             onClick={() => {if(previousDate)changeCalendar({date:previousDate});}}
             disabled={previousDate===null}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body disabled:cursor-not-allowed disabled:opacity-50"
-          >←</button>
-          <button
+            
+          >←</Button>
+          <Button variant="secondary"
             type="button"
             onClick={() => changeCalendar({date:initialCareerCalendarDay()})}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body"
-          >Today</button>
-          <button
+            
+          >Today</Button>
+          <Button variant="secondary"
             type="button"
             aria-label="Next calendar period"
             onClick={() => {if(nextDate)changeCalendar({date:nextDate});}}
             disabled={nextDate===null}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body disabled:cursor-not-allowed disabled:opacity-50"
-          >→</button>
+            
+          >→</Button>
           <span className="text-sm font-semibold text-foreground">
             {view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}
           </span>
@@ -285,10 +286,10 @@ export function LearnerCareerCalendar({
                     <p className="text-sm font-semibold text-foreground">{event.title} · {event.companyName}</p>
                     <p className="mt-1 text-xs text-body">{displayDate(event.start)} · {event.kind}</p>
                     <div className="mt-2 flex flex-wrap gap-3">
-                      <button type="button" onClick={()=>showEventDetail(event)}
-                        className="min-h-11 text-sm font-semibold text-primary-text">
+                      <Button variant="ghost" type="button" onClick={()=>showEventDetail(event)}
+                        >
                         Event details
-                      </button>
+                      </Button>
                       <Link href={learnerCareerCalendarEventTarget(event)}
                         className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
                         Open exact round →
@@ -357,10 +358,10 @@ export function LearnerCareerCalendar({
               className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Open exact round
             </Link>:null}
-            <button type="button" onClick={()=>setSelectedKey(null)}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body">
+            <Button variant="secondary" type="button" onClick={()=>setSelectedKey(null)}
+              >
               Close
-            </button>
+            </Button>
           </>
         }>
         {selected?<dl className="grid gap-3 text-sm sm:grid-cols-2">

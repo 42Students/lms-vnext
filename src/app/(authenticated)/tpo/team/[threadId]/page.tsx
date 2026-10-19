@@ -19,6 +19,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
 import { readTpoInternalConversation, tpoThreadIdSchema, tpoMessagePageSchema } from "@/modules/placements/tpo-team-conversation-service";
+import {Button} from "@/components/ui/button";
 export default async function InternalThread({params,searchParams}:{params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[];m?:string|string[];ask?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!hasPlacementTeamMembership(context))redirect("/dashboard");
@@ -74,10 +75,10 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
-   <button type="submit"
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+   <Button variant="secondary" type="submit"
+    >
     Mark this conversation&apos;s alerts as read
-   </button>
+   </Button>
   </form>
   {result.messages.some(message=>message.decision&&!message.removed)?
    <aside aria-label="Decisions here" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">

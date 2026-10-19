@@ -7,6 +7,7 @@ import { PopoverListbox } from "@/components/ui/popover";
 import {LearnerNotificationBell} from "./learner-notification-bell";
 import { LEARNER_COURSE_SEARCH_PLACEHOLDER } from "@/modules/courses/learner-course-copy-model";
 import { useEffect, useMemo, useRef, useState } from "react";
+import {Input} from "@/components/ui/input";
 
 type LearnerCourse = {
   deliveryId: string;
@@ -61,7 +62,7 @@ export function LearnerTopbarTools() {
         <label className="sr-only" htmlFor="learner-global-course-search">
           Search Courses
         </label>
-        <input
+        <Input
           id="learner-global-course-search"
           value={query}
           onFocus={() => setOpen(true)}
@@ -80,7 +81,7 @@ export function LearnerTopbarTools() {
             }
           }}
           placeholder={LEARNER_COURSE_SEARCH_PLACEHOLDER}
-          className="min-h-10 w-52 rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] lg:w-72"
+          className="w-52 lg:w-72"
           autoComplete="off"
         />
         {open ? (

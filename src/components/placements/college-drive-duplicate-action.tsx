@@ -2,6 +2,7 @@
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 export function CollegeDriveDuplicateAction({jobId}:{jobId:string}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const {ask,confirmation}=useCollegeConfirmation();
@@ -21,9 +22,9 @@ export function CollegeDriveDuplicateAction({jobId}:{jobId:string}){
   finally{setBusy(false);}
  }
  return <div className="inline-flex flex-col gap-1">{confirmation}
-  <button type="button" disabled={busy} onClick={()=>void duplicate()}
-   className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
-   {busy?"Creating draft…":"Duplicate as new drive"}</button>
+  <Button variant="secondary" type="button" disabled={busy} onClick={()=>void duplicate()}
+   >
+   {busy?"Creating draft…":"Duplicate as new drive"}</Button>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
  </div>;
 }

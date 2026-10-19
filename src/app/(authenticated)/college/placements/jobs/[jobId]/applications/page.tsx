@@ -8,6 +8,9 @@ import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPOR
 import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
 import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
 import { listCollegeDriveApplicationFilters } from "@/modules/placements/college-drive-applications-options-service";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 
 export default async function CollegeDriveApplicationsPage({ params, searchParams }: {
   params: Promise<{jobId:string}>;
@@ -39,48 +42,48 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Drive overview</Link>} />
     <form method="get" role="search" aria-label="Application filters" className="grid gap-3 rounded-[8px] border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
-        <input name="q" defaultValue={query.q} maxLength={100} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm" />
+        <Input name="q" defaultValue={query.q} maxLength={100} />
       </label>
       <label className="grid gap-1 text-sm">Application
-        <select name="status" defaultValue={query.status} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="status" defaultValue={query.status} >
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm">Screening
-        <select name="screening" defaultValue={query.screening} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="screening" defaultValue={query.screening} >
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm">Source
-        <select name="source" defaultValue={query.source} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="source" defaultValue={query.source} >
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm">Department
-        <select name="departmentId" defaultValue={query.departmentId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="departmentId" defaultValue={query.departmentId??""} >
           <option value="">All departments</option>
           {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
             <option value={query.departmentId}>Selected department</option>}
           {filters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm">Program
-        <select name="programId" defaultValue={query.programId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="programId" defaultValue={query.programId??""} >
           <option value="">All programs</option>
           {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
             <option value={query.programId}>Selected program</option>}
           {filters.programs.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm">Batch
-        <select name="cohortId" defaultValue={query.cohortId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="cohortId" defaultValue={query.cohortId??""} >
           <option value="">All batches</option>
           {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
             <option value={query.cohortId}>Selected batch</option>}
           {filters.cohorts.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-        </select>
+        </Select>
       </label>
-      <button type="submit" className="min-h-[var(--lms-control-height)] self-end rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
+      <Button type="submit" className="self-end">Filter</Button>
     </form>
     <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2">
       {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>

@@ -198,12 +198,12 @@ function LearnerHourlyGrid({days,eventsForDay,courseBasePath,onSelectDay}:{
             {starts.length?<div className="space-y-1">
               {starts.map(event=><EventCard key={event.id} event={event}
                 courseBasePath={courseBasePath} compact/>)}
-            </div>:<button type="button"
+            </div>:<Button variant="secondary" type="button"
               onClick={()=>onSelectDay(col.day)}
               aria-label={"See "+dayHeading(col.day)+" at "+learnerHourLabel(hour)}
-              className="min-h-12 w-full rounded-[var(--lms-control-radius)] text-left text-xs text-muted-foreground hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-primary">
+              className="w-full">
               <span className="sr-only">No class scheduled. Open this day.</span>
-            </button>}
+            </Button>}
           </div>;
         })}
       </Fragment>)}
@@ -528,10 +528,10 @@ export function LearnerClassSchedule({
                 placeholder="Class title, faculty, location or course"
                 className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm font-normal text-foreground" />
             </label>
-            {sessionSearch ? <button type="button" onClick={()=>setSessionSearch("")}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+            {sessionSearch ? <Button variant="secondary" type="button" onClick={()=>setSessionSearch("")}
+              >
               Clear search
-            </button> : null}
+            </Button> : null}
             <label className="min-w-44 text-xs font-semibold text-body">Session kind
               <Select value={sessionKind} onChange={event=>setSessionKind(event.target.value as LearnerScheduleKind)}
                 className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm text-foreground">
@@ -547,14 +547,14 @@ export function LearnerClassSchedule({
                 : "min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body"}>
               Upcoming sessions only
             </button>
-            <button type="button" onClick={() => {
+            <Button variant="secondary" type="button" onClick={() => {
               const reset = learnerScheduleResetFilters(courses);
               setSessionSearch(reset.search);setSessionKind(reset.kind);
               setSectionId(reset.sectionId);setUpcomingOnly(reset.upcomingOnly);
               setSelectedDeliveryIds(reset.deliveryIds);
-            }} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+            }} >
               Clear schedule filters
-            </button>
+            </Button>
             <span role="status" className="w-full text-xs text-muted-foreground">
               {filteredEvents.length} matching authorized sessions
             </span>

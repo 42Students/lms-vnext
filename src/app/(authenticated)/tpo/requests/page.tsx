@@ -20,6 +20,8 @@ import {listPlacementJobs} from "@/modules/placements/job-service";
 import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
 import {afterCollegeDisplay} from "@/modules/placements/tpo-after-college-model";
 import {tpoRequestAttentionOnPage} from "@/modules/placements/tpo-request-attention-model";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 type Params = { urgentOnly?:string|string[]; jobId?:string|string[]; age?:string|string[]; sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
@@ -93,7 +95,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
        {jobChoices.map(row=><option value={row.job.id} key={row.job.id}>{row.company.name} · {row.job.title}</option>)}
       </Select></label>
       <label className="min-w-0 flex-1 text-sm">Search student number, student, job or company
-        <input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+        <Input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block w-full" />
       </label>
       <label className="text-sm">Page size
         <Select name="pageSize" defaultValue={String(data.query.pageSize)} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
@@ -102,7 +104,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       </label>
       <label className="text-sm">Age<Select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></Select></label>
       <label className="text-sm">Order<Select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></Select></label>
-      <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Apply</button>
+      <Button type="submit" >Apply</Button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Clear search, age and drive filters</Link>
     </form>
     {(await placementTableExists("placement_learner_general_requests"))?<TpoGeneralRequestsPanel/>:null}

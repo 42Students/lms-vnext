@@ -2,7 +2,6 @@
 
 import { Tabs } from "@/components/ui/tabs";
 import { usePathname } from "next/navigation";
-import { Tabs } from "@/components/ui/tabs";
 import { TrackerThemeToggle } from "./tracker-theme-toggle";
 
 const pages = [

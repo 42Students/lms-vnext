@@ -20,6 +20,7 @@ import {learnerDrivePageState} from "@/modules/placements/learner-drive-paginati
 import {learnerJobsMobileFilterLabel} from "@/modules/placements/learner-jobs-mobile-model";
 import {learnerDrivesEmptyState} from "@/modules/placements/learner-drives-empty-state-model";
 import {learnerSavedDriveSummary} from "@/modules/placements/learner-saved-drives-model";
+import {Button} from "@/components/ui/button";
 
 const PAGE_SIZE = 20;
 
@@ -111,12 +112,12 @@ export function LearnerJobsBrowse({
         </button>
       </nav>
       <section className="border-t border-border pt-4" aria-label="Find placement drives">
-        <button type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
+        <Button variant="ghost" type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
           onClick={()=>setMobileOpen(value=>!value)}
-          className="flex min-h-11 sm:min-h-9 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">
+          className="w-full sm:hidden">
           <span>{mobileOpen ? "Hide drive filters" : learnerJobsMobileFilterLabel(filters)}</span>
           <span aria-hidden="true">{mobileOpen ? "−" : "+"}</span>
-        </button>
+        </Button>
         <div id="learner-drive-filters"
           className={(mobileOpen?"block":"hidden")+" space-y-4 sm:block"}>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -292,17 +293,17 @@ export function LearnerJobsBrowse({
 
       {totalPages > 1 ? (
         <nav aria-label="Drive results pages" className="flex items-center justify-between gap-4">
-          <button type="button" disabled={page <= 1}
+          <Button type="button" disabled={page <= 1}
             onClick={() => updateQuery({ page: String(page - 1) })}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-40 sm:min-h-9">
+            >
             Previous
-          </button>
+          </Button>
           <span className="text-sm tabular-nums text-body">Page {page} of {totalPages}</span>
-          <button type="button" disabled={page >= totalPages}
+          <Button type="button" disabled={page >= totalPages}
             onClick={() => updateQuery({ page: String(page + 1) })}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-40 sm:min-h-9">
+            >
             Next
-          </button>
+          </Button>
         </nav>
       ) : null}
     </div>

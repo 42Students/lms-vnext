@@ -7,6 +7,7 @@ import {DataTable} from "@/components/ui/data-table";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter,useSearchParams} from "next/navigation";
 import {projectMutation} from "./project-api";
+import {Button} from "@/components/ui/button";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
  updatedAt:Date;status:string;priority:string;estimatePoints:number|null};
 type Member={membershipId:string;displayName:string|null;role:string};
@@ -84,8 +85,8 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     </p>:null}
    </div>
   </div>
-  {!readOnly?<button type="button" disabled={busy||projectUnassigned===0||!learners.length}
-     className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+  {!readOnly?<Button type="button" disabled={busy||projectUnassigned===0||!learners.length}
+     
      onClick={async()=>{
        if(!await askConfirm("Auto-assign unassigned tasks to learners with the fewest open tasks?"))return;
        setBusy(true);setError("");setNotice("");
@@ -95,13 +96,13 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         setNotice(result.assigned+" task(s) auto-assigned.");router.refresh();
        }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
        finally{setBusy(false);}
-     }}>Auto-assign {projectUnassigned} eligible project task(s)</button>:null}
-  <button type="button" aria-expanded={filtersOpen}
+     }}>Auto-assign {projectUnassigned} eligible project task(s)</Button>:null}
+  <Button variant="secondary" type="button" aria-expanded={filtersOpen}
     aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
     onClick={()=>setFiltersOpen(open=>!open)}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
+    >
     Filters{activeFilterCount?" ("+activeFilterCount+")":""}
-  </button>
+  </Button>
   {filtersOpen?<div id="mentor-allocation-filters"
     className="flex flex-wrap gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
    <label className="text-sm font-semibold">Release

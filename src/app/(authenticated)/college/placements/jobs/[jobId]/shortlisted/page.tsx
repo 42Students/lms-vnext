@@ -8,6 +8,8 @@ import { ErrorState } from "@/components/ui/error-state";
 import { listCollegeDriveApplications } from "@/modules/placements/college-drive-applications-service";
 import { DRIVE_APPLICATION_EXPORT_CAP, driveApplicationsHref, driveApplicationsQuerySchema } from "@/modules/placements/college-drive-applications-model";
 import { collegeShortlistedQuery, collegeShortlistedHref } from "@/modules/placements/college-shortlisted-query";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 /** Dedicated legacy shortlisted surface, with persisted college-scoped applicant status. */
 export default async function CollegeDriveShortlistedPage({
@@ -41,10 +43,10 @@ export default async function CollegeDriveShortlistedPage({
         className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Applications</Link>} />
     <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Student
-        <input type="search" name="q" maxLength={100} defaultValue={query.q}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm"/>
+        <Input type="search" name="q" maxLength={100} defaultValue={query.q}
+          />
       </label>
-      <button type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
+      <Button type="submit" >Filter</Button>
     </form>
     <p role="status" className="text-sm">{data.total} shortlisted</p>
     {query.q&&data.total===0?<Link href={collegeShortlistedHref(jobId,{q:"",page:1})}

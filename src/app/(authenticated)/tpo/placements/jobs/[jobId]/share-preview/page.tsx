@@ -13,6 +13,8 @@ import {companySharePreferenceKey} from "@/modules/placements/company-share/reme
 import {tpoFilteredSharePreviewExportHref} from "@/modules/placements/tpo-share-preview-export-href";
 import {companyShareStatusSchema,companyShareStatusLabel} from "@/modules/placements/company-share/status-model";
 import {companyShareLinksHref,recoverCompanyShareLinkPage,companySharePreviewSearchState} from "@/modules/placements/company-share/link-page-model";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; sharePage?:string|string[]; q?:string|string[] };
 const first = (value: string | string[] | undefined) =>
@@ -66,12 +68,12 @@ export default async function TpoShortlistSharePreviewPage({
       {preservedHistory.shareStatus?<input type="hidden" name="shareStatus" value={preservedHistory.shareStatus}/>:null}
       {preservedHistory.sharePage?<input type="hidden" name="sharePage" value={preservedHistory.sharePage}/>:null}
       <label className="grid gap-2 text-sm font-semibold text-body">Search shortlisted learner
-        <input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
-          placeholder="Learner name" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9"/>
+        <Input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
+          placeholder="Learner name" />
       </label>
-      <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-primary-foreground md:min-h-9">
+      <Button type="submit" >
         Search
-      </button>
+      </Button>
       <Link href={path} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Clear</Link>
     </form>
     <p className="text-sm text-body">

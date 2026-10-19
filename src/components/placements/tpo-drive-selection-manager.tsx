@@ -4,6 +4,9 @@ import {useRouter} from "next/navigation";
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {DataTable} from "@/components/ui/data-table";
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 type Candidate={applicationId:string;name:string;email?:string|null;roleTitle:string;offerReady:boolean;alreadyOffered:boolean};
 type RoleOption={id:string;title:string;annualCtcInr:number|null};
 type Selection={id:string;applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null;status:string;recordedAt:string;offerReady:boolean;releasedOfferId:string|null};
@@ -50,11 +53,11 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
  }
  return <section className="space-y-4">
   <div className="flex flex-wrap gap-3">
-   <button type="button" onClick={()=>open("RECORD")} disabled={!recordable.length}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">Record a selection</button>
-   <button type="button" onClick={()=>open("VERIFY_AND_RELEASE")} disabled={!releasable.length}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
-    Verify and release ({releasable.length})</button>
+   <Button type="button" onClick={()=>open("RECORD")} disabled={!recordable.length}
+    >Record a selection</Button>
+   <Button variant="secondary" type="button" onClick={()=>open("VERIFY_AND_RELEASE")} disabled={!releasable.length}
+    >
+    Verify and release ({releasable.length})</Button>
   </div>
   {lastRecorded>0?<p role="status" className="text-sm font-semibold">{lastRecorded} selection(s) recorded, not yet released.</p>:null}
   <p className="text-sm text-body">Selection alone does not issue an offer. Verify and release only after checking the company&apos;s selection list.</p>
@@ -81,28 +84,28 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       Successful releases issue official offers and notify learners.
     </p>:null}
     {mode==="RECORD"?<label className="grid gap-1 text-sm">Package from this drive
-     <select className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" defaultValue=""
+     <Select defaultValue=""
       onChange={e=>{const option=roleOptions.find(o=>o.id===e.target.value);
         if(option){setRole(option.title);setLpa(option.annualCtcInr==null?"":String(option.annualCtcInr/100000));}}}>
       <option value="">Choose a role package or enter manually</option>
       {roleOptions.map(o=><option value={o.id} key={o.id}>{o.title}{o.annualCtcInr==null?"":" · ₹"+(o.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</option>)}
-     </select></label>:null}
+     </Select></label>:null}
     {mode==="RECORD"?<div className="grid gap-3 sm:grid-cols-2">
-     <label className="grid gap-1 text-sm">Role<input required value={role} onChange={e=>setRole(e.target.value)}
-      maxLength={200} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/></label>
-     <label className="grid gap-1 text-sm">Package (LPA, optional)<input type="number" min={0} max={1000} step="0.01"
-      value={lpa} onChange={e=>setLpa(e.target.value)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/></label>
+     <label className="grid gap-1 text-sm">Role<Input required value={role} onChange={e=>setRole(e.target.value)}
+      maxLength={200} /></label>
+     <label className="grid gap-1 text-sm">Package (LPA, optional)<Input type="number" min={0} max={1000} step="0.01"
+      value={lpa} onChange={e=>setLpa(e.target.value)} /></label>
     </div>:null}
     <label className="grid gap-1 text-sm">Find student
-     <input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
-      placeholder="Search name, email or role" className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+     <Input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
+      placeholder="Search name, email or role" />
     </label>
     <div className="flex flex-wrap gap-3 text-sm">
-      <button type="button" disabled={pending} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen(previous=>[
+      <Button variant="ghost" type="button" disabled={pending} onClick={()=>setChosen(previous=>[
        ...new Set([...previous,...(mode==="RECORD"?visibleRecordable.map(x=>x.applicationId):visibleReleasable.map(x=>x.id))])].slice(0,100))}>
        Select matching (max 100)
-      </button>
-      <button type="button" disabled={pending||!chosen.length} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen([])}>Clear selection</button>
+      </Button>
+      <Button variant="ghost" type="button" disabled={pending||!chosen.length} onClick={()=>setChosen([])}>Clear selection</Button>
     </div>
     <fieldset className="max-h-60 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border px-3 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
@@ -118,11 +121,11 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
      {report.map(x=><p key={x.selectionId}>{x.status}: {x.applicationId} {x.reason??""}</p>)}
     </div>:null}
     <div className="flex gap-3">
-     <button type="button" disabled={pending||!chosen.length||(mode==="RECORD"&&!role.trim())}
-      onClick={()=>void submit()} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
-      {pending?"Saving…":mode==="RECORD"?"Record "+chosen.length+" selection(s)":"Verify and release "+chosen.length+" offer(s)"}</button>
-     <button type="button" disabled={pending} onClick={()=>{setMode(null);setError("");}}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Close</button>
+     <Button type="button" disabled={pending||!chosen.length||(mode==="RECORD"&&!role.trim())}
+      onClick={()=>void submit()} >
+      {pending?"Saving…":mode==="RECORD"?"Record "+chosen.length+" selection(s)":"Verify and release "+chosen.length+" offer(s)"}</Button>
+     <Button variant="secondary" type="button" disabled={pending} onClick={()=>{setMode(null);setError("");}}
+      >Close</Button>
     </div>
     </div>
   </Dialog>

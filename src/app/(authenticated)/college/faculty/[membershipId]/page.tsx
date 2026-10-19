@@ -6,6 +6,8 @@ import { DataTable } from "@/components/ui/data-table";
 import { getCollegeFacultyDetail } from "@/modules/people/college-faculty-detail-service";
 import { CollegePersonNotFoundError } from "@/modules/people/college-person-detail-model";
 import {CollegeFacultyScheduleReassign} from "@/components/college/college-faculty-schedule-reassign";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 
 export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
@@ -45,24 +47,24 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
         <label className="grid gap-2 text-sm font-semibold text-body">
           Assignment history
-          <select name="status" defaultValue={data.filter.status}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          <Select name="status" defaultValue={data.filter.status}
+            >
             <option value="ALL">All assignments</option>
             <option value="ACTIVE">Active only</option>
             <option value="ENDED">Ended only</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-2 text-sm font-semibold text-body">
           Teaching role
-          <select name="role" defaultValue={data.filter.role}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          <Select name="role" defaultValue={data.filter.role}
+            >
             <option value="ALL">All teaching roles</option>
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
             <option value="TA">Teaching assistant</option>
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+        <Button type="submit" >Filter</Button>
       </form>
       <p className="mt-2 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·

@@ -8,7 +8,6 @@ import {
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {loadCourseMembership,loadCourseSectionDeliveryScope} from "./scope";

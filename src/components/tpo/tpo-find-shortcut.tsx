@@ -6,6 +6,7 @@ import {useEffect,useRef,useState,type KeyboardEvent} from "react";
 import {Dialog} from "@/components/ui/dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import {isTpoFindShortcut} from "@/modules/placements/tpo-find-shortcut-model";
+import {Input} from "@/components/ui/input";
 
 type Match={group:string;label:string;href:string};
 const safeMatch=(value:unknown):value is Match=>
@@ -81,10 +82,10 @@ export function TpoFindShortcut(){
   <Dialog open={open} onOpenChange={value=>{setOpen(value);if(value)requestAnimationFrame(()=>inputRef.current?.focus());}}
     title="Find a student, recruiter or company" description="Search records in your college. Use arrow keys to navigate, Enter to open and Esc to close.">
    <label className="block text-sm font-semibold">Search records
-    <input ref={inputRef} autoFocus value={query} onKeyDown={handleKeyDown}
+    <Input ref={inputRef} autoFocus value={query} onKeyDown={handleKeyDown}
       aria-controls="tpo-find-results" aria-activedescendant={showing.length?"tpo-find-result-"+active:undefined}
       onChange={event=>changeQuery(event.target.value)} placeholder="Type at least 2 characters"
-      maxLength={100} className="mt-2 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+      maxLength={100} className="mt-2 w-full"/>
    </label>
    <div id="tpo-find-results" role="listbox" aria-label="Matching records" className="mt-4 max-h-80 space-y-1 overflow-y-auto">
     {query.trim().length<2?<h3 className="text-xs font-semibold text-muted-foreground">Recently opened</h3>:null}

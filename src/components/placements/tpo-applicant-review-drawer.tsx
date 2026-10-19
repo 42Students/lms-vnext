@@ -5,6 +5,7 @@ import {Drawer} from "@/components/ui/drawer";
 import {useRouter} from "next/navigation";
 import {TpoApplicantReviewForm} from "./tpo-applicant-review-form";
 import {applicantDrawerReviewable,type TpoApplicantReviewSnapshot} from "@/modules/placements/tpo-applicant-review-drawer-model";
+import {Button} from "@/components/ui/button";
 export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}:{
  jobId:string;jobStatus:string;app:TpoApplicantReviewSnapshot;previousId?:string;nextId?:string;
 }){
@@ -18,14 +19,14 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
   if(id){event.preventDefault();setOpen(false);router.push(applicantHref(id));}
  }
  return <>
-  <button type="button" onClick={()=>setOpen(true)}
-   className="mt-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+  <Button variant="secondary" type="button" onClick={()=>setOpen(true)}
+   className="mt-2">
    Review applicant
-  </button>
+  </Button>
   <Drawer open={open} onOpenChange={setOpen} title={app.student??"Name unavailable"}>
    <div onKeyDown={move} className="min-w-0 space-y-4">
-    <div className="flex justify-end"><button type="button" onClick={()=>setOpen(false)}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Close</button></div>
+    <div className="flex justify-end"><Button variant="secondary" type="button" onClick={()=>setOpen(false)}
+     >Close</Button></div>
    <dl className="mb-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
     <div><dt className="text-body">Role</dt><dd className="break-words">{app.role}</dd></div>
     <div><dt className="text-body">Application</dt><dd>{app.applicationStatus}</dd></div>

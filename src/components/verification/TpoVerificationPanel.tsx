@@ -1,6 +1,5 @@
 "use client";
 import { Select } from "@/components/ui/select";
-import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useRouter,useSearchParams} from "next/navigation";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
