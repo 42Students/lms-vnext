@@ -442,3 +442,19 @@ grep -En '<(button|input|select|textarea)([ >])|#[[:xdigit:]]{6}|sm:(min-h-9|gri
 Responsive source implications: **375px phone** and **700px tablet** show one-column cards, full-width shared actions, scrollable filter chips and 44px links. **768px tablet** enables 2/3-column content and wrapped time filters; **1024px desktop** uses existing learner page canvas without an extra nested wrapper. Zero raw element matches in these three selected files. No DOM, screenshot, test, TypeScript parser or CI was executed; strict LRN-02/04/06 remain unticked.
 
 **Exact next source file:** `src/app/(authenticated)/learn/my-placements/assessments/page.tsx` (was inspected, currently no raw controls/legacy mobile classes; compare its info banner state), then `src/app/(authenticated)/learn/my-placements/interviews/page.tsx` (already one shared PageHeader; no edits expected unless source proves a mismatch).
+
+### Assessment landing and published-results action (2026-10-20)
+
+`src/app/(authenticated)/learn/my-placements/assessments/page.tsx`: moved existing **View official assessment results** action from a separate block into shared `PageHeader.actions` without changing its destination. Changed assessment guidance from nested rounded card to slim info strip. Page still renders the identical `LearnerCareerRoundsWorkspace` and validation; nothing changed in application/round access.
+
+| Property | Legacy value/reference | Source value | Proof |
+|---|---|---|---|
+| Title + right action | `old-lms-pages.md:5-13`: one PageHeader with title/action on one row where space permits | One `PageHeader` with existing results Link in `actions` prop | Static markup |
+| Info strip | `docs/design/legacy-styles/components___learn-notifications.scss`: pale tinted notice, hairline accent | `border-l-2 border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3 md:px-6` | Token and padding source |
+| Mobile link | `components___learn-notifications.scss:9-10`: minimum 44px <=767px | `min-h-11 md:min-h-9` | Utility source |
+| Focus | `components___accessibility.scss:19-38`: 2px teal, offset 2px | `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]` | Static markup |
+| Responsive placement | `components___learn-layout.scss:152-163`: 16px mobile horizontal padding, 768px breakpoint | `px-4 md:px-6` strip, shared PageHeader right action | Source match, no screenshot |
+
+This file has 1 shared PageHeader, 1 results destination link, 0 raw button/input/select/textarea, 0 hex literals and 0 deprecated `sm:` utility instances. `assessments/page.tsx` and `interviews/page.tsx` retain the same learner-owned request/schedule services and the combined `learner-career-rounds-workspace.tsx`. Browser rendering, keyboard and mobile screenshots remain outstanding; LRN-02 still unticked.
+
+**Next queued file:** `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`, then nested notification error/loading page inventory. Do not alter courses owned chat-7.
