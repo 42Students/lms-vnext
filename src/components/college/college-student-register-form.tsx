@@ -116,11 +116,11 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
         className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground text-base sm:text-sm"/>
     </label>
     <div className="space-y-2 sm:col-span-2">
-      <Button variant="primary" type="submit" disabled={pending} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
+      <Button variant="primary" type="submit" disabled={pending} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 font-semibold text-[var(--lms-on-primary)] disabled:opacity-50">
         {pending?"Registering…":"Register student"}
       </Button>
       {result&&<p role="status" className="text-sm text-body">{result}</p>}
-      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Open registered student profile →</Link>:null}
+      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Open registered student profile →</Link>:null}
       {error&&<p role="alert" className="text-sm text-error">{error}</p>}
     </div>
   </form></>;

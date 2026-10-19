@@ -73,9 +73,9 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
     {query.tab==="WAITING"?<fieldset className="min-w-0 space-y-2 sm:col-span-2">
       <legend className="text-sm font-semibold">Waiting since</legend>
       <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("TODAY")} className="min-h-11 sm:min-h-9">Today</Button>
-        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("WEEK")} className="min-h-11 sm:min-h-9">This week</Button>
-        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("OLDER")} className="min-h-11 sm:min-h-9">Over a week</Button>
+        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("TODAY")} className="min-h-[var(--lms-control-height)] ">Today</Button>
+        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("WEEK")} className="min-h-[var(--lms-control-height)] ">This week</Button>
+        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("OLDER")} className="min-h-[var(--lms-control-height)] ">Over a week</Button>
       </div>
       <p className="text-xs text-muted-foreground">These shortcuts filter persisted submitted dates in IST and reset conflicting waiting-age filters.</p>
     </fieldset>:null}
@@ -122,8 +122,8 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
    </div>
    {error&&<p role="alert" className="text-sm">{error}</p>}
    <div className="flex flex-wrap gap-2">
-    <Button variant="primary" type="submit" className="min-h-11 sm:min-h-9">Apply filters</Button>
-    <Button variant="secondary" type="button" onClick={()=>{setFields(empty);apply(empty);}} className="min-h-11 sm:min-h-9">Clear extra filters</Button>
+    <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] ">Apply filters</Button>
+    <Button variant="secondary" type="button" onClick={()=>{setFields(empty);apply(empty);}} className="min-h-[var(--lms-control-height)] ">Clear extra filters</Button>
    </div>
   </form>
  </details>;

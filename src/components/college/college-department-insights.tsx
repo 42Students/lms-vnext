@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
@@ -75,11 +77,11 @@ export function CollegeDepartmentInsights({
       <form method="get" action={path} className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
           Department name
-          <input name="q" type="search" maxLength={100} defaultValue={data.query.q}
+          <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
             placeholder="Search your college"
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
+        <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">Search</Button>
         <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Clear</Link>
       </form>
     </section>

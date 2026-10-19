@@ -86,14 +86,14 @@ export function CollegeClassCreate({ cohorts, periods }: {
       : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <label className="grid gap-1 text-sm font-medium text-body">Program
           <Select required value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
-           className="min-h-11 sm:min-h-9">
+           className="min-h-[var(--lms-control-height)] ">
            <option value="">Select program</option>
            {uniquePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch
           <Select required value={cohortId} onChange={event => setCohortId(event.target.value)}
-            className="min-h-11 sm:min-h-9">
+            className="min-h-[var(--lms-control-height)] ">
             <option value="">Select batch</option>
             {filteredCohorts.map(c => <option key={c.id} value={c.id}>
               {c.programName} · {c.name} ({c.code})
@@ -103,7 +103,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
         <label className="grid gap-1 text-sm font-medium text-body">Academic period
           <Select required value={academicPeriodId}
             onChange={event => setAcademicPeriodId(event.target.value)}
-            className="min-h-11 sm:min-h-9">
+            className="min-h-[var(--lms-control-height)] ">
             <option value="">Select period</option>
             {periods.map(p => <option key={p.id} value={p.id}>
               {p.name} ({p.code})
@@ -112,16 +112,16 @@ export function CollegeClassCreate({ cohorts, periods }: {
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class name
           <Input required maxLength={255} value={name} onChange={event => setName(event.target.value)}
-            className="min-h-11 sm:min-h-9" />
+            className="min-h-[var(--lms-control-height)] " />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class code (optional; generated from name)
           <Input maxLength={64} value={code} onChange={event => setCode(event.target.value)}
-            className="min-h-11 sm:min-h-9" />
+            className="min-h-[var(--lms-control-height)] " />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Capacity (required, 1–200)
           <Input required type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
-            className="min-h-11 sm:min-h-9" />
+            className="min-h-[var(--lms-control-height)] " />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body sm:col-span-2 lg:col-span-5">Description (optional)
           <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
@@ -130,7 +130,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
         <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-5">Moving a student into a full section is refused.</p>
         <div className="sm:col-span-2 lg:col-span-5">
           <Button variant="primary" disabled={pending} type="submit"
-            className="min-h-11 sm:min-h-9">
+            className="min-h-[var(--lms-control-height)] ">
             {pending ? "Creating…" : "Create class"}
           </Button>
         </div>
@@ -183,7 +183,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
   return <div>
     <Button variant="secondary" type="button" disabled={pending || row.status !== "ACTIVE"}
       onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); }}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Edit
     </Button>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
@@ -195,16 +195,16 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         </p>
         <label className="grid gap-1 text-sm font-medium text-body">Class name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-11 sm:min-h-9" />
+            className="min-h-[var(--lms-control-height)] " />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
-            className="min-h-11 sm:min-h-9" />
+            className="min-h-[var(--lms-control-height)] " />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Capacity (blank means unlimited)
           <Input type="number" min={1} max={10000} step={1} value={capacity}
             onChange={e => setCapacity(e.target.value)}
-            className="min-h-11 sm:min-h-9" />
+            className="min-h-[var(--lms-control-height)] " />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Description
           <Textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
@@ -214,11 +214,11 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
         <div className="flex justify-end gap-2">
           <Button variant="secondary" disabled={pending} type="button" onClick={cancel}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
             Cancel
           </Button>
           <Button variant="primary" disabled={pending || !changed} type="submit"
-            className="min-h-11 sm:min-h-9">
+            className="min-h-[var(--lms-control-height)] ">
             {pending ? "Saving…" : "Save changes"}
           </Button>
         </div>

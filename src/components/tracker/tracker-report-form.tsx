@@ -117,12 +117,12 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
       {linkIssueError?<p role="alert" className="text-sm text-body">{linkIssueError}</p>:null}
       {knownErrorId&&linkIssueError?<Button type="button"
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold"
+        className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold"
         onClick={()=>void linkCreatedIssue(created)}>Retry linking Known Error</Button>:null}
 
       <div className="flex flex-wrap gap-3">
         <Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
-        <Button className="rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-[650] text-on-primary"
+        <Button className="rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 py-2 text-sm font-[650] text-[var(--lms-on-primary)]"
           onClick={() => {setCreated("");setDraft(initial);clearDraft();setError("");}}
           type="button">Report another</Button>
       </div>
@@ -133,7 +133,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
     <form onSubmit={submit} onKeyDown={onFormKeyDown}
       className="space-y-5">
       {restored?<div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
-        <span>Unsaved report restored.</span><Button type="button" onClick={()=>{setDraft(initial);clearDraft();}} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Discard draft</Button>
+        <span>Unsaved report restored.</span><Button type="button" onClick={()=>{setDraft(initial);clearDraft();}} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Discard draft</Button>
       </div>:null}
       {dirty?<p className="text-xs text-muted-foreground">Unsaved changes are kept on this device until your report is submitted.</p>:null}
       <div className="grid gap-4 md:grid-cols-3">
@@ -221,7 +221,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             className={field+" min-w-48 flex-1"}/>
           <Button type="button" onClick={()=>void checkSimilar()}
             disabled={similarLoading||similarQuery.trim().length<3}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
             {similarLoading?"Searching…":"Find similar issues"}
           </Button>
         </div>
@@ -241,7 +241,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
         <Button disabled={pending} type="submit"
-          className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-5 py-2 text-sm font-[650] text-on-primary disabled:opacity-60">
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 py-2 text-sm font-[650] text-[var(--lms-on-primary)] disabled:opacity-60">
           {pending ? "Reporting…" : "Report issue"}
         </Button>
       </div>
