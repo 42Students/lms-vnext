@@ -125,6 +125,7 @@
   [data-slot="dropdown-root"][data-mobile-sheet="true"] > [data-slot="dropdown"] {
     inset: auto 0 0;
     width: 100%;
+    max-width: 100vw;
     border-radius: 12px 12px 0 0;
   }
 }
