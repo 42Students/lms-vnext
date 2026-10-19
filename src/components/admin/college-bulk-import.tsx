@@ -48,7 +48,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
   {open?<div id="admin-college-bulk-import-panel" className="space-y-3">
    <label className="grid gap-1 text-sm">Organization
-    <Select value={organizationId}
+    <Select value={organizationId} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);}}>
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
     </Select></label>
