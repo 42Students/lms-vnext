@@ -553,3 +553,8 @@
 .learnerNotificationFooter { flex:none; padding:12px 20px; border-top:1px solid var(--lms-neutral-200); background:var(--lms-neutral-50); }
 .learnerNotificationFooter a { display:inline-flex; min-height:44px; align-items:center; }
 .learnerNotificationDrawerBody { padding:12px 16px; overscroll-behavior:contain; }
+
+.topbarNotificationEmptyIcon { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; color:var(--lms-neutral-400); opacity:.6; }
+.topbarNotificationEmptyIcon svg { width:36px; height:36px; }
+.topbarNotificationEmptyTitle { margin:0; color:var(--lms-muted-text); font-size:14px; font-weight:500; line-height:1.5; }
+.topbarNotificationEmptyDescription { display:block; max-width:260px; color:var(--lms-neutral-400); font-size:14px; line-height:1.5; }
