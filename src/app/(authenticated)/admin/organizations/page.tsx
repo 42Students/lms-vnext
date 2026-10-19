@@ -31,7 +31,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
     <PageHeader eyebrow="Super Admin" title="Organizations"/>
     <ErrorState title="Invalid organization directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/organizations" className="inline-flex min-h-11 items-center font-semibold underline">Clear filters</Link>}/>
+      action={<Link href="/admin/organizations" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold underline">Clear filters</Link>}/>
   </div>;
   const organizations = await listOrganizations(context);
   const {q,pageSize}=filters;
@@ -120,8 +120,8 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         </Select>
        </label>
        <Button type="submit">Search</Button>
-       <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link>
-       <Link href={href(page)} className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Refresh</Link>
+       <Link href="/admin/organizations" className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm text-primary-text underline">Clear search</Link>
+       <Link href={href(page)} className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm text-primary-text underline">Refresh</Link>
       </form>
       <p role="status" className="text-sm text-body">{q?matching.length+" of "+organizations.length:organizations.length} organizations · Page {page} of {totalPages}</p>
       {organizations.length===0 ? <EmptyState title="No organizations in this scope" description="There are no active organizations visible under the current Super Admin safety scope. Create one only when your role and scope permit it."/> : null}
