@@ -156,7 +156,7 @@ export async function ProjectAdminAuditPage({
       />
 
       {filters.ignoredInvalidFilters ? (
-        <p role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+        <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm leading-5 text-body">
           Some audit filters were invalid and have been ignored. Review the filters below and apply them again.
         </p>
       ) : null}
