@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {groupRuleCriteriaSchema} from "@/modules/groups/rule-evaluator";
@@ -58,15 +59,15 @@ export function CollegeGroupDetailWrites({
         <ul className="mt-3 space-y-2">{ordered.map(member=><li key={member.membershipId}
           className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
           <span className="text-sm text-body">{member.displayName||"Unnamed learner"} · Position {member.waitlistPosition??"not recorded"}{member.isLocked?" · Locked":""}</span>
-          <button type="button" disabled={busy||groupStatus!=="ACTIVE"||!hasSpace||
+          <Button variant="secondary" type="button" disabled={busy||groupStatus!=="ACTIVE"||!hasSpace||
             front?.membershipId!==member.membershipId||member.isLocked}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50"
+            
             onClick={()=>{void submit({
               action:"PROMOTE_WAITLIST",memberId:member.membershipId,
               expectedMemberVersion:member.version,expectedGroupVersion:groupVersion,confirm:true,
             },collegeGroupDetailActionLabel("PROMOTE_WAITLIST"));}}>
             Promote
-          </button>
+          </Button>
         </li>)}</ul>}
       {!hasSpace?<p className="mt-2 text-xs text-warning">Group capacity is full. No manual promotion is available.</p>:null}
     </div>
@@ -81,10 +82,10 @@ export function CollegeGroupDetailWrites({
         <input type="checkbox" checked={autoRefresh} onChange={e=>setAutoRefresh(e.target.checked)}/>
         Enable rule auto-refresh setting (does not execute a refresh now)
       </label>
-      <button type="button" disabled={busy} onClick={saveRule}
-        className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+      <Button variant="primary" type="button" disabled={busy} onClick={saveRule}
+        >
         {busy?"Saving…":"Confirm rule update"}
-      </button>
+      </Button>
     </div>
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
