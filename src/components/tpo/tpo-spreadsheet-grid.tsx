@@ -139,6 +139,10 @@ export function TpoSpreadsheetGrid<Row>({
  }
  function copyVisibleRows(){
   const included=orderedRows.filter(row=>!selection?.selected.length||selection.selected.includes(rowKey(row)));
+  if(typeof navigator==="undefined"||!navigator.clipboard?.writeText){
+   setClipboardMessage("Clipboard unavailable. Use Export CSV instead.");
+   return;
+  }
   void navigator.clipboard.writeText(gridClipboardTsv(display,included,true))
     .then(()=>setClipboardMessage("Visible grid rows copied as TSV."))
     .catch(()=>setClipboardMessage("Clipboard unavailable. Use Export CSV instead."));
