@@ -39,7 +39,7 @@ export default async function TpoCompanyFeedbackPage({
   return (
     <div className="space-y-6">
       <Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-        className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+        className="text-sm font-semibold text-link hover:underline">
         ← Company details
       </Link>
       <PageHeader
@@ -48,26 +48,26 @@ export default async function TpoCompanyFeedbackPage({
         description="Recorded TPO recruiter notes for contacts explicitly linked to this college-company relationship."
       />
       {!data.available ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
+        <p role="status" className="rounded-[12px] border border-border bg-surface p-6 text-sm text-body">
           Registered recruiter note storage is unavailable in this database. No
           zero-history inference is made and note creation is disabled.
         </p>
       ) : (
         <>
           {!data.writeEnabled ? (
-            <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+            <p role="status" className="rounded-[12px] border border-border bg-surface p-4 text-sm text-body">
               CRM writes are not enabled for this deployment. Existing notes remain
               readable, but new feedback cannot be recorded.
             </p>
           ) : data.contacts.length === 0 ? (
-            <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+            <p role="status" className="rounded-[12px] border border-border bg-surface p-4 text-sm text-body">
               No recruiter contacts are explicitly linked to this company. Link
               a contact before recording company feedback.
             </p>
           ) : (
             <TpoCompanyFeedbackForm companyId={companyId} contacts={data.contacts} />
           )}
-          <section className="rounded-xl border border-border bg-surface">
+          <section className="rounded-[12px] border border-border bg-surface">
             <h2 className="border-b border-border px-5 py-4 text-lg font-semibold text-foreground">
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
             </h2>
@@ -82,7 +82,7 @@ export default async function TpoCompanyFeedbackPage({
                   <li key={item.id} className="space-y-2 px-5 py-4">
                     <div className="flex flex-wrap justify-between gap-2">
                       <Link href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
-                        className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
+                        className="font-semibold text-link hover:underline">
                         {item.contactName}
                       </Link>
                       <time className="text-xs text-muted-foreground" dateTime={item.recordedAtIso}>
@@ -100,11 +100,11 @@ export default async function TpoCompanyFeedbackPage({
             <div className="flex gap-3">
               {data.page > 1 ? (
                 <Link href={base + "?page=" + (data.page - 1)}
-                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline">← Previous</Link>
+                  className="font-semibold text-link hover:underline">← Previous</Link>
               ) : null}
               {data.totalPages !== null && data.page < data.totalPages ? (
                 <Link href={base + "?page=" + (data.page + 1)}
-                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Next →</Link>
+                  className="font-semibold text-link hover:underline">Next →</Link>
               ) : null}
             </div>
           </nav>
