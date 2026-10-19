@@ -13,6 +13,8 @@ import {FilterBar} from "@/components/ui/filter-bar";
 import {Pagination} from "@/components/ui/pagination";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {DataTable} from "@/components/ui/data-table";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
 import {collegeContactPageRoleCounts,activeCollegeContactFilterCount,collegeContactsPageRange,collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
@@ -37,31 +39,31 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Contacts"
    description="Read-only college contacts. Student contact details are masked; account management is separate."
-   actions={<div className="flex flex-wrap gap-2"><Link href="/college/students" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold">Student accounts</Link><Link href="/college/faculty" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold">Faculty accounts</Link><Link href="/college/faculty-assignment" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold">Teaching assignments</Link></div>}/>
+   actions={<div className="flex flex-wrap gap-2"><Link href="/college/students" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Student accounts</Link><Link href="/college/faculty" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Faculty accounts</Link><Link href="/college/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Teaching assignments</Link></div>}/>
   <Tabs ariaLabel="Contacts categories" renderPanel={false} value={filter.tab}
    items={[
     {value:"ALL",label:"All contacts",href:collegeContactsTabHref(filter,"ALL")},
     {value:"FACULTY",label:"Faculty contacts",href:collegeContactsTabHref(filter,"FACULTY")},
     {value:"STUDENT",label:"Student contacts",href:collegeContactsTabHref(filter,"STUDENT")},
    ]}/>
-  {filter.membershipId&&<div role="status" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border bg-surface p-3 text-sm">
+  {filter.membershipId&&<Alert tone="info" className="flex flex-row flex-wrap items-center gap-3">
    <span>Showing the bookmarked contact record only.</span>
-   <Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-[var(--lms-link-text)] underline">Show matching contact directory</Link>
-  </div>}
+   <Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Show matching contact directory</Link>
+  </Alert>}
   <p role="status" className="text-xs text-muted-foreground">{activeCollegeContactFilterCount(filter)} applied directory filters. Pagination, sort and selected tab are not counted.</p>
   <p className="text-xs text-muted-foreground">Join-date range uses Asia/Kolkata calendar days. The start must not be after the end.</p>
   <FilterBar title="Filters" activeCount={activeCollegeContactFilterCount(filter)}
     search={<label className="flex min-w-0 flex-col gap-1 text-sm font-semibold text-body">Name or email
       <Input type="search" name="q" form="college-contacts-filters" maxLength={100}
         defaultValue={filter.q} placeholder="Search contacts"
-        className="min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
+        className="min-h-11 w-full min-w-0 md:min-h-9"/>
     </label>}>
   <form id="college-contacts-filters" action="/college/contacts" method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <input type="hidden" name="tab" value={filter.tab}/>
    {filter.membershipId&&<input type="hidden" name="membershipId" value={filter.membershipId}/>}
 
    <Disclosure title="Advanced filters" defaultOpen={activeCollegeContactFilterCount(filter)>0} className="min-w-0 flex-auto basis-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 [&>summary]:text-foreground">
-    <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
    <label className="min-w-0 flex-1 basis-32 text-sm">Name begins with
     <Select name="initial" defaultValue={filter.initial??""} className="mt-1 w-full">
      <option value="">Any letter</option>{initials.map(letter=><option key={letter} value={letter}>{letter}</option>)}
@@ -167,10 +169,10 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Joined on or after (IST)
-    <Input name="joinedFrom" type="date" defaultValue={filter.joinedFrom??""} className="mt-1 block min-h-[var(--lms-control-height)] w-full rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm"/>
+    <Input name="joinedFrom" type="date" defaultValue={filter.joinedFrom??""} className="mt-1 block min-h-11 w-full md:min-h-9"/>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Joined through (IST)
-    <Input name="joinedThrough" type="date" defaultValue={filter.joinedThrough??""} className="mt-1 block min-h-[var(--lms-control-height)] w-full rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm"/>
+    <Input name="joinedThrough" type="date" defaultValue={filter.joinedThrough??""} className="mt-1 block min-h-11 w-full md:min-h-9"/>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Sort
     <Select name="sort" defaultValue={filter.sort} className="mt-1 w-full">
@@ -184,25 +186,27 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    </label>
     </div>
    </Disclosure>
-   <Button variant="secondary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold">Search contacts</Button>
+   <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Search contacts</Button>
    <Link href={clearedCollegeContactsHref(filter.tab)}
-    className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 text-sm">Clear filters</Link>
+    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>
   </form>
   </FilterBar>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-xs text-muted-foreground">Student contact information is masked in the CSV as on screen. Exports are capped at 1,000.</p>
    <Link href={"/api/college/contacts/export?"+new URLSearchParams({
     tab:filter.tab,q:filter.q,...(filter.membershipId?{membershipId:filter.membershipId}:{}),...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),...(filter.joinedThrough?{joinedThrough:filter.joinedThrough}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,profile:filter.profile,enrollment:filter.enrollment,teaching:filter.teaching,teachingRole:filter.teachingRole,rollPresence:filter.rollPresence,registrationPresence:filter.registrationPresence,titlePresence:filter.titlePresence,departmentPresence:filter.departmentPresence,classPresence:filter.classPresence,...(filter.cohortId?{cohortId:filter.cohortId}:{}),...(filter.programId?{programId:filter.programId}:{}),...(filter.sectionId?{sectionId:filter.sectionId}:{}),...(filter.facultyDepartmentId?{facultyDepartmentId:filter.facultyDepartmentId}:{}),...(filter.employmentType?{employmentType:filter.employmentType}:{}),...(filter.facultyTitleQ?{facultyTitleQ:filter.facultyTitleQ}:{}),sort:filter.sort,
-   }).toString()} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold">
+   }).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">
     Export filtered contacts CSV
    </Link>
   </div>
   <section aria-label="Contacts" className="space-y-3">
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
    <p className="text-xs text-muted-foreground" aria-label="Current page role breakdown">On this page: {roleCounts.facultyOnly} faculty-only · {roleCounts.learnerOnly} learner-only · {roleCounts.dual} dual-role contacts.</p>
-   {results.items.length===0?<div role="status" className="space-y-2 rounded-[var(--lms-control-radius)] border p-4 text-sm"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-[var(--lms-link-text)] underline">Clear filters in this tab</Link></div>:
+   {results.items.length===0?<EmptyState title="No matching contacts" description="No matching contacts in this college."
+      action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters in this tab</Link>}/>:
     <DataTable rows={results.items} getRowKey={contact=>contact.membershipId}
-      caption="Contacts" empty={<div role="status"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-[var(--lms-control-height)] items-center underline">Clear filters in this tab</Link></div>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
+      caption="Contacts" empty={<EmptyState title="No matching contacts" description="No matching contacts in this college."
+        action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters in this tab</Link>}/>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
       columns={[
         {key:"name",header:"Name",mobileLabel:"Name",mobilePriority:"primary" as const,
           cell:contact=><Link href={"/college/contacts/"+encodeURIComponent(contact.membershipId)}
