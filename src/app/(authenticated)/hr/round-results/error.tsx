@@ -1,3 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
-export default function Error({reset}:{error:Error;reset:()=>void}){return <section role="alert" className="space-y-3"><h2 className="font-semibold text-foreground">Round results could not load</h2><Button type="button" onClick={reset}>Try again</Button></section>;}
+import { ErrorState } from "@/components/ui/error-state";
+export default function Error({reset}:{error:Error;reset:()=>void}){
+ return <ErrorState title="Round results could not load"
+   description="Round results could not load."
+   action={<Button type="button" variant="secondary" onClick={reset}>Try again</Button>}/>;
+}
