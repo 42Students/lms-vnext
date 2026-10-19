@@ -102,7 +102,10 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       }} size="sm" className="min-h-11 md:min-h-9 print:hidden">
        Close columns
       </Button>
-      {headings.map((heading,index)=><label key={index} className="flex items-center gap-2 text-xs">
+      {headings.map((heading,index)=><label key={index}
+       className={"flex min-h-11 items-center gap-2 rounded-[8px] px-2 py-1 text-xs transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none "+
+        (!hidden.includes(index)&&hidden.length===headings.length-1
+          ? "cursor-not-allowed opacity-50" : "hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)]")}>
        <Checkbox checked={!hidden.includes(index)}
         disabled={!hidden.includes(index)&&hidden.length===headings.length-1}
         onChange={e=>{setHidden(current=>e.target.checked?current.filter(n=>n!==index):[...current,index]);if(!e.target.checked&&sort===index){setSort(null);setDescending(false);}}}/>
