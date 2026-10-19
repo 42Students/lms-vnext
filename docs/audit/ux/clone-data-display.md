@@ -183,3 +183,5 @@ Updated explicit work queue:
 - [ ] Native AG Grid compile and smoke validation after the missing dependencies/legacy-grid reference are restored; verify save/restore and selection in the browser before marking E8 done.
 
 No CI, app execution, or bulk codemod execution was run. Files manually edited this turn were fetched back for structural re-reading and stray-character inspection; that inspection is **not** TypeScript typechecking.
+
+Additional source migrations: `src/components/tpo/recruiter-leads-workspace.tsx` now uses shared `FilterChip` for its attention/Unassigned counts; `src/components/placements/learner-career-calendar.tsx` also uses shared `Button` for all calendar view toggles. `scripts/codemods/chat14-tables-tabs.cjs` now discovers files containing only raw `<button>` or `<Button>` presses and recognizes `bg-primary`/`bg-muted` tone candidates. Strict category checkboxes remain unchanged; these are source-file completions, not verified pixel parity.
