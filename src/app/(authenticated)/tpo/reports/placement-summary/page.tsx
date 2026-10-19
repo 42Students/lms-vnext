@@ -161,25 +161,25 @@ export default async function TpoPlacementSummaryPage({
             {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
             {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
             <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold">Company
-             <Select name="companyId" defaultValue={companyId} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+             <Select name="companyId" defaultValue={companyId} className="min-h-11 sm:min-h-9">
               <option value="">All companies</option>
               {byCompany.map(row=><option key={row.companyId} value={row.companyId}>{row.companyName}</option>)}
              </Select>
             </label>
             <label className="grid gap-1 text-sm font-semibold">Work mode
-             <Select name="workMode" defaultValue={workMode} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+             <Select name="workMode" defaultValue={workMode} className="min-h-11 sm:min-h-9">
               <option value="">All modes</option><option value="ONSITE">Onsite</option>
               <option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
              </Select>
             </label>
             <label className="grid gap-1 text-sm font-semibold">Pay evidence
-             <Select name="payCategory" defaultValue={payCategory} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+             <Select name="payCategory" defaultValue={payCategory} className="min-h-11 sm:min-h-9">
               <option value="">All</option><option value="CTC_RECORDED">CTC recorded</option>
               <option value="STIPEND_RECORDED">Stipend recorded</option>
               <option value="NOT_RECORDED">Not recorded</option>
              </Select>
             </label>
-            <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</Button>
+            <Button type="submit" className="min-h-11 sm:min-h-9">Apply</Button>
             {(companyId||workMode||payCategory)?<a href={"/tpo/reports/placement-summary?"+
              new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
