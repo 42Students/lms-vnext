@@ -3,6 +3,7 @@ import {useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {Alert} from "@/components/ui/alert";
 import {useRouter} from "next/navigation";
 type Managed={ready:boolean;baseDomain:string|null;currentHost:string|null};
 export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;initial:Managed}){
@@ -38,8 +39,8 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
  }
  return <section className="space-y-3 border-t border-border pt-5" aria-label="Managed college web address">
   <h2 className="font-semibold">Web address · Managed subdomain</h2>
-  {!state.ready?<p role="status" className="text-sm text-warning-text">
-   One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.</p>:
+  {!state.ready?<Alert tone="warning">
+   One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.</Alert>:
    <>
     <p className="text-sm">Platform domain: {state.baseDomain}</p>
     <p className="text-sm">Current: {state.currentHost??"Not allotted"}</p>
@@ -65,6 +66,6 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
    pending={busy} onConfirm={()=>{if(pendingAction)void send(pendingAction);}}>
    {message?<p role="alert" className="text-sm text-body">{message}</p>:null}
   </ConfirmDialog>
-  {message&&<p role="status" className="text-sm">{message}</p>}
+  {message&&<Alert tone={message.includes(" is live")||message==="Managed web address removed."?"success":"info"}>{message}</Alert>}
  </section>;
 }
