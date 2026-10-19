@@ -208,7 +208,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           <SearchIcon /> {command.label}
         </Link>)}
         {matches.length === 0 && destinations.length === 0 && courseMatches.length === 0 &&
-          !(config.portal === "tpo" && query.trim().length >= 2) && !courseLoading ? <p className="p-2 text-xs text-muted-foreground">
+          !(config.portal === "tpo" && query.trim().length >= 2) && !courseLoading ? <p role="status" className="p-2 text-xs text-muted-foreground">
           No matching shortcuts. Press Enter to search this portal.
         </p> : null}
       </div> : null}
