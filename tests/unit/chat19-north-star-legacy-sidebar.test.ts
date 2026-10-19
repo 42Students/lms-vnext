@@ -154,6 +154,9 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(mobile).toContain('role="dialog"');
   expect(mobile).toContain('aria-modal="true"');
   expect(mobile).toContain("onNavigate={() => setOpen(false)}");
+  expect(css).toContain(".lms-mobile-sidebar .lms-sidebar-nav {padding-inline:12px;}");
+  expect(css).toContain("margin-bottom:2px;");
+  expect(mobile).toContain("pb-[calc(24px+env(safe-area-inset-bottom,0px))]");
  });
  it("uses the legacy thin TPO scrollbar only on expanded rails",()=>{
   const css=source("src/components/shell/sidebar-legacy.css");
