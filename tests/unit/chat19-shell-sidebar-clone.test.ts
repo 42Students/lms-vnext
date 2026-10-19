@@ -17,6 +17,13 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
     expect(css()).not.toContain("padding-left:256px");
   });
 
+  it("points brand and sidebar recovery to the first permitted account destination", () => {
+    expect(shell()).toContain('const homeHref=navigation[0]?.href??"/dashboard"');
+    expect(shell()).toContain('<Link href={homeHref} aria-label="42Students LMS home"');
+    expect(shell()).toContain('fallbackHref={homeHref}');
+    expect(shell()).not.toContain('<Link href="/dashboard" aria-label="42Students LMS home"');
+  });
+
   it("retains the exact legacy collapsed and hover widths and easing", () => {
     expect(css()).toContain("width:96px");
     expect(css()).toContain("min-width:96px");
