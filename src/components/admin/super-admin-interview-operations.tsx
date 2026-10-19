@@ -24,7 +24,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
  const unique=(values:string[])=>[...new Set(values)].sort();
  const choices=(label:string,items:string[],value:string,change:(v:string)=>void)=>
   <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">{label}
-   <Select className="min-h-11 sm:min-h-9" value={value}
+   <Select className="min-h-11 min-[768px]:min-h-9" value={value}
     onChange={e=>change(e.target.value)}>
     <option value="ALL">All</option>{items.map(i=><option key={i} value={i}>{i}</option>)}
    </Select>
@@ -57,7 +57,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
   <p role="status" aria-live="polite" className="text-sm text-body">{filtered.length} matching candidate interview bookings. Department filter uses the applicant’s currently active academic program; historical departments may be unrecorded.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
   <a download="interviews.csv" href={filtered.length?"data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv):undefined}
    onClick={e=>{if(!filtered.length){e.preventDefault();setExportError("No interviews match the selected filters. Clear filters to export.");}else setExportError("");}}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Export interviews.csv</a>
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Export interviews.csv</a>
   {filtered.length>500?<p role="status" className="text-sm text-muted-foreground">Export includes the first 500 visible rounds. Narrow filters for the remaining records.</p>:null}
   {exportError?<p role="alert" className="border-l-2 border-error bg-error-subtle px-4 py-3 text-sm text-error">{exportError}</p>:null}
   {!filtered.length?<p className="border-b border-border py-4">No interviews match these filters. Clear filters to see all rounds.</p>:
