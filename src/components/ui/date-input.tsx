@@ -90,7 +90,7 @@ export function DateInput({
   // time panel is minute-based, like components___antddesign.scss:204-211.
   const minuteStep = Number.isInteger(requestedStep) && requestedStep >= 60 && requestedStep % 60 === 0
     ? requestedStep / 60 : null;
-  const hasPanel = mode === "date" || mode === "month" || (mode === "time" && minuteStep !== null);
+  const hasPanel = mode === "date" || mode === "week" || mode === "month" || (mode === "time" && minuteStep !== null);
   const enabled = hasPanel && calendarPopup && !disabled && !readOnly;
   const selected = String(value ?? (inputRef.current?.value || defaultValue || ""));
   const today = localISO(new Date());
@@ -160,8 +160,11 @@ export function DateInput({
   }
 
   const first = new Date(viewMonth.getFullYear(), viewMonth.getMonth(), 1);
+  const weekMode = mode === "week";
+  const offset = weekMode ? (first.getDay() + 6) % 7 : first.getDay();
+  const weekdayLabels = weekMode ? [...weekdays.slice(1), weekdays[0]] : weekdays;
   const days = Array.from({ length: 42 }, (_, index) =>
-    new Date(viewMonth.getFullYear(), viewMonth.getMonth(), index + 1 - first.getDay()));
+    new Date(viewMonth.getFullYear(), viewMonth.getMonth(), index + 1 - offset));
   const native = <Input {...props} id={inputId} ref={bindRef} type={mode}
     value={value} defaultValue={defaultValue} disabled={disabled} readOnly={readOnly}
     aria-readonly={readOnly || undefined} error={error}
@@ -184,7 +187,7 @@ export function DateInput({
       }}>
       {native}
       <Button type="button" variant="ghost" size="icon-sm"
-        aria-label={mode === "time" ? "Open time picker" : mode === "month" ? "Open month picker" : "Open date calendar"}
+        aria-label={mode === "time" ? "Open time picker" : mode === "month" ? "Open month picker" : mode === "week" ? "Open week picker" : "Open date calendar"}
         aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? popupId : undefined}
         disabled={!enabled} onClick={toggle}
         className="absolute right-1 top-0 !h-9 !w-9 !min-w-9 !rounded-[9px] !border-0 !p-0 max-[767px]:!h-11 max-[767px]:!w-11">
@@ -195,10 +198,10 @@ export function DateInput({
         </svg>
       </Button>
       {open && enabled
-        ? <PopoverPanel id={popupId} label={mode === "time" ? "Choose time" : mode === "month" ? "Choose month" : "Choose date"}
+        ? <PopoverPanel id={popupId} label={mode === "time" ? "Choose time" : mode === "month" ? "Choose month" : mode === "week" ? "Choose week" : "Choose date"}
             onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
             onKeyDown={mode === "date" ? handleCalendarKey : undefined}
-            data-slot={mode === "time" ? "legacy-time-picker" : mode === "month" ? "legacy-month-picker" : "legacy-date-calendar"}
+            data-slot={mode === "time" ? "legacy-time-picker" : mode === "month" ? "legacy-month-picker" : mode === "week" ? "legacy-week-picker" : "legacy-date-calendar"}
             className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] !rounded-[12px] border border-[var(--lms-neutral-200)] bg-white p-3 !shadow-[var(--lms-search-dropdown-shadow)]">
             {mode !== "time"
               ? <div className="mb-3 flex items-center justify-between gap-2">
@@ -254,20 +257,21 @@ export function DateInput({
                     })}
                   </div>
                 : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} className="text-center">
-              {weekdays.map(day => <span key={day} aria-hidden="true" className="py-1 text-[12px] font-semibold text-[var(--lms-muted-text)]">{day}</span>)}
+              {weekdayLabels.map(day => <span key={day} aria-hidden="true" className="py-1 text-[12px] font-semibold text-[var(--lms-muted-text)]">{day}</span>)}
               {days.map(day => {
                 const iso = localISO(day);
+                const candidate = weekMode ? isoWeek(day) : iso;
                 const outsideMonth = day.getMonth() !== viewMonth.getMonth();
-                const limited = (props.min != null && iso < String(props.min)) ||
-                  (props.max != null && iso > String(props.max));
+                const limited = (props.min != null && candidate < String(props.min)) ||
+                  (props.max != null && candidate > String(props.max));
                 return <Button key={iso} type="button" variant="ghost" size="icon-sm"
-                  data-calendar-day={iso} aria-label={day.toLocaleDateString(undefined, { dateStyle: "full" })}
-                  aria-current={iso === today ? "date" : undefined} aria-pressed={selected === iso}
+                  data-calendar-day={iso} aria-label={`${day.toLocaleDateString(undefined, { dateStyle: "full" })}${weekMode ? `, ${candidate}` : ""}`}
+                  aria-current={iso === today ? "date" : undefined} aria-pressed={selected === candidate}
                   disabled={Boolean(limited)}
-                  onClick={() => choose(iso)}
+                  onClick={() => choose(candidate)}
                   className={cx("!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px]",
                     outsideMonth ? "!text-[var(--lms-neutral-400)]" : "",
-                    selected === iso ? "!bg-[var(--lms-primary)] !text-white" :
+                    selected === candidate ? "!bg-[var(--lms-primary)] !text-white" :
                     iso === today ? "!text-[var(--lms-primary-text)] !underline" : "hover:!bg-[var(--lms-primary-subtle)]")}>
                   {day.getDate()}
                 </Button>;
