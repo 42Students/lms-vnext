@@ -427,7 +427,7 @@ export function CreateLessonForm({
       <p className="m-0 text-sm font-semibold text-foreground">
         Add Lesson
       </p>
-      <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_2fr_auto] sm:items-end">
+      <div className="mt-3 grid gap-3 md:grid-cols-[1fr_2fr_auto] md:items-end">
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Name
