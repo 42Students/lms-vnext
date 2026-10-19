@@ -46,7 +46,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
     {open?"Close editor":"Edit resources"}</Button>
   </div>
   {open?<div className="space-y-4">
-   {rows.map((row,i)=><fieldset key={row.key} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
+   {rows.map((row,i)=><fieldset key={row.key} className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3 sm:grid-cols-2">
     <legend className="px-2 text-sm font-semibold">Resource {i+1}</legend>
     <label className="text-xs font-semibold">Key<Input value={row.key} maxLength={64}
       onChange={e=>change(i,{key:e.target.value})} className={cls}/></label>
