@@ -468,7 +468,7 @@ export default async function HrCalendarPage({
               method="get"
               className="mt-5 flex flex-wrap items-end gap-3 border-t border-border pt-5"
             >
-              <input
+              <Input
                 type="hidden"
                 name="view"
                 value={view}
