@@ -1,0 +1,11 @@
+/*
+ * TPO batch eligibility meters, legacy: lms2-fe@prod-2026
+ * src/styles/components/_tpo-batches.scss:2-6,39-42.
+ */
+.bar {
+  height: 6px !important;
+  border-radius: 999px;
+  background: #e7ecf2 !important;
+}
+.bar > span[title^="Eligible:"] { background-color: #15803d !important; }
+.bar > span[title^="Ineligible:"] { background-color: #b91c1c !important; }

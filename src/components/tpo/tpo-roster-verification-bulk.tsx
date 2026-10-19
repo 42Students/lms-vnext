@@ -59,20 +59,20 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   finally{setBusy(false);}
  }
  if(!waiting.length)return null;
- return <section aria-label="Bulk student profile verification" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
-  <h2 className="text-lg font-semibold">Verify profiles / Send back for correction</h2>
+ return <section aria-label="Bulk student profile verification" className="min-w-0 space-y-3 border-b border-border py-4">
+  <h2 className="text-lg font-semibold text-foreground">Verify profiles / Send back for correction</h2>
   <p className="text-sm text-muted-foreground">Select up to 20 submitted Education or Identity sections from this current {scope==="roster"?"student roster":"verification queue"} page. Every decision is rechecked, audited, and sent to the student.</p>
-  <p role="status" className="text-sm">{checked.length} selected of {waiting.length} visible waiting sections.</p>
-  <label className="flex min-h-10 items-center gap-2 text-sm">
+  <p role="status" aria-live="polite" className="text-sm tabular-nums">{checked.length} selected of {waiting.length} visible waiting sections.</p>
+  <label className="flex min-h-11 items-center gap-2 text-sm">
    <Checkbox  disabled={busy} checked={waiting.length>0&&waiting.slice(0,20).every(row=>selected.includes(verificationSelectionKey(row)))}
     onChange={event=>{setSelected(event.target.checked?waiting.slice(0,20).map(verificationSelectionKey):[]);invalidate();}}/>
    Select first {Math.min(20,waiting.length)} waiting section(s)
   </label>
-  <div className="grid max-h-64 gap-2 overflow-y-auto sm:grid-cols-2">
-   {waiting.map(row=>{const key=verificationSelectionKey(row);return <label key={key} className="flex min-h-10 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">
+  <div className="grid max-h-64 min-w-0 grid-cols-1 gap-2 overflow-y-auto overscroll-contain pr-1 sm:grid-cols-2">
+   {waiting.map(row=>{const key=verificationSelectionKey(row);return <label key={key} className="flex min-h-11 min-w-0 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
     <Checkbox  disabled={busy||selected.length>=20&&!selected.includes(key)}
      checked={selected.includes(key)} onChange={()=>toggle(key)}/>
-    <span>{row.learnerName} · {row.section==="EDUCATION"?"Education":"Identity"}{row.missingMarksheet||row.missingIdentityProof?" · Missing document":""}</span>
+    <span className="min-w-0 break-words">{row.learnerName} · {row.section==="EDUCATION"?"Education":"Identity"}{row.missingMarksheet||row.missingIdentityProof?" · Missing document":""}</span>
    </label>;})}
   </div>
   <label className="grid gap-1 text-sm">Action
@@ -96,10 +96,10 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
      value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);invalidate();}}/>
    </label>
   </div>:null}
-  <Button variant="secondary" type="button" disabled={busy||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
+  <Button variant="secondary" type="button" disabled={busy||guardedPending||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
    onClick={()=>{setPreview(true);setError("");setOutcomes([]);}}
    >Preview selected</Button>
-  {preview?<div className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+  {preview?<div className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 sm:px-4">
    <h3 className="font-semibold">Review {eligible.length} eligible, {skipped.length} left out</h3>
    {skipped.length?<p className="text-sm text-warning-text">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
    {action==="VERIFY"?<label className="flex gap-2 text-sm"><Checkbox  checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
@@ -111,7 +111,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    </Button>
    <Button variant="secondary" type="button" disabled={busy}  onClick={()=>setPreview(false)}>Cancel preview</Button>
   </div>:null}
-  {outcomes.length>0?<div role="status" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+  {outcomes.length>0?<div role="status" className="space-y-2 border-t border-border py-3">
    <h3 className="font-semibold">Bulk review results</h3>
    <p>{outcomes.filter(item=>item.result==="VERIFIED"||item.result==="SENT_BACK").length} saved; {outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK").length} need review.</p>
    <ul className="space-y-1 text-sm">{described.map(item=><li key={item.key}>{item.label} · {item.section}: {item.message}</li>)}</ul>

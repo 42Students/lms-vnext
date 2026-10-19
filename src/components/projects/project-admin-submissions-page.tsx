@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -14,7 +15,6 @@ import { Pagination } from "@/components/ui/pagination";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
-import { EmptyState } from "@/components/ui/empty-state";
 import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref,projectAdminSubmissionHref } from "@/modules/projects/admin-submissions-query-model";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
@@ -158,7 +158,7 @@ export async function ProjectAdminSubmissionsPage({
               <Link href={basePath+"/"+row.id+"/delivery"}
                 className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open</Link>},
           ]}
-          empty={<EmptyState title="All workspaces submitted" description="All matching workspaces have a submission."/>}
+          empty={<EmptyState title="No pending submissions" description="All matching workspaces have a submission." />}
         />
         <Pagination page={unsubmitted.page} pageCount={unsubmitted.totalPages}
           hrefForPage={page=>projectAdminUnsubmittedHref(queuePath,query,page)}

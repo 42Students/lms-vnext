@@ -123,7 +123,7 @@ export async function AppShell({
         <main id="lms-main-content" tabIndex={-1} style={{ paddingRight: "16px" }} className={"mx-auto min-w-0 w-full max-w-[1600px] px-4 py-6 sm:pl-6 sm:pr-4 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           <RouteTransition>{children}</RouteTransition>
         </main>
-        <LearnerFacultyMobileFooter />
+        <LearnerFacultyMobileFooter items={navigation} />
       </div>
     </div>
       <TrackerQuickReportLauncher />

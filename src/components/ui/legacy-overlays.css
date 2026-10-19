@@ -125,6 +125,9 @@
   }
 }
 @media (max-width: 639px) {
+  [data-slot="dropdown-root"][data-mobile-sheet="true"][open] {
+    z-index: 1050;
+  }
   [data-slot="dropdown-root"][data-mobile-sheet="true"][open]::before {
     content: "";
     position: fixed;

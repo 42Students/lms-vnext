@@ -151,17 +151,16 @@ export function LearnerCareerCalendar({
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2" role="group" aria-label="Calendar view">
           {views.map((option) => (
-            <button
+            <Button
               type="button"
               key={option}
               aria-pressed={view === option}
               onClick={() => changeCalendar({view:option})}
-              className={view === option
-                ? "min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-[650] capitalize text-[var(--lms-on-primary)] sm:min-h-9"
-                : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold capitalize text-body sm:min-h-9 hover:text-primary-text"}
+              variant={view===option?"primary":"secondary"}
+              className="min-h-11 capitalize sm:min-h-9"
             >
               {option}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">

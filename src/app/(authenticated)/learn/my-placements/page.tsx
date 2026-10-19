@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import {LearnerGeneralRequests} from "@/components/placements/learner-general-requests";
 import {placementTableExists} from "@/modules/placements/staged-tables";
@@ -300,7 +301,7 @@ export default async function LearnerPlacementsPage({
           </div>
         </div>
         <p className="mt-1 text-xs text-muted-foreground">These are notices visible to your college membership, not necessarily placement-cell announcements.</p>
-        {collegeNoticesFailed ? <p role="alert" className="mt-3 text-sm text-body">College notices are temporarily unavailable. Your other placement information is unchanged.</p>
+        {collegeNoticesFailed ? <Alert tone="error" className="mt-3">College notices are temporarily unavailable. Your other placement information is unchanged.</Alert>
           : collegeNotices===null ? <p className="mt-3 text-sm text-body">The college notice feed is not enabled.</p>
           : collegeNotices.length===0 ? <p className="mt-3 text-sm text-body">No notices yet.</p>
           : <ul className="mt-3 space-y-2">{collegeNotices.map(notice=><li key={notice.id} className="rounded-lg border border-border px-3 py-2">
@@ -315,7 +316,7 @@ export default async function LearnerPlacementsPage({
         <div className="mt-4 border-t border-border pt-4">
           <h3 className="text-sm font-semibold text-foreground">Latest personal updates</h3>
           {!personalNoticeRead.available ? (
-            <p role="status" className="mt-2 text-sm text-body">Personal placement updates are temporarily unavailable. College notices above remain visible.</p>
+            <Alert tone="info" className="mt-2">Personal placement updates are temporarily unavailable. College notices above remain visible.</Alert>
           ) : personalNoticeRead.value.length===0 ? (
             <p className="mt-2 text-sm text-body">No personal placement updates have been delivered yet.</p>
           ) : <ul className="mt-3 space-y-2">

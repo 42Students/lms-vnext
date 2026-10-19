@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import Link from "next/link";
 import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
@@ -130,7 +131,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
    </li>)}
   </ol>
-  {!result.messages.length?<p role="status" className="border-y border-border py-5 text-body">No messages on this page.</p>:null}
+  {!result.messages.length?<EmptyState title="No messages" description="No messages on this page."/>:null}
   <RecruiterConversationReplyForm threadId={result.thread.id}/>
   <nav aria-label="Conversation history" className="flex flex-wrap gap-3">
    {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}

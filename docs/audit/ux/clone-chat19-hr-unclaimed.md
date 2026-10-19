@@ -45,7 +45,14 @@ The adapter supplies values and stable keys only.
 A non-executed regression suite has been authored:
 `tests/unit/chat19-unclaimed-hr-grid-parity.test.ts`.
 
-**Status:** All four unclaimed adapter files are source-complete and need no
-visual migration. This does *not* tick chat-15/chat-18's entire HR portal
-because their queued pages remain under separate ownership; nor does it
-certify AG Grid runtime or browser screenshot parity. No CI/run was performed.
+**Status:** All four unclaimed adapter files are **source-reviewed** and have
+no local control/style migration to make. This does *not* tick chat-15/chat-18's
+entire HR portal, nor does it certify AG Grid runtime or visual parity.
+
+**Upstream blocker (not owned by chat-19):** `src/components/tpo/grid/tpo-grid.tsx:15-19`
+imports `ag-grid-react` and `ag-grid-community`, but current `package.json`
+contains neither package in dependencies or devDependencies. All four adapters
+are therefore structurally ready but cannot be certified buildable until the
+shared AG Grid owner registers those dependencies and the package lock.
+Do not replace the intended AG Grid with duplicated local hand-rolled tables.
+No CI/application code was run.

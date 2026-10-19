@@ -191,3 +191,201 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   [data-slot="switch"][data-state="checked"]):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-primary);
 }
+
+
+/* A3/I — verified interactive states and press feedback.
+ * Legacy: components___antddesign.scss:153-181 (primary hover, press,
+ * focus, disabled), components___variables.scss:251-259 (150ms timing).
+ * The shared Button already supplies colours and 1px pressed translation in
+ * globals.css; preserve it here and avoid applying press to disabled/loading.
+ * Legacy: components___notification-drawer.scss:26-49 — 200ms notifications.
+ */
+:where([data-slot="button"][data-loading="true"], [aria-busy="true"]):not(:where([data-unskin], [data-unskin] *)) {
+  cursor: progress;
+}
+:where([data-slot="notification-popover"] a[href],
+  [data-slot="notification-popover"] button):not(:where([data-unskin], [data-unskin] *)) {
+  transition: background-color 200ms ease, border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+:where([data-slot="notification-popover"] a[href],
+  [data-slot="notification-popover"] button):active:not(:disabled):not([aria-disabled="true"]) {
+  background-color: rgba(0, 0, 0, 0.06);
+  box-shadow: none;
+}
+/* Legacy: components___notification-drawer.scss:217-224 (row keyboard ring:
+   1px neutral-500, offset 1px); keep ordinary 2px teal focus elsewhere. */
+[data-slot="notification-popover"] li :is(a[href], button):focus-visible {
+  outline: 1px solid var(--lms-neutral-500);
+  outline-offset: 1px;
+}
+
+/* A4 — global hidden scrollbars are already present in globals.css:183-193.
+ * Legacy exceptions: pages___admin-list-pages.scss:96-106 (table wrapper
+ * horizontal 4px rgba(0,0,0,.2) thumb), :244-254 (tabs 3px);
+ * components___common.scss:294-304 (generic 8px thumb #c4c4c4, but body
+ * scrollbar-width:none), :307-311,329-331 (hidden overflow chrome).
+ * These selectors map the existing ScrollCue viewport, not its layout.
+ */
+:where([data-slot="table"], [data-slot="data-table"])
+  [data-slot="scroll-cue"][data-axis="x"] > div:first-child {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+:where([data-slot="table"], [data-slot="data-table"])
+  [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar {
+  display: block;
+  height: 4px;
+}
+:where([data-slot="table"], [data-slot="data-table"])
+  [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+[data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+[data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar {
+  display: block;
+  height: 3px;
+}
+[data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+/* Legacy: old-lms-shell.css:41-43 — sidebar hover thumb 4px / 28% grey;
+   chat-19 handles sidebar scroll chrome, do not duplicate/override it here. */
+
+/* I — row hover, selected row, and scrollable sticky headings.
+ * Legacy: components___common.scss:130-139 explicitly disables hover
+ * for .ln-table-no-hover; old-lms-shell.css:45-48 provides teal tint for
+ * actionable list items; globals.css already owns generic table hover paint.
+ * Never override the "no hover" exemption or zebra-striped read-only rows.
+ */
+:where(main, [data-slot="page-canvas"]) :where([data-slot="data-table"],
+  [data-slot="table"]) tr[data-state="selected"] > :is(td, th),
+:where(main, [data-slot="page-canvas"]) :where([data-slot="data-table"],
+  [data-slot="table"]) tr[aria-selected="true"] > :is(td, th) {
+  background-color: var(--lms-micro-selected);
+}
+:where(main, [data-slot="page-canvas"]) :where([data-slot="data-table"],
+  [data-slot="table"]) tr[data-state="selected"]:hover > :is(td, th),
+:where(main, [data-slot="page-canvas"]) :where([data-slot="data-table"],
+  [data-slot="table"]) tr[aria-selected="true"]:hover > :is(td, th) {
+  background-color: var(--lms-micro-selected);
+}
+:where(main, [data-slot="page-canvas"])
+  :where(.ln-table-no-hover) :where(tbody tr:hover, tbody tr:hover > td) {
+  background-color: var(--lms-white) !important;
+}
+/* Legacy: old-lms-shell.css:56 (0 1px 3px 3.5% navy); only shadow already
+   sticky table cells. No position:sticky or stacking-order changes. */
+:where([data-slot="table"], [data-slot="data-table"])
+  :where(thead th.sticky, thead th[data-sticky="true"]) {
+  box-shadow: 0 1px 3px rgba(26, 45, 72, 0.035);
+}
+
+/* I — measured notification-overlay entry, not inferred generic modal
+ * geometry. Legacy: components___notification-drawer.scss:83-102
+ * (backdrop opacity 0->1 for 150ms ease-out), :112-143 (panel 200ms
+ * ease-out with -8px vertical entry). These are visual animations only:
+ * click-outside, Escape, focus order and closing are owned by JS.
+ */
+@keyframes lms-micro-notification-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes lms-micro-notification-panel-enter {
+  from { opacity: 0; translate: 0 -8px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-slot="notification-popover"]:not(:where([data-unskin], [data-unskin] *)) {
+    animation: lms-micro-notification-panel-enter 200ms ease-out both;
+  }
+  [data-slot="dropdown-root"][data-mobile-sheet="true"][open]::before {
+    animation: lms-micro-notification-backdrop-enter 150ms ease-out both;
+  }
+}
+/* Legacy: components___antddesign.scss:48-64 (tooltip charcoal #1a1d21,
+ * 8px radius, 12px/16px text and 2px/8px shadow); already exact in
+ * legacy-overlays.css. SCSS does not prescribe a mouseEnterDelay.
+ * CSS cannot alter component timer semantics, so no invented delay.
+ */
+
+/* I — natural checkbox/radio/switch paint change (native check glyphs cannot
+ * be tweened in a cross-browser way). Legacy: components___antddesign.scss:
+ * 123-132/742-745 and components___common.scss:226-228.
+ * Keep the check animation on the *track*, never fake/duplicate glyph content.
+ */
+:where([role="switch"][aria-checked="false"],
+  [data-slot="switch"][data-state="unchecked"]):not(:where([data-unskin], [data-unskin] *)) {
+  transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1),
+    border-color 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+:where([role="switch"][aria-checked="true"],
+  [data-slot="switch"][data-state="checked"]):not(:where([data-unskin], [data-unskin] *)) {
+  transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1),
+    border-color 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* A4 — text selection and autofill in the tracker-only dark theme must remain
+ * legible. Legacy light theme ink/surface: components___variables.scss:10-13,
+ * 24-32. This dark opt-in has no old LMS counterpart. */
+:root[data-tracker-theme="dark"] ::selection {
+  color: var(--lms-foreground);
+  background-color: var(--lms-primary-subtle);
+}
+:root[data-tracker-theme="dark"] :is(input, textarea):-webkit-autofill {
+  -webkit-text-fill-color: var(--lms-foreground);
+  caret-color: var(--lms-foreground);
+}
+
+/* Print interaction paint — do not interfere with document formatting.
+ * Legacy contains no paper/print rules; authenticated-print.css supplies the
+ * printable document geometry and hides overlay chrome. This only silences
+ * residual interactive effects in printed output.
+ * Legacy: components___accessibility.scss:116-124 (motion suppression);
+ * components___common.scss:130-139 (static table hover exemption).
+ */
+@media print {
+  :where(main, [data-slot="page-canvas"])
+    :where(a[href], button, [role="button"], [role="tab"], summary) {
+    animation: none !important;
+    transition: none !important;
+    text-shadow: none !important;
+  }
+  :where([data-slot="data-table"], [data-slot="table"]) thead th.sticky {
+    box-shadow: none !important;
+  }
+}
+
+/* Accessibility motion guarantee, sourced directly from
+ * components___accessibility.scss:116-124 and
+ * components___antddesign.scss:184-189. Covers this stylesheet's additional
+ * notification and toggle states without introducing new content shifts.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :where([data-slot="notification-popover"],
+    [role="switch"], [data-slot="switch"], [data-slot="toast-stack"] > section) {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* I — exactly the old 200ms active-tab underline. Legacy:
+ * components___common.scss:381-415 (0->100% underline width, opacity 0->1,
+ * both 0.2s ease-in-out). Existing Tabs markup already renders the pseudo
+ * underline, so this only fixes timing and never creates a second bar.
+ */
+[data-slot="tabs"] :is([role="tab"], nav > a)::after {
+  transition: width 200ms ease-in-out, opacity 200ms ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="tabs"] :is([role="tab"], nav > a)::after {
+    transition: none !important;
+  }
+}

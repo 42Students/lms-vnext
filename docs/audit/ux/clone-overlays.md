@@ -151,3 +151,58 @@ The restored clean `Dropdown` was extended with typed `mobileSheet` and `trigger
 | Toast timeout/interaction | No universal legacy toast duration or error persistence documented | `src/components/ui/toast.tsx:139-141` uses reading-duration 4.5–15s and persistent errors | **Unverified**, F2 stays unticked |
 
 **Strict status:** F1 and F2 remain unchecked. No codemod execution, JSX compiler, typecheck, lint, CI, app run, or responsive browser comparison was performed in this lane turn.
+
+## Chat-16 complete-file work queue — source migration checkpoint
+
+Each checked file was re-read for remaining hand-built popup wrappers and paired opening/closing tags. “Done” means the **source has moved to or already uses the shared primitive**, not that runtime/viewport equivalence was measured. No app, codemod, CI, lint, or typecheck was run.
+
+### Migrated or shared components reviewed — DONE
+
+- [x] `scripts/codemods/chat16-overlays.cjs` — AST-limited Dialog/Drawer converter, dry-run default; skips nonmodal/watermark/dynamic wrapper cases.
+- [x] `src/components/ui/dropdown.tsx` — one balanced native `<details>` root, `summary` and one panel; shared dismissal, mobileSheet, inlineDesktop, Escape and Arrow/Home/End keyboard support.
+- [x] `src/components/ui/tooltip.tsx` — shared InfoPopover/Tooltip, outside pointer dismissal, Escape trigger-focus recovery, legacy size/arrow via overlays CSS.
+- [x] `src/components/ui/popover.tsx` — PopoverPanel and PopoverListbox; common surface and arrow navigation for links or option buttons.
+- [x] `src/components/ui/searchable-select.tsx` — own option popup replaced with shared PopoverListbox; input selection logic preserved.
+- [x] `src/components/shell/topbar/command-search.tsx` — command results now shared PopoverListbox; custom search key handlers retained.
+- [x] `src/components/tpo/tpo-find-shortcut.tsx` — result popup now shared PopoverListbox inside existing shared Dialog.
+- [x] `src/components/profile/learner-skill-catalog-input.tsx` — skill suggestion listbox now shared PopoverListbox; native list/options retained.
+- [x] `src/components/placements/placement-drive-workspace.tsx` — “Drive actions” responsive inline/mobile action menu now shared Dropdown, with desktop action row and a single action subtree.
+- [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx` — row “More” popup migrated from native details/menu wrapper to shared Dropdown, both closing tags updated.
+- [x] `src/app/(authenticated)/tpo/students/page.tsx` — roster “More student tools” moved to shared Dropdown; other filter/outcome disclosures left inline.
+- [x] `src/components/shell/topbar/account-menu.tsx` — existing shared PopoverPanel; focus/outside/Escape handlers reviewed, no unshared modal.
+- [x] `src/components/shell/topbar/organization-switcher.tsx` — existing shared PopoverPanel; workspace permissions/controls remain intact.
+- [x] `src/components/shell/learner-notification-bell.tsx` — one notification-content subtree now uses desktop PopoverPanel and native mobile Drawer (kept mounted through exit), with existing InlineNotice and controls.
+- [x] `src/components/tpo/tpo-bell-panel.tsx` — one notification list and action footer use legacy desktop notification PopoverPanel (12px source styling) or native mobile Drawer.
+- [x] `src/components/hr/hr-recruiter-bell.tsx` — desktop PopoverPanel and now persistently mounted mobile Drawer for the exit animation.
+- [x] `src/components/hr/recruiter-notification-bell.tsx` — existing shared native Drawer; no handcrafted overlay found.
+- [x] `src/components/tpo/tpo-mobile-footer.tsx` — existing shared BottomSheet for mobile destinations.
+- [x] `src/components/tpo/tpo-notice-undo-toast.tsx` — existing shared ToastAction, keeping the 30-second undo semantics.
+- [x] `src/components/ui/toast.tsx` — existing shared ToastProvider/ToastStack/ToastAction; source inspected, durations unchanged because no canonical legacy duration is proved.
+- [x] `src/components/ui/menu.tsx` — shared Menu/MenuItem/MenuSeparator handles keyboard, states and separators.
+- [x] `src/components/ui/dialog.tsx` — shared native modal/alertdialog; no hand-built wrapper.
+- [x] `src/components/ui/drawer.tsx` — shared native drawer including responsive inline filters.
+- [x] `src/components/ui/legacy-overlays.css` — legacy source-backed modal/drawer/menu, tooltip, notification and toast styling.
+- [x] `src/components/tpo/tpo-topbar-new-menu.tsx`, `src/components/tpo/tpo-company-memory-workspace.tsx`, `src/components/tpo/recruiter-leads-workspace.tsx`, `src/components/placements/report-interactive-table.tsx`, `src/components/tpo/recruiter-roster-display-controls.tsx`, `src/components/tpo/tpo-spreadsheet-grid.tsx`, `src/components/placements/tpo-drive-workspace-nav.tsx`, `src/components/shell/topbar/tpo-quick-create.tsx`, `src/components/ui/split-button.tsx` — already use shared Dropdown; no remaining hand-built action-menu wrapper found in reviewed source.
+
+### Inspected non-overlay disclosures — intentionally keep inline
+
+These are expand/collapse content, filters, academic details, results, or forms; converting them into a modal would change the page’s content arrangement or workflow.
+
+- [x] `src/components/admin/college-create-form.tsx`, `src/components/courses/learner-course-list.tsx`, `src/components/projects/learner-project-mobile-filters.tsx`, `src/app/(authenticated)/admin/features/page.tsx`, `src/components/tpo/tpo-students-spreadsheet.tsx`, `src/components/projects/learner-project-board-search.tsx`.
+- [x] `src/components/courses/quiz-attempt-control.tsx`, `src/app/(authenticated)/hr/conversations/page.tsx`, `src/components/placements/learner-jobs-browse.tsx`, `src/app/(authenticated)/college/contacts/page.tsx`, `src/components/courses/college-lesson-visibility-controls.tsx`, `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx`, `src/components/verification/VerificationFilterPanel.tsx`.
+- [x] `src/components/courses/faculty-course-home-signals.tsx`, `src/components/courses/learner-course-workspace.tsx`, `src/components/courses/faculty-course-workspace.tsx`, `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx`, `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx`, `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`, `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx`.
+- [x] `src/app/company-share/[token]/page.tsx` — fixed-inset confidentiality watermark is `aria-hidden` and `pointer-events-none`, not a modal.
+- [x] `src/components/shell/route-announcer.tsx`, `src/components/hr/recruiter-conversation-live-refresh.tsx` — quoted `role="dialog"` strings are DOM-observer selectors, not handcrafted overlay JSX.
+
+### Strict remaining parity gates — NOT complete
+
+- [ ] F1/F2 viewport behavior: 375px, 767px, 768px and desktop; Escape, outside pointer, focus trap/recovery, scrolling/safe areas, reduced motion, disabled and loading variants.
+- [ ] Legacy toast timing/persistence and popup close animation source equivalence: no single canonical legacy value in the examined SCSS.
+- [ ] Checkout-wide command-line audit of dynamic JSX/class compositions and style precedence after the orchestrator runs the codemod; GitHub search is an index, not an exhaustive local grep.
+- [ ] Review device/browser performance of `Dropdown.inlineDesktop` across the 767→768 breakpoint and its nested More action dropdown.
+
+### Final source scan and caution
+
+- [x] Search-index review: the only `fixed inset-0` in public source is the noninteractive, aria-hidden confidentiality watermark. Shared `Dialog` consumers own all inspected `role="alertdialog"` usages. Existing nonmodal `PopoverPanel` and DOM selector literals are not modal candidates. Hand-built search listboxes identified in command search, TPO find, learner skill suggestions and SearchableSelect were moved to shared `PopoverListbox`.
+- [x] Paired JSX opening/closing tags re-read in the changed Dropdown, Tooltip, Popover, search listbox consumers, responsive drive actions, and three notification bell variants. No local execution was done; this is a source-only balance check.
+- [ ] Viewport/browser parity still requires the orchestrator: especially the new mobile notification Drawer breakpoint, scroll/focus, and layered popup close timing. Keep F1/F2 unchecked until measured.
