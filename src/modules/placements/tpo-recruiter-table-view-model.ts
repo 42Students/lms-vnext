@@ -1,9 +1,7 @@
-// Visible-column chooser follows the original Engage roster sequence.
- lms2-fe@prod-2026/src/pages/tpo/recruiters/index.js:363-416.
-export const ENGAGE_COLUMNS = ["Contact","Status","Stage","Company","Email","Phone",
-"Flags","Owner","Last activity","Next follow-up","Invite","Added","Source","Company drives","Actions"] as const;
+export const ENGAGE_COLUMNS = ["Contact","Company","Status","Stage","Owner",
+"Last activity","Next follow-up","Company drives","Invite","Added","Flags","Source","Email","Phone","Actions"] as const;
 export type EngageColumn = (typeof ENGAGE_COLUMNS)[number];
-export const ENGAGE_DEFAULT_COLUMNS: readonly EngageColumn[] = ENGAGE_COLUMNS.filter(x=>x!=="Email"&&x!=="Phone"&&x!=="Added");
+export const ENGAGE_DEFAULT_COLUMNS: readonly EngageColumn[] = ENGAGE_COLUMNS.filter(x=>x!=="Email"&&x!=="Phone");
 export type EngageSort = "ADDED"|"LAST_ACTIVITY"|"NEXT_FOLLOWUP"|"NAME"|"DRIVES";
 export function normalizeEngageColumns(value:unknown): EngageColumn[]{
  if(!Array.isArray(value))return [...ENGAGE_DEFAULT_COLUMNS];
