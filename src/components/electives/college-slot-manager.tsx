@@ -1,6 +1,5 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 
 
@@ -91,7 +90,7 @@ export function CollegeSlotManager({ options, row }: {
   return <div className="min-w-0">
     <Button variant="secondary" type="button" disabled={pending || (!editing && options.programs.length === 0)}
       onClick={() => setOpen(!open)}
-      className="min-h-10 px-4">
+      className="text-primary-text">
       {row ? "Edit slot" : "New elective slot"}
     </Button>
     {open ? <form onSubmit={submit} className="mt-3 grid max-w-3xl gap-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:grid-cols-2">
@@ -125,11 +124,11 @@ export function CollegeSlotManager({ options, row }: {
       {error ? <p role="alert" className="sm:col-span-2 text-sm text-red-700">{error}</p> : null}
       <div className="flex gap-3 sm:col-span-2">
         <Button variant="primary" type="submit" disabled={pending}
-          className="min-h-10 px-4">
+          >
           {pending ? "Saving…" : editing ? "Confirm update" : "Confirm create"}
         </Button>
         <Button variant="secondary" type="button" disabled={pending} onClick={() => setOpen(false)}
-          className="min-h-10 px-4">
+          >
           Cancel
         </Button>
       </div>
