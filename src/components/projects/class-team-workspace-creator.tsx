@@ -1,4 +1,5 @@
 "use client";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -224,7 +225,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
             {key:"decision",header:"Decision",mobilePriority:"secondary",cell:row=>
               row.status==="TO_CREATE"?"To create":row.status==="ALREADY_COVERED"?"Already covered":"Duplicate"},
           ]}
-          empty={<p>No eligible learners in this preview.</p>}
+          empty={<EmptyState title="No eligible learners" description="No eligible learners in this preview." />}
         />
       </div>
       <p className="text-xs text-muted-foreground">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
@@ -280,7 +281,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
             {key:"result",header:"Result",mobilePriority:"secondary",cell:row=>row.status==="CREATED"?"Created":"Already covered"},
             {key:"workspace",header:"Workspace",mobilePriority:"secondary",cell:row=>row.title??"Existing workspace"},
           ]}
-          empty={<p>No individual results recorded.</p>}
+          empty={<EmptyState title="No individual results" description="No individual results recorded." />}
         />
       </div>
       <Button type="button" variant="secondary" className=""

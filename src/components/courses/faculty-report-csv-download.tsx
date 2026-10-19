@@ -10,8 +10,7 @@ export function FacultyReportCsvDownload({
   return <div className="flex flex-wrap items-center gap-3 print:hidden">
     <Link
       href={href}
-      aria-label="Download current faculty report as CSV"
-      className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:underline"
+      className="inline-flex min-h-11 items-center justify-center sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:underline"
     >
       Download CSV
     </Link>

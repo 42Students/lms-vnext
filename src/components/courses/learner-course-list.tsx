@@ -260,7 +260,7 @@ export function LearnerCourseList({
           </label>
           <Button type="button" aria-pressed={continueOnly}
             onClick={() => {setContinueOnly(value => !value);setVisibleLimit(PAGE_SIZE);}}
-            variant="secondary" className="min-h-11 aria-pressed:!border-[var(--lms-primary)] aria-pressed:!bg-[var(--lms-primary-subtle)] aria-pressed:!text-[var(--lms-primary-text)]">
+            variant={continueOnly ? "primary" : "secondary"} className="min-h-11">
             Continue learning only
           </Button>
         </div>
@@ -335,14 +335,9 @@ export function LearnerCourseList({
       ) : null}
       <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length, periodRows.length)}</p>
       {visibleRows.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border bg-surface p-8 text-center">
-          <h2 className="m-0 text-base font-semibold text-foreground">
-            {periodRows.length===0&&selectedPeriod?("No courses found for "+selectedPeriod.name+"."):learnerCourseFilteredEmptyTitle({query,continueOnly,typeFilter:effectiveTypeFilter,termState,progressFilter,periodCount:periodRows.length})}
-          </h2>
-          <p className="mt-2 text-sm text-body">
-            Change the semester, course type or search to see other courses.
-          </p>
-        </div>
+        <EmptyState title={
+            periodRows.length===0&&selectedPeriod?("No courses found for "+selectedPeriod.name+"."):learnerCourseFilteredEmptyTitle({query,continueOnly,typeFilter:effectiveTypeFilter,termState,progressFilter,periodCount:periodRows.length})}
+          description="Change the semester, course type or search to see other courses." />
       ) : (
         <>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

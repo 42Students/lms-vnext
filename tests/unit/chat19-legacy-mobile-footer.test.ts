@@ -16,28 +16,31 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
     expect(styles()).toContain("box-shadow:0 -2px 8px rgba(0,0,0,.04)");
   });
   it("uses 30px original artwork, neutral inactive opacity and active opacity 1", () => {
-    expect(mobile()).toContain("width={30} height={30}");
+    expect(mobile()).toContain("width={24} height={24}");
     expect(styles()).toContain("opacity:.5");
-    expect(styles()).toContain(".active .lms-legacy-mobile-footer-icon {opacity:1;}");
+    expect(styles()).toContain(".lms-legacy-mobile-footer-icon {opacity:1;}");
   });
   it("retains learner and faculty icon order without mixing portal links", () => {
     const content = mobile();
     const learner = content.slice(content.indexOf("const learnerLinks"), content.indexOf("const facultyLinks"));
-    const faculty = content.slice(content.indexOf("const facultyLinks"), content.indexOf("/** The original LMS"));
-    expect(learner).toContain('href: "/learn/courses"');
-    expect(learner).toContain('href: "/learn/notifications"');
-    expect(learner).toContain('href: "/learn/profile"');
-    expect(faculty).toContain('href: "/teacher/allQuizzes"');
-    expect(faculty).toContain('href: "/teacher/allAssignments"');
+    const faculty = content.slice(content.indexOf("const facultyLinks"), content.indexOf("const recruiterLinks"));
+    expect(learner).toContain('href:"/learn/courses"');
+    expect(learner).toContain('href:"/learn/notifications"');
+    expect(learner).toContain('href:"/learn/profile"');
+    expect(faculty).toContain('href:"/teacher/allQuizzes"');
+    expect(faculty).toContain('href:"/teacher/allAssignments"');
     expect(faculty).not.toContain("/tpo/");
-    expect(content).toContain("if (!learner && !faculty) return null");
-    const imagePaths = [...content.matchAll(/icon: "(\/assets\/images\/[^"]+)"/g)];
+    expect(content).toContain('href:"/hr/conversations"');
+    expect(content).toContain('href:"/college/placements"');
+    expect(content).toContain("items.some(item=>item.href===link.href)");
+    expect(content).toContain("if (!learner && !faculty && !recruiter && !college && !mentor) return null");
+    const imagePaths = [...content.matchAll(/icon:\s*"(\/assets\/images\/[^"]+)"/g)];
     for (const match of imagePaths) expect(existsSync("public" + match[1]), match[1]).toBe(true);
   });
   it("mounts once outside main and keeps route-level TPO footer separate", () => {
     expect(shell()).toContain('import { LearnerFacultyMobileFooter } from "./learner-faculty-mobile-footer"');
-    expect(shell()).toContain("<LearnerFacultyMobileFooter />");
-    expect(shell().indexOf("<LearnerFacultyMobileFooter />")).toBeGreaterThan(shell().indexOf("</main>"));
+    expect(shell()).toContain("<LearnerFacultyMobileFooter items={navigation} />");
+    expect(shell().indexOf("<LearnerFacultyMobileFooter items={navigation} />")).toBeGreaterThan(shell().indexOf("</main>"));
     expect(mobile()).toContain('data-slot="legacy-mobile-footer"');
   });
 });

@@ -4,7 +4,7 @@ import { ZodError } from "zod";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
-import { CourseDetailAnchorTabs } from "./course-detail-anchor-tabs";
+import {AdminOfferingSectionTabs} from "./admin-offering-section-tabs";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
 import {AdminOfferingTeachersPanel} from "./admin-offering-teachers-panel";
 import {AdminOfferingSectionPreview} from "./admin-offering-section-preview";
@@ -82,13 +82,8 @@ export async function AdminOfferingLearningPage({
           </Link>
         }
       />
-      <CourseDetailAnchorTabs
-        href={(backHref.startsWith("/admin/")
-          ? "/admin/courses/offerings/"
-          : "/college/courses/offerings/") + encodeURIComponent(offeringId)
-          + (deliveryId ? "?deliveryId=" + encodeURIComponent(deliveryId) : "")}
-      />
-      <section id="course-home" aria-label="Course Home" className="scroll-mt-24 space-y-2">
+      <AdminOfferingSectionTabs/>
+      <section id="course-home" aria-label="Course Home" className="space-y-2">
       <h2 className="text-lg font-semibold">Home</h2>
       <AdminCourseDisplayEditor
         courseId={workspace.offering.courseId}

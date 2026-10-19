@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -158,8 +159,8 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     {activeFilterCount} active {activeFilterCount===1?"filter":"filters"} ·
     {" "}{filtered.length} matching {filtered.length===1?"task":"tasks"}
   </p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {notice?<Alert tone="success">{notice}</Alert>:null}
   <section className="rounded-xl border border-border p-3" aria-labelledby="mentor-allocation-workload">
     <h2 id="mentor-allocation-workload" className="mb-2 text-sm font-semibold">Workload by learner</h2>
     <DataTable
@@ -185,7 +186,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         {key:"points",header:"Points",cell:row=>row.points,mobilePriority:"secondary"},
         {key:"unsized",header:"Unsized",cell:row=>row.unsized,mobilePriority:"secondary"},
       ]}
-      empty={<p>No learners to summarize yet.</p>}
+      empty={<EmptyState title="No learners to summarize" description="No learners to summarize yet." />}
     />
   </section>
   {filtered.length===0?<EmptyState title={tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters."} description={tasks.length===0?"There are no tasks to assign.":"Use Clear all to see every task."} />:null}
