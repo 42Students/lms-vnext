@@ -136,7 +136,8 @@
   overscroll-behavior-x: contain;
 }
 .grid {
-  min-width: 608px;
+  min-width: 0 !important;
+  width: 100%;
   border: 1px solid #e5e9f0 !important;
   border-radius: 10px !important;
   background: #e5e9f0 !important;
@@ -268,7 +269,16 @@
   list-style: none;
 }
 @media (max-width: 1099px) {
-  .gridFrame { scrollbar-width: thin; }
+  .gridFrame::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 28px;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(255,255,255,0),#fff);
+  }
 }
 @media (max-width: 767px) {
   .toolbar { padding: 12px; }
