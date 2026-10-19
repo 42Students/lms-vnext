@@ -46,7 +46,7 @@ export function RecruiterPlacementPortfolio({
       {[...jobs].sort((a,b)=>Number((unansweredRequests[b.job.id]??0)>0)-Number((unansweredRequests[a.job.id]??0)>0)).map((item) => (
         <article
           key={item.job.id}
-          className={(unansweredRequests[item.job.id]??0)>0 ? "rounded-xl border border-warning bg-surface-secondary p-5" : "rounded-xl border border-border bg-surface p-5"}
+          className={(unansweredRequests[item.job.id]??0)>0 ? "rounded-xl border border-warning bg-muted p-5" : "rounded-xl border border-border bg-surface p-5"}
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
@@ -105,7 +105,7 @@ export function RecruiterPlacementPortfolio({
               </nav>
               {(unansweredRequests[item.job.id]??0)>0?<Link
                 href={"/recruiter/drives/"+item.job.id+"?tab=requests"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}
-                className="mt-2 inline-flex min-h-10 items-center rounded-md border border-warning px-3 text-sm font-semibold text-primary-text">
+                className="mt-2 inline-flex min-h-10 items-center rounded-[9px] border border-warning px-3 text-sm font-semibold text-primary-text">
                 Answer {unansweredRequests[item.job.id]} open {unansweredRequests[item.job.id]===1?"request":"requests"} →
               </Link>:null}
               <p className="mt-2 text-sm text-body">
@@ -122,7 +122,7 @@ export function RecruiterPlacementPortfolio({
             <Link
               href={"/recruiter/drives/" + item.job.id +
                 (returnTo ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
-              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
             >
               Open hiring flow
             </Link>
@@ -130,11 +130,11 @@ export function RecruiterPlacementPortfolio({
           <nav aria-label={"Actions for "+item.job.title}
             className="mt-4 flex flex-wrap gap-3 border-t border-border pt-3">
             <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
-              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-10 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">
               {item.job.status==="CLOSED"?"Hire again":"Hire again with changes"}
             </Link>
             <Link href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"/messages"}
-              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-10 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">
               Answer
             </Link>
           </nav>

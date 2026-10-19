@@ -60,7 +60,7 @@ export function ApplicantNotesPanel({
   }
 
   return (
-    <section aria-labelledby="applicant-notes-title" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+    <section aria-labelledby="applicant-notes-title" className="space-y-3 border-b border-border pb-6">
       <h2 id="applicant-notes-title" className="font-semibold text-foreground">
         Private notes
       </h2>
@@ -70,7 +70,7 @@ export function ApplicantNotesPanel({
       ) : (
         <ul className="grid gap-3">
           {snapshot.notes.map((note) => (
-            <li key={note.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-3">
+            <li key={note.id} className="min-w-0 rounded-lg border border-border bg-muted p-3">
               <p className="whitespace-pre-wrap break-words text-sm text-foreground">{note.body}</p>
               <p className="mt-2 text-xs text-body">
                 {note.mine ? "You" : note.authorName} · {formatIst(note.createdAt)} IST
@@ -92,7 +92,7 @@ export function ApplicantNotesPanel({
             name="body"
             rows={3}
             maxLength={APPLICANT_NOTE_MAX_LENGTH}
-            className="mt-2 w-full rounded-md border border-border bg-surface p-3 text-foreground"
+            className="mt-2 w-full rounded-[9px] border border-border bg-surface p-3 text-foreground"
           />
         </label>
         {error ? (
@@ -103,7 +103,7 @@ export function ApplicantNotesPanel({
         <button
           type="submit"
           disabled={pending}
-          className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50"
+          className="min-h-11 rounded-[9px] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50"
         >
           {pending ? "Saving…" : "Save note"}
         </button>
