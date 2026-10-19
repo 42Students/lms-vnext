@@ -22,7 +22,7 @@ export default async function CollegeClassesPage({
   const raw = readCollegeStructureParams(await searchParams);
   const parsed = collegeClassQuerySchema.safeParse(raw);
   if (!parsed.success) return <div className="space-y-4">
-    <PageHeader eyebrow="College Admin · Academic Setup" title="Classes" />
+    <PageHeader title="Classes" />
     <ErrorState title="Invalid class filters"
       description={collegeDirectoryValidationMessage(parsed.error)}
       action={<Link href="/college/classes" className="font-semibold text-link lms-inline-link">Clear filters</Link>} />
