@@ -2,6 +2,8 @@
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
 type Ask={
  id:string;title:string;status:string;dueAt:string|null;doneNote:string|null;
  askerMembershipId:string;assigneeMembershipId:string;
@@ -28,21 +30,21 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
  }
  return <div className="mt-2 flex flex-wrap gap-2">
   {canDone?<button type="button" disabled={busy}
-   className="min-h-11 sm:min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs"
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs"
    onClick={()=>setConfirmation("DONE")}>Mark done</button>:null}
   {canCancel?<button type="button" disabled={busy}
-   className="min-h-11 sm:min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs"
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs"
    onClick={()=>setConfirmation("CANCEL")}>Cancel ask</button>:null}
   {confirmation?<div role="alertdialog" aria-label={confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"}
    className="w-full space-y-2 rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-sm">
    <p>{confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"}</p>
    {confirmation==="DONE"?<label className="grid gap-1 text-xs">A note goes into the conversation as your reply (optional)
-    <textarea rows={2} maxLength={2000} disabled={busy} value={note}
-     onChange={event=>setNote(event.target.value)} className="rounded border border-border p-2"/>
+    <Textarea rows={2} maxLength={2000} disabled={busy} value={note}
+     onChange={event=>setNote(event.target.value)} className="w-full"/>
    </label>:null}
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
    <button type="button" disabled={busy} onClick={()=>void submit()}
-    className="min-h-11 sm:min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-3 text-xs text-on-primary">
+    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-3 text-xs text-on-primary">
     {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}</button>
    <button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
     className="ml-2 min-h-10 text-xs underline">{confirmation==="CANCEL"?"Keep it":"Not now"}</button>
@@ -85,14 +87,14 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
    <p className="text-sm">Ask {recipientName}</p>
    {recipientAwayLabel?<p role="status" className="text-xs text-warning-text">{recipientName.split(" ")[0]} is away until {recipientAwayLabel}.</p>:null}
    <label className="grid gap-1 text-sm">What needs doing?
-    <input required maxLength={200} disabled={busy} value={title}
+    <Input required maxLength={200} disabled={busy} value={title}
      onChange={event=>{setTitle(event.target.value);key.current=null;}}
-     className="min-h-11 sm:min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"/>
+     className="min-h-11 sm:min-h-9 w-full"/>
    </label>
    <label className="grid gap-1 text-sm">By (optional, IST)
-    <input type="datetime-local" disabled={busy} value={due}
+    <Input type="datetime-local" disabled={busy} value={due}
      onChange={event=>{setDue(event.target.value);key.current=null;}}
-     className="min-h-11 sm:min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"/>
+     className="min-h-11 sm:min-h-9 w-full"/>
    </label>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
    <button type="submit" disabled={busy||!title.trim()||!recipientId}
