@@ -112,23 +112,23 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
               })}
             </div>:null}
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button variant="secondary" type="button" disabled={pending || index===0 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} onClick={async()=>{
+              <Button variant="secondary" type="button" disabled={pending || index===0 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} className="min-h-11 min-[768px]:min-h-9" onClick={async()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index-1));setChanged(true);
               }}  aria-label={"Move "+title+" record "+(index+1)+" up"}>Move up</Button>
-              <Button variant="secondary" type="button" disabled={pending || index===rows.length-1 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} onClick={async()=>{
+              <Button variant="secondary" type="button" disabled={pending || index===rows.length-1 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} className="min-h-11 min-[768px]:min-h-9" onClick={async()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index+1));setChanged(true);
               }}  aria-label={"Move "+title+" record "+(index+1)+" down"}>Move down</Button>
             </div>
             <Button variant="secondary" type="button" disabled={pending || rows.length >= maxItems} onClick={async () => {
               setRows(current=>duplicateFacultyProfileDraftRow(current,row.id,maxItems,crypto.randomUUID()));
               setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);
-            }} className="mt-3 mr-2">
+            }} className="mt-3 mr-2 min-h-11 min-[768px]:min-h-9">
               Duplicate draft
             </Button>
             <Button variant="secondary" type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={async () => {
               if (!(await askConfirm("Remove record "+(index+1)+" from "+title+"? It remains saved until you submit the section."))) return;
               setRows(current => removeFacultyProfileDraftRow(current,row.id)); setChanged(true);
-            }} className="mt-3 text-error">
+            }} className="mt-3 min-h-11 min-[768px]:min-h-9 text-error">
               Remove draft record
             </Button>
             {facultyProfileRecordHasManagedDocument(row) ? <p className="mt-2 text-xs text-muted-foreground">This entry has a managed document. Contact your College to remove it.</p> : null}
@@ -136,7 +136,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         ))}
       </div>
       <div className="flex flex-wrap gap-3">
-        <Button variant="secondary" type="button" disabled={pending || rows.length >= maxItems}
+        <Button variant="secondary" type="button" disabled={pending || rows.length >= maxItems} className="min-h-11 min-[768px]:min-h-9"
           
           onClick={async () => { setRows(current => [...current, create()]); setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true); }}>
           Add {title.toLowerCase()} record
