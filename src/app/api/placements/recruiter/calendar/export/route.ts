@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -22,7 +23,7 @@ export async function GET(request:Request){
   const result=buildHrCalendarCsv(calendar.events,calendar.resultsDue,category);
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="recruiter-calendar.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiter-calendar", "csv") + '"',
    "Cache-Control":"private, no-store","X-Export-Omitted":String(result.omitted),
   }});
  }catch(error){return apiErrorResponse(error);}
