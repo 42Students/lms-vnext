@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
 import {PageHeader} from "@/components/ui/page-header";
@@ -12,9 +12,7 @@ export default async function FacultyDiscussionParticipationPage({
   const data=await getFacultyDiscussionParticipation(context,{deliveryId});
   const base="/teacher/courses/"+encodeURIComponent(deliveryId);
   return <div className="min-w-0 max-w-full space-y-5">
-    <Link href={base+"/discussions"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-      ← Discussions
-    </Link>
+    <PageBackLink href={base+"/discussions"} label="Discussions" />
     <PageHeader eyebrow="Faculty · Section" title="Discussion participation"
       description={data.delivery.courseName+" · "+data.delivery.sectionName}/>
     <section aria-label="Recorded participation" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
