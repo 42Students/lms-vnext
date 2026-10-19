@@ -93,6 +93,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(nav).toContain('!item.href.startsWith("/tpo/")');
   expect(nav).toContain('portal!=="tpo"');
   expect(nav).toContain("sectionLabel(item,sidebarPortal)");
+  expect(nav).toContain('(item.href==="/tpo/home"&&item.label==="Placement cell")');
   expect(nav).toContain('className="lms-nav-group-rule"');
   expect(css).toContain(".lms-nav-group-rule");
   expect(TPO_SECTION_LABELS.operate).toBe("Operate");
