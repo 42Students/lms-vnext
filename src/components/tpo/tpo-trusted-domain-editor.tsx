@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
-import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
  const router=useRouter();
