@@ -152,3 +152,24 @@ The following two files were checked against the legacy page anatomy and link/to
 **Source proof:** Full GitHub-fetched recruiter-leads-workspace.tsx: raw button/input/select/textarea **0**, inline svg **0**, 6-digit hex **0**, next Link opening/closing **8/8**. Saved-view controls: raw buttons **0**, inline svg **0**, 6-digit hex **0** and shared Button **9/9**. Phone source styles use min-h-11 and md:min-h-9 at 768px rather than 640px sm. Main shell/topbar and other lane components were not edited.
 
 **Global A5 / A6 / A7 stay [ ]**: shared topbar-avatar, logo/wordmark, browser tab format, full icon-family inventory, all portals' visited/external links, and phone/tablet rendered comparison are not proven here. Next after E8 queue: review any remaining TPO inline images and links without touching other owners' shell/shared UI.
+
+
+## chat-12 link/tap and icon-family source audit — TPO continuation (2026-10-19)
+
+Exact reference: docs/design/legacy-styles/components___common.scss:68-75 .ln-lnk-ul is teal/weight500 with hover underline; docs/design/old-lms-shell-spec.md:24-25 is 9px radius / 36px desktop toolbar buttons; old-lms-shell.css:68-85 switches mobile to tablet at 768px and enforces 44px phone touch. All changes are scoped source implementation, not raster screenshot proof.
+
+| Component, user-visible action | Legacy property/state | Authored current VNext file/line/source | Scoped evidence |
+|---|---|---|---|
+| Recruiter CSV import duplicate/result profile links | Teal underline, visible focus, 44px phone hit target | recruiter-lead-csv-import.tsx:224,278, original Link href retained with encodeURIComponent and lms-inline-link | Source two Link pairs 2/2; 0 raw SVG/hex |
+| Recruiter detail deep links / mailto / tel | Same teal/underline/focus; external contact actions remain native scheme | recruiter-lead-detail-workspace.tsx:398-490; source links to companies, jobs, mail and phone preserved; min-h-11 and 2px focus | Link 7/7; no fabricated URL/avatar |
+| TPO audit item / drive link | Compact row action link, keyboard focus and proper authorized route | tpo-audit-grid.tsx:69-93 rowActions Open item/Open job only for original authorized URLs | Link 2/2; no inferred audit rows |
+| Student quick panel | Legacy teal links to eligibility, team discussion, drives, requests; phone 44px | tpo-student-quick-panel.tsx:150-191, min-h-11 md:min-h-9 underline and 2px teal outline, original route retained | Link 7/7; sm 0, md 9 |
+| Company memory header actions | Legacy header 36px desktop, 44px phone; focus teal | tpo-company-memory-workspace.tsx:67-69 buttonStyle now min-h-11 md:min-h-9, lms-inline-link teal and focus-visible 2px | Link 10/10; no user-image URL inferred |
+| Company Team rich #drive / #company / #student links | Underline teal, keyboard focus and touch | tpo-company-team-conversation.tsx:35-43 rich formatTokens original safe route with min-h-11 md:min-h-9, lms-inline-link, 2px focus-visible | Link 4/4; private same-tenant link semantics retained |
+| Team notes, handover and preferences controls | Original compact action/button family, radius9, 36px desktop | tpo-team-decision-toggle.tsx:27 radius token; tpo-team-follow-controls.tsx:30-34; tpo-team-handover.tsx:40-47; tpo-team-message-actions.tsx:28-47; all min-h-11 md:min-h-9 | Source consistent; browser focus/hover unverified |
+| TPO batch facet clear-all link | Underline teal hover/focus, 44px phone | tpo-batch-facet-filters.tsx:82; no plain unlabeled link, original clear all route | Link 1/1, raw SVG0 |
+| Student note/clipboard/import controls | Shared Button/Input/Textarea/Checkbox family and 44px phone selection | tpo-student-clipboard-actions.tsx:26-49; tpo-student-note-editor.tsx:31-46; tpo-student-nudge-panel.tsx:50-95 | raw native controls0, literal hex0, inline svg0 |
+
+Scoped grep equivalent applied to all edited TPO files (full fetched content): /<(button|input|select|textarea)(?:\s|>)/g, /<svg(?:\s|>)/g, /#[a-f0-9]{6}\b/gi. The current ten Team/composer and company-visibility controls each have 0 occurrences for these raw tokens and 0 sm: styles. Responsive authored phone/desktop height is min-h-11 (44px) and md:min-h-9 (36px) with md=768px; actual browser/OS pixel widths and visited/hover paint not proven.
+
+**STRICT TICK RULE — A5, A6, A7 remain [ ].** The header/topbar avatar and logo, favicon/tab title states, visited/external-link treatment across every portal, all icon-callers' exact stroke/color/size, repository-wide zero-instance grep and phone/tablet screenshots have not been verified here. Shared Table 640px phone breakpoint and shared Quartz 44px versus old 40px header remain other-lane outstanding source mismatches. No application, CI, lint, screenshot or runtime test executed.
