@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
@@ -92,54 +93,54 @@ export function CollegeFacultyAssignmentCreate({
     <h2 className="text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
     <form onSubmit={event => void submit(event)} className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-1 text-sm font-semibold">Program
-        <select required className={fieldClass} value={programId}
+        <Select required className={fieldClass} value={programId}
           onChange={event => resetParents("program", event.target.value)}>
           <option value="">Choose program</option>
           {programs.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold">Batch
-        <select required className={fieldClass} value={cohortId}
+        <Select required className={fieldClass} value={cohortId}
           onChange={event => resetParents("batch", event.target.value)}>
           <option value="">Choose batch</option>
           {batches.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold">Class/Section
-        <select required className={fieldClass} value={sectionId}
+        <Select required className={fieldClass} value={sectionId}
           onChange={event => resetParents("class", event.target.value)}>
           <option value="">Choose class</option>
           {classes.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold">Semester
-        <select className={fieldClass} value={semesterNumber}
+        <Select className={fieldClass} value={semesterNumber}
           onChange={event => { setSemesterNumber(event.target.value); setSelected([]); }}>
           <option value="">All semesters</option>
           {semesters.map(term => <option key={term} value={term}>Semester {term}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold">Academic Year
-        <select className={fieldClass} value={academicYear}
+        <Select className={fieldClass} value={academicYear}
           onChange={event => { setAcademicYear(event.target.value); setSelected([]); }}>
           <option value="">All years</option>
           {years.map(year => <option key={year} value={year}>{year}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold">Faculty
-        <select required className={fieldClass} value={membershipId}
+        <Select required className={fieldClass} value={membershipId}
           onChange={event => setMembershipId(event.target.value)}>
           <option value="">Choose faculty</option>
           {faculty.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold">{FACULTY_ASSIGNMENT_COPY.roleLabel}
-        <select className={fieldClass} value={role}
+        <Select className={fieldClass} value={role}
           onChange={event => setRole(event.target.value as CourseTeachingRole)}>
           <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
           <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS.CO_TEACHER}</option>
           <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
-        </select>
+        </Select>
       </label>
       <fieldset className="space-y-2 sm:col-span-2 lg:col-span-4">
         <legend className="text-sm font-semibold">Courses to Assign ({selected.length} selected)</legend>
