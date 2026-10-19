@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 
 import { useRouter } from "next/navigation";
@@ -142,17 +143,17 @@ export function TpoDebarControl({
             </span>
           </label>
 
-          <button
+          <Button variant="primary"
             type="submit"
             disabled={pending || !confirmed || (!debarred && !reason.trim())}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary disabled:opacity-60"
+            className="min-h-9 px-5"
           >
             {pending
               ? "Saving…"
               : debarred
                 ? "Confirm remove debar"
                 : "Confirm debar"}
-          </button>
+          </Button>
         </form>
       ) : null}
 
