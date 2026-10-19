@@ -3,6 +3,7 @@ import {CourseChoiceControl} from "./course-choice-control";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Radio} from "@/components/ui/radio";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   type FormEvent,
   useEffect,
@@ -799,7 +800,7 @@ export function FacultyLessonAuthoring({
 
             {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
               <label className="mt-4 flex min-h-10 items-center gap-2 text-sm text-body">
-                <Checkbox checked={publishNow} onChange={event=>setPublishNow(event.target.checked)}/>
+                <Checkbox  checked={publishNow} onChange={event=>setPublishNow(event.target.checked)}/>
                 Publish now — make this learning item visible to eligible students
               </label>:null}
             {mode === "LIVE_CLASS" ? (
