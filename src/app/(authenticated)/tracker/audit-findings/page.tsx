@@ -96,7 +96,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     href:independentFindingHref({...parsed,statuses:[status],page:1}),
    }))}/>
   <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2 lg:grid-cols-3">
-   <Input type="hidden" name="view" value={parsed.view}/>
+   <input type="hidden" name="view" value={parsed.view}/>
    <label className="text-sm font-semibold">Search
     <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="ID, title or summary"/></label>
    <label className="text-sm font-semibold">Area
