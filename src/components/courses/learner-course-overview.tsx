@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { learnerUpcomingQuizEligible } from "@/modules/courses/learner-course-upcoming-quiz-model";
 import { learnerCourseHomeCompletion } from "@/modules/courses/learner-course-home-completion-model";
@@ -318,35 +319,35 @@ export function LearnerCourseOverview({
             ) : null}
           </div>
           <div className="flex max-w-md flex-wrap gap-2">
-            <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
+            <Badge  tone="neutral">
               {workspace.course.code}
-            </span>
+            </Badge>
             {meta.credits !== null ? (
-              <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
+              <Badge  tone="neutral">
                 {meta.credits} Credits
-              </span>
+              </Badge>
             ) : null}
-            <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
+            <Badge  tone="neutral">
               {meta.sectionName}
-            </span>
-            <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
+            </Badge>
+            <Badge  tone="neutral">
               {meta.academicPeriodName}
-            </span>
+            </Badge>
             {meta.instructors.length===0 ? (
-              <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body">
+              <Badge  tone="neutral">
                 Faculty not recorded
-              </span>
+              </Badge>
             ) : null}
             {meta.instructors.map((instructor) => (
-              <span
+              <Badge
                 key={instructor.membershipId}
-                className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-body"
-              >
+                
+               tone="neutral">
                 {instructor.name}
                 {instructor.role === "PRIMARY"
                   ? " · Faculty"
                   : ` · ${instructor.role.replaceAll("_", " ")}`}
-              </span>
+              </Badge>
             ))}
             {String(meta.offeringType).toUpperCase() === "ELECTIVE" ? (
               <StatusBadge tone="info">Elective</StatusBadge>
