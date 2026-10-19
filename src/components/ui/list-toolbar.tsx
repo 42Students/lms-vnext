@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { cx } from "@/lib/class-names";
 
 export type ListToolbarProps = {
+  /** Accessible toolbar title when more than one list appears on a page. */
+  label?: string;
   /** Page-owned search form/control; this component never submits on its own. */
   search?: ReactNode;
   /** Page-owned search submit button, usually associated with its GET form. */
@@ -30,7 +32,7 @@ export type ListToolbarProps = {
  * Actions are slots so existing URL/state/permission rules stay with the owning page.
  */
 export function ListToolbar({
-  search, searchAction, filters, views, columns, exportAction,
+  label = "List tools", search, searchAction, filters, views, columns, exportAction,
   onFiltersClick, onViewsClick, onColumnsClick, onExportClick, filterCount,
   viewCount, bulkAction, className,
 }: ListToolbarProps) {
@@ -41,10 +43,10 @@ export function ListToolbar({
   const viewControl = views ?? (onViewsClick ? <Button variant="secondary" size="sm" onClick={onViewsClick}>Views</Button> : null);
   const columnControl = columns ?? (onColumnsClick ? <Button variant="secondary" size="sm" onClick={onColumnsClick}>Columns</Button> : null);
   const exportControl = exportAction ?? (onExportClick ? <Button variant="secondary" size="sm" onClick={onExportClick}>Export</Button> : null);
-  return <section data-slot="list-toolbar" aria-label="List tools" className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
+  return <section data-slot="list-toolbar" aria-label={label} className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
     <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
       {search ? <div className="flex min-w-0 w-full flex-1 basis-[220px] items-center gap-[var(--lms-space-2)] sm:max-w-[380px]"><div className="min-w-0 flex-1">{search}</div>{searchAction}</div> : null}
-      {filterControl || viewControl || columnControl || exportControl ? <div role="toolbar" aria-label="Filters and table actions"
+      {filterControl || viewControl || columnControl || exportControl ? <div role="toolbar" aria-label={`${label} actions`}
         className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] [&_[data-slot=button]]:rounded-[var(--lms-control-radius)] [&_[data-slot=button]]:border-[var(--lms-canvas-border)] [&_[data-slot=button]]:bg-white [&_[data-slot=button]]:text-[var(--lms-body-text)]">
         {filterControl}{viewControl}{columnControl}{exportControl}
       </div> : null}
