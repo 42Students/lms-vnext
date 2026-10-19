@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import progressStyles from "./learner-course-progress.module.css";
 import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
@@ -75,7 +76,7 @@ function ProgressBar({
           {value}%
         </span>
       </div>
-      <MetricBar size="medium" role="progressbar"
+      <MetricBar size="medium" className={progressStyles.track} role="progressbar"
         label={label} value={value} maximum={100} unit="percent" />
     </div>
   );

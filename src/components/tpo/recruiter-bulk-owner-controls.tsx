@@ -3,6 +3,8 @@
 import { useState } from "react";
 import {tpoBulkFailedLines,tpoBulkFailedSummary} from "@/modules/placements/tpo-bulk-failed-result-model";
 import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/checkbox";
 
 type LeadChoice = {
   id: string;
@@ -20,7 +22,7 @@ type Result = {
 };
 
 const fieldClass =
-  "min-h-10 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+  "min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground";
 
 export function RecruiterBulkOwnerControls({
   rows,
@@ -158,7 +160,7 @@ export function RecruiterBulkOwnerControls({
 
   return (
     <section
-      className="space-y-3 rounded-lg border border-border bg-surface p-4"
+      className="min-w-0 space-y-3 border-y border-border py-4"
       aria-label="Bulk recruiter lead owner assignment"
     >
       <div>
@@ -169,15 +171,15 @@ export function RecruiterBulkOwnerControls({
         </p>
       </div>
       {ownersState === "idle" ? (
-        <button type="button" onClick={() => void loadOwners()} className={fieldClass}>
+        <Button variant="secondary" type="button" onClick={() => void loadOwners()} className={fieldClass}>
           Load eligible owners
-        </button>
+        </Button>
       ) : ownersState === "loading" ? (
         <p role="status" className="text-sm text-body">Loading placement staff…</p>
       ) : ownersState === "error" ? (
-        <button type="button" className={fieldClass} onClick={() => void loadOwners()}>
+        <Button variant="secondary" type="button" className={fieldClass} onClick={() => void loadOwners()}>
           Retry eligible owners
-        </button>
+        </Button>
       ) : (
         <>
           {owners.length === 0 ? (
@@ -187,7 +189,7 @@ export function RecruiterBulkOwnerControls({
           ) : (
             <label className="block text-sm font-semibold text-foreground">
               New owner
-              <select
+              <Select
                 className={fieldClass + " mt-1 block w-full max-w-md"}
                 value={ownerId}
                 onChange={(event) => {setOwnerId(event.target.value);setReviewOpen(false);}}
@@ -199,7 +201,7 @@ export function RecruiterBulkOwnerControls({
                     {item.displayName ?? "Unnamed staff member"}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
           )}
           {assignable.length === 0 ? (
@@ -209,9 +211,8 @@ export function RecruiterBulkOwnerControls({
           ) : (
             <div className="max-h-52 space-y-1 overflow-y-auto rounded-md border border-border p-2">
               {assignable.map((item) => (
-                <label key={item.id} className="flex min-h-9 items-center gap-2 px-1 py-1 text-sm">
-                  <input
-                    type="checkbox"
+                <label key={item.id} className="flex min-h-11 items-center gap-2 px-1 py-1 text-sm">
+                  <Checkbox
                     checked={chosen.includes(item.id)}
                     onChange={(event) => choose(item.id, event.target.checked)}
                     disabled={busy || (chosen.length >= 100 && !chosen.includes(item.id))}
@@ -225,10 +226,10 @@ export function RecruiterBulkOwnerControls({
               ))}
             </div>
           )}
-          {reviewOpen&&reviewSignature===currentSignature?<p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+          {reviewOpen&&reviewSignature===currentSignature?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
             Assign {selections.length} recruiter lead(s) to {owners.find(item=>item.membershipId===ownerId)?.displayName??"selected staff member"}.
             Each changed lead receives an audit record.
-            <button type="button" className="ml-2 text-primary-text underline" onClick={()=>setReviewOpen(false)}>Edit</button>
+            <Button variant="secondary" type="button" className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" onClick={()=>setReviewOpen(false)}>Edit</Button>
           </p>:null}
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <span className="text-body">{selections.length} / 100 selected</span>
@@ -252,22 +253,22 @@ export function RecruiterBulkOwnerControls({
            <p>Undo these owner assignments within five minutes. If a changed lead has since been edited, nothing is restored.</p>
            {undoReview?<p role="status" className="mt-2">Restore the previous owner for every changed recruiter in this batch?</p>:null}
            <div className="mt-2 flex gap-2">
-            <button type="button" disabled={undoBusy} className={fieldClass} onClick={()=>void restore()}>
-             {undoBusy?"Restoring…":undoReview?"Confirm undo":"Undo owner batch"}</button>
-            {undoReview?<button type="button" className={fieldClass} onClick={()=>setUndoReview(false)}>Cancel</button>:null}
+            <Button variant="secondary" type="button" disabled={undoBusy} className={fieldClass} onClick={()=>void restore()}>
+             {undoBusy?"Restoring…":undoReview?"Confirm undo":"Undo owner batch"}</Button>
+            {undoReview?<Button variant="secondary" type="button" className={fieldClass} onClick={()=>setUndoReview(false)}>Cancel</Button>:null}
            </div>
           </div>:null}
           <p className="text-xs text-body">Updated: {results.filter(row=>row.status==="updated").length};
             unchanged: {results.filter(row=>row.status==="unchanged").length};
             ineligible: {results.filter(row=>row.status==="ineligible").length}.</p>
-          {tpoBulkFailedLines(results).length>0?<button type="button"
-            className={fieldClass+" mt-2"} onClick={()=>void copyFailed()}>Copy failed</button>:null}
+          {tpoBulkFailedLines(results).length>0?<Button variant="secondary" type="button"
+            className={fieldClass+" mt-2"} onClick={()=>void copyFailed()}>Copy failed</Button>:null}
           {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
-          {retryable.length>0?<button type="button" disabled={busy} className={fieldClass+" mt-2"}
+          {retryable.length>0?<Button variant="secondary" type="button" disabled={busy} className={fieldClass+" mt-2"}
             onClick={()=>{setChosen(retryable.slice(0,100).map(item=>item.leadId));setReviewOpen(false);setError("");
               setCopyNotice("Failed rows selected for review. Refresh owners and leads before retrying.");}}>
             Select failed for review ({retryable.length})
-          </button>:null}
+          </Button>:null}
           <ul className="mt-2 max-h-36 overflow-auto text-xs text-body">
             {results.map((item) => (
               <li key={item.leadId}>

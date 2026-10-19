@@ -203,25 +203,25 @@ export default async function SuperAdminLearnerAccessTracePage({
           </label>
 
           <label className="grid gap-2 text-sm font-semibold text-body">Learner scope
-            <Select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 sm:min-h-9">
+            <Select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 md:min-h-9">
               <option value="all">All active learners</option>
               <option value="only">Only students with stored overrides</option>
               <option value="locked">Only students with locked overrides</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored override module
-            <Select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 sm:min-h-9">
+            <Select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 md:min-h-9">
               <option value="">Any module</option><option value="projects">Projects</option><option value="electives">Electives</option><option value="placements">Placements (ignored below college)</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored rule state
-            <Select name="storedValue" defaultValue={query.storedValue} className="min-h-11 sm:min-h-9">
+            <Select name="storedValue" defaultValue={query.storedValue} className="min-h-11 md:min-h-9">
               <option value="all">Stored On or Off</option><option value="on">Stored On only</option><option value="off">Stored Off only</option>
             </Select>
           </label>
           <Button
             type="submit"
-            className="min-h-11 sm:min-h-9"
+            className="min-h-11 md:min-h-9"
           >
             Search
           </Button>
@@ -382,9 +382,9 @@ export default async function SuperAdminLearnerAccessTracePage({
           <section className="min-w-0 border-t border-border pt-5" aria-label="Student overrides and locks">
             <h3 className="text-base font-semibold text-foreground">Student overrides and locks</h3>
             <p className="mt-2 text-sm text-body">Persisted member-specific rules for this active learner. An inherited or masked rule does not mean the learner&apos;s final access is enabled.</p>
-            <dl className="mt-3 grid min-w-0 gap-3 sm:grid-cols-3">
+            <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-3">
               {membershipOverrideSummary(selected.modules).map(item => (
-                <div key={item.module} className="min-w-0 rounded-lg border border-border p-3">
+                <div key={item.module} className="min-w-0 border-b border-border py-3">
                   <dt className="break-words text-sm font-semibold">{item.label}</dt>
                   <dd className="mt-1 text-sm">{item.stored === null ? "Inherit" : item.stored ? "Stored On" : "Stored Off"}</dd>
                   <dd className="mt-1 text-xs text-muted-foreground">{item.ignored ? "Ignored for Placements" : item.stored === null ? "No membership override" : item.winner ? "Membership rule selected" : "Overridden by another rule"}</dd>

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 export function SuperAdminPeopleCsvControl({href}:{href:string}) {
  const [pending,setPending]=useState(false);
  const [error,setError]=useState<string|null>(null);
@@ -20,10 +21,10 @@ export function SuperAdminPeopleCsvControl({href}:{href:string}) {
   finally{setPending(false);}
  }
  return <div className="space-y-2 print:hidden">
-  <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>void download()}>
+  <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={pending} onClick={()=>void download()}>
    {pending?"Preparing CSV…":"Export filtered CSV (max 500)"}
   </Button>
   <p className="text-xs text-muted-foreground">Names, roles and membership statuses only. No phone or email.</p>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
  </div>;
 }

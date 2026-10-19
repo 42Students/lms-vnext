@@ -3,6 +3,7 @@
 import {useState, type FormEvent} from "react";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {Checkbox} from "@/components/ui/checkbox";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -54,17 +55,17 @@ export function SuperAdminFacultyAssignmentCreate({
    }
   });
  }
- const inputClass="min-h-11 w-full min-[768px]:min-h-9";
+ const inputClass="min-h-11 w-full md:min-h-[var(--lms-control-height)]";
  return <section aria-label="Create teaching assignment" className="space-y-3">
    <Button variant="secondary" type="button" disabled={!available.length||!faculty.length||pending}
     onClick={()=>setOpen(value=>!value)} aria-expanded={open}
-    className="min-h-11 min-[768px]:min-h-9">
+    className="min-h-11 md:min-h-[var(--lms-control-height)]">
     Create teaching assignment
    </Button>
    {!available.length?<p role="status" className="text-sm text-body">
     Create an active course offering and class delivery before assigning a teacher.
    </p>:null}
-   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
+   {notice?<Alert tone="success">{notice}</Alert>:null}
    {open?<form onSubmit={e=>void submit(e)} className="grid gap-3 border-b border-border pb-5 min-[768px]:grid-cols-2">
     <p className="min-[768px]:col-span-2 text-sm text-body">Select a course and class in the current college. Only active faculty can be assigned.</p>
     <label className="grid gap-1 text-[13px] font-semibold text-body">Course / Class / Semester
@@ -106,13 +107,13 @@ export function SuperAdminFacultyAssignmentCreate({
     {truncated?<p role="status" className="text-xs text-muted-foreground">
      Only the first 500 active faculty members are available here. Use the course workspace to find others.
     </p>:null}
-    {error?<p role="alert" className="min-[768px]:col-span-2 text-sm text-error">{error}</p>:null}
+    {error?<Alert tone="error" className="min-[768px]:col-span-2">{error}</Alert>:null}
     <div className="flex flex-wrap gap-2 min-[768px]:col-span-2">
-      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 min-[768px]:min-h-9">
+      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-[var(--lms-control-height)]">
        {pending?"Assigning…":"Assign faculty"}
       </Button>
       <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-       className="min-h-11 min-[768px]:min-h-9">Cancel</Button>
+       className="min-h-11 md:min-h-[var(--lms-control-height)]">Cancel</Button>
     </div>
    </form>:null}
  </section>;
@@ -148,7 +149,7 @@ export function SuperAdminTeachingRoleEdit({
   });
  }
  return <div className="min-w-0 space-y-2">
-   <Button variant="secondary" size="sm" type="button" className="min-h-11 min-[768px]:min-h-9"
+   <Button variant="secondary" size="md" type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]"
      aria-expanded={open} disabled={pending}
      onClick={()=>{setRole(initialRole);setNotice("");setOpen(v=>!v);}}>
       Edit role
@@ -163,10 +164,10 @@ export function SuperAdminTeachingRoleEdit({
        </Select>
       </label>
       <Button variant="primary" type="button" disabled={pending||role===initialRole}
-       onClick={()=>void save()} className="min-h-11 min-[768px]:min-h-9">
+       onClick={()=>void save()} className="min-h-11 md:min-h-[var(--lms-control-height)]">
        {pending?"Saving…":"Save role"}
       </Button>
     </div>:null}
-   {notice?<p role="alert" className="text-xs text-body">{notice}</p>:null}
+   {notice?<Alert tone="error">{notice}</Alert>:null}
  </div>;
 }

@@ -1,0 +1,54 @@
+/*
+ * Read-only recruiter job hiring progress visuals.
+ * Legacy source lms2-fe@prod-2026/src/styles/components/_recruiter-v2.scss:
+ * 93-98,132-134,150-164; generic TPO track _tpo-reports.scss:465-483.
+ * The vNext employer-visible counts, stage ordering and semantics stay intact.
+ */
+.stage {
+  min-width: 0;
+  padding: 14px 10px;
+  border: 1px solid #e3e8ef;
+  border-radius: 10px;
+  background: #f3f6fa;
+}
+.label {
+  display: block;
+  color: #66758d;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  line-height: 1.4;
+}
+.count {
+  display: block;
+  margin: 4px 0 0;
+  color: #334155;
+  font-size: 26px;
+  line-height: 1.1;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.track {
+  height: 11px !important;
+  border-radius: 999px;
+  background: #e7ecf2 !important;
+}
+.track > div { background: #26bac7 !important; }
+.track[aria-valuenow]:not([aria-valuenow="0"]) > div { min-width: 2px; }
+.note {
+  margin: 8px 0 0;
+  color: #66758d;
+  font-size: 12px;
+  line-height: 1.4;
+}
+@media (max-width: 860px) {
+  .stage { padding: 12px; }
+  .count { font-size: 24px; }
+}
+@media (max-width: 767px) {
+  .stage { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track > div { transition: none; }
+}

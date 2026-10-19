@@ -1,6 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
+import {Skeleton} from "@/components/ui/skeleton";
 import {useState} from "react";
 type Event={id:string;summary:string;kind:string;at:string;importance:string;authorId:string|null;authorName:string|null};
 export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:string;name:string;kind:"FACULTY"|"LEARNER"}){
@@ -19,24 +22,23 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
  const date=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
  return <>
   <Button variant="secondary" type="button" onClick={()=>void show()}
-   className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text">Audit trail</Button>
+   className="min-h-11 md:min-h-9">Audit trail</Button>
   <Dialog open={open} onOpenChange={setOpen} title={"Audit trail for "+name}>
-    <div className="flex items-center justify-between">
-     <h2 className="font-semibold">Audit trail · {name}</h2>
-     <Button variant="secondary" type="button" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3"
+    <div className="flex justify-end">
+     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9"
       onClick={()=>setOpen(false)}>Close</Button>
     </div>
-    {busy?<p role="status">Loading audit trail…</p>:null}
-    {error?<p role="alert" className="text-error">{error}</p>:null}
-    {!events.length&&!busy&&!error?<p className="text-sm text-muted-foreground">No recorded activity for this person.</p>:null}
-    <ol className="space-y-3">
-     {events.map(event=><li key={event.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+    {busy?<Skeleton variant="row" count={3} label="Loading audit trail"/>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
+    {!events.length&&!busy&&!error?<EmptyState title="No recorded activity" description="No recorded activity for this person."/>:null}
+    <ol className="divide-y divide-border">
+     {events.map(event=><li key={event.id} className="py-3 text-sm">
       <strong>{event.summary}</strong>
       <p className="mt-1 text-xs text-muted-foreground">{date.format(new Date(event.at))} IST · {event.importance} · By {event.authorName??"System/unknown staff"}</p>
       <p className="mt-1 break-all text-xs text-muted-foreground">{event.kind}</p>
      </li>)}
     </ol>
-    {truncated?<p className="text-xs text-muted-foreground">Showing 100 most recent events.</p>:null}
+    {truncated?<Alert tone="info">Showing 100 most recent events.</Alert>:null}
   </Dialog>
  </>;
 }
