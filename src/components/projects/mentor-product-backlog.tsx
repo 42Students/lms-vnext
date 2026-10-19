@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -155,8 +156,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    </article>)}
    {!backlog.length?<p className="py-4 text-sm text-muted-foreground">Backlog is empty.</p>:null}
   </div>
-  {!readOnly&&returnable.length>0?<details><summary className="cursor-pointer text-sm font-semibold text-link">
-    Return unfinished tasks to backlog</summary>
+  {!readOnly&&returnable.length>0?<Disclosure title="Return unfinished tasks to backlog">
     <div className="mt-2 space-y-2">
      {returnable.map(task=><Button variant="secondary" key={task.id} type="button" disabled={busy}
         onClick={()=>setMoveRequest({task,targetSprintId:null})}
@@ -164,7 +164,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         {task.title} · Return to backlog
        </Button>)}
     </div>
-  </details>:null}
+  </Disclosure>:null}
   <ConfirmDialog open={moveRequest!==null} onOpenChange={open=>{if(!open&&!busy)setMoveRequest(null);}}
    title={moveRequest?.targetSprintId?"Pull task into selected sprint?":"Move task into the product backlog?"}
    description={moveRequest?.task.title??"Task movement will update the project board."}
