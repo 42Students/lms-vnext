@@ -41,7 +41,8 @@ const safeTsv=(value:unknown)=>{
 export function GridWorkspace<Row>({
  rows,columns,rowKey,children,filters=[],selection,rollOf,savedViews,extraActions,
  exportName="tpo-grid",xlsxHref,searchPlaceholder="Search name, roll no., anything",
- searchParam="search",filterTitle="Filters",
+ searchParam="search",filterTitle="Filters",columnScope="url",columnStorageKey,
+ searchMaxLength=120,
 }:GridWorkspaceProps<Row>){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const id=useId();
@@ -54,6 +55,7 @@ export function GridWorkspace<Row>({
  const [pasteOpen,setPasteOpen]=useState(false);
  const [pasteText,setPasteText]=useState("");
  const [notice,setNotice]=useState("");
+ const [localKeys,setLocalKeys]=useState<string[]>([]);
  const permitted=useMemo(()=>columns.filter(column=>!column.exportOnly).map(column=>column.key),[columns]);
  const activeKeys=parseTpoGridColumns(params.get("columns")??undefined,permitted);
  const chosen=chosenTpoGridColumns(columns,activeKeys.length?activeKeys:permitted)
