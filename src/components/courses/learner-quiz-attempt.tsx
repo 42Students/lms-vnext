@@ -444,21 +444,16 @@ export function LearnerQuizAttempt() {
           : "Submit this quiz attempt? You cannot edit this attempt after submission."}
         confirmLabel="Submit" onConfirm={() => void submit()} />
       <div className="pb-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="m-0 text-xs font-semibold text-muted-foreground">
-              Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
-            </p>
-            <PageHeader title={quiz.quiz.title}
-              actions={<Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 text-primary-text sm:min-h-9">Back</Button>}
-            />
-            <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
-            {learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable) ? (
-              <p role="status" className="mt-2 rounded-md border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>
-            ) : null}
-          </div>
-
-        </div>
+        <p className="mb-2 text-xs font-semibold text-muted-foreground">
+          Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
+        </p>
+        <PageHeader title={quiz.quiz.title}
+          actions={<Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 text-primary-text sm:min-h-9">Back</Button>}
+        />
+        <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
+        {learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable) ? (
+          <p role="status" className="mt-2 rounded-[var(--lms-control-radius)] border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>
+        ) : null}
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-body" aria-live="polite">
           <span>{answerProgress.answered} answered · {answerProgress.total-answerProgress.answered} unanswered</span>
           {answerProgress.firstUnanswered!==null ? (
