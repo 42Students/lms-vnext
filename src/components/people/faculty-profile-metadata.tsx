@@ -60,7 +60,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   {dirty&&issue?<p role="alert" className="text-sm text-error">{issue}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <div className="flex flex-wrap gap-3">
-   <Button variant="secondary" type="button" disabled={pending||rows.length>=100}
+   <Button variant="secondary" type="button" disabled={pending||rows.length>=100} className="min-h-11 min-[768px]:min-h-9"
      onClick={async()=>{
      setRows(current=>[...current,{id:crypto.randomUUID(),key:"",value:""}]);
      setSearch(current=>facultyProfileSearchAfterInsertion(current));setDirty(true);
@@ -68,7 +68,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
    {dirty?<Button variant="secondary" type="button" disabled={pending} onClick={async()=>{
     if(!(await askConfirm("Discard unsaved metadata edits?")))return;
     setRows(restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));setDirty(false);setError(null);
-   }} className="min-h-11 px-4">Discard unsaved metadata</Button>:null}
+   }} className="min-h-11 min-[768px]:min-h-9 px-4">Discard unsaved metadata</Button>:null}
    <Button variant="primary" type="submit" disabled={pending||!dirty||Boolean(issue)} className="min-h-11 min-[768px]:min-h-9 px-4">
     {pending?"Saving…":"Save metadata"}
    </Button>
