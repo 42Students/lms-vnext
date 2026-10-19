@@ -1,4 +1,6 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -91,30 +93,30 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
   {drives.length===0?<p>No draft or published drives can be changed here.</p>:null}
   <div className="flex flex-wrap gap-3">
    <label className="grid gap-1 text-sm">Drive
-    <select value={jobId} disabled={pending} onChange={e=>{setJobId(e.target.value);setResults([]);}}
-     className="min-h-9 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
+    <Select className="max-w-full" value={jobId} disabled={pending} onChange={e=>{setJobId(e.target.value);setResults([]);}}
+     >
      <option value="">Choose a drive</option>
      {drives.map(job=><option key={job.id} value={job.id}>{job.name} · {job.status}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-sm">Action
-    <select value={decision} disabled={pending} onChange={e=>{setDecision(e.target.value as typeof decision);setResults([]);}}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
+    <Select value={decision} disabled={pending} onChange={e=>{setDecision(e.target.value as typeof decision);setResults([]);}}
+     >
      <option value="INCLUDE">Show / Include</option>
      <option value="EXCLUDE">Hide / Exclude</option>
      <option value="CLEAR">Clear active override</option>
-    </select>
+    </Select>
    </label>
   </div>
   <label className="grid gap-1 text-sm">Reason
-   <textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
-    className="min-h-20 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
+   <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
+    />
   </label>
   {decision==="CLEAR"?<p className="text-sm text-warning-text">Clearing an override returns to ordinary eligibility rules. It does not restore an older override or undo an application.</p>:null}
-  <button type="button" disabled={!valid||pending} onClick={()=>setConfirm(true)}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+  <Button variant="secondary" type="button" disabled={!valid||pending} onClick={()=>setConfirm(true)}
+   >
    Review drive visibility for {picked.length} student(s)
-  </button>
+  </Button>
   <Dialog open={confirm} onOpenChange={open=>{if(!pending)setConfirm(open);}}
    title="Confirm drive eligibility overrides?"
    description={"This "+decision.toLowerCase()+" action is applied separately to "+picked.length+" selected learners. The server rechecks each college and learner."}
@@ -126,10 +128,10 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
   {results.length>0?<div role="status" aria-live="polite" className="space-y-2 text-sm">
    <p>{results.filter(row=>row.status==="saved").length} saved · {results.filter(row=>row.status==="failed").length} not saved.</p>
    {results.some(row=>row.status==="saved"&&row.action!=="CLEAR"&&row.overrideId)
-     ?<button type="button" disabled={pending} onClick={()=>void undoLast()}
-       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text">
+     ?<Button variant="secondary" type="button" disabled={pending} onClick={()=>void undoLast()}
+       >
        Undo saved changes (only if still current)
-      </button>:null}
+      </Button>:null}
    <ul className="max-h-48 space-y-1 overflow-y-auto">{results.map(item=><li key={item.id}>
     {item.name} — {item.status==="saved"?"Saved.":"Not saved; open the learner eligibility record before retrying."}
    </li>)}</ul>
