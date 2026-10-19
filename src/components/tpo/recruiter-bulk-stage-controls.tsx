@@ -23,7 +23,7 @@ type BulkResult = {
 };
 
 const fieldClass =
-  "min-h-11 md:min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground";
+  "min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground";
 
 export function RecruiterBulkStageControls({
   rows,
