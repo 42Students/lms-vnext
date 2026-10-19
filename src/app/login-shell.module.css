@@ -83,7 +83,7 @@
   letter-spacing: -.055em;
   line-height: 1;
 }
-.wordmarkAccent { color: #0a7c88; }
+.wordmarkAccent { color: var(--auth-primary); }
 .collegeName {
   margin: 0;
   color: var(--auth-body);
@@ -139,8 +139,8 @@
   color: var(--auth-primary);
   box-shadow: 0 1px 4px rgba(23, 32, 51, .10);
 }
-.card :global(label span:first-child) { color: #172033; }
-.card :global(input[name="contact"]), .card :global(input[name="code"]),
+.card :global(label span:first-child) { color: var(--auth-ink); }
+ .card :global(input[name="contact"]), .card :global(input[name="code"]),
 .card :global(input[name="secondCode"]) {
   display: block;
   width: 100%;
@@ -192,7 +192,7 @@
 }
 .card :global(button:not([type="submit"]):not([role="tab"])),
 .card :global(a) { color: var(--auth-primary); }
-.card :global(button:disabled:not([type="submit"])) { color: #a9a7ae; }
+.card :global(button:disabled:not([type="submit"])) { color: var(--lms-neutral-400, #a9a7ae); }
 .status { margin-bottom: 24px; border-radius: 10px; padding: 14px 16px; font-size: 14px; line-height: 22px; }
 .statusWarning { border: 1px solid #f3d1a0; background: #fffbeb; color: #92400e; }
 .statusError { border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; }
@@ -212,7 +212,7 @@
   line-height: 20px;
 }
 .footerLinks { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
-.footer a { color: #54505d; text-decoration: none; }
+.footer a { color: var(--auth-body); text-decoration: none; }
 .footer a:hover { color: var(--auth-primary); text-decoration: underline; }
 @media (max-width: 640px) {
   .brandHeader { padding: 20px 22px; }

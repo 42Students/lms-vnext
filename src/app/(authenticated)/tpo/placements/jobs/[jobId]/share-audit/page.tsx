@@ -20,8 +20,8 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  const rawPage=Array.isArray(search.page)?search.page[0]:search.page;
  const parsed=parseCompanyShareAuditQuery({kind:rawKind,page:rawPage});
  const back="/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview";
- if(!parsed.success)return <section role="alert" className="space-y-3 rounded-xl border border-border bg-surface p-6">
-  <h1 className="text-[30px] font-semibold text-[#172033]">Invalid share-audit filters</h1>
+ if(!parsed.success)return <section role="alert" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+  <h1 className="text-[30px] font-semibold text-[var(--lms-heading)]">Invalid share-audit filters</h1>
   <p className="text-sm text-body">Choose a valid event kind and page number. No access history was loaded.</p>
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Clear filters</Link>
  </section>;
@@ -31,17 +31,17 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
   <Link href={back} className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">
    Back to company-share preview
   </Link>
-  <h1 className="font-semibold text-[30px] text-[#172033]">Company-share access history</h1>
+  <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Company-share access history</h1>
   <nav aria-label="Company-share event filters" className="flex flex-wrap gap-3">
    {tpoCompanyAuditKindSchema.options.map(option=><Link key={option}
     href={tpoCompanyAuditHref(jobId,option)}
     aria-current={kind===option?"page":undefined}
-    className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
     {option==="ALL"?"All events":option==="VIEW"?"Page views":option==="LOCKED"?"Locked shares":"CSV downloads"}
    </Link>)}
   </nav>
   {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)}
-    className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">
     Export access history CSV
   </a>:null}
   {!result.ready?<p role="status" className="rounded border border-border p-5">
