@@ -22,8 +22,8 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     },
   );
   if(!parsed.success)return <section role="alert">
-    <h1>Invalid risk/readiness filters</h1>
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
+    <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid risk/readiness filters</h1>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>
   </section>;
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -38,7 +38,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     <PageHeader eyebrow="Mentor · Project" title="At-risk & readiness drill-in"
       description={data.enabled?data.projectTitle+" · "+data.projectStatus:"Projects are disabled. No private task, meeting or delivery evidence was loaded."}
       actions={<Link href={base}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Full project workspace
       </Link>}/>
     {!data.enabled?<section role="status" className="rounded-xl border border-border bg-surface p-5">
@@ -59,17 +59,17 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         A project without tasks is never assumed complete.
       </p>
       <form method="get" action={base+"/risk-readiness"}
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Show
-          <select name="focus" defaultValue={data.query.focus}
-            className="min-h-11 rounded border border-border bg-background px-3">
+          <select data-slot="select" name="focus" defaultValue={data.query.focus}
+            className="min-h-11 rounded border border-border bg-surface px-3">
             <option value="ALL">All evidence</option><option value="RISK">Attention only</option>
             <option value="READINESS">Readiness gaps only</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Task priority
-          <select name="taskPriority" defaultValue={data.query.taskPriority}
-            className="min-h-11 rounded border border-border bg-background px-3">
+          <select data-slot="select" name="taskPriority" defaultValue={data.query.taskPriority}
+            className="min-h-11 rounded border border-border bg-surface px-3">
             <option value="ALL">All task priorities</option>
             <option value="CRITICAL">Critical</option><option value="HIGH">High</option>
             <option value="MEDIUM">Medium</option><option value="LOW">Low</option>
@@ -79,7 +79,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
           Filter
         </Button>
         <Link href={base+"/risk-readiness"}
-          className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+          className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
         description="No matching stored signals were found. This is not a certificate of project safety or completeness."/>:
@@ -93,7 +93,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
           </div>
           <p className="mt-2 break-words text-sm text-body">{row.detail}</p>
           <Link href={row.href}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Open exact project workspace →
           </Link>
         </li>)}</ol>}
@@ -101,9 +101,9 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page>1?<Link href={mentorRiskReadinessHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
           {data.page<data.totalPages?<Link href={mentorRiskReadinessHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
         </div>
       </nav>
     </>}

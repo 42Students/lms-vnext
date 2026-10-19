@@ -91,9 +91,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    creationSprints.find(item=>item.status==="PLANNED");
  return <section className="space-y-4">
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
-    className="text-sm font-semibold text-primary-text underline">Back to project</Link>
+    className="text-sm font-semibold text-link underline">Back to project</Link>
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <h1 className="text-xl font-semibold">Board</h1>
+   <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Board</h1>
    <div className="flex flex-wrap items-center gap-2">
      {!readOnly?<MentorTaskCreate projectId={projectId}
        sprintId={creationDefault?.id??""}
@@ -105,48 +105,48 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
          membershipId:member.membershipId,displayName:member.displayName,
        }))}/>:null}
      <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-       className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link">
       Review submission</Link>
    </div>
   </div>
   <div className="flex flex-wrap gap-3 rounded-xl border border-border p-3">
    <label className="text-sm font-semibold">Release
-    <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");remember("release",e.target.value);remember("sprint","");}}
-      className="ml-2 min-h-11 rounded-md border border-border bg-background px-2">
+    <select data-slot="select" value={release} onChange={e=>{setRelease(e.target.value);setSprint("");remember("release",e.target.value);remember("sprint","");}}
+      className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All releases</option>{releases.map(r=><option key={r.id} value={r.id}>{r.title}</option>)}
     </select></label>
    <label className="text-sm font-semibold">Sprint
-    <select value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
-      className="ml-2 min-h-11 rounded-md border border-border bg-background px-2">
+    <select data-slot="select" value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
+      className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
       .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
    <label className="text-sm font-semibold">Sprint scope
-    <select value={scope} aria-label="Board sprint scope"
+    <select data-slot="select" value={scope} aria-label="Board sprint scope"
       onChange={e=>{setScope(e.target.value==="all"?"all":"current");remember("scope",e.target.value);}}
-      className="ml-2 min-h-11 rounded border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded border border-border bg-surface p-2">
       <option value="current">Current sprint + backlog</option>
       <option value="all">All sprints (full history)</option>
     </select>
    </label>
    <label className="text-sm font-semibold">Priority
-    <select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
-     className="ml-2 min-h-11 rounded border border-border bg-background p-2">
+    <select data-slot="select" value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
+     className="ml-2 min-h-11 rounded border border-border bg-surface p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Assignee
-    <select value={assignee} onChange={e=>{setAssignee(e.target.value);remember("assignee",e.target.value);}}
-     className="ml-2 min-h-11 rounded border border-border bg-background p-2">
+    <select data-slot="select" value={assignee} onChange={e=>{setAssignee(e.target.value);remember("assignee",e.target.value);}}
+     className="ml-2 min-h-11 rounded border border-border bg-surface p-2">
      <option value="">Everyone</option><option value="UNASSIGNED">Unassigned</option>
      {members.filter(m=>m.role==="LEARNER").map(m=>
       <option key={m.membershipId} value={m.membershipId}>{m.displayName??"Learner"}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Lane
-    <select value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);remember("lane",e.target.value);}}
-      className="ml-2 min-h-11 rounded border border-border bg-background p-2">
+    <select data-slot="select" value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);remember("lane",e.target.value);}}
+      className="ml-2 min-h-11 rounded border border-border bg-surface p-2">
       <option value="">All lanes</option>
       <option value="BACKLOG">Backlog</option>
       {editable.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
@@ -154,7 +154,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </select>
    </label>
    <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");["priority","assignee","sprint","release","lane","scope"].forEach(k=>remember(k,""));}}
-    className="min-h-11 text-sm font-semibold text-primary-text underline">Clear all</button>
+    className="min-h-11 text-sm font-semibold text-link underline">Clear all</button>
   </div>
   <div className="flex flex-wrap items-center gap-2" aria-label="Board lane filters">
     {[{value:"",label:"All lanes"},{value:"BACKLOG",label:"Backlog"},
@@ -177,12 +177,12 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     {matching.length} matching {matching.length===1?"task":"tasks"} · {tasks.length} total in this project&apos;s full history.
     {!sprint&&!release&&scope==="current"?" Showing the current sprint and backlog. Switch “Sprint scope” to see everything.":""}
   </p>
-  {matching.length===0?<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">
+  {matching.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
     {tasks.length===0?"No tasks on this board yet. Create the first one to give the team somewhere to start.":
       "No tasks match these filters. Clear all to see the board."}
   </p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {undo?<button type="button" disabled={busy} className="text-sm font-semibold text-primary-text underline"
+  {undo?<button type="button" disabled={busy} className="text-sm font-semibold text-link underline"
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</button>:null}
   <div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0}
     className="overflow-x-auto overscroll-x-contain pb-3 [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"><div className="flex min-w-max gap-3">
@@ -197,22 +197,22 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        editable.includes(task.status as typeof editable[number]);
      return <li key={task.id} draggable={canMove}
       onDragStart={e=>e.dataTransfer.setData("text/plain",task.id)}
-      className="space-y-2 rounded-lg border border-border bg-surface p-3 text-sm">
+      className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
       <button type="button" onClick={()=>setSelected(task.id)}
-        className="min-h-11 text-left font-semibold text-primary-text underline">{task.title}</button>
+        className="min-h-11 text-left font-semibold text-link underline">{task.title}</button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
       <p className="text-xs text-body">Assignee: {members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"} ·
         {" "}Estimate: {task.estimatePoints??"Unsized"} · {task.taskType??"Task"}</p>
       <p className="text-xs text-body">Due: {task.dueDate??"No due date"} ·
         {" "}{projectTaskDueState(task.dueDate,task.status,new Date())}</p>
       {taskSubmissions.some(s=>s.taskId===task.id&&/^https?:\/\//.test(s.submissionUrl))?
-        <p className="text-xs font-semibold text-primary-text">Submission link attached</p>:null}
+        <p className="text-xs font-semibold text-link">Submission link attached</p>:null}
       {task.carriedFromSprintId&&!task.sprintId?<p className="text-xs font-semibold text-warning-text">Carried over</p>:null}
       {task.assigneeMembershipId===null?<p className="text-xs font-semibold text-warning-text">Needs assigning</p>:null}
       {task.blockerReason?<p className="whitespace-pre-wrap text-xs text-warning-text">Blocked: {task.blockerReason}</p>:null}
       {canMove?<label className="block text-xs font-semibold">Move task
-       <select value={task.status} disabled={busy} onChange={e=>void move(task.id,e.target.value)}
-        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2">
+       <select data-slot="select" value={task.status} disabled={busy} onChange={e=>void move(task.id,e.target.value)}
+        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
         {editable.map(x=><option key={x} value={x}>{x.replaceAll("_"," ")}</option>)}
        </select></label>:null}
       {!readOnly&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?
@@ -221,8 +221,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       {!readOnly?<ProjectTaskAssigneeControl projectId={projectId} taskId={task.id} taskTitle={task.title}
        assigneeMembershipId={task.assigneeMembershipId}
        updatedAt={new Date(task.updatedAt).toISOString()} learners={learnerChoices}/>:null}
-      <details className="rounded-lg border border-border p-2">
-       <summary className="cursor-pointer font-semibold text-primary-text">Task details</summary>
+      <details className="rounded-[var(--lms-control-radius)] border border-border p-2">
+       <summary className="cursor-pointer font-semibold text-link">Task details</summary>
        <p className="mt-2 whitespace-pre-wrap text-xs">{task.description||"No description"}</p>
        <p className="mt-2 text-xs font-semibold">Approach</p>
        <p className="whitespace-pre-wrap text-xs">{task.approach||"Not recorded"}</p>
@@ -236,7 +236,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         <div key={item.id} className="mt-1 text-xs">
           <span>{item.status} · version {item.version}</span>
           {safeProjectExternalHref(item.submissionUrl)?<a href={safeProjectExternalHref(item.submissionUrl)!} target="_blank"
-            rel="noreferrer noopener" className="ml-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open submission link</a>:null}
+            rel="noreferrer noopener" className="ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open submission link</a>:null}
         </div>
        )}
        {!taskSubmissions.some(s=>s.taskId===task.id)?<p className="text-xs text-muted-foreground">No submission yet.</p>:null}
@@ -255,7 +255,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    </section>)}
   </div></div>
   {matching.length>visible.length?<button type="button"
-    className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link"
     onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</button>:null}
   {selected&&tasks.find(task=>task.id===selected)?<MentorBoardTaskDetailDialog
     projectId={projectId} task={tasks.find(task=>task.id===selected)!}

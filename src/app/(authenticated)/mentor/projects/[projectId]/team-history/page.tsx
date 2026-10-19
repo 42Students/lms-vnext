@@ -30,8 +30,8 @@ export default async function MentorTeamHistoryPage({
     normalized ? {projectId,...normalized} : null,
   );
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid team history filters</h1>
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to projects</Link>
+    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid team history filters</h1>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to projects</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -41,7 +41,7 @@ export default async function MentorTeamHistoryPage({
     <PageHeader eyebrow="Mentor · Project Team" title="Team membership history"
       description={data.enabled?data.title + " · Registered team join/end records":"Projects access is disabled. Team history cannot be displayed."}
       actions={<Link href={back}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Team workspace
       </Link>} />
     {!data.enabled
@@ -50,24 +50,24 @@ export default async function MentorTeamHistoryPage({
         </section>
       : <>
         <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"}
-          className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3">
-          <input type="hidden" name="view" value={data.query.view}/>
+          className="flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius)] border-b border-border p-3">
+          <input data-slot="input" type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-1 text-sm font-semibold text-body">Registered role
-            <select name="role" defaultValue={data.query.role}
-              className="min-h-11 rounded-md border border-border bg-background px-3">
+            <select data-slot="select" name="role" defaultValue={data.query.role}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
               <option value="ALL">All roles</option>
               <option value="MENTOR">Mentors</option><option value="LEARNER">Learners</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Primary Mentor record
-            <select name="primary" defaultValue={data.query.primary}
-              className="min-h-11 rounded-md border border-border bg-background px-3">
+            <select data-slot="select" name="primary" defaultValue={data.query.primary}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
               <option value="ALL">All team records</option><option value="PRIMARY">Recorded primary Mentors only</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Assignment chronology
-            <select name="order" defaultValue={data.query.order}
-              className="min-h-11 rounded-md border border-border bg-background px-3">
+            <select data-slot="select" name="order" defaultValue={data.query.order}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
               <option value="OLDEST">Earliest started first</option>
               <option value="NEWEST">Most recent started first</option>
             </select>
@@ -115,9 +115,9 @@ export default async function MentorTeamHistoryPage({
           <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
           <div className="flex gap-3">
             {data.page > 1 ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:data.page-1})}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link> : null}
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link> : null}
             {data.page < data.totalPages ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:data.page+1})}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link> : null}
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link> : null}
           </div>
         </nav>
       </>}

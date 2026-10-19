@@ -23,8 +23,8 @@ export default async function MentorProjectActivityHistoryPage({
     filters ? {projectId,...filters} : null,
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid activity filters</h1>
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid activity filters</h1>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Return to projects
     </Link>
   </section>;
@@ -34,7 +34,7 @@ export default async function MentorProjectActivityHistoryPage({
     <PageHeader eyebrow="Mentor · Project Activity" title="Recorded project activity"
       description={data.enabled?data.title+" · Events linked to this assigned project.":"Projects access is disabled. No private project activity was loaded."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Project activity workspace
       </Link>} />
     {!data.enabled ?
@@ -45,16 +45,16 @@ export default async function MentorProjectActivityHistoryPage({
         action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
         className={mentorProjectActivityMobileFilters}>
         <label className="grid gap-1 text-sm font-semibold text-body">Event importance
-          <select name="importance" defaultValue={data.query.importance}
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <select data-slot="select" name="importance" defaultValue={data.query.importance}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All</option><option value="LOW">Low</option>
             <option value="NORMAL">Normal</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Event type
-          <select name="view" defaultValue={data.query.view}
-            className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="view" defaultValue={data.query.view}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All recorded events</option>
             <option value="PROJECT">Project lifecycle</option>
             <option value="REVIEWS">Review decisions</option><option value="DELIVERIES">Final delivery history</option>
@@ -64,8 +64,8 @@ export default async function MentorProjectActivityHistoryPage({
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded within
-          <select name="window" defaultValue={data.query.window}
-            className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="window" defaultValue={data.query.window}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All recorded events</option>
             <option value="LAST_7_DAYS">Past 7×24 hours</option>
             <option value="LAST_30_DAYS">Past 30×24 hours</option>
@@ -74,15 +74,15 @@ export default async function MentorProjectActivityHistoryPage({
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Chronology
-          <select name="order" defaultValue={data.query.order}
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <select data-slot="select" name="order" defaultValue={data.query.order}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="NEWEST">Newest recorded first</option>
             <option value="OLDEST">Oldest recorded first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
-          <select name="pageSize" defaultValue={String(data.query.pageSize)}
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <select data-slot="select" name="pageSize" defaultValue={String(data.query.pageSize)}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="20">20 events</option>
             <option value="50">50 events</option>
           </select>
@@ -91,7 +91,7 @@ export default async function MentorProjectActivityHistoryPage({
           Filter
         </Button>
         <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
-          className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+          className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       <p className="text-sm text-body">
         {data.total} matching persisted event{data.total===1?"":"s"}
@@ -100,7 +100,7 @@ export default async function MentorProjectActivityHistoryPage({
         <Link href={"/api/projects/"+encodeURIComponent(projectId)+
           "/mentor-activity-export"+(data.query.importance==="ALL"&&data.query.view==="ALL"&&data.query.window==="ALL"&&data.query.order==="NEWEST"?"":"?"+
             new URLSearchParams({importance:data.query.importance,view:data.query.view,window:data.query.window,order:data.query.order}).toString())}
-          download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Export recorded events CSV (max 200)
         </Link>
         {data.total>200?<span role="status">
@@ -125,9 +125,9 @@ export default async function MentorProjectActivityHistoryPage({
         <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
           {data.page>1 && <Link href={mentorProjectActivityHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
           {data.page<data.totalPages && <Link href={mentorProjectActivityHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
         </div>
       </nav>
     </>}

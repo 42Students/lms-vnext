@@ -74,10 +74,10 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
      {row.submittedByMembershipId ? " · Submitted by "+(members.find(member=>member.membershipId===row.submittedByMembershipId)?.displayName??"Project member") : ""}
      {safeProjectExternalHref(row.submissionUrl)?
       <a href={safeProjectExternalHref(row.submissionUrl)!} target="_blank" rel="noopener noreferrer"
-       className="ml-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open submitted evidence</a>:null}
+       className="ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open submitted evidence</a>:null}
     </li>)}</ul>:<p className="text-xs text-muted-foreground">No submissions yet</p>}
    <Link href={"/mentor/projects/"+projectId+"?tab=delivery"}
-    className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open delivery review</Link>
+    className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open delivery review</Link>
   </section>
   <section className="mt-4"><h3 className="font-semibold">Activity</h3>
    {recent.length?<ol className="mt-2 space-y-2">{recent.slice(0,20).map(item=>
