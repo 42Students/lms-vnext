@@ -4,6 +4,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {FileUpload} from "@/components/ui/file-upload";
 import {DataTable} from "@/components/ui/data-table";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -132,9 +133,9 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
      {key:"roll",header:"Roll",mobilePriority:"secondary",cell:({row,i})=>row.rollNumber??preview.rows[i]?.studentCode??"—"},
      {key:"change",header:"Current → Proposed",mobilePriority:"secondary",cell:({row})=>
       (row.currentStatus??"—")+" → "+(row.proposedStatus??"—")},
-     {key:"result",header:"Match",mobilePriority:"secondary",cell:({row})=>
-      (row.status==="matched"&&row.currentStatus===row.proposedStatus?
-       "No change":row.status==="matched"?"Matched":"Can't use")+(row.reason?" — "+row.reason:"")},
+     {key:"result",header:"Match",mobilePriority:"secondary",cell:({row})=><>
+      <StatusBadge tone={row.status==="matched"?(row.currentStatus===row.proposedStatus?"neutral":"success"):"warning"}>{row.status==="matched"&&row.currentStatus===row.proposedStatus?"No change":row.status==="matched"?"Matched":"Can't use"}</StatusBadge>
+      {row.reason?<span className="ml-2 text-xs text-body">{row.reason}</span>:null}</>},
      {key:"include",header:"Include",mobilePriority:"action",cell:({row,i})=>row.status==="unusable"?
       <Button variant="secondary" size="sm" type="button" disabled={busy||skippedByUser.includes(i)}
        onClick={()=>setSkippedByUser(current=>current.includes(i)?current:[...current,i])}>
