@@ -22,7 +22,7 @@ export function MentorSprintDeleteControl({projectId,sprintId,title,taskCount,up
  }
  return <span className="inline-flex flex-col gap-1">
   <button type="button" disabled={busy}
-   onClick={()=>void remove()} className="min-h-10 rounded-md border border-error px-3 text-xs font-semibold text-error">
+   onClick={()=>void remove()} className="min-h-10 rounded-[var(--lms-control-radius)] border border-error px-3 text-xs font-semibold text-error">
    {busy?"Deleting…":"Delete sprint"}
   </button>
   {error?<span role="alert" className="text-xs text-error">{error}</span>:null}

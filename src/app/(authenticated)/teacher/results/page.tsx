@@ -18,7 +18,7 @@ export default async function FacultyAssessmentResultsPage({
   const parsed = parseFacultyResultsSearchParams(raw);
   if (!parsed.success) {
     return <section role="alert" className="space-y-3">
-      <h1 className="text-xl font-semibold">Invalid assessment filters</h1>
+      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid assessment filters</h1>
       <Link href="/teacher/results" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
     </section>;
   }
@@ -30,24 +30,24 @@ export default async function FacultyAssessmentResultsPage({
       description="Section-specific recorded response counts and scores from your current teaching assignments."
       actions={<div className="flex flex-wrap gap-2">
         <Link href="/teacher/response-followups"
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Response follow-ups
         </Link>
         <Link href="/teacher/allAssignments"
-          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           All Assignments
         </Link>
       </div>} />
     <form method="get" action="/teacher/results"
-      className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           placeholder="Assessment, course code or Section" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Type
         <select name="kind" defaultValue={data.query.kind}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
@@ -55,7 +55,7 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
         <select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="">All teaching sections</option>
           {data.sections.map(section => (
             <option key={section.deliveryId} value={section.deliveryId}>
@@ -66,14 +66,14 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <select name="status" defaultValue={data.query.status}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All</option>
           <option value="PUBLISHED">Published</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Due date
         <select name="due" defaultValue={data.query.due}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All due dates</option>
           <option value="OVERDUE">Past due, published</option>
           <option value="UPCOMING">Upcoming due</option>
@@ -82,7 +82,7 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sort
         <select name="sort" defaultValue={data.query.sort}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="DUE_DESC">Latest due date</option>
           <option value="DUE_ASC">Earliest due date</option>
           <option value="TITLE">Assessment title</option>
@@ -90,11 +90,11 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Records per page
         <select name="pageSize" defaultValue={data.query.pageSize}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="5">5</option><option value="10">10</option>
         </select>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+      <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-foreground text-on-primary">
         Filter
       </button>
       <Link href="/teacher/results" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
@@ -104,7 +104,7 @@ export default async function FacultyAssessmentResultsPage({
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
       <Link href={facultyResultsCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+       className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
        Export this page CSV (no learner names)
       </Link>
     </div>

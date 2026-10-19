@@ -24,8 +24,8 @@ export default async function MentorReviewsPage({
     page:raw.page,pageSize:raw.pageSize,
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid review filters</h1>
-    <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid review filters</h1>
+    <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
   </section>;
   const data = await getMentorReviewQueue(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
@@ -33,11 +33,11 @@ export default async function MentorReviewsPage({
       description="Submitted deliveries awaiting review across your currently assigned Mentor projects."
       actions={<div className="flex flex-wrap items-center gap-3">
         <Link href="/mentor/review-history"
-          className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Review history
         </Link>
         <Link href="/mentor/projects"
-          className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Projects
         </Link>
       </div>} />
@@ -46,51 +46,51 @@ export default async function MentorReviewsPage({
     </div> : <>
       <form action="/mentor/reviews" method="get" className={mentorDeliveryReviewMobileForm}>
         <label className="grid gap-1 text-sm font-semibold text-body">Search
-          <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
-            placeholder="Project title" className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground" />
+          <input data-slot="input" type="search" name="search" maxLength={120} defaultValue={data.query.search}
+            placeholder="Project title" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 max-w-full rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
-          <select name="assignment" defaultValue={data.query.assignment} className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="assignment" defaultValue={data.query.assignment} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All assigned projects</option><option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
-          <select name="order" defaultValue={data.query.order}
-            className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="order" defaultValue={data.query.order}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="NEWEST">Newest submitted first</option>
             <option value="OLDEST">Oldest submitted first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Submitted within
-          <select name="age" defaultValue={data.query.age} className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="age" defaultValue={data.query.age} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">Any age</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_7_DAYS">Waiting over 7 days</option><option value="OLDER_THAN_30_DAYS">Waiting over 30 days</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned Project lifecycle
-          <select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All current assignments</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size
-          <select name="pageSize" defaultValue={String(data.pageSize)}
-            className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="pageSize" defaultValue={String(data.pageSize)}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="20">20</option><option value="50">50</option>
           </select>
         </label>
         <Button type="submit" variant="primary">Filter</Button>
-        <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={mentorReviewExportHref(data.query)} download
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Export filtered delivery review metadata CSV (max 200)
         </Link>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching reviews.</span>:null}
@@ -99,20 +99,20 @@ export default async function MentorReviewsPage({
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
         description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." />
         : <div className="grid gap-3">{data.items.map(item =>
-          <Link key={item.key} href={item.href} className="min-h-11 block rounded-xl border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-            <p className="min-w-0 break-words font-semibold text-[var(--lms-teal-deep)]">{item.description}</p>
+          <Link key={item.key} href={item.href} className="min-h-11 block rounded-xl border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            <p className="min-w-0 break-words font-semibold text-link">{item.description}</p>
             <p className="mt-2 text-xs text-muted-foreground">Submitted: {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(new Date(item.occurredAt))} IST</p>
-            <p className="mt-2 text-sm font-semibold text-[var(--lms-teal-deep)]">Open delivery review →</p>
+            <p className="mt-2 text-sm font-semibold text-link">Open delivery review →</p>
           </Link>)}</div>}
       <nav aria-label="Review queue pagination" className="flex items-center justify-between gap-3">
         <span className="text-sm text-body">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page > 1 && <Link href={mentorPortfolioHref("reviews",{...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
           {data.page < data.totalPages && <Link href={mentorPortfolioHref("reviews",{...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
         </div>
       </nav>
     </>}
