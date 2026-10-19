@@ -31,7 +31,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Recruiter · Interview coordination" title="Interview slots"
    description={workspace.job.title+" · This schedules employer time blocks only. No learner invitation or candidate booking is created here."}/>
-  <p role="status" className="rounded-lg border border-border bg-surface-secondary p-3 text-sm text-body">
+  <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-sm text-body">
     Time blocks proposed here are visible to the placement cell. They are not confirmed interview appointments until the placement cell coordinates the schedule.
   </p>
   <nav className="flex flex-wrap gap-3">
@@ -53,7 +53,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
    </section>
    <section className="space-y-3">
     <h2 className="font-semibold text-foreground">Time blocks ({slots.items.length})</h2>
-    {slots.items.map(slot=><article key={slot.id} className="space-y-3 rounded-xl border border-border bg-surface p-4">
+    {slots.items.map(slot=><article key={slot.id} className="space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
      <p className="font-semibold text-foreground">{when(slot.startAt)} – {when(slot.endAt)}</p>
      <p className="text-sm text-body">
       {slot.status==="OFFERED"?"Waiting for the placement cell":
