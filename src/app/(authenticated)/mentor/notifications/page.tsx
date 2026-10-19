@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {listMyProjectInstances} from "@/modules/projects/member-service";
 import Link from "next/link";
@@ -111,27 +112,27 @@ export default async function MentorNotificationsPage({
       <form method="get" action={MENTOR_INBOX}
         className="flex flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
         <label className="grid gap-1 text-sm font-semibold">Project with recorded attention
-          <select data-slot="select" name="projectId" defaultValue={projectId.data??""}
+          <Select name="projectId" defaultValue={projectId.data??""}
             className="min-h-11 sm:min-h-9 max-w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="">All assigned Projects</option>
             {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention order
-          <select data-slot="select" name="attentionOrder" defaultValue={attentionOrder.data}
+          <Select name="attentionOrder" defaultValue={attentionOrder.data}
             className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="RECENT">Most recent recorded first</option>
             <option value="REVIEW_FIRST">Reviews and requests first</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention type
-          <select data-slot="select" name="kind" defaultValue={kind.data}
+          <Select name="kind" defaultValue={kind.data}
             className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">All</option><option value="REVIEW">Reviews</option>
             <option value="STALLED">Stalled</option>
             <option value="REQUESTED">Meeting requests</option>
             <option value="MEETING_SOON">Meetings soon</option>
-          </select>
+          </Select>
         </label>
         <Button type="submit" variant="primary">
           Filter attention
