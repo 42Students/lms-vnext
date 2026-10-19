@@ -1,3 +1,4 @@
+import {PageBackLink} from "@/components/ui/page-back-link";
 import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -76,7 +77,7 @@ export default async function SuperAdminTenantSetup({
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."
-   actions={<Link href="/admin/tenants" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-3.5 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)] ">← Tenant directory</Link>} />
+   actions={<PageBackLink href="/admin/tenants" label="Tenant directory" />} />
   <section aria-label="Tenant setup overview" className="grid gap-3 sm:grid-cols-3">
    <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Current step</p>
