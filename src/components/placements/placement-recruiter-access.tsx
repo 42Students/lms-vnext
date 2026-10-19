@@ -177,7 +177,7 @@ export function PlacementRecruiterAccess({
           </span>
           <select
             aria-label="Employer relationship"
-            className="min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)] md:min-h-9"
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)]"
             value={relationshipId}
             onChange={(event) =>
               setRelationshipId(
@@ -213,7 +213,7 @@ export function PlacementRecruiterAccess({
           <input
             aria-label="Recruiter email"
             type="email"
-            className="min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)] md:min-h-9"
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)]"
             value={email}
             onChange={(event) =>
               setEmail(event.target.value)
@@ -229,7 +229,7 @@ export function PlacementRecruiterAccess({
           </span>
           <input
             aria-label="Recruiter title"
-            className="min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)] md:min-h-9"
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)]"
             value={title}
             onChange={(event) =>
               setTitle(event.target.value)
