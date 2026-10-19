@@ -52,26 +52,26 @@ export default async function SuperAdminBatchPromotionPage({
     <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Program
         <Select name="programId" defaultValue={input.data.programId ?? ""}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="">All programs</option>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Batch
         <Select name="cohortId" defaultValue={input.data.cohortId ?? ""}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="">Select a batch</option>
           {visibleCohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Academic year start override
         <Input name="yearStart" type="number" min={1900} max={9998} step={1}
-          defaultValue={input.data.yearStart ?? ""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+          defaultValue={input.data.yearStart ?? ""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
       </label>
       <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
         <input name="showCompleted" type="checkbox" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
-      <Button type="submit" className="min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary font-[650]">Preview</Button>
+      <Button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Preview</Button>
     </form>
     <section aria-label="Batch promotion queue" className="min-w-0 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
