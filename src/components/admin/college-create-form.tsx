@@ -92,7 +92,7 @@ export function CollegeCreateForm({
     <form
       onSubmit={submit}
       aria-busy={pending}
-      className="grid min-w-0 gap-3 border-t border-border pt-4 min-[992px]:grid-cols-[1fr_1fr_12rem_auto] min-[992px]:items-end"
+      className="grid min-w-0 gap-3 border-t border-border pt-4 min-[992px]:grid-cols-[1fr_1fr_12rem_auto] min-[992px]:items-end print:hidden"
     >
       <div>
         <label
@@ -102,7 +102,7 @@ export function CollegeCreateForm({
           Organization
         </label>
         <Select
-          id="college-organization"
+          className="min-h-11 md:min-h-9" id="college-organization"
           disabled={pending}
           value={organizationId}
           onChange={(event) => setOrganizationId(event.target.value)}
@@ -123,7 +123,7 @@ export function CollegeCreateForm({
           College Name
         </label>
         <Input
-          id="college-name"
+          className="min-h-11 md:min-h-9" id="college-name"
           disabled={pending}
           value={name}
           onChange={(event) => setName(event.target.value)}
@@ -140,7 +140,7 @@ export function CollegeCreateForm({
           Unique ID / Code
         </label>
         <Input
-          id="college-code"
+          className="min-h-11 md:min-h-9" id="college-code"
           aria-describedby="college-code-help"
           autoCapitalize="none"
           spellCheck={false}
@@ -162,7 +162,7 @@ export function CollegeCreateForm({
           ["Country",country,setCountry,128],
          ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-1 text-[13px] font-semibold text-body">
           {label}<Input value={value} disabled={pending} onChange={e=>setter(e.target.value)} maxLength={maxLength}
-           className="w-full"/>
+           className="min-h-11 w-full md:min-h-9"/>
          </label>)}
         </div>
        </Disclosure>
