@@ -1,3 +1,4 @@
+import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -96,11 +97,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
     </li>)}</ul>
    </section>:null}
-   {result.choices.length>1?<nav aria-label="College conversations" className="flex flex-wrap gap-3">
-    {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
-     aria-current={g.collegeId===result.collegeId?"page":undefined}
-     className={g.collegeId===result.collegeId ? "inline-flex min-h-9 max-sm:min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 max-sm:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle"}>{g.collegeName}</Link>)}
-   </nav>:null}
+   {result.choices.length>1?<NeedsDoingChips label="College conversations:"
+      selectedKey={result.collegeId}
+      items={result.choices.map(grant=>({
+        key:grant.collegeId,label:grant.collegeName,
+        href:"/hr/conversations?collegeId="+encodeURIComponent(grant.collegeId),
+      }))}/>:null}
    <section className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
