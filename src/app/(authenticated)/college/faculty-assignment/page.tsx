@@ -169,9 +169,9 @@ export default async function CollegeFacultyAssignmentPage({
       <nav aria-label="Faculty assignment pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span className="text-muted-foreground">Page {query.page} of {totalPages} · 25/page</span>
         <div className="flex gap-2">
-          {query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link"
+          {query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link lms-inline-link"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page - 1 })}>Previous</Link> : null}
-          {query.page < totalPages ? <Link className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link"
+          {query.page < totalPages ? <Link className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link lms-inline-link"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page + 1 })}>Next</Link> : null}
         </div>
       </nav>
