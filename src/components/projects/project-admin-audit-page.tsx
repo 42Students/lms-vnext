@@ -6,6 +6,7 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-export";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -144,6 +145,30 @@ export async function ProjectAdminAuditPage({
     );
   }
 
+  // Show an active underline only when a saved date filter is one of the
+  // preset ranges. A custom range should not falsely appear as "All time".
+  const auditRangeOptions = [
+    { value: "today", label: "Today", days: 0 },
+    { value: "7-days", label: "7 days", days: 6 },
+    { value: "30-days", label: "30 days", days: 29 },
+    { value: "all-time", label: "All time", days: null },
+  ] as const;
+  const referenceTimeMs = currentTimeMs();
+  const rangeFrom = (days: number | null) =>
+    days === null ? null : istDate(new Date(referenceTimeMs - days * 86400000));
+  const selectedAuditRange = to ? "custom" :
+    auditRangeOptions.find(item => rangeFrom(item.days) === (from ?? null))?.value ?? "custom";
+  const auditRangeTabs = auditRangeOptions.map(item => {
+    const params = new URLSearchParams();
+    if (eventType) params.set("action", eventType);
+    if (importance) params.set("importance", importance);
+    if (subjectType) params.set("subjectType", subjectType);
+    if (subjectId) params.set("subjectId", subjectId);
+    const start = rangeFrom(item.days);
+    if (start) params.set("from", start);
+    return { value: item.value, label: item.label, href: basePath + "/audit?" + params.toString() };
+  });
+
   return (
     <div className="space-y-6">
       <ProjectAdminNav
@@ -166,20 +191,7 @@ export async function ProjectAdminAuditPage({
         </Banner>
       ) : null}
 
-      <nav aria-label="Audit time range" className="flex flex-wrap gap-2 text-sm">
-        {([{label:"Today",days:0},{label:"7 days",days:6},
-           {label:"30 days",days:29},{label:"All time",days:null}]).map(item=>{
-          const params=new URLSearchParams();
-          if(eventType)params.set("action",eventType);
-          if(importance)params.set("importance",importance);
-          if(subjectType)params.set("subjectType",subjectType);
-          if(subjectId)params.set("subjectId",subjectId);
-          if(item.days!==null)params.set("from",istDate(new Date(currentTimeMs()-item.days*86400000)));
-          return <a key={item.label} href={basePath+"/audit?"+params.toString()}
-           className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">
-             {item.label}</a>;
-        })}
-      </nav>
+      <Tabs ariaLabel="Audit time range" renderPanel={false} value={selectedAuditRange} items={auditRangeTabs} />
       <form
         className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-5"
         action={basePath + "/audit"}
