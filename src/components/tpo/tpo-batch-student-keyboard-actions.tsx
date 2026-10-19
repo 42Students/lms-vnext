@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useState,type KeyboardEvent} from "react";
 import {tpoBatchShortcut,tpoBatchVisibleSelection,tpoBatchSelectedClipboard}
  from "@/modules/placements/tpo-batch-keyboard-actions-model";
