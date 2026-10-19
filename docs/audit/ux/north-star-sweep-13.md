@@ -243,3 +243,19 @@ Every row refers to a full source file, not to an arbitrary commit. The checked 
 
 - [ ] Visual screenshots, browser focus interactions, TS compile, tests and CI intentionally unverified.
 - [ ] **Next file:** `src/components/admin/lecture-hall-manager.tsx` (first-third Super Admin academics) then `src/components/admin/department-directory.tsx`.
+
+
+### Department, lecture-hall and attendance visual sweep (first-third Super Admin)
+
+| Completed file | Legacy / current value proof | Grep and responsive proof |
+| --- | --- | --- |
+| [x] `src/components/admin/lecture-hall-manager.tsx` | `const field` label at :178 uses 13px/600, replacing 12px; exact source `components___form.scss:110-112`. Availability row link now resolves 9px radius `globals.css:343`, semantic teal hover `globals.css:30`, keyboard outline. | Raw visual controls 0, hex 0, inline styles 0; shared Button 6/6 and Select 2/2. Link min-height 44px ≤767px/36px ≥768px and modal form becomes 2 columns at 768px. |
+| [x] `src/components/admin/department-directory.tsx` | Search/page-size labels 13px/600 (`:72,86`), shared Select inherits 10px field radius (`components___form.scss:120`, `globals.css:344`); Export CSV uses 9px CTA radius with hover/focus tokens. | Raw controls 0, hex 0, inline styles 0; Button 6/6, Select 1/1. Page-size Select and CSV export min-height 44px ≤767px/36px ≥768px; toolbar flex wraps. |
+| [x] `src/components/admin/department-create-form.tsx` | `:61` Create Department label 13px/600 matching legacy form; shared Input/Button, flat form divider retained. | Raw controls 0, hex 0, inline styles 0; Button 1/1. Input/Button stay in flex-wrap form and inherit shared mobile styling. |
+| [x] `src/components/admin/department-actions.tsx` | `:183` Edit Department label 13px/600; existing shared Dialog, Input, Button and confirmation states unchanged. | Raw controls 0, hex 0, inline styles 0; Button 7/7; dialog has responsive shared chrome and unchanged keyboard behavior. |
+| [x] `src/components/admin/super-admin-attendance-settings-editor.tsx` | `:42-53` heading uses `text-foreground` (`globals.css:327`), policy fields 13px/600, 14px normal input text and 10px radius from shared Input. | Raw controls 0, hex 0, inline styles 0; Button 1/1. One-column phone form, two at 768px; shared ConfirmDialog still controls the mutation. |
+
+**Grep proof (GitHub source scan, no local code execution):** `rg -o '<(button|input|select|textarea)\\b' <file> | wc -l` => each of five files `0`; `rg -o '#[0-9A-Fa-f]{3,8}\\b' <file> | wc -l` => each `0`; `rg -o 'style=\\{' <file> | wc -l` => each `0`. Opening/closing `Button` and `Select` counts above match. 13px/600 form source: `components___form.scss:110-112`; 44px touch source: `components___variables.scss:139` and `pages___admin-list-pages.scss:8,193`; 36px control: `globals.css:341`, mobile breakpoint 767px: `old-lms-shell.css:73`. No modified prop, form action, query, upload, optimistic token or permission boundary.
+
+- [ ] Browser pixel comparison, role interaction checks, TS typecheck, tests and CI remain explicitly outstanding.
+- [ ] **Next file:** `src/components/admin/super-admin-learning-filter-fields.tsx`, then Super Admin Academics / Lectures remaining nested widgets.
