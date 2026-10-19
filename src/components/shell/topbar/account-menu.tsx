@@ -82,7 +82,7 @@ export function TopbarAccountMenu({
 
   return <div className="relative shrink-0" ref={root}>
     <button type="button" ref={trigger} className={style.avatar}
-      aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open}
+      aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "lms-topbar-account-dialog" : undefined}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
       <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
