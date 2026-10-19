@@ -202,7 +202,7 @@ export function PersonOnboardDialog({
               placeholder="name@example.com"
             />
           </div>
-          {forcedRole==="FACULTY" ? <fieldset className="sm:col-span-2 space-y-2 rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+          {forcedRole==="FACULTY" ? <fieldset className="sm:col-span-2 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
             <legend className="text-xs font-semibold text-body">Faculty Type</legend>
             <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
               <input type="checkbox" checked={registerAsMentor} disabled={pending}
@@ -221,7 +221,7 @@ export function PersonOnboardDialog({
               {MEMBERSHIP_ROLES.map((role) => (
                 <label
                   key={role}
-                  className="flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 hover:bg-primary-subtle"
+                  className="flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 hover:bg-primary-subtle"
                 >
                   <span className="text-sm font-semibold text-body">
                     {roleLabel(role)}
