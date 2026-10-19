@@ -1,5 +1,6 @@
 import { Alert } from "@/components/ui/alert";
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "./faculty-course-home-signals.module.css";
 import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -173,7 +174,7 @@ export function FacultyCourseHomeSignals({
                 <Disclosure title={`${learner.severity>=3?"Critical":"Moderate"} · View snapshot`} className="min-w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs">
                   <div className="mt-2 space-y-2 text-xs text-muted-foreground">
                     <p>Attendance: {learner.attendancePercent===null?"Not enough marked sessions":learner.attendancePercent+"%"}</p>
-                    {learner.attendancePercent!==null?<MetricBar role="img"
+                    {learner.attendancePercent!==null?<MetricBar role="img" className={styles.track}
                       label={"Attendance "+learner.attendancePercent+" percent"}
                       value={learner.attendancePercent} maximum={100} unit="percent" />:null}
                     <p>Submissions missing: {learner.missingSubmissionCount}</p>
@@ -231,14 +232,14 @@ export function FacultyCourseHomeSignals({
             );
             return (
               <details key={bucket.label} className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
-                <summary className="grid cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3">
+                <summary className={styles.distribution+" cursor-pointer"}>
 
-                <span className="text-body">
+                <span className={styles.distributionLabel}>
                   {bucket.label}
                 </span>
-                <MetricBar label={bucket.label+" grade distribution"}
+                <MetricBar className={styles.track} label={bucket.label+" grade distribution"}
                   value={width} maximum={100} unit="percent" />
-                <strong className="text-right text-foreground">{bucket.count}</strong>
+                <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </summary>
                 {bucket.count>0?<ul className="mt-2 space-y-1 border-t border-border pt-2">
                   {signals.performance.studentAverages.filter(student=>
