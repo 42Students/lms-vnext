@@ -990,6 +990,8 @@ export function RecruiterLeadsWorkspace({
               onColumnKeysChange={keys=>changeVisibleColumns(normalizeEngageColumns(
                keys.filter(key=>ENGAGE_COLUMNS.includes(key as EngageColumn))))}
               searchMode="hidden" exportName="recruiter-leads"
+              externalFilters={{count:filterChips.length,open:filterOpen,controlsId:"engage-filter-panel",
+               onToggle:()=>setFilterOpen(previous=>!previous)}}
               savedViews={<RecruiterSavedViewControls columns={visibleColumns}/>}
               onExportCsv={selected=>exportRows(selected?"selected":"shown","csv")}
               onExportXlsx={selected=>exportRows(selected?"selected":"shown","xlsx")}
