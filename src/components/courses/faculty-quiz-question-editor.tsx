@@ -1,5 +1,7 @@
 "use client";
 
+import { Radio } from "@/components/ui/radio";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -546,13 +548,8 @@ export function FacultyQuizQuestionEditor({
                           key={option.key}
                           className="grid grid-cols-[auto_1fr_auto] items-center gap-2"
                         >
-                          <input
-                            type={
-                              question.type ===
-                              "SINGLE_CHOICE"
-                                ? "radio"
-                                : "checkbox"
-                            }
+                          {question.type === "SINGLE_CHOICE" ? <Radio
+                            
                             name={`correct-${question.key}`}
                             checked={
                               option.correct
@@ -571,7 +568,27 @@ export function FacultyQuizQuestionEditor({
                                 },
                               )
                             }
-                          />
+                          /> : <Checkbox
+                            
+                            name={`correct-${question.key}`}
+                            checked={
+                              option.correct
+                            }
+                            aria-label={`Correct answer for option ${optionIndex + 1}`}
+                            onChange={() =>
+                              patchOption(
+                                question.key,
+                                option.key,
+                                {
+                                  correct:
+                                    question.type ===
+                                    "SINGLE_CHOICE"
+                                      ? true
+                                      : !option.correct,
+                                },
+                              )
+                            }
+                          />}
                           <Input
                             value={
                               option.text
