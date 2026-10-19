@@ -1,4 +1,6 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -71,25 +73,25 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
    <p className="text-xs text-muted-foreground">
     {localMuted?"Muted: no unread count, no noise":"Everyone in the team can read and reply."}
    </p>
-   <button type="button" disabled={busy} onClick={()=>void updateMute()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50">
+   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void updateMute()}
+    >
     {busy?"Updating…":localMuted?"Unmute":"Mute"}
-   </button>
+   </Button>
   </div>
   <form onSubmit={event=>{event.preventDefault();void post();}}
    className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
    <h2 className="font-semibold">Write to Everyone</h2>
    <label className="block text-sm">Message
-    <textarea name="body" required maxLength={4000} rows={4} value={message}
+    <Textarea className="mt-2" name="body" required maxLength={4000} rows={4} value={message}
      onChange={event=>updateMessage(event.target.value)} disabled={busy}
-     className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
+     
      placeholder="Share an update with the placement team"/>
    </label>
    <p aria-live="polite" className="text-xs text-muted-foreground">{message.length}/4000</p>
-   <button type="submit" disabled={busy||!message.trim()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50">
+   <Button type="submit" disabled={busy||!message.trim()}
+    >
     {busy?"Sending…":"Send to Everyone"}
-   </button>
+   </Button>
   </form>
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
