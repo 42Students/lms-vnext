@@ -48,26 +48,26 @@ export default async function TpoCompanyFeedbackPage({
         description="Recorded TPO recruiter notes for contacts explicitly linked to this college-company relationship."
       />
       {!data.available ? (
-        <p role="status" className="rounded-[12px] border border-border bg-surface p-6 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
           Registered recruiter note storage is unavailable in this database. No
           zero-history inference is made and note creation is disabled.
         </p>
       ) : (
         <>
           {!data.writeEnabled ? (
-            <p role="status" className="rounded-[12px] border border-border bg-surface p-4 text-sm text-body">
+            <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
               CRM writes are not enabled for this deployment. Existing notes remain
               readable, but new feedback cannot be recorded.
             </p>
           ) : data.contacts.length === 0 ? (
-            <p role="status" className="rounded-[12px] border border-border bg-surface p-4 text-sm text-body">
+            <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
               No recruiter contacts are explicitly linked to this company. Link
               a contact before recording company feedback.
             </p>
           ) : (
             <TpoCompanyFeedbackForm companyId={companyId} contacts={data.contacts} />
           )}
-          <section className="rounded-[12px] border border-border bg-surface">
+          <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
             <h2 className="border-b border-border px-5 py-4 text-lg font-semibold text-foreground">
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
             </h2>
