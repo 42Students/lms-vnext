@@ -405,7 +405,7 @@ export default async function HrPlacementJobPage({
               className={step.state==="CURRENT"
                 ?"rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 py-3 text-sm font-semibold text-primary-text"
                 :"rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary px-3 py-3 text-sm text-body"}>
-              <span className="block text-xs">{step.state==="COMPLETE"?"Done":step.state==="CURRENT"?"Current":"Upcoming"}</span>
+              <StatusBadge tone={step.state==="COMPLETE"?"success":step.state==="CURRENT"?"info":"neutral"}>{step.state==="COMPLETE"?"Done":step.state==="CURRENT"?"Current":"Upcoming"}</StatusBadge>
               <span className="mt-1 block">{step.label}</span>
             </li>)}
           </ol>
