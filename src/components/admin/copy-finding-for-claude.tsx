@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import {Button} from "@/components/ui/button";
 export function CopyFindingForClaude({finding}:{finding:string}){
  const [message,setMessage]=useState("");
  async function copy(){
@@ -16,7 +17,7 @@ export function CopyFindingForClaude({finding}:{finding:string}){
   catch{setMessage("Copy failed. Check clipboard permission.");}
  }
  return <div className="inline-flex flex-wrap items-center gap-3">
-  <button type="button" onClick={()=>void copy()} className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text">Copy for Claude</button>
+  <Button variant="secondary" type="button" onClick={()=>void copy()}>Copy for Claude</Button>
   {message?<span role="status" className="text-xs text-body">{message}</span>:null}
  </div>;
 }
