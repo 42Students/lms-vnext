@@ -184,7 +184,7 @@ export function TpoPublicJoinLinkCard({
                   onFocus={(event) => event.currentTarget.select()}
                   className="min-w-0 flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground" />
                 <button type="button" onClick={copyLink}
-                  className="min-h-10 rounded-[9px] border border-border px-4 text-sm font-semibold text-foreground">
+                  className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-foreground">
                   Copy
                 </button>
               </div>

@@ -73,7 +73,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
     </div>
     <button type="button" disabled={busy} onClick={()=>void send("/api/placements/tpo/settings/job-types/"+item.id,"PATCH",{
       active:!item.active,expectedVersion:item.updatedAt,
-    })} className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50">
+    })} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 text-sm disabled:opacity-50">
       {item.active?"Switch off":"Reactivate"}
     </button></li>)}</ul>}
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}

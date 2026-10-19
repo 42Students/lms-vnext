@@ -153,7 +153,7 @@ export function CollegeBrandingPreview({
         }
       />
 
-      <section className="- border-t border-border pt-5">
+      <section className="border-t border-border pt-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           College branding settings
         </h2>
