@@ -64,7 +64,7 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
     onDragOver={event=>{if(!unavailable && Array.from(event.dataTransfer.types).includes("Files")){event.preventDefault();setDragging(true);}}}
     onDragLeave={event => { const next = event.relatedTarget; if (!(next instanceof Node) || !event.currentTarget.contains(next)) setDragging(false); }}
     onDrop={onDrop}
-    className={cx("min-w-0 rounded-[var(--lms-control-radius)] border border-dashed border-[var(--lms-neutral-300)] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-150",dragging?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)]":"",unavailable?"opacity-50":"",className)}>
+    className={cx("min-w-0 rounded-[var(--lms-field-radius)] border border-dashed border-[var(--lms-neutral-300)] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-150",dragging?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)]":"",unavailable?"opacity-50":"",className)}>
     <FileUpload key={pickerResetToken} label={label} onFiles={files=>{droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError(null);onFiles(files);}} accept={accept} multiple={multiple} maxBytes={maxBytes} progress={progress} showSelectedFiles={showSelectedFiles} showImagePreview={showImagePreview} disabled={disabled} pickerUnavailable={pickerUnavailable} helper={helper} fallback={fallback}/>
     <p className="mt-2 text-[12px] text-[var(--lms-muted-text)]">Drag a file here or use the file picker.</p>
     {showSelectedFiles && droppedNames.length>0 && !unavailable
