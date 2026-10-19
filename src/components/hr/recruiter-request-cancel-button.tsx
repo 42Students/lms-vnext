@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -31,10 +32,10 @@ export function RecruiterRequestCancelButton({requestId,collegeId,updatedAt}:{
   finally{lock.current=false;setBusy(false);}
  }
  return <div className="mt-2">
-  <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-   className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50">
+  <Button variant="secondary" type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
+  >
    {busy?"Cancelling…":"Cancel request"}
-  </button>
+  </Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
    title="Cancel this drive request?" confirmLabel="Cancel request" pending={busy}
    description="The placement cell will no longer review it." onConfirm={cancel}>
