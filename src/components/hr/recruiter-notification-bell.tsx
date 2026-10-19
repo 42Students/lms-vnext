@@ -69,11 +69,11 @@ export function RecruiterNotificationBell(){
    {data?.status==="READY"&&data.rows?.length===0?
      <EmptyState title="No notifications yet" description="New placement notifications will appear here."/>:null}
    {data?.status==="READY"&&data.rows?.length?
-    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-[50vh]"><ul className="divide-y divide-[var(--lms-canvas-border)]">
+    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-[50vh]"><ul className="space-y-[6px] px-3">
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] px-3 py-3 text-sm text-primary-text hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="block min-h-11 rounded-lg border border-border bg-surface px-4 py-3 text-sm font-semibold leading-[1.4] text-foreground transition-[background-color,border-color,box-shadow] duration-200 hover:bg-[var(--lms-neutral-50)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:bg-muted focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}
