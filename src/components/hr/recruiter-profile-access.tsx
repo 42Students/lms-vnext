@@ -47,7 +47,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="border-b border-border pb-5">
       <h2 className="text-base font-semibold text-foreground">College Access</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Open a page for the exact college you select. These links do not change your account-wide active college. Leaving access takes effect immediately and requires a new placement-cell grant to return.
