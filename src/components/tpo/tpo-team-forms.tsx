@@ -80,14 +80,14 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   <h3 className="font-semibold text-foreground">Start a private placement team conversation</h3>
   <label className="grid gap-1 text-sm text-body">Team member
    <Select required value={recipient} onChange={event=>updateDraft(event.target.value,topic)} disabled={busy}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+    className="min-h-11 sm:min-h-9">
     <option value="">Choose an active placement team colleague</option>
     {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </Select>
   </label>
   <label className="grid gap-1 text-sm text-body">Topic
    <Input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" placeholder="Drive coordination"/>
+    className="min-h-11 sm:min-h-9" placeholder="Drive coordination"/>
   </label>
   <label className="grid gap-1 text-sm text-body">First message (optional)
    <Textarea value={firstMessage} maxLength={4000} rows={3} disabled={busy}
@@ -97,7 +97,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   <p className="text-xs text-muted-foreground">Only named active placement team members can take part.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <Button type="submit" disabled={busy||!recipient||!topic.trim()}
-   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+   className="min-h-11 sm:min-h-9">
    {busy?"Starting…":"Start conversation"}
   </Button>
  </form>;
@@ -166,7 +166,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <Button type="submit" disabled={busy||!body.trim()}
-   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+   className="min-h-11 sm:min-h-9">
    {busy?"Sending…":"Send"}
   </Button>
  </form>;
