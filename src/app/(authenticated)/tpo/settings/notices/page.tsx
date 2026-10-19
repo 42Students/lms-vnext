@@ -39,7 +39,7 @@ export default async function TpoStudentNoticesSettings(){
    <Link href={view.prepHref} className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Configure available preparation courses</Link>
   </section>
   {communication.ready?<TpoSmsCapEditor key={ctx.membership?.collegeId??"unscoped"} initial={communication.smsMonthlyCap} version={communication.version}/>:
-   <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">Communication settings are not available in this database.</p>}
+   <p role="status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-4 text-sm">Communication settings are not available in this database.</p>}
   {communication.ready?<TpoOptionalEmailsEditor key={ctx.membership?.collegeId??"unscoped"} initial={{
     notifyDriveOpenEmail:communication.notifyDriveOpenEmail,
     notifyResultApplied:communication.notifyResultApplied,
@@ -58,7 +58,7 @@ export default async function TpoStudentNoticesSettings(){
    <h2 className="text-lg font-semibold">Emails switched on</h2>
    <p role="status" className="text-sm text-warning-text">Couldn&apos;t check which emails are switched on.</p>
    <p className="text-xs text-muted-foreground">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
-   <Link href="/tpo/settings/templates" className="inline-flex min-h-11 sm:min-h-9 text-sm text-link underline">View available message templates</Link>
+   <Link href="/tpo/settings/templates" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-link underline">View available message templates</Link>
   </section>
   <nav aria-label="Notice and notification destinations" className="flex flex-wrap gap-4 text-sm">
     <Link href={destinations.inbox} className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Open personal notifications inbox</Link>
