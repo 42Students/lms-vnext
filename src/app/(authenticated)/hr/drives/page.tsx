@@ -130,10 +130,10 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         </Link>)}
       </div>
     </section>:null}
-    <nav aria-label="Drive lifecycle" className="flex flex-wrap gap-2">{viewOptions.map(option =>
+    <nav aria-label="Drive lifecycle" className="flex flex-wrap gap-3 border-b border-border">{viewOptions.map(option =>
       <Link key={option.view} href={recruiterDrivesHref({...query.data, collegeId: selectedCollege, view: option.view, page: 1})}
         aria-current={query.data.view === option.view ? "page" : undefined}
-        className={query.data.view === option.view ? "rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary" : "rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm text-body"}>
+        className={query.data.view === option.view ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
         {option.label} ({option.count})</Link>)}</nav>
     {query.data.view!=="WAITING"?<div className="flex justify-end">
       <Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:1})
@@ -202,12 +202,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       })}</ul>
     </section>:null}
     {query.data.view==="WAITING" && requestView.length===0
-      ? <div className="rounded-xl border border-border p-5">
+      ? <div className="py-5">
           <EmptyState title="No Sent for review drives" description="Choose another drive stage to see more."/>
           <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View all drives</Link>
         </div>
       : query.data.view!=="WAITING" && pageResult.rows.length===0 && requestView.length===0
-        ? <div className="rounded-xl border border-border p-5">
+        ? <div className="py-5">
           {totals.all===0
            ? <EmptyState title="You have no drives yet" description="Request a drive and the placement cell will review it."/>
            : query.data.q
