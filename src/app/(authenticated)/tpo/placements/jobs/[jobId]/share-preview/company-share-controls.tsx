@@ -133,11 +133,11 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
      Create expiring link
     </button>
    </div>
-   {newCode?<p role="status" className="rounded border border-border p-3 text-sm">
+   {newCode?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
     Share code: <strong className="font-mono text-lg">{newCode}</strong>.
     Give this six-digit code to the company separately. It cannot be recovered later.
    </p>:null}
-   {newUrl?<div className="rounded border border-border p-3">
+   {newUrl?<div className="rounded-[var(--lms-control-radius)] border border-border p-3">
     <p className="text-xs font-semibold text-body">Copy this URL now. The secret cannot be recovered later.</p>
     <input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
      className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-xs"/>
