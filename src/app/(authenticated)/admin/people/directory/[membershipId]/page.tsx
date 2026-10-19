@@ -19,7 +19,7 @@ export default async function MembershipDetail({params}:{params:Promise<{members
   {label:"Email",value:detail.contactVisible?detail.email??"Not recorded":"Masked outside selected college"},
   {label:"Phone",value:detail.contactVisible?detail.phoneE164??"Not recorded":"Masked outside selected college"},
  ];
- return <div className="space-y-5">
+ return <div className="min-w-0 space-y-[var(--lms-space-5)]">
   <PageHeader eyebrow="Super Admin · People" title={detail.name??"Unnamed user"}
    description="Read-only exact membership, with contact redaction outside the selected college."/>
   <div className="flex flex-wrap gap-2">
