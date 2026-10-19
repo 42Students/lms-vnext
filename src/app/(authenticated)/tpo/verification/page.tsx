@@ -12,7 +12,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const params=await searchParams;
  const parsed=parseTpoVerificationParams(params);
  if(!parsed)return <div className="space-y-3 p-5">
-  <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Invalid verification filters</h1>
+  <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Invalid verification filters</h1>
   <p role="alert">No verification records were loaded. Choose a supported status or reset the filters.</p>
   <Link href="/tpo/verification" className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
  </div>;
@@ -34,25 +34,25 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
         }).toString()} filename={"tpo-verification-"+tab.toLowerCase()+".csv"} label={label+" CSV"} />)}
      </div>:null}
   </nav>
-  <form method="get" action="/tpo/verification" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-4">
+  <form method="get" action="/tpo/verification" className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:grid-cols-4">
    <label className="grid gap-1 text-sm">Status
-    <select name="tab" defaultValue={query.tab} className="min-h-11 rounded border border-border bg-surface px-2">
+    <select name="tab" defaultValue={query.tab} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="WAITING">Waiting</option><option value="SENT_BACK">Sent back</option><option value="VERIFIED">Verified</option>
     </select>
    </label>
    <label className="grid gap-1 text-sm">Section
-    <select name="kind" defaultValue={query.kind} className="min-h-11 rounded border border-border bg-surface px-2">
+    <select name="kind" defaultValue={query.kind} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="ALL">All sections</option><option value="EDUCATION">Education</option><option value="IDENTITY">Identity</option>
     </select>
    </label>
    <label className="grid gap-1 text-sm">Request kind
-    <select name="waitingState" defaultValue={query.waitingState} className="min-h-11 rounded border border-border bg-surface px-2">
+    <select name="waitingState" defaultValue={query.waitingState} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="ALL">First check or update</option><option value="SUBMITTED">First check</option><option value="UPDATE_PENDING">Update</option>
     </select>
    </label>
    <label className="grid gap-1 text-sm">Waiting since
     <select name="waitingSince" defaultValue={query.waitingSince}
-     className="min-h-11 rounded border border-border bg-surface px-2"
+     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"
      disabled={query.tab!=="WAITING"}>
      <option value="ALL">Any time</option>
      <option value="TODAY">Today</option>
@@ -61,26 +61,26 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     </select>
    </label>
    <label className="grid gap-1 text-sm">Batch
-    <select name="batchId" defaultValue={query.batchId??""} className="min-h-11 rounded border border-border bg-surface px-2">
+    <select name="batchId" defaultValue={query.batchId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All batches</option>
      {directory?.batches.map(item=><option key={item.id} value={item.id}>{item.program} · {item.name}</option>)}
     </select>
    </label>
    <label className="grid gap-1 text-sm">Branch
-    <select name="branchId" defaultValue={query.branchId??""} className="min-h-11 rounded border border-border bg-surface px-2">
+    <select name="branchId" defaultValue={query.branchId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All branches</option>
      {branches.map(([id,name])=><option key={id} value={id}>{name}</option>)}
     </select>
    </label>
    <label className="grid gap-1 text-sm">Student or roll number
-    <input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" className="min-h-11 rounded border border-border bg-surface px-2"/>
+    <input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
    </label>
    <label className="grid gap-1 text-sm">Page size
-    <select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded border border-border bg-surface px-2">
+    <select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="1000">First 1,000 (legacy view)</option>
     </select>
    </label>
-   <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply filters</button>
+   <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Apply filters</button>
    <Link href="/tpo/verification" className="self-center text-[var(--lms-teal-deep)] underline">Reset filters</Link>
   </form>
   {queue.available&&queue.enabled&&queue.permitted&&queue.counts?
@@ -93,11 +93,11 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    ((query.tab==="WAITING"?queue.counts?.WAITING:query.tab==="VERIFIED"?queue.counts?.VERIFIED:queue.counts?.SENT_BACK)??0)>1000?
     <p role="status" className="rounded border border-border p-3 text-sm">Showing the first 1,000 students in this view. Narrow the filters to find more students.</p>:null}
   {!queue.available?<section role="status" className="rounded border border-border p-4">
-   <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Verification</h1>
+   <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Verification</h1>
    <p>Verification records are not available right now. Please try again or contact your college admin.</p>
    <Link href="/tpo/verification" className="font-semibold text-[var(--lms-teal-deep)] underline">Retry</Link>
   </section>:!queue.enabled||!queue.permitted?<section role="status" className="rounded border border-border p-4">
-   <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">You cannot verify profiles here</h1>
+   <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">You cannot verify profiles here</h1>
    <p className="text-sm">{!queue.enabled
     ?"Your college admin has not allowed the placement cell to verify profiles"
     :"Your verification access has been removed. Ask your college admin."}</p>

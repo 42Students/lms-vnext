@@ -56,14 +56,14 @@ export default async function TpoScheduleConflictsPage({
         <label className="text-sm font-semibold text-foreground">
           Upcoming window
           <select name="days" defaultValue={String(data.days)}
-            className="mt-1 block min-h-11 md:min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm font-normal">
+            className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal">
             {[7, 14, 30, 60, 90].map((days) => (
               <option key={days} value={days}>{days} days</option>
             ))}
           </select>
         </label>
         <button type="submit"
-          className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-primary-foreground">
+          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground">
           Apply
         </button>
       </form>
@@ -74,14 +74,14 @@ export default async function TpoScheduleConflictsPage({
           ["Assessable rounds", data.assessedCount],
           ["Incomplete scheduling", data.unassessable.length],
         ].map(([name, value]) => (
-          <div key={name} className="rounded-xl border border-border bg-surface p-4">
+          <div key={name} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
         ))}
       </section>
       {data.limited ? (
-        <p role="status" className="rounded-lg border border-border p-4 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
           More than 1,000 scheduled rounds match. Only the first 1,000 were assessed;
           this is not a complete conflict audit. Narrow the window.
         </p>
@@ -91,7 +91,7 @@ export default async function TpoScheduleConflictsPage({
         Only non-cancelled and non-completed upcoming rounds on published drives
         count here. Missing venue, mode or duration cannot be considered conflict-free.
       </p>
-      <section className="overflow-hidden rounded-xl border border-border bg-surface">
+      <section className="overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <div className="border-b border-border p-5">
           <h2 className="text-lg font-semibold text-foreground">Confirmed venue/time overlaps</h2>
         </div>
@@ -121,7 +121,7 @@ export default async function TpoScheduleConflictsPage({
           </div>
         )}
       </section>
-      <section className="overflow-hidden rounded-xl border border-border bg-surface">
+      <section className="overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <div className="border-b border-border p-5">
           <h2 className="text-lg font-semibold text-foreground">Cannot fully assess</h2>
         </div>
