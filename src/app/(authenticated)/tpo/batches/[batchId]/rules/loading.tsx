@@ -1,1 +1,1 @@
-export default function Loading(){return <p role="status">Loading batch rules…</p>;}
+export default function Loading(){return <p role="status" className="text-sm text-body">Loading batch rules…</p>;}
