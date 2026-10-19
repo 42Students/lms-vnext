@@ -89,7 +89,7 @@ export function CollegeSlotManager({ options, row }: {
       className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
       {row ? "Edit slot" : "New elective slot"}
     </button>
-    {open ? <form onSubmit={submit} className="mt-3 grid max-w-3xl gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
+    {open ? <form onSubmit={submit} className="mt-3 grid max-w-3xl gap-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:grid-cols-2">
       {row?<p role="note" className="sm:col-span-2 text-xs text-muted-foreground">Academic identity is locked after creation. Changing existing learner picks, credits or choice limits is checked by the server before saving.</p>:null}
       {!row ? <>
         <Field label="Program"><select required className={fieldClass} value={programId}

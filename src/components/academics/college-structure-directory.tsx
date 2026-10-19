@@ -39,7 +39,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           Academic workspace
         </Link>}
       />
-      <section aria-label={title + " filters"} className="sm: border-t border-border pt-4">
+      <section aria-label={title + " filters"} className="border-t border-border pt-4">
         <form method="get" action={path} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">
             {classes ? "Class, batch or program" : "Elective or program"}
@@ -353,7 +353,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           </div>
         </form>
       </section>
-      <section aria-label={title + " results"} role="region" tabIndex={0} className="max-w-full overflow-x-auto rounded-xl border border-border bg-surface">
+      <section aria-label={title + " results"} role="region" tabIndex={0} className="max-w-full overflow-x-auto rounded-[var(--lms-control-radius,9px)] border border-border bg-surface">
         <p className="px-4 pt-3 text-xs text-muted-foreground sm:hidden">Scroll sideways to view all class or elective columns.</p>
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {data.total} matching {classes ? "classes" : "elective slots"}
@@ -389,7 +389,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                 {key:"manage",header:"Manage",mobilePriority:"action",cell:item=>
                   <div className="flex flex-wrap items-start gap-2">
                     <Link href={"/college/classes/recurring-preview?classId="+encodeURIComponent(item.id)}
-                      className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text"
+                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text"
                       aria-label={"Schedule recurring sessions for "+item.name}>Schedule</Link>
                     <CollegeClassRowActions row={item}/>
                     <CollegeSectionLifecycleAction row={{
@@ -422,11 +422,11 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                   <div className="flex flex-wrap items-start gap-2">
                     {electiveOptions && item.status === "ACTIVE" ? <>
                       <Link href={"/college/electives/"+encodeURIComponent(item.id)}
-                        className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Open</Link>
+                        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">Open</Link>
                       <CollegeSlotManager options={electiveOptions} row={item}/>
                       <CollegeElectiveOfferingManager slotId={item.id}/>
                       <Link href={"/college/electives/"+encodeURIComponent(item.id)+"/allocate"}
-                        className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+                        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">
                         Eligible students
                       </Link>
                     </> : null}
