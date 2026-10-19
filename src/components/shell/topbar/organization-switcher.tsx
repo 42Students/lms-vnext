@@ -2,6 +2,7 @@
 
 import {useEffect, useRef, useState} from "react";
 import {Button} from "@/components/ui/button";
+import {PopoverPanel} from "@/components/ui/popover";
 import type {AdminScope} from "@/modules/identity/context";
 import type {AdminScopeChoices} from "@/modules/admin-scope/service";
 import type {MembershipChoice} from "@/modules/identity/context-service";
