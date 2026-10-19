@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import {Button} from "@/components/ui/button";
 
 export default function Error({reset}:{
@@ -6,7 +7,7 @@ export default function Error({reset}:{
   reset:()=>void;
 }) {
   return <section role="alert" className="py-6">
-    <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Attendance calendar could not be loaded</h1>
+    <PageHeader title={"Attendance calendar could not be loaded"} />
     <p className="mt-2 text-sm text-body">
       The read failed; missing or unmarked sessions cannot be inferred from this error.
     </p>
