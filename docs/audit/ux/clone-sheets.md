@@ -279,3 +279,20 @@ Phone source path: custom forms and saved-view/selection lists are one column, w
 **Source scan:** the three touched/new files were fetched after the commits; `/<(button|input|select|textarea|table)(?=[\\s/>])/g` => 0 raw native controls each; `/#[0-9a-fA-F]{3,8}\\b/g` => 0 inline hex each. All paired JSX wrappers were inspected by source; no local TS compiler, app, CI, or browser executed. Existing legacy-grid directory not available through the connector at this checkpoint; exact old export filenames remain unverified. Existing package manifest lacks declared AG Grid packages despite native imports. **E8 remains [ ].**
 
 **Next E8 file:** `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` (applicant/offer/round sheet contract), after a runtime/dependency gate when permitted.
+
+
+## 2026-10-19 chat-14 E8 fallback pin-control static parity
+
+Completed source-level item: src/components/tpo/tpo-spreadsheet-grid.tsx (the phone fallback of src/components/tpo/grid/tpo-grid.tsx). The per-column Pin/Unpin pressed Button was migrated to FilterChip while retaining updateLayout(col.key,{pinned:...}), aria-pressed, the localized column name in aria-label, and existing selected state.
+
+| Property | Legacy value / reference | Current source value and proof | Result |
+|---|---|---|---|
+| Selection column width | E8 owner requirement ui-clone-checklist.md:57 — 48px pinned selection | tpo-spreadsheet-grid.tsx:186,209 contains sticky left-0 with inline width/minWidth/maxWidth each 48px (2 occurrences) | Exact width preserved in phone fallback |
+| Interactive pin chip on phone | components___antddesign.scss:1092-1100 — min-height 44px; padding 0 12px | tpo-spreadsheet-grid.tsx:200-202 FilterChip; ui/filter-chip.tsx:27-36 44px and 12px | Static touch/padding match |
+| Interactive chip on tablet | No authoritative legacy pin-control measurement supplied; E8 needs live legacy viewport source | ui/filter-chip.tsx:27-36 md:min-h-8 (32px), md:px-[15px] | Unverified legacy parity |
+| Selection/sort and copy | E8 owner requirements include filtered select-all, Shift/Ctrl selection, numeric/date sort only and TSV copying | tpo-spreadsheet-grid.tsx:183-210 retains filtered checkbox, sort indicator + aria-sort, CSV/TSV handler, original helpers; ag-grid source keeps numeric/date comparator | Source contracts preserved, behavior not executed |
+| AG Grid integration | Quartz, 48px pinned select, column layout persistence, mobile fallback | tpo-grid.tsx desktop AG Grid; tpo-students-spreadsheet and tpo-applications-spreadsheet both use next/dynamic with ssr:false and responsive fallback | Source wired, compile still blocked |
+
+Fetched-file grep-equivalent: src/components/tpo/tpo-spreadsheet-grid.tsx has exactly 1 opening <FilterChip and 1 closing </FilterChip>, 0 native <button> tags, and 2 exact width:48,minWidth:48,maxWidth:48 occurrences. Its original sort, row actions and selection callbacks were not changed. This is a source inspection, NOT an executed shell grep or browser/CI run. E8 remains [ ]: legacy-grid/TpoGrid.jsx.txt was not retrievable via GitHub connector (404); package.json still lacks declared ag-grid-community and ag-grid-react despite imported AG Grid 36 source. Under the explicit manifest prohibition, do not modify package.json or falsely claim installed dependency or build.
+
+Next exact E8 file: src/components/tpo/grid/tpo-grid.tsx; require legacy source and dependency verification before ticking E8.
