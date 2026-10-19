@@ -122,27 +122,27 @@ export function PublicRecruiterJoinForm({
       <Card as="section" className="w-full">
         {preview.kind !== "READY" ? (
           <>
-            <h1 className="text-[30px] font-semibold leading-[1.3] text-[var(--lms-heading)]">This link is no longer valid</h1>
+            <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">This link is no longer valid</h1>
             <p className="mt-3 text-sm text-body">Ask the placement cell for a new one.</p>
           </>
         ) : blockedReason ? (
           <div role="alert" className="space-y-3">
-           <h1 className="text-[30px] font-semibold leading-[1.3] text-[var(--lms-heading)]">Recruiter verification unavailable</h1>
+           <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">Recruiter verification unavailable</h1>
            <p className="text-sm text-body">{blockedReason}</p>
           </div>
         ) : joined ? (
           <>
-            <h1 className="text-[30px] font-semibold leading-[1.3] text-[var(--lms-heading)]">{alreadyJoined?"You already have access to "+college:"You now have access to "+college}</h1>
+            <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">{alreadyJoined?"You already have access to "+college:"You now have access to "+college}</h1>
             <p className="mt-3 text-sm text-body">
               {alreadyJoined
                 ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
                 : "Sign in with your work email, "+signInEmail+". We'll email you a code each time."}
             </p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Sign in</Link>
           </>
         ) : (
           <>
-            <h1 className="text-[30px] font-semibold leading-[1.3] text-[var(--lms-heading)]">
+            <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">
               {scope === "COLLEGE" ? "Hire from " + college : college + " would like " + companyLabel + " to hire from their students"}
             </h1>
             <p className="mt-3 text-sm text-body">
