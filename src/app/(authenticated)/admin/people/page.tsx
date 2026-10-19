@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import {
   listCollegePeopleWithRuntime,
 } from "@/modules/people/runtime";
@@ -45,8 +46,11 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
   {
     key: "roles",
     header: "Roles",
-    cell: (person) =>
-      person.membership.roles.join(", ") || "—",
+    cell: (person) => person.membership.roles.length ? (
+      <div className="flex min-w-0 flex-wrap gap-[var(--lms-space-1)]">
+        {person.membership.roles.map(role => <Badge key={role} tone="neutral">{role}</Badge>)}
+      </div>
+    ) : "—",
   },
   {
     key: "status",
