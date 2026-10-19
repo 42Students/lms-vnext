@@ -19,7 +19,7 @@ export default async function FacultyAssessmentResultsPage({
   const parsed = parseFacultyResultsSearchParams(raw);
   if (!parsed.success) {
     return <section role="alert" className="space-y-3">
-      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid assessment filters</h1>
+      <PageHeader title={"Invalid assessment filters"} />
       <Link href="/teacher/results" className="text-primary-text underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
     </section>;
   }
