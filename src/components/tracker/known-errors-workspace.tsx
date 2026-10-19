@@ -1,5 +1,5 @@
-import { EmptyState } from "@/components/ui/empty-state";
 "use client";
+import { EmptyState } from "@/components/ui/empty-state";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
