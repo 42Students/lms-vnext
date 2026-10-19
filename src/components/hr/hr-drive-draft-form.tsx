@@ -11,6 +11,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
@@ -397,8 +398,8 @@ export function HrDriveDraftForm({
       <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Hiring rounds</h2>
-          <Button variant="secondary" className="text-primary-text" type="button" disabled={draft.rounds.length >= 12}
-           
+          <Button type="button" disabled={draft.rounds.length >= 12}
+            variant="secondary"
             onClick={() => setDraft((current) => ({
               ...current, rounds: [...current.rounds, { kind: "INTERVIEW", name: "Interview" }],
             }))}>
@@ -406,8 +407,8 @@ export function HrDriveDraftForm({
           </Button>
         </div>
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
-          {HR_DRIVE_ROUND_PRESETS.map(preset=><Button variant="secondary" className="text-primary-text" key={preset.id}
-            type="button"
+          {HR_DRIVE_ROUND_PRESETS.map(preset=><Button key={preset.id}
+            type="button" variant="secondary"
             onClick={()=>{setDraft(current=>applyHrRoundPreset(current,preset.id));setShowPreview(false);}}>
             {preset.label}
           </Button>)}
@@ -435,21 +436,21 @@ export function HrDriveDraftForm({
                   }))} />
               </label>
               <div className="flex items-end gap-2">
-                <Button variant="secondary" className="text-primary-text" type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
-                 
+                <Button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
+                  variant="secondary"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</Button>
-                <Button variant="secondary" className="text-primary-text" type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
-                 
+                <Button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
+                  variant="secondary"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</Button>
               </div>
-              <Button variant="secondary" className="self-end" type="button" disabled={draft.rounds.length>=12}
+              <Button type="button" disabled={draft.rounds.length>=12}
                 aria-label={"Duplicate "+round.name}
-               
+                variant="secondary" className="self-end"
                 onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
                 Duplicate
               </Button>
-              <Button variant="secondary" className="self-end" type="button" disabled={draft.rounds.length <= 1}
-               
+              <Button type="button" disabled={draft.rounds.length <= 1}
+                variant="secondary" className="self-end"
                 onClick={() => setDraft((current) => ({
                   ...current, rounds: current.rounds.filter((_, i) => i !== index),
                 }))}>Remove</Button>
@@ -463,23 +464,23 @@ export function HrDriveDraftForm({
           Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
-          <Button variant="primary" type="button"
+          <Button type="button" 
             onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</Button>
-          <Button variant="secondary" className="text-primary-text" type="button" disabled={!result.success||submitting}
+          <Button type="button" disabled={!result.success||submitting}
             aria-busy={submitting}
-           
+            variant="secondary"
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </Button>
-          <Button variant="secondary" className="text-primary-text" type="button" disabled={!result.success}
-           
+          <Button type="button" disabled={!result.success}
+            variant="secondary"
             onClick={() => void copyPreview()}>Copy validated draft</Button>
-          <Button variant="secondary" className="text-primary-text" type="button" disabled={submitting}
-           
+          <Button type="button" disabled={submitting}
+            variant="secondary"
             onClick={saveForThisTab}>Save unsent draft</Button>
-          <Button variant="secondary" className="text-primary-text" type="button"
+          <Button type="button" variant="secondary"
             onClick={()=>restoreFromThisTab()}>Restore saved draft</Button>
-          <Button variant="secondary" type="button"
+          <Button type="button" variant="secondary"
             onClick={() => {
               if(hrDraftContainsWork(draft)){setDraftDecision("CLEAR");return;}
               try{window.sessionStorage.removeItem(storageKey);window.localStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
