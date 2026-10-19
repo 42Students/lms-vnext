@@ -107,9 +107,9 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     empty={<p role="status" className="text-body">No data for the selected filters</p>}
    />
    {data.companyRows.length>0?
-    <section aria-label="Company-wise report totals" className="rounded-lg border border-border bg-surface-secondary p-4">
+    <section aria-label="Company-wise report totals" className="space-y-3">
      <h3 className="font-semibold text-foreground">All drives · Totals</h3>
-     <SummaryStrip className="mt-3" label="Company-wise report totals"
+     <SummaryStrip label="Company-wise report totals"
       steps={[["Total",data.totalApplications] as const,
         ...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
         .map(([name,value])=>({label:name,value}))} />

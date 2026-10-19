@@ -1,10 +1,10 @@
 "use client";
 
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
 
-export default function CollegePlacementCalendarError({
-  reset,
-}: {
+export default function CollegePlacementCalendarError({ reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
@@ -13,9 +13,7 @@ export default function CollegePlacementCalendarError({
       role="alert"
       className="rounded-xl border border-border bg-surface px-6 py-10 text-center"
     >
-      <h1 className="text-lg font-semibold text-foreground">
-        Couldn&apos;t load placement interviews
-      </h1>
+      <PageHeader title={"Couldn't load placement interviews"} />
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         College placement rounds could not be retrieved.
         A failed read does not mean there are no interviews.

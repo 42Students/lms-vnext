@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { FileUpload } from "@/components/ui/file-upload";
 import { DataTable } from "@/components/ui/data-table";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -100,10 +101,10 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
        </div>},
       ]}/>
    </div>:null}
-   <Disclosure title={`Not in file (${preview.notInFile.length})`} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
+   <Disclosure title={`Not in file (${preview.notInFile.length})`} className="border-t border-border pt-3 text-sm">
     {preview.notInFile.length?<div className="mt-2 max-h-48 min-w-0 overflow-auto"><DataTable caption="Candidates absent from round import" rows={preview.notInFile} getRowKey={row=>row.applicationId} empty={<p>Every candidate in this round is represented in the file.</p>} columns={[{key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.name},{key:"application",header:"Application ID",mobilePriority:"secondary",cell:row=><span className="font-mono text-xs">{row.applicationId}</span>}]}/></div>:<p className="mt-2">Every candidate in this round is represented in the file.</p>}
    </Disclosure>
-   <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
+   <fieldset className="space-y-2 border-t border-border pt-3 text-sm">
     <legend className="font-semibold">Students not in the file</legend>
     <label className="flex gap-2"><Radio checked={missingPolicy==="LEAVE_PENDING"}
      onChange={()=>{setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/> Leave pending (do not change their result)</label>
@@ -127,19 +128,19 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     description={(missingPolicy==="MARK_NOT_CLEARED"?"Applicants not in the file will be marked Not cleared. ":"")+"Results are not published until the separate Apply step."}
     confirmLabel="Confirm and stage results"
     onConfirm={()=>{setConfirmOpen(false);void send("STAGE_IMPORT");}}/>
-  {report?<div role="status" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">
+  {report?<div role="status" className="space-y-2 border-t border-border pt-4 text-sm">
    <p className="font-semibold">{report.staged} results staged · {report.skipped} skipped · {report.unmatched} unmatched.</p>
    <div className="max-h-40 min-w-0 overflow-auto">
     <DataTable<Report["results"][number]> caption="Round import outcomes" rows={report.results}
       getRowKey={row=>row.line+":"+row.applicationId} empty={<p>No round import results were returned.</p>}
       columns={[
        {key:"application",header:"Application ID",cell:row=>row.applicationId,mobilePriority:"primary"},
-       {key:"status",header:"Status",cell:row=>row.status,mobilePriority:"secondary"},
+       {key:"status",header:"Status",cell:row=><StatusBadge tone={/fail|error|reject/i.test(row.status)?"error":/skip|unmatch|pending/i.test(row.status)?"warning":"success"}>{row.status}</StatusBadge>,mobilePriority:"secondary"},
        {key:"reason",header:"Reason",cell:row=>row.reason??"—",mobilePriority:"secondary"},
       ]}/>
    </div>
    <p>Stage completed. Use the Apply results preview above to publish progression when the round is completed.</p>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-foreground">{error} Re-preview if the round has changed.</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error} Re-preview if the round has changed.</p>:null}
  </section>;
 }

@@ -1,4 +1,5 @@
 import { CalendarGrid } from "@/components/ui/calendar-grid";
+import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
 import { Tabs } from "@/components/ui/tabs";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
@@ -244,7 +245,7 @@ export default async function HrCalendarPage({
   const query = await searchParams;
   if (Object.values(query).some(Array.isArray)) {
     return <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader eyebrow="Recruiter" title="Calendar" />
+      <PageHeader title="Calendar" />
       <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
         Invalid calendar filters.
       </p>
@@ -310,7 +311,6 @@ export default async function HrCalendarPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
-        eyebrow="Recruiter"
         title="Calendar"
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
         actions={
@@ -503,11 +503,11 @@ export default async function HrCalendarPage({
           {view !== "agenda" ? (
             <section
               aria-label={`${view} recruiter calendar`}
-              className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 md:overflow-x-auto"
+              className="border-y border-border py-3 md:overflow-x-auto"
             >
               <div className="space-y-4 md:hidden">
                 {mobileDays.map((day) => (
-                  <article key={day.day} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
+                  <article key={day.day} className="space-y-3 border-b border-border py-3">
                     <h3 className="text-sm font-semibold text-foreground">{dateLabel(day.day)}</h3>
                     <div className="grid gap-3">
                       {day.events.map((event) => (
@@ -538,10 +538,10 @@ export default async function HrCalendarPage({
                   "Fri",
                   "Sat",
                   "Sun",
-                ].map((label) => (
+                ].map((label,index) => (
                   <div
                     key={label}
-                    className="py-3 text-center text-xs font-bold uppercase text-muted-foreground"
+                    className={"py-3 text-center text-xs font-bold uppercase text-muted-foreground "+(index===6?calendarStyles.calendarSunday:"")}
                   >
                     {label}
                   </div>
@@ -573,9 +573,10 @@ export default async function HrCalendarPage({
                     >
                       <p
                         className={
-                          isToday
+                          (isToday
                             ? "text-xs font-bold text-primary-text"
-                            : "text-xs font-semibold text-foreground"
+                            : "text-xs font-semibold text-foreground") +
+                          (!isToday && new Date(day+"T12:00:00Z").getUTCDay()===0?" "+calendarStyles.calendarSunday:"")
                         }
                       >
                         {shortDayLabel(day)}

@@ -24,7 +24,7 @@ const learnerLinks: readonly FooterLink[] = [
 
 const facultyLinks: readonly FooterLink[] = [
   { href: "/teacher/courses", label: "Courses", icon: "/assets/images/common/courses.svg", activeIcon: "/assets/images/common/course.svg" },
-  { href: "/teacher/allQuizzes", label: "All quizzes", icon: "/assets/images/common/quiz.svg", activeIcon: "/assets/images/common/quiz-active.svg" },
+  { href: "/teacher/allQuizzes", label: "All quizzes", icon: "/assets/images/common/bell.svg" },
   { href: "/teacher/allAssignments", label: "All assignments", icon: "/assets/images/common/assignment.svg", activeIcon: "/assets/images/common/assignment-active.svg" },
   { href: "/teacher/profile", label: "Profile", icon: "/assets/images/common/myAccount.svg" },
 ];
@@ -59,11 +59,11 @@ export function LearnerFacultyMobileFooter() {
         {links.map(item => {
           const current = pathname === item.href || pathname.startsWith(item.href + "/");
           return <li key={item.href} className={current ? "active" : undefined}>
-            <Link href={item.href} aria-label={item.label} aria-current={current ? "page" : undefined} className="lms-legacy-mobile-footer-link">
+            <Link href={item.href} aria-label={item.href === "/learn/notifications" && unread !== null ? `${item.label}, ${unread} unread` : item.label} aria-current={current ? "page" : undefined} className="lms-legacy-mobile-footer-link">
               <Image src={current ? item.activeIcon ?? item.icon : item.icon} alt="" width={30} height={30}
                 draggable={false} className="lms-legacy-mobile-footer-icon" />
               {item.href === "/learn/notifications" && unread !== null && unread > 0 ?
-                <span className="lms-legacy-mobile-footer-badge" aria-label={unread + " unread notifications"}>
+                <span className="lms-legacy-mobile-footer-badge" aria-hidden="true">
                   {unread > 99 ? "99+" : unread}
                 </span> : null}
             </Link>

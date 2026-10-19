@@ -2,6 +2,7 @@
 import {BottomSheet} from "@/components/ui/bottom-sheet";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
+import "@/components/shell/legacy-mobile-footer.css";
 import {useState} from "react";
 import {usePathname} from "next/navigation";
 
@@ -23,16 +24,16 @@ export function TpoMobileFooter(){
   ["Settings","/tpo/settings"],["Audit log","/tpo/audit"],
  ];
  const moreActive=moreLinks.some(([,href])=>pathname===href||pathname.startsWith(href+"/"));
- return <><nav aria-label="TPO mobile footer" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-surface pb-[env(safe-area-inset-bottom,0px)] shadow-lg md:hidden">
+ return <><nav aria-label="TPO mobile footer" className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 md:hidden">
   {links.map(link=>{
    const active=pathname===link.href||pathname.startsWith(link.href+"/")||
     (link.label==="Engage"&&pathname.startsWith("/tpo/companies"));
    if(link.label==="More")return <Button key="more" variant="ghost" type="button" aria-label="More TPO workspaces"
     aria-expanded={moreOpen} aria-pressed={moreOpen} aria-current={moreActive?"page":undefined} onClick={()=>setMoreOpen(open=>!open)}
-    className={"h-full min-h-14 w-full rounded-none px-1 py-2 text-xs font-semibold "+(moreOpen||moreActive?"bg-primary-subtle text-primary-text":"text-body")}>More</Button>;
+    className={"h-full min-h-16 w-full rounded-none px-1 py-2 text-xs font-semibold "+(moreOpen||moreActive?"bg-primary-subtle text-primary-text":"text-body")}>More</Button>;
    return <Link key={link.label} href={link.href}
     aria-current={active?"page":undefined}
-    className={"flex min-h-14 items-center justify-center px-1 py-2 text-center text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"bg-primary-subtle text-primary-text":"text-body")}>
+    className={"flex min-h-16 items-center justify-center px-1 py-2 text-center text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"bg-primary-subtle text-primary-text":"text-body")}>
     {link.label}
    </Link>;
   })}

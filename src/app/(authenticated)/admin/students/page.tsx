@@ -22,7 +22,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin" title="Students"/>
+  <PageHeader title="Students"/>
   <ErrorState title="Student access denied"
    description="Your account cannot access Super Admin student records."
    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
@@ -42,7 +42,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
    ]);
   }catch{
    return <div className="min-w-0 space-y-5">
-    <PageHeader eyebrow="Super Admin" title="Students"/>
+    <PageHeader title="Students"/>
     <ErrorState title="Student register unavailable"
      description="The selected college's student registration and import details could not be verified. No registration actions are available until the read succeeds."
      action={<Link href="/admin/students" className="font-semibold text-primary-text">Retry student register</Link>}/>
@@ -58,7 +58,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
    };
  });
  return <div className="min-w-0 space-y-4">
-  <PageHeader eyebrow="Super Admin" title="Students"
+  <PageHeader title="Students"
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex flex-wrap items-center justify-end gap-2">
     <a href="#register-student" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">Register New Student ↓</a>

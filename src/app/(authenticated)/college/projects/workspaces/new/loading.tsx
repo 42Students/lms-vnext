@@ -1,1 +1,8 @@
-export default function LoadingClassProjectWorkspace(){return <div className="mx-auto max-w-5xl space-y-4 px-3 py-6" role="status" aria-label="Loading workspace creator"><div className="h-8 w-64 max-w-full animate-pulse rounded bg-[var(--lms-neutral-100)]"/><div className="grid grid-cols-1 gap-4 sm:grid-cols-2"><div className="h-12 animate-pulse rounded bg-[var(--lms-neutral-100)]"/><div className="h-12 animate-pulse rounded bg-[var(--lms-neutral-100)]"/></div><p className="text-sm text-muted-foreground">Loading class and template choices…</p></div>}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function LoadingClassProjectWorkspace() {
+  return <section className="mx-auto max-w-5xl space-y-4 px-3 py-6">
+    <GracefulPageLoading label="Loading workspace creator" shape="directory" />
+    <p role="status" className="text-sm text-muted-foreground">Loading class and template choices…</p>
+  </section>;
+}

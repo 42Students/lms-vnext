@@ -1,5 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
@@ -179,10 +180,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     {matching.length} matching {matching.length===1?"task":"tasks"} · {tasks.length} total in this project&apos;s full history.
     {!sprint&&!release&&scope==="current"?" Showing the current sprint and backlog. Switch “Sprint scope” to see everything.":""}
   </p>
-  {matching.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
-    {tasks.length===0?"No tasks on this board yet. Create the first one to give the team somewhere to start.":
-      "No tasks match these filters. Clear all to see the board."}
-  </p>:null}
+  {matching.length===0?<EmptyState title={tasks.length===0?"No tasks on this board yet.":"No tasks match these filters."}
+    description={tasks.length===0?"Create the first one to give the team somewhere to start.":"Clear all to see the board."} />:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {undo?<Button variant="ghost" type="button" disabled={busy} 
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
@@ -198,7 +197,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        editable.includes(task.status as typeof editable[number]);
      return <li key={task.id} draggable={canMove}
       onDragStart={e=>e.dataTransfer.setData("text/plain",task.id)}
-      className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
+      className="space-y-2 rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm">
       <Button variant="ghost" type="button" onClick={()=>setSelected(task.id)}
         className="min-h-11 text-left">{task.title}</Button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
@@ -250,7 +249,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       </Disclosure>
      </li>;
     })}
-    {!lane.tasks.length?<li className="py-4 text-center text-xs text-muted-foreground">No tasks</li>:null}
+    {!lane.tasks.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
     </ul>
    </BoardColumn>)}
   </div></div>

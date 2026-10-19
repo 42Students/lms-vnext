@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -9,7 +10,7 @@ export default function FacultyNotificationsError({ reset }: {
 }) {
   return (
     <section role="alert" className="rounded-xl border border-border bg-surface p-8 text-center">
-      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Unable to load Notifications</h1>
+      <PageHeader title={"Unable to load Notifications"} />
       <p className="mt-2 text-sm text-body">
         This Faculty page could not load. Retry to recheck current access.
       </p>

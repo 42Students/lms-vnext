@@ -260,3 +260,26 @@ The old learner notification mobile breakpoint is **767px** (`components___notif
 - [ ] **B2 command palette:** legacy search-result state reference and rendered keyboard/mobile no-regression check absent.
 
 **Exact next file:** `src/components/hr/hr-recruiter-bell.tsx` — match notification list/hover/error/empty and migrate remaining custom overlay to shared popover without changing unread provenance. All four strict items remain unticked.
+
+
+## Recruiter notification continuation — 2026-10-19, chat-13 bounded turn
+
+Synced to `origin/main` at `60f960b7816e` before the sprint batch. The recruiter bell is the next B2 page from the previous queue. This source-only comparison **does not tick B1 or B2** without global grep and actual desktop/tablet/mobile state proof.
+
+| B2 state / measured property | Old LMS reference | vNext source, exact behavior | Result |
+| --- | --- | --- | --- |
+| Desktop overlay | `docs/design/legacy-styles/components___notification-drawer.scss:113-147`: white, 12px radius, border #e5e9f0, width 360–420, max-height 520, two-layer shadow, 200ms entry | `src/components/hr/hr-recruiter-bell.tsx:112-121` uses shared nonmodal `PopoverPanel`; `src/components/shell/topbar/topbar.module.css:506-507,525` matches desktop panel sizing, surface and animation | Matched CSS source; anchored viewport and browser focus not proven |
+| Desktop header | `notification-drawer.scss:153-168`: 16px 20px padding, neutral50, border neutral200, 18px/600 title | `topbar.module.css:508-511`, `hr-recruiter-bell.tsx:115-119` | Matched values |
+| Scroll body | `notification-drawer.scss:170-184`: min-height 0, scroll Y, 12px vertical padding, no visible scrollbar | `topbar.module.css:512-513`, shared `ScrollCue` content remains in `hr-recruiter-bell.tsx:98-103` | CSS source matched; nested max-height 320px remains intentionally smaller than full 520px panel |
+| Notification list | `notification-drawer.scss:180-224`: 12px horizontal inset, 6px gap, radius8, 12px 16px, 44px target, neutral hover/pressed/focus | `topbar.module.css:515-524` and `hr-recruiter-bell.tsx:98-103`; shared list/row links | Matched property declarations, not screenshot |
+| Unread/timestamp | `notification-drawer.scss:52-60,233-261`: 16px count, 10px font, 14px/600 title, 12px subtle timestamp; warm red legacy `components___dropdown.scss:16-23` | `hr-recruiter-bell.tsx:101-111`: 16px warm-red count, 14px/600 label, `<time>` relative timestamp, unread red dot | Matched sourced values; actual unread totals remain role-server data |
+| Footer | `notification-drawer.scss:323-356`: 12px 20px, top hairline, subtle surface, minimum 44px controls | `hr-recruiter-bell.tsx:86-92,112-121` uses fixed popover footer or shared `Drawer.footer`; `topbar.module.css:529-534` | Matched source styling/structure |
+| Phone | `notification-drawer.scss:400-445`: mobile ≤767, full-width Drawer, safe-area header/footer, 44px actions | `hr-recruiter-bell.tsx:50-55,112-121` switches on matchMedia 767; `topbar.module.css:527,534,536` and shared `Drawer` control safe areas | Responsive source-rule evidence only, no 320/375/768px browser test |
+| Loading/error/empty | `notification-drawer.scss:272-321`: centered 32px 20px, 14px muted text and empty icon | `hr-recruiter-bell.tsx:94-100` retains server state gating; `topbar.module.css:537-538` centers empty/error states | **Partial:** legacy empty icon and exact explanatory copy missing |
+| Dismissal/focus | Legacy desktop outside backdrop/ESC and mobile modal — `notification-drawer.scss:64-109,400-445` | Desktop outside pointer + Escape with focus return `hr-recruiter-bell.tsx:57-69`; mobile shared `Drawer` Escape/backdrop handling | Source semantics closer; exact focus timing not browser-proven |
+
+**Scoped grep-equivalent verification (GitHub file content, not executed shell grep):** `src/components/hr/hr-recruiter-bell.tsx` has **0** native `<button>`, `<input>`, `<select>` and `<textarea>`; exactly one `<PopoverPanel></PopoverPanel>`, one `<Drawer></Drawer>`, and three matching `<Button></Button>` pairs. Edited `topbar.module.css` curly braces balance. Re-read the changed JSX after every open/close conversion and fixed a malformed root opening tag before proceeding. CSS includes hard-coded legacy hex values, so global token-zero evidence **does not pass**; full-`src` greps are unrun.
+
+**STRICT TICK DECISION:** all four `clone-topbar.md` categories remain **unticked**: global grep, desktop/mobile rendered proof, all-portal count provenance, and exact missing legacy state behavior cannot be truthfully certified without integration and screenshot evidence.
+
+**Next file:** `src/components/shell/topbar/command-search.tsx` — finish command palette empty/error/open/focus states and align its popover geometry to the legacy CSS, then update B2 evidence.

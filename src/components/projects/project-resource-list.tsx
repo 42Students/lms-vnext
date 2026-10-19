@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -154,12 +155,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       "Resource reordering is available when no filters are active."}
   </p>:null}
   {reorderError?<p role="alert" className="text-sm text-error">{reorderError}</p>:null}
-  {rows.length===0?<p className="border-b border-border py-5 text-sm text-muted-foreground">
-    {mode==="LEARNER"?"No resources yet. Share the first link or file with your team."
-      :"No resources yet. Add the briefs, templates and reference links your team will need."}
-  </p>:filtered.length===0?<p role="status" className="border-b border-border py-5 text-sm text-body">
-    No resources match these filters. Clear filters to see all resources.
-  </p>:<div className="space-y-3">{[...filtered].sort((a,b)=>
+  {rows.length===0?<EmptyState title="No resources yet" description={mode==="LEARNER"
+    ?"Share the first link or file with your team."
+    :"Add the briefs, templates and reference links your team will need."}
+  />:filtered.length===0?<EmptyState title="No matching resources"
+    description="No resources match these filters. Clear filters to see all resources." />:<div className="space-y-3">{[...filtered].sort((a,b)=>
       Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||currentOrder(a)-currentOrder(b)).map(resource=>{
     const safe=resource.url?safeProjectExternalHref(resource.url):null;
     return <article key={resource.id}

@@ -1,30 +1,20 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 
-export default function HrCalendarError({
-  reset,
-}: {
+export default function RouteError({ reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <section role="alert" className="space-y-4">
-      <PageHeader title="Couldn't load your recruiter calendar" />
-
-      <p className="max-w-xl text-sm leading-6 text-body">
-        Your authorized hiring events could not be
-        retrieved. This is a loading error, not
-        evidence that your calendar is empty.
-      </p>
-
-      <Button
-        className="mt-5"
-        onClick={reset}
-      >
-        Retry
-      </Button>
-    </section>
-  );
+  return <div className="min-w-0 space-y-4">
+    <PageHeader title="Calendar" />
+    <ErrorState
+      title="Couldn't load your recruiter calendar"
+      description="Your authorized hiring events could not be retrieved. This is a loading error, not evidence that your calendar is empty."
+      action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    />
+  </div>;
 }
