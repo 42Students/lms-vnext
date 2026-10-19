@@ -22,13 +22,13 @@ export default async function MentorLandingPage() {
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title={access===null?"Projects could not be loaded":"Projects is currently unavailable"}
       description={access===null?"Check your connection and try again. This does not mean Projects is disabled.":"Projects is disabled for this account. You can still check notifications."} />
-    <div className="rounded-xl border border-border bg-surface p-6">
+    <div className="space-y-3">
       <p className="text-sm text-body">
         Contact your college administrator if you need access to Projects.
       </p>
-      {access===null?<Link href="/mentor?retry=1" className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Retry access check</Link>:null}
+      {access===null?<Link href="/mentor?retry=1" className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry access check</Link>:null}
       <Link href="/mentor/notifications"
-        className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="mt-4 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         View notifications
       </Link>
     </div>
