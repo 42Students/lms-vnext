@@ -1,3 +1,4 @@
+import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
 import Link from "next/link";
 import {tpoBatchReturnHref} from "@/modules/placements/tpo-batch-return-model";
 import { redirect } from "next/navigation";
@@ -102,12 +103,11 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    </div>)}
   </dl>
   {summary.complete&&summary.assessed>0?
-   <div role="img" aria-label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+summary.undecided+" not decided, "+summary.needsReview+" need review"}
-    className="flex h-3 overflow-hidden rounded-full bg-muted">
-    <span className="bg-success" style={{width:100*summary.eligible/summary.assessed+"%"}}/>
-    <span className="bg-warning" style={{width:100*summary.ineligible/summary.assessed+"%"}}/>
-    <span className="bg-primary" style={{width:100*summary.undecided/summary.assessed+"%"}}/>
-   </div>:null}
+   <StackedMetricBar maximum={summary.assessed}
+    label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+summary.undecided+" not decided, "+summary.needsReview+" need review"}
+    segments={[{label:"Eligible",value:summary.eligible,tone:"success"},
+      {label:"Ineligible",value:summary.ineligible,tone:"warning"},
+      {label:"Not decided",value:summary.undecided,tone:"primary"}]} />:null}
   <p className="text-sm">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
     eligibility.nextAction==="DECIDE"?"Decide undecided learners":
     eligibility.nextAction==="INVITE"?"Review batch invitation readiness":"Review finished batch"}</p>
