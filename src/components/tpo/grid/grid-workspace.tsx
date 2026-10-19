@@ -220,8 +220,10 @@ export function GridWorkspace<Row>({
    <TpoGridColumnChooser columns={columns} selected={activeKeys.length?activeKeys:permitted} onChange={changeColumns}/>
   </div>:null}
   {exportOpen?<div id={id+"-export"} className="flex flex-wrap items-center gap-2">
-   <Button variant="secondary" type="button" onClick={downloadCsv}
-    disabled={!rows.length}>Export {selectedPage.length?"selected":"visible"} CSV</Button>
+   <Button variant="secondary" type="button" onClick={()=>{
+    if(onExportCsv)onExportCsv(selectedPage.length>0);
+    else downloadCsv();
+   }} disabled={!rows.length}>Export {selectedPage.length?"selected":"visible"} CSV</Button>
    {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link lms-inline-link">Export selected XLSX</a>:null}
    <span className="text-xs text-muted-foreground">Exports contain only rows on this page{selectedPage.length?" that are selected":""}; server-side Excel uses existing permissions.</span>
   </div>:null}
