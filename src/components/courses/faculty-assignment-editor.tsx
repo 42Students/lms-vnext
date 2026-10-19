@@ -1,5 +1,6 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
+import { LoadingState } from "@/components/ui/loading-state";
 
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -152,45 +153,45 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{mutationLock.current=false;setPending(false);}
  }
- return <section className="space-y-4">
+ return <section className="space-y-4 max-[767px]:[&_button]:min-h-11">
   <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Assignment authoring</h2>
-  <label className="grid gap-1 text-sm">Choose draft or create new
+  <label className="grid gap-1 text-[13px] font-semibold leading-4">Choose draft or create new
    <Select value={selected} disabled={pending} onChange={e=>choose(e.target.value)}
-    className="text-base sm:text-sm">
+    className="text-base md:text-sm">
     <option value="">New assignment</option>
     {assignments.map(x=><option key={x.id} value={x.id}>{x.title} ({x.status})</option>)}
    </Select>
   </label>
   {existing?<p className="text-xs text-body">Current state: {existing.status}. Published assignments can be edited until the first learner submission; archived assignments are read-only. An assignment with submissions cannot be archived.</p>:null}
-  {!existing?<label className="grid gap-1 text-sm">Lesson
+  {!existing?<label className="grid gap-1 text-[13px] font-semibold leading-4">Lesson
    <Select value={lessonId} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,lessonId,next));setLessonId(next);}}
-    className="text-base sm:text-sm">
+    className="text-base md:text-sm">
     {lessons.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
    </Select></label>:null}
-  <label className="grid gap-1 text-sm">Title
+  <label className="grid gap-1 text-[13px] font-semibold leading-4">Title
    <Input value={title} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,title,next));setTitle(next);}} maxLength={255}
-    className="text-base sm:text-sm" /></label>
-  <label className="grid gap-1 text-sm">Text instructions
+    className="text-base md:text-sm" /></label>
+  <label className="grid gap-1 text-[13px] font-semibold leading-4">Text instructions
    <Textarea value={description} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,description,next));setDescription(next);}}
-    maxLength={10000} rows={4} className="text-base sm:text-sm" /></label>
-  <label className="grid gap-1 text-sm">Due date (IST, required before publishing)
+    maxLength={10000} rows={4} className="text-base md:text-sm" /></label>
+  <label className="grid gap-1 text-[13px] font-semibold leading-4">Due date (IST, required before publishing)
    <Input type="datetime-local" value={dueAt} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,dueAt,next));setDueAt(next);}}
-    className="text-base sm:text-sm" /></label>
-  <label className="grid gap-1 text-sm">Maximum points
+    className="text-base md:text-sm" /></label>
+  <label className="grid gap-1 text-[13px] font-semibold leading-4">Maximum points
    <Input type="number" min={0} max={1000} value={maxPoints}
     onChange={e=>{const next=Number(e.target.value);setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,maxPoints,next));setMaxPoints(next);}}
-    className="text-base sm:text-sm" /></label>
+    className="text-base md:text-sm" /></label>
   {methodsEnabled?<FacultyAssignmentMethodPicker methods={allowedMethods}
    disabled={pending||!methodsLoaded||existing?.status==="ARCHIVED"}
    onChange={next=>{setAllowedMethods(next);setMethodsDirty(true);setConfirmed(false);}}/>:null}
-  {methodsEnabled&&methodsLoading?<p role="status" className="text-xs">Loading allowed methods…</p>:null}
+  {methodsEnabled&&methodsLoading?<LoadingState label="Loading allowed methods…" />:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   {success?<Alert tone="success">{success}</Alert>:null}
   <div className="flex flex-wrap gap-2">
    {!existing?<div className="flex flex-wrap items-center gap-3">
     <Checkbox label="Publish now" checked={publishNow} disabled={pending}
       onChange={event=>setPublishNow(event.target.checked)} />
-    <Button type="button" disabled={pending||!lessonId}
+    <Button type="button" loading={pending} disabled={pending||!lessonId}
     onClick={()=>void submit("CREATE")} variant="primary">{publishNow?"Create and publish":"Create draft"}</Button>
    </div>
    : <>
