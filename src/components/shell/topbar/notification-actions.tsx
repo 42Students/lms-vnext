@@ -19,7 +19,7 @@ function IconLink({
   href, label, count, message = false,
 }: { href: string; label: string; count: number | null; message?: boolean }) {
   return <Link href={href} className={style.iconButton}
-    aria-label={label + (count !== null ? ", " + count + " unread" : "")}
+    aria-label={label + (count !== null ? count >= 40 ? ", at least " + count + " unread" : ", " + count + " unread" : "")}
     title={label}>
     {message ? <MessageIcon /> : <BellIcon />}
     <CountBadge count={count}/>
