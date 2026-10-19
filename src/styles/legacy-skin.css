@@ -439,3 +439,25 @@
   color: var(--lms-primary-text) !important;
   background-color: var(--lms-primary-subtle) !important;
 }
+
+/* HORIZONTAL DIVIDERS
+ * Legacy: components___variables.scss:30 (#e5e9f0 neutral-200);
+ * components___common.scss:118-120 (quiet hairline divisions).
+ * Existing border widths and element flow remain as authored.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(hr):not(:where([data-unskin], [data-unskin] *)) {
+  border-color: var(--lms-neutral-200) !important;
+  background-color: var(--lms-neutral-200) !important;
+  box-shadow: none !important;
+}
+
+/* PLACEHOLDERS
+ * Legacy: components___form.scss:57-60 (14px neutral-400 placeholder),
+ * components___variables.scss:28,184 (#a9a7ae / 14px).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input, textarea):not(:where([data-unskin], [data-unskin] *))::placeholder {
+  color: var(--lms-neutral-400) !important;
+  font-size: 14px !important;
+}
