@@ -21,8 +21,10 @@ export function TpoSafeCsvDownload({href,filename,label}:{href:string;filename:s
    const url=URL.createObjectURL(data);
    try{
     const link=document.createElement("a");
-    link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();
-   }finally{URL.revokeObjectURL(url);}
+    link.href=url;link.download=filename;document.body.appendChild(link);
+    try { link.click(); }
+    finally { link.remove(); }
+   }finally{window.setTimeout(()=>URL.revokeObjectURL(url),1000);}
   }catch(cause){
    setError(cause instanceof Error && (
     cause.message==="Your session has ended. Please sign in again."||
@@ -32,9 +34,9 @@ export function TpoSafeCsvDownload({href,filename,label}:{href:string;filename:s
    )?cause.message:"Could not download the export. Check your connection and try again.");
   }finally{inFlight.current=false;setPending(false);}
  }
- return <span className="inline-flex flex-col items-start gap-2">
+ return <span className="inline-flex flex-col items-start gap-2 print:hidden">
   <Button variant="secondary" type="button" disabled={pending} onClick={()=>void download()}
-   className="min-h-9">
+   className="min-h-11 md:min-h-9">
    {pending?"Preparing export…":label}
   </Button>
   {error?<span role="alert" className="max-w-xs text-xs text-error">{error}</span>:null}
