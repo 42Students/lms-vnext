@@ -22,12 +22,12 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    Array.isArray(params[key]));
  const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status)??"NEW",q:one(params.q),recipient:one(params.recipient),page:one(params.page)});
  if(repeated||!parsed.success)return <div className="space-y-6">{header}
-   <div role="alert" className="rounded-xl border border-border p-5">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-[var(--lms-teal-deep)]">Reset</Link></div></div>;
+   <div role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-primary-text">Reset</Link></div></div>;
  const data=await listInboundMailForAdmin(context,parsed.data);
  if(!data.available)return <div className="space-y-6">{header}
   <div role="status" className="space-y-3 border-b border-border pb-5">
    <p>Inbound mail storage has not been registered or deployed. The inbox is unavailable; this is not a zero-message result.</p>
-   <Link href="/admin/inbound-mail" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Retry</Link>
+   <Link href="/admin/inbound-mail" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>
   </div></div>;
  const totalPages=data.total===null?null:Math.max(1,Math.ceil(data.total/50));
  const pageNumbers=totalPages===null?[]:Array.from(
@@ -47,7 +47,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <nav aria-label="Inbound mail views" className="flex flex-wrap gap-2">{tabs.map(tab=>{
    const url=new URLSearchParams(base);url.set("status",tab.value);
    return <Link key={tab.value} href={"/admin/inbound-mail?"+url.toString()} aria-current={parsed.data.status===tab.value?"page":undefined}
-    className={parsed.data.status===tab.value?"min-h-9 border-b-2 border-[var(--lms-button-primary)] px-4 py-2 text-sm font-semibold text-[var(--lms-primary-text)]":"min-h-9 border-b-2 border-transparent px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-[var(--lms-primary-text)]"}>
+    className={parsed.data.status===tab.value?"min-h-9 border-b-2 border-primary px-4 py-2 text-sm font-semibold text-primary-text":"min-h-9 border-b-2 border-transparent px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-primary-text"}>
     {tab.label}{tab.count!==null&&tab.count!==undefined?" ("+tab.count+")":""}
    </Link>})}</nav>
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
@@ -69,7 +69,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <nav aria-label="Inbox pages" className="flex flex-wrap justify-between gap-3 text-sm">
    <span>{data.total===null?"Page "+data.page:data.total+" matching messages · Page "+data.page+" of "+totalPages}</span><div className="flex flex-wrap gap-3">
    {pageNumbers.map(n=><Link key={n} href={next(n)} aria-current={n===data.page?"page":undefined}
-     className={n===data.page?"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-primary-subtle)] px-3 py-2 text-[var(--lms-primary-text)]":"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2"}>{n}</Link>)}
+     className={n===data.page?"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-[var(--lms-primary-subtle)] px-3 py-2 text-primary-text":"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2"}>{n}</Link>)}
    {data.page>1?<Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3" href={next(data.page-1)}>Previous</Link>:null}
    {data.hasMore?<Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3" href={next(data.page+1)}>Next</Link>:null}
    </div>

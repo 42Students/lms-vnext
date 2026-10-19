@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { TPO_TOPBAR_QUICK_LINKS } from "@/modules/placements/tpo-topbar-links";
 import { TpoNewFollowupModal } from "@/components/tpo/tpo-new-followup-modal";
 import { PlusIcon } from "./icons";
@@ -15,6 +15,25 @@ export function TpoQuickCreate({ collegeId }: { collegeId: string }) {
   const pathname = usePathname();
   const params = useSearchParams();
   const root = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const onPointer = (event: PointerEvent) => {
+      if (root.current && !root.current.contains(event.target as Node)) {
+        root.current.open = false;
+      }
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || !root.current?.open) return;
+      event.preventDefault();
+      root.current.open = false;
+      root.current.querySelector<HTMLElement>("summary")?.focus();
+    };
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, []);
   const company = pathname === "/tpo/companies"
     ? (params.get("name") ?? "").trim().slice(0, 150) : "";
   const suffix = company ? " for " + company : "";

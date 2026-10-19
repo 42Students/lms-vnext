@@ -25,5 +25,5 @@ export function PermissionAction({
   if (can(context, permission, resource)) return children;
   if (fallback !== undefined) return fallback;
   if (deniedMode === "hide-sensitive") return null;
-  return <span data-slot="permission-denied" role="note" className="block rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">You do not have permission to perform this action.</span>;
+  return <span data-slot="permission-denied" role="note" className="block min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] break-words text-[13px] leading-5 text-[var(--lms-body-text)]">You do not have permission to perform this action.</span>;
 }

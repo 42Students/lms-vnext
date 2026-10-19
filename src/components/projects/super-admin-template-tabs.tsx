@@ -31,7 +31,7 @@ export function SuperAdminTemplateTabs({
             }
             className={
               active === tab.id
-                ? "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                ? "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-primary px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 : "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-transparent px-4 text-sm font-semibold text-body hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             }
           >

@@ -161,12 +161,12 @@ export function TpoStudentsBulkAdd({
   }
 
   if (available.length === 0) return (
-    <section role="status" className="rounded-[12px] border border-border bg-surface p-5 text-sm text-body">
+    <section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
       No learners are listed on this filtered roster page. There is nobody to select.
     </section>
   );
   return (
-    <section id="student-bulk-add" className="space-y-4 rounded-[12px] border border-border bg-surface p-5">
+    <section id="student-bulk-add" className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
       <div>
         <h2 className="text-lg font-semibold text-foreground">
           Add selected students to a drive
@@ -184,14 +184,14 @@ export function TpoStudentsBulkAdd({
         <>
           <label className="grid gap-1 text-sm">Search open drives
             <input type="search" value={driveSearch} onChange={event=>setDriveSearch(event.target.value)}
-             className="min-h-9 rounded-[var(--radius)] border border-border bg-surface p-2"
+             className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
              placeholder="Search company or drive"/>
           </label>
           {visibleDrives.length===0?<p role="status">No open drives match your search.</p>:null}
           <div className="grid gap-3 md:grid-cols-2">
             <label className="text-sm font-semibold text-foreground">
               Published drive
-              <select className="mt-1 min-h-10 w-full rounded-[var(--radius)] border border-border bg-surface px-3"
+              <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
                 value={driveId} disabled={busy}
                 onChange={(event) => void loadRoles(event.target.value)}>
                 <option value="">Choose a drive</option>
@@ -204,7 +204,7 @@ export function TpoStudentsBulkAdd({
             </label>
             <label className="text-sm font-semibold text-foreground">
               Active role
-              <select className="mt-1 min-h-10 w-full rounded-[var(--radius)] border border-border bg-surface px-3"
+              <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
                 value={roleOptionId} disabled={busy || roles.length === 0}
                 onChange={(event) => setRoleOptionId(event.target.value)}>
                 {roles.length === 0 ? <option value="">Select a drive first</option> : null}
@@ -213,9 +213,9 @@ export function TpoStudentsBulkAdd({
             </label>
           </div>
           {roleError ? <p role="alert" className="text-sm text-error">{roleError}</p> : null}
-          <div className="max-h-80 space-y-1 overflow-auto rounded-[var(--radius)] border border-border p-2">
+          <div className="max-h-80 space-y-1 overflow-auto rounded-[var(--lms-control-radius)] border border-border p-2">
             {learners.map((learner) => (
-              <label key={learner.membershipId} className="flex min-h-11 items-center gap-3 rounded-[var(--radius)] p-2 text-sm hover:bg-surface-secondary">
+              <label key={learner.membershipId} className="flex min-h-11 items-center gap-3 rounded-[var(--lms-control-radius)] p-2 text-sm hover:bg-surface-secondary">
                 <input type="checkbox" className="h-4 w-4"
                   checked={selected.includes(learner.membershipId)}
                   disabled={busy || !drives.length}
@@ -238,14 +238,14 @@ export function TpoStudentsBulkAdd({
           {includeIneligible?<label className="grid gap-1 text-sm">Required reason for inclusion
             <textarea value={overrideReason} disabled={busy} maxLength={500}
              onChange={event=>setOverrideReason(event.target.value)}
-             className="min-h-20 w-full rounded-[var(--radius)] border border-border bg-surface p-2"/>
+             className="min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
           </label>:null}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <span className="text-sm text-body">{pageSelected.length} learner(s) selected</span>
             <button type="button" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
                 includeIneligible&&overrideReason.trim().length<3}
               onClick={() => void preview()}
-              className="min-h-10 rounded-[var(--radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+              className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
               {busy ? "Checking learners…" : "Review and add selected"}
             </button>
           </div>
@@ -273,7 +273,7 @@ export function TpoStudentsBulkAdd({
       {results.length > 0 ? (
         <div aria-live="polite" className="space-y-2">
           <h3 className="text-sm font-semibold text-foreground">Per-learner result</h3>
-          <ul className="max-h-60 divide-y divide-border overflow-auto rounded-[var(--radius)] border border-border text-sm">
+          <ul className="max-h-60 divide-y divide-border overflow-auto rounded-[var(--lms-control-radius)] border border-border text-sm">
             {results.map((result) => (
               <li key={result.membershipId} className="flex flex-wrap gap-2 p-3">
                 <span className="font-semibold text-foreground">

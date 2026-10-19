@@ -78,7 +78,7 @@ export default async function TpoTeamPage({searchParams}:{
   <nav aria-label="Team tabs" className="flex flex-wrap gap-2">
    {(["conversations","people"] as const).map(item=><Link key={item} href={"/tpo/team?tab="+item}
      aria-current={tab===item?"page":undefined}
-     className={tab===item?"rounded-[var(--radius)] bg-primary px-4 py-3 text-sm text-on-primary":"rounded-[var(--radius)] border border-border px-4 py-3 text-sm text-body"}>
+     className={tab===item?"rounded-[var(--lms-control-radius)] bg-primary px-4 py-3 text-sm text-on-primary":"rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-sm text-body"}>
     {item==="people"?"People":"Conversations"}
    </Link>)}
   </nav>
@@ -93,7 +93,7 @@ export default async function TpoTeamPage({searchParams}:{
       {([["WORK","Most assigned duties"],["OVERDUE","Overdue first"],["NAME","Name"]] as const).map(([value,label])=>
        <Link key={value} href={"/tpo/team?tab=people&sort="+value}
         aria-current={peopleSort===value?"page":undefined}
-        className={peopleSort===value?"rounded-[var(--radius)] bg-primary px-3 py-2 text-on-primary":"rounded-[var(--radius)] border border-border px-3 py-2 text-body"}>
+        className={peopleSort===value?"rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-on-primary":"rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-body"}>
         {label}
        </Link>)}
       {!workload?.ready?<span className="text-xs text-muted-foreground">Ask workload is not available yet.</span>:null}
@@ -101,7 +101,7 @@ export default async function TpoTeamPage({searchParams}:{
     {people.length?<ul className="grid gap-3 sm:grid-cols-2">
       {people.map(member=><li key={member.membershipId} className="min-w-0 border-b border-border py-4">
        <h2 className="break-words font-semibold text-foreground">{member.displayName}
-         {member.membershipId===context.membership?.id?<span className="ml-2 rounded-[var(--radius)] border border-border px-2 py-0.5 text-xs">You</span>:null}
+         {member.membershipId===context.membership?.id?<span className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-0.5 text-xs">You</span>:null}
         </h2>
        {awayByMember.get(member.membershipId)?<p className="mt-2 text-xs text-warning-text">
         Away until {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})
@@ -148,16 +148,16 @@ export default async function TpoTeamPage({searchParams}:{
      {(["ALL","FOLLOWING","UNREAD","TOPICS","DECISIONS",...(conversations?.status==="READY"&&conversations.asksReady?["ASKS","AT_ME"] as const:[])] as const).map(key=><Link key={key}
       href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter:key,...(search?{q:search}:{})}).toString()}
       aria-current={filter===key?"page":undefined}
-      className={filter===key?"rounded-[var(--radius)] bg-primary px-3 py-2 text-sm text-on-primary":"rounded-[var(--radius)] border border-border px-3 py-2 text-sm text-body"}>
+      className={filter===key?"rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm text-on-primary":"rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-body"}>
       {key==="ALL"?"All":key==="FOLLOWING"?"Following":key==="UNREAD"?"Unread":key==="TOPICS"?"Topics":key==="DECISIONS"?"Decisions":key==="ASKS"?"Asks":"@ Me"} ({conversationCounts[key]})
      </Link>)}
     </nav>:null}
-    <Link href="/tpo/team/everyone" className="mt-3 block rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4 font-semibold text-link">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
+    <Link href="/tpo/team/everyone" className="mt-3 block rounded-[var(--lms-canvas-radius)] border border-border bg-surface-secondary p-4 font-semibold text-link">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
     {conversations?.status==="READY"?<TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
       member=>member.membershipId!==context.membership?.id&&
       (member.roles.includes("TPO")||member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN")))
       .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
-    {conversations?.status==="FAILED"?<div role="alert" className="mt-3 rounded-[var(--radius)] border border-border p-3 text-sm">
+    {conversations?.status==="FAILED"?<div role="alert" className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
      Could not load conversations right now. Your search has been kept.
      <Link className="ml-2 font-semibold text-link underline" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
     </div>:null}
@@ -182,10 +182,10 @@ export default async function TpoTeamPage({searchParams}:{
     {conversations?.status==="READY" && (conversations.page>1||conversations.hasMore)?
      <nav aria-label="Team conversation pages" className="mt-4 flex flex-wrap items-center gap-3">
       <span className="text-sm text-body">Page {conversations.page}</span>
-      {conversations.page>1?<Link className="min-h-9 rounded-[var(--radius)] border border-border px-4 py-3 text-link"
+      {conversations.page>1?<Link className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link"
        href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
         ...(search?{q:search}:{}),page:String(conversations.page-1)}).toString()}>Previous</Link>:null}
-      {conversations.hasMore?<Link className="min-h-9 rounded-[var(--radius)] border border-border px-4 py-3 text-link"
+      {conversations.hasMore?<Link className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link"
        href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
         ...(search?{q:search}:{}),page:String(conversations.page+1)}).toString()}>Show older</Link>:null}
      </nav>:null}

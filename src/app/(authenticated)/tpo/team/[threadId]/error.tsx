@@ -1,2 +1,3 @@
 "use client";
-export default function ErrorView({reset}:{error:Error&{digest?:string};reset:()=>void}){return <section role="alert" className="space-y-3 p-5"><h2 className="font-semibold">Private messages unavailable</h2><p className="text-sm text-body">No conversation content could be loaded.</p><button type="button" onClick={reset} className="min-h-9 rounded-[var(--radius)] border border-border px-4">Retry</button></section>;}
+import { Button } from "@/components/ui/button";
+export default function ErrorView({reset}:{error:Error&{digest?:string};reset:()=>void}){return <section role="alert" className="space-y-3 p-5"><h2 className="font-semibold">Private messages unavailable</h2><p className="text-sm text-body">No conversation content could be loaded.</p><Button type="button" variant="secondary" onClick={reset}>Retry</Button></section>;}

@@ -87,23 +87,23 @@ export function TopbarAccountMenu({
     </button>
     {open ? <div role="dialog" aria-label="Account menu" className={style.menu}>
       <div className="px-2 pb-2 text-left">
-        <p className="m-0 truncate text-[13px] font-semibold text-[#172033]">{roleLabel}</p>
-        <p className="mt-1 truncate text-[12px] text-[#64748b]">{organizationName}</p>
+        <p className={style.accountHeading}>{roleLabel}</p>
+        <p className={style.accountSubheading}>{organizationName}</p>
       </div>
       {copy.accountHref ? <Link href={copy.accountHref}
         onClick={() => setOpen(false)} className={style.menuItem}>{copy.accountLabel}</Link> : null}
       {adminScopeChoices || memberships.length > 1 ? <>
         <hr className={style.menuDivider}/>
-        <p className="px-2 pb-2 text-left text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">Switch workspace</p>
+        <p className={style.accountSectionHeading}>Switch workspace</p>
         {adminScopeChoices ? <AdminScopeSwitcher choices={adminScopeChoices} scope={scope} /> :
           <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId}/>}
       </> : null}
       <hr className={style.menuDivider}/>
       <button type="button" disabled={pending}
         className={style.menuItem} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
-        <span className="ml-auto text-[#94a3b8]"><ChevronIcon /></span>
+        <span className="ml-auto text-muted-foreground"><ChevronIcon /></span>
       </button>
-      {error ? <p role="alert" className="px-2 pt-2 text-xs text-[#b91c1c]">{error}</p> : null}
+      {error ? <p role="alert" className="px-2 pt-2 text-xs text-error">{error}</p> : null}
     </div> : null}
   </div>;
 }

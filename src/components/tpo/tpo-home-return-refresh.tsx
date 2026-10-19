@@ -56,10 +56,10 @@ export function TpoHomeReturnRefresh(){
  },[router]);
  return <div aria-live="polite" className="space-y-2">
   {busy?<p role="status" className="text-xs text-muted-foreground">Refreshing placement home…</p>:null}
-  {failed?<div role="alert" className="flex flex-wrap items-center gap-3 rounded-[var(--radius)] border border-border p-3 text-sm">
+  {failed?<div role="alert" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
     <span>Home refresh failed. Showing the last successful snapshot.</span>
     <button type="button" disabled={busy} onClick={()=>void refresh()}
-      className="min-h-10 rounded-[var(--radius)] border border-border px-4 font-semibold text-primary-text">Retry</button>
+      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Retry</button>
   </div>:null}
  </div>;
 }

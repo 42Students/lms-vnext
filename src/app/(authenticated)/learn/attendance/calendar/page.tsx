@@ -24,7 +24,7 @@ const statusClass:Record<string,string> = {
   MEDICAL:"bg-warning-subtle text-warning",
   LATE:"bg-warning-subtle text-warning",
   NOT_MARKED:"bg-muted text-body",
-  SCHEDULED:"bg-primary-subtle text-[var(--lms-teal-deep)]",
+  SCHEDULED:"bg-primary-subtle text-primary-text",
 };
 
 export default async function LearnerAttendanceCalendarPage({
@@ -37,8 +37,8 @@ export default async function LearnerAttendanceCalendarPage({
     status:first(raw.status)??undefined,
   });
   if(!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] leading-9">Invalid attendance calendar filters</h1>
-    <Link href="/learn/attendance/calendar" className="text-[var(--lms-teal-deep)] underline">
+    <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Invalid attendance calendar filters</h1>
+    <Link href="/learn/attendance/calendar" className="text-primary-text underline">
       Clear filters
     </Link>
   </section>;
@@ -67,11 +67,11 @@ export default async function LearnerAttendanceCalendarPage({
 
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
+      actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
         Attendance detail
       </Link>} />
     <form action="/learn/attendance/calendar" method="get"
-      className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-3">
+      className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Month
         <input name="month" type="month" defaultValue={data.query.month}
           className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
@@ -95,11 +95,11 @@ export default async function LearnerAttendanceCalendarPage({
         </select>
       </label>
       <div className="flex flex-wrap items-center gap-3 sm:col-span-3">
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">
           Apply filters
         </button>
         <Link href="/learn/attendance/calendar"
-          className="text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
+          className="text-sm font-semibold text-primary-text">Clear</Link>
       </div>
     </form>
     <div className="grid gap-3 sm:grid-cols-4" aria-label="Filtered attendance totals">
@@ -122,10 +122,10 @@ export default async function LearnerAttendanceCalendarPage({
     <section aria-label={monthLabel+" attendance calendar"} className="rounded-xl border border-border bg-surface p-3 sm:p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <Link href={previous} aria-label="Previous month"
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">← Previous</Link>
         <h2 className="text-lg font-semibold text-foreground">{monthLabel}</h2>
         <Link href={next} aria-label="Next month"
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Next →</Link>
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Next →</Link>
       </div>
       <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-muted-foreground sm:gap-2">
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day=>
@@ -136,9 +136,9 @@ export default async function LearnerAttendanceCalendarPage({
           const label=Number(day.slice(-2));
           return <div key={day}
             aria-label={day+": "+entries.length+" matching classes"}
-            className="min-h-14 rounded-md border border-border p-1 sm:min-h-20 sm:p-2">
+            className="min-h-14 rounded-[var(--lms-control-radius)] border border-border p-1 sm:min-h-20 sm:p-2">
             <div className="text-right font-semibold text-foreground">{label}</div>
-            {entries.length>0?<div className="mt-1 rounded bg-primary-subtle px-1 py-0.5 text-center text-xs font-semibold text-[var(--lms-teal-deep)]">
+            {entries.length>0?<div className="mt-1 rounded bg-primary-subtle px-1 py-0.5 text-center text-xs font-semibold text-primary-text">
               {entries.length} class{entries.length===1?"":"es"}
             </div>:null}
             <div className="mt-1 hidden flex-wrap gap-1 sm:flex">
@@ -175,7 +175,7 @@ export default async function LearnerAttendanceCalendarPage({
             <Link href={"/learn/attendance?"+new URLSearchParams({
               month:data.query.month,deliveryId:row.deliveryId,
             }).toString()}
-              className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+              className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               View Course attendance →
             </Link>
           </li>)}

@@ -49,7 +49,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <SuperAdminDriveTabs jobId={jobId} active="Schedule"/>
     <PageHeader eyebrow="Super Admin · Placements" title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
-      actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Drive overview</Link>} />
+      actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-4 border-b border-border pb-4">
       <label className="grid gap-1 text-sm">Round kind
         <Select name="kind" defaultValue={query.kind} className="min-w-0">

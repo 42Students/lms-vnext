@@ -147,8 +147,8 @@ export default async function SuperAdminProjectsPage({
         }
       />
 
-      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
-        <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link></div>
+      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
+        <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link></div>
 
       {!templatesResult.ok && (
         <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
@@ -157,11 +157,11 @@ export default async function SuperAdminProjectsPage({
       )}
       <ProjectAdminFilters query={query} legacyWorkspaces />
 
-      <nav className="flex gap-2 text-sm font-semibold" aria-label="Workspace display mode">
+      <nav className="flex gap-2 border-b border-border text-sm font-semibold" aria-label="Workspace display mode">
         <Link href={viewHref("table")} aria-current={view==="table"?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">Table</Link>
+          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Table</Link>
         <Link href={viewHref("cards")} aria-current={view==="cards"?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">Cards</Link>
+          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Cards</Link>
       </nav>
       <ProjectWorkspacePageExport items={result.items.map(item=>({
         id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,

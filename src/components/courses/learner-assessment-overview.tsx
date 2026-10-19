@@ -233,7 +233,7 @@ export function LearnerAssessmentOverview({
   return (
     <div className="space-y-5">
       {kind==="QUIZ" ? (
-        <section aria-label="Quiz summary" className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-sm font-semibold text-body">
+        <section aria-label="Quiz summary" className="flex flex-wrap items-center gap-3 border-b border-border pb-4 text-sm font-semibold text-body">
           <span className="rounded-full border border-border px-3 py-1">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</span>
           <details className="min-w-0 rounded-lg border border-border px-3 py-1">
             <summary className="cursor-pointer text-primary-text">{submittedQuizzes.length} Submitted</summary>

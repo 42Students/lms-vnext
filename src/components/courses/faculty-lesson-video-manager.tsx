@@ -229,7 +229,7 @@ export function FacultyLessonVideoManager({
       {videos.map((video,index)=>{
         const state=videoProcessingDescriptor(video.processingStatus);
         const canEdit=video.deliveryId===deliveryId;
-        return <li key={video.id} className="space-y-3 rounded-lg border border-border bg-surface-subtle p-3">
+        return <li key={video.id} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="min-w-0 break-words text-sm font-semibold text-foreground">{video.title} · {formatFileSize(video.sizeBytes)}</p>
             <div className="flex flex-wrap gap-2">
