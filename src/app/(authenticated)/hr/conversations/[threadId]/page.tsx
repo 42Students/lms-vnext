@@ -33,7 +33,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   result=await readRecruiterThreadMessages(context,parsedId.data,parsedPage.data);
  }catch(error){
   if(error instanceof TpoMessagingError && error.code==="TPO_MESSAGE_FORBIDDEN"){
-   return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Messages"/>
+   return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Messages"/>
     <ErrorState title="No access to this college"
      description="Your access to this college has ended or was removed. Ask the placement cell to give it again."
      action={<Link href="/hr/home" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Return to Today</Link>}/>
@@ -68,7 +68,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
  }));
  return <div className="min-w-0 max-w-full space-y-5">
   <RecruiterConversationLiveRefresh/>
-  <PageHeader eyebrow="Recruiter · Conversations" title={conversationSubject}
+  <PageHeader title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
   {driveLookupResult && !driveLookupResult.ok?
     <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-sm text-body">
@@ -113,9 +113,9 @@ export default async function RecruiterConversationDetail({params,searchParams}:
         Review requests, answers and decisions
       </Link>
     </section>:null}
-  <ol aria-label="Employer and placement cell messages" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+  <ol aria-label="Employer and placement cell messages" className="divide-y divide-border border-y border-border">
    {messages.map(message=><li key={message.id}
-    className="rounded-[var(--lms-control-radius)] px-2 py-4 transition-colors hover:bg-[var(--lms-neutral-50)]">
+    className="rounded-[var(--lms-control-radius)] px-4 py-3 transition-colors duration-200 hover:bg-[var(--lms-neutral-50)]">
     <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} · {dateTime(message.createdAt)} IST</p>
     {message.proposal?<div className="mt-2 rounded-[var(--lms-control-radius,9px)] border border-border bg-muted p-3 text-xs text-body">
       <p className="font-semibold text-foreground">Drive proposal · sent as discussion message</p>

@@ -15,7 +15,7 @@ export default async function TpoRecruiterPublicLinkPage() {
   return (
     <div className="space-y-6">
       <TpoSettingsNav active="public-link" />
-      <PageHeader eyebrow="TPO · Settings" title="Public recruiter link" />
+      <PageHeader title="Public recruiter link" />
       <TpoPublicJoinLinkCard initial={initial} scope="COLLEGE" />
     </div>
   );

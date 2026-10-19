@@ -32,7 +32,6 @@ export default async function TpoTrustedCompaniesPage() {
     <div className="space-y-6">
       <TpoSettingsNav active="trusted" />
       <PageHeader
-        eyebrow="TPO · Settings"
         title="Trusted Companies"
         description="Review and confirm changes to college-specific employer trust flags. Trusted email domains are explicit college-scoped entries, separate from company trust flags."
         actions={
