@@ -77,7 +77,7 @@ export function LearnerNotificationBell(){
       className="min-h-11 px-2 text-sm text-primary-text">Close</Button>
    </div>
    {error?<div className="mt-2 space-y-2"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
-    <button type="button" className="inline-flex min-h-11 items-center text-sm text-primary-text underline" onClick={()=>void refresh()}>Retry notifications</button>
+    <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center text-sm text-primary-text underline" onClick={()=>void refresh()}>Retry notifications</Button>
    </div>:null}
    {loading&&!everLoaded?<GracefulPageLoading/>:null}
    {error&&everLoaded?<p className="mt-2 text-xs text-muted-foreground">Showing the last successful notifications.</p>:null}
