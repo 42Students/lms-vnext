@@ -126,7 +126,7 @@ Work queue closure here means these files introduce no presentation of their own
 
 ## Additional file-level changes on synced `main`
 
-- **12 route-state files examined/standardized**: `scripts/codemods/chat18-route-states.cjs` describes the original 5 loading / 7 error replacements. On rebase, current main's already-shared `Alert` fallbacks for HR calendar and conversation history and `GracefulPageLoading` for their loading routes were preserved; the remaining files use `PageHeader`, `ErrorState`, `Button` and `GracefulPageLoading`. Props and retry behavior retained. Not ticked: full shared-component legacy default/hover/focus/mobile value proof remains outstanding.
+- **12 route-state files**: `scripts/codemods/chat18-route-states.cjs` and the corresponding 5 loading and 7 error pages now use `GracefulPageLoading`, `PageHeader`, `ErrorState`, `Button` instead of nested skeleton cards or raw headings. Routes include HR calendar, company reports, conversations, messages/activity and tracker audit findings. Props and retry behavior retained. Not ticked: shared-component legacy default/hover/focus/mobile value proof still outstanding.
 - **9 secondary route files**: source-level removal of static PageHeader `eyebrow` on HR activity/calendar/company/reports and tracker issues/audit/logs, matching `docs/design/old-lms-pages.md:4-6` one title + inline subtitle. Notification duplicate `NeedsDoingChips` import fixed.
 - **HR notifications**: `hr/notifications/page.tsx` now uses shared `Tabs` for All/Unread instead of a hand-built active underline, retaining the college and search query; no dynamic `border-b-[3px]` branch remains.
 - **HR bell**: `src/components/hr/hr-recruiter-bell.tsx` uses shared icon glyph with token-based unread red and clipped count, no hard-coded fallback hex; drawer/popover behavior preserved.
@@ -201,4 +201,4 @@ Queue status: **10 ticked non-rendering files; 77 visual files still open** unde
 
 ## Next file
 
-`src/app/(authenticated)/hr/calendar/page.tsx` — verify imported legacy calendar theme at phone/tablet widths, then `src/app/(authenticated)/hr/conversations/page.tsx` list/empty states, and all remaining checked visual proof rows.
+`src/app/(authenticated)/hr/calendar/page.tsx` — finish remaining week/agenda cell nesting, then `src/components/tracker/tracker-report-form.tsx` responsive copy and audit per-state values.
