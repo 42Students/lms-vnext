@@ -188,17 +188,17 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <p className="break-words text-sm text-body">{row.subtitle}</p>
     {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground">{value}</p>)}
     {renderRowActions?<div className="border-t border-border pt-3">{renderRowActions(row)}</div>:null}
-    {row.href?<Link href={row.href} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open details →</Link>:null}
-    {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{row.secondaryLabel??"Manage →"}</Link>:null}
+    {row.href?<Link href={row.href} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline sm:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open details →</Link>:null}
+    {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline sm:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{row.secondaryLabel??"Manage →"}</Link>:null}
    </article>)}
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
   <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline sm:min-h-9">Clear search</Link>
+    className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline sm:min-h-[var(--lms-control-height)]">Clear search</Link>
   <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
    <div className="flex flex-wrap gap-3">
-    {data.query.page>1?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9">Previous</Link>:null}
-    {data.query.page<data.totalPages?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9">Next</Link>:null}
+    {data.query.page>1?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page-1})} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline sm:min-h-[var(--lms-control-height)]">Previous</Link>:null}
+    {data.query.page<data.totalPages?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page+1})} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline sm:min-h-[var(--lms-control-height)]">Next</Link>:null}
    </div>
   </nav>
  </div>;
