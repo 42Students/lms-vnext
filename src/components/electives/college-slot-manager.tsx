@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 
 
 
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
@@ -105,7 +107,7 @@ export function CollegeSlotManager({ options, row }: {
           <option value="">No period linked</option>
           {options.periods.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </Select></Field>
-        <Field label="Semester number"><input required type="number" min={1} max={Math.min(12, limit)}
+        <Field label="Semester number"><Input required type="number" min={1} max={Math.min(12, limit)}
           className={fieldClass} value={term} onChange={event => setTerm(event.target.value)} /></Field>
         <Field label="Academic year (optional, YYYY-YY)"><Input maxLength={9}
           placeholder="2026-27" className={fieldClass} value={year}
