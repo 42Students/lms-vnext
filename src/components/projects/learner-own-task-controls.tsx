@@ -1,8 +1,8 @@
+"use client";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-"use client";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
