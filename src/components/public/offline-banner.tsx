@@ -21,7 +21,7 @@ export function OfflineBanner() {
   }, []);
   if (!offline) return null;
   return (
-    <div role="alert" className="sticky top-0 z-50 border-b border-error bg-error-subtle px-4 py-3 text-center text-sm text-foreground">
+    <div role="alert" className="sticky top-0 z-50 border-b border-warning bg-warning-subtle px-4 py-3 text-center text-sm font-medium text-foreground shadow-[var(--lms-header-shadow)]">
       You appear to be offline. Check your connection and try again.
     </div>
   );
