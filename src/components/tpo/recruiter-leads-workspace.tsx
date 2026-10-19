@@ -1000,6 +1000,7 @@ export function RecruiterLeadsWorkspace({
               onExportCsv={selected=>exportRows(selected?"selected":"shown","csv")}
               onExportXlsx={selected=>exportRows(selected?"selected":"shown","xlsx")}
               onCopyRows={()=>void copyRows()}>
+              {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
                 sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}
                  showColumns={false}/>
