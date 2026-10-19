@@ -17,8 +17,10 @@ import "./sidebar-legacy.css";
 
 /** Only TPO displays uppercase group words in the legacy shell.
  * Recruiter, learner, faculty and admin lists separate groups with hairlines. */
-function sectionLabel(item:ShellNavItem):string|null{
- if(!item.group||!item.href.startsWith("/tpo/"))return null;
+function sectionLabel(item:ShellNavItem,portal:string):string|null{
+ // A College Admin's one "Placement cell" shortcut points at /tpo/home;
+ // its college sidebar must not suddenly acquire a TPO section heading.
+ if(portal!=="tpo"||!item.group||!item.href.startsWith("/tpo/"))return null;
  return item.group in TPO_SECTION_LABELS
   ?TPO_SECTION_LABELS[item.group as keyof typeof TPO_SECTION_LABELS]
   :null;
@@ -82,7 +84,7 @@ export function SidebarNav({
    const startsNewGroup=Boolean(item.group)&&(index===0||item.group!==previousGroup);
    const active=legacySidebarItemActive(pathname,item,
     superAdminGroup?.title??null,collegeGroup?.title??null);
-   const label=sectionLabel(item);
+   const label=sectionLabel(item,sidebarPortal);
    const count=tpoCounts?tpoItemCount(item.href,tpoCounts):null;
    const badge=count===null?null:shellUnreadBadge(count);
    return <Fragment key={item.href}>
