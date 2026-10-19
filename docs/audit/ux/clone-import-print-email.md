@@ -232,3 +232,45 @@ Responsive source evidence: legacy `@media (max-width:767px)` uses a 44px touch 
 Legacy template discovery: the connected legacy backend `42Students/lms` (`master`, 316 tree items) and frontend `42Students/lms2-fe` (`main`, 783 items) were searched by filename for PDF/print/certificate/letter/receipt/email-template candidates. The frontend contains PDF-viewer components but no named email/offer/certificate template; neither tree supplied an authenticated printed report template. This is filename-level evidence, not a proof that no template exists outside those repositories. Also, all 24 checked-in `docs/design/legacy-styles/*.scss` sources were read and yielded **0** `@media print` or `@page` declarations.
 
 **Strict status:** G4 and G5 stay **[ ]** because their global source coverage, computed visual values, screenshots, printed legacy PDF/letter/receipt/certificate and hosted email HTML are still unavailable. The five entries above mark *scoped source edits/review*, not category parity.
+
+## Replacement lane chat-6 · G4/G5 Super Admin CSV and print pass (2026-10-19)
+
+The replacement lane fast-forwarded `chatgpt/chat-6-b` from `dd845578f6ff97b2d409d8ba81ad2e6fc36a4f15` to current main `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` before writing. The branch had **0** unique commits and was **1,017** behind main; fast-forward preserved the previously merged chat-6 work. These are new scoped source changes, **not** category-level G4 or G5 ticks.
+
+### Work queue · completed source files
+- [x] `src/app/(authenticated)/admin/quizzes/page.tsx` — quiz CSV action: responsive hit area (44px phone / 36px desktop), background hover, 2px focus / 3px offset, brand ring, print suppression; export href/label unchanged.
+- [x] `src/app/(authenticated)/admin/assignments/page.tsx` — matching CSV anchor states and exact 768px touch boundary; export href/label unchanged.
+- [x] `src/components/admin/tenant-directory-csv-control.tsx` — explicit type button, mobile touch target, paper-hidden guarded fetch action.
+- [x] `src/components/admin/admin-scoped-csv-control.tsx` — same Super Admin download action treatments; guard, URL and CSV filename retained.
+- [x] `src/components/courses/admin-assessment-read-directory.tsx` — seven previously `sm:min-h-9` controls/links retargeted to 768px; pagination gains phone 44px, keyboard ring and hover; filters, pager, offering link excluded from paper report.
+- [x] `src/components/admin/admin-scoped-read-page.tsx` — interactive directory filter/refresh and pagination excluded from print; on-screen directory unaffected.
+- [x] `src/app/(authenticated)/admin/tenants/page.tsx` — interactive tenant filters and header actions paper-hidden; tenant records retained.
+- [x] `src/components/admin/super-admin-people-csv-control.tsx` — explicit button type, 44px/36px break, hide download and helper on printed output.
+- [x] `src/components/admin/super-admin-faculty-bulk-import.tsx` — 44px/36px sample/download and submit controls; 44px file picker override; missing `StatusBadge` import restored for existing status cells; sample download anchor attached and released after handoff (no CSV bytes/name changed).
+- [x] `src/components/admin/super-admin-student-import-history.tsx` — responsive history trigger and print exclusion.
+- [ ] **Next exact file:** `src/components/admin/college-bulk-import.tsx` — source-level drop/upload/confirmation, paper exclusion and 44px touch state comparisons, without changing data or handlers.
+
+### Legacy value matrix (G4 and G5 narrow scope, not a global parity claim)
+
+| Property / state | Legacy source/value | vNext source/value | Status |
+|---|---|---|---|
+| Phone tap region through 767px | `docs/design/legacy-styles/pages___admin-list-pages.scss:8,190-214` — `$admin-list-touch-min:44px`, mobile max-width 767px | Quiz CSV `src/app/(authenticated)/admin/quizzes/page.tsx:53`, assignment CSV `.../assignments/page.tsx:52`, admin CSV `src/components/admin/{admin-scoped,tenant-directory,super-admin-people}-csv-control.tsx:21,20,23`: `min-h-11 md:min-h-9` | Source classes match threshold; browser check missing |
+| Large-screen button height | `docs/design/ui-clone-checklist.md:46-47` — 36px observed legacy TPO control | Export links and shared CSV buttons `md:min-h-9`; 36px CSS utility intended | Source match; computed height not measured |
+| Keyboard focus ring | `docs/design/legacy-styles/components___accessibility.scss:18-21` — 2px solid `$teal-text`, 3px offset | Quiz/assignment links `page.tsx:53,52`, directory pager `admin-assessment-read-directory.tsx:107-109`: `outline-2`, `outline-offset-[3px]`, `--lms-primary-text` | Source match conditional on existing token; not tested in browser |
+| Hover state for outlined links | `docs/design/old-lms-pages.md:8` — outlined secondary actions; `docs/design/ui-clone-checklist.md:46-47` shared button states | Quiz/assignment links `page.tsx:53,52`, directory page links `admin-assessment-read-directory.tsx:107-109`: `hover:bg-primary-subtle` | Inherits current token; exact computed legacy hover color unproved |
+| Printed report interaction chrome | Original authenticated legacy `@media print` not supplied in `legacy-styles` | `admin-scoped-read-page.tsx:87,159,197`; `admin-assessment-read-directory.tsx:31,103`; `admin/tenants/page.tsx:53,64`: `print:hidden` | Safe omission only, **G5 value parity unprovable** |
+| Import file picker and results | `docs/design/legacy-styles/pages___admin-list-pages.scss:190-214`: mobile action hit area 44px; original import result visuals absent | `super-admin-faculty-bulk-import.tsx:10,91-111`: FileUpload descendant input 44px/36px, StatusBadge existing outcomes | Partial source match; exact results table/validation states unknown |
+| PDF / receipt / offer / certificate / hosted email | Historical output/templates and ZeptoMail HTML not present | Unchanged existing PDF stream / templates | **G5 remains OPEN** |
+
+### Coverage proof (SCOPED; no app or CI run)
+
+All ten source files above were re-fetched from `chatgpt/chat-6-b` after the commits and checked by source regex equivalent to `/<button(?=[\\s>])/`, `/<select(?=[\\s>])/` and `/#[0-9a-fA-F]{3,8}\\b/`. Across the ten fetched files: **0 native button tags**, **0 native select tags**, **0 hard-coded hex literals**. These checks cover exactly the ten listed files, **not** the repository. Link/JSX edits were all matched with exact single-occurrence strings and re-fetched byte-for-byte; shared `src/components/ui/*` files are unchanged.
+
+Reproducible checkout commands still owed for STRICT TICK RULE:
+```sh
+grep -rlE '<button[ >]' src --include='*.tsx'
+grep -rlE '<(select|textarea)[ >]' src --include='*.tsx'
+grep -rlE '<table[ >]' src --include='*.tsx'
+grep -rlE '#[[:xdigit:]]{3,8}' src --include='*.tsx'
+```
+**No tests, TypeScript, lint, CI, application, responsive browser or actual print render were executed.** G4 and G5 remain `[ ]` until exhaustive legacy value/state tables, whole-repository source scans, computed styles, and genuine historical PDF/email/print output are available. No parity checkmark asserted.
