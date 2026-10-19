@@ -106,13 +106,13 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <textarea value={csv} onChange={event => {
           setCsv(event.target.value); setReport(null); setConfirm(false);
         }} rows={8} spellCheck={false}
-          className="w-full rounded-md border border-border bg-surface p-3 font-mono text-xs text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm" />
+          className="w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 font-mono text-xs text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm" />
       </label>
       <button type="button" disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => guardRun(async () => {
         try { await submit("PREVIEW"); } catch (reason) {
           setError(reason instanceof Error ? reason.message : "Validation failed");
         }
-      })} className="mt-4 min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      })} className="mt-4 min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         {pending ? "Validating..." : "Preview validation"}
       </button>
       {error ? <p role="alert" className="mt-3 text-sm text-error">{error}</p> : null}
@@ -155,7 +155,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
               setError(reason instanceof Error ? reason.message : "Import failed");
             }
           })}
-          className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           {pending ? "Importing..." : "Confirm import of validated rows"}
         </button>
       </div> : null}
