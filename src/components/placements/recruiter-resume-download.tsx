@@ -31,7 +31,7 @@ export function RecruiterResumeDownload({jobId,applicationId}:{jobId:string;appl
  }
  return <div className="space-y-1">
   <button type="button" onClick={()=>void openResume()} disabled={pending}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50">
    {pending?"Preparing resume…":"Open shared resume"}
   </button>
   {message?<p role="status" className="text-xs text-body">{message}</p>:null}
