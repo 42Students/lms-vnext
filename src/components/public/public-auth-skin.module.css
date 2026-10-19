@@ -35,3 +35,23 @@
 .page :global([data-slot="card"]) {
   box-shadow: 0 18px 48px rgba(23, 32, 51, .05);
 }
+
+/* Shared entry pages such as recruiter invitations and unsubscribe confirmations
+   do not render the sign-in header. Keep the same legacy brand mark visible
+   without moving the existing verification form or changing its behavior. */
+.page::after {
+  content: "";
+  position: fixed;
+  z-index: 1;
+  top: 24px;
+  left: clamp(16px, 4vw, 64px);
+  width: 151px;
+  height: 37px;
+  pointer-events: none;
+  background: url("/assets/images/legacy-42lms-logo.svg") left center / contain no-repeat;
+}
+.page:has(form), .page:has([role="alert"]) { padding-top: max(72px, env(safe-area-inset-top)); }
+@media (max-width: 640px) {
+  .page::after { top: 16px; left: 20px; }
+  .page { padding-top: max(66px, env(safe-area-inset-top)); }
+}
