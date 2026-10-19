@@ -33,7 +33,7 @@ export function paginationWindow(page: number, pageCount: number): number[] {
 function safePageHref(hrefForPage: PaginationProps["hrefForPage"], target: number): string | null {
   try {
     const href = hrefForPage(target);
-    return typeof href === "string" && href ? href : null;
+    return typeof href === "string" && isSafeInternalHref(href) ? href : null;
   } catch {
     return null;
   }
@@ -61,7 +61,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
           <span aria-disabled="true" className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>1</span>}
         {firstShown > 2 ? <span aria-hidden="true" className="hidden px-1 text-[var(--lms-neutral-500)] md:inline-flex">…</span> : null}
       </> : null}
-      {pageLinks.map(({item,href}) => isSafeInternalHref(href) ?
+      {pageLinks.map(({item,href}) => href ?
         <Link key={item} href={href}
           aria-label={`Page ${item} of ${total}`}
           aria-current={item === current ? "page" : undefined}
