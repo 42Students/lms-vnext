@@ -157,14 +157,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         href:hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,
           unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:item.value,page:1}),
       }))} />
-   <nav aria-label="Conversation status" className="flex flex-wrap gap-3 border-b border-border">
-    <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"false",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}
-     aria-current={parsed.data.unreadOnly==="false"?"page":undefined}
-     className={parsed.data.unreadOnly==="false" ? "inline-flex min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>All</Link>
-    <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"true",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}
-     aria-current={parsed.data.unreadOnly==="true"?"page":undefined}
-     className={parsed.data.unreadOnly==="true" ? "inline-flex min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>Unread</Link>
-   </nav>
+   <Tabs ariaLabel="Conversation status" renderPanel={false} value={parsed.data.unreadOnly}
+      items={(["false","true"] as const).map(value=>({
+        value, label:value==="false"?"All":"Unread",
+        href:hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,
+          unreadOnly:value,sort:parsed.data.sort,scope:parsed.data.scope,page:1}),
+      }))} />
    <p role="status" className="text-sm text-body">
     {result.unreadInView} unread placement cell messages in these conversations
    </p>
