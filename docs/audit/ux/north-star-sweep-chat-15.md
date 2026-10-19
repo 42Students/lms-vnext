@@ -78,7 +78,7 @@ The source audit and commits are complete. Exact pixel parity **cannot be certif
 
 ## 2026-10-19 follow-up: value-level HR/recruiter parity pass
 
-The original source sweep was rechecked after chat-17 shared skin and canvas changes. The earlier "source complete" status did not mean all native controls, tab states and nested page surfaces were pixel-aligned. This follow-up made **30 additional file-level commits** tagged `[chat-15]` across **28 distinct implementation files** (five commits have already been integrated into `main` by the orchestrator). After these edits, `origin/main` was merged into `chatgpt/chat-15-b` with a separate tagged merge commit, without pushing to `main`. The merge preserved unrelated changes from 156 incoming paths and retained this lane's 23 then-unmerged edited paths. No CI, TypeScript execution or browser tests were run.
+The original source sweep was rechecked after chat-17 shared skin and canvas changes. The earlier "source complete" status did not mean all native controls, tab states and nested page surfaces were pixel-aligned. This follow-up made **30 additional file-level commits** tagged `[chat-15]` across **27 distinct implementation files** (five commits have already been integrated into `main` by the orchestrator). After these edits, `origin/main` was merged into `chatgpt/chat-15-b` with a separate tagged merge commit, without pushing to `main`. The merge preserved unrelated changes from 156 incoming paths and retained this lane's 23 then-unmerged edited paths. No CI, TypeScript execution or browser tests were run.
 
 | File (path relative to `src/`) | Follow-up source treatment |
 |---|---|
@@ -109,7 +109,6 @@ The original source sweep was rechecked after chat-17 shared skin and canvas cha
 | `components/placements/recruiter-resume-download.tsx` | Resume link action 36px instead of 40px |
 | `components/placements/recruiter-interview-slot-form.tsx` | Slot form shared Select/Input use 14px text |
 | `components/placements/recruiter-placement-portfolio.tsx` | Recruiter card secondary actions 36px instead of 40px |
-| `components/hr/recruiter-notification-bell.tsx` | Existing popover scroll and unread badges preserved |
 
 **Intentionally unchanged:** per-job portfolio objects, per-candidate editor/offer cards, avatars, status pills, warning banners, notification dropdown overlays, and modal layers retain distinct contained surfaces. Recruiter route aliases still delegate to canonical HR pages. Shared UI, shell, and global CSS remain with their owning lanes. Page content, labels, form behavior, and route handlers were not deliberately changed.
 
