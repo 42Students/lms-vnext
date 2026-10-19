@@ -59,6 +59,16 @@
   padding: 12px 20px max(12px, env(safe-area-inset-bottom));
   background: var(--lms-neutral-50);
 }
+[data-slot="info-popover"] [role="tooltip"] {
+  background: #1a1d21;
+  border-radius: 8px;
+  min-height: 27px;
+  padding: 6px 16px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+}
 [data-slot="dropdown"] {
   box-shadow: 9px 11px 28px rgba(0, 0, 0, .1);
   border-radius: 6px;
