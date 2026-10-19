@@ -1,5 +1,6 @@
 import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
 import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-model";
 import {mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
@@ -277,28 +278,11 @@ export function ProjectWorkspace({
         <span aria-current="page">{workspace.project.title}</span>
       </nav> : null}
       {sectionBaseHref ? (
-        <nav
-          aria-label="Project workspace sections"
-          className="flex max-w-full gap-2 overflow-x-auto border-b border-border pb-3 focus-visible:outline-2" tabIndex={0}
-        >
-          {PROJECT_WORKSPACE_SECTIONS.map((section) => (
-            <Link
-              key={section}
-              href={sectionBaseHref + "/" + section + sectionQuerySuffix}
-              aria-current={
-                activeSection === section ? "page" : undefined
-              }
-              className={
-                "whitespace-nowrap border-b-[3px] px-3 py-2 text-[14px] font-[650] transition " +
-                (activeSection === section
-                  ? "border-primary bg-primary-subtle text-link"
-                  : "border-transparent text-body hover:bg-primary-subtle hover:text-link")
-              }
-            >
-              {PROJECT_WORKSPACE_SECTION_LABELS[section]}
-            </Link>
-          ))}
-        </nav>
+        <Tabs ariaLabel="Project workspace sections" renderPanel={false} value={activeSection}
+          items={PROJECT_WORKSPACE_SECTIONS.map(section=>({
+            value:section, label:PROJECT_WORKSPACE_SECTION_LABELS[section],
+            href:sectionBaseHref+"/"+section+sectionQuerySuffix,
+          }))} />
       ) : null}
 
       <PageHeader
