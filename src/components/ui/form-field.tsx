@@ -6,21 +6,22 @@ export type FormFieldProps = {
   required?: boolean;
   helper?: string;
   error?: string | null;
-  children: (field: { id: string; required: boolean | undefined; "aria-invalid": boolean | undefined; "aria-describedby": string | undefined }) => ReactNode;
+  children: (field: { id: string; required: boolean | undefined; "aria-invalid": boolean | undefined; "aria-describedby": string | undefined; "aria-errormessage": string | undefined }) => ReactNode;
 };
 
 /** Owns visible labels and error descriptions for native Input/Select/Textarea. */
 export function FormField({ id, label, required = false, helper, error, children }: FormFieldProps) {
   const describedBy = [helper ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean).join(" ") || undefined;
-  const rendered = children({ id, required: required || undefined, "aria-invalid": error ? true : undefined, "aria-describedby": describedBy });
+  const rendered = children({ id, required: required || undefined, "aria-invalid": error ? true : undefined, "aria-describedby": describedBy, "aria-errormessage": error ? `${id}-error` : undefined });
   // Apply the accessible relation at the container boundary even if a caller
   // forgets to spread the render-function props. Fragments cannot receive IDs.
-  const associated = isValidElement<{id?:string; required?:boolean; "aria-invalid"?: boolean; "aria-describedby"?: string}>(rendered) &&
+  const associated = isValidElement<{id?:string; required?:boolean; "aria-invalid"?: boolean; "aria-describedby"?: string; "aria-errormessage"?: string}>(rendered) &&
     rendered.type !== Fragment
     ? cloneElement(rendered, {
         id,
         required: required || rendered.props.required || undefined,
         "aria-invalid": error ? true : rendered.props["aria-invalid"],
+        "aria-errormessage": error ? `${id}-error` : rendered.props["aria-errormessage"],
         "aria-describedby": [...new Set([
           ...(rendered.props["aria-describedby"]?.split(/\s+/) ?? []),
           ...(describedBy?.split(/\s+/) ?? []),
