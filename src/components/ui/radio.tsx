@@ -6,5 +6,5 @@ export type RadioProps = Omit<ComponentPropsWithRef<"input">, "type">;
 /** Native radio grouping, checked, disabled and focus behaviour. */
 export function Radio({ className, ...props }: RadioProps) {
   return <input {...props} type="radio" data-slot="radio"
-    className={cx("h-5 w-5 shrink-0 cursor-pointer rounded-full border border-[#d6dbe3] accent-[#26bac7] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none", className)} />;
+    className={cx("h-5 w-5 shrink-0 cursor-pointer rounded-full border border-[var(--lms-neutral-300)] accent-[var(--lms-primary)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none", className)} />;
 }

@@ -89,7 +89,7 @@ export default async function TpoWhatCompaniesSeePage() {
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4">
+          <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
             <p className="text-xs font-semibold text-muted-foreground">
               Sharing flags enabled
             </p>
@@ -98,7 +98,7 @@ export default async function TpoWhatCompaniesSeePage() {
             </p>
           </div>
 
-          <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4">
+          <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
             <p className="text-xs font-semibold text-muted-foreground">
               Sharing flags disabled
             </p>
@@ -180,7 +180,7 @@ export default async function TpoWhatCompaniesSeePage() {
 
       <section
         aria-label="Company visibility methodology"
-        className="border-t border-border bg-surface-subtle pt-4 text-sm leading-6 text-body"
+        className="border-t border-border pt-4 text-sm leading-6 text-body"
       >
         <h3 className="m-0 text-sm font-semibold text-foreground">
           How these settings work
