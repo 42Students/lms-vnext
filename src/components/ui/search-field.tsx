@@ -3,7 +3,7 @@ import { useRef, type ComponentPropsWithRef, type FormEvent } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
 import { cx } from "@/lib/class-names";
-export type SearchFieldProps = Omit<ComponentPropsWithRef<"input">,"type"> & {
+export type SearchFieldProps = Omit<ComponentPropsWithRef<"input">,"type"|"onSearch"> & {
   onSearch: (query: string) => void;
   buttonLabel?: string;
   wrapperClassName?: string;
