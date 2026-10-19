@@ -55,7 +55,6 @@ export default async function LearnerAssessmentResultsPage({
         ← Assessment schedule
       </Link>
       <PageHeader
-        eyebrow="My Placements · Assessments"
         title="Official assessment results"
         description="Only placement-team-applied test outcomes from your own applications. A scheduled or submitted assessment is not a published result."
       />
