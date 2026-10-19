@@ -42,7 +42,7 @@ export default async function TrackerIssuesPage({
           description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
         />
         <TrackerAdminNav />
-        <div role="status" className="rounded-xl border border-border bg-surface p-6">
+        <div role="status" className="border-y border-border py-6">
           <p className="m-0 font-semibold text-foreground">Tracker database is not enabled.</p>
           <p className="mt-2 text-sm text-body">
             Apply and verify migration 0076, then explicitly set DB10_TRACKER_READY=DB10_VERIFIED before enabling these issue reads.
@@ -58,7 +58,7 @@ export default async function TrackerIssuesPage({
         <PageHeader eyebrow="42 Tracker" title="Issues" description="Review and triage reported LMS issues." />
         <TrackerAdminNav />
         <ErrorState title="Invalid issue filter." description="Review and triage reported LMS issues."
-          action={<Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline" href="/tracker/issues">
+          action={<Link className="inline-flex min-h-9 items-center font-semibold text-primary-text underline" href="/tracker/issues">
             Reset filters
           </Link>}/>
       </div>
@@ -80,7 +80,7 @@ export default async function TrackerIssuesPage({
   }
 
   const inputClass =
-    "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:text-sm";
+    "min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
 
   return (
     <div className="space-y-6">
@@ -99,7 +99,7 @@ export default async function TrackerIssuesPage({
         sort:current.sort,
       }).toString()} />
 
-      <form className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 xl:grid-cols-5">
+      <form className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-5">
         <label className="text-xs font-semibold text-body">
           Search
           <input className={inputClass} name="q" defaultValue={current.q ?? ""} placeholder="Search ID, description or page" />
@@ -138,7 +138,7 @@ export default async function TrackerIssuesPage({
         </label>
         <div className="flex items-end gap-2 sm:col-span-2 xl:col-span-5">
           <Button type="submit" variant="primary">Apply filters</Button>
-          <Link href="/tracker/issues" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          <Link href="/tracker/issues" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             Reset
           </Link>
         </div>
@@ -148,7 +148,7 @@ export default async function TrackerIssuesPage({
 
       {page.items.length === 0 ? (
         <EmptyState title="No matching issues." description="Review and triage reported LMS issues."
-          action={<Link href="/tracker/issues" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Reset</Link>}/>
+          action={<Link href="/tracker/issues" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Reset</Link>}/>
       ) : (
         <div className="grid gap-3">
           {page.items.map((issue) => (
@@ -161,7 +161,7 @@ export default async function TrackerIssuesPage({
                     <StatusBadge>{issue.environment}</StatusBadge>
                   </div>
                   <h2 className="mt-3 text-base font-semibold text-foreground">
-                    <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
+                    <Link className="inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
                       {issue.publicId} · {issue.issueType}
                     </Link>
                   </h2>
@@ -172,7 +172,7 @@ export default async function TrackerIssuesPage({
                 </div>
                 <Link
                   href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}
-                  className="inline-flex min-h-11 shrink-0 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+                  className="inline-flex min-h-9 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                 >
                   Open issue
                 </Link>
@@ -186,7 +186,7 @@ export default async function TrackerIssuesPage({
         <div className="flex justify-center">
           <Link
             href={"/tracker/issues?" + next.toString()}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
           >
             {current.sort === "newest" ? "Older issues" : "Newer issues"}
           </Link>

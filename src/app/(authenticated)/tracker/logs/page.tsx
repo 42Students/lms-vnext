@@ -83,7 +83,7 @@ export default async function TrackerLogsPage({
       <div className="space-y-6">
         {header}
         <ErrorState title="Invalid log environment." description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
-          action={<Link href="/tracker/logs" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+          action={<Link href="/tracker/logs" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
             Reset filter
           </Link>}/>
       </div>
@@ -98,17 +98,17 @@ export default async function TrackerLogsPage({
   return (
     <div className="space-y-6">
       {header}
-      <nav aria-label="Log environment" className="flex flex-wrap gap-2">
+      <nav aria-label="Log environment" className="flex flex-wrap gap-3 border-b border-border">
         {(["PRODUCTION", "UAT", "DEVELOPMENT"] as const).map((value) => (
           <Link
             key={value}
             href={"/tracker/logs?environment=" + value}
             aria-current={environment === value ? "page" : undefined}
             className={
-              "inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] " +
+              "inline-flex min-h-9 items-center border-b-[3px] px-3 py-2 text-[13px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] " +
               (environment === value
-                ? "border-[var(--lms-teal-deep)] bg-primary-subtle text-foreground"
-                : "border-border bg-surface text-foreground")
+                ? "border-primary text-foreground"
+                : "border-transparent text-body hover:text-primary-text")
             }
           >
             {value}

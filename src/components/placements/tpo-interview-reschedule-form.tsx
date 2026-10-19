@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {useRef,useState,type FormEvent} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useRouter} from "next/navigation";
@@ -29,26 +33,26 @@ export function TpoInterviewRescheduleForm({round}:{
   }catch(e){setError(e instanceof Error?e.message:"Interview reschedule failed");}
   finally{setPending(false);}
  }
- const field="mt-1 min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface p-2 text-foreground";
+ const field="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-foreground";
  function askToReschedule(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(!pending)setConfirmOpen(true);
  }
  return <><form ref={formRef} onSubmit={askToReschedule} className="mt-4 grid gap-3 border-t border-border pt-4 sm:grid-cols-2">
   <label className="text-sm text-body">New interview time (IST)
-   <input required type="datetime-local" name="localDateTime" defaultValue={initial} className={field}/></label>
+   <Input required type="datetime-local" name="localDateTime" defaultValue={initial} className={field}/></label>
   <label className="text-sm text-body">Mode
-   <select name="mode" defaultValue={round.mode??"ON_CAMPUS"} className={field}>
+   <Select name="mode" defaultValue={round.mode??"ON_CAMPUS"} className={field}>
     <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
-   </select></label>
+   </Select></label>
   <label className="text-sm text-body">Venue (for on-campus)
-   <input name="venue" defaultValue={round.venue??""} className={field} maxLength={500}/></label>
+   <Input name="venue" defaultValue={round.venue??""} className={field} maxLength={500}/></label>
   <label className="text-sm text-body">Meeting URL (for virtual)
-   <input name="meetingUrl" type="url" defaultValue={round.meetingUrl??""} className={field}/></label>
+   <Input name="meetingUrl" type="url" defaultValue={round.meetingUrl??""} className={field}/></label>
   <label className="text-sm text-body sm:col-span-2">Reason (audited)
-   <textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={field}/></label>
+   <Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={field}/></label>
   {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
-  <button type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50 sm:col-span-2 text-primary-foreground">
-    {pending?"Rescheduling…":"Confirm interview reschedule"}</button>
+  <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50 sm:col-span-2 text-primary-foreground">
+    {pending?"Rescheduling…":"Confirm interview reschedule"}</Button>
  </form><ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
   title="Reschedule this interview?"
   description="Venue occupancy and version will be checked before saving, and the change is audited."

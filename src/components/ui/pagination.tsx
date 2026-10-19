@@ -33,7 +33,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
   const previousHref = current > 1 ? hrefForPage(current - 1) : null;
   const nextHref = current < total ? hrefForPage(current + 1) : null;
   const pageLinks = paginationWindow(current, total).map(item=>({item,href:hrefForPage(item)}));
-  const buttonClass = "inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 text-[14px] font-semibold leading-5 text-[#54505d] hover:border-[#26bac7] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7]";
+  const buttonClass = "inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none";
   return (
     <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]", className)}>
       {!previousHref || !isSafeInternalHref(previousHref) ?
@@ -44,7 +44,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
         <Link key={item} href={href}
           aria-label={`Page ${item} of ${total}`}
           aria-current={item === current ? "page" : undefined}
-          className={cx(buttonClass, item === current ? "border-[var(--lms-primary)] bg-primary-subtle text-primary-text" : "hidden md:inline-flex hover:bg-primary-subtle")}>
+          className={cx(buttonClass, item === current ? "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]" : "hidden md:inline-flex hover:bg-[var(--lms-primary-subtle)]")}>
           {item}
         </Link> :
         <span key={item} aria-disabled="true" aria-label={`Page ${item} unavailable`}

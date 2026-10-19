@@ -144,7 +144,12 @@ export default async function AuthenticatedLayout({
       adminScopeChoices={shellData.adminScopeChoices}
     >
       <SessionResponseGuard />
-      <PageCanvas className="lms-authenticated-canvas" data-authenticated-canvas="true">
+      {/* One legacy white canvas encloses every authenticated page and notice. */}
+      <PageCanvas
+        className="lms-authenticated-canvas"
+        data-authenticated-canvas="true"
+        data-lms-page-surface="legacy-single-canvas"
+      >
         <Suspense fallback={null}><PortalAccessNotice /></Suspense>
         <ConnectionFailureNotice />
         {children}

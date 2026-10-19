@@ -55,7 +55,7 @@ export default async function TpoCalendarExportPage({
         Preview range
       </Button>
     </form>
-    {!parsed.success ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 text-sm text-body">
+    {!parsed.success ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">
       Invalid date range. Select real IST dates with a maximum inclusive span of 93 days.
     </p> : result ? <section className="space-y-4">
       <p className="text-sm text-body">
@@ -64,7 +64,7 @@ export default async function TpoCalendarExportPage({
           ? " More than 500 matched: this export is truncated, narrow the range."
           : ""}
       </p>
-      {result.rows.length === 0 ? <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
+      {result.rows.length === 0 ? <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">
         No future scheduled rounds were found in this college for the chosen dates.
         Unscheduled, cancelled, completed and non-published drives are not inferred.
       </p> : null}

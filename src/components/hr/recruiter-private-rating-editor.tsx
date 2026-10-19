@@ -65,13 +65,13 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
  }
  const dirty=rating!==saved.rating||note!==saved.note;
  return <form onSubmit={event=>void save(event)}
-  className="mt-5 space-y-3 rounded-lg border border-border bg-surface-secondary p-4">
+  className="mt-5 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
   <h4 className="font-semibold text-foreground">Your private rating</h4>
   <p className="text-xs text-body">Only you can read or change this rating and note.</p>
   <label className="grid gap-1 text-sm text-body">Your rating
    <select value={rating===null?"":String(rating)} disabled={!ready||pending}
     onChange={event=>setRating(event.target.value===""?null:Number(event.target.value))}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     <option value="">Not rated</option>
     {[1,2,3,4,5].map(value=><option key={value} value={value}>{value} / 5</option>)}
    </select>
@@ -79,13 +79,13 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   <label className="grid gap-1 text-sm text-body">Your note
    <textarea value={note} maxLength={1000} rows={3} disabled={!ready||pending}
     onChange={event=>setNote(event.target.value)}
-    className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
+    className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/>
   </label>
   <p className="text-xs text-muted-foreground">{note.length}/1000 characters</p>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   <div className="flex flex-wrap gap-2">
    <button type="submit" disabled={!ready||!dirty||pending}
-    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
     {pending?"Saving…":"Save private review"}</button>
    <button type="button" disabled={!ready||pending||(rating===null&&!note)}
     onClick={()=>void save(undefined,true)}

@@ -59,7 +59,7 @@ export function TpoCompanyFeedbackForm({
       <label className="block text-sm font-medium text-foreground">
         Linked contact
         <select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
-          className="mt-1 w-full rounded-[9px] border border-border bg-surface p-2">
+          className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
           {contacts.map((item) => (
             <option key={item.id} value={item.id}>{item.name}</option>
           ))}
@@ -69,15 +69,15 @@ export function TpoCompanyFeedbackForm({
         Feedback / meeting note
         <textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           rows={4} maxLength={2000}
-          className="mt-1 w-full rounded-[9px] border border-border bg-surface p-2" />
+          className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
       </label>
-      {reviewing?<div role="group" aria-label="Review recruiter feedback" className="rounded-lg border border-border p-3 text-sm">
+      {reviewing?<div role="group" aria-label="Review recruiter feedback" className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
         <p>Record this internal recruiter note? New CRM contacts become CONTACTED when an activity is logged.</p>
         <button type="button" className="mt-2 text-[var(--lms-teal-deep)] underline" onClick={()=>setReviewing(false)}>Cancel review</button>
       </div>:null}
       <button type="button" disabled={busy || !leadId || note.trim().length < 3}
         onClick={() => void save()}
-        className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50">
+        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50">
         {busy ? "Saving note..." : reviewing?"Confirm note save":"Review and save note"}
       </button>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}

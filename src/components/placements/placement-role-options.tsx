@@ -42,7 +42,7 @@ const emptyDraft: RoleDraft = {
   maximumAnnualCtcInr: "",
 };
 
-const inputClass = "min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
 
 function humanize(value: string) {
   return value
@@ -288,7 +288,7 @@ export function PlacementRoleOptions({
         {activeRoles.map((role) => (
           <article
             key={role.id}
-            className="rounded-lg border border-border bg-muted p-4"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>

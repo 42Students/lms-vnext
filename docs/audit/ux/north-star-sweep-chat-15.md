@@ -1,6 +1,6 @@
 # Chat-15 — North Star old-LMS visual parity sweep (HR / Recruiter)
 
-Status: SOURCE SWEEP COMPLETE — screenshot verification pending · 2026-10-19 · owner: chat-15 · branch `chatgpt/chat-15-b`
+Status: SOURCE RE-AUDIT COMPLETE — screenshot verification pending · 2026-10-19 · owner: chat-15 · branch `chatgpt/chat-15-b`
 
 ## Binding reference and non-goals
 
@@ -75,3 +75,64 @@ All `recruiter/{home,drives,calendar,colleges,company,messages,profile}` aliases
 ### Visual verification remaining
 
 The source audit and commits are complete. Exact pixel parity **cannot be certified without side-by-side authenticated browser screenshots**, especially at desktop 1280×800 and phone widths, for Home, Drives, Job detail, Calendar, Messages, Company, and Profile. No CI, typecheck, snapshots or browser tests were run, as ordered. This audit is a source-completion record, not a claim that the final browser pixels have been independently verified.
+
+## 2026-10-19 follow-up: value-level HR/recruiter parity pass
+
+The original source sweep was rechecked after chat-17 shared skin and canvas changes. The earlier "source complete" status did not mean all native controls, tab states and nested page surfaces were pixel-aligned. This follow-up made **30 additional file-level commits** tagged `[chat-15]` across **27 distinct implementation files** (five commits have already been integrated into `main` by the orchestrator). After these edits, `origin/main` was merged into `chatgpt/chat-15-b` with a separate tagged merge commit, without pushing to `main`. The merge preserved unrelated changes from 156 incoming paths and retained this lane's 23 then-unmerged edited paths. No CI, TypeScript execution or browser tests were run.
+
+| File (path relative to `src/`) | Follow-up source treatment |
+|---|---|
+| `app/(authenticated)/hr/activity/page.tsx` | Event-type active underline, 36px export/college links, divide-y activity rows |
+| `app/(authenticated)/hr/home/page.tsx` | Ordinary Today sections become whitespace and hairline separators; keep distinct Next up panel and action tiles |
+| `app/(authenticated)/hr/drives/page.tsx` | Legacy 13px/3px lifecycle underline tabs; remove redundant empty-state card frames |
+| `app/(authenticated)/hr/drives/proposals/page.tsx` | Single-canvas search region, 14px native inputs, hairline proposal list and empty state |
+| `app/(authenticated)/hr/drives/[jobId]/messages/page.tsx` | Flatten ordinary drive discussion wrapper and repeated message-row cards |
+| `app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx` | Compact 14px native controls, 650/white primary buttons, flat empty state |
+| `app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx` | 14px/650 primary removal action |
+| `app/(authenticated)/hr/calendar/page.tsx` | Calendar grid border integrated with white page instead of a second full card |
+| `app/(authenticated)/hr/company/page.tsx` | Consistent 13px/3px Company/Team active underline |
+| `app/(authenticated)/hr/company/reports/page.tsx` | Flat funnel section; 13px/3px selected and unselected Reports cross-tabs |
+| `app/(authenticated)/hr/notifications/page.tsx` | Empty state uses hairline rows, no nested panel |
+| `app/(authenticated)/hr/profile/page.tsx` | Account and access table sections stop creating a duplicate page canvas |
+| `app/(authenticated)/hr/round-results/page.tsx` | Hiring round and outcome tabs match the old underline rather than pills |
+| `app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | Overview/Applicants/Rounds/Offers/Requests/Discussion tabs use active underline; discussion loses full-page inner card |
+| `components/hr/hr-drive-draft-form.tsx` | 36px confirmation actions; preserve multiline job description height despite 36px single-line controls |
+| `components/hr/recruiter-round-inline-editor.tsx` | 14px secondary actions and 14px/650 primary |
+| `components/hr/recruiter-profile-details-editor.tsx` | Remove native `rounded` 4px styles; use control-radius token, 14px text, visible focus and white primary |
+| `components/hr/recruiter-display-name-editor.tsx` | Cancel is 36px; 650 CTA weight and focus-visible fields |
+| `components/hr/recruiter-designation-editor.tsx` | Field focus and 650-weight primary |
+| `components/hr/recruiter-drive-focus-refresh.tsx` | Refresh CTA now 36px and 14px text |
+| `components/hr/recruiter-private-rating-editor.tsx` | Select and note use 14px shared focus/radius; primary review action 650/white |
+| `components/hr/recruiter-notification-bell.tsx` | Compact dropdown close, retry, see-all controls |
+| `components/placements/placement-recruiter-access.tsx` | Explicit 9px hardcoded/44px form controls replaced by shared radius/36px fields |
+| `components/placements/recruiter-result-controls.tsx` | 36px/14px bulk outcome actions, 650/white primary and flat no-rounds state |
+| `components/placements/recruiter-resume-download.tsx` | Resume link action 36px instead of 40px |
+| `components/placements/recruiter-interview-slot-form.tsx` | Slot form shared Select/Input use 14px text |
+| `components/placements/recruiter-placement-portfolio.tsx` | Recruiter card secondary actions 36px instead of 40px |
+
+**Intentionally unchanged:** per-job portfolio objects, per-candidate editor/offer cards, avatars, status pills, warning banners, notification dropdown overlays, and modal layers retain distinct contained surfaces. Recruiter route aliases still delegate to canonical HR pages. Shared UI, shell, and global CSS remain with their owning lanes. Page content, labels, form behavior, and route handlers were not deliberately changed.
+
+**Verification boundary:** textual source checks and specific follow-up inspections only. Actual 1280×800 desktop and narrow/mobile screenshot comparison is still outstanding; no successful typecheck, visual diff, CI, or runtime certification is claimed.
+
+## 2026-10-19 follow-up: tracker portal and component parity
+
+The lane assignment includes tracker pages, which are a separate authenticated `/tracker` route tree and were omitted from the earlier HR/recruiter-only inventory. They have now received **25 additional `[chat-15]` file commits across 23 distinct tracker implementation files**. The edits use inherited `PageCanvas` rather than nested page cards, 36px/9px controls, 14px input/button text, `text-primary-text` links, white text on teal actions, and 13px/3px active underline navigation. Status pills, genuine recurring issue and attachment objects, logs, modal dialogs and behavior are preserved.
+
+| Surface | Paths updated |
+|---|---|
+| Landing and report history | `src/app/(authenticated)/tracker/page.tsx`, `mine/page.tsx`, `mine/[publicId]/page.tsx` |
+| Admin issue directory and detail | `src/app/(authenticated)/tracker/issues/page.tsx`, `issues/[publicId]/page.tsx` |
+| Logs | `src/app/(authenticated)/tracker/logs/page.tsx` |
+| Independent audit list and detail | `src/app/(authenticated)/tracker/audit-findings/page.tsx`, `audit-findings/[publicId]/page.tsx` |
+| Tracker shell nav, page theme and quick report | `src/components/tracker/tracker-admin-nav.tsx`, `tracker-theme-toggle.tsx`, `tracker-quick-report-launcher.tsx` |
+| User report and issue actions | `src/components/tracker/tracker-report-form.tsx`, `tracker-issue-bulk-actions.tsx`, `tracker-issue-saved-views.tsx`, `tracker-issue-copy-actions.tsx`, `tracker-issue-logs-panel.tsx`, `tracker-workflow-panel.tsx` |
+| Logs, Known Errors and alerts | `src/components/tracker/tracker-live-logs-explorer.tsx`, `known-errors-workspace.tsx`, `tracker-telegram-manual-panel.tsx` |
+| Independent finding controls | `src/components/tracker/independent-finding-actions.tsx`, `audit-finding-status-action.tsx`, `independent-finding-copy-action.tsx` |
+
+The filter-memory and persistence helpers contain no competing visual styling and remain unchanged. Source-only verification; browser screenshots, runtime/typecheck and CI are intentionally not run. Any remaining pixel deviations must be resolved against authenticated desktop/mobile screenshots by the later visual verification owner.
+
+## Final textual cleanup (no runtime execution)
+
+Ten additional `[chat-15]` file edits followed the tracker inventory (nine tracker file edits and one recruiter activity tab fix), bringing this pass to **65 file-edit commits** in total: **31 HR/recruiter edits** and **34 tracker edits**. The follow-up corrected the tracker Logs active environment tab, native report-form control radii, bulk status select typography, live-log input radius, issue screenshots/empty sections, independent finding import status, tracker quick-report control height, similar-issue radius, and recruiter Activity tab sizing. All route delegates and operational behavior were retained.
+
+A source-only pass verified that explicit `min-h-10`/`min-h-11` control classes, `rounded-md` control overrides, and raw deep-teal link colors in the inspected tracker TSX paths were replaced, excluding intentionally independent cards, badges and alerts. `src/components/tracker/audit-finding-filter-memory.tsx` and `audit-finding-filter-persistence.tsx` are nonvisual helpers. The scope still needs authenticated screenshot comparison and independent TypeScript verification; **no tests, typecheck, CI or dev server were run**.

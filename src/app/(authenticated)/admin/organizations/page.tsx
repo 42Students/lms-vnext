@@ -100,9 +100,9 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         Archived organizations · {archived.length} shown
        </summary>
        <p className="mt-2 text-xs text-muted-foreground">Restoring an organization does not restore archived colleges. Only the first 200 records in your safety scope are shown.</p>
-       <ul className="mt-3 grid gap-2">
+       <ul className="mt-3 divide-y divide-border border-y border-border">
         {archived.map(organization=><li key={organization.id}
-         className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+         className="flex flex-wrap items-center justify-between gap-3 py-3">
          <span className="break-words text-sm font-semibold text-foreground">{organization.name}</span>
          <TenantRestoreAction kind="organization" id={organization.id} name={organization.name}/>
         </li>)}

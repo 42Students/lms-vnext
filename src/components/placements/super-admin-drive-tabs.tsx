@@ -15,11 +15,11 @@ export function SuperAdminDriveTabs({jobId,active}:{
    <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline" href="/admin/placements/drives">Drives</Link>
    <span aria-hidden="true">›</span><span>Drive workspace</span>
   </nav>
-  <nav aria-label="Drive tabs" className="flex flex-wrap gap-2">
+  <nav aria-label="Drive tabs" className="flex flex-wrap gap-2 border-b border-border">
     {tabs.map(tab=><Link key={tab.label} href={base+tab.suffix}
        aria-current={tab.label===active?"page":undefined}
-       className={"inline-flex min-h-11 items-center rounded-[9px] border px-3 text-sm font-semibold "+
-        (tab.label===active?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border bg-surface text-body")}>
+       className={"inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-semibold sm:min-h-9 "+
+        (tab.label===active?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
        {tab.label}</Link>)}
   </nav>
  </div>;
