@@ -146,8 +146,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      </Select>
     </label>
     <label className="flex-1 text-sm text-body">Search by drive or message
-     <Input name="q" maxLength={120} defaultValue={parsed.data.q}
-      className="mt-1 min-h-11 w-full"/></label>
+     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full" /></label>
     <Button type="submit" variant="secondary" className="self-end min-h-11">Search</Button>
    </form>
    <nav aria-label="Conversation kind" className="flex flex-wrap gap-2">
