@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {exportTpoMessagingHistory} from "@/modules/messaging/receipt-history-service";
@@ -29,7 +30,7 @@ export async function GET(request:Request){
  })),rows.length);
  return new NextResponse(csv,{headers:{
   "Content-Type":"text/csv; charset=utf-8",
-  "Content-Disposition":'attachment; filename="tpo-campaign-batches.csv"',
+  "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-campaign-batches", "csv") + '"',
   "Cache-Control":"private, no-store",
   "X-Content-Type-Options":"nosniff",
   "X-Export-Scope":"All filtered batches",
