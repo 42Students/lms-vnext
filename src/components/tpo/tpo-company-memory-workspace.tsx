@@ -193,7 +193,6 @@ export function TpoCompanyMemoryWorkspace({
   }
 
   const latest = company.timeline[0] ?? null;
-  const statusLabel=(status:string)=>({PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",CANCELLED:"Cancelled"} as Record<string,string>)[status]??status;
   const visibleDrives=company.drives.filter(drive=>
     [drive.jobTitle,drive.status,String(new Date(drive.createdAt).getFullYear())]
       .join(" ").toLowerCase().includes(driveSearch.trim().toLowerCase()));
