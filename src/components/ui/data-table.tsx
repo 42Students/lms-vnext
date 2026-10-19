@@ -28,13 +28,14 @@ export type DataTableProps<Row> = {
   empty: ReactNode;
   caption?: string;
   rowHref?: (row: Row) => string;
+  className?: string;
 };
 
 /** Backwards-compatible export for existing DataTable consumers and tests. */
 export { isSafeInternalHref as isSafeDataTableHref } from "@/lib/safe-internal-href";
 
-export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref }: DataTableProps<Row>) {
-  if(rows.length===0) return <div className="rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-6">{empty}</div>;
+export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref, className }: DataTableProps<Row>) {
+  if(rows.length===0) return <div data-slot="data-table" className={cx("rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-6", className)}>{empty}</div>;
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
     columns.find(col=>col.mobilePriority===undefined || col.mobilePriority==="secondary");
   const actions=columns.filter(col=>col.mobilePriority==="action");
@@ -89,7 +90,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
     };
   });
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
-  return <div data-slot="data-table" className="min-w-0">
+  return <div data-slot="data-table" className={cx("min-w-0", className)}>
     <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 sm:rounded-[var(--lms-radius-md)] sm:border sm:border-[var(--lms-canvas-border)]">
       <table className="block w-full border-separate border-spacing-0 text-left text-[13px] leading-5 tabular-nums sm:table sm:border-collapse sm:[&_tbody_tr:last-child_td]:border-b-0">
         <caption className="sr-only">{caption ?? "Records"}</caption>
