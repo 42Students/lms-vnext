@@ -12,7 +12,7 @@ export default async function LearnerSupportHistory({searchParams}:{
   const choices=["ALL","PENDING","APPROVED","REJECTED","CANCELLED"] as const;
   const requestTypes=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 md:min-h-9 md:min-h-9 items-center text-sm font-semibold text-primary-text">← Placement Cell</Link>
+    <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← Placement Cell</Link>
     <PageHeader eyebrow="My Placements" title="My support requests"
       description="Your application withdrawal, round rescheduling and offer-extension requests from your college placement team." />
     <section className="border-b border-border pb-5">
@@ -71,11 +71,11 @@ export default async function LearnerSupportHistory({searchParams}:{
     </ol>}
     <nav aria-label="Request history pages" className="flex flex-wrap gap-3">
       {data.hasPrevious?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page-1})}
-        className="inline-flex min-h-11 md:min-h-9 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
         ← Newer requests
       </Link>:null}
       {data.hasMore?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page+1})}
-        className="inline-flex min-h-11 md:min-h-9 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
         Older requests →
       </Link>:null}
     </nav>
