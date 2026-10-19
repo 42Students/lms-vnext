@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Disclosure } from "@/components/ui/disclosure";
 import {
   SUPER_ADMIN_PLACEMENT_OVERSIGHT_PRIMARY,
@@ -6,9 +8,14 @@ import {
 } from "@/modules/placements/super-admin-placement-nav-model";
 
 function NavLinks({ links }: { links: readonly { href: string; label: string }[] }) {
-  return <>{links.map(link => <Link key={link.href} href={link.href}
-    className="inline-flex min-h-9 max-w-full items-center border-b-2 border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary">
-    {link.label}</Link>)}</>;
+  const pathname = usePathname();
+  return <>{links.map(link => {
+    const active = pathname === link.href || pathname.startsWith(link.href + "/");
+    return <Link key={link.href} href={link.href} aria-current={active ? "page" : undefined}
+      className={"inline-flex min-h-9 max-w-full items-center border-b-2 px-3 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary " +
+        (active ? "border-primary text-primary-text" : "border-transparent text-body hover:border-primary hover:text-primary-text")}>
+      {link.label}</Link>;
+  })}</>;
 }
 
 export function SuperAdminPlacementOversightNav() {
