@@ -658,14 +658,14 @@ export function SuperAdminHrAccounts({
         }
       />
 
-      <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
+      <p role="status" className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
       <section aria-label="Recruiter account lifecycle" className="space-y-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--lms-teal-deep)]">Industry access</p>
         <h2 className="text-base font-semibold">Recruiter account lifecycle</h2>
         <p className="text-sm text-body">Manage recruiter access, suspension and signed-in devices.</p>
       </section>
       <h2 className="text-base font-semibold">Recruiter accounts</h2>
-      {!statusSummary&&<p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+      {!statusSummary&&<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
         Account totals are temporarily unavailable. The directory is still usable.
         <button type="button" onClick={()=>router.refresh()}
           className="ml-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
@@ -839,7 +839,7 @@ export function SuperAdminHrAccounts({
                     Previous
                   </Link>
                 ) : (
-                  <span className="inline-flex min-h-11 items-center rounded-md border border-border px-3 opacity-50">
+                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50">
                     Previous
                   </span>
                 )}
@@ -855,7 +855,7 @@ export function SuperAdminHrAccounts({
                     Next
                   </Link>
                 ) : (
-                  <span className="inline-flex min-h-11 items-center rounded-md border border-border px-3 opacity-50">
+                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50">
                     Next
                   </span>
                 )}
@@ -973,7 +973,7 @@ export function SuperAdminHrAccounts({
           {actionError ? (
             <p
               role="alert"
-              className="rounded-md bg-[var(--lms-error-subtle)] p-3 text-error"
+              className="border-l-2 border-error bg-error-subtle px-4 py-3 text-error"
             >
               {actionError}
             </p>
