@@ -5,7 +5,7 @@ export default function Error({ reset }: {
   reset: () => void;
 }) {
   return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
-    <h1 className="font-semibold text-foreground">Unable to load Faculty response follow-ups</h1>
+    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Unable to load Faculty response follow-ups</h1>
     <p className="mt-2 text-sm text-body">
       The read failed. No data absence is inferred from this error.
     </p>
