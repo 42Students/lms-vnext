@@ -7,6 +7,7 @@ import {TpoDriveCloneAction} from "@/components/placements/tpo-drive-clone-actio
 import {TpoDriveSavedViews} from "@/components/placements/tpo-drive-saved-views";
 import {TpoDriveActOnPanel} from "@/components/placements/tpo-drive-act-on-panel";
 import { PageHeader } from "@/components/ui/page-header";
+import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { can } from "@/modules/permissions/policy";
@@ -229,7 +230,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <Link key={view} href={{pathname:"/tpo/placements/lifecycle",query:{view,search:"",page:1}}}
           aria-current={data.view===view?"page":undefined}
           className={"inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary "+(data.view===view?"border-primary text-[var(--lms-teal-deep)]":"border-transparent text-body hover:border-border hover:text-foreground")}>
-          {label}<span className={"rounded-full px-2 py-0.5 tabular-nums "+(view==="REQUESTS"&&total>0?"bg-warning-subtle text-[var(--lms-gold-accent)]":"bg-muted text-body")}>{total}</span>
+          {label}<Badge tone={view==="REQUESTS"&&total>0?"warning":"neutral"}>{total}</Badge>
         </Link>)}
     </nav>
     {data.view==="REQUESTS" ? (!data.requestsAvailable ?
