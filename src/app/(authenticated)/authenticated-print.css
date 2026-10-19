@@ -13,7 +13,8 @@
   .lms-shell-frame [aria-label="Reports navigation"],
   .lms-shell-frame [aria-label="Report filters"],
   .lms-shell-frame [aria-label="Placement journey"],
-  .lms-shell-frame [data-slot="pagination"] { display:none !important; }
+  .lms-shell-frame [data-slot="pagination"],
+  .lms-shell-frame [data-report-toolbar] { display:none !important; }
   .lms-shell-frame .lms-shell-page,
   .lms-shell-frame #lms-main-content,
   .lms-shell-frame .lms-authenticated-canvas {
