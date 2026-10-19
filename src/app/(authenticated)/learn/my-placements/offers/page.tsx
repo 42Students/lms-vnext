@@ -52,7 +52,7 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 // Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
 const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[14px] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
 // Legacy mobile (<768px): one-line horizontally scrolling filter strip (SCSS:56-74).
-const placementFilterNavClass = "min-w-0 max-w-[calc(100vw-48px)] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:max-w-full sm:flex-wrap sm:overflow-visible sm:pb-0";
+const placementFilterNavClass = "min-w-0 max-w-[calc(100vw-48px)] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
 
 export default async function LearnerOffersPage({
   searchParams,
@@ -107,7 +107,7 @@ export default async function LearnerOffersPage({
     <div className="min-w-0 space-y-6">
       <Link
         href="/learn/my-placements/applications"
-        className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
       >
         ← Applications
       </Link>
@@ -139,9 +139,9 @@ export default async function LearnerOffersPage({
           <Input name="q" type="search" maxLength={80} defaultValue={searchTerm}
             placeholder="Employer or role" className="min-h-11 min-w-0" />
         </label>
-        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Search</Button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Search</Button>
         {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
-          className="inline-flex min-h-9 sm:min-h-9 items-center text-sm text-primary-text underline">Clear search</Link> : null}
+          className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
       <form method="GET" action="/learn/my-placements/offers" className="flex flex-wrap items-end gap-3">
         {view!=="all"?<Input type="hidden" name="status" value={view}/>:null}
@@ -158,11 +158,11 @@ export default async function LearnerOffersPage({
             <option value="company">Company A–Z</option>
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Apply sort</Button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Apply sort</Button>
       </form>
       {hasActiveFacets ? (
         <Link href={learnerOfferClearFiltersHref(view)}
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline">
           Clear offer filters (keep selected status)
         </Link>
       ) : null}
@@ -204,7 +204,7 @@ export default async function LearnerOffersPage({
       {pageClamped ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           The requested offer page no longer exists in your filtered results. Showing page {paginated.page} of {paginated.pages}.
-          <Link href={pageUrl(paginated.page)} className="ml-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">Use this page link</Link>
+          <Link href={pageUrl(paginated.page)} className="ml-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Use this page link</Link>
         </p>
       ) : null}
       {learnerOfferFocusMissing(query.focus,focused.found) ? (
@@ -215,7 +215,7 @@ export default async function LearnerOffersPage({
       ) : null}
       {expiringSoon > 0 && view !== "pending" ? (
         <Link href={learnerOfferStatusHref("pending",{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
           Review {expiringSoon} awaiting-response {expiringSoon===1?"offer":"offers"} with a deadline in 24 hours →
         </Link>
       ) : null}
@@ -226,12 +226,12 @@ export default async function LearnerOffersPage({
       ) : null}
       {!requestRead.available ? <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
-        <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
+        <section role="status" className="rounded-xl border border-border bg-surface p-5 md:p-6">
           <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
           <p className="mt-2 text-sm text-body">{emptyState.description}</p>
           {offers.counts.all > 0 ? (
             <Link href="/learn/my-placements/offers"
-              className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               See all offers →
             </Link>
           ) : null}
@@ -275,18 +275,18 @@ export default async function LearnerOffersPage({
       )}
       {paginated.total>0 ? <nav aria-label="Offer results pagination" className="flex flex-wrap items-center gap-3 text-sm">
         <p className="text-muted-foreground">{paginated.from}–{paginated.to} of {paginated.total} matching offers</p>
-        {paginated.page>1 ? <Link href={pageUrl(paginated.page-1)} className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Previous</Link> : null}
+        {paginated.page>1 ? <Link href={pageUrl(paginated.page-1)} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Previous</Link> : null}
         <span aria-current="page">Page {paginated.page} of {paginated.pages}</span>
-        {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Next</Link> : null}
+        {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Next</Link> : null}
       </nav> : null}
       <section aria-label="How offers work at your college" className="rounded-xl border border-border bg-surface p-5">
         <h2 className="font-semibold text-foreground">How offers work at your college</h2>
         <p className="mt-2 text-sm text-body">Check the offer response deadline and official terms before replying. Accepting a letter of intent is not the same as confirmed joining. College rules may affect how many offers you can hold.</p>
         <div className="mt-3 flex flex-wrap gap-4">
           <Link href="/learn/my-placements/rules?from=offers"
-            className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Read placement rules</Link>
+            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Read placement rules</Link>
           <Link href="/learn/my-placements/placement"
-            className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Need more time? Send a request to the placement cell</Link>
+            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Need more time? Send a request to the placement cell</Link>
         </div>
       </section>
       <p className="text-xs text-muted-foreground">
