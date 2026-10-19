@@ -26,7 +26,7 @@ export default async function CollegeAssignmentsPage({
   if (!validation.success || validation.data.status === "CLOSED") {
     return (
       <div className="min-w-0 overflow-x-clip space-y-4">
-        <PageHeader eyebrow="College Admin" title="Assignments" />
+        <PageHeader title="Assignments" />
         <ErrorState title="Invalid assessment filters"
           description="The requested search, status or page is invalid. No records were loaded." />
       </div>
