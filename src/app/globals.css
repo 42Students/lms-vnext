@@ -1122,3 +1122,33 @@ body {
 /* Keep browser selection affordances with native inputs and range slider. */
 [data-slot="range-slider"] input[type="range"] { accent-color: var(--lms-primary); }
 [data-slot="file-dropzone"]:focus-within { border-color: var(--lms-primary); }
+
+/* Adjacent button group: keep native focus and per-button behaviour, remove
+   doubled hairlines and share the measured 9px shell-control corners. */
+[data-slot="button-group"] > [data-slot="button"] {
+  border-radius: 0;
+  min-width: 0;
+}
+[data-slot="button-group"] > [data-slot="button"] + [data-slot="button"] {
+  margin-left: -1px;
+}
+[data-slot="button-group"] > [data-slot="button"]:first-child {
+  border-radius: var(--lms-control-radius) 0 0 var(--lms-control-radius);
+}
+[data-slot="button-group"] > [data-slot="button"]:last-child {
+  border-radius: 0 var(--lms-control-radius) var(--lms-control-radius) 0;
+}
+[data-slot="button-group"] > [data-slot="button"]:only-child {
+  border-radius: var(--lms-control-radius);
+}
+[data-slot="button-group"] > [data-slot="button"]:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
+/* Native select popup options inherit the selected-option teal/white of
+   legacy components___antddesign.scss:134-137 where the UA permits styling. */
+[data-slot="multi-select"] option:checked {
+  background-color: var(--lms-primary);
+  color: var(--lms-white);
+}
