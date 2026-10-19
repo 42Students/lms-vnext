@@ -303,7 +303,7 @@ Do not edit shared `src/app/globals.css`, `src/components/ui/**`, `src/component
 ## Progress log
 
 - Inventory created against latest main tree after fast-forwarding chat-7 branch to main.
-- UI edits: in progress. 127 distinct files listed in the five completed visual batches have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
+- UI edits: in progress. 131 distinct files listed in the six completed visual batches have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
 
 
 ## Completed visual edits — 2026-10-19 (first sweep batch)
@@ -457,3 +457,12 @@ Merged the latest origin/main as a genuine two-parent merge, retaining 86 non-co
 - [x] `src/app/(authenticated)/learn/my-placements/assessments/results/error.tsx`
 
 Removed duplicated white full-page cards inside the authenticated canvas, kept retry/back actions reachable with 44px mobile targets and legacy teal outline control styling. Existing error wording and routing are unchanged. JSX closing tags inspected textually; no test, typecheck or CI execution.
+
+## Completed visual edits — course/placement canvas continuation (4 additional files)
+
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/interviews/loading.tsx`
+- [x] `src/components/placements/learner-placement-academic-evidence.tsx`
+
+Neutral skeleton placeholders remain visibly distinguishable on the white page canvas. Academic evidence, placement preferences, and placement requests now align their existing sectional separators and internal margins with the shared canvas instead of nesting full-page border cards. Functional workflows and JSX hierarchy are preserved; no CI, tests, typecheck, or application execution.
