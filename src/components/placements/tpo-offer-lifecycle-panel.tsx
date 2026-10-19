@@ -1,5 +1,6 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 
@@ -126,9 +127,7 @@ export function TpoOfferLifecyclePanel({
         </Select>
       </label>
       {eligible.length === 0 ? (
-        <p role="status" className="text-sm text-body">
-          No offers currently match this action. Nothing will be changed.
-        </p>
+        <EmptyState title="No offers currently match this action." description="Nothing will be changed."/>
       ) : (
         <div tabIndex={0} role="group" aria-label="Eligible offers, scroll for more" className="max-h-56 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
           {eligible.map((offer) => (
