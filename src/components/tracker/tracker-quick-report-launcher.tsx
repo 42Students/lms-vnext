@@ -31,7 +31,7 @@ export function TrackerQuickReportLauncher(){
   </button>
   <Drawer open={open} onOpenChange={setOpen} title="Report an issue">
     <details className="mb-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-xs text-body">
-      <summary className="min-h-11 cursor-pointer font-semibold">Captured page / browser / viewport</summary>
+      <summary className="min-h-9 cursor-pointer text-sm font-semibold">Captured page / browser / viewport</summary>
       <pre className="mt-2 whitespace-pre-wrap break-words">{context}</pre>
     </details>
     <TrackerReportForm contextPrefill={context}/>
