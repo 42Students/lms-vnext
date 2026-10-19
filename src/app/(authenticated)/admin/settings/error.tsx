@@ -11,9 +11,9 @@ export default function SuperAdminSettingsError({
   return (
     <section
       role="alert"
-      className="rounded-xl border border-border bg-surface px-6 py-10 text-center"
+      className="border-t border-border pt-5 text-center"
     >
-      <h1 className="text-lg font-semibold text-foreground">
+      <h1 className="m-0 text-[26px] font-semibold leading-[1.35] tracking-[-0.02em] text-[#172033] sm:text-[30px]">
         Unable to load platform settings
       </h1>
       <p className="mt-2 text-sm leading-6 text-body">
