@@ -220,6 +220,7 @@
  }
 }
 .lms-mobile-sidebar .lms-nav-group-rule {
+ pointer-events:none;
  align-self:stretch;
  width:auto;
  margin-inline:12px;
