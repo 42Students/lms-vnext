@@ -63,17 +63,17 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
      <p className="mt-2 text-2xl font-semibold">{card.value}</p>
     </div>)}
    </div>
-   <form method="get" className="grid gap-3 rounded-[8px] border border-border bg-surface p-4 sm:grid-cols-3">
+   <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
     <label className="grid gap-1 text-sm">Search student, company or role
-     <Input name="q" defaultValue={valid.data.q} maxLength={100} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
+     <Input name="q" defaultValue={valid.data.q} maxLength={100} />
     </label>
     <label className="grid gap-1 text-sm">Company
-     <Select name="companyId" defaultValue={valid.data.companyId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+     <Select name="companyId" defaultValue={valid.data.companyId??""} >
       <option value="">All companies</option>{data.companies.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
     </label>
     <label className="grid gap-1 text-sm">Department
-     <Select name="departmentId" defaultValue={valid.data.departmentId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+     <Select name="departmentId" defaultValue={valid.data.departmentId??""} >
       <option value="">All departments</option>{data.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
     </label>
@@ -82,11 +82,11 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       {name:"mode",label:"Mode",values:["ALL","ON_CAMPUS","VIRTUAL"]}]
     ).map(filter=><label key={filter.name} className="grid gap-1 text-sm">{filter.label}
      <Select name={filter.name} defaultValue={String(valid.data[filter.name as "type"|"status"|"mode"])}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+      >
       {filter.values.map(value=><option key={value} value={value}>{value==="ALL"?"All":value.replaceAll("_"," ")}</option>)}
      </Select></label>)}
     <label className="grid gap-1 text-sm">Sort
-     <Select name="sort" defaultValue={valid.data.sort} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+     <Select name="sort" defaultValue={valid.data.sort} >
       <option value="UPCOMING">Upcoming first</option><option value="RECENT">Recent first</option>
       <option value="STUDENT">Student name</option>
      </Select>

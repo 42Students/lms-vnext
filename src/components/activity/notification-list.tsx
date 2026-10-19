@@ -94,7 +94,7 @@ export function NotificationList({
   return (
     <div className="grid gap-4">
       {groupNotificationsByDate(items, groupingNow).map((group) => (
-        <section key={group.label} aria-label={group.label} className="grid gap-3">
+        <section key={group.label} aria-label={group.label} className="grid gap-4">
           <h2 className="text-sm font-semibold text-muted-foreground">{group.label}</h2>
           {group.items.map((item) => (
             variant==="tpo"?<Button variant="ghost" type="button" key={item.id} disabled={pendingId!==null}
@@ -128,7 +128,7 @@ export function NotificationList({
                     ) : null}
                     {!item.readAt && item.source !== "ANNOUNCEMENT" ? <StatusBadge tone="info">Unread</StatusBadge> : null}
                   </div>
-                  <h3 className="mt-3 text-base font-semibold text-foreground">
+                  <h3 className="mt-3 text-sm font-semibold leading-[1.35] text-foreground min-[768px]:text-base">
                     {onSelect ? (
                       <Button
                         type="button"
@@ -141,8 +141,8 @@ export function NotificationList({
                     ) : item.title}
                   </h3>
                   {item.contextLine?<p className="mt-1 text-xs font-semibold text-muted-foreground">{item.contextLine}</p>:null}
-                  <p className="mt-1 text-sm leading-6 text-body">{item.body}</p>
-                  <p className="mt-2 text-xs text-muted-foreground">
+                  <p className="mt-1 text-sm leading-[1.5] text-body">{item.body}</p>
+                  <p className="mt-2 text-xs leading-[1.4] text-muted-foreground">
                     {formatWhen(item.createdAt)}
                   </p>
                 </div>

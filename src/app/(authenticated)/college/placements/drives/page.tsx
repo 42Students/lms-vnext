@@ -54,25 +54,25 @@ export default async function CollegeDrivesPage({ searchParams }: {
     <PageHeader eyebrow="College Admin · Placements" title="Drives"
       description="College-owned placement drives. This list is independent of cross-college recruiter access."
       actions={<Link href="/college/placements" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Operations workspace</Link>} />
-    <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 rounded-[8px] border border-border p-4 sm:grid-cols-3 lg:grid-cols-6">
+    <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3 lg:grid-cols-6">
       <label className="grid gap-1 text-sm">Title or company
         <Input name="q" defaultValue={query.q} maxLength={100}
           />
       </label>
       <label className="grid gap-1 text-sm">Status
-        <Select name="status" defaultValue={query.status} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="status" defaultValue={query.status}>
           {["PUBLISHED","DRAFT","CLOSED","ARCHIVED","ALL"].map(s=><option key={s} value={s}>{s==="PUBLISHED"?"Active":s}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Season
-        <Select name="seasonId" defaultValue={query.seasonId ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="seasonId" defaultValue={query.seasonId ?? ""}>
           <option value="">All seasons</option>
           {data.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Company
         <Select name="relationshipId" defaultValue={query.relationshipId ?? ""}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+         >
           <option value="">All companies</option>
           {data.companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
         </Select>
@@ -91,7 +91,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
           />
       </label>
       <label className="grid gap-1 text-sm">Sort
-        <Select name="sort" defaultValue={query.sort} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+        <Select name="sort" defaultValue={query.sort}>
           <option value="TITLE">Title A–Z</option><option value="DEADLINE">Deadline first</option>
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
         </Select>
