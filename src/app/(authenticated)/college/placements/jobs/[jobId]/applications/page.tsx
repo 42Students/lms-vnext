@@ -86,7 +86,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>
         <Link key={stage} href={driveApplicationsHref(jobId,{...query,stage,page:1})}
           aria-current={query.stage===stage?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm font-semibold "+
+          className={"inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius,9px)] border px-3 text-sm font-semibold "+
             (query.stage===stage?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border text-body")}>
           {stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase()}
           <span className="tabular-nums">{stage==="ALL"?
