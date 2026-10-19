@@ -1,29 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
 
-export default function TpoCompaniesError({
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
-  return (
-    <section
-      role="alert"
-      className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-6 py-10 text-center"
-    >
-      <h1 className="text-lg font-semibold text-foreground">
-        Couldn&apos;t load companies
-      </h1>
-      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
-        The company directory could not be retrieved.
-        No company, lead, drive or offer count is inferred
-        from this failure.
-      </p>
-      <Button className="mt-5" onClick={reset}>
-        Retry
-      </Button>
-    </section>
-  );
+export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorState
+    title="\n        Couldn't load companies\n      "
+    description="The company directory could not be retrieved.\n        No company, lead, drive or offer count is inferred\n        from this failure."
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+  />;
 }
