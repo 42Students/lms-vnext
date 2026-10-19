@@ -1345,10 +1345,7 @@ export function ProjectWorkspace({
                       </div>
                     ) : null}
 
-                    {mode!=="LEARNER"?<details className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3">
-                      <summary className="cursor-pointer text-sm font-semibold text-link">
-                        Submission history
-                      </summary>
+                    {mode!=="LEARNER"?<Disclosure title="Submission history" className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3">
                       <ul className="mt-2 space-y-2 text-xs text-body">
                         {workspace.activity.filter(event=>event.subjectId===submission.id&&
                           event.eventType.includes("delivery")).map(event=>
@@ -1358,7 +1355,7 @@ export function ProjectWorkspace({
                         {submission.reopenedAt?<li>Reopened · {formatDateTime(submission.reopenedAt)}</li>:null}
                         {submission.lockedAt?<li>Locked · {formatDateTime(submission.lockedAt)}</li>:null}
                       </ul>
-                    </details>:null}
+                    </Disclosure>:null}
                     {mode === "ADMIN" && !readOnly &&
                       (submission.status === "SUBMITTED" || submission.status === "APPROVED") ? (
                       <ProjectAdminSubmissionReview projectId={workspace.project.id}
