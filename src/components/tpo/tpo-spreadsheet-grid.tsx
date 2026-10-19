@@ -86,6 +86,7 @@ export function TpoSpreadsheetGrid<Row>({
  useEffect(()=>{
   if(!selection)return;
   const filtered=selectedGridIdsWithin(selection.selected,allowedIds);
+  if(anchor.current&&!allowedIds.includes(anchor.current))anchor.current=null;
   if(filtered.length!==selection.selected.length)selection.onChange(filtered);
  },[allowedCsv,selectedCsv,selection,allowedIds]);
  const restored=useRef(false),permittedCsv=permitted.join(",");
