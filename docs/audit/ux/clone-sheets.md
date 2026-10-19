@@ -502,3 +502,57 @@ Full fetched GitHub contents inspected for raw form opening tags, inline svg, li
 This is scoped source evidence only. Unchecked E8/A5-A7: shared Quartz 44px header vs old 40px, shared DataTable 640px breakpoint vs old 768px, whole-repo icon/link inventory, actual phone/tablet rendered screenshots, hover/focus/disabled behaviour and runtime end-to-end parity. Do not globally tick these categories.
 
 Next: remaining TPO Team and batch support files, and original icon/link caller inventory.
+
+## chat-12 Team/company subsidiary surfaces — ten more checked files (2026-10-19)
+
+Legacy value references: docs/design/old-lms-pages.md:5-12 (white continuous canvas, flat actions/rows), docs/design/old-lms-shell-spec.md:24-25 (teal primary, 36px desktop, 9px button radius), docs/design/old-lms-shell.css:68-85 (max-width 767px phone; 768px tablet; 44px touch) and legacy-styles/components___form.scss:117-143 (10px focus field/radius). This section is authored-source-only and no runtime/browser screenshot/CI.
+
+### Source file queue
+- [x] src/components/tpo/tpo-company-team-composer.tsx — Private Company Team message uses original idempotent draft/send; border-t and shared Button min-h-11 md:min-h-9.
+- [x] src/components/tpo/tpo-company-visibility-editor.tsx — Learner privacy visibility switches and version checks unchanged; option label rows 44px and Save 44phone/36md.
+- [x] src/components/tpo/tpo-team-assign-unowned.tsx — College-scoped assignment confirmation unchanged; flexible min-width-free owner label, 44phone/36md select/button.
+- [x] src/components/tpo/tpo-team-away-form.tsx — IST away date/revoke and optimistic expectedUntil preserved; 44phone/36md shared controls, flat section.
+- [x] src/components/tpo/tpo-team-decision-toggle.tsx — Original revision-safe decision toggle unchanged, legacy radius9 via control token and 44phone/36md.
+- [x] src/components/tpo/tpo-team-follow-controls.tsx — Original follow/mute scoped API retained; action buttons 44phone/36md.
+- [x] src/components/tpo/tpo-team-forms.tsx — Original private create/reply/draft/idempotency retained, shared inputs/buttons 44phone/36md; mark-as-decision radius token.
+- [x] src/components/tpo/tpo-team-handover.tsx — Guarded work ownership handover unchanged, flat section and 44phone/36md controls.
+- [x] src/components/tpo/tpo-team-message-actions.tsx — Original edit/delete expectedBodyHash guarded API and Dialog preserved; 44phone/36md buttons.
+- [x] src/components/tpo/tpo-team-rename.tsx — Original expectedTopic guarded rename unchanged; field/buttons min-h-11 phone/9 md.
+
+- [x] src/components/tpo/tpo-company-memory-workspace.tsx recheck — linked header buttons now 44px phone / 36px md with focus-visible teal outline; previous metric strip and 10 original Link actions preserved.
+- [x] src/components/tpo/tpo-company-team-conversation.tsx recheck — rich #drive, #company and #student references now underline/44px/tap/2px focus; original private thread and conditional links preserved.
+
+### Value-by-value comparison
+| File | Legacy value baseline | vNext authored source / value | Result |
+|---|---|---|---|
+| tpo-company-team-composer.tsx | shell.css:68-85 44px phone, 36px desktop and 768px tablet; old-lms-pages.md:5-12 continuous canvas | tpo-company-team-composer.tsx:53-66 — Private Company Team message uses original idempotent draft/send; border-t and shared Button min-h-11 md:min-h-9 | Authored source aligned; rendered comparison pending |
+| tpo-company-visibility-editor.tsx | shell.css:68-85 44px phone, 36px desktop and 768px tablet; old-lms-pages.md:5-12 continuous canvas | tpo-company-visibility-editor.tsx:38-60 — Learner privacy visibility switches and version checks unchanged; option label rows 44px and Save 44phone/36md | Authored source aligned; rendered comparison pending |
+| tpo-team-assign-unowned.tsx | shell.css:68-85 44px phone, 36px desktop and 768px tablet; old-lms-pages.md:5-12 continuous canvas | tpo-team-assign-unowned.tsx:36-62 — College-scoped assignment confirmation unchanged; flexible min-width-free owner label, 44phone/36md select/button | Authored source aligned; rendered comparison pending |
+| tpo-team-away-form.tsx | shell.css:68-85 44px phone, 36px desktop and 768px tablet; old-lms-pages.md:5-12 continuous canvas | tpo-team-away-form.tsx:24-42 — IST away date/revoke and optimistic expectedUntil preserved; 44phone/36md shared controls, flat section | Authored source aligned; rendered comparison pending |
+| tpo-team-decision-toggle.tsx | shell.css:68-85 44px phone, 36px desktop and 768px tablet; old-lms-pages.md:5-12 continuous canvas | tpo-team-decision-toggle.tsx:24-33 — Original revision-safe decision toggle unchanged, legacy radius9 via control token and 44phone/36md | Authored source aligned; rendered comparison pending |
+| tpo-team-follow-controls.tsx | shell.css:68-85 44px phone, 36px desktop and 768px tablet; old-lms-pages.md:5-12 continuous canvas | tpo-team-follow-controls.tsx:28-43 — Original follow/mute scoped API retained; action buttons 44phone/36md | Authored source aligned; rendered comparison pending |
+| tpo-team-forms.tsx | shell.css:68-85 44px phone, 36px desktop and 768px tablet; old-lms-pages.md:5-12 continuous canvas | tpo-team-forms.tsx:79-174 — Original private create/reply/draft/idempotency retained, shared inputs/buttons 44phone/36md; mark-as-decision radius token | Authored source aligned; rendered comparison pending |
+| tpo-team-handover.tsx | shell.css:68-85 44px phone, 36px desktop and 768px tablet; old-lms-pages.md:5-12 continuous canvas | tpo-team-handover.tsx:36-55 — Guarded work ownership handover unchanged, flat section and 44phone/36md controls | Authored source aligned; rendered comparison pending |
+| tpo-team-message-actions.tsx | shell.css:68-85 44px phone, 36px desktop and 768px tablet; old-lms-pages.md:5-12 continuous canvas | tpo-team-message-actions.tsx:27-51 — Original edit/delete expectedBodyHash guarded API and Dialog preserved; 44phone/36md buttons | Authored source aligned; rendered comparison pending |
+| tpo-team-rename.tsx | shell.css:68-85 44px phone, 36px desktop and 768px tablet; old-lms-pages.md:5-12 continuous canvas | tpo-team-rename.tsx:27-46 — Original expectedTopic guarded rename unchanged; field/buttons min-h-11 phone/9 md | Authored source aligned; rendered comparison pending |
+
+### Source grep equivalents and responsive proof
+Full GitHub-fetched source scanned with /(button|input|select|textarea)/ JSX-opening regex, inline svg regex, and six-digit hex regex. Equivalent file-scoped grep: grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE. Every listed file: native raw tags 0, inline svg 0, six-digit hex 0, and sm breakpoint 0.
+| File | Raw / SVG / hex | JSX balance proof | Phone/tablet source |
+|---|---|---|---|
+| tpo-company-team-composer.tsx | 0 / 0 / 0 | Button 1/1; braces 37/37 | min-h-11, md1 (md=768px) |
+| tpo-company-visibility-editor.tsx | 0 / 0 / 0 | Button 1/1; braces 42/42 | min-h-11, md1 (md=768px) |
+| tpo-team-assign-unowned.tsx | 0 / 0 / 0 | Button 1/1; braces 39/39 | min-h-11, md2 (md=768px) |
+| tpo-team-away-form.tsx | 0 / 0 / 0 | Button 2/2; braces 30/30 | min-h-11, md3 (md=768px) |
+| tpo-team-decision-toggle.tsx | 0 / 0 / 0 | Button 1/1; braces 21/21 | min-h-11, md1 (md=768px) |
+| tpo-team-follow-controls.tsx | 0 / 0 / 0 | Button 2/2; braces 31/31 | min-h-11, md2 (md=768px) |
+| tpo-team-forms.tsx | 0 / 0 / 0 | Button 2/2; braces 115/115 | min-h-11, md4 (md=768px) |
+| tpo-team-handover.tsx | 0 / 0 / 0 | Button 1/1; braces 36/36 | min-h-11, md2 (md=768px) |
+| tpo-team-message-actions.tsx | 0 / 0 / 0 | Button 6/6; braces 50/50 | min-h-11, md6 (md=768px) |
+| tpo-team-rename.tsx | 0 / 0 / 0 | Button 3/3; braces 30/30 | min-h-11, md4 (md=768px) |
+
+Two rechecked files: company-memory-workspace — Link 10/10, Button 1/1, braces 122/122, raw/svg/hex 0, sm 0; company-team-conversation — Link 4/4, Button 10/10, braces 180/180, raw/svg/hex 0, sm 0, md15.
+
+Global A5/A6/A7/E8 remain [ ]: 40px legacy vs 44px shared Quartz header, old 768px vs DataTable's 640px phone switch, actual phone/tablet hover/focus/disabled/print screenshots and full cross-portal icon inventories are not verified. No app/test/CI ran.
+
+Exact next optional audit: src/components/tpo/tpo-team-search.tsx, src/components/tpo/tpo-team-open-read.tsx and TPO page-level icon/link inventory.
