@@ -31,13 +31,13 @@ export function ThirdPartyLink({ href, label, ariaLabel }: { href: string; label
   }
 
   return <span className="inline-flex min-w-0 flex-col gap-2">
-    {safeHref ? <a href={safeHref} aria-label={ariaLabel} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{label}</a> :
+    {safeHref ? <a href={safeHref} aria-label={ariaLabel} className="inline-flex min-h-11 items-center rounded-[9px] border border-[#e5e9f0] bg-white px-3 text-[13px] font-semibold leading-5 text-[#0e7c87] underline transition-colors duration-[var(--lms-motion-fast)] hover:border-[#26bac7] hover:bg-[#eff8fa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7]">{label}</a> :
       <span role="alert" className="text-sm text-foreground">This link is unavailable.</span>}
     {safeHref ? <span className="block select-text break-all text-xs text-body" aria-label="Destination URL">{safeHref}</span> : null}
     {safeHref ? <span className="flex flex-wrap gap-3">
       <button type="button" onClick={() => { setCopyStatus("");setShowFallback(value=>!value); }}
         aria-expanded={showFallback}
-        className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[9px] px-2 text-[13px] leading-5 font-semibold text-[#0e7c87] underline hover:bg-[#eff8fa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7]">
         {showFallback ? "Hide link" : "Show link to copy"}
       </button>
       <button type="button" onClick={() => void copyLink()}
