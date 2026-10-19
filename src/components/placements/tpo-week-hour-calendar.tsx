@@ -192,8 +192,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   </div>
   {move?<Dialog open={Boolean(move)} onOpenChange={next=>{if(!next)setMove(null);}} title="Move follow-up" className="max-w-lg">
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
-      <button type="button" onClick={()=>setMove(null)}
-        className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Close</button>
+      <Button variant="secondary" type="button" onClick={()=>setMove(null)} className="mt-3">Close</Button>
    </Dialog>:null}
   {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
   {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next)cancelDraft();}} title="New recruiter follow-up" className="max-w-md">
@@ -216,10 +215,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
     {message?<p role="alert" className="text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
     <div className="flex justify-end gap-2">
-     <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</Button>
-     <Button variant="primary" type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary">{saving?"Saving…":"Add follow-up"}</Button>
+     <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft}>Cancel</Button>
+     <Button variant="primary" type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}>{saving?"Saving…":"Add follow-up"}</Button>
     </div>
    </div>
   </Dialog>:null}
