@@ -54,7 +54,7 @@ export default async function CollegeProjectTemplatesPage({
     }},
     {key:"action",header:"Action",mobilePriority:"action",cell:template=>
       <Link href={"/college/projects/templates/"+template.templateId}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View template</Link>},
+        className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View template</Link>},
   ];
   return (
     <div className="space-y-6">
@@ -78,7 +78,7 @@ export default async function CollegeProjectTemplatesPage({
         <Button type="submit" variant="secondary">
           Search
         </Button>
-        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">
+        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">
           Clear search
         </Link> : null}
 
@@ -91,7 +91,7 @@ export default async function CollegeProjectTemplatesPage({
         empty={<div role="status" className="space-y-3 text-sm text-body">
           <p>{templates.length===0?"No project templates are currently assigned to this college.":"No project templates match this search."}</p>
           {q?<Link href="/college/projects/templates"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear search</Link>:null}
+            className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear search</Link>:null}
         </div>} />
     </div>
   );
