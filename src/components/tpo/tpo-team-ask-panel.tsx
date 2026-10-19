@@ -1,7 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -34,10 +32,10 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
  }
  return <div className="mt-2 flex flex-wrap gap-2">
   {canDone?<Button variant="secondary" type="button" disabled={busy}
-   className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs"
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs"
    onClick={()=>setConfirmation("DONE")}>Mark done</Button>:null}
   {canCancel?<Button variant="secondary" type="button" disabled={busy}
-   className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs"
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs"
    onClick={()=>setConfirmation("CANCEL")}>Cancel ask</Button>:null}
   {confirmation?<div role="alertdialog" aria-label={confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"}
    className="w-full space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
@@ -48,7 +46,7 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
    </label>:null}
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
    <Button variant="primary" type="button" disabled={busy} onClick={()=>void submit()}
-    className="min-h-10 rounded-[var(--lms-control-radius)] bg-primary px-3 text-xs text-on-primary">
+    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-xs text-on-primary">
     {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}</Button>
    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setConfirmation(null)}
     className="ml-2 min-h-10 text-xs underline">{confirmation==="CANCEL"?"Keep it":"Not now"}</Button>
