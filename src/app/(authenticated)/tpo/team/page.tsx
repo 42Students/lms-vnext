@@ -105,6 +105,7 @@ export default async function TpoTeamPage({searchParams}:{
         <h2 className="min-w-0 break-words font-semibold text-foreground">{member.displayName}
          {member.membershipId===context.membership?.id?<span className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-0.5 text-xs">You</span>:null}
         </h2>
+       </div>
        {awayByMember.get(member.membershipId)?<p className="mt-2 text-xs text-warning-text">
         Away until {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})
          .format(awayByMember.get(member.membershipId)!)} IST
