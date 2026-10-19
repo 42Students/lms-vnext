@@ -36,6 +36,8 @@ export function TopbarAccountMenu({
   const copy = accountActionCopy(variant);
   useEffect(() => {
     if (!open) return;
+    // The legacy dropdown is an operable menu, not merely an avatar hover card.
+    root.current?.querySelector<HTMLElement>('[role="dialog"] a, [role="dialog"] button, [role="dialog"] input, [role="dialog"] select')?.focus();
     const onPointer = (event: PointerEvent) => {
       if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
     };
