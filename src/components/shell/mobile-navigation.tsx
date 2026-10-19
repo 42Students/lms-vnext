@@ -102,7 +102,7 @@ export function MobileNavigation({
                 type="button"
                 aria-label="Close navigation"
                 onClick={() => setOpen(false)}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
               >
                 <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20"
                   fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
