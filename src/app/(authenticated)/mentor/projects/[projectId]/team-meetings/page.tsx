@@ -24,8 +24,8 @@ export default async function MentorTeamMeetingsPage({
     normalized ? {projectId,...normalized} : null,
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid meeting history filters</h1>
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
+    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid meeting history filters</h1>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorTeamMeetings(context,parsed.data);
@@ -35,7 +35,7 @@ export default async function MentorTeamMeetingsPage({
     <PageHeader eyebrow="Mentor · Project" title="Team &amp; meeting log"
       description={data.enabled?data.projectTitle:"Projects access is disabled. No private team or meeting data was loaded."}
       actions={<Link href={board}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Team workspace
       </Link>} />
     {!data.enabled?<section role="status"
@@ -59,10 +59,10 @@ export default async function MentorTeamMeetingsPage({
         </p>
       </section>
       <form method="get" action={mentorTeamMeetingsHref({...data.query,page:1}).split("?")[0]}
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting status
-          <select name="status" defaultValue={data.query.status}
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <select data-slot="select" name="status" defaultValue={data.query.status}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All</option><option value="REQUESTED">Requested</option>
             <option value="SCHEDULED">Scheduled</option>
             <option value="COMPLETED">Completed</option>
@@ -70,37 +70,37 @@ export default async function MentorTeamMeetingsPage({
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting type
-          <select name="type" defaultValue={data.query.type}
-            className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="type" defaultValue={data.query.type}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All types</option><option value="GENERAL">General</option>
             <option value="PLANNING">Planning</option><option value="STANDUP">Standup</option>
             <option value="REVIEW">Review</option><option value="RETRO">Retrospective</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded outcome
-          <select name="outcome" defaultValue={data.query.outcome}
-            className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="outcome" defaultValue={data.query.outcome}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All meetings</option><option value="RECORDED">With written outcome</option>
             <option value="NOT_RECORDED">Without written outcome</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting order
-          <select name="order" defaultValue={data.query.order}
-            className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="order" defaultValue={data.query.order}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="NEWEST">Most recent first</option>
             <option value="OLDEST">Oldest first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting title
-          <input type="search" name="search" maxLength={100}
+          <input data-slot="input" type="search" name="search" maxLength={100}
             defaultValue={data.query.search}
-            className="min-h-11 rounded-md border border-border bg-background px-3"/>
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <Button type="submit" variant="primary">
           Filter
         </Button>
         <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
-          className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+          className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       <p className="text-sm text-body">{data.total} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
@@ -131,7 +131,7 @@ export default async function MentorTeamMeetingsPage({
               </div>:null}
             <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
               "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               View outcome notes
             </Link>
           </li>)}</ol>}
@@ -139,9 +139,9 @@ export default async function MentorTeamMeetingsPage({
         <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page>1?<Link href={mentorTeamMeetingsHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
           {data.page<data.totalPages?<Link href={mentorTeamMeetingsHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
         </div>
       </nav>
     </>}
