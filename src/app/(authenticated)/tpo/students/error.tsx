@@ -11,8 +11,7 @@ export default function TpoStudentsError({
   reset: () => void;
 }) {
   return (
-    <Alert tone="error"
-      className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-6 py-10 text-center"
+    <Alert tone="error" className="text-center"
     >
       <PageHeader title={"Could not load students"} />
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
