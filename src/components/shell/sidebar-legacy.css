@@ -185,6 +185,38 @@
 /* The legacy AntD mobile drawer uses 12px body gutters and 10px
  * item padding, not the 8px desktop icon-rail gutter. */
 @media (max-width:767px) {
+ /* Shared Drawer has sm+ defaults at 640px; the old nav stays 82% to 767px. */
+ .lms-mobile-sidebar[data-slot="drawer"] {
+  inset-inline-start:0;
+  inset-inline-end:auto;
+  width:82vw;
+  max-width:300px;
+  height:var(--lms-visual-height,100dvh);
+  max-height:var(--lms-visual-height,100dvh);
+  border-right:0;
+ }
+ .lms-mobile-sidebar [data-slot="drawer-header"] {
+  flex-direction:row;
+  align-items:center;
+  min-height:calc(52px + env(safe-area-inset-top,0px));
+  padding:calc(10px + env(safe-area-inset-top,0px)) 4px 10px 16px;
+  gap:8px;
+  border-bottom:1px solid #f0f0f0;
+ }
+ .lms-mobile-sidebar [data-slot="drawer-header"] button[aria-label="Close drawer"] {
+  flex:0 0 44px;
+  width:44px;
+  min-height:44px;
+  margin:0;
+  padding:0;
+ }
+ .lms-mobile-sidebar [data-slot="scroll-cue"][data-axis="y"] > div:first-child {
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+ }
+ .lms-mobile-sidebar [data-slot="scroll-cue"][data-axis="y"] > div:first-child::-webkit-scrollbar {display:none;}
  .lms-mobile-sidebar .lms-sidebar-nav {padding-inline:0;overflow-x:hidden;scrollbar-width:none;}
  .lms-mobile-sidebar [data-slot="mobile-sidebar-scroll"] {
   -webkit-overflow-scrolling:touch;
