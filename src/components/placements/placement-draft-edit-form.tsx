@@ -74,8 +74,8 @@ export type PlacementDraftEditValue = {
   };
 };
 
-const inputClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
-const textareaClass = "min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9";
+const textareaClass = "min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
 
 function splitList(value: string) {
   return value
@@ -352,14 +352,14 @@ export function PlacementDraftEditForm({
   }
 
   return (
-    <details className="rounded-xl border border-border bg-surface">
-      <summary className="cursor-pointer px-5 py-4 text-base font-semibold text-foreground">
+    <details className="border-y border-border">
+      <summary className="cursor-pointer py-4 text-base font-semibold text-foreground">
         Edit draft opportunity
       </summary>
       <form
         onSubmit={submit}
       onChange={markDirty}
-        className="grid gap-5 border-t border-border p-5"
+        className="grid gap-5 border-t border-border py-5"
       >
         <div className="grid gap-4 lg:grid-cols-2">
           <label className="lg:col-span-2">

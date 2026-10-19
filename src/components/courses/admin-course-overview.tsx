@@ -10,6 +10,9 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import type {
   getAdminCourseWorkspace,
 } from "@/modules/courses/admin-course-workspace";
@@ -36,7 +39,7 @@ function Metric({
   detail: string;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-surface p-4">
+    <section className="border-b border-border py-4">
       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         {label}
       </p>
@@ -492,23 +495,23 @@ export function AdminCourseOverview({
         {catalogue&&catalogueQuery?<form method="get" action={courseBasePath}
          className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
          <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-sm font-semibold">Search courses
-          <input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
-           placeholder="Name, code or department" className="min-h-11 sm:min-h-9 min-w-0 w-full rounded border border-border bg-surface p-2"/>
+          <Input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
+           placeholder="Name, code or department" className="min-h-11 min-w-0 w-full sm:min-h-9"/>
          </label>
          <label className="grid gap-1 text-sm font-semibold">Sort
-          <select name="sort" defaultValue={catalogueQuery.sort}
-           className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9">
+          <Select name="sort" defaultValue={catalogueQuery.sort}
+           className="min-h-11 sm:min-h-9">
            <option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option>
            <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
-          </select>
+          </Select>
          </label>
          {courseBasePath.startsWith("/admin/")?<label className="grid gap-1 text-sm font-semibold">Per page
-          <select name="pageSize" defaultValue={catalogueQuery.pageSize??"25"}
-           className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9">
+          <Select name="pageSize" defaultValue={catalogueQuery.pageSize??"25"}
+           className="min-h-11 sm:min-h-9">
            <option value="25">25</option><option value="50">50</option><option value="100">100</option>
-          </select>
+          </Select>
          </label>:null}
-         <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] sm:min-h-9">Filter</button>
+         <Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
          <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
           className="inline-flex min-h-11 sm:min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
           Export CSV

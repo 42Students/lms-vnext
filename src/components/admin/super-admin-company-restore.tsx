@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 export function SuperAdminCompanyRestore({id,name}:{id:string;name:string}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState<string|null>(null);
  async function restore(){
@@ -17,10 +18,10 @@ export function SuperAdminCompanyRestore({id,name}:{id:string;name:string}){
   finally{setBusy(false);}
  }
  return <div className="space-y-1">
-  <button type="button" disabled={busy} onClick={()=>void restore()}
-   className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+  <Button type="button" variant="secondary" disabled={busy} onClick={()=>void restore()}
+   className="min-h-9">
    {busy?"Restoring…":"Restore company"}
-  </button>
+  </Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </div>;
 }

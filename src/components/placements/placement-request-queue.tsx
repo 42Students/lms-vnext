@@ -148,8 +148,8 @@ export function PlacementRequestQueue({
   ).length;
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
-      <div className="border-b border-border px-5 py-4">
+    <section className="border-b border-border pb-5">
+      <div className="border-b border-border pb-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -171,7 +171,7 @@ export function PlacementRequestQueue({
         </div>
       </div>
 
-      <div className="grid gap-3 p-5">
+      <div className="divide-y divide-border">
         {requests.map((item) => {
           const requestedWhen =
             when(
@@ -202,7 +202,7 @@ export function PlacementRequestQueue({
           return (
             <article
               key={item.id}
-              className="rounded-lg border border-border bg-muted p-4"
+              className="py-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>

@@ -29,11 +29,22 @@ export function legacySidebarItemActive(
    pathname==="/recruiter/drives"||pathname.startsWith("/recruiter/drives/")
  );
  const recruiterMessagesArea=href==="/hr/conversations"&&(
-   pathname==="/hr/messages"||pathname.startsWith("/hr/messages/")
+   pathname==="/hr/messages"||pathname.startsWith("/hr/messages/")||
+   pathname==="/recruiter/messages"||pathname.startsWith("/recruiter/messages/")
  );
+ /** Historical recruiter entry points re-export canonical HR pages. Their
+  * active states must follow the destination, not the alias in the URL. */
+ const recruiterAliasOwners:Readonly<Record<string,string>>={
+  "/recruiter":"/hr/home",
+  "/recruiter/home":"/hr/home",
+  "/recruiter/calendar":"/hr/calendar",
+  "/recruiter/company":"/hr/company",
+ };
+ const recruiterAlias=Object.entries(recruiterAliasOwners).some(([alias,owner])=>
+   href===owner&&(pathname===alias||pathname.startsWith(alias+"/")));
  const descendant=href!=="/dashboard"&&href!=="/college"&&
    pathname.startsWith(href+"/")&&!(href==="/admin/features"&&featureDetail);
- return exact||descendant||utilityOwner||recruiterDriveArea||recruiterMessagesArea||
+ return exact||descendant||utilityOwner||recruiterDriveArea||recruiterMessagesArea||recruiterAlias||
    (href==="/tpo/recruiters"&&(pathname==="/tpo/companies"||pathname.startsWith("/tpo/companies/")))||
    (admin&&superAdminGroup!==null&&superAdminGroup===item.label)||
    (college&&collegeGroup!==null&&collegeGroup===item.label)||
