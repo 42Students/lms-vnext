@@ -53,7 +53,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
    <textarea rows={5} maxLength={4000} value={about} disabled={!initial.ready||busy}
     onChange={e=>setAbout(e.target.value)}
     placeholder="Tell recruiters about your placement cell and your students."
-    className="min-h-28 w-full rounded border border-border bg-surface p-3"/>
+    className="min-h-28 w-full rounded-[9px] border border-border bg-surface p-3"/>
   </label>
   <p className="text-xs">{about.length}/4000 characters</p>
   <fieldset className="space-y-3">
@@ -68,15 +68,15 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
    {metricKeys.map((key,index)=><li key={key} className="flex items-center justify-between gap-3 rounded border border-border p-2 text-sm">
     <span>{index+1}. {PUBLIC_METRIC_LABELS[key]}</span>
     <span className="flex gap-2"><button type="button" disabled={busy||index===0}
-     onClick={()=>move(index,-1)} className="rounded border px-2 py-1">Move up</button>
+     onClick={()=>move(index,-1)} className="rounded-[9px] border px-2 py-1">Move up</button>
      <button type="button" disabled={busy||index===metricKeys.length-1}
-      onClick={()=>move(index,1)} className="rounded border px-2 py-1">Move down</button></span>
+      onClick={()=>move(index,1)} className="rounded-[9px] border px-2 py-1">Move down</button></span>
    </li>)}
   </ol>
   {dirty?<p role="status">Unsaved changes</p>:null}
   {!initial.ready?<p role="status">Page content editing is temporarily unavailable until storage is ready.</p>:null}
   <button type="button" disabled={busy||!initial.ready||!dirty}
-   className="min-h-11 md:min-h-9 rounded bg-primary px-4 font-[650] text-on-primary disabled:opacity-50"
+   className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50"
    onClick={()=>void save()}>{busy?"Saving…":"Save"}</button>
   {message?<p role="status" className="text-sm">{message}</p>:null}
  </section>;
