@@ -83,6 +83,7 @@ export function AdminScopeSwitcher({
         id="admin-scope-switcher"
         value={selectedValue(scope)}
         disabled={pending}
+        aria-busy={pending}
         onChange={(event) => switchScope(event.target.value)}
         className="min-h-10 py-0"
       >
