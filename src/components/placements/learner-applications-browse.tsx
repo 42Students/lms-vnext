@@ -235,7 +235,7 @@ export function LearnerApplicationsBrowse({
           ) : null}
         </section>
       ) : null}
-      <section aria-label="Application list filters" className="border-b border-border pb-5">
+      <section aria-label="Application list filters" className="border-t border-border pt-4">
         <button type="button" aria-controls="learner-app-filters" aria-expanded={mobileOpen}
           onClick={()=>setMobileOpen(open=>!open)}
           className="flex min-h-11 sm:min-h-9 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">
