@@ -214,7 +214,7 @@ export default async function SuperAdminCompaniesPage({
           Review this employer&apos;s relationships →
         </Link>
       </article>)}
-    </div> : <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-muted-foreground">No company relationships match the current scope and filters.</p>}
+    </div> : <p className="border-t border-border py-6 text-sm text-muted-foreground">No company relationships match the current scope and filters.</p>}
     {data.truncated ? <p className="text-sm text-muted-foreground">Only 50 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
     <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
       {data.query.page > 1 ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,searchField:data.query.searchField,companyStatus:data.query.companyStatus,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
