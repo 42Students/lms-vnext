@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -61,11 +62,12 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
     <section className="border-b border-border pb-4 sm:pb-5">
       <h2 className="font-semibold text-foreground">Choose round</h2>
-      <nav aria-label="Hiring rounds" className="mt-3 flex flex-wrap gap-3 border-b border-border">{rounds.map(round=>
-       <Link key={round.id} href={recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id})}
-         aria-current={round.id===selectedRound?.id?"page":undefined}
-         className={round.id===selectedRound?.id?"inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]":"inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
-        {round.sequence}. {round.name}</Link>)}</nav>
+      <Tabs ariaLabel="Hiring rounds" className="mt-3" renderPanel={false}
+         value={selectedRound?.id??""}
+         items={rounds.map(round=>({
+           value:round.id, label:round.sequence+". "+round.name,
+           href:recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id}),
+         }))} />
     </section>
     {results?<section className="space-y-4 border-b border-border pb-4 sm:pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
