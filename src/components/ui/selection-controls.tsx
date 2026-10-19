@@ -5,13 +5,13 @@ import { cx } from "@/lib/class-names";
 import { Checkbox as NativeCheckbox } from "./checkbox";
 import { Radio as NativeRadio } from "./radio";
 
-type NativeInput = Omit<ComponentPropsWithRef<"input">, "type"> & { label: ReactNode };
+type NativeInput = Omit<ComponentPropsWithRef<"input">, "type"> & { label: ReactNode; indeterminate?: boolean };
 type SwitchProps = Omit<NativeInput, "role">;
 
-function Control({ label, type, className, ...props }: NativeInput & { type: "checkbox" | "radio" }) {
+function Control({ label, type, className, indeterminate, ...props }: NativeInput & { type: "checkbox" | "radio" }) {
   return (
     <label className={cx("inline-flex min-h-11 min-w-11 cursor-pointer items-center gap-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-body-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50", className)}>
-      {type === "checkbox" ? <NativeCheckbox {...props} /> : <NativeRadio {...props} />}
+      {type === "checkbox" ? <NativeCheckbox {...props} indeterminate={indeterminate} /> : <NativeRadio {...props} />}
       <span className="min-w-0 break-words">{label}</span>
     </label>
   );
