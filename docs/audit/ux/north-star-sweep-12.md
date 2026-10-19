@@ -150,3 +150,10 @@ After the initial sweep and its merge into main, fast-forwarded `chatgpt/chat-12
 - Swapped native Retry buttons to the shared secondary `Button` on TPO registration, batch-rules and company-person error states. Other error panels received the canonical radius. Preserved existing user-facing copy, filters, data flow, conditional states, accessibility attributes and behavior.
 - **Source-only checks:** exact old/new occurrence assertions for each edit; trailing malformed `</Select` check; JSX closing-tag count checks on page work; `<Button>` opening/closing balance on fallback conversions. No application execution, no TypeScript typecheck, tests, CI, browser, deployment or screenshots.
 - **Snapshot before this tracker write:** relative to moving `main`, `106` commits ahead, `198` behind, `93` changed files including this tracker (42 TPO route files, 50 TPO component files, one documentation file). Concurrent lanes have continued to update `main` since the sync; reconcile using a normal merge before orchestrator integration, not a forced branch update.
+
+### Follow-up: five core TPO portal pages
+
+- Added **five further** `[chat-12]` commits after the 50-commit post-merge batch: `/tpo/more`, `/tpo/home`, `/tpo/companies`, `/tpo/companies/[companyId]`, and `/tpo/students`.
+- Applied 12px canonical canvas/card radius to distinct home, shortcut, company listing/detail and student directory panels, while changing native controls, list action links and filter fields to 9px canonical control radius. Distinct student-directory filter `details` and metrics blocks retain grouped-surface treatment. All existing company CRM layouts, roster filters, search bindings, CTA semantics, chart bars and tabs remain intact.
+- This continuation totals **55 verified source commits following the main merge**, with exact text-occurrence checks and JSX closing-tag counts per edit. No compiler, CI, tests, dev server, runtime or browser used.
+- Live branch comparison before this audit commit: **ahead `112`, behind `198`, changed files `98`** versus moving `main`. Any further main integration must preserve all chat-12 source commits and use a normal merge.
