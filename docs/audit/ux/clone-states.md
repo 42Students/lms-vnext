@@ -602,3 +602,27 @@ rg -n '<(p|div|section|span)[^>]*role="(status|alert)"[^>]*(rounded|border|bg-|p
 - [ ] F5 **OPEN**: five migrated file-level states; full system-state and all-portal inventory not verified.
 
 **Next exact file:** `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx` (continue with student history and request state fallbacks). The companion `src/app/(authenticated)/tpo/companies/[companyId]/manage/page.tsx` has no bespoke role-status/alert, EmptyState or error JSX from its last source read and was deliberately left unchanged.
+
+
+## Chat-5 next four student workflow states — source proof (2026-10-19)
+
+The four source files below were written only to `chatgpt/chat-5-b` and independently re-fetched after each update; shared notice JSX pairs and the original conditional branches were inspected. Values/source comparison inherits the full table above for unchanged shared components, with token fills matching old SCSS `components___variables.scss:67-74` and current `globals.css:47-57`. Radius (6px legacy vs 9px new), focus offset (3px legacy vs 2px new) and 640px vs 767px breakpoint discrepancies **remain open**; no viewport screenshots or runtime tests were performed.
+
+| Re-fetched file | Alert open/close | EmptyState | Remaining raw status/alert | First migrated line | Responsive source |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx` | 0/0 | 1 | 0 | 90 | Existing item row wrapping and linked history unchanged |
+| `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx` | 2/2 | 1 | 1 | 24 | `min-w-0` page and mobile shared feedback; numeric course count stays plain live metadata |
+| `src/app/(authenticated)/tpo/students/requests/page.tsx` | 1/1 | 0 | 0 | 122 | Existing grid/table breakpoints and `flex-wrap` links unchanged |
+| `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx` | 2/2 | 1 | 0 | 17 | Existing responsive list and pagination navigation retained |
+| **Bounded total** | **5/5** | **3** | **1** | — | **0** styled bespoke status wrappers |
+
+**Scoped source grep equivalent:** `<Alert`=5 `</Alert>`=5, `<EmptyState`=3, `<InlineNotice`=0, `<Skeleton`=0; raw status/alert=1 (unstyled evidence-count summary), styled raw=0. Every altered paired opening and closing tag was re-read. The history page retains absence of **persisted** applications, without inferring unrecorded offers, and the preparation-plan keeps the distinction between unregistered settings and an empty configured course subset. The request invalid-filter branch preserves its recovery link and never queries bad input.
+
+**Commands for checkout execution (NOT run):**
+```sh
+rg -n '<(Alert|EmptyState|InlineNotice)([ >])|</Alert>|role="(alert|status)"' 'src/app/(authenticated)/tpo/students' -g page.tsx
+rg -n 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g loading.tsx
+```
+
+- [ ] F3, F4, F5 remain unticked: source conversion does not establish all matching legacy properties, zero whole-repo raw coverage or 320px/767px/tablet rendered proof.
+- [ ] Next source: `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx` — inspect prepared readiness controls and unavailability states, then further settings pages.
