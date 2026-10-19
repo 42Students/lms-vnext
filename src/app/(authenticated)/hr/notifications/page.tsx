@@ -67,7 +67,7 @@ export default async function HrMessagesPage({searchParams}:{
      <p className="text-xs text-muted-foreground">Grouped by drive within this page only. This is not a conversation thread.</p>
      {groupHrNotificationPage(result.rows).map(group=><section key={group.jobId}
        aria-label={"Notifications for "+group.title}
-       className="rounded-xl border border-border bg-surface p-4">
+       className="border-b border-border pb-4">
        <div className="flex flex-wrap items-center justify-between gap-2">
          <h2 className="font-semibold text-foreground">
            <Link href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}
