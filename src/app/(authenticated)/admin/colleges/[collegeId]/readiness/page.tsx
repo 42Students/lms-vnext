@@ -185,7 +185,7 @@ export default async function CollegeReadinessPage({
         ].map((metric) => (
           <article
             key={metric.label}
-            className="rounded-[8px] border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4"
           >
             <p className="m-0 text-xs font-semibold text-muted-foreground">
               {metric.label}
