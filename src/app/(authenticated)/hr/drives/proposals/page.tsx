@@ -40,7 +40,7 @@ export default async function RecruiterDriveProposalHistory({
    }))}/>
   </section>:data.status==="NO_ACCESS"?<EmptyState title="No active college access" description="No active recruiter college access."/>:<>
    <form action="/hr/drives/proposals" method="get" className="flex flex-wrap items-end gap-3">
-    <input type="hidden" name="collegeId" value={data.collegeId??""}/>
+    <Input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-0 flex-[1_1_12rem] text-sm text-body">Search by role title
      <Input name="q" maxLength={100} defaultValue={input.data.q}
        className="mt-1 w-full" placeholder="Role title" />
