@@ -22,6 +22,13 @@ export function Dropdown({ trigger, children, label, align = "start", mobileShee
     if (!root || !panel) return;
     const positionPanel = () => {
       if (!root.open) return;
+      if (mobileSheet && window.innerWidth < 640) {
+        panel.style.top = "auto";
+        panel.style.bottom = "0";
+        panel.style.transform = "none";
+        panel.style.maxHeight = "70dvh";
+        return;
+      }
       panel.style.top = "calc(100% + 5px)";
       panel.style.bottom = "auto";
       panel.style.transform = "none";
@@ -74,7 +81,7 @@ export function Dropdown({ trigger, children, label, align = "start", mobileShee
       document.removeEventListener("focusin", onFocusIn);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, []);
+  }, [mobileSheet]);
   return <details ref={rootRef} data-slot="dropdown-root" className={cx("group relative inline-block min-w-0 align-middle", className)} {...props}>
     <summary aria-label={label} onKeyDown={event => {
       if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
