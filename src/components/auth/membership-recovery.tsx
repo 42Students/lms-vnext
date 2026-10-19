@@ -53,7 +53,7 @@ export function MembershipRecovery({
           Your canonical account remains signed in.
         </p>
         <div className="mt-6">
-          <Button disabled={pending} onClick={recover}>
+          <Button type="button" className="min-h-11 md:min-h-9" disabled={pending} onClick={recover}>
             {pending
               ? "Clearing selection…"
               : "Continue to college selection"}
