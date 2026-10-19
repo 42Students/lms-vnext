@@ -141,9 +141,23 @@ Reference facts: `docs/design/old-lms-pages.md` prescribes one #fff canvas radiu
 
 ### Exact next file
 
-`src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` — inspect `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` and indirect shared table/overlay components.
+`src/components/admin/admin-program-directory.tsx` — inspect `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` and indirect shared table/overlay components.
 
 ### Follow-on migration
 
 - `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx` directly renders the attendance workspace without a parent `PageHeader`. Replaced that workspace's screen-reader-only `<h1>` with shared `PageHeader` retaining the visible description, course/section/period context, and Schedule Class action; self-closing `PageHeader` and matching `Button` tags manually reviewed. No JSX build or CI run. This closes that specific markup gap, but NOT category H under the STRICT TICK RULE.
 - Next inspect assignment submissions report's filter form (hidden-input exemptions, shared control styles), then quiz attempts report and Super Admin directory pages. Audit responsive changes against 767px/991px legacy breakpoints before checking any category.
+
+## Turn 1: navigation and remaining strict proof
+
+- Migrated **20 individually identified back-link instances across 19 route files** to `PageBackLink` (teacher profile/details; course students/discussions/session coverage/discussion participation/attendance detail/gradebook learner; assignment report; faculty course assignments/quizzes/manage and discussion history; contacts detail; assignment submissions invalid-filter state; Super Admin people directory/membership/audit/unassigned routes). Reused unchanged href expressions and visible labels (including the Users & Roles entity), removed `next/link` imports only when no remaining `<Link>` existed. The shared component already has keyboard focus states and a compact responsive treatment. Actual side-by-side phone/tablet verification is **pending**.
+- Migrated one styled GET Filter submit button to shared `Button`, and one attendance heading to shared `PageHeader` with the same Schedule Class action. This is a component migration, **not** proof of a pixel-level match.
+- Removed duplicate UI import declarations in six faculty/people files, including an import with whitespace-only differences.
+- Native hidden `<input type="hidden">` fields in GET filter forms remain intentionally exempt when they have no class/style strings and preserve query state. Visible raw controls still require full coverage scan.
+- Shared `src/components/ui/*` was not edited. No code, tests, typecheck, lint, browser rendering, CI, or screenshot comparisons run.
+- [ ] Faculty/Teacher H (missing: full grep coverage including transitive components, legacy vs new file:line rows for every state, phone/tablet comparison).
+- [ ] Super Admin academics/people/recruiters H (missing: complete page-by-page value/coverage/responsive proofs; the recruiters alias routes to HR and must be coordinated with HR owner).
+- [ ] Formal JSX/type validation (not run by lane constraint; manually reviewed each changed tag pair and new self-closing component).
+
+**Commit handoff:** 31 commits ahead of `main` at `d915bd67b20838f496d2a5b25b4365e748a35dd5`, 0 behind when checked immediately before this audit update. GitHub Contents API writes each commit directly to `chatgpt/chat-3-b`; no main push. 
+**Next file:** `src/components/admin/admin-program-directory.tsx`. Check Super Admin academic program filter/button variants, responsive breakpoints, and exact legacy values. Do not alter shared `ui` files.
