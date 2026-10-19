@@ -8,7 +8,7 @@ import {updateTpoGridQuery} from "@/modules/placements/tpo-grid-model";
 import {activeTpoGridFilterCount,invalidTpoGridFilterValue,resolvedTpoGridFilterValue} from "@/modules/placements/tpo-grid-filter-state";
 import {clearTpoGridFilters} from "@/modules/placements/tpo-grid-filter-reset";
 export type TpoFilterField={key:string;label:string;urlKey?:string;allValue?:string;options:readonly {value:string;label:string}[]};
-export function TpoGridFilterPanel({fields,mobileSheet=false,title={title}}:{fields:readonly TpoFilterField[];mobileSheet?:boolean;title?:string}){
+export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter students"}:{fields:readonly TpoFilterField[];mobileSheet?:boolean;title?:string}){
  const router=useRouter(),pathname=usePathname(),query=useSearchParams();
  const [sheetOpen,setSheetOpen]=useState(false);
  const activeCount=activeTpoGridFilterCount(new URLSearchParams(query.toString()),fields);
@@ -48,7 +48,7 @@ export function TpoGridFilterPanel({fields,mobileSheet=false,title={title}}:{fie
    className="md:hidden">
    {title} ({activeCount})
   </Button>
-  <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title="Filter students">
+  <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title={title}>
    <div id="tpo-grid-student-filters" aria-label={title} className={wrapper}>{content}</div>
   </BottomSheet>
   <aside aria-label="Grid filters" className={wrapper+" hidden md:block"}>{content}</aside>
