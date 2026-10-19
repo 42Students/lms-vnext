@@ -287,3 +287,11 @@ Continue legacy-shell skin in the attendance portion of Super Admin academic ope
 ### Attendance pass result
 - Reviewed all three source files; flattened policy metrics and monthly-health block separators in `admin-attendance-workspace.tsx` while retaining the hairline table boundary.
 - Server route and settings editor inherit the shared UI tokens and require no presentation-only changes. No code, tests, typecheck or CI executed.
+
+## Follow-on portal: Super Admin recruiter accounts
+The `/admin/recruiters` route in the original 211-file inventory is a compatibility export of `../hr/page`; therefore the actual UI is implemented in the files below. Include these to fulfill the explicitly owned recruiter directory surface without changing any HR/recruiter portal routes.
+
+- [ ] `src/app/(authenticated)/admin/hr/page.tsx`
+- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
+- [ ] `src/components/admin/super-admin-hr-account-dialog.tsx`
+- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
