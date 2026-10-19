@@ -92,7 +92,11 @@ export function DateInput({
   // time panel is minute-based, like components___antddesign.scss:204-211.
   const minuteStep = Number.isInteger(requestedStep) && requestedStep >= 60 && requestedStep % 60 === 0
     ? requestedStep / 60 : null;
-  const hasPanel = mode === "date" || mode === "week" || mode === "month" || ((mode === "time" || mode === "datetime-local") && minuteStep !== null);
+  // A minute-only custom panel must not truncate values or bounds that use
+  // native second precision; use the browser picker for those existing forms.
+  const hasSecondPrecision = [value, defaultValue, props.min, props.max].some(raw =>
+    typeof raw === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(raw));
+  const hasPanel = mode === "date" || mode === "week" || mode === "month" || ((mode === "time" || (mode === "datetime-local" && !hasSecondPrecision)) && minuteStep !== null);
   const enabled = hasPanel && calendarPopup && !disabled && !readOnly;
   const selected = String(value ?? (inputRef.current?.value || defaultValue || ""));
   const today = localISO(new Date());
@@ -107,7 +111,10 @@ export function DateInput({
     const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(raw);
     if (!match) return null;
     const [, year, month, day, hour, minute] = match.map(Number);
+    if (month < 1 || month > 12 || hour > 23 || minute > 59) return null;
     const utc = Date.UTC(year, month - 1, day, hour, minute);
+    const reconstructed = new Date(utc);
+    if (reconstructed.getUTCMonth() !== month - 1 || reconstructed.getUTCDate() !== day) return null;
     return Number.isFinite(utc) ? utc / 60000 : null;
   }
   const candidateMinutes = dateTimeMinuteNumber(dateTimeCandidate);
@@ -221,7 +228,7 @@ export function DateInput({
       {open && enabled
         ? <PopoverPanel id={popupId} label={mode === "time" ? "Choose time" : mode === "datetime-local" ? "Choose date and time" : mode === "month" ? "Choose month" : mode === "week" ? "Choose week" : "Choose date"}
             onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
-            onKeyDown={mode === "date" ? handleCalendarKey : undefined}
+            onKeyDown={mode === "date" || mode === "week" || mode === "datetime-local" ? handleCalendarKey : undefined}
             data-slot={mode === "time" ? "legacy-time-picker" : mode === "datetime-local" ? "legacy-datetime-picker" : mode === "month" ? "legacy-month-picker" : mode === "week" ? "legacy-week-picker" : "legacy-date-calendar"}
             className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] !rounded-[12px] border border-[var(--lms-neutral-200)] bg-white p-3 !shadow-[var(--lms-search-dropdown-shadow)]">
             {mode !== "time"
