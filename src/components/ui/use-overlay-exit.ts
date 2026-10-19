@@ -16,6 +16,18 @@ export function useOverlayExit(
     const dialog = dialogRef.current;
     if (!dialog) return;
     let timeout: number | undefined;
+    let onMotionPreferenceChange: ((event: MediaQueryListEvent) => void) | undefined;
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    const restoreFocus = () => {
+      const opener = openerRef.current;
+      // The trigger can disappear during a route change; never focus a detached node.
+      if (opener?.isConnected) opener.focus();
+    };
+    const finishClose = () => {
+      dialog.removeAttribute("data-closing");
+      if (dialog.open) dialog.close();
+      restoreFocus();
+    };
     if (open) {
       dialog.removeAttribute("data-closing");
       if (!dialog.open) {
@@ -23,19 +35,24 @@ export function useOverlayExit(
         dialog.showModal();
       }
     } else if (dialog.open) {
-      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-      if (reduceMotion || exitDurationMs <= 0) {
-        dialog.close();
-        openerRef.current?.focus();
+      if (reducedMotion?.matches || exitDurationMs <= 0) {
+        finishClose();
       } else {
         dialog.setAttribute("data-closing", "true");
-        timeout = window.setTimeout(() => {
-          dialog.removeAttribute("data-closing");
-          if (dialog.open) dialog.close();
-          openerRef.current?.focus();
-        }, exitDurationMs);
+        timeout = window.setTimeout(finishClose, exitDurationMs);
+        // Respect a reduced-motion preference enabled during an in-progress exit.
+        onMotionPreferenceChange = event => {
+          if (!event.matches) return;
+          if (timeout !== undefined) window.clearTimeout(timeout);
+          timeout = undefined;
+          finishClose();
+        };
+        reducedMotion?.addEventListener("change", onMotionPreferenceChange);
       }
     }
-    return () => { if (timeout !== undefined) window.clearTimeout(timeout); };
+    return () => {
+      if (timeout !== undefined) window.clearTimeout(timeout);
+      if (onMotionPreferenceChange) reducedMotion?.removeEventListener("change", onMotionPreferenceChange);
+    };
   }, [open, dialogRef, openerRef, exitDurationMs]);
 }
