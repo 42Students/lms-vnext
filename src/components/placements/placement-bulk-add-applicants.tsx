@@ -215,7 +215,7 @@ export function PlacementBulkAddApplicants({
                 type="button"
                 disabled={busy || selected.size === 0 || !roleOptionId}
                 onClick={() => void submit()}
-                className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50 md:min-h-9"
+                className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50 md:min-h-9"
               >
                 {busy ? "Working..." : "Review and confirm Add-to-Drive"}
               </button>
