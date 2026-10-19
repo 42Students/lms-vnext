@@ -2,6 +2,7 @@
 import { DateInput } from "@/components/ui/date-input";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+
 import {useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 type Classroom={id:string;name:string;cohortName:string;periodStart:string;periodEnd:string;updatedAt:string};
@@ -34,7 +35,7 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
       }catch(reason){setError(reason instanceof Error?reason.message:"Booking failed");}
     });
   }
-  const field="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground";
+  const field="min-h-[var(--lms-control-height)] min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground";
   return <section className="border-t border-border pt-4" aria-label="Book lecture hall">
     <h2 className="font-semibold text-foreground">Book class session</h2>
     <p className="mt-2 text-sm text-body">Dates and times use IST. A booking is only confirmed after rechecking persisted overlaps.</p>

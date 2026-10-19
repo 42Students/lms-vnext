@@ -103,7 +103,7 @@ export function NotificationList({
                void markRead(item.id,item.actionHref??undefined);
               }}
               aria-label={"Open notification: "+item.title}
-              className="w-full min-h-12 justify-start rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 text-left whitespace-normal hover:bg-[var(--lms-primary-subtle)]">
+              className="w-full min-h-12 justify-start rounded-[var(--lms-radius-lg)] border border-border bg-surface p-2 text-left whitespace-normal shadow-[var(--lms-shadow-sm)] hover:border-primary/25 hover:shadow-[var(--lms-shadow-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:p-3">
               <div className="flex items-start gap-3">
                {!item.readAt?<span aria-hidden="true" className="mt-2 inline-block h-2 w-2 shrink-0 rounded-full bg-primary"/>:null}
                <div className="min-w-0 flex-1">
@@ -117,7 +117,7 @@ export function NotificationList({
               </div>
              </Button>:<article
               key={item.id}
-              className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5"
+              className="rounded-[var(--lms-radius-lg)] border border-border bg-surface p-2 shadow-[var(--lms-shadow-sm)] transition-[box-shadow,border-color] duration-200 hover:border-primary/25 hover:shadow-[var(--lms-shadow-md)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary sm:p-3"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>

@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -47,10 +48,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
           { label: "Other marked", value: attendance.overall?.absent ?? 0 },
           { label: "Unmarked sessions", value: attendance.overall?.unmarkedSessions ?? 0 },
         ].map((metric) => (
-          <article key={metric.label} className="rounded-xl border border-border bg-surface p-4">
-            <h2 className="text-xs font-semibold text-muted-foreground">{metric.label}</h2>
-            <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{metric.value}</p>
-          </article>
+          <StatTile key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </section>
       <section className="border-b border-border py-4" aria-label="Threshold context">

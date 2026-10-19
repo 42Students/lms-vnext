@@ -23,9 +23,8 @@ export default async function LearnerVerificationPage() {
   return <div className="min-w-0 space-y-6">
     <Link href="/learn/profile" className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Profile</Link>
     <LearnerVerificationLiveRefresh />
-    <header><PageHeader title="Profile verification" />
-      <p className="mt-2 text-sm text-body">Your own Education and Identity review status. A saved detail does not mean it is verified.</p>
-    </header>
+    <PageHeader title="Profile verification"
+      description="Your own Education and Identity review status. A saved detail does not mean it is verified." />
     <section aria-labelledby="own-private-receipts" className="border-t border-border pt-5">
       <h2 id="own-private-receipts" className="text-base font-semibold text-foreground">Your saved private evidence receipts</h2>
       <p className="mt-2 text-sm text-body">These counts describe private upload receipts and scan status, not verified documents or proof that a reviewer has accepted them. Rejected, revoked and expired receipts cannot be used for approval.</p>

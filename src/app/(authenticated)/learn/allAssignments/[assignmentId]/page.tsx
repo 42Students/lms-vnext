@@ -103,8 +103,8 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
           <AssignmentSubmissionControl fileUploadsEnabled={assignmentFilesRuntimeEnabled()} assignmentId={item.id} deliveryId={item.deliveryId} />
         ) : <div className="mt-2 space-y-2">
           <p className="text-sm text-body">{item.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}</p>
-          <Button variant="secondary" type="button" disabled aria-disabled="true"
-            className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-muted-foreground">
+          <Button type="button" variant="secondary" disabled aria-disabled="true"
+            className="min-h-11">
             {item.dueAt?"Submission closed":"Unavailable"}
           </Button>
         </div>}

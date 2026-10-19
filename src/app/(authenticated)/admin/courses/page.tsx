@@ -18,7 +18,6 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
-          eyebrow="Super Admin"
           title="Courses"
           description="Course administration requires a college safety scope."
         />
@@ -42,7 +41,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
   const query=await searchParams;
   const parsed=parseSuperAdminCourseQuery(query);
   if(!parsed)return <div className="min-w-0 space-y-5">
-    <PageHeader eyebrow="Super Admin" title="Courses"/>
+    <PageHeader title="Courses"/>
     <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."
       action={<Link href="/admin/courses" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
   </div>;
@@ -55,7 +54,6 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin"
         title="Courses"
         description="Course structure inside the selected college safety scope."
       />

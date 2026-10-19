@@ -1,4 +1,6 @@
 "use client";
+
+import { MetricBar } from "@/components/ui/metric-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -442,19 +444,10 @@ export function LearnerCourseList({
                             {safeCardProgress(row) === null ? "Not available" : safeCardProgress(row)+"%"}
                           </span>
                         </div>
-                        {safeCardProgress(row) !== null ? <div
-                          className="h-2 overflow-hidden rounded-full bg-muted"
-                          role="progressbar"
-                          aria-label="Course progress"
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          aria-valuenow={safeCardProgress(row)!}
-                        >
-                          <div
-                            className="h-full rounded-full bg-primary"
-                            style={{ width: `${safeCardProgress(row)}%` }}
-                          />
-                        </div> : <p className="text-xs text-muted-foreground">No published learning items to measure.</p>}
+                        {safeCardProgress(row) !== null ?
+                          <MetricBar role="progressbar" label="Course progress"
+                            value={safeCardProgress(row)!} maximum={100} unit="percent" />
+                          : <p className="text-xs text-muted-foreground">No published learning items to measure.</p>}
                         {!row.readOnly && row.overdueAssignments ? (
                           <p className="mt-3 text-xs font-semibold text-warning" role="note">
                             {row.overdueAssignments} overdue {row.overdueAssignments === 1 ? "assignment" : "assignments"} · submission deadline passed

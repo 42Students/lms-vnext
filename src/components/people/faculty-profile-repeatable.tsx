@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,7 +96,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                 return <label key={field.name} className="block min-w-0 text-sm font-semibold text-body">
                   {field.label}
                   {field.kind === "checkbox" ? (
-                    <Checkbox className="ml-3" checked={value === true} disabled={pending}
+                    <Checkbox  className="ml-3" checked={value === true} disabled={pending}
                       onChange={event => update(row.id, field.name, event.target.checked)} />
                   ) : field.multiline ? (
                     <Textarea className="mt-1.5 min-h-24 w-full min-w-0"

@@ -1,1 +1,5 @@
-export default function Loading(){return <p role="status" className="text-sm text-body">Loading batch rules…</p>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function Loading() {
+  return <GracefulPageLoading label="Loading batch rules…" shape="directory" />;
+}

@@ -3,6 +3,8 @@ import {CourseChoiceControl} from "./course-choice-control";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Radio} from "@/components/ui/radio";
 
+import { Radio } from "@/components/ui/radio";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   type FormEvent,
   useEffect,
@@ -799,7 +801,7 @@ export function FacultyLessonAuthoring({
 
             {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
               <label className="mt-4 flex min-h-10 items-center gap-2 text-sm text-body">
-                <Checkbox checked={publishNow} onChange={event=>setPublishNow(event.target.checked)}/>
+                <Checkbox  checked={publishNow} onChange={event=>setPublishNow(event.target.checked)}/>
                 Publish now — make this learning item visible to eligible students
               </label>:null}
             {mode === "LIVE_CLASS" ? (
@@ -1017,8 +1019,9 @@ export function FacultyLessonAuthoring({
                               }
                               className="grid gap-2 sm:grid-cols-[auto_1fr_auto] sm:items-center"
                             >
-                              <CourseChoiceControl
-                                aria-label={`Correct answer for option ${optionIndex + 1}`} single={question.type === "SINGLE_CHOICE"}
+                              {question.type === "SINGLE_CHOICE" ? <Radio
+                                aria-label={`Correct answer for option ${optionIndex + 1}`}
+                                
                                 name={`correct-${question.id}`}
                                 checked={
                                   option.correct
@@ -1036,8 +1039,29 @@ export function FacultyLessonAuthoring({
                                     },
                                   )
                                 }
-                                className="shrink-0"
-                              />
+                                className="h-4 w-4 accent-[var(--lms-primary)]"
+                              /> : <Checkbox
+                                aria-label={`Correct answer for option ${optionIndex + 1}`}
+                                
+                                name={`correct-${question.id}`}
+                                checked={
+                                  option.correct
+                                }
+                                onChange={() =>
+                                  updateOption(
+                                    question.id,
+                                    option.id,
+                                    {
+                                      correct:
+                                        question.type ===
+                                        "SINGLE_CHOICE"
+                                          ? true
+                                          : !option.correct,
+                                    },
+                                  )
+                                }
+                                className="h-4 w-4 accent-[var(--lms-primary)]"
+                              />}
                               <Input
                                 aria-label={`Option ${optionIndex + 1}`}
                                 value={

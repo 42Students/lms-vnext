@@ -55,7 +55,7 @@ export default async function CollegeGroupsPage({
     <PageHeader eyebrow="College Admin" title="Student groups" />
     <ErrorState title="Invalid group filters"
       description="Choose a supported group type, status and page. Remove repeated or unrelated filters."
-      action={<Link href="/college/groups" className="inline-flex min-h-11 items-center font-semibold underline">Clear filters</Link>}/>
+      action={<Link href="/college/groups" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold underline">Clear filters</Link>}/>
   </div>;
   const { kind, status, offset } = filters;
 
@@ -118,7 +118,7 @@ export default async function CollegeGroupsPage({
         {kind || status ? (
           <Link
             href="/college/groups"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline"
+            className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link hover:underline"
           >
             Clear filters
           </Link>

@@ -40,9 +40,9 @@ export default async function DriveDayForOneDrive({
               : "Date to be confirmed"}</p>
             <p className="mt-1 text-sm text-body">{round.venue || "Venue to be told"}</p>
             <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
-              <Link className="text-link underline"
+              <Link className="text-link underline lms-inline-link"
                 href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}>See attendance and results</Link>
-              <Link className="text-link underline" href="/tpo/drive-day">Open drive day</Link>
+              <Link className="text-link underline lms-inline-link" href="/tpo/drive-day">Open drive day</Link>
             </div>
           </article>;
         })}

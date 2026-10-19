@@ -1,3 +1,4 @@
+import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
 import Link from "next/link";
 import {tpoBatchReturnHref} from "@/modules/placements/tpo-batch-return-model";
 import { redirect } from "next/navigation";
@@ -35,7 +36,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    invitable:invitePreview.invitable,registered:registrations.registered},new Date());
  const tabs=[{label:"Students",href:"students"},{label:"Registrations",href:"registrations"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
  return <div className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
- <Link href={backHref} className="text-sm text-link underline">← Placement eligibility</Link>
+ <Link href={backHref} className="text-sm text-link underline lms-inline-link">← Placement eligibility</Link>
  {undoable?<details className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
   <summary className="min-h-11 cursor-pointer font-semibold text-link"
    title={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}>
@@ -53,7 +54,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    Suggested: invite the batch (Next step, above) <Link href="#batch-next-step"
     className="ml-2 font-semibold text-link underline" data-testid="batch.suggest-do">Show me</Link>
   </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="rounded border border-border bg-surface p-3 text-sm">
-   Suggested: remind them to register <Link href="#batch-reminder" className="ml-2 font-semibold text-link underline" data-testid="batch.suggest-do">Show me</Link>
+   Suggested: remind them to register <Link href="#batch-reminder" className="ml-2 font-semibold text-link underline lms-inline-link" data-testid="batch.suggest-do">Show me</Link>
   </p>:null}
  {own?<Link href={"/tpo/batches/"+batchId+"/students?source=LEARNER"}
     className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
@@ -66,7 +67,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
       <p className="text-sm text-body">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
       {decision.reason?<p className="text-xs text-muted-foreground">Reason: {decision.reason}</p>:null}
     </div>
-    <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link">
+    <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link">
       {lifecycle?.finishedAt?"Review batch decision":"Set batch decision"} →
     </Link>
   </div>
@@ -102,12 +103,11 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    </div>)}
   </dl>
   {summary.complete&&summary.assessed>0?
-   <div role="img" aria-label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+summary.undecided+" not decided, "+summary.needsReview+" need review"}
-    className="flex h-3 overflow-hidden rounded-full bg-muted">
-    <span className="bg-success" style={{width:100*summary.eligible/summary.assessed+"%"}}/>
-    <span className="bg-warning" style={{width:100*summary.ineligible/summary.assessed+"%"}}/>
-    <span className="bg-primary" style={{width:100*summary.undecided/summary.assessed+"%"}}/>
-   </div>:null}
+   <StackedMetricBar maximum={summary.assessed}
+    label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+summary.undecided+" not decided, "+summary.needsReview+" need review"}
+    segments={[{label:"Eligible",value:summary.eligible,tone:"success"},
+      {label:"Ineligible",value:summary.ineligible,tone:"warning"},
+      {label:"Not decided",value:summary.undecided,tone:"primary"}]} />:null}
   <p className="text-sm">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
     eligibility.nextAction==="DECIDE"?"Decide undecided learners":
     eligibility.nextAction==="INVITE"?"Review batch invitation readiness":"Review finished batch"}</p>

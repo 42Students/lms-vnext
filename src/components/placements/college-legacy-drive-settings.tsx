@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import { Button } from "@/components/ui/button";
 import {collegeDriveCloseAction,collegeDriveReopenAction,type CollegeLegacyDriveStatus} from
   "@/modules/placements/college-legacy-drive-settings-model";
 
@@ -47,34 +48,34 @@ export function CollegeLegacyDriveSettings({
     }catch(error){setFeedback(error instanceof Error?error.message:"Could not reopen drive");}
     finally{setBusy(false);}
   }
-  return <section className="space-y-4 rounded-xl border border-border bg-surface p-4">
+  return <section className="space-y-4 border-t border-border pt-4">
     <h2 className="font-semibold">Drive status</h2>
     <p className="font-medium">{status}</p>
     {action?<div className="space-y-3">
       {confirmation==="CLOSE"?<div className="space-y-3" role="group" aria-label={action.confirmation}>
         <p>{action.confirmation}</p>
         <div className="flex flex-wrap gap-3">
-          <button type="button" disabled={busy} onClick={closeDrive}
-            className="min-h-11 rounded-md bg-primary px-4 text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Yes</button>
-          <button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
-            className="min-h-11 rounded-md border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">No</button>
+          <Button type="button" disabled={busy} onClick={closeDrive}
+            className="min-h-11 sm:min-h-9">Yes</Button>
+          <Button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
+            variant="secondary" className="min-h-11 sm:min-h-9">No</Button>
         </div>
-      </div>:<button type="button" disabled={busy}
-        onClick={()=>setConfirmation("CLOSE")} className="min-h-11 rounded-md border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      </div>:<Button type="button" disabled={busy}
+        onClick={()=>setConfirmation("CLOSE")} variant="secondary" className="min-h-11 sm:min-h-9">
         {action.label}
-      </button>}
+      </Button>}
     </div>:null}
     {reopen?<div className="space-y-3">
       {confirmation==="REOPEN"?<div role="group" aria-label={reopen.confirmation} className="space-y-3">
         <p>{reopen.confirmation}</p>
-        <button type="button" disabled={busy} onClick={()=>void reopenDrive()}
-          className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Button type="button" disabled={busy} onClick={()=>void reopenDrive()}
+          className="min-h-11 sm:min-h-9">
           {busy?"Reopening…":"Yes, reopen"}
-        </button>
-        <button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
-          className="ml-2 min-h-11 rounded border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
-      </div>:<button type="button" disabled={busy} onClick={()=>setConfirmation("REOPEN")}
-        className="min-h-11 rounded border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{reopen.label}</button>}
+        </Button>
+        <Button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
+          variant="secondary" className="ml-2 min-h-11 sm:min-h-9">Cancel</Button>
+      </div>:<Button type="button" disabled={busy} onClick={()=>setConfirmation("REOPEN")}
+        variant="secondary" className="min-h-11 sm:min-h-9">{reopen.label}</Button>}
     </div>:null}
     {feedback?<p role="status">{feedback}</p>:null}
   </section>;

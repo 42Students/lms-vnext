@@ -57,7 +57,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
   }
 
   return (
-    <article id={"known-error-"+item.id} className="scroll-mt-4 space-y-4 rounded-xl border border-border bg-surface p-5">
+    <article id={"known-error-"+item.id} className="scroll-mt-4 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="m-0 break-all font-mono text-xs text-muted-foreground">
@@ -180,7 +180,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
       </div>
       {confirmMute && !item.muted ? (
         <section aria-label="Mute this error"
-          className="space-y-3 rounded-lg border border-border bg-surface p-4">
+          className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <p className="font-semibold text-foreground">Mute this error</p>
           <p className="text-sm text-body">
             Why is it safe to ignore? It comes back on its own if it suddenly spikes.

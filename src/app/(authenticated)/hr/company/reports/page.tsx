@@ -1,3 +1,5 @@
+import { SummaryStrip } from "@/components/ui/summary-strip";
+import { MetricBar } from "@/components/ui/metric-bar";
 import { DataTable } from "@/components/ui/data-table";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -204,67 +206,16 @@ export default async function RecruiterCompanyReportsPage({
         </nav>
       ) : null}
 
-      <nav
-        aria-label="Company sections"
-        className="flex gap-2 border-b border-border"
-      >
-        <Link
-          href={`${companyBase}&tab=company`}
-          className="border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-        >
-          Company
-        </Link>
+      <Tabs renderPanel={false} ariaLabel="Company sections" value="reports"
+        items={[{value:"company",label:"Company",href:`${companyBase}&tab=company`},
+          {value:"team",label:"Team",href:`${companyBase}&tab=team`},
+          {value:"reports",label:"Reports",href:recruiterCompanyReportsHref({collegeId})}]}/>
 
-        <Link
-          href={`${companyBase}&tab=team`}
-          className="border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-        >
-          Team
-        </Link>
-
-        <Link
-          href={recruiterCompanyReportsHref({
-            collegeId,
-          })}
-          aria-current="page"
-          className="border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-        >
-          Reports
-        </Link>
-      </nav>
-
-      <section
-        aria-label="Hiring portfolio summary"
-        className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-3"
-      >
-        {[
-          {
-            label: "Visible hiring drives",
-            value: summary.total,
-          },
-          {
-            label: "Published drives",
-            value: summary.published,
-          },
-          {
-            label: "Closed drives",
-            value: summary.closed,
-          },
-        ].map((metric) => (
-          <article
-            key={metric.label}
-            className="border-b border-border p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
-          >
-            <p className="text-xs font-semibold text-muted-foreground">
-              {metric.label}
-            </p>
-
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {metric.value}
-            </p>
-          </article>
-        ))}
-      </section>
+      <SummaryStrip label="Hiring portfolio summary" steps={[
+        {label:"Visible hiring drives",value:summary.total},
+        {label:"Published drives",value:summary.published},
+        {label:"Closed drives",value:summary.closed},
+      ]} />
 
       <section aria-label="All your drives at this college" className="border-b border-border pb-4 sm:pb-5">
         <h2 className="font-semibold text-foreground">All your drives at this college</h2>
@@ -275,9 +226,8 @@ export default async function RecruiterCompanyReportsPage({
               <span className="font-semibold text-foreground">{stage.label}</span>
               <span className="tabular-nums text-body">{stage.total} · {stage.previousPercentLabel} of previous</span>
             </div>
-            <div className="mt-1 h-2 overflow-hidden rounded-full bg-border">
-              <div className="h-full bg-primary" style={{width:stage.appliedPercent+"%"}}/>
-            </div>
+            <MetricBar className="mt-1" label={stage.label+" hiring funnel"}
+              value={stage.appliedPercent} maximum={100} unit="percent" />
           </div>)}
         </div>
       </section>

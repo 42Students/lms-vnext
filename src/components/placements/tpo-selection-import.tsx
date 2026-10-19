@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { FileUpload } from "@/components/ui/file-upload";
+import { DataTable } from "@/components/ui/data-table";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -50,15 +52,18 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   <h2 className="font-semibold text-foreground">Import the company&apos;s selection list</h2>
   <p className="text-sm text-body">Use CSV with Application ID, Email or Student name. Optional Role and Package LPA columns.
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
-  <label className="block text-sm font-semibold">Selection list (CSV)
-   <input type="file" accept=".csv,text/csv" disabled={busy} onChange={e=>void read(e.target.files?.[0]??null)}
-    className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm md:min-h-9"/>
-  </label>
+  <FileUpload label="Selection list (CSV)" accept=".csv,text/csv" maxBytes={2_000_000}
+     disabled={busy} onFiles={files=>void read(files?.[0]??null)}/>
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
-   <div tabIndex={0} role="group" aria-label="Selection import preview, scroll for more" className="max-h-52 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
-    {entries.map(e=><p key={e.applicationId} className="min-h-9 border-b border-border px-2 py-2 last:border-b-0">{e.name} · {e.roleTitle}
-     {e.annualCtcInr==null?"":" · ₹"+(e.annualCtcInr/100000)+" LPA"}</p>)}
+   <div className="max-h-52 min-w-0 overflow-auto">
+    <DataTable<SelectionImportEntry> caption="Selection import preview" rows={entries}
+     getRowKey={item=>item.applicationId} empty={<p>No matched selections yet.</p>}
+     columns={[
+      {key:"student",header:"Student",cell:item=>item.name,mobilePriority:"primary"},
+      {key:"role",header:"Role",cell:item=>item.roleTitle,mobilePriority:"secondary"},
+      {key:"package",header:"Package",cell:item=>item.annualCtcInr==null?"—":"₹"+item.annualCtcInr/100000+" LPA",mobilePriority:"secondary"},
+     ]}/>
    </div>
    <Button variant="primary" type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
     className="min-h-11 md:min-h-9 px-4">
@@ -72,8 +77,15 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     onConfirm={()=>void confirm()}/>
   {unmatched.length?<details className="rounded-[var(--lms-control-radius)] border border-border p-3" open>
    <summary className="cursor-pointer text-sm font-semibold">{unmatched.length} unmatched or unusable rows</summary>
-   <ul tabIndex={0} aria-label="Unmatched selection import rows, scroll for more" className="mt-2 max-h-40 min-h-0 list-disc overflow-y-auto overscroll-contain pl-6 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">{unmatched.map(x=>
-    <li key={x.line}>Row {x.line}: {x.value||"Empty identifier"} — {x.reason}</li>)}</ul>
+   <div className="mt-2 max-h-40 min-w-0 overflow-auto">
+    <DataTable caption="Unmatched selection import rows" rows={unmatched}
+      getRowKey={item=>String(item.line)} empty={<p>No unmatched rows.</p>}
+      columns={[
+       {key:"line",header:"Row",cell:item=>item.line,mobilePriority:"primary"},
+       {key:"identity",header:"Identifier",cell:item=>item.value||"Empty identifier",mobilePriority:"secondary"},
+       {key:"reason",header:"Reason",cell:item=>item.reason,mobilePriority:"secondary"},
+      ]}/>
+   </div>
   </details>:null}
   {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
   {done?<p role="status" className="text-sm text-body">{done}</p>:null}

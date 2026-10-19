@@ -63,7 +63,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
    setError(reason instanceof Error?reason.message:friendlyApiError({network:true}));
   }finally{pending.current=false;setBusy(false);}
  }
- return <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 space-y-3" aria-label="Reply to recruiter">
+ return <section className="space-y-3 border-t border-border pt-4" aria-label="Reply to recruiter">
   <h2 className="font-semibold text-foreground">Reply</h2>
   <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
     {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
@@ -93,7 +93,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
     </Button>:null}
    </div>
   </form>
-  {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
  </section>;
 }

@@ -1,3 +1,4 @@
+import { BoardColumn } from "@/components/ui/board-column";
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
 import {useEffect,useMemo,useState} from "react";
@@ -192,8 +193,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     className="overflow-x-auto overscroll-x-contain pb-3 [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"><div className="flex min-w-max gap-3">
    {groups.map(group=>{
     const cards=filtered.filter(task=>task.assigneeMembershipId===group.membershipId);
-    return <section key={group.membershipId??"unassigned"} aria-label={group.displayName??"Learner"}
-      className="w-72 shrink-0 rounded-xl border border-border bg-surface-subtle p-3"
+    return <BoardColumn key={group.membershipId??"unassigned"} label={group.displayName??"Learner"}
       onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,group.membershipId)}>
      <h2 className="flex justify-between text-sm font-semibold">
       <span>{group.displayName??"Learner"}</span><span>{cards.length}</span></h2>
@@ -235,7 +235,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       </li>)}
       {!cards.length?<li className="py-5 text-center text-xs text-muted-foreground">No tasks</li>:null}
      </ul>
-    </section>;
+    </BoardColumn>;
    })}
   </div></div>
  </section>;

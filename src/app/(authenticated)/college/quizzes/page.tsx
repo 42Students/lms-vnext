@@ -30,7 +30,7 @@ export default async function CollegeQuizzesPage({
         <PageHeader eyebrow="College Admin" title="Quizzes" />
         <ErrorState title="Invalid assessment filters"
           description="The requested search, status or page is invalid. No records were loaded."
-          action={<Link href="/college/quizzes" className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>} />
+          action={<Link href="/college/quizzes" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>} />
       </div>
     );
   }

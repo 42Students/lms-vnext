@@ -36,7 +36,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  if(result.status==="NOT_REGISTERED")return <div className="space-y-4">
    <PageHeader eyebrow="TPO · Team" title="Conversations unavailable"/>
    <p role="status">Private messaging tables are not registered.</p>
-   <Link href="/tpo/team" className="text-link">Back to team</Link>
+   <Link href="/tpo/team" className="text-link lms-inline-link">Back to team</Link>
  </div>;
  const preferences=await getTpoTeamThreadPreferences(context,parsed.data);
  const asks=await listTpoTeamAsks(context,parsed.data).catch(()=>({status:"FAILED" as const,items:[]}));
@@ -54,7 +54,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Team" title={result.thread.topic}
    description={"With "+result.thread.counterpartName+" · Private placement-team conversation."}/>
-  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-9 sm:min-h-9 items-center text-link">All conversations</Link>
+  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-9 sm:min-h-9 items-center text-link lms-inline-link">All conversations</Link>
   <TpoTeamOpenRead threadId={result.thread.id}/>
   <TpoTeamRename threadId={result.thread.id} currentTopic={result.thread.topic}/>
   <TpoTeamThreadDetails threadId={result.thread.id} topic={result.thread.topic}

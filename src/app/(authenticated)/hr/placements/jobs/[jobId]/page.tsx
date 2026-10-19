@@ -1,3 +1,4 @@
+import { MetricBar } from "@/components/ui/metric-bar";
 import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { notFound, redirect } from "next/navigation";
@@ -9,7 +10,6 @@ import { RecruiterApplicantReviewDrawer } from "@/components/hr/recruiter-applic
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
 import { PageHeader } from "@/components/ui/page-header";
-import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { DataTable } from "@/components/ui/data-table";
 import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focus-refresh";
@@ -389,10 +389,9 @@ export default async function HrPlacementJobPage({
               }).map(stage=><li key={stage.label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
                 <p className="text-xs font-semibold text-body">{stage.label}</p>
                 <p className="mt-1 text-xl font-bold tabular-nums text-foreground">{stage.count??"—"}</p>
-                <div role="img" aria-label={stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage"}
-                  className="mt-2 h-2 overflow-hidden rounded-full bg-border">
-                  <div className="h-full bg-primary" style={{width:(stage.ofPrevious??0)+"%"}}/>
-                </div>
+                <MetricBar className="mt-2" role="img"
+                  label={stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage"}
+                  value={stage.ofPrevious??0} maximum={100} unit="percent" />
                 <p className="mt-1 text-xs text-muted-foreground">{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"} · {stage.ofApplied===null?"Applied percentage unavailable":stage.ofApplied+"% of shared applicants"}</p>
               </li>)}
             </ol>
@@ -447,30 +446,16 @@ export default async function HrPlacementJobPage({
           Request another drive
         </Link>
       </div>
-      <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-3 border-b border-border">
-        {(["overview", "applicants", "rounds", "offers"] as const).map(tab => (
-          <Link key={tab} href={`/recruiter/drives/${workspace.job.id}?tab=${tab}${returnQuery}`}
-            aria-current={filters.tab === tab ? "page" : undefined}
-            className={`inline-flex min-h-9 items-center border-b-[3px] px-3 py-2 text-[13px] font-semibold capitalize ${filters.tab === tab ? "border-primary text-foreground" : "border-transparent text-body hover:text-primary-text"}`}>
-            {tab==="overview"?"Overview":tab==="applicants"?"Applicants ("+applicants.counts.all+")":
-              tab==="rounds"?"Rounds & interviews":"Offers ("+offersTotal+")"}
-          </Link>
-        ))}
-        <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
-          aria-current={requestsTab?"page":undefined}
-          className={requestsTab ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text"}>
-          Requests{requestData?" ("+requestData.requests.length+")":""}
-        </Link>
-        <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery}
-          aria-current={discussionTab?"page":undefined}
-          className={discussionTab ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text"}>
-          Discussion
-        </Link>
-        <Link href={hrDriveMessagesHref(workspace.job.id)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-          Messages
-        </Link>
-      </nav>
+      <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={filters.tab}
+        items={[{value:"overview",label:"Overview",href:`/recruiter/drives/${workspace.job.id}?tab=overview${returnQuery}`},
+          {value:"applicants",label:"Applicants",count:applicants.counts.all,
+           href:`/recruiter/drives/${workspace.job.id}?tab=applicants${returnQuery}`},
+          {value:"rounds",label:"Rounds & interviews",href:`/recruiter/drives/${workspace.job.id}?tab=rounds${returnQuery}`},
+          {value:"offers",label:"Offers",count:offersTotal,href:`/recruiter/drives/${workspace.job.id}?tab=offers${returnQuery}`},
+          {value:"requests",label:"Requests",count:requestData?.requests.length,
+           href:`/recruiter/drives/${workspace.job.id}?tab=requests${returnQuery}`},
+          {value:"discussion",label:"Discussion",href:`/recruiter/drives/${workspace.job.id}?tab=discussion${returnQuery}`},
+          {value:"messages",label:"Messages",href:hrDriveMessagesHref(workspace.job.id)}]}/>
       {discussionTab?<section aria-label="Drive discussion" className="space-y-4 border-b border-border pb-4 sm:pb-5">
         <RecruiterConversationLiveRefresh/>
         <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
@@ -526,15 +511,9 @@ export default async function HrPlacementJobPage({
             </Link>
           </div>
           <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded. Counts include all authorized shared applications, while the list loads 25 per page.</p>
-          <nav aria-label="Applicant stage" className="flex flex-wrap gap-2">
-            {HR_RECRUITER_STAGES.map(({value:stage,label}) => (
-              <Link key={stage} href={`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}${returnQuery}`}
-                aria-current={filters.stage === stage ? "page" : undefined}
-                className={`inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm ${filters.stage === stage ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
-                {label} ({stageCounts[stage]})
-              </Link>
-            ))}
-          </nav>
+          <Tabs renderPanel={false} ariaLabel="Applicant stage" value={filters.stage}
+            items={HR_RECRUITER_STAGES.map(({value:stage,label})=>({value:stage,label,count:stageCounts[stage],
+              href:`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}${returnQuery}`}))}/>
           <p className="text-xs text-muted-foreground">These milestones reflect only applicants the placement cell has shared. A candidate may appear in multiple historical stages; unshared or privately rejected applicants remain hidden.</p>
           {applicants.rows.length ? <div className="grid gap-3 md:grid-cols-2">
             {applicants.rows.map(applicant => (
@@ -669,17 +648,11 @@ export default async function HrPlacementJobPage({
             {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
               <span key={applicant.id} className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground">{applicant.name || "Candidate"}</span>)}</div> : null}
           </section>
-          <nav aria-label="Offer status" className="flex flex-wrap gap-3 border-b border-border">
-            {HR_OFFER_STATES.map((status) => (
-              <Link key={status} href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status+returnQuery}
-                aria-current={status===filters.offerState ? "page" : undefined}
-                className={status===filters.offerState ?
-                  "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" :
-                  "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
-                {status==="ALL" ? "All statuses" : status==="PENDING_VERIFICATION"?"Verified, awaiting release":status==="REVOKED"?"Selection cancelled":recruiterOfferStatusLabel(status)}
-              </Link>
-            ))}
-          </nav>
+          <Tabs renderPanel={false} ariaLabel="Offer status" value={filters.offerState}
+            items={HR_OFFER_STATES.map(status=>({value:status,
+              label:status==="ALL"?"All statuses":status==="PENDING_VERIFICATION"?"Verified, awaiting release":
+                status==="REVOKED"?"Selection cancelled":recruiterOfferStatusLabel(status),
+              href:"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status+returnQuery}))}/>
           {(filters.offerState==="ALL"||["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState))?
             <section aria-label="Placement-cell selection history" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
               <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
@@ -839,31 +812,15 @@ export default async function HrPlacementJobPage({
             <p className="mt-1 text-sm text-body">Authorized, placement-cell-shortlisted candidates only. STAGED means awaiting college review; APPLIED means official college-applied outcome.</p>
           </div>
           {workspace.rounds.length ? <>
-            <nav aria-label="Choose results round" className="flex flex-wrap gap-2">
-              {workspace.rounds.map(round => (
-                <Link key={round.id} href={hrInlineRoundResultsHref(workspace.job.id,round.id,"ALL")}
-                  aria-current={selectedRound?.id === round.id ? "page" : undefined}
-                  className={selectedRound?.id === round.id
-                    ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm text-on-primary"
-                    : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-body"}>
-                  {round.sequence}. {round.name}
-                </Link>
-              ))}
-            </nav>
+            <Tabs renderPanel={false} ariaLabel="Choose results round" value={selectedRound?.id??""}
+              items={workspace.rounds.map(round=>({value:round.id,label:round.sequence+". "+round.name,
+                href:hrInlineRoundResultsHref(workspace.job.id,round.id,"ALL")}))}/>
             {inlineResults ? inlineResults.round.kind === "TALK"
               ? <p className="text-sm text-muted-foreground">Informational rounds do not record candidate outcomes.</p>
               : <>
-                <nav aria-label="Filter results" className="flex flex-wrap gap-2">
-                  {outcomeOptions.map(option => (
-                    <Link key={option.value} href={hrInlineRoundResultsHref(workspace.job.id,inlineResults.round.id,option.value)}
-                      aria-current={filters.outcome === option.value ? "page" : undefined}
-                      className={filters.outcome === option.value
-                        ? "border-b-[3px] border-primary px-3 py-2 text-xs font-semibold text-primary-text"
-                        : "border-b-[3px] border-transparent px-3 py-2 text-xs text-body hover:text-primary-text"}>
-                      {option.label} ({option.count})
-                    </Link>
-                  ))}
-                </nav>
+                <Tabs renderPanel={false} ariaLabel="Filter results" value={filters.outcome}
+                items={outcomeOptions.map(option=>({value:option.value,label:option.label,count:option.count,
+                  href:hrInlineRoundResultsHref(workspace.job.id,inlineResults.round.id,option.value)}))}/>
                 {inlineResults.rows.length
                   ? <div className="grid gap-3 md:grid-cols-2">
                       {inlineResults.rows.map(candidate => (

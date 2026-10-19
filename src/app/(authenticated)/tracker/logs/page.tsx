@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { KnownErrorsWorkspace } from "@/components/tracker/known-errors-workspace";
@@ -42,12 +43,12 @@ export default async function TrackerLogsPage({
       {!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
         <TrackerLiveLogsExplorer initialQuery={liveQuery}/>:null}
       {!cloudLogPollConfigured() ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
           Cloud Logging backup is not configured. In-app errors can still be reported to Telegram.
         </p>
       ) : null}
       {!telegramAlertsConfigured() ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
           Telegram alerts are not configured
         </p>
       ) : null}
@@ -58,7 +59,7 @@ export default async function TrackerLogsPage({
     return (
       <div className="space-y-6">
         {header}
-        <p role="alert" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
+        <p role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
           Clear the Super Admin organization/college safety scope to view platform-wide log signatures.
         </p>
       </div>
@@ -69,7 +70,7 @@ export default async function TrackerLogsPage({
     return (
       <div className="space-y-6">
         {header}
-        <p role="status" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
           Known Errors persistence is staged but not enabled. W01 must register
           and replay the DB10 log-alert tables before this page can read data.
           This message is not a healthy-log status.
@@ -98,23 +99,10 @@ export default async function TrackerLogsPage({
   return (
     <div className="space-y-6">
       {header}
-      <nav aria-label="Log environment" className="flex flex-wrap gap-3 border-b border-border">
-        {(["PRODUCTION", "UAT", "DEVELOPMENT"] as const).map((value) => (
-          <Link
-            key={value}
-            href={"/tracker/logs?environment=" + value}
-            aria-current={environment === value ? "page" : undefined}
-            className={
-              "inline-flex min-h-[var(--lms-control-height)] items-center border-b-[3px] px-3 py-2 text-[13px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] " +
-              (environment === value
-                ? "border-primary text-foreground"
-                : "border-transparent text-body hover:text-primary-text")
-            }
-          >
-            {value}
-          </Link>
-        ))}
-      </nav>
+      <Tabs ariaLabel="Log environment" renderPanel={false} value={environment}
+        items={(["PRODUCTION","UAT","DEVELOPMENT"] as const).map(value=>({
+          value, label:value, href:"/tracker/logs?environment="+value,
+        }))} />
       <TrackerTelegramManualPanel items={items} configured={telegramAlertsConfigured()}
         deploy={/^[0-9a-f]{7,64}$/i.test(process.env.DEPLOY_COMMIT??"")
           ?process.env.DEPLOY_COMMIT??null:null} />

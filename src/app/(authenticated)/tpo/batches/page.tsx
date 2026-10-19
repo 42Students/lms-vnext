@@ -13,7 +13,7 @@ import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-se
 import {countTpoLearnersWithoutClass} from "@/modules/placements/tpo-batch-unassigned-students-service";
 import { listTpoBatchCardEligibility } from "@/modules/placements/tpo-batch-directory-counts-service";
 import { listTpoBatchJourneyCounts } from "@/modules/placements/tpo-batch-journey-service";
-import { batchEligibilityShare } from "@/modules/placements/tpo-batch-eligibility-summary-model";
+import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { tpoBatchNextAction, tpoBatchNextActionLink } from "@/modules/placements/tpo-batch-next-action-model";
 import { tpoBatchCardDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
@@ -133,8 +133,8 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   <p role="status" className="text-sm text-muted-foreground">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to} · Page {batchPage.page} of {batchPage.totalPages}</p>
   {pageParsed.data.page!==batchPage.page?<p role="status" className="rounded border border-border p-3 text-sm text-body">The requested batch page no longer exists for these filters. Showing the last available page.</p>:null}
   <nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
-   {batchPage.hasPrev?<Link className="min-h-9 inline-flex items-center rounded-[var(--radius)] border border-border px-3 text-link" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
-   {batchPage.hasNext?<Link className="min-h-9 inline-flex items-center rounded-[var(--radius)] border border-border px-3 text-link" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
+   {batchPage.hasPrev?<Link className="min-h-9 inline-flex items-center rounded-[var(--radius)] border border-border px-3 text-link lms-inline-link" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
+   {batchPage.hasNext?<Link className="min-h-9 inline-flex items-center rounded-[var(--radius)] border border-border px-3 text-link lms-inline-link" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
 
   </nav>
   {batches.length===0?<section role="status" className="space-y-2 rounded-[var(--radius)] border border-border p-4">
@@ -144,7 +144,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    {data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
       className="inline-flex min-h-9 items-center text-link underline">Clear batch filters</Link>:null}
   </section>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-    <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id+"?returnTo="+encodeURIComponent(tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize))} className="text-link underline">{b.name}</Link></h2>
+    <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id+"?returnTo="+encodeURIComponent(tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize))} className="text-link underline lms-inline-link">{b.name}</Link></h2>
     <p className="text-sm">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
     <p className="text-xs text-muted-foreground">{data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:eligibility?.get(b.id)?.eligible??null}):"Status unavailable"}</p>
     {tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))?<p className="text-xs text-muted-foreground">{tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))}</p>:null}
@@ -171,11 +171,14 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
             <dd className="font-semibold tabular-nums">{part.count}</dd>
           </div>)}
         </dl>
-        <div role="img" aria-label={split.map(part=>part.label+": "+part.count).join(", ")}
-          className="flex h-3 w-full overflow-hidden rounded-full bg-muted">
-          {split.map(part=><div key={part.key} className={part.color}
-            style={{width: batchEligibilityShare(part.count,summary.assessed)+"%"}} />)}
-        </div>
+        <StackedMetricBar className="w-full" maximum={summary.assessed}
+          label={split.map(part=>part.label+": "+part.count).join(", ")}
+          segments={split.map(part=>({
+            label:part.label,value:part.count,
+            tone:part.key==="eligible"?"success" as const:
+              part.key==="ineligible"?"error" as const:
+              part.key==="review"?"warning" as const:"muted" as const,
+          }))} />
         {summary.needsReview>0?<p className="text-xs text-warning">Ambiguous class membership requires review.</p>:null}
       </div>;
     })()}

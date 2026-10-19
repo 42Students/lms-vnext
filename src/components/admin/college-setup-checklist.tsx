@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { ListRow } from "@/components/ui/list-row";
+import { Disclosure } from "@/components/ui/disclosure";
 import { COLLEGE_SETUP_GUIDE_COPY } from "@/modules/admin-ui/admin-dashboard-navigation";
 import type { collegeChecklistProjection } from "@/modules/admin-ui/college-setup-checklist-model";
 
@@ -7,10 +9,7 @@ type Phases = ReturnType<typeof collegeChecklistProjection>;
 export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
   const steps = phases.flatMap(phase => phase.steps);
   const recorded = steps.filter(step => step.hasRecords).length;
-  return <details aria-label="College setup evidence" className="min-w-0 border-t border-border pt-4">
-    <summary className="cursor-pointer text-sm font-semibold text-foreground">
-      {COLLEGE_SETUP_GUIDE_COPY.collapseLabel}
-    </summary>
+  return <Disclosure title={COLLEGE_SETUP_GUIDE_COPY.collapseLabel} className="min-w-0 border-t border-border pt-4">
     <div className="mt-4 space-y-4">
     <div className="flex flex-wrap items-baseline justify-between gap-3">
       <div>
@@ -25,27 +24,18 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
       {phases.map(phase => <section key={phase.title}
         className="border-t border-border pt-4">
         <h3 className="text-base font-semibold text-foreground">{phase.title}</h3>
-        <div className="mt-3 divide-y divide-border">
-          {phase.steps.map(step => <div key={step.key}
-            className="flex flex-wrap items-center justify-between gap-3 py-3">
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-foreground">{step.label}</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {step.count > 0
-                  ? `${step.count} qualifying record${step.count === 1 ? "" : "s"}`
-                  : "No qualifying records"}
-              </p>
-            </div>
-            {step.href ? <Link href={step.href}
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-link hover:underline">
+        <ul className="mt-3">
+          {phase.steps.map(step => <ListRow key={step.key} title={step.label}
+            detail={step.count > 0
+              ? `${step.count} qualifying record${step.count === 1 ? "" : "s"}`
+              : "No qualifying records"}
+            action={step.href ? <Link href={step.href}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link hover:underline sm:min-h-9">
               Open
-            </Link> : <span className="text-xs text-muted-foreground">
-              Page unavailable
-            </span>}
-          </div>)}
-        </div>
+            </Link> : <span className="text-xs text-muted-foreground">Page unavailable</span>} />)}
+        </ul>
       </section>)}
     </div>
     </div>
-  </details>;
+  </Disclosure>;
 }

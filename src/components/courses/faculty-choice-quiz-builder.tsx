@@ -1,5 +1,6 @@
 "use client";
-import {CourseChoiceControl} from "./course-choice-control";
+import { Radio } from "@/components/ui/radio";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -265,8 +266,9 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      <p className="whitespace-pre-wrap break-words text-sm text-body">{question.prompt||"Question prompt not entered"}</p>
      {question.options.map((option,i)=><label key={i}
       className="flex items-start gap-2 text-sm text-body">
-      <CourseChoiceControl single={question.type==="SINGLE_CHOICE"}
-       name={"preview-question-"+index} disabled/>
+      {question.type === "SINGLE_CHOICE" ? <Radio 
+       name={"preview-question-"+index} disabled/> : <Checkbox 
+       name={"preview-question-"+index} disabled/>}
       <span>{option.text||"Option not entered"}</span>
       {previewAnswers&&option.correct?<span className="text-xs font-semibold text-success">(Correct)</span>:null}
      </label>)}

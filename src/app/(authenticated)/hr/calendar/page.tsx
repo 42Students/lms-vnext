@@ -1,3 +1,5 @@
+import { CalendarGrid } from "@/components/ui/calendar-grid";
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -348,45 +350,13 @@ export default async function HrCalendarPage({
         </section>
       ) : (
         <>
-          <section
-            aria-label="Recruiter calendar summary"
-            className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-2 xl:grid-cols-5"
-          >
-            {[
-              [
-                "Hiring rounds",
-                calendar.summary.rounds,
-              ],
-              [
-                "Application deadlines",
-                calendar.summary.deadlines,
-              ],
-              [
-                "All events",
-                eventCount,
-              ],
-              [
-                "Accessible drives",
-                calendar.authorizedJobCount,
-              ],
-              [
-                "Results due",
-                calendar.resultsDue.length,
-              ],
-            ].map(([label, value]) => (
-              <div
-                key={String(label)}
-                className="border-b border-border p-4 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
-              >
-                <p className="text-xs font-semibold text-muted-foreground">
-                  {label}
-                </p>
-                <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-                  {value}
-                </p>
-              </div>
-            ))}
-          </section>
+          <SummaryStrip label="Recruiter calendar summary" steps={[
+            {label:"Hiring rounds",value:calendar.summary.rounds},
+            {label:"Application deadlines",value:calendar.summary.deadlines},
+            {label:"All events",value:eventCount},
+            {label:"Accessible drives",value:calendar.authorizedJobCount},
+            {label:"Results due",value:calendar.resultsDue.length},
+          ]} />
 
           <section className="border-b border-border pb-4 sm:pb-5">
             <h2 className="text-base font-semibold text-foreground">Results due in this period</h2>
@@ -415,42 +385,14 @@ export default async function HrCalendarPage({
                 </p>
               </div>
 
-              <nav aria-label="Calendar event types" className="flex flex-wrap gap-3 border-b border-border">
-                {HR_CALENDAR_CATEGORIES.map(option=><Link key={option}
-                  href={calendarHref(anchor,view,option)}
-                  aria-current={category===option?"page":undefined}
-                  className={category===option ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
-                  {option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
-                    option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds"}
-                </Link>)}
-              </nav>
-              <nav
-                aria-label="Calendar views"
-                className="flex flex-wrap gap-3 border-b border-border"
-              >
-                {VIEWS.map((option) => (
-                  <Link
-                    key={option}
-                    href={calendarHref(
-                      anchor,
-                      option,
-                      category,
-                    )}
-                    aria-current={
-                      view === option
-                        ? "page"
-                        : undefined
-                    }
-                    className={
-                      view === option
-                        ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold capitalize text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                        : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold capitalize text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                    }
-                  >
-                    {option}
-                  </Link>
-                ))}
-              </nav>
+              <Tabs renderPanel={false} ariaLabel="Calendar event types" value={category}
+                items={HR_CALENDAR_CATEGORIES.map(option=>({value:option,
+                  label:option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
+                    option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds",
+                  href:calendarHref(anchor,view,option)}))}/>
+              <Tabs renderPanel={false} ariaLabel="Calendar views" value={view}
+                items={VIEWS.map(option=>({value:option,label:option.charAt(0).toUpperCase()+option.slice(1),
+                  href:calendarHref(anchor,option,category)}))}/>
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-2">
@@ -499,7 +441,7 @@ export default async function HrCalendarPage({
               method="get"
               className="mt-5 flex flex-wrap items-end gap-3 border-t border-border pt-5"
             >
-              <input
+              <Input
                 type="hidden"
                 name="view"
                 value={view}
@@ -586,7 +528,7 @@ export default async function HrCalendarPage({
                   </p>
                 ) : null}
               </div>
-              <div className="hidden min-w-[56rem] grid-cols-7 gap-2 md:grid">
+              <CalendarGrid className="hidden min-w-[56rem] gap-2 md:grid">
                 {[
                   "Mon",
                   "Tue",
@@ -687,7 +629,7 @@ export default async function HrCalendarPage({
                     </div>
                   );
                 })}
-              </div>
+              </CalendarGrid>
             </section>
           ) : null}
 

@@ -41,17 +41,17 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
     <PageHeader eyebrow="College Admin · Lecture halls" title={result?.hall.name ?? "Room availability"}
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
       actions={<Link href="/college/lecture-halls"
-        className="inline-flex min-h-11 items-center font-semibold text-link">Back to lecture halls</Link>} />
+        className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link">Back to lecture halls</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-5">
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">From (IST)
         <input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
       </label>
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">To (IST)
         <input name="to" type="date" required defaultValue={typeof to === "string" ? to : ""}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
       </label>
-      <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary">View schedule</button>
+      <button type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary">View schedule</button>
     </form>
     {!parsed.success && hasRange ? <ErrorState title="Invalid date range"
       description="Choose valid from/to dates in IST, up to 31 consecutive calendar days. No schedule was loaded." />
