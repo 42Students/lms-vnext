@@ -45,7 +45,7 @@ export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs d
           if (!item.disabled && item.href && isSafeInternalHref(item.href)) {
             return <Link key={item.key} href={item.href} aria-label={accessibleLabel} aria-current={selected ? "page" : undefined} className={classes}>{content}</Link>;
           }
-          return <span key={item.key} aria-disabled="true" className={cx(classes, "cursor-not-allowed opacity-50")}>{content}</span>;
+          return <span key={item.key} aria-disabled="true" className={cx(classes, "cursor-not-allowed opacity-50 hover:brightness-100")}>{content}</span>;
         }
         if (onSelect) {
           return <button key={item.key} type="button" aria-label={accessibleLabel} disabled={item.disabled} aria-pressed={selected} onClick={() => onSelect(item.key)} className={classes}>{content}</button>;
