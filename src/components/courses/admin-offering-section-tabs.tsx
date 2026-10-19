@@ -17,7 +17,9 @@ export function AdminOfferingSectionTabs(){
   const [selected,setSelected]=useState<string>("course-home");
   useEffect(()=>{
     const sync=()=>{
-      const hash=decodeURIComponent(window.location.hash.slice(1));
+      let hash="";
+      try {hash=decodeURIComponent(window.location.hash.slice(1));}
+      catch {hash="";}
       setSelected(sections.some(item=>item.value===hash)?hash:"course-home");
     };
     sync();
