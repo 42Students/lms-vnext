@@ -91,7 +91,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
   return <div data-slot="data-table" className="min-w-0">
     <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 sm:rounded-[var(--lms-radius-md)] sm:border sm:border-[var(--lms-canvas-border)]">
-      <table className="block w-full border-separate border-spacing-0 text-left text-sm leading-5 sm:table sm:border-collapse">
+      <table className="block w-full border-separate border-spacing-0 text-left text-[13px] leading-5 tabular-nums sm:table sm:border-collapse sm:[&_tbody_tr:last-child_td]:border-b-0">
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden sm:table-header-group sm:bg-[var(--lms-table-header)]">
           <tr>{columns.map(col=><th key={col.key} scope="col"
@@ -99,12 +99,12 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
         </thead>
         <tbody className="block space-y-3 sm:table-row-group sm:space-y-0">
           {prepared.map(item=><tr key={item.key}
-            className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:hover:bg-[rgba(38,186,199,0.045)]">
+            className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:transition-colors sm:duration-[var(--lms-motion-fast)] sm:hover:bg-[rgba(38,186,199,0.045)] motion-reduce:transition-none">
             {columns.map(col=>{
               const phoneVisible=visibleOnPhone.has(col.key);
               const content=cell(item,col);
               return <td key={col.key} className={cx(
-                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-[var(--lms-canvas-border)] sm:px-4 sm:py-2.5 sm:align-middle sm:first:sticky sm:first:left-0 sm:first:z-10 sm:first:bg-inherit",
+                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-[var(--lms-canvas-border)] sm:px-4 sm:py-[10px] sm:align-middle sm:first:sticky sm:first:left-0 sm:first:z-10 sm:first:bg-inherit",
                 phoneVisible?"block":"hidden",col.className,
               )}>
                 {phoneVisible && col.mobilePriority!=="action" ?
