@@ -1,8 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
 export default function ErrorPage({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  return <div role="alert" className="rounded-[var(--radius)] border border-border bg-surface p-6">
+  return <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
     <h1 className="font-semibold">Contact people could not be loaded</h1>
     <p className="mt-2 text-sm text-body">The contact list is unavailable; this is not an empty list.</p>
-    <button type="button" className="mt-4 rounded-[var(--radius)] border px-4 py-2" onClick={reset}>Retry</button>
+    <Button variant="secondary" className="mt-4" onClick={reset}>Retry</Button>
   </div>;
 }
