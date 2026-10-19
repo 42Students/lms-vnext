@@ -1,3 +1,6 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -37,7 +40,7 @@ export default async function LearnerAttendanceCalendarPage({
     status:first(raw.status)??undefined,
   });
   if(!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Invalid attendance calendar filters</h1>
+    <PageHeader title="Invalid attendance calendar filters" />
     <Link href="/learn/attendance/calendar" className="text-primary-text underline">
       Clear filters
     </Link>
@@ -73,31 +76,31 @@ export default async function LearnerAttendanceCalendarPage({
     <form action="/learn/attendance/calendar" method="get"
       className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Month
-        <input name="month" type="month" defaultValue={data.query.month}
-          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+        <Input name="month" type="month" defaultValue={data.query.month}
+          className="min-h-11" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course
-        <select name="deliveryId" defaultValue={data.query.deliveryId}
+        <Select name="deliveryId" defaultValue={data.query.deliveryId}
           className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All accessible Courses</option>
           {data.courses.map(course=>
             <option key={course.deliveryId} value={course.deliveryId}>
               {course.courseCode} · {course.courseName}
             </option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <select name="status" defaultValue={data.query.status}
+        <Select name="status" defaultValue={data.query.status}
           className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All status types</option>
           {Object.entries(statusNames).map(([value,label])=>
             <option key={value} value={value}>{label}</option>)}
-        </select>
+        </Select>
       </label>
       <div className="flex flex-wrap items-center gap-3 sm:col-span-3">
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">
+        <Button type="submit" className="min-h-11">
           Apply filters
-        </button>
+        </Button>
         <Link href="/learn/attendance/calendar"
           className="text-sm font-semibold text-primary-text">Clear</Link>
       </div>
