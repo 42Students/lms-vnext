@@ -1,6 +1,6 @@
+"use client";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-"use client";
 import {useState,type FormEvent} from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";

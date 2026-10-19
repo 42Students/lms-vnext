@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
 "use client";
+import { Input } from "@/components/ui/input";
 import {useEffect,useRef,useState} from "react";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 /** A legacy q= deep link resolves on the server; editing normalizes to search=. */
