@@ -22,7 +22,7 @@ export function TpoMobileFooter(){
   ["Announcements","/tpo/announcements"],["Notifications","/tpo/notifications"],
   ["Settings","/tpo/settings"],["Audit log","/tpo/audit"],
  ];
- return <><nav aria-label="TPO mobile footer" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] shadow-lg md:hidden">
+ return <><nav aria-label="TPO mobile footer" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-surface pb-[env(safe-area-inset-bottom,0px)] shadow-lg md:hidden">
   {links.map(link=>{
    const active=pathname===link.href||pathname.startsWith(link.href+"/")||
     (link.label==="Engage"&&pathname.startsWith("/tpo/companies"));
