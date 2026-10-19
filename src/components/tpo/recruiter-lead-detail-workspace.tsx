@@ -1,5 +1,5 @@
-import { PageHeader } from "@/components/ui/page-header";
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import {Dialog} from "@/components/ui/dialog";
 
