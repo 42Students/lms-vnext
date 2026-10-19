@@ -381,7 +381,7 @@
  */
 /* Legacy refs: components___form.scss:110-115; components___global.scss:60-69 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(label):not(:where([data-unskin], [data-unskin] *)) {
+  :where(label:not(:has(input[type="checkbox"], input[type="radio"], [role="switch"]))):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-400) !important;
   font-size: 13px !important;
   font-weight: 600 !important;
@@ -586,4 +586,86 @@
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(dialog):not(:where([data-unskin], [data-unskin] *))::backdrop {
   background-color: rgba(30, 54, 63, 0.1) !important;
+}
+
+/* Choice labels are BODY TEXT, not muted form captions.
+ * Legacy: components___antddesign.scss:213-216 (checked checkbox text #0a0517),
+ * components___variables.scss:25,43,184 (body ink, #0a0517 checked, 14px).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(label:has(input[type="checkbox"], input[type="radio"], [role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-700) !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+/* Legacy: components___antddesign.scss:213-216 (dark checked label ink). */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(label:has(input[type="checkbox"]:checked, input[type="radio"]:checked)):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-form-ink) !important;
+}
+
+/* Explicit legacy error class and user-touched native validity:
+ * components___form.scss:136-143 (.ln-in2.error: #ef4444 border,
+ * rgba(239,68,68,.06) background, 20% focus halo). Untouched :invalid
+ * is intentionally left alone to avoid displaying errors on empty forms.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]), select, textarea):is(.error, :user-invalid):not(:where([data-unskin], [data-unskin] *)) {
+  border-color: var(--lms-error) !important;
+  background-color: rgba(239, 68, 68, 0.06) !important;
+}
+/* Legacy: components___form.scss:140-143 (2px red 20% active halo). */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]), select, textarea):is(.error, :user-invalid):not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  border-color: var(--lms-error) !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+}
+/* Legacy: components___antddesign.scss:178-185 (loading actions retain
+ * the teal fill while being inert, rather than appearing disabled gray);
+ * old-lms-shell-spec.md:23 (#0a7c88 / white measured action).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(button[aria-busy="true"]:not([data-slot="button"]):not([role="tab"]):not([aria-pressed])):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-button-primary) !important;
+  border-color: var(--lms-button-primary) !important;
+  color: var(--lms-on-primary) !important;
+  box-shadow: none !important;
+}
+
+/* Native select option selection follows AntD's selected teal/white state.
+ * Legacy: components___antddesign.scss:134-140 (#26bac7, #fff and wrapped
+ * option content). Popup rendering remains OS-dependent and is not forced
+ * into a custom overlay by this global paint layer.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(select[multiple] option:checked):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-primary) !important;
+  color: var(--lms-white) !important;
+}
+/* Selected menu option invalid/disabled state remains readable.
+ * Legacy: components___variables.scss:27-32 (disabled ink #a9a7ae,
+ * neutral surface #fafbfc).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(select option:disabled):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-400) !important;
+  background-color: var(--lms-neutral-50) !important;
+}
+/* Native WebKit date/time picker glyph: preserve browser picker behavior.
+ * Legacy: components___antddesign.scss:93-97,191-203,219-224 (teal picker
+ * focus, selected day and today indicator). Popup day-grid is OS-owned.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input[type="date"], input[type="time"], input[type="datetime-local"],
+    input[type="month"], input[type="week"]):not(:where([data-unskin], [data-unskin] *))::-webkit-calendar-picker-indicator {
+  color: var(--lms-primary) !important;
+}
+/* Phone and tablet selection text and hover remain the same pale-teal
+ * brand tone, as in components___variables.scss:10-13,145-159.
+ */
+@media (hover: none) {
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+    :where(tbody tr:active):not(:where([data-unskin], [data-unskin] *)) {
+    background-color: var(--lms-primary-subtle) !important;
+  }
 }
