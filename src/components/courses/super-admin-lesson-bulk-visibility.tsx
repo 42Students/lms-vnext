@@ -43,9 +43,9 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
   </div>
   <div className="flex flex-wrap gap-2">
    <button type="button" disabled={pending||!selected.length} onClick={()=>void mutate(true)}
-    className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">{pending?"Saving…":"Show selected"}</button>
+    className="min-h-10 rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-[var(--lms-on-primary)]">{pending?"Saving…":"Show selected"}</button>
    <button type="button" disabled={pending||!selected.length} onClick={()=>void mutate(false)}
-    className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold disabled:opacity-50">Hide selected</button>
+    className="min-h-10 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">Hide selected</button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {report?<div role="status" className="space-y-1 rounded-md border border-border p-3 text-sm">

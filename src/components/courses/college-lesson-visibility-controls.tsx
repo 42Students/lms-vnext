@@ -35,7 +35,7 @@ export function CollegeLessonVisibilityControl({lesson}: {lesson:Item}){
  }
  return <div className="space-y-1">
   <button type="button" disabled={pending} onClick={change}
-   aria-pressed={visible} className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
+   aria-pressed={visible} className="min-h-9 rounded-[9px] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
    {pending?"Saving…":label}
   </button>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
@@ -119,16 +119,16 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
   </div></ScrollCue>
   <div className="mt-3 flex flex-wrap gap-2">
    <button type="button" disabled={pending||!selected.length}
-    onClick={()=>apply(true)} className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+    onClick={()=>apply(true)} className="min-h-9 rounded-[9px] border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
     Show to students
    </button>
    <button type="button" disabled={pending||!selected.length}
-    onClick={()=>apply(false)} className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+    onClick={()=>apply(false)} className="min-h-9 rounded-[9px] border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
     Hide from students
    </button>
    {failed.length?<button type="button" disabled={pending} onClick={()=>{
     if(retryTarget!==null)apply(retryTarget,failed);
-   }} className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text">
+   }} className="min-h-9 rounded-[9px] border border-border px-3 font-semibold text-primary-text">
     Retry failed
    </button>:null}
   </div>
