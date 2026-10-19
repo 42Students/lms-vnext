@@ -1,20 +1,17 @@
+import { Skeleton } from "@/components/ui/skeleton";
+
 export default function TpoPlacementBrandingLoading() {
   return (
-    <div
-      aria-busy="true"
-      aria-label="Loading placement branding"
-      className="space-y-5"
-    >
-      <div className="h-12 animate-pulse rounded-xl bg-muted" />
-      <div className="h-40 animate-pulse rounded-xl bg-muted" />
-      <div className="h-48 animate-pulse rounded-xl bg-muted" />
-
+    <div aria-busy="true" aria-label="Loading placement branding" className="space-y-5">
+      <Skeleton variant="row" height={48} label="Loading placement branding" />
+      <Skeleton variant="row" height={160} label="Loading placement branding" />
+      <Skeleton variant="row" height={192} label="Loading placement branding" />
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="h-36 animate-pulse rounded-xl bg-muted" />
-        <div className="h-36 animate-pulse rounded-xl bg-muted" />
+        {Array.from({ length: 2 }, (_, index) => (
+          <Skeleton key={index} variant="row" height={144} label="Loading placement branding" />
+        ))}
       </div>
-
-      <div className="h-28 animate-pulse rounded-xl bg-muted" />
+      <Skeleton variant="row" height={112} label="Loading placement branding" />
     </div>
   );
 }
