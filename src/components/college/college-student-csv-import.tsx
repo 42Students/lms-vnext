@@ -63,14 +63,14 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
       <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{TEMPLATE}</p>
       <a download="student-import-template.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent(TEMPLATE+"\n")}
-        className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="mt-2 inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Download CSV template
       </a>
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
         <label className="grid gap-1 text-sm font-semibold">Program
           <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">Choose program</option>
             {choices.programs.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
           </Select>
@@ -78,7 +78,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Batch
           <Select required value={cohortId}
             onChange={event=>{setCohortId(event.target.value);setSectionId("");setReport(null);}}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">Choose batch</option>
             {choices.batches.filter(option=>option.programId===programId).map(option=>
               <option key={option.id} value={option.id}>{option.name}</option>)}
@@ -87,7 +87,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <label className="grid gap-1 text-sm font-semibold">Class/Section
           <Select value={sectionId}
             onChange={event=>{setSectionId(event.target.value);setReport(null);}}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">No class placement</option>
             {choices.classes.filter(option=>option.cohortId===cohortId).map(option=>
               <option key={option.id} value={option.id}>{option.name} · capacity {option.capacity??"unlimited"}</option>)}
@@ -109,13 +109,13 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setReport(null); setConfirm(false);
         }} rows={8} spellCheck={false}
-          className="w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 font-mono text-xs text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm" />
+          className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-mono text-xs text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm" />
       </label>
       <Button variant="primary" type="button" disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => guardRun(async () => {
         try { await submit("PREVIEW"); } catch (reason) {
           setError(reason instanceof Error ? reason.message : "Validation failed");
         }
-      })} className="mt-4 min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      })} className="mt-4 min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         {pending ? "Validating..." : "Preview validation"}
       </Button>
       {error ? <p role="alert" className="mt-3 text-sm text-error">{error}</p> : null}
@@ -133,7 +133,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         {report.structuralErrors.join(", ")}
       </p> : null}
       {csvDownload ? <a href={csvDownload} download="student-import-result.csv"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Export neutralized result CSV
       </a> : null}
       <DataTable<StudentCsvResult> caption="Student CSV validation and import results"
@@ -158,7 +158,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
               setError(reason instanceof Error ? reason.message : "Import failed");
             }
           })}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           {pending ? "Importing..." : "Confirm import of validated rows"}
         </Button>
       </div> : null}
