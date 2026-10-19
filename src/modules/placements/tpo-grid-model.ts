@@ -9,7 +9,7 @@ export const tpoGridQuerySchema = z.object({
 
 export type TpoGridColumn<Row> = {
   key: string; label: string; read: (row: Row) => string | number | null | undefined;
-  exportOnly?: boolean; editable?: boolean;
+  exportOnly?: boolean; exportAlways?: boolean; editable?: boolean;
   /** Only numeric or date columns may sort in the legacy sheet. */
   sortKind?: "number" | "date";
   sortValue?: (row: Row) => number | null;
@@ -23,8 +23,24 @@ export function chosenTpoGridColumns<Row>(columns: readonly TpoGridColumn<Row>[]
   const order=new Map(selected.map((key,index)=>[key,index]));
   return visible.sort((left,right)=>(order.get(left.key)??999)-(order.get(right.key)??999));
 }
-export function tpoGridExportColumns<Row>(columns: readonly TpoGridColumn<Row>[]) {
-  return columns;
+/**
+ * Match the legacy TpoGrid.table() contract: all displayed columns plus
+ * explicit exportAlways columns even when a saved layout hides them.
+ * When there are no extra columns, preserve the displayed/reordered order.
+ * Legacy source: lms2-fe/src/components/tpo/grid/TpoGrid.jsx, table().
+ */
+export function tpoGridExportColumns<Row>(
+  columns: readonly TpoGridColumn<Row>[],
+  visible: readonly TpoGridColumn<Row>[] = columns.filter(column=>!column.exportOnly),
+): TpoGridColumn<Row>[] {
+  const permitted = columns.filter(column=>!column.exportOnly);
+  const displayed = visible.filter(column=>permitted.some(item=>item.key===column.key));
+  const displayedKeys = new Set(displayed.map(column=>column.key));
+  const hiddenRequired = permitted.filter(column=>column.exportAlways&&!displayedKeys.has(column.key));
+  if(hiddenRequired.length===0)return [...displayed];
+  const exported = new Set([...displayedKeys,...hiddenRequired.map(column=>column.key)]);
+  // Hidden always-export columns retain their source positions among shown headers.
+  return permitted.filter(column=>exported.has(column.key));
 }
 export function parseTpoGridColumns(raw: string | undefined, allowed: readonly string[]) {
   if (!raw) return [];
