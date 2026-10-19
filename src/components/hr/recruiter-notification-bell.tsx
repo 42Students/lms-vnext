@@ -54,6 +54,7 @@ export function RecruiterNotificationBell(){
       {data.unread>99?"99+":data.unread}</span>:null}
   </Button>
   <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications">
+   {!data&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:null}
    {error?<div role="alert" className="mt-3 text-sm text-error">{error}
     <Button type="button" onClick={()=>void load()} variant="ghost" className="ml-2 underline">Retry</Button>
    </div>:null}

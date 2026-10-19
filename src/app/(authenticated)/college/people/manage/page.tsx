@@ -58,7 +58,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
 
   if (!filter) {
     return <div className="space-y-5">
-      <PageHeader eyebrow="College Admin" title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory} />
+      <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory} />
       <ErrorState title="Invalid directory filters"
         description="Check the search, role, status or page. No people were loaded."
         action={<Link href="/college/people/manage" className="font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Clear filters</Link>} />
@@ -74,7 +74,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     redirect(collegePeopleManageHref({ ...filter, page: pagination.page }));
   }
   return <div className="space-y-6">
-    <PageHeader eyebrow="College Admin" title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory}
+    <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory}
       description="Manage college memberships, roles and lifecycle. For the read-only legacy contact tabs, open Contacts."
       actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/groups"
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Export filtered CSV</Link><PersonOnboardDialog collegeId={membership.collegeId} /></div>} />

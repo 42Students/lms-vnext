@@ -295,3 +295,26 @@ GitHub indexed searches for `<button`, `<input`, `<select`, `<textarea` returned
 - [ ] D buttons (missing: complete raw markup grep, icon/sizes/variants caller migration, focused/hovered/disabled browser proof).
 
 **Next exact source file:** `src/components/ui/date-input.tsx`, then `date-range-picker.tsx`: replace the native-only date picker interaction with an accessible legacy-styled date/month popup, keeping `DateInputProps` and existing value/change handlers working. Once that is stable, finish `multi-select.tsx` selected-tags geometry, `selection-controls.tsx` geometry and run authoritative whole-tree grep + responsive source/browser verification before ticking.
+
+
+## Global skin layer — SMARTER PLAN implementation, 2026-10-19
+
+**Files:** `src/styles/legacy-skin.css` (scoped, standalone) and **one** `@import "../styles/legacy-skin.css";` in `src/app/globals.css`. The stylesheet is read after the existing Tailwind and overlay imports, and overrides page-level utility paint where needed. It does **not** replace the other lanes' shared component files, page structure, or JSX.
+
+**Scope/escape:** Every element selector starts with `:where(main, [data-slot="canvas"], [data-slot="page-canvas"])`. Every selector excludes `:where([data-unskin], [data-unskin] *)`, so an attribute on an element **or any ancestor** opts its entire subtree out of this layer. Plain native buttons are further excluded when marked `[data-slot="button"]`, `[role="tab"]`, `[aria-pressed]`, `[aria-expanded]`, `[role="menuitem"]` or `[role="switch"]`. Native checkbox/radio/hidden/file/range/color and button-like inputs are excluded from general text-field paint. Shared dropdown `details[data-slot="dropdown-root"]` are excluded from disclosure paint.
+
+**Legacy values/source mapping (CSS comments beside rules):**
+
+| Skin family | SCSS or measured source | Scoped effective paint |
+| --- | --- | --- |
+| Tables: header, hairlines, rows, hover, selection | `components___common.scss:700-713,831-837`; `components___variables.scss:10-13,24-32`; `old-lms-shell.css:45-48` | #fafbfc head, muted #a9a7ae headings, #e5e9f0 hairlines, white body, teal-tinted hover/selected states |
+| Native text inputs/select/textareas | `components___form.scss:117-143`; `components___antddesign.scss:511-523`; `components___variables.scss:28,30,46,71,91` | 10px radius, #fbfcfd surface, 14px/400, teal focus halo, red invalid halo, disabled/read-only muted paint |
+| Plain buttons | `old-lms-shell-spec.md:23-24`; `components___antddesign.scss:153-189`; `components___variables.scss:252,258` | #0a7c88/white, radius 9px, 14px/650, hover #086873, disabled grey, keyboard focus |
+| h1–h6 | `old-lms-shell-spec.md:26-28`; `components___typo.scss:3-40`; `components___variables.scss:176-190` | h1 30px/600 #172033 desktop, 24px on phones; legacy h2/h3 768/992px type scale; remaining heading roles 16/14/13 |
+| Links/labels | `components___common.scss:68-75`; `components___form.scss:110-115` | Teal links with hover underline; 13px/600 muted form labels |
+| Dialogs, summaries, hr | `components___antddesign.scss:1033-1061,143-146`; `components___common.scss:118-120,1322-1326` | White 12px modal surfaces, neutral 10px disclosures, subdued rules and backdrops |
+| Placeholder/selection/scrollbar/focus | `components___form.scss:57-60`; `components___accessibility.scss:13-35`; `components___common.scss:294-311`; `components___variables.scss:10-13,28,48` | Muted placeholder, teal selection/focus paint, neutral scrollbar thumb when visible |
+
+**No layout overrides:** the skin does not assign `margin`, `padding`, `width`, `height`, `position`, `display`, `flex`, `grid`, `transform`, or table row padding/height. Existing page owners retain those values. The style of visually different hand-rolled controls that have explicitly set `[data-unskin]` is preserved.
+
+**Verification performed:** compared the connected repository's exact `globals.css` and new stylesheet content. Exactly **one** import was found. CSS static delimiter scan returned **zero unmatched braces/brackets/parentheses and zero unterminated quoted strings**. Inspected **53 non-@ selectors**: all start in authenticated `main` or a canvas and include the `[data-unskin]` ancestor escape. No app, browser, typecheck, tests, or CI were run. Source-only checks do **not** prove computed-style parity; per SMARTER PLAN the orchestrator's browser-based `docs/audit/ux/parity-report.md` should identify concrete remaining mismatches. This does not entitle any of the prior 12 audit items to a strict tick.

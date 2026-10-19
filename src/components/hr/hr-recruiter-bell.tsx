@@ -1,6 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { ShellNavGlyph } from "@/components/shell/shell-nav-icons";
 import { Drawer } from "@/components/ui/drawer";
+import { PopoverPanel } from "@/components/ui/popover";
+import style from "@/components/shell/topbar/topbar.module.css";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {createRecruiterBellRequestGate} from "@/modules/placements/recruiter-bell-model";
@@ -18,6 +21,8 @@ export function HrRecruiterBell(){
  const markAllGate=useRef(createHrBellMutationGate());
  const loadGate=useRef(createRecruiterBellRequestGate());
  const triggerRef=useRef<HTMLButtonElement>(null);
+ const rootRef=useRef<HTMLDivElement>(null);
+ const [mobile,setMobile]=useState(false);
  const load=useCallback(async()=>{
   const request=loadGate.current.begin();
   try{
@@ -42,6 +47,27 @@ export function HrRecruiterBell(){
   const id=setInterval(()=>{void load();},30000);
   return ()=>{clearInterval(id);loadGate.current.invalidate();};
  },[load]);
+ useEffect(()=>{
+  const mq=window.matchMedia("(max-width:767px)");
+  const check=()=>setMobile(mq.matches);
+  check();
+  mq.addEventListener("change",check);
+  return ()=>mq.removeEventListener("change",check);
+ },[]);
+ useEffect(()=>{
+  if(!open || mobile)return;
+  const pointer=(event:PointerEvent)=>{
+   if(rootRef.current && !rootRef.current.contains(event.target as Node))setOpen(false);
+  };
+  const key=(event:KeyboardEvent)=>{
+   if(event.key!=="Escape")return;
+   if(event.target instanceof Node && rootRef.current && !rootRef.current.contains(event.target))return;
+   event.preventDefault();setOpen(false);triggerRef.current?.focus();
+  };
+  document.addEventListener("pointerdown",pointer);
+  document.addEventListener("keydown",key);
+  return ()=>{document.removeEventListener("pointerdown",pointer);document.removeEventListener("keydown",key);};
+ },[open,mobile]);
  async function markAll(){
   if(!markAllGate.current.tryBegin())return;
   setLoading(true);setSaveError("");
@@ -58,14 +84,13 @@ export function HrRecruiterBell(){
  }
 
  const unread=state?.unread??0;
- return <div className="relative">
-  <Button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
-   aria-expanded={open} aria-haspopup="dialog"
-   onClick={()=>setOpen(value=>!value)}
-   variant="secondary" className="relative">
-   Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
-  </Button>
-  <Drawer open={open} onOpenChange={setOpen} title="Recruiter notifications">
+ const panelFooter=<><div role="group" aria-label="Recruiter notification actions" className="flex flex-wrap items-center justify-between gap-3">
+    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
+    {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
+      variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
+   </div>
+   {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}</>;
+ const panelBody=<>
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
    {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
     state?.status!=="READY"?<p className="mt-3 text-sm text-body">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
@@ -73,15 +98,27 @@ export function HrRecruiterBell(){
      <p className="text-muted-foreground">{HR_BELL_EMPTY_HELP}</p></div>:
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-80"><ul className="divide-y divide-[var(--lms-canvas-border)]">{state.items.map(item=><li key={item.id}>
      <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-9 max-sm:min-h-11 items-start gap-2 rounded-[var(--lms-control-radius)] px-3 py-3 text-sm text-body hover:bg-[var(--lms-neutral-50)] hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-      <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary":"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted"}/>
-      <span className="flex-1">{item.label}</span><span className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</span>
+      <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--lms-notification-unread,#ff7576)]":"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted"}/>
+      <span className="flex-1 text-sm font-semibold leading-[1.4]">{item.label}</span><time dateTime={item.at} className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</time>
      </Link></li>)}</ul></ScrollCue>}
-   <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
-    {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
-      variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
+
+</>;
+ return <div ref={rootRef} className="relative">
+  <Button ref={triggerRef} type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"}
+   aria-expanded={open} aria-haspopup="dialog" aria-busy={loading} aria-controls={open?(mobile?"hr-topbar-mobile-notifications":"hr-topbar-desktop-notifications"):undefined}
+   onClick={()=>setOpen(value=>!value)}
+   variant="secondary" className="relative">
+   Notifications {unread>0?<span className="ml-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-notification-unread,#ff7576)] px-1 text-[10px] font-bold leading-none text-white">{unread}</span>:null}
+  </Button>
+  {open ? (mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} footer={panelFooter}>
+   {panelBody}
+  </Drawer> : <PopoverPanel id="hr-topbar-desktop-notifications" label="Recruiter notifications" className={style.hrNotificationPopover}>
+   <div className={style.hrNotificationHeader}>
+    <h2>Recruiter notifications</h2>
+    <Button variant="ghost" size="sm" type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}>Close</Button>
    </div>
-   {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}
-  </Drawer>
+   <div className={style.hrNotificationBody}>{panelBody}</div>
+   <div className={style.hrNotificationFooter}>{panelFooter}</div>
+  </PopoverPanel>) : null}
  </div>;
 }

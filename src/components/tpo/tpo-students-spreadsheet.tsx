@@ -35,8 +35,8 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"student",label:"Student",read:row=>row.fromFinishedBatch?
    row.displayName+" · From "+row.cohortName:row.displayName},
  {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
- {key:"branch",label:"Branch",read:row=>row.branchName},
- {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
+ {key:"branch",label:"Branch",exportAlways:true,read:row=>row.branchName},
+ {key:"batch",label:"Batch",exportAlways:true,read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
  {key:"stage",label:"Stage",filter:{urlKey:"journeyState",
   options:TPO_STUDENT_JOURNEY_STATES.map(value=>({value,label:tpoStudentDisplayLabel(value)}))},
   read:row=>tpoStudentDisplayLabel(row.journeyState)},
@@ -223,7 +223,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    filters={filters} rollOf={row=>[row.rollNumber??"",row.registrationNumber??""]}
    filterTitle="Filter students" exportName="tpo-students" xlsxHref={xlsxHref}
    savedViews={canManageViews?<TpoStudentSavedViews embedded/>:undefined}>
-  <TpoGrid mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoGrid integratedWorkspace mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
