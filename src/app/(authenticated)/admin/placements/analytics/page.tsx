@@ -89,7 +89,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
     className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Export report (CSV) →</a>
   </div>
-  {data.truncated?<p role="alert" className="rounded-md border border-border bg-surface p-3 text-sm text-body">
+  {data.truncated?<p role="alert" className="rounded-[9px] border border-border bg-surface p-3 text-sm text-body">
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
   </p>:null}
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
