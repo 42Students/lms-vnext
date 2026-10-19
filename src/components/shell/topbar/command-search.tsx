@@ -135,7 +135,19 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         <kbd className={style.searchHint}>Ctrl K</kbd>
       </div>
       {open ? <div id="lms-topbar-command-results" role="listbox"
-        aria-label="Workspace commands" className={style.dropdown}>
+        aria-label="Workspace commands" className={style.dropdown}
+        onKeyDown={event => {
+          if (event.defaultPrevented ||
+              (event.key !== "ArrowDown" && event.key !== "ArrowUp")) return;
+          const options = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('[role="option"]'));
+          const index = options.findIndex(option => option === event.target);
+          if (index < 0 || options.length === 0) return;
+          event.preventDefault();
+          const next = event.key === "ArrowDown"
+            ? (index + 1) % options.length
+            : (index - 1 + options.length) % options.length;
+          options[next]?.focus();
+        }}>
         <p className="px-2 py-1 text-[11px] font-semibold uppercase tracking-[.08em] text-muted-foreground">Go to</p>
         {config.portal === "learn" && courseError ?
           <p role="status" className="px-2 py-2 text-xs text-error">Could not load courses. Search shortcuts remain available.</p> : null}
