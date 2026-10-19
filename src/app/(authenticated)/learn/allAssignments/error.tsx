@@ -12,7 +12,7 @@ export default function LearnerAssessmentsError({
 }) {
   return (
     <div className="rounded-xl border border-border bg-surface p-8 text-center">
-      <h1 className="m-0 text-xl font-semibold text-foreground">Assignments could not be loaded</h1>
+      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Assignments could not be loaded</h1>
       <p className="mt-2 text-sm text-body">
         This is a loading problem, not an empty list. Check your connection and try again.
       </p>
