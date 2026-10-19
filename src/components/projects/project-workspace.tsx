@@ -1,4 +1,5 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -1220,9 +1221,7 @@ export function ProjectWorkspace({
         ) : null}
         {workspace.finalDelivery.submissions.length ===
         0 ? (
-          <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-            Not submitted
-          </div>
+          <EmptyState title="Not submitted" description="No final delivery has been submitted." />
         ) : (
           <div className="space-y-3">
             {workspace.finalDelivery.submissions.map(
