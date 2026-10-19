@@ -11,9 +11,9 @@ export default function TpoMyNotificationsError({
   return (
     <section
       role="alert"
-      className="rounded-xl border border-border bg-surface px-6 py-10 text-center"
+      className="border-t border-border pt-5 text-center"
     >
-      <h1 className="text-lg font-semibold text-foreground">
+      <h1 className="m-0 text-[26px] font-semibold leading-[1.35] tracking-[-0.02em] text-[#172033] sm:text-[30px]">
         Couldn&apos;t load My Notifications
       </h1>
 

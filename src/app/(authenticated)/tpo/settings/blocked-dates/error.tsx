@@ -1,1 +1,2 @@
-"use client";export default function Error({reset}:{reset:()=>void}){return <section role="alert"><p>Blocked dates could not be loaded.</p><button className="rounded border px-3 py-2" onClick={reset}>Retry</button></section>;}
+"use client";
+import {Button} from "@/components/ui/button";export default function Error({reset}:{reset:()=>void}){return <section role="alert"><p>Blocked dates could not be loaded.</p><Button variant="secondary" onClick={reset}>Retry</Button></section>;}
