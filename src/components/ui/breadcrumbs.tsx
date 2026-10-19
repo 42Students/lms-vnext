@@ -11,10 +11,10 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
       <ol className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[13px] leading-5 text-body">
         {items.map((item, index) => (
           <li key={`${item.label}-${index}`} className="flex min-w-0 items-center gap-2">
-            {index > 0 ? <span aria-hidden="true" className="text-[#a9a7ae]">/</span> : null}
+            {index > 0 ? <span aria-hidden="true" className="text-[var(--lms-neutral-400)]">/</span> : null}
             {index === items.length - 1 || !item.href || !isSafeInternalHref(item.href) ?
-              <span aria-current={index === items.length - 1 ? "page" : undefined} className="max-w-[16rem] break-words font-semibold text-[#172033]">{item.label}</span> :
-              <Link href={item.href} className="inline-flex min-h-11 items-center rounded-[6px] text-[#0e7c87] underline-offset-4 hover:text-[#1a95a1] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7]">{item.label}</Link>}
+              <span aria-current={index === items.length - 1 ? "page" : undefined} className="max-w-[16rem] break-words font-semibold text-[var(--lms-heading)]">{item.label}</span> :
+              <Link href={item.href} className="inline-flex min-h-11 items-center rounded-[6px] text-[var(--lms-link-text)] underline-offset-4 hover:text-[#1a95a1] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.label}</Link>}
           </li>
         ))}
       </ol>
