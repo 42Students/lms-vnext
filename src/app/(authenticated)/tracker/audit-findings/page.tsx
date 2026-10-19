@@ -57,7 +57,7 @@ export default async function IndependentFindingsPage({searchParams}:{
   {key:"reported",header:"Reported",mobilePriority:"secondary",cell:item=><span>{item.foundBy??"Unknown"} · {item.foundAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.foundAt):"Date not recorded"}</span>},
  ];
  return <div className="min-w-0 space-y-5">{header}
-  <section aria-label="Findings import status" className="rounded-xl border border-border bg-surface p-4 text-sm">
+  <section aria-label="Findings import status" className="border-b border-border pb-4 text-sm">
    <h2 className="font-semibold">Findings import status</h2>
    <p role="status" className="mt-1 text-body">
     {sync?.lastResult==="SUCCESS"?"Last sync succeeded.":
