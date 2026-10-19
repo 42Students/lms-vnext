@@ -1,5 +1,8 @@
 "use client";
 import {useState} from "react";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
 import {verificationFilterDraftError} from "@/modules/verification/filter-draft-validation";
 type Fields={ageBand:string;enrollment:string;waitingState:string;membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;programId:string;sectionId:string;batchId:string;branchId:string};
@@ -34,93 +37,93 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
   if(draftError){setError(draftError);return;}
   setError("");onApply(value);
  }
- return <details className="min-w-0 rounded-lg border p-3">
+ return <details className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3">
   <summary className="cursor-pointer text-sm font-medium">More filters: learner name, marksheets, batch, branch, class, waiting since</summary>
   <form className="mt-3 space-y-3" onSubmit={e=>{e.preventDefault();apply(fields);}}>
    <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
     <label className="min-w-0 text-sm">Exact learner membership ID
-     <input type="text" maxLength={36} value={fields.membershipId} onChange={e=>change("membershipId",e.target.value)}
-      placeholder="Membership UUID" className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/>
+     <Input type="text" maxLength={36} value={fields.membershipId} onChange={e=>change("membershipId",e.target.value)}
+      placeholder="Membership UUID" className="mt-1 w-full"/>
     </label>
     {query.tab==="WAITING"&&<label className="min-w-0 text-sm">Waiting request state
-     <select value={fields.waitingState} onChange={e=>change("waitingState",e.target.value)}
-      className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+     <Select value={fields.waitingState} onChange={e=>change("waitingState",e.target.value)}
+      className="mt-1 w-full">
       <option value="ALL">Both waiting states</option><option value="SUBMITTED">First submission</option><option value="UPDATE_PENDING">Updated verified details</option>
-     </select>
+     </Select>
     </label>}
     {query.tab==="WAITING"&&<label className="min-w-0 text-sm">Time in verification queue
-     <select value={fields.ageBand} onChange={e=>change("ageBand",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+     <Select value={fields.ageBand} onChange={e=>change("ageBand",e.target.value)} className="mt-1 w-full">
       <option value="ANY">Any age</option><option value="WITHIN_48_HOURS">Under 48 hours</option><option value="TWO_TO_SEVEN_DAYS">2–7 days</option><option value="OVER_SEVEN_DAYS">At least 7 days</option>
-     </select>
+     </Select>
     </label>}
     <label className="min-w-0 text-sm">Learner name
-     <input type="search" maxLength={100} value={fields.q} onChange={e=>change("q",e.target.value)}
-      placeholder="Search by name" className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/>
+     <Input type="search" maxLength={100} value={fields.q} onChange={e=>change("q",e.target.value)}
+      placeholder="Search by name" className="mt-1 w-full"/>
     </label>
     <label className="min-w-0 text-sm">Marksheets
-     <select value={fields.marksheets} onChange={e=>change("marksheets",e.target.value)}
-      className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+     <Select value={fields.marksheets} onChange={e=>change("marksheets",e.target.value)}
+      className="mt-1 w-full">
       <option value="ANY">Any</option><option value="MISSING">Missing</option><option value="PRESENT">Present</option>
-     </select></label>
+     </Select></label>
     <label className="min-w-0 text-sm">Needs a closer look
-     <select value={fields.attention} onChange={e=>change("attention",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+     <Select value={fields.attention} onChange={e=>change("attention",e.target.value)} className="mt-1 w-full">
       <option value="ALL">All requests</option><option value="MISSING_MARKSHEET">Missing marksheets</option><option value="VERIFIED_DETAILS_CHANGED">Updated verified details</option><option value="WAITING_OVER_WEEK">Waiting over a week</option>
-     </select>
+     </Select>
     </label>
     {query.tab==="WAITING"?<fieldset className="min-w-0 space-y-2 sm:col-span-2">
       <legend className="text-sm font-semibold">Waiting since</legend>
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={()=>chooseWaitingPreset("TODAY")} className="rounded border border-border px-3 py-2 text-sm">Today</button>
-        <button type="button" onClick={()=>chooseWaitingPreset("WEEK")} className="rounded border border-border px-3 py-2 text-sm">This week</button>
-        <button type="button" onClick={()=>chooseWaitingPreset("OLDER")} className="rounded border border-border px-3 py-2 text-sm">Over a week</button>
+        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("TODAY")} className="min-h-11 sm:min-h-9">Today</Button>
+        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("WEEK")} className="min-h-11 sm:min-h-9">This week</Button>
+        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("OLDER")} className="min-h-11 sm:min-h-9">Over a week</Button>
       </div>
       <p className="text-xs text-muted-foreground">These shortcuts filter persisted submitted dates in IST and reset conflicting waiting-age filters.</p>
     </fieldset>:null}
     <label className="min-w-0 text-sm">Submitted on or after (IST)
-     <input type="date" value={fields.submittedFrom} onChange={e=>change("submittedFrom",e.target.value)}
-      className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/>
+     <Input type="date" value={fields.submittedFrom} onChange={e=>change("submittedFrom",e.target.value)}
+      className="mt-1 w-full"/>
     </label>
     <label className="min-w-0 text-sm">Waiting since (submitted on/before)
-     <input type="date" value={fields.waitingSince} onChange={e=>change("waitingSince",e.target.value)}
-      className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/></label>
+     <Input type="date" value={fields.waitingSince} onChange={e=>change("waitingSince",e.target.value)}
+      className="mt-1 w-full"/></label>
     <label className="min-w-0 text-sm">Current academic enrollment
-     <select value={fields.enrollment} onChange={e=>change("enrollment",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+     <Select value={fields.enrollment} onChange={e=>change("enrollment",e.target.value)} className="mt-1 w-full">
       <option value="ALL">Any enrollment</option><option value="ACTIVE">Has active college program enrollment</option><option value="NONE">No active college program enrollment</option>
-     </select>
+     </Select>
     </label>
     <label className="min-w-0 text-sm">Academic program
-     <select value={fields.programId} onChange={e=>change("programId",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+     <Select value={fields.programId} onChange={e=>change("programId",e.target.value)} className="mt-1 w-full">
       <option value="">All programs</option>
       {missingSelectedChoice(programChoices?.items??[],fields.programId)&&<option value={fields.programId}>Selected program (outside first 200)</option>}
       {(programChoices?.items??[]).map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
-     </select>{programChoices?.truncated&&<span className="block text-xs">First 200 programs shown.</span>}
+     </Select>{programChoices?.truncated&&<span className="block text-xs">First 200 programs shown.</span>}
     </label>
     <label className="min-w-0 text-sm">Batch
-     <select value={fields.batchId} onChange={e=>change("batchId",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+     <Select value={fields.batchId} onChange={e=>change("batchId",e.target.value)} className="mt-1 w-full">
       <option value="">All batches</option>
       {missingSelectedChoice(batchChoices?.items??[],fields.batchId)&&<option value={fields.batchId}>Selected batch (not among first 200)</option>}
       {(batchChoices?.items??[]).map(x=><option key={x.id} value={x.id}>{x.label}</option>)}
-     </select>{batchChoices?.truncated&&<span className="block text-xs">First 200 batches shown.</span>}
+     </Select>{batchChoices?.truncated&&<span className="block text-xs">First 200 batches shown.</span>}
     </label>
     <label className="min-w-0 text-sm">Branch
-     <select value={fields.branchId} onChange={e=>change("branchId",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+     <Select value={fields.branchId} onChange={e=>change("branchId",e.target.value)} className="mt-1 w-full">
       <option value="">All branches</option>
       {missingSelectedChoice(branchChoices?.items??[],fields.branchId)&&<option value={fields.branchId}>Selected branch (outside first 200)</option>}
       {(branchChoices?.items??[]).map(x=><option key={x.id} value={x.id}>{x.label}</option>)}
-     </select>{branchChoices?.truncated&&<span className="block text-xs">First 200 branches shown.</span>}
+     </Select>{branchChoices?.truncated&&<span className="block text-xs">First 200 branches shown.</span>}
     </label>
     <label className="min-w-0 text-sm">Class / section
-     <select value={fields.sectionId} onChange={e=>change("sectionId",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+     <Select value={fields.sectionId} onChange={e=>change("sectionId",e.target.value)} className="mt-1 w-full">
       <option value="">All classes</option>
       {missingSelectedChoice(classChoices?.items??[],fields.sectionId)&&<option value={fields.sectionId}>Selected class (outside first 200)</option>}
       {(classChoices?.items??[]).map(x=><option key={x.id} value={x.id}>{x.label}</option>)}
-     </select>{classChoices?.truncated&&<span className="block text-xs">First 200 classes shown.</span>}
+     </Select>{classChoices?.truncated&&<span className="block text-xs">First 200 classes shown.</span>}
     </label>
    </div>
    {error&&<p role="alert" className="text-sm">{error}</p>}
    <div className="flex flex-wrap gap-2">
-    <button type="submit" className="rounded-md border px-3 py-2 text-sm">Apply filters</button>
-    <button type="button" onClick={()=>{setFields(empty);apply(empty);}} className="rounded-md border px-3 py-2 text-sm">Clear extra filters</button>
+    <Button variant="primary" type="submit" className="min-h-11 sm:min-h-9">Apply filters</Button>
+    <Button variant="secondary" type="button" onClick={()=>{setFields(empty);apply(empty);}} className="min-h-11 sm:min-h-9">Clear extra filters</Button>
    </div>
   </form>
  </details>;
