@@ -57,7 +57,7 @@ export default async function FacultyAssignmentReportPage({
             assignmentId:assignment.id,deliveryId:assignment.deliveryId,
             filter:"ALL",page:1,
           })}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
           Filter submissions and export
         </Link>
       </div>

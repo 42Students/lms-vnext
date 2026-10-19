@@ -32,23 +32,23 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
     }))}
   />
   <form action="/teacher/live-classes" method="get"
-   className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   className="flex flex-wrap items-end gap-3">
    <label className="grid gap-1 text-sm">When
     <select name="view" defaultValue={data.query.view}
-     className="min-h-11 rounded border border-border p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+     className="min-h-9 rounded border border-border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      <option value="UPCOMING">Upcoming and in progress</option>
      <option value="PAST">Past</option>
      <option value="ALL">All</option>
     </select></label>
    <label className="grid gap-1 text-sm">Section
     <select name="deliveryId" defaultValue={data.query.deliveryId??""}
-     className="min-h-11 rounded border border-border p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+     className="min-h-9 rounded border border-border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      <option value="">All assigned Sections</option>
      {data.courses.map(c=><option key={c.deliveryId} value={c.deliveryId}>
       {c.courseName} · {c.sectionName}
      </option>)}
     </select></label>
-   <button type="submit" className="min-h-11 rounded bg-primary px-4 py-2 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Filter</button>
+   <button type="submit" className="min-h-9 rounded bg-primary px-4 py-2 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-on-primary">Filter</button>
    <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
   </form>
   <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching registered live session{data.total===1?"":"s"}</p>
