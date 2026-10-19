@@ -2,7 +2,7 @@
 
 Generated from the complete, non-truncated main Git tree (2026-10-19), with duplicate paths removed. These are path-inventory counts, not in-file content grep counts, compilation results or proof of visual parity.
 
-Totals: **1041 unique files** = **511 loading**, **512 error**, **18 not-found**. This turn changed **38 loading routes**; all strict parity checkboxes stay OPEN until the F3–F5 value/state, grep and responsive proofs are completed.
+Totals: **1041 unique files** = **511 loading**, **512 error**, **18 not-found**. Prior turn changed **38 loading routes**, and the second bounded turn changed **20 TPO loading routes**; all strict parity checkboxes stay OPEN until the F3–F5 value/state, grep and responsive proofs are completed.
 
 Equivalent local path inventory command (not executed): git ls-tree -r --name-only main src/app | grep -E '(^|/)(loading|error|not-found)\.tsx$' | sort
 
@@ -1083,34 +1083,34 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/messages/notifications/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/more/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/notifications/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/lifecycle/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/new/draft/loading.tsx`
@@ -1133,16 +1133,16 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/reports/by-company/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/ctc/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/intelligence/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-followups/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/intelligence/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
+- [ ] `src/app/(authenticated)/tpo/reports/joining-followups/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/joining-status/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/leads/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-acceptance/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/offers-acceptance/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
+- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/placed-branch/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
+- [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/unplaced/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/requests/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/after-college/loading.tsx`
