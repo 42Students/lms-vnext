@@ -33,7 +33,7 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
       onChange={e=>setSelected(e.target.checked?lessons.map(l=>l.id):[])} disabled={pending}/> Select all on this page
   </label>
   <div className="grid max-h-48 gap-2 overflow-y-auto sm:grid-cols-2">
-   {lessons.map(lesson=><label key={lesson.id} className="flex min-h-10 items-center gap-3 rounded-md border border-border px-3 text-sm">
+   {lessons.map(lesson=><label key={lesson.id} className="flex min-h-10 items-center gap-3 rounded-[9px] border border-border px-3 text-sm">
     <input type="checkbox" checked={selected.includes(lesson.id)} disabled={pending}
      onChange={e=>setSelected(list=>e.target.checked?[...list,lesson.id]:list.filter(id=>id!==lesson.id))}/>
     <span className="min-w-0"><span className="block truncate font-semibold">{lesson.name}</span>
@@ -48,7 +48,7 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
     className="min-h-10 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">Hide selected</button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {report?<div role="status" className="space-y-1 rounded-md border border-border p-3 text-sm">
+  {report?<div role="status" className="space-y-1 rounded-[9px] border border-border p-3 text-sm">
    <p>{report.changed} content records updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
    {report.failures.length?<ul className="list-disc pl-5">{report.failures.slice(0,25).map(row=><li key={row.id}>Lesson update was not applied. Review the selection and retry.</li>)}</ul>:null}
   </div>:null}
