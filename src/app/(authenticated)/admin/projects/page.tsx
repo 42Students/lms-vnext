@@ -13,6 +13,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { parseAdminProjectsQuery } from "@/modules/projects/admin-projects-query-model";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Tabs } from "@/components/ui/tabs";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Banner } from "@/components/ui/banner";
@@ -39,7 +40,7 @@ export default async function SuperAdminProjectsPage({
       <PageHeader title="Project workspaces" />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
-        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}
+        action={<PageBackLink href="/dashboard" label="Back to dashboard" />}
       />
     </div>;
   }
@@ -136,8 +137,8 @@ export default async function SuperAdminProjectsPage({
         description="Live projects, each run by a mentor with a team of students."
         actions={
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link>
-            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
+            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link>
+            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
             <CreateProjectControl
               collegeId={collegeId}
               basePath="/admin/projects"

@@ -89,6 +89,7 @@ export function CollegeEditDialog({
       <Button
         variant="secondary"
         size="sm"
+        className="min-h-11 md:min-h-9"
         onClick={() => {
           setName(college.name);
           setCity(college.city ?? "");
@@ -111,6 +112,7 @@ export function CollegeEditDialog({
           <>
             <Button
               variant="secondary"
+              className="min-h-11 md:min-h-9"
               disabled={pending}
               onClick={() => setOpen(false)}
             >
@@ -119,6 +121,7 @@ export function CollegeEditDialog({
             <Button
               disabled={pending || !name.trim()}
               loading={pending}
+              className="min-h-11 md:min-h-9"
               onClick={save}
             >
               {pending ? "Saving…" : "Save changes"}
@@ -126,7 +129,7 @@ export function CollegeEditDialog({
           </>
         }
       >
-        <div aria-busy={pending} className="grid gap-4 sm:grid-cols-2">
+        <div aria-busy={pending} className="grid min-w-0 gap-4 md:grid-cols-2">
           {([
            ["Address",addressLine1,setAddressLine1,255],
            ["Address line 2",addressLine2,setAddressLine2,255],
@@ -137,7 +140,7 @@ export function CollegeEditDialog({
            <Input value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
           </label>)}
 
-          <div className="sm:col-span-2">
+          <div className="md:col-span-2">
             <label
               htmlFor={`college-name-${college.id}`}
               className="mb-1.5 block text-xs font-semibold text-body"
@@ -191,7 +194,7 @@ export function CollegeEditDialog({
               maxLength={128}
             />
           </div>
-          <div className="sm:col-span-2">
+          <div className="md:col-span-2">
             <label
               htmlFor={`college-country-${college.id}`}
               className="mb-1.5 block text-xs font-semibold text-body"

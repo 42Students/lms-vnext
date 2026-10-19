@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import { Disclosure } from "@/components/ui/disclosure";
 import {Button} from "@/components/ui/button";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {Input} from "@/components/ui/input";
@@ -38,8 +39,8 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
   if(draftError){setError(draftError);return;}
   setError("");onApply(value);
  }
- return <details className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3">
-  <summary className="cursor-pointer text-sm font-medium">More filters: learner name, marksheets, batch, branch, class, waiting since</summary>
+ return <Disclosure title="More filters: learner name, marksheets, batch, branch, class, waiting since" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+  
   <form className="mt-3 space-y-3" onSubmit={e=>{e.preventDefault();apply(fields);}}>
    <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
     <label className="min-w-0 text-sm">Exact learner membership ID
@@ -127,5 +128,5 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
     <Button variant="secondary" type="button" onClick={()=>{setFields(empty);apply(empty);}} className="min-h-[var(--lms-control-height)] ">Clear extra filters</Button>
    </div>
   </form>
- </details>;
+ </Disclosure>;
 }

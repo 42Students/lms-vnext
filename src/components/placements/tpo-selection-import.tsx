@@ -53,11 +53,11 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   <h2 className="font-semibold text-foreground">Import the company&apos;s selection list</h2>
   <p className="text-sm text-body">Use CSV with Application ID, Email or Student name. Optional Role and Package LPA columns.
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
-  <FileUpload label="Selection list (CSV)" accept=".csv,text/csv" maxBytes={2_000_000}
+  <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Selection list (CSV)" accept=".csv,text/csv" maxBytes={2_000_000}
      disabled={busy} onFiles={files=>void read(files?.[0]??null)}/>
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
-   <div className="max-h-52 min-w-0 overflow-auto">
+   <div className="max-h-52 min-w-0 overflow-auto print:max-h-none print:overflow-visible">
     <DataTable<SelectionImportEntry> caption="Selection import preview" rows={entries}
      getRowKey={item=>item.applicationId} empty={<p>No matched selections yet.</p>}
      columns={[
@@ -67,7 +67,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
      ]}/>
    </div>
    <Button variant="primary" type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 md:min-h-9 px-4">
+    className="min-h-11 md:min-h-9 px-4 print:hidden">
     {busy?"Recording…":"Confirm and record "+entries.length+" selections"}
    </Button>
   </div>:null}
@@ -77,7 +77,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     confirmLabel={"Confirm and record "+entries.length+" selections"}
     onConfirm={()=>void confirm()}/>
   {unmatched.length?<Disclosure title={`${unmatched.length} unmatched or unusable rows`} className="border-t border-border pt-3" defaultOpen>
-   <div role="region" aria-label="Unmatched selection import rows" tabIndex={0} className="mt-2 max-h-40 min-w-0 overflow-auto"><DataTable caption="Unmatched selection import rows" rows={unmatched} getRowKey={row=>String(row.line)} empty={<p>No unmatched rows.</p>} columns={[{key:"line",header:"Row",mobilePriority:"primary",cell:row=>row.line},{key:"identity",header:"Identifier",mobilePriority:"secondary",cell:row=>row.value||"Empty identifier"},{key:"reason",header:"Reason",mobilePriority:"secondary",cell:row=>row.reason}]}/></div>
+   <div role="region" aria-label="Unmatched selection import rows" tabIndex={0} className="mt-2 max-h-40 min-w-0 overflow-auto print:max-h-none print:overflow-visible"><DataTable caption="Unmatched selection import rows" rows={unmatched} getRowKey={row=>String(row.line)} empty={<p>No unmatched rows.</p>} columns={[{key:"line",header:"Row",mobilePriority:"primary",cell:row=>row.line},{key:"identity",header:"Identifier",mobilePriority:"secondary",cell:row=>row.value||"Empty identifier"},{key:"reason",header:"Reason",mobilePriority:"secondary",cell:row=>row.reason}]}/></div>
   </Disclosure>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {done?<p role="status" className="text-sm text-body">{done}</p>:null}

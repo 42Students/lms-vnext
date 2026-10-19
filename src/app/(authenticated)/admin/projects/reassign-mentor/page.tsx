@@ -3,8 +3,8 @@ import { ProjectAdminReassignMentorPage } from "@/components/projects/project-ad
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { can } from "@/modules/permissions/policy";
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 
 export default async function SuperAdminProjectReassignMentorRoute({
@@ -49,7 +49,7 @@ export default async function SuperAdminProjectReassignMentorRoute({
       <PageHeader title="Bulk mentor reassignment"/>
       <ErrorState title="Mentor reassignment access denied"
         description="This account cannot manage projects in the selected college."
-        action={<Link href="/admin/projects" className="font-semibold text-primary-text">Back to projects</Link>}/>
+        action={<PageBackLink href="/admin/projects" label="Back to projects" />}/>
     </div>;
   }
 

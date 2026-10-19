@@ -74,7 +74,7 @@ export function ProjectTemplateView({
           {data.overview?.goal?.trim() ||
             "No project goal recorded."}
         </p>
-        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <div className="mt-4 grid gap-4 min-[992px]:grid-cols-2">
           <div>
             <h3 className="mb-2 text-sm font-semibold text-foreground">
               Deliverables
@@ -90,7 +90,7 @@ export function ProjectTemplateView({
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
+      <section className="grid gap-4 min-[992px]:grid-cols-2">
         <TemplateRows
           title="Releases"
           rows={data.releases}
