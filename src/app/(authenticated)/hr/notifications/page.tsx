@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -79,7 +80,7 @@ export default async function HrMessagesPage({searchParams}:{
        <ol className="mt-3 divide-y divide-border">{group.items.map(row=>
          <li key={row.id} className="rounded-[8px] px-2 py-3 transition-colors hover:bg-[var(--lms-neutral-50)]">
            <div className="flex flex-wrap justify-between gap-2">
-             <span className="text-sm text-body">{row.label}{row.unread?<span className="ml-2 inline-flex rounded-full bg-[var(--lms-primary-subtle)] px-2 py-0.5 text-xs font-semibold text-[var(--lms-primary-text)]">Unread</span>:null}</span>
+             <span className="text-sm text-body">{row.label}{row.unread?<StatusBadge tone="info" className="ml-2">Unread</StatusBadge>:null}</span>
              <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
            </div>
            {row.unread?<HrNotificationReadButton notificationId={row.id}
