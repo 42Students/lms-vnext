@@ -93,11 +93,11 @@ export default async function SuperAdminTenantSetup({
   </section>
   <nav aria-label="Tenant Setup steps" className="flex flex-wrap gap-2">
    <Link href={tabLink("STRUCTURE")} aria-current={tab==="STRUCTURE"?"page":undefined}
-    className={"inline-flex min-h-9 items-center border-b-[3px] px-3 text-[14px] font-[650] "+(tab==="STRUCTURE"?active:inactive)}>
+    className={"inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] px-3 text-sm font-semibold "+ (tab==="STRUCTURE"?active:inactive)}>
     1. Tenant structure
    </Link>
    <Link href={tabLink("LAUNCH")} aria-current={tab==="LAUNCH"?"page":undefined}
-    className={"inline-flex min-h-11 items-center border-b-[3px] px-4 text-sm font-semibold "+(tab==="LAUNCH"?active:inactive)}>
+    className={"inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] px-4 text-sm font-semibold "+(tab==="LAUNCH"?active:inactive)}>
     2. Launch setup
    </Link>
   </nav>
