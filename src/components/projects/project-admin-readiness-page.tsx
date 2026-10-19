@@ -51,7 +51,6 @@ function tone(status: string) {
 export async function ProjectAdminReadinessPage({
   collegeId,
   basePath,
-  eyebrow,
   searchParams,
 }: {
   collegeId: string;
@@ -90,7 +89,6 @@ export async function ProjectAdminReadinessPage({
         active="readiness"
       />
       <PageHeader
-        eyebrow={eyebrow}
         title="Submission readiness"
         description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to."
         actions={<a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
