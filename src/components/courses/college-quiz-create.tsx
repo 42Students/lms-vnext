@@ -1,7 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
-
-
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
@@ -100,17 +101,17 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   {opened?<div className="space-y-3">
    <div className="grid gap-3 sm:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold">Course / Lesson
-     <select value={lessonId} disabled={busy} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
+     <Select value={lessonId} disabled={busy} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
       className="min-h-10 rounded border border-border p-2">
       {lessons.map(x=><option key={x.id} value={x.id}>{x.courseCode} · {x.course} · {x.name}</option>)}
-     </select></label>
+     </Select></label>
     <label className="grid gap-1 text-sm font-semibold">Audience
-     <select value={deliveryId} disabled={busy} onChange={e=>setDeliveryId(e.target.value)}
+     <Select value={deliveryId} disabled={busy} onChange={e=>setDeliveryId(e.target.value)}
       className="min-h-10 rounded border border-border p-2">
       <option value="">All currently eligible sections</option>
       {sections.map(x=><option key={x.deliveryId} value={x.deliveryId}>
        {x.sectionName} ({x.sectionCode})</option>)}
-     </select></label>
+     </Select></label>
     <label className="grid gap-1 text-sm font-semibold">Title
      <Input maxLength={255} required value={title} disabled={busy}
       onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
@@ -128,9 +129,9 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
     "All currently eligible Sections in the Course Offering"} · Draft quiz is hidden until published.</p>
    <div className="flex flex-wrap gap-4 text-sm">
-    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleQuestions}
+    <label className="flex items-center gap-2"><Checkbox checked={shuffleQuestions}
       onChange={e=>setShuffleQuestions(e.target.checked)}/>Shuffle question order per learner</label>
-    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleOptions}
+    <label className="flex items-center gap-2"><Checkbox checked={shuffleOptions}
       onChange={e=>setShuffleOptions(e.target.checked)}/>Shuffle answer options per learner</label>
    </div>
    <p role="status" className="text-sm text-muted-foreground">{questions.length} question(s) ·
@@ -138,13 +139,13 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    {questions.map((question,i)=><fieldset key={i} className="space-y-2 rounded border border-border p-3">
     <legend className="text-sm font-semibold">Question {i+1}</legend>
     <div className="flex flex-wrap gap-2">
-     <select value={question.type} disabled={busy} onChange={e=>{
+     <Select value={question.type} disabled={busy} onChange={e=>{
       const type=e.target.value as Question["type"];
       replaceQuestion(i,{...question,type,options:question.options.map((o,j)=>({...o,correct:j===0}))});
      }} className="min-h-10 rounded border border-border px-2">
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
-     </select>
+     </Select>
      <Input type="number" min={1} max={1000} aria-label="Question points" disabled={busy}
       value={question.points} onChange={e=>replaceQuestion(i,{...question,points:Number(e.target.value)})}
       className="w-28 rounded border border-border px-2"/>
@@ -153,7 +154,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      aria-label={"Question "+(i+1)+" prompt"} onChange={e=>replaceQuestion(i,{...question,prompt:e.target.value})}
      className="w-full rounded border border-border p-2"/>
     {question.options.map((option,j)=><label key={j} className="flex items-center gap-2 text-sm">
-     <input type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
+     <Input type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
       name={"quiz-correct-"+i} checked={option.correct} disabled={busy}
       aria-label={"Correct answer "+(j+1)} onChange={e=>replaceQuestion(i,{...question,
        options:question.options.map((o,k)=>({...o,correct:question.type==="SINGLE_CHOICE"?
@@ -183,7 +184,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     className="text-primary-text">
     + Add question</Button>
    <label className="flex items-center gap-2 text-sm">
-    <input type="checkbox" disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
+    <Checkbox disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
     Create another quiz after saving
    </label>
    <div className="flex flex-wrap gap-2">
