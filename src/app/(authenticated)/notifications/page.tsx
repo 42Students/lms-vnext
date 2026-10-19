@@ -83,7 +83,7 @@ export default async function NotificationsPage({
           />
           {nextHref ? (
             <div className="flex justify-center">
-              <Link href={nextHref} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <Link href={nextHref} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Older notifications
               </Link>
             </div>

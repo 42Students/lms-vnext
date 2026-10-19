@@ -3,6 +3,7 @@ import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Alert} from "@/components/ui/alert";
 import {TpoInterviewSlotPlanner} from "@/components/placements/tpo-interview-slot-planner";
 import {getTpoInterviewSlotWorkspace} from "@/modules/placements/tpo-interview-slot-service";
 import {PlacementsServiceError} from "@/modules/placements/errors";
@@ -19,12 +20,12 @@ export default async function SlotsPage({params}:{params:Promise<{jobId:string;r
    description="Generate interview slots, book candidates and resolve room assignments before the drive day."/>
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule"}
    className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">← Candidate schedule</Link>
-  {!data.storageReady?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm">
+  {!data.storageReady?<Alert tone="warning">
    Candidate-specific interview slot storage has not been registered. The orchestrator must register
-   docs/proposed-migrations/chat-5-interview-candidate-slots.sql before booking or changing slots.</p>
+   docs/proposed-migrations/chat-5-interview-candidate-slots.sql before booking or changing slots.</Alert>
    :data.round.kind!=="INTERVIEW"||data.round.roundStatus!=="SCHEDULED"||data.round.jobStatus!=="PUBLISHED"
-   ?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-[var(--lms-space-5)] text-sm">
-     Slots can be booked only for a scheduled interview round in a published drive.</p>
+   ?<Alert tone="warning">
+     Slots can be booked only for a scheduled interview round in a published drive.</Alert>
    :<TpoInterviewSlotPlanner jobId={jobId} roundId={roundId}
      slots={data.slots.map(s=>({id:s.id,startsAt:s.startsAt,endsAt:s.endsAt,room:s.room,
        panel:s.panel,status:s.status,applicationId:s.applicationId,version:s.version}))}

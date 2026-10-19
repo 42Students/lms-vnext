@@ -11,6 +11,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
 import {tpoApplicationFilterError} from "@/modules/placements/tpo-applications-url-guard";
 type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
@@ -24,7 +26,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  if(urlError)return <div className="space-y-4">
   <PageHeader eyebrow="TPO · Drive applicants" title="Invalid applicant filters"
    description="No private application records were loaded."/>
-  <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">{urlError}</p>
+  <Alert tone="error">{urlError}</Alert>
   <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="font-semibold text-[var(--lms-teal-deep)] underline">Clear applicant filters</Link>
  </div>;
  const columns=first(query.columns)?.slice(0,800);
@@ -118,7 +120,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"#drive-registered-not-applied"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Registered, not applied</Link>
     <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Clear applicant filters</Link>
    </div>:
-   <Suspense fallback={<p role="status">Loading applicant grid…</p>}>
+   <Suspense fallback={<Skeleton variant="row" count={4} label="Loading applicant grid…" />}>
     <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
    </Suspense>}
   <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3">

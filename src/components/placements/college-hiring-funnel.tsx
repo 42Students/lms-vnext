@@ -2,6 +2,7 @@ import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Input } from "@/components/ui/input";
 import { StatTile } from "@/components/ui/stat-tile";
 import { MetricBar } from "@/components/ui/metric-bar";
+import reportStyles from "./report-bar-chart.module.css";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
@@ -54,10 +55,10 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
      </Select>
     </label>
     <label className="grid gap-1 text-sm">Applied from
-     <DateInput mode="date" name="from" defaultValue={q.from??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
+     <Input type="date" name="from" defaultValue={q.from??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
     </label>
     <label className="grid gap-1 text-sm">Applied to
-     <DateInput mode="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
+     <Input type="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
     </label>
     <div className="flex gap-3 sm:col-span-2 lg:col-span-5">
      <Button type="submit" >Apply filters</Button>
@@ -80,11 +81,11 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined})}
      className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
    </div>:<div className="space-y-3">
-    {order.map(stage=><div key={stage} className="grid grid-cols-[7rem_1fr_4rem] items-center gap-3 text-sm">
-      <span>{label(stage)}</span>
-      <MetricBar label={label(stage)} size="default"
+    {order.map(stage=><div key={stage} className={reportStyles.chartRow}>
+      <span className={reportStyles.label}>{label(stage)}</span>
+      <MetricBar label={label(stage)} size="default" className={reportStyles.track}
        value={data.totals[stage]??0} maximum={total} unit="applications" />
-      <span className="text-right tabular-nums">{data.totals[stage]??0}</span>
+      <span className={reportStyles.value+" tabular-nums"}>{data.totals[stage]??0}</span>
     </div>)}
    </div>}
    <p className="text-xs text-muted-foreground">Counts show current pipeline stages, not cumulative conversion. A candidate can occupy only one current stage.</p>

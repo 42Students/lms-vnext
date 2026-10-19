@@ -8,6 +8,8 @@ import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-mod
 import {mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { ProjectAdminSubmissionReview } from "./project-admin-submission-review";
 import {CollegeProjectSummaryEditorFull} from "./college-project-summary-editor-full";
@@ -304,17 +306,14 @@ export function ProjectWorkspace({
 
   return (
     <div className="space-y-6">
-      <Link
-        href={backHref}
-        className="inline-flex text-sm font-semibold text-link hover:text-primary-hover"
-      >
-        {backLabel === "Projects" ? "Back to projects" : backLabel}
-      </Link>
+      <PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />
 
-      {mode === "ADMIN" ? <nav aria-label="Workspace breadcrumb" className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-        <Link href={backHref}>Projects</Link><span aria-hidden="true">/</span>
-        <span aria-current="page">{workspace.project.title}</span>
-      </nav> : null}
+      {mode === "ADMIN" ? (
+        <Breadcrumbs items={[
+          { label: "Projects", href: backHref },
+          { label: workspace.project.title },
+        ]} />
+      ) : null}
       {sectionBaseHref ? (
         <Tabs ariaLabel="Project workspace sections" renderPanel={false} value={activeSection}
           items={PROJECT_WORKSPACE_SECTIONS.map(section=>({
@@ -473,7 +472,7 @@ export function ProjectWorkspace({
             </div>
           </div>:null}
           {mode!=="ADMIN"?<div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <section className="rounded-[var(--lms-control-radius)] border border-border p-3">
+            <section className="border-b border-border pb-3">
               <h3 className="font-semibold text-foreground">Definition of done</h3>
               <p className="mt-1 text-sm text-body">
                 Finish the planned tasks, have each sprint signed off, and send the final submission for mentor review.
@@ -482,7 +481,7 @@ export function ProjectWorkspace({
                 Submission also needs all {workspace.sprints.length} sprint(s) signed off.
               </p>
             </section>
-            <section className="rounded-[var(--lms-control-radius)] border border-border p-3">
+            <section className="border-b border-border pb-3">
               <h3 className="font-semibold text-foreground">Who’s who</h3>
               <ul className="mt-2 space-y-1 text-sm text-body">
                 <li>Mentor · Reviews tasks and final delivery</li>
@@ -492,13 +491,13 @@ export function ProjectWorkspace({
               </ul>
             </section>
           </div>:null}
-          {mode==="MENTOR"?<section aria-label="Final submission" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+          {mode==="MENTOR"?<section aria-label="Final submission" className="mt-4 border-b border-border pb-4 text-sm text-body">
             <h3 className="font-semibold text-foreground">Final submission</h3>
             <p className="mt-1">Status: {readiness.finalSubmission.latest?label(readiness.finalSubmission.latest.status):"Not submitted"}</p>
             <Link href={mentorReviewHref??("/mentor/projects/"+workspace.project.id+"?tab=delivery")}
               className="mt-2 inline-flex min-h-10 items-center font-semibold text-link underline">Review submission</Link>
           </section>:null}
-          {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3">
+          {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 border-b border-border pb-4">
             <h3 className="font-semibold">Task progress</h3>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
               {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
@@ -510,7 +509,7 @@ export function ProjectWorkspace({
             <p className="mt-2 text-xs text-body">Submission also needs all {readiness.execution.sprints.total}
               {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>
           </section>:null}
-          {mode==="LEARNER"?<section aria-label="Task completion donut" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-4">
+          {mode==="LEARNER"?<section aria-label="Task completion donut" className="mt-4 border-b border-border pb-4">
             <h3 className="text-sm font-semibold">Task completion</h3>
             {readiness.execution.tasks.total>0?<div className="mt-3 flex flex-wrap items-center gap-4">
               <svg viewBox="0 0 42 42" role="img"
@@ -537,7 +536,7 @@ export function ProjectWorkspace({
                 {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>:
               <p className="mt-3 text-xs text-body">Tasks only — this project has no sprints.</p>}
           </section>:null}
-          {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3">
+          {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 border-b border-border pb-4">
             <h3 className="font-semibold text-foreground">Task progress</h3>
             <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
               {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
@@ -591,7 +590,7 @@ export function ProjectWorkspace({
             </div>
           ) : null}
           {mode === "LEARNER" ? (
-            <section className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
+            <section className="mt-4 border-b border-border pb-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="text-sm font-semibold text-foreground">Final submission</h3>
                 <StatusBadge tone={readiness.finalSubmission.latest?.status === "APPROVED" ? "success" :
@@ -646,7 +645,7 @@ export function ProjectWorkspace({
               ) : null}
             </div>
           ) : null}
-          {mode==="MENTOR"?<section className="mt-4 space-y-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+          {mode==="MENTOR"?<section className="mt-4 space-y-3 border-b border-border pb-4 text-sm">
             <p>Mentor: {workspace.members.find(m=>m.role==="MENTOR"&&m.isPrimary)?.displayName??
               workspace.members.find(m=>m.role==="MENTOR")?.displayName??"Not assigned"}</p>
             <p>Due date: <strong>{workspace.project.dueLabel??workspace.project.endDate??"No due date"}</strong></p>

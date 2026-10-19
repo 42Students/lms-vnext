@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
@@ -30,6 +31,7 @@ export default async function LearnerPlacementCellPage({
   const requestWorkspace=requestRead.value;
   return (
     <div className="space-y-7">
+      <PageHeader title="Placement cell" />
 
       <section id="registration" className="scroll-mt-24" aria-label="Registration">
         <LearnerPlacementRegistration registration={registration}/>

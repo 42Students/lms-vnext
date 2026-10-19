@@ -2,6 +2,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { Tabs } from "@/components/ui/tabs";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -22,11 +24,11 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  const rawPage=Array.isArray(search.page)?search.page[0]:search.page;
  const parsed=parseCompanyShareAuditQuery({kind:rawKind,page:rawPage});
  const back="/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview";
- if(!parsed.success)return <section role="alert" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+ if(!parsed.success)return <div className="min-w-0 space-y-3">
   <PageHeader title="Invalid share-audit filters" />
-  <p className="text-sm text-body">Choose a valid event kind and page number. No access history was loaded.</p>
+  <Alert tone="error">Choose a valid event kind and page number. No access history was loaded.</Alert>
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Clear filters</Link>
- </section>;
+ </div>;
  const {kind,page:auditPage}=parsed.data;
  const result=await listTpoCompanyShareAudit(context,jobId,kind,auditPage);
  return <div className="min-w-0 space-y-5">
@@ -44,12 +46,12 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary md:min-h-9">
     Export access history CSV
   </a>:null}
-  {!result.ready?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5">
+  {!result.ready?<Alert tone="warning">
    Access history is unavailable until the share-audit migration is registered.
-  </p>:<DataTable caption="Company-share access history"
+  </Alert>:<DataTable caption="Company-share access history"
     rows={result.entries.map((entry,index)=>({...entry,rowKey:String(index)}))}
     getRowKey={entry=>entry.rowKey}
-    empty={<p role="status">No share-page views or CSV downloads match this event filter for this drive.</p>}
+    empty={<EmptyState title="No share-page views or CSV downloads match this event filter for this drive." />}
     columns={[
       {key:"prefix",header:"Link prefix",mobilePriority:"primary",cell:entry=><span className="font-mono break-all">{entry.sharePrefix}</span>},
       {key:"action",header:"Action",mobilePriority:"secondary",cell:entry=>entry.kind},
