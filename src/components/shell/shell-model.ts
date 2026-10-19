@@ -98,30 +98,21 @@ function navPortal(href: string): string | null {
  * Single-role college admins retain their one explicit Placement cell link.
  * The general Dashboard link remains a safe cross-workspace escape. */
 export function scopedShellNavigation(items: readonly ShellNavItem[], pathname: string): ShellNavItem[] {
- const counts = new Map<string, number>();
- for (const item of items) {
-  const portal = navPortal(item.href);
-  if (portal) counts.set(portal, (counts.get(portal) ?? 0) + 1);
- }
- const substantial = ["learn", "teacher", "mentor", "tpo", "hr", "college"]
-  .filter(portal => (counts.get(portal) ?? 0) > 1);
- const rolePortals = ["learn", "teacher", "mentor", "tpo", "hr"]
-  .filter(portal => counts.has(portal));
- // One navigation item can still represent a separate role. Do not assume
- // every role has multiple rows before isolating its workspace.
- const mixedCollege = (counts.get("college") ?? 0) > 1 && rolePortals.length > 0;
- if (substantial.length < 2 && rolePortals.length < 2 && !mixedCollege) return [...items];
+ const portals = [...new Set(items.map(item => navPortal(item.href)).filter(
+  (portal): portal is string => portal !== null
+ ))];
+ if (portals.length <= 1) return [...items];
+ // The legacy shell displays one account's navigation at a time. A single
+ // stray row from another portal must not leak into the active icon rail.
  const pathPortal = navPortal(pathname);
- const selected = pathPortal && counts.has(pathPortal) ? pathPortal :
-  substantial[0] ?? rolePortals[0] ?? "college";
+ const selected = pathPortal && portals.includes(pathPortal) ? pathPortal :
+  portals.includes("college") ? "college" : portals[0]!;
  return items.filter(item => {
   const portal = navPortal(item.href);
-  return !portal || portal === selected ||
-   (selected === "college" && item.label === "Placement cell" && item.href === "/tpo/home") ||
-   (portal === "college" && counts.get("college") === 1);
+  return portal === selected ||
+   (selected === "college" && item.href === "/tpo/home" &&
+    item.label.replace(/ · Placements$/, "") === "Placement cell");
  }).map(item => {
-  // Role disambiguators are only needed in a mixed list. Once scoped to one
-  // legacy portal, restore its exact unsuffixed labels and accessible names.
   const label = item.label.replace(/ · (?:Learning|Teaching|Mentoring|College|Admin|Placements|Recruiting)$/, "");
   return label === item.label ? item : {...item, label};
  });
