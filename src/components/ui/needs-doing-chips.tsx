@@ -39,8 +39,11 @@ export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs d
         const selected = selectedKey === item.key;
         const classes = cx(base, tones[item.tone ?? "neutral"], selected && "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]");
         const content = <>{item.label}{count !== null ? <span className="tabular-nums">{count}</span> : null}</>;
-        if (item.href && !item.disabled && isSafeInternalHref(item.href)) {
-          return <Link key={item.key} href={item.href} aria-current={selected ? "page" : undefined} className={classes}>{content}</Link>;
+        if (item.href) {
+          if (!item.disabled && isSafeInternalHref(item.href)) {
+            return <Link key={item.key} href={item.href} aria-current={selected ? "page" : undefined} className={classes}>{content}</Link>;
+          }
+          return <span key={item.key} aria-disabled="true" className={cx(classes, "cursor-not-allowed opacity-50")}>{content}</span>;
         }
         if (onSelect) {
           return <button key={item.key} type="button" disabled={item.disabled} aria-pressed={selected} onClick={() => onSelect(item.key)} className={classes}>{content}</button>;
