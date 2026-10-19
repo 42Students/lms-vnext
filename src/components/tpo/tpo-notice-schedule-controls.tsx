@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {Input} from "@/components/ui/input";
+import {Radio} from "@/components/ui/radio";
 import {Button} from "@/components/ui/button";
 
 export function TpoNoticeScheduleControls({count,enabled,minDateTime}:{
@@ -11,9 +12,9 @@ export function TpoNoticeScheduleControls({count,enabled,minDateTime}:{
   <fieldset className="space-y-2">
    <legend className="text-sm font-semibold text-foreground">When</legend>
    <div className="flex flex-wrap gap-4 text-sm">
-    <label className="flex items-center gap-2"><input type="radio" checked={mode==="NOW"}
+    <label className="flex items-center gap-2"><Radio checked={mode==="NOW"}
       onChange={()=>setMode("NOW")} name="noticeWhen" value="NOW"/> Now</label>
-    <label className="flex items-center gap-2"><input type="radio" checked={mode==="LATER"}
+    <label className="flex items-center gap-2"><Radio checked={mode==="LATER"}
       onChange={()=>setMode("LATER")} name="noticeWhen" value="LATER"/> Later</label>
    </div>
   </fieldset>
