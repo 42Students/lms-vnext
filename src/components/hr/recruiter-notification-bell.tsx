@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
+import { Button } from "@/components/ui/button";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {recruiterBellAriaLabel,recruiterBellPreview,createRecruiterBellRequestGate,type RecruiterBellItem}
  from "@/modules/placements/recruiter-bell-model";
@@ -63,10 +64,10 @@ export function RecruiterNotificationBell(){
  },[isOpen]);
  const href="/hr/notifications"+(data?.collegeId?"?collegeId="+encodeURIComponent(data.collegeId):"");
  return <div className="relative">
-  <Button variant="primary" className="relative" ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
+  <Button variant="secondary" ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
     aria-expanded={isOpen} aria-haspopup="dialog"
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
-    className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-border bg-surface hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    className="relative min-h-11 min-w-11 rounded-[8px] px-2">
     <span aria-hidden="true">🔔</span>
     {data?.unread&&data.unread>0?<span aria-hidden="true"
       className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#ff7576] px-1 text-[10px] leading-3 text-white">
@@ -76,27 +77,27 @@ export function RecruiterNotificationBell(){
     className="absolute right-0 top-full z-[1050] mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,94vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[#e5e9f0] bg-white p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="-mx-4 -mt-4 flex items-center justify-between gap-3 rounded-t-[12px] border-b border-[#e5e9f0] bg-[#fafbfc] px-4 py-3">
     <h2 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.02em] text-[#1a1d21]">Notifications</h2>
-    <button type="button" onClick={()=>{setIsOpen(false);triggerRef.current?.focus();}}
-     aria-label="Close notifications" className="min-h-11 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
+    <Button variant="ghost" type="button" onClick={()=>{setIsOpen(false);triggerRef.current?.focus();}}
+     aria-label="Close notifications" className="min-h-11 px-3 text-primary-text">Close</Button>
    </div>
    {error?<div role="alert" className="mt-3 text-sm text-error">{error}
-    <Button variant="ghost" type="button" onClick={()=>void load()}>Retry</Button>
+    <Button variant="ghost" type="button" onClick={()=>void load()} className="ml-2 min-h-9 text-primary-text underline">Retry</Button>
    </div>:null}
    {data?.status==="CHOOSE_COLLEGE"?
     <div className="mt-3 space-y-2 text-sm">{data.choices?.map(item=>
-     <Button variant="primary" className="w-full justify-start text-left" type="button" key={item.collegeId} onClick={()=>{
+     <Button variant="secondary" type="button" key={item.collegeId} onClick={()=>{
        requestGate.current.invalidate();setData(null);setError("");setCollegeId(item.collegeId);
       }}
-      className="block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border p-3 text-left text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-      {item.collegeName}</button>)}</div>:null}
+      className="min-h-11 w-full justify-start p-3 text-left">
+      {item.collegeName}</Button>)}</div>:null}
    {data?.status==="READY"&&data.rows?.length===0?
      <p role="status" className="mt-4 text-sm text-muted-foreground">No notifications yet</p>:null}
    {data?.status==="READY"&&data.rows?.length?
-    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-[50vh]"><ul className="space-y-1.5">
-     {recruiterBellPreview(data.rows).map(item=><li key={item.id} className="rounded-[8px] border border-[#e5e9f0] bg-white">
+    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-[50vh]"><ul className="divide-y divide-[var(--lms-canvas-border)]">
+     {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-11 rounded-[8px] px-3 py-3 text-sm text-primary-text hover:bg-[#fafbfc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="block min-h-11 rounded-[8px] px-3 py-3 text-sm text-primary-text hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}
