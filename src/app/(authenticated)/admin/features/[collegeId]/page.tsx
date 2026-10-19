@@ -56,7 +56,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <ErrorState title="Invalid module access filters"
           description="The module, scope or requested page is invalid. No college module rules were loaded."
           action={<Link href={"/admin/features/"+encodeURIComponent(collegeId)}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Clear filters
           </Link>} />
       </div>
@@ -103,7 +103,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
     <div className="min-w-0 space-y-6">
       <Link
         href="/admin/features"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
       >
         ← Feature Controls
       </Link>
@@ -116,7 +116,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <LearnerModuleAccessDrawer collegeId={college.id}/>
 
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="- border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -130,7 +130,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
           </div>
           <Link
             href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
           >
             Open learner access trace →
           </Link>
@@ -138,7 +138,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         View audited college module changes →
       </Link>
       <section className="grid gap-3 md:grid-cols-3">
@@ -173,7 +173,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         ))}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5" aria-label="Placements college access impact">
+      <section className="- border-t border-border pt-5" aria-label="Placements college access impact">
         <h2 className="text-base font-semibold text-foreground">Placements: college-level access impact</h2>
         {modules.filter(decision=>decision.module==="placements").map(decision=>(
           <div key={decision.module} className="mt-3 space-y-2 text-sm text-body">
@@ -212,8 +212,8 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Exact scope ID (optional)
           <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
         </label>
-        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter overrides</Button>
-        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Reset</Link>
+        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter overrides</Button>
+        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Reset</Link>
       </form>
 
       <section className="min-w-0 space-y-3">
@@ -251,7 +251,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       </section>
 
-      <section aria-label="Academic module rules" className="rounded-xl border border-border bg-surface p-5">
+      <section aria-label="Academic module rules" className="- border-t border-border pt-5">
         <h2 className="font-semibold">Department, Program, Batch and Class access</h2>
         <p className="mt-2 text-sm text-body">Select an academic scope, set Projects, Placements or Electives On, Off, or Inherit, and apply an optional lock.</p>
         <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>
@@ -306,7 +306,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page > 1 ? (
               <Link
                 href={pageHref(result.page - 1)}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
               >
                 ← Previous
               </Link>
@@ -314,7 +314,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page < result.totalPages ? (
               <Link
                 href={pageHref(result.page + 1)}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
               >
                 Next →
               </Link>

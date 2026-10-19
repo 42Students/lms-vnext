@@ -30,7 +30,7 @@ export default async function TenantDirectory({searchParams}:{
  if(!parsed) return <div className="space-y-4">
   <PageHeader eyebrow="Super Admin" title="Tenant Setup" />
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
-   action={<Link href="/admin/tenants" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
+   action={<Link href="/admin/tenants" className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
  let data:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDirectory>>;
  try{
@@ -42,7 +42,7 @@ export default async function TenantDirectory({searchParams}:{
    <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"/>
    <ErrorState title="Tenant directory unavailable"
     description="Colleges and organizations could not be loaded. Try again with the same filters."
-    action={<Link href={tenantLifecycleHref(parsed)} className="font-semibold text-[var(--lms-teal-deep)]">Retry tenant directory</Link>}/>
+    action={<Link href={tenantLifecycleHref(parsed)} className="font-semibold text-primary-text">Retry tenant directory</Link>}/>
   </div>;
  }
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
@@ -51,10 +51,10 @@ export default async function TenantDirectory({searchParams}:{
   <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />} />
-  <Link href="/admin/domains" className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Domains</Link>
+  <Link href="/admin/domains" className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 font-semibold text-primary-text">Domains</Link>
   <div className="flex flex-wrap gap-3">
-   <Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Create an organization and its colleges</Link>
-   <Link href="/admin/tenants/setup" className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Get this college ready to go live</Link>
+   <Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 font-semibold text-primary-text">Create an organization and its colleges</Link>
+   <Link href="/admin/tenants/setup" className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 font-semibold text-primary-text">Get this college ready to go live</Link>
   </div>
   <form className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold text-body">College
@@ -84,7 +84,7 @@ export default async function TenantDirectory({searchParams}:{
      <StatusBadge tone={x.organizationStatus==="ACTIVE"?"success":"neutral"}>Organization {x.organizationStatus}</StatusBadge></div>
     <p className="mt-2 text-xs text-muted-foreground">{[x.city,x.state,x.country].filter(Boolean).join(", ")||"Location not recorded"}</p>
     <Link href={`/admin/colleges/${encodeURIComponent(x.id)}`}
-     className="mt-3 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Tenant details →</Link>
+     className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text">Tenant details →</Link>
    </article>)}
   </div>:<EmptyState title="No matching tenants" description="No colleges in the current scope match these lifecycle filters."/>}
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={url} label="Tenant pages" />

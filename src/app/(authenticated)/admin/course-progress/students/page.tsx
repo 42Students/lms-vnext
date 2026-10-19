@@ -14,7 +14,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
  const offeringId=parseSuperAdminStudentProgressParams(await searchParams);
- const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Back to Course Progress</Link>;
+ const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Back to Course Progress</Link>;
  if(!offeringId)return <div className="space-y-5">
   <PageHeader title="Student Course Progress" eyebrow="Super Admin · Courses"/>
   <ErrorState title="Choose a course offering" description="Select a course and class from Course Progress first." action={back}/>
@@ -43,7 +43,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
      highestMeasured:lowestMeasured+"–"+highestMeasured+" per learner"}</dd></div>
   </dl>
   <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
-   className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export CSV</a>
+   className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export CSV</a>
   <p className="text-sm text-body">Video completions, submitted assignments and attempted quizzes are counted from persisted learner records. No completion percentage is inferred when there are no measurable items.</p>
   {report.truncated?<p role="alert" className="text-warning-text">Showing the first 500 students. Narrowing by course offering is required for large cohorts.</p>:null}
   <DataTable<(typeof report.rows)[number]>
