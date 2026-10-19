@@ -3,7 +3,7 @@ import { useState } from "react";
 import { PUBLIC_RECRUIT_COPY,publicRecruitThanks } from "@/modules/placements/public-enquiry/public-copy";
 import {publicRecruiterWorkEmailSchema} from "@/modules/placements/public-college-join-model";
 
-const control="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground";
+const control="min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-[var(--lms-focus-ring)] md:min-h-9";
 export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;enabled:boolean}){
  const [email,setEmail]=useState(""),[name,setName]=useState(""),[company,setCompany]=useState("");
  const [mobile,setMobile]=useState(""),[hiringFor,setHiringFor]=useState("");
@@ -34,7 +34,7 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
   }catch(cause){setError(cause instanceof Error?cause.message:PUBLIC_RECRUIT_COPY.errorSubmit);}
   finally{setBusy(false);}
  }
- return <section className="mt-8 rounded-xl border border-border bg-surface p-5 sm:p-6" aria-label="Recruit from us">
+ return <section className="mt-8 border-t border-border pt-6" aria-label="Recruit from us">
   <h2 className="text-xl font-semibold text-foreground">{PUBLIC_RECRUIT_COPY.heading}</h2>
   {done?<div role="status" className="mt-4 space-y-2">
     <h3 className="font-semibold">{PUBLIC_RECRUIT_COPY.thankYou}</h3>
@@ -72,10 +72,10 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
      </label>:null}
     {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
     {sent?<button type="button" disabled={busy}
-      className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text disabled:opacity-50"
+      className="min-h-11 rounded-[9px] md:min-h-9 border border-border px-4 text-sm text-primary-text disabled:opacity-50"
       onClick={()=>void submit("send-code")}>Send a new code</button>:null}
     <button type="submit" disabled={busy}
-     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+     className="min-h-11 rounded-[9px] md:min-h-9 bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
       {sent?PUBLIC_RECRUIT_COPY.submit:PUBLIC_RECRUIT_COPY.send}
     </button>
    </form>}
