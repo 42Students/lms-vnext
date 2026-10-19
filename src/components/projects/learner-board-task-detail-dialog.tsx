@@ -1,7 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
+import { Dialog } from "@/components/ui/dialog";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
 import { ProjectTaskComments } from "./project-task-comments";
 import { projectTaskVisibleFacts } from "@/modules/projects/project-task-visible-facts-model";
@@ -34,31 +36,14 @@ export function LearnerBoardTaskDetailDialog({
   submissionUrl?:string|null;
   activityEvents?:readonly {summary:string;actorDisplayName:string|null;occurredAt:Date}[];
 }) {
-  const ref=useRef<HTMLDialogElement>(null);
   const navigatingRef=useRef(createLearnerBoardTaskDialogNavigationGuard());
   const router=useRouter();
   const returnHref=learnerBoardTaskHref(projectId,filters);
   const facts=projectTaskVisibleFacts(task,assigneeName);
-  useEffect(()=>{
-    const dialog=ref.current;
-    if(!dialog)return;
-    navigatingRef.current.reset();
-    if(!dialog.open)dialog.showModal();
-    return ()=>{if(dialog.open)dialog.close();};
-  },[task.id]);
+  useEffect(()=>{ navigatingRef.current.reset(); },[task.id]);
   return (
-    <dialog ref={ref} aria-labelledby="learner-task-dialog-title"
-      onClose={()=>{if(navigatingRef.current.shouldReturn())router.replace(returnHref);}}
-      className="fixed inset-0 m-auto max-h-[85dvh] w-[min(94vw,38rem)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground shadow-[var(--lms-dialog-shadow)] backdrop:bg-black/50 sm:p-6">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Project Board task</p>
-          <h2 id="learner-task-dialog-title" className="mt-1 break-words text-lg font-semibold">{task.title}</h2>
-        </div>
-        <form method="dialog">
-          <Button type="submit" variant="secondary" className="min-h-11" aria-label="Close task details">Close</Button>
-        </form>
-      </div>
+    <Dialog open={true} title={task.title} description="Project Board task" className="max-w-[38rem]"
+      onOpenChange={next=>{if(!next&&navigatingRef.current.shouldReturn())router.replace(returnHref);}}>
       {task.carriedFromSprintId?<p className="mt-2 text-xs font-semibold text-warning-text">
         Carried over
       </p>:null}
@@ -126,6 +111,6 @@ export function LearnerBoardTaskDetailDialog({
         </Link>
       </div>
       <p className="mt-3 text-xs leading-5 text-muted-foreground">Submission review and additional task details are available in the full Board.</p>
-    </dialog>
+    </Dialog>
   );
 }

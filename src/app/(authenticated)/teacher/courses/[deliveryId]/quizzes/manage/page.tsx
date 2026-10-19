@@ -18,6 +18,6 @@ export default async function Page({params}:{params:Promise<{deliveryId:string}>
    lessons={workspace.lessons.map(l=>({id:l.id,name:l.name}))} quizzes={quizzes}/>:
    <section role="status" className="rounded border border-border p-4">No registered lessons are available for this Section. Publish a learning path first.</section>}
   <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to course</Link>
+   className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to course</Link>
  </div>;
 }

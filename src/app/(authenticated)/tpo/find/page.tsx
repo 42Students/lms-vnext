@@ -43,29 +43,29 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
   {invalid?<p role="alert">Search must contain 2–100 characters.</p>:!text?<p role="status">Type a name or a roll number, for example 21CS001</p>:<>
    {!hasMatches?<p role="status">No student, recruiter, company or drive matches &quot;{rawText}&quot;</p>:null}
    <section className="space-y-2"><h2 className="font-semibold">Batches ({foundBatches.length}{batches.batches.length>30?"+":""})</h2>
-    {foundBatches.length===0?<p className="text-sm">No matching batches.</p>:<ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border">{foundBatches.map(b=><li key={b.id} className="p-3 text-sm">
+    {foundBatches.length===0?<p className="text-sm">No matching batches.</p>:<ul className="divide-y divide-border border-y border-border">{foundBatches.map(b=><li key={b.id} className="p-3 text-sm">
       <Link href={"/tpo/batches/"+b.id} className="text-link underline">{b.name} · {b.program}</Link></li>)}</ul>}
    </section>
    <section className="space-y-2"><h2 className="font-semibold">Students ({named.students.length})</h2>
-    {named.students.length===0?<p className="text-sm">No matching students.</p>:<ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border">
+    {named.students.length===0?<p className="text-sm">No matching students.</p>:<ul className="divide-y divide-border border-y border-border">
       {named.students.slice(0,5).map(s=><li key={s.id} className="p-3 text-sm">
        <Link href={"/tpo/students?q="+encodeURIComponent(s.rollNumber??s.name??"")+"&student="+encodeURIComponent(s.id)} className="text-link underline">{s.name??"Student"}{s.rollNumber?" · "+s.rollNumber:""}{s.branch?" · "+s.branch:""}</Link>
       </li>)}</ul>}
    </section>
    <section className="space-y-2"><h2 className="font-semibold">Recruiter Leads ({named.recruiters.length})</h2>
-    {named.recruiters.length===0?<p className="text-sm">No matching recruiter leads.</p>:<ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border">
+    {named.recruiters.length===0?<p className="text-sm">No matching recruiter leads.</p>:<ul className="divide-y divide-border border-y border-border">
       {named.recruiters.slice(0,5).map(lead=><li key={lead.id} className="p-3 text-sm">
        <Link href={"/tpo/recruiters/"+lead.id} className="text-link underline">{lead.name}</Link>
       </li>)}</ul>}
    </section>
    <section className="space-y-2"><h2 className="font-semibold">Companies ({named.companies.length})</h2>
-    {named.companies.length===0?<p className="text-sm">No matching companies.</p>:<ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border">
+    {named.companies.length===0?<p className="text-sm">No matching companies.</p>:<ul className="divide-y divide-border border-y border-border">
       {named.companies.slice(0,5).map(company=><li key={company.id} className="p-3 text-sm">
        <Link href={"/tpo/companies?name="+encodeURIComponent(company.name)} className="text-link underline">{company.name}</Link>
       </li>)}</ul>}
    </section>
    <section className="space-y-2"><h2 className="font-semibold">Drives ({jobs.length})</h2>
-    {jobs.length===0?<p className="text-sm">No matching drives.</p>:<ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border">{jobs.map(r=><li key={r.job.id} className="p-3 text-sm">
+    {jobs.length===0?<p className="text-sm">No matching drives.</p>:<ul className="divide-y divide-border border-y border-border">{jobs.map(r=><li key={r.job.id} className="p-3 text-sm">
      <Link href={"/tpo/placements/jobs/"+r.job.id} className="text-link underline">{r.job.title} · {r.job.company.name} · {r.job.status.replaceAll("_"," ")}</Link></li>)}</ul>}
    </section>
   </>}

@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {TPO_QUICK_REPLIES,recruiterMessageDraftKey} from "@/modules/placements/tpo-message-draft-model";
@@ -68,7 +67,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   <h2 className="font-semibold text-foreground">Reply</h2>
   <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
     {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-body"
+      className="min-h-11 px-3"
       onClick={()=>persistDraft(body?body+" "+reply:reply)}>{reply}</Button>)}
    </div>
   <form onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
@@ -82,14 +81,14 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
    <p className="text-xs text-muted-foreground" aria-live="polite">Enter to send · Shift + Enter for a new line · {body.length}/4000</p>
    <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={busy||!body.trim()} onClick={discardDraft}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold">Discard draft</Button>
+     className="min-h-11 px-4">Discard draft</Button>
     <Button variant="primary" type="submit" disabled={busy||!body.trim()}
-     className="min-h-11 sm:min-h-9">
+     className="min-h-11 px-4">
       Send message
     </Button>
     {discardReview?<p role="status" className="w-full text-sm">Discard your unsent message? Select Discard draft again to confirm, or keep typing to cancel.</p>:null}
     {unread?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void post("read")}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+     className="min-h-11 px-4">
       Mark as read
     </Button>:null}
    </div>
