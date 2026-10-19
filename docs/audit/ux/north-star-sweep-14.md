@@ -333,3 +333,35 @@ The live `docs/audit/ux/north-star-sweep-4.md` college audit retains its own sou
 - Inspected a representative ten-file sample for brace-count parity, split `sm: border` / ` - border` utilities, primary buttons incorrectly using `text-foreground`, duplicated `data-slot` input attributes, and line breaks before `as` casts; no flagged patterns were found in that sample.
 - **No code execution**, build, TypeScript parser/typecheck, lint, test, CI, dev server, or browser screenshot comparison was performed. Pixel parity and compile correctness remain unverified and require final integration review.
 - College Admin is still **partial** relative to the larger route/component inventory; loading/error boundaries, cross-portal pages, and remaining bespoke component skins need a subsequent source/visual pass. Shared global CSS, UI kit, shell, topbar and sidebar remain with their assigned lanes.
+
+## Chat-14 shared-list kit and Mentor parity continuation — 2026-10-19
+
+Scope: shared tabs, table/data-table, chips, list toolbar, pagination and badges within `src/components/ui`; then a second-pass old-LMS styling sweep of mentor and Projects mentor UI. Source of truth: `docs/design/old-lms-pages.md` §§3–6, `old-lms-shell-spec.md` and legacy SCSS. Existing props, routes, form submission, permissions, data and copy retained.
+
+### Shared UI completion
+
+- `tabs.tsx`: legacy teal underline, counted accessible labels, focus-visible treatment and tokenized gaps.
+- `table.tsx` and `data-table.tsx`: compact hairlines, row hover/focus, responsive horizontal scroll cue and empty-table context.
+- `needs-doing-chips.tsx`: small semantic quick filters and static metrics; safe href handling, explicit count text and legacy chip proportions.
+- `list-toolbar.tsx` and `filter-bar.tsx`: compact responsive search, filters, views, columns, export, active-count and bulk-action surfaces; action callbacks remain page-owned.
+- `pagination.tsx`: safe previous/next and numbered internal links, page boundaries/ellipses, mobile current-page announcement.
+- `badge.tsx`, `status-badge.tsx`: semantic small pills and preserved native status attributes.
+- Updated components were integrated on the lane branch against the latest available `main` instead of changing global tokens or other UI-kit owners' files.
+
+### Additional Projects mentor component pass (10)
+
+- `mentor-project-about-editor.tsx`: remove redundant nested white-card editor, use shared control radius and CTA contrast.
+- `mentor-meeting-history.tsx`, `project-task-comments.tsx`: replace individually bordered history/comment cards with compact hairline rows.
+- `mentor-task-details-edit.tsx`, `mentor-task-create.tsx`, `mentor-sprint-details-edit.tsx`, `mentor-sprint-write.tsx`: normalize select/input skin, labels and desktop control scale.
+- `mentor-meeting-notes-editor.tsx`, `mentor-meeting-reschedule.tsx`: canonical typography and border with mobile-friendly date controls.
+- `mentor-release-editor.tsx`: legacy inputs, textarea and primary button.
+
+### Mentor route second pass (20)
+
+- Project detail: `board-review`, `risk-readiness`, `resources-directory`, `team-meetings`, `review-overview`, `activity-history`, `team-history`, `timeline`, project overview and project listing.
+- Portal: `sprint-progress`, `team-coverage`, `reviews`, `activity`, `reports`, `task-reviews`, `task-review-history`, `review-history`, `notifications`, `calendar`.
+- Changed only legacy control classes and lightweight list chrome, retaining existing 44px mobile touch targets with 36px desktop styling. Preserved metrics, cards representing separate objects, error states and all page-owned business logic.
+
+### Verification boundary
+
+Re-read changed JSX elements and performed source-only checks on all 35 touched UI/mentor files for tag names, closing-tag presence, truncated `</Select>`, and accidental malformed class fragments. This is **not** a TypeScript parser, typecheck, build or pixel-comparison verification. No app, tests, CI, lint, typecheck or browser were executed as requested. Existing checkmarks in this file continue to mean source sweep only, not runtime acceptance.
