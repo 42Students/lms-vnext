@@ -13,6 +13,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -723,7 +725,7 @@ export function RecruiterResultControls({
                                 </span>
                                 <Textarea
                                   aria-label="Candidate message"
-                                 
+                                  className="min-h-20 w-full"
                                   value={
                                     draft.candidateMessage
                                   }
