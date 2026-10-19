@@ -70,7 +70,7 @@ export default async function CollegeBatchStudentsPage({
       .orderBy(users.displayName).limit(500),
   ]);
   return <main className="min-w-0 overflow-x-clip space-y-5">
-    <PageHeader eyebrow="College Admin · Batches" title={"Students · " + batch.name}
+    <PageHeader title={"Students · " + batch.name}
       description={batch.program + " · Search the batch roster and move students to another class."}
       actions={<Link href="/college/batches" className="font-semibold text-[var(--lms-teal-deep)]">Back to batches</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border bg-surface p-4">
