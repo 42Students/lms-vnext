@@ -30,7 +30,7 @@ export default async function SuperAdminTenantSetup({
    <PageHeader title="Tenant Setup"/>
    <ErrorState title="Tenant setup access denied"
     description="Your account cannot configure Super Admin tenants."
-    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+    action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
   </div>;
  const parsed=parseSuperAdminTenantSetupQuery(await searchParams);
  if(!parsed.success)return <div className="min-w-0 space-y-5">
