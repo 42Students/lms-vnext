@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/ui/checkbox";
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
