@@ -26,9 +26,9 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       description="College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure."
       actions={<div className="flex flex-wrap gap-3">
         <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
-          className="text-sm font-semibold text-[var(--lms-teal-deep)]">Lifecycle audit</Link>
+          className="text-sm font-semibold text-link">Lifecycle audit</Link>
         <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
-        <Link href="/college/faculty" className="text-sm font-semibold text-[var(--lms-teal-deep)]">Back to faculty</Link>
+        <Link href="/college/faculty" className="text-sm font-semibold text-link">Back to faculty</Link>
       </div>} />
     <section className="border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Faculty record</h2>
@@ -46,7 +46,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <label className="grid gap-2 text-sm font-semibold text-body">
           Assignment history
           <select name="status" defaultValue={data.filter.status}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All assignments</option>
             <option value="ACTIVE">Active only</option>
             <option value="ENDED">Ended only</option>
@@ -55,14 +55,14 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <label className="grid gap-2 text-sm font-semibold text-body">
           Teaching role
           <select name="role" defaultValue={data.filter.role}
-            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All teaching roles</option>
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
             <option value="TA">Teaching assistant</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
+        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
       </form>
       <p className="mt-2 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·
@@ -79,7 +79,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             columns={[
               { key: "course", header: "Course", mobilePriority: "primary",
                 cell: item => <Link href={`/college/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
+                  className="font-semibold text-link hover:underline">
                   {item.courseName} ({item.courseCode})
                 </Link> },
               { key: "class", header: "Class / cohort", mobilePriority: "secondary",
