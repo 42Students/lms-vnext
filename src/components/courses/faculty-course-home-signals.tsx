@@ -231,7 +231,7 @@ export function FacultyCourseHomeSignals({
             return (
               <Disclosure
                 key={bucket.label}
-                className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
+                className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [&>summary]:px-0"
                 title={<span className="grid w-full min-w-0 grid-cols-[minmax(0,6rem)_minmax(0,1fr)_2rem] items-center gap-3">
                   <span className="text-body">{bucket.label}</span>
                   <MetricBar label={bucket.label+" grade distribution"}
