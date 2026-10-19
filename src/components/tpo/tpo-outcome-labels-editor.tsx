@@ -54,13 +54,13 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
    <label className="flex-1 text-sm">Label {index+1}
     <Input value={row.label} maxLength={60} disabled={busy}
      onChange={event=>setLabels(rows=>rows.map((item,i)=>i===index?{...item,label:event.target.value}:item))}
-     className="mt-1 min-h-9 w-full"/>
+     className="mt-1 min-h-11 sm:min-h-9 w-full"/>
     {validate(row.label,labels,index)?<span className="block text-xs text-error">{validate(row.label,labels,index)}</span>:null}
    </label>
    <label className="min-w-52 text-sm">Counts as
     <Select value={row.outcome} disabled={busy}
      onChange={event=>setLabels(rows=>rows.map((item,i)=>i===index?{...item,outcome:event.target.value as AfterCollegeOutcome}:item))}
-     className="mt-1 min-h-9 w-full">
+     className="mt-1 min-h-11 sm:min-h-9 w-full">
      {MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
     </Select>
    </label>
@@ -72,12 +72,12 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
    <label className="min-w-52 flex-1 text-sm">New label
     <Input value={draft} onChange={event=>setDraft(event.target.value)} maxLength={60}
      placeholder="New label, e.g. Family business" disabled={busy}
-     className="mt-1 min-h-9 w-full"/>
+     className="mt-1 min-h-11 sm:min-h-9 w-full"/>
     {draft&&problem?<span className="block text-xs text-error">{problem}</span>:null}
    </label>
    <label className="text-sm">Counts as
     <Select value={outcome} onChange={e=>setOutcome(e.target.value as AfterCollegeOutcome)}
-     className="mt-1 min-h-9">
+     className="mt-1 min-h-11 sm:min-h-9">
      {MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
     </Select>
    </label>
