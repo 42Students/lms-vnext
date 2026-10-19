@@ -13,8 +13,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
-export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters}:{
- title:string;path:string;description:string;
+export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters,headingMode="page"}:{
+ title:string;path:string;description:string;headingMode?:"page"|"section";
  statuses:readonly string[];
  searchParams:Promise<Record<string,string|string[]|undefined>>;
  loader:(raw:unknown)=>Promise<SuperAdminReadResult>;
@@ -24,27 +24,33 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  applicationFilters?:{jobs:readonly {id:string;name:string}[];departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[]};
  peopleFilters?:{kind:"FACULTY"|"LEARNER";departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[]};
 }) {
+ // Student registration owns the page h1; the directory then has a section
+ // heading. Other callers retain the original PageHeader by default.
+ const heading=(eyebrow:string,detail?:string)=>headingMode==="section"
+  ? <div><h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
+     {detail?<p className="mt-1 text-sm text-body">{detail}</p>:null}</div>
+  : <PageHeader eyebrow={eyebrow} title={title} description={detail}/>;
  const parsed=readAdminQuery(await searchParams);
  if(!parsed.success || !statuses.includes(parsed.data.status))
- return <div className="space-y-5"><PageHeader eyebrow="Super Admin" title={title}/>
+ return <div className="space-y-5">{heading("Super Admin")}
   <ErrorState title="Invalid directory filters" description="Check the search, status or page."
    action={<Link href={path} className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/></div>;
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin" title={title}/>
+  {heading("Super Admin")}
   <ErrorState title="Directory access denied"
    description="Your account cannot access Super Admin directory records."
    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin" title={title}/>
+  {heading("Super Admin")}
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+(title==="Faculty"?"faculty":title==="Students"?"students":title==="Faculty Assignment"?"faculty assignments":"people directory")+"."}/>
  </div>;
  const directory=await loader(parsed.data)
   .then(value=>({ok:true as const,value}))
   .catch(()=>({ok:false as const}));
  if(!directory.ok)return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin" title={title}/>
+  {heading("Super Admin")}
   <ErrorState title="Directory unavailable"
    description="The selected college's directory could not be loaded. Your filters have not changed."
    action={<Link href={superAdminReadHref(path,parsed.data)}
@@ -60,7 +66,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   summaries[1].status==="fulfilled"&&summaries[2].status==="fulfilled"
   ?[summaries[0].value,summaries[1].value,summaries[2].value]:null;
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow={peopleFilters?"People":"Super Admin · Read-only"} title={title} description={description}/>
+  {heading(peopleFilters?"People":"Super Admin · Read-only",description)}
   {peopleFilters&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
