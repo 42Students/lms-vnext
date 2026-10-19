@@ -202,12 +202,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       })}</ul>
     </section>:null}
     {query.data.view==="WAITING" && requestView.length===0
-      ? <div className="rounded-[var(--lms-radius-card)] border border-border p-5">
+      ? <div className="space-y-2">
           <EmptyState title="No Sent for review drives" description="Choose another drive stage to see more."/>
           <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View all drives</Link>
         </div>
       : query.data.view!=="WAITING" && pageResult.rows.length===0 && requestView.length===0
-        ? <div className="rounded-[var(--lms-radius-card)] border border-border p-5">
+        ? <div className="space-y-2">
           {totals.all===0
            ? <EmptyState title="You have no drives yet" description="Request a drive and the placement cell will review it."/>
            : query.data.q
