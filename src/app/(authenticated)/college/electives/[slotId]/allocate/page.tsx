@@ -17,7 +17,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { joinGroup } from "@/modules/groups/service";
 
 const uuid = z.string().uuid();
-const fieldStyle = "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+const fieldStyle = "min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
 const base = (id: string) => "/college/electives/" + encodeURIComponent(id) + "/allocate";
 
 async function scopedSlot(slotId: string) {
@@ -155,11 +155,11 @@ export default async function CollegeElectiveAllocatePage({
     <PageHeader eyebrow="College Admin · Academic Setup" title="Eligible students"
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
       actions={<Link href="/college/electives" className="font-semibold text-[var(--lms-teal-deep)]">Back to Electives</Link>} />
-    {input.added !== undefined && <p role="status" className="rounded-md border border-border p-3">
+    {input.added !== undefined && <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border p-3">
       Processed {input.added} learner(s); {input.failed ?? "0"} failed.
       {input.reason ? " " + input.reason : ""}
     </p>}
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
+    <form method="get" className="flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4">
       <label className="grid min-w-0 sm:min-w-52 flex-1 gap-1 text-sm font-semibold">Class/Section
         <select name="section" className={fieldStyle} defaultValue={input.section ?? ""}>
           <option value="">All sections</option>
@@ -172,7 +172,7 @@ export default async function CollegeElectiveAllocatePage({
       </label>
       <button className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-foreground">Search</button>
     </form>
-    <form action={allocate} className="space-y-4 rounded-lg border border-border bg-surface p-4">
+    <form action={allocate} className="space-y-4 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold">Allocate selected to…
         <select name="offeringGroup" required className={fieldStyle}>
           <option value="">Choose elective offering</option>
@@ -184,7 +184,7 @@ export default async function CollegeElectiveAllocatePage({
       {offerings.length === 0 && <p className="text-sm text-muted-foreground">
         Add a course offering to this slot before allocating learners.</p>}
       <ScrollCue axis="y" label="Eligible students for allocation"
-        className="min-w-0 rounded-md border border-border" viewportClassName="max-h-80">
+        className="min-w-0 rounded-[var(--lms-control-radius,9px)] border border-border" viewportClassName="max-h-80">
         <DataTable
           caption="Eligible students for allocation"
           rows={students}
