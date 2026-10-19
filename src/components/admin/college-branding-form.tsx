@@ -240,7 +240,7 @@ export function CollegeBrandingForm({
           <p className="mb-0 mt-2 text-xl font-semibold text-foreground">
             {collegeName}
           </p>
-          <div className="mt-4 grid grid-cols-2 gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1 text-xs">
+          <div className="mt-4 grid grid-cols-2 gap-1 rounded-[var(--lms-control-radius)] border border-border bg-muted p-1 text-xs">
             <span className="rounded-[var(--lms-control-radius)] bg-surface py-2 text-center font-semibold text-link shadow-none">
               Phone
             </span>
