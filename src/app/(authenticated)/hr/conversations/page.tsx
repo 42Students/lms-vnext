@@ -181,12 +181,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <span className="text-xs text-muted-foreground">Only incoming placement-cell messages on this page.</span>
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
-   {result.items.length?<ol className="divide-y divide-[#e5e9f0] border-y border-[#e5e9f0]">
-    {visibleRows.map(row=><li key={row.id} className="rounded-[8px] px-2 py-4 transition-colors hover:bg-[#fafbfc] first:pt-3 last:pb-3">
+   {result.items.length?<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+    {visibleRows.map(row=><li key={row.id} className="rounded-[8px] px-2 py-4 transition-colors hover:bg-[var(--lms-neutral-50)] first:pt-3 last:pb-3">
      <Link href={"/hr/conversations/"+row.id}
       className="block min-h-11 break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<span aria-label={row.unread+" unread messages"}
-      className="mt-2 inline-flex rounded-full bg-[#eff8fa] px-2 py-1 text-xs font-semibold text-[#1a95a1]">
+      className="mt-2 inline-flex rounded-full bg-[var(--lms-primary-subtle)] px-2 py-1 text-xs font-semibold text-[var(--lms-primary-text)]">
       {row.unread} new
      </span>:null}
      {row.preview?<p className="mt-2 break-words text-sm text-body">
