@@ -25,5 +25,5 @@ export function PermissionAction({
   if (can(context, permission, resource)) return children;
   if (fallback !== undefined) return fallback;
   if (deniedMode === "hide-sensitive") return null;
-  return <span role="note" className="block rounded-md border border-border p-3 text-sm text-body">You do not have permission to perform this action.</span>;
+  return <span data-slot="permission-denied" role="note" className="block rounded-[9px] border border-[#e5e9f0] bg-[#fafbfc] px-4 py-3 text-[13px] leading-5 text-[#54505d]">You do not have permission to perform this action.</span>;
 }

@@ -58,18 +58,18 @@ const columns: DataTableColumn<CollegeRow>[] = [
     cell: (college) => (
       <div className="flex min-w-0 flex-wrap justify-start gap-2 sm:justify-end">
         <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)]-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
           Tenant setup
         </Link>
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle"
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)]-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle"
         >
           Readiness
         </Link>
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle"
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)]-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle"
         >
           Branding
         </Link>
@@ -143,19 +143,19 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         />
       ) : null}
       {creatableOrganizations.length>0?<CollegeBulkImport organizations={creatableOrganizations.map(x=>({id:x.id,name:x.name}))}/>:null}
-      <Link href="/admin/tenants" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+      <Link href="/admin/tenants" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)]-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">
         Search tenant directory →
       </Link>
       <form className="flex flex-wrap items-end gap-3 border-t border-border pt-4" method="get">
        <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-sm font-semibold sm:min-w-48">Search college, code, city or organization
-        <Input type="search" name="q" defaultValue={q} maxLength={100} className="min-h-11 w-full min-w-0 rounded border border-border px-3" />
+        <Input type="search" name="q" defaultValue={q} maxLength={100} className="min-h-11 sm:min-h-9 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3" />
        </label>
        <label className="flex flex-col gap-1 text-sm font-semibold">Rows per page
-        <Select name="pageSize" defaultValue={String(pageSize)} className="min-h-11 rounded border border-border px-3">
+        <Select name="pageSize" defaultValue={String(pageSize)} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3">
          {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
         </Select>
        </label>
-       <Button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Search</Button>
+       <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Search</Button>
        <Link href="/admin/colleges" className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Clear search</Link>
        <Link href={href(page)} className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Refresh</Link>
       </form>
