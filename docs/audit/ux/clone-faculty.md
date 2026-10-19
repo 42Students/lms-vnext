@@ -242,3 +242,32 @@ After editing, re-fetched and inspected **every changed TSX file**. The five cha
 - [ ] Super Admin academics/people/recruiters Section H (missing: full per-state comparisons for scoped and unscoped academics/people screens; linked HR implementation remains another lane's responsibility)
 
 **Exact next file:** `src/components/academics/academics-actions.tsx` — inspect section action link/buttons and all edit/confirmation dialogs for token and responsive judgement cases; then `src/components/courses/faculty-course-workspace.tsx` for dynamic class tabs/pills.
+
+## Turn 4 — Faculty actions, course Blueprint and people views (2026-10-19)
+
+**Source base:** latest `main` `3a77aebd651756d5a16b9fea375ffc276fa4404b`; lane was fast-forwarded first (144 behind, zero ahead). Reviewed SMARTER PLAN and kept edits in lane-owned portal files. Approximately 38 code commits in this turn, before the audit update/merge. Most initial commits have also been independently incorporated into main while work continued.
+
+### Judgement cases closed in source (strict UI audit remains open)
+
+- `src/components/academics/academics-actions.tsx`: four separate entity action strips now wrap instead of exceeding mobile table cells. Section Open action and small buttons use legacy outlined states, focus and touch-size tokens; existing edit/archive dialogs and mutation behavior retained. Three edit grids now switch to two columns at tablet size, with corresponding column spans.
+- `src/components/courses/faculty-course-workspace.tsx`: Blueprint filter navigation uses shared `Tabs` with unchanged filter URLs and selected state; report, students and quiz links share legacy outlined styling; credits use `Badge`, summary tile grid uses tablet breakpoint, lesson subnavigation is flat. **Important conflict reconciliation:** upstream independently moved Overview actions into `PageHeader.actions` and converted Blueprint filters to `Tabs`; reconstructed this file from upstream `main` and reapplied lane styling, preserving the new header action placement and upstream Tabs.
+- `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`: read-only membership roles use neutral `Badge` pills while actual statuses remain semantic `StatusBadge`; audit link has mobile touch/focus treatment; return link uses `PageBackLink`; field layout avoids a second canvas.
+- `src/app/(authenticated)/teacher/profile/page.tsx`: matched shortcut outlined states, responsive field columns and divider tokens; reconciled against concurrently added upstream hover/focus classes rather than simply overwriting changes.
+- `src/components/courses/faculty-assessment-lifecycle.tsx`: removed `window.confirm` and replaced it with `ConfirmDialog`, preserving assessment warning copy, pending/disabled state, optimistic timestamp and mutation. Confirmation state is reset after success/error.
+- `src/components/courses/faculty-item-actions.tsx`: replaced native `window.confirm` for archive and close with shared `ConfirmDialog`; Publish still invokes its existing action directly. Confirmation warning copy, API path, payload and errors preserved. Controls have mobile hit areas.
+- `src/components/admin/person-onboard-dialog.tsx`: aligned first/last-name and full-width fields with the updated tablet grid, made role selection 44px-tall at mobile sizes.
+- `src/components/courses/faculty-assignment-review.tsx`: increased student navigation button hit areas and aligned grade editor fields with the tablet breakpoint.
+- `src/components/courses/faculty-quiz-review.tsx`: kept attempted answers and scores inside existing cards but normalized their canvas border/background/padding tokens.
+
+### Bounded textual safety review
+
+Re-fetched all nine then-current lane-only TSX paths from the GitHub branch and inspected component boundaries, imports, close tags, literal hex and suspicious quote patterns. Matched open and close counts for `<Button>`, `<Select>`, `<Dialog>`, `<Link>`, `<Badge>`, `<StatusBadge>`, `<div>`, `<span>`, `<nav>`, `<section>`. Self-closing `PageHeader`, `PageBackLink`, `Tabs`, `ConfirmDialog` are intentionally counted as opens only. No stray quote or raw control tag was identified in this **limited set**. This is not a parser/typecheck/CI or visual test.
+
+### Remaining blockers
+
+- [ ] Strict value/state table and automated computed-style parity for all Faculty + scoped Super Admin pages. No `docs/audit/ux/parity-report.md` was available in the prior turn.
+- [ ] Portal-wide coverage proofs for all remaining route and component files, including legacy vs phone/tablet pixel screenshots.
+- [ ] Other `window.confirm` uses in `faculty-assignment-review.tsx` (three occurrences) and `faculty-quiz-review.tsx` (one occurrence), which require careful grading transaction-specific dialog state. Do not mark their overlays complete.
+- [ ] All category H tick boxes remain open until every strict-proof condition is met. No CI, build, tests or local application run were performed.
+
+**Next exact file:** `src/components/courses/faculty-assignment-review.tsx` — confirmation prompts and grading state judgement cases; then `src/components/courses/faculty-quiz-review.tsx` and `src/components/admin/person-membership-actions.tsx`.
