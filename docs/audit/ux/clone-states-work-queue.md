@@ -1002,21 +1002,21 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/reports/accreditation/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/after-college/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/branch-season/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-branch/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-company/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/by-branch/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
+- [ ] `src/app/(authenticated)/tpo/reports/by-company/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
 - [ ] `src/app/(authenticated)/tpo/reports/ctc/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/intelligence/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/joining-followups/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-status/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/leads/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placed-branch/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/unplaced/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/joining-status/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
+- [ ] `src/app/(authenticated)/tpo/reports/leads/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
+- [ ] `src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
+- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
+- [ ] `src/app/(authenticated)/tpo/reports/placed-branch/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
+- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
+- [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
+- [ ] `src/app/(authenticated)/tpo/reports/unplaced/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
 - [ ] `src/app/(authenticated)/tpo/requests/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/tpo/settings/after-college/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/blocked-dates/error.tsx`
