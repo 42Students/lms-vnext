@@ -21,13 +21,13 @@ export function MentorDeliveryLockControl({projectId,submissionId,status,lockedA
   }catch(e){setError(e instanceof Error?e.message:"Could not lock submission");}
   finally{setBusy(false);}
  }
- return <section className="mt-3 space-y-2 rounded-lg border border-border p-3">
+ return <section className="mt-3 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
   <button type="button" onClick={()=>setOpen(v=>!v)}
    className="min-h-10 rounded border border-border px-3 text-sm font-semibold">Lock submission</button>
   {open?<div className="space-y-2">
     <label className="block text-sm font-semibold">Why are you locking this delivery?
-     <textarea required maxLength={4000} value={reason} onChange={e=>setReason(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded border border-border bg-background p-2"/></label>
+     <textarea data-slot="textarea" required maxLength={4000} value={reason} onChange={e=>setReason(e.target.value)}
+      className="mt-1 min-h-20 w-full rounded border border-border bg-surface p-2"/></label>
     <button type="button" disabled={busy||!reason.trim()} onClick={()=>void lock()}
      className="min-h-10 rounded bg-primary px-3 text-sm font-semibold text-primary-foreground">
       {busy?"Locking…":"Confirm lock"}</button>
