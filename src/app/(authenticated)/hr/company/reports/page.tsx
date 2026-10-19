@@ -65,7 +65,6 @@ export default async function RecruiterCompanyReportsPage({
     return (
       <div className="min-w-0 max-w-full space-y-6">
         <PageHeader
-          eyebrow="Employer Recruiter"
           title="Company Reports"
           description="Read-only, college-scoped employer hiring metrics."
         />
@@ -95,7 +94,6 @@ export default async function RecruiterCompanyReportsPage({
     return (
       <div className="min-w-0 max-w-full space-y-6">
         <PageHeader
-          eyebrow="Employer Recruiter"
           title="Company Reports"
           description="Choose one college to view your employer's authorized hiring reports. Reports from different college relationships are never combined."
         />
@@ -163,7 +161,6 @@ export default async function RecruiterCompanyReportsPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
-        eyebrow="Employer Recruiter"
         title="Company Reports"
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
         actions={<div className="flex flex-wrap gap-2">
