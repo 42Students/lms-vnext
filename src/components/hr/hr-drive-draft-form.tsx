@@ -6,6 +6,7 @@ import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
@@ -70,7 +71,6 @@ export function HrDriveDraftForm({
   const submittedRef=useRef(false);
   const submittingRef=useRef(false);
   const result = hrDriveDraftSchema.safeParse(draft);
-  const inputClass = "h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
   const selectOptions = [
     ["FULL_TIME", "Full-time"], ["INTERNSHIP", "Internship"], ["INTERNSHIP_FULL_TIME", "Internship + full-time"], ["CONTRACT", "Contract"],
   ] as const;
@@ -276,7 +276,7 @@ export function HrDriveDraftForm({
           </label>
           <label className="grid gap-1 text-sm text-body sm:col-span-2">
             Job description
-            <textarea className={inputClass+" h-auto min-h-28 py-2"} rows={5} value={draft.description} maxLength={5000}
+            <Textarea className="min-h-28" rows={5} value={draft.description} maxLength={5000}
               onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))} />
           </label>
           <label className="grid gap-1 text-sm text-body">
