@@ -38,7 +38,7 @@ export function CollegeLessonVisibilityControl({lesson}: {lesson:Item}){
   });
  }
  return <div className="space-y-1">
-  <Button type="button" size="sm" variant={visible ? "primary" : "secondary"} disabled={pending} onClick={change}
+  <Button type="button" size="sm" className="min-h-11 md:min-h-9" variant={visible ? "primary" : "secondary"} disabled={pending} onClick={change}
    aria-pressed={visible}>
    {pending?"Saving…":label}
   </Button>
@@ -106,13 +106,13 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
   <p className="mt-2 text-xs text-muted-foreground">
    Select Lessons on this page. Saved visibility does not delete student progress.
   </p>
-  <label className="mt-2 flex items-center gap-2">
+  <label className="mt-2 flex min-h-11 items-center gap-2">
    <Checkbox disabled={pending} checked={allChecked}
     onChange={event=>{setSelected(event.target.checked?items.map(item=>item.id):[]);setFailed([]);setMessage("");}}/>
    Select all on this page
   </label>
-  <ScrollCue axis="y" label="Lessons available for bulk visibility" className="mt-2" viewportClassName="max-h-48"><div className="grid gap-2 sm:grid-cols-2">
-   {items.map(item=><label key={item.id} className="flex min-w-0 items-center gap-2">
+  <ScrollCue axis="y" label="Lessons available for bulk visibility" className="mt-2" viewportClassName="max-h-48"><div className="grid gap-2 md:grid-cols-2">
+   {items.map(item=><label key={item.id} className="flex min-h-11 min-w-0 items-center gap-2">
     <Checkbox checked={selected.includes(item.id)} disabled={pending}
      onChange={()=>toggle(item.id)}/>
     <span className="truncate" title={item.name}>{item.name}</span>
@@ -122,15 +122,15 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
    </label>)}
   </div></ScrollCue>
   <div className="mt-3 flex flex-wrap gap-2">
-   <Button type="button" variant="secondary" disabled={pending||!selected.length}
+   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending||!selected.length}
     onClick={()=>apply(true)}>
     Show to students
    </Button>
-   <Button type="button" variant="secondary" disabled={pending||!selected.length}
+   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending||!selected.length}
     onClick={()=>apply(false)}>
     Hide from students
    </Button>
-   {failed.length?<Button type="button" variant="secondary" disabled={pending} onClick={()=>{
+   {failed.length?<Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>{
     if(retryTarget!==null)apply(retryTarget,failed);
    }}>
     Retry failed

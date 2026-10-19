@@ -86,63 +86,63 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create assignment.");}
   finally{lock.current=false;setPending(false);}
  }
- return <section className="space-y-3 rounded-lg border border-border bg-surface p-4">
+ return <section className="space-y-3 border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h2 className="font-semibold">Assignments</h2>
+   <div><h2 className="font-semibold text-foreground">Assignments</h2>
     <p className="text-xs text-muted-foreground">Create a shared or Section-specific assignment draft.</p>
    </div>
    <Button type="button" variant="secondary" disabled={!lessons.length||pending}
-    variant="secondary" className="min-h-11"
+    className="min-h-11 md:min-h-9"
     onClick={()=>{setError("");setMessage("");setOpened(true);}}>Create New Assignment</Button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">
    Create an active course offering and lesson before adding an assignment.</p>:null}
-  {opened?<div className="grid gap-3 sm:grid-cols-2">
-   <label className="grid gap-1 text-sm font-semibold">Course / Lesson
+  {opened?<div className="grid gap-3 md:grid-cols-2">
+   <label className="grid gap-1 text-xs font-semibold text-body">Course / Lesson
     <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
-     className="min-h-11 rounded border border-border bg-surface px-2">
+     className="min-h-11 md:min-h-9">
      {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
       {lesson.courseCode} · {lesson.course} · {lesson.name}
      </option>)}
     </Select></label>
-   <label className="grid gap-1 text-sm font-semibold">Audience
+   <label className="grid gap-1 text-xs font-semibold text-body">Audience
     <Select value={deliveryId} disabled={pending} onChange={e=>setDeliveryId(e.target.value)}
-     className="min-h-11 rounded border border-border bg-surface px-2">
+     className="min-h-11 md:min-h-9">
      <option value="">All currently eligible sections (shared offering)</option>
      {sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
       {section.sectionName} ({section.sectionCode})
      </option>)}
     </Select></label>
-   <label className="grid gap-1 text-sm font-semibold">Title
+   <label className="grid gap-1 text-xs font-semibold text-body">Title
     <Input required maxLength={200} value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}
-     className="min-h-11 rounded border border-border bg-surface px-2"/></label>
-   <label className="grid gap-1 text-sm font-semibold">Points
+     className="min-h-11 md:min-h-9"/></label>
+   <label className="grid gap-1 text-xs font-semibold text-body">Points
     <Input type="number" min={1} max={10000} value={points} disabled={pending}
      onChange={e=>setPoints(e.target.value)}
-     className="min-h-11 rounded border border-border bg-surface px-2"/></label>
-   <label className="grid gap-1 text-sm font-semibold">Deadline (IST, optional until publishing)
+     className="min-h-11 md:min-h-9"/></label>
+   <label className="grid gap-1 text-xs font-semibold text-body">Deadline (IST, optional until publishing)
     <Input type="datetime-local" value={dueAt} disabled={pending}
      onChange={e=>setDueAt(e.target.value)}
-     className="min-h-11 rounded border border-border bg-surface px-2"/></label>
-   <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Instructions
+     className="min-h-11 md:min-h-9"/></label>
+   <label className="grid gap-1 text-xs font-semibold text-body md:col-span-2">Instructions
     <Textarea rows={3} maxLength={10000} value={description} disabled={pending}
      onChange={e=>setDescription(e.target.value)}
-     className="rounded border border-border bg-surface p-2"/></label>
-   <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
+     className="min-h-24"/></label>
+   <p className="text-xs text-muted-foreground md:col-span-2" role="status">Audience: {deliveryId?
     sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
     "All currently eligible Sections in the selected Course Offering"}.
     Draft assignments are hidden until they are published.</p>
-   <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
-   <label className="flex items-center gap-2 text-sm sm:col-span-2">
+   <div className="md:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
+   <label className="flex min-h-11 items-center gap-2 text-sm md:col-span-2">
     <Checkbox checked={keepOpen} disabled={pending}
      onChange={event=>setKeepOpen(event.target.checked)}/>Create another assignment after saving
    </label>
-   <div className="flex flex-wrap gap-2 sm:col-span-2">
+   <div className="flex flex-wrap gap-2 md:col-span-2">
     <Button type="button" disabled={pending||!chosen||!title.trim()} onClick={()=>setConfirmCreate(true)}
-     className="min-h-11">
+     className="min-h-11 md:min-h-9">
      {pending?"Creating…":"Create draft"}</Button>
     <Button type="button" variant="secondary" disabled={pending} onClick={close}
-     className="min-h-11">Cancel</Button>
+     className="min-h-11 md:min-h-9">Cancel</Button>
    </div>
   </div>:null}
   <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}

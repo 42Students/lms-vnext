@@ -121,9 +121,10 @@ export function CourseActions({
   return (
     <>
       <div className="flex justify-end gap-2">
-        {duplicateHref?<Link href={duplicateHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Duplicate</Link>:null}
+        {duplicateHref?<Link href={duplicateHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Duplicate</Link>:null}
         <Button
           size="sm"
+          className="min-h-11 md:min-h-9"
           variant="secondary"
           onClick={openEdit}
         >
@@ -131,6 +132,7 @@ export function CourseActions({
         </Button>
         <Button
           size="sm"
+          className="min-h-11 md:min-h-9"
           variant="ghost"
           onClick={() =>
             setArchiveOpen(true)
@@ -324,6 +326,7 @@ export function OfferingActions({
       <div className="flex justify-end gap-2">
         <Button
           size="sm"
+          className="min-h-11 md:min-h-9"
           variant="secondary"
           onClick={openEdit}
         >
@@ -331,6 +334,7 @@ export function OfferingActions({
         </Button>
         {!hideArchive ? <Button
           size="sm"
+          className="min-h-11 md:min-h-9"
           variant="ghost"
           onClick={() => setArchiveOpen(true)}
         >
@@ -491,6 +495,7 @@ export function DeliveryActions({
     <>
       <Button
         size="sm"
+          className="min-h-11 md:min-h-9"
         variant="ghost"
         onClick={() => setOpen(true)}
       >
@@ -546,6 +551,7 @@ export function TeachingAssignmentActions({
     <>
       <Button
         size="sm"
+          className="min-h-11 md:min-h-9"
         variant="ghost"
         onClick={() => setOpen(true)}
       >

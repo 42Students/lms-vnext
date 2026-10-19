@@ -6,6 +6,7 @@ import { useState, useSyncExternalStore } from "react";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { courseApiError } from "./learner-course-api";
 
@@ -71,6 +72,7 @@ export function ResourceProgressControl({
     <div className="mt-3">
       <Button
         size="sm"
+        className="min-h-11 md:min-h-9"
         variant={
           complete ? "secondary" : "primary"
         }
@@ -88,14 +90,7 @@ export function ResourceProgressControl({
         title={contentType === "LIVE_CLASS" ? "Attended this session?" : "Finished with these materials?"}
         description="Mark this learning item as complete?"
         confirmLabel="Mark as complete" pending={saving} onConfirm={markComplete} />
-      {error ? (
-        <p
-          role="alert"
-          className="mt-2 text-sm font-semibold text-error"
-        >
-          {error}
-        </p>
-      ) : null}
+      {error ? <Alert tone="error" className="mt-2">{error}</Alert> : null}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -77,7 +78,7 @@ export function CollegeAssignmentReview({
   {options.length>1?<label className="grid gap-1 text-xs font-semibold text-body">
    Section
    <Select value={selected.deliveryId} disabled={bulkBusy} onChange={event=>{setDeliveryId(event.target.value);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);}}
-    className="min-h-11">
+    className="min-h-11 md:min-h-9">
     {options.map(item=><option key={item.deliveryId} value={item.deliveryId}>
      {item.sectionName} ({item.sectionCode})
     </option>)}
@@ -88,15 +89,15 @@ export function CollegeAssignmentReview({
     assignmentId={assignmentId} deliveryId={selected.deliveryId}
     maxPoints={maxPoints} status={status as "DRAFT"|"PUBLISHED"} filesEnabled={filesEnabled}/>
    {status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
-    className="min-h-11 text-xs">
+    className="min-h-11 text-xs md:min-h-9">
     {bulkBusy?"Publishing…":"Publish grades"}
    </Button>:null}
   </div>
-  {bulkBusy?<p role="status" className="text-xs text-muted-foreground">Publishing graded submissions for this Section. {progress} Do not close this page.</p>:null}
-  {bulkStatus?<p role="status" className="text-xs text-muted-foreground">{bulkStatus}</p>:null}
+  {bulkBusy?<Alert tone="info" role="status">Publishing graded submissions for this Section. {progress} Do not close this page.</Alert>:null}
+  {bulkStatus?<Alert tone={retryAllowed?"warning":"success"} role="status">{bulkStatus}</Alert>:null}
   {retryAllowed&&status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy}
    onClick={()=>void publishAllGrades(selected.deliveryId,failedIds.length?failedIds:null)}
-   className="min-h-11 text-xs">
+   className="min-h-11 text-xs md:min-h-9">
    {failedIds.length?"Retry "+failedIds.length+" failed":"Retry failed"}
   </Button>:null}
  </div>;
