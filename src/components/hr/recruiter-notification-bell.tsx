@@ -72,7 +72,7 @@ export function RecruiterNotificationBell(){
       className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#ff7576] px-1 text-[10px] leading-3 text-white">
       {data.unread>99?"99+":data.unread}</span>:null}
   </Button>
-  {isOpen?<section ref={popoverRef} role="dialog" aria-modal="false" aria-label="Notifications"
+  {isOpen?<section ref={popoverRef} data-slot="notification-popover" role="dialog" aria-modal="false" aria-label="Notifications"
     className="absolute right-0 top-full z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,94vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="flex items-center justify-between gap-3">
     <h2 className="font-semibold text-foreground">Notifications</h2>
