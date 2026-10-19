@@ -130,3 +130,12 @@ The lane branch was 651 commits behind `main` and had no unique commits (GitHub 
 - [x] `src/components/projects/super-admin-template-plan-editor.tsx`: source-reviewed; already uses shared Input/Select/Textarea/Button, tokenized labels and separable sprint/task fieldsets. No speculative layout rewrite.
 - [x] Re-read editor JSX: shared Button/Select opening and closing tag counts match; Textarea is self-closing; no native button/select/input/textarea in these three template editors. No truncated `</Select` or `</Button` found.
 - [ ] **Next source scrutiny**: `src/components/projects/super-admin-template-college-bulk.tsx` integration appearance with college cards; `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` and other thin template subviews; then source-review remaining Super Admin placements/projects detail wrappers. Visual screenshots and behavior still unverified.
+
+
+### Post-check: topbar notification and Super Admin detail wrappers
+- [x] `src/components/hr/hr-recruiter-bell.tsx` (topbar dependency): restored missing import for shared `Badge` rendered in the real unread-count trigger; no change to recruiter bell data, polling, links, mutation or drawer.
+- [x] `src/components/shell/topbar/topbar.module.css` notification sections source-checked against `docs/design/legacy-styles/components___notification-drawer.scss`: 360–420px panel, 520px cap, 12px corners, thin neutral border, 16×20px header padding, two-layer soft shadow, 8px rows, 44px mobile actions and responsive drawer are already specified. No duplicate style overrides introduced.
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` and `versions/[versionId]/page.tsx` reviewed; the former delegates visual skin entirely to `SuperAdminTemplateSubviewPage` (swept above), while the latter has semantic side-by-side diff panels and uses shared PageHeader/PageBackLink controls.
+- [x] `src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx` delegates its visual skin to the authorized AdminProjectSectionPage.
+- [x] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/page.tsx`, `interviews/[roundId]/page.tsx`, `joining/[offerId]/page.tsx`, `offers/[offerId]/page.tsx`, `screenings/[applicationId]/page.tsx` and `shortlisted/[applicationId]/page.tsx` use the now-swept `SuperAdminPlacementDetailView`; no route-specific card wrappers.
+- [ ] Browser screenshot/computed-style and functional checks remain open; intentionally no app execution, build, test suite, or CI.
