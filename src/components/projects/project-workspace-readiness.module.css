@@ -1,0 +1,72 @@
+/*
+ * Project execution readiness progress rows, scoped to the existing three
+ * measured task/sprint/release bars. Old project visual source:
+ * lms2-fe@prod-2026/src/styles/components/_learn-projects.scss:
+ * 256-268,2057-2061,2680-2693,5731-5734.
+ */
+.progress {
+  display: grid;
+  gap: 8px;
+  min-width: 220px;
+  width: 100%;
+  margin-top: 12px;
+}
+.label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.amount {
+  color: #1a1d21;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.track {
+  width: 100%;
+  min-width: 0;
+  height: 8px;
+  border-radius: 999px;
+  background: #9ee4e8;
+}
+.track > div { background: #26bac7; }
+@media (max-width: 767px) {
+  .progress { min-width: 0; width: 100%; }
+  .label { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track > div { transition: none; }
+}
+
+/* Matching compact table-row application of the same old project progress
+ * label/track semantics, retaining 96px read-only row width. */
+.inlineCell {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+.inlineTrack {
+  width: 96px;
+  min-width: 44px;
+  height: 8px;
+  flex: 0 1 96px;
+  overflow: hidden;
+  background: #9ee4e8;
+}
+.inlineTrack > div { background: #26bac7; }
+.inlinePercent {
+  color: #1a1d21;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 767px) {
+  .inlineCell { flex-wrap: wrap; }
+  .inlineTrack { flex-basis: 72px; width: 72px; }
+}

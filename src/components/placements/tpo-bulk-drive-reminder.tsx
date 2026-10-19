@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState,type MouseEvent} from "react";
 
 /** TPO-drives-13/14: only acts on currently selected, visible drives. */
@@ -48,7 +49,7 @@ export function TpoBulkDriveReminder(){
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
    {busy?"Checking selected drives…":"Remind non-applicants in selected drives"}
   </Button>
-  {message?<span role="status" className="text-xs text-body">{message}</span>:null}
-  {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </div>;
 }

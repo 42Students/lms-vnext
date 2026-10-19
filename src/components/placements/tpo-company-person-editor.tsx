@@ -2,6 +2,8 @@
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -104,17 +106,17 @@ export function TpoCompanyPersonEditor({
             className="mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
         </label>
       </div>
-      {reviewing?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm text-body">
+      {reviewing?<Alert tone="info">
         {current?"Save edits to this linked company contact?":"Add this contact person to the selected company?"}
         An immutable audit note will be recorded.
         <Button variant="ghost" type="button" className="ml-3" onClick={()=>setReviewing(false)}>Cancel review</Button>
-      </p>:null}
+      </Alert>:null}
       <Button variant="primary" type="button" onClick={() => void save()}
         disabled={busy || !name.trim() || !email.trim()}
         className="min-h-9 px-4">
         {busy ? "Saving..." : reviewing?"Confirm contact save":current ? "Review and save changes" : "Review and add contact"}
       </Button>
-      {message ? <p role="status" className="text-sm text-body">{message}</p> : null}
+      {message ? <InlineNotice tone={message.startsWith("Network error")?"error":"success"} message={message}/> : null}
     </section>
   );
 }

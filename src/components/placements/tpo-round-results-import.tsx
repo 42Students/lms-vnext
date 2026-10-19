@@ -7,6 +7,8 @@ import { Select } from "@/components/ui/select";
 import { FileUpload } from "@/components/ui/file-upload";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -71,7 +73,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
    <div className="max-h-44 min-w-0 overflow-auto print:max-h-none print:overflow-visible">
     <DataTable<Match> caption="Imported round matched rows" rows={preview.matched}
-     getRowKey={row=>String(row.line)} empty={<p>No matching rows were found.</p>}
+     getRowKey={row=>String(row.line)} empty={<EmptyState title="No matching rows were found."/>}
      columns={[
       {key:"line",header:"Row",cell:row=>row.line,mobilePriority:"primary"},
       {key:"name",header:"Applicant",cell:row=>row.name,mobilePriority:"secondary"},
@@ -82,7 +84,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    {preview.unmatched.length?<div className="space-y-2">
     <h4 className="font-semibold">Unmatched rows — review or skip</h4>
     <DataTable<Missing> caption="Unmatched round result rows" rows={preview.unmatched}
-      getRowKey={row=>String(row.line)} empty={<p>All result rows were matched.</p>}
+      getRowKey={row=>String(row.line)} empty={<EmptyState title="All result rows were matched."/>}
       columns={[
        {key:"row",header:"Row",cell:row=>row.line,mobilePriority:"primary"},
        {key:"identity",header:"Identity",cell:row=>row.identity||"No ID",mobilePriority:"secondary"},
@@ -102,7 +104,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
       ]}/>
    </div>:null}
    <Disclosure title={`Not in file (${preview.notInFile.length})`} className="border-t border-border pt-3 text-sm">
-    {preview.notInFile.length?<div className="mt-2 max-h-48 min-w-0 overflow-auto print:max-h-none print:overflow-visible"><DataTable caption="Candidates absent from round import" rows={preview.notInFile} getRowKey={row=>row.applicationId} empty={<p>Every candidate in this round is represented in the file.</p>} columns={[{key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.name},{key:"application",header:"Application ID",mobilePriority:"secondary",cell:row=><span className="font-mono text-xs">{row.applicationId}</span>}]}/></div>:<p className="mt-2">Every candidate in this round is represented in the file.</p>}
+    {preview.notInFile.length?<div className="mt-2 max-h-48 min-w-0 overflow-auto print:max-h-none print:overflow-visible"><DataTable caption="Candidates absent from round import" rows={preview.notInFile} getRowKey={row=>row.applicationId} empty={<EmptyState title="Every candidate in this round is represented in the file."/>} columns={[{key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.name},{key:"application",header:"Application ID",mobilePriority:"secondary",cell:row=><span className="font-mono text-xs">{row.applicationId}</span>}]}/></div>:<p className="mt-2">Every candidate in this round is represented in the file.</p>}
    </Disclosure>
    <fieldset className="space-y-2 border-t border-border pt-3 text-sm print:hidden">
     <legend className="font-semibold">Students not in the file</legend>
@@ -132,7 +134,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    <p className="font-semibold">{report.staged} results staged · {report.skipped} skipped · {report.unmatched} unmatched.</p>
    <div className="max-h-40 min-w-0 overflow-auto print:max-h-none print:overflow-visible">
     <DataTable<Report["results"][number]> caption="Round import outcomes" rows={report.results}
-      getRowKey={row=>row.line+":"+row.applicationId} empty={<p>No round import results were returned.</p>}
+      getRowKey={row=>row.line+":"+row.applicationId} empty={<EmptyState title="No round import results were returned."/>}
       columns={[
        {key:"application",header:"Application ID",cell:row=>row.applicationId,mobilePriority:"primary"},
        {key:"status",header:"Status",cell:row=><StatusBadge tone={/fail|error|reject/i.test(row.status)?"error":/skip|unmatch|pending/i.test(row.status)?"warning":"success"}>{row.status}</StatusBadge>,mobilePriority:"secondary"},
@@ -141,6 +143,6 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </div>
    <p>Stage completed. Use the Apply results preview above to publish progression when the round is completed.</p>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error} Re-preview if the round has changed.</p>:null}
+  {error?<InlineNotice tone="error" message={error+" Re-preview if the round has changed."}/>:null}
  </section>;
 }

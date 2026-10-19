@@ -1,9 +1,8 @@
 "use client";
-import {Checkbox} from "@/components/ui/checkbox";
-import {CourseChoiceControl} from "./course-choice-control";
-
 import { ChoiceInput } from "@/components/ui/choice-input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
 
@@ -40,18 +39,18 @@ export function FacultyQuizLearnerPreview({quizId,deliveryId}:{
   })();
   return ()=>controller.abort();
  },[open,quizId,deliveryId]);
- return <section className="mt-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
-  <Button type="button" size="sm" variant="secondary" onClick={()=>setOpen(v=>!v)}
+ return <section className="mt-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-3">
+  <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setOpen(v=>!v)}
    aria-expanded={open}>{open?"Close Quiz Preview":"Preview Quiz"}</Button>
   {open?<div className="mt-3 space-y-3">
    <p className="text-xs text-muted-foreground">Preview only. No learner attempts are created.</p>
    {loading?<p role="status" className="text-sm">Loading quiz…</p>:null}
-   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-   {preview?<><label className="flex items-center gap-2 text-sm">
+   {error?<Alert tone="error">{error}</Alert>:null}
+   {preview?<><label className="flex min-h-11 items-center gap-2 text-[13px] md:min-h-[var(--lms-control-height)]">
     <Checkbox checked={answers} onChange={e=>setAnswers(e.target.checked)}/>
     Show answer key (faculty only)
    </label>
-   {preview.questions.map((q,i)=><fieldset key={q.id} className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+   {preview.questions.map((q,i)=><fieldset key={q.id} className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
     <legend className="font-semibold text-sm">Question {i+1} · {q.points} points</legend>
     <p className="whitespace-pre-wrap break-words text-sm">{q.prompt}</p>
     {q.options.map(o=><label key={o.id} className="flex gap-2 text-sm">
@@ -60,7 +59,7 @@ export function FacultyQuizLearnerPreview({quizId,deliveryId}:{
      {answers&&o.correct?<span className="text-success">(Correct)</span>:null}
     </label>)}
    </fieldset>)}
-   {!preview.questions.length?<p className="text-sm">No quiz questions yet.</p>:null}
+   {!preview.questions.length?<EmptyState title="No quiz questions yet." />:null}
    </>:null}
   </div>:null}
  </section>;

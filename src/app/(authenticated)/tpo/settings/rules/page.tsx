@@ -136,7 +136,7 @@ export default async function TpoPlacementRulesSettingsPage({
           </StatusBadge>
         </div>
 
-        <dl className="mt-5 grid gap-5 sm:grid-cols-2">
+        <dl className="mt-5 grid gap-5 min-[768px]:grid-cols-2">
           <RuleValue
             label="Count learner as placed at"
             value={placedTriggerLabel(
@@ -273,7 +273,7 @@ export default async function TpoPlacementRulesSettingsPage({
                   </StatusBadge>
                 </div>
 
-                <dl className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <dl className="mt-4 grid gap-4 min-[768px]:grid-cols-2 xl:grid-cols-4">
                   <RuleValue
                     label="Minimum CGPA"
                     value={formatTpoEligibilityThreshold(

@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { Alert } from "@/components/ui/alert";
 
 export default function RouteError({ reset }: {
   error: Error & { digest?: string };

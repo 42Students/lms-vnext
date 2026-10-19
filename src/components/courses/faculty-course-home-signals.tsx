@@ -1,5 +1,6 @@
 import { Alert } from "@/components/ui/alert";
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "./faculty-course-home-signals.module.css";
 import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -34,15 +35,14 @@ export function FacultyCourseHomeSignals({
   return (
     <div className="space-y-5">
       {missing.length ? (
-        <section role="status" aria-label="Incomplete faculty course signals"
-          className="rounded-[var(--lms-canvas-radius)] border border-warning-border bg-warning-subtle p-4 text-sm text-body">
+        <Alert tone="warning" aria-label="Incomplete faculty course signals">
           <p className="font-semibold">Some faculty course signals are incomplete ({missing.join(", ")}).</p>
           <p className="mt-1">Unknown metrics are shown as unavailable, not zero.</p>
           <Link href={facultyCourseTabHref(deliveryId,"home")+"?refreshSignals=1"}
-            className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+            className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
             Retry signals
           </Link>
-        </section>
+        </Alert>
       ) : null}
       <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -80,7 +80,7 @@ export function FacultyCourseHomeSignals({
           </div>
           <Link
             href={reviewHref}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm text-on-primary hover:bg-primary-hover font-[650]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]"
           >
             {firstPending
               ? "Review work"
@@ -98,7 +98,7 @@ export function FacultyCourseHomeSignals({
             Items that need faculty attention.
           </p>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <StatTile
             label="Reviews"
             value={assignmentsReady ? signals.pendingSubmissions.length : "—"}
@@ -173,7 +173,7 @@ export function FacultyCourseHomeSignals({
                 <Disclosure title={`${learner.severity>=3?"Critical":"Moderate"} · View snapshot`} className="min-w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs">
                   <div className="mt-2 space-y-2 text-xs text-muted-foreground">
                     <p>Attendance: {learner.attendancePercent===null?"Not enough marked sessions":learner.attendancePercent+"%"}</p>
-                    {learner.attendancePercent!==null?<MetricBar role="img"
+                    {learner.attendancePercent!==null?<MetricBar role="img" className={styles.track}
                       label={"Attendance "+learner.attendancePercent+" percent"}
                       value={learner.attendancePercent} maximum={100} unit="percent" />:null}
                     <p>Submissions missing: {learner.missingSubmissionCount}</p>
@@ -198,7 +198,7 @@ export function FacultyCourseHomeSignals({
           Current learner averages across graded assignments.
         </p>
         <Link href="/teacher/allAssignments"
-          className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
           View all assessments
         </Link>
         {signals.performance.studentAverages.length<3?
@@ -230,16 +230,17 @@ export function FacultyCourseHomeSignals({
               (bucket.count / total) * 100,
             );
             return (
-              <details key={bucket.label} className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
-                <summary className="grid cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3">
+              <Disclosure key={bucket.label}
+                title={<span className={styles.distribution+" min-w-0 flex-1"}>
 
-                <span className="text-body">
+                <span className={styles.distributionLabel}>
                   {bucket.label}
                 </span>
-                <MetricBar label={bucket.label+" grade distribution"}
+                <MetricBar className={styles.track} label={bucket.label+" grade distribution"}
                   value={width} maximum={100} unit="percent" />
-                <strong className="text-right text-foreground">{bucket.count}</strong>
-                </summary>
+                <strong className={styles.distributionCount}>{bucket.count}</strong>
+                </span>}
+                className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [&>summary]:px-0">
                 {bucket.count>0?<ul className="mt-2 space-y-1 border-t border-border pt-2">
                   {signals.performance.studentAverages.filter(student=>
                     student.averagePercent>=bucket.min&&student.averagePercent<=bucket.max
@@ -248,7 +249,7 @@ export function FacultyCourseHomeSignals({
                     <span>{student.name}</span><span>{student.averagePercent}%</span>
                   </li>)}
                 </ul>:<p className="mt-2 text-xs text-muted-foreground">No graded learners in this range.</p>}
-              </details>
+              </Disclosure>
             );
           })}
         </div>

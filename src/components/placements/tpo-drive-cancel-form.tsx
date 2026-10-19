@@ -2,6 +2,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { FilterChip } from "@/components/ui/filter-chip";
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -117,7 +118,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             <p className="text-xs text-body">Students see the reason. You can choose a reason above or write your own.</p>
           </div>
           <p className="text-xs text-body">If the drive or counts change after this preview, the cancellation is rejected.</p>
-          {error ? <p role="alert" className="text-sm text-foreground">{error}</p> : null}
+          {error ? <InlineNotice tone="error" message={error}/> : null}
           <label className="flex items-start gap-2 text-sm text-body">
             <Checkbox checked={reviewed} onChange={event=>setReviewed(event.target.checked)}
               disabled={pending} className="mt-1 h-4 w-4 accent-primary"/>

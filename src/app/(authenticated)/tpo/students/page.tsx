@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Dropdown } from "@/components/ui/dropdown";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
@@ -452,8 +453,7 @@ export default async function TpoStudentsPage({
           <Input type="number" name="minRoundReached" min={0} max={10000} step={1}
            defaultValue={query.minRoundReached??""} className="w-28"/>
         </label>
-        <details className="w-full rounded-[var(--lms-canvas-radius)] border border-border p-3">
-         <summary className="cursor-pointer font-semibold">Profile strength filters</summary>
+        <Disclosure title="Profile strength filters" className="w-full rounded-[var(--lms-canvas-radius)] border border-border p-3">
          <p className="mt-2 text-xs text-muted-foreground">Projects here are self-reported profile entries, not verified Projects workspace outcomes or released grades.</p>
          <div className="mt-3 flex flex-wrap gap-3">
           <label className="grid gap-1 text-sm">Gender
@@ -484,7 +484,7 @@ export default async function TpoStudentsPage({
             </Select>
            </label>)}
          </div>
-        </details>
+        </Disclosure>
         <label className="text-sm font-semibold">Profile verified
           <Select name="profileStatus" defaultValue={query.profileStatus??""}
             className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
@@ -513,8 +513,7 @@ export default async function TpoStudentsPage({
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
          </label>)}
-        <details className="w-full rounded-[var(--lms-canvas-radius)] border border-border p-3">
-          <summary className="cursor-pointer font-semibold">Academic marks and passing year filters</summary>
+        <Disclosure title="Academic marks and passing year filters" className="w-full rounded-[var(--lms-canvas-radius)] border border-border p-3">
           <div className="mt-3 flex flex-wrap gap-3">
             {([
               ["minTenthPct","10th % from",query.minTenthPct],
@@ -539,7 +538,7 @@ export default async function TpoStudentsPage({
                 <option value="">Any</option><option value="YES">Yes</option><option value="NO">No</option>
               </Select></label>)}
           </div>
-        </details>
+        </Disclosure>
         <label className="text-sm font-semibold">CGPA recorded
           <Select name="cgpaRecorded" defaultValue={query.cgpaRecorded===undefined?"":query.cgpaRecorded?"YES":"NO"}
             className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
@@ -833,12 +832,12 @@ export default async function TpoStudentsPage({
               <div><dt className="text-body">Applying</dt><dd className="font-semibold tabular-nums">{branch.applying}</dd></div>
               <div><dt className="text-body">Rate*</dt><dd className="font-semibold tabular-nums">{percentage(branch.placementRatePercent)}</dd></div>
             </dl>
-            <details className="mt-3 border-t border-border pt-2"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link">More placement outcomes</summary>
+            <Disclosure title="More placement outcomes" className="mt-3 border-t border-border pt-2 [&>summary]:min-h-11">
               <dl className="grid grid-cols-2 gap-3 text-sm">
                 <div><dt>Placed in pool</dt><dd>{branch.placedInPool}</dd></div>
                 <div><dt>Placed overall</dt><dd>{branch.placed}</dd></div>
               </dl>
-            </details>
+            </Disclosure>
           </li>)}
         </ul> : null}
 

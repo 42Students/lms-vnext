@@ -85,7 +85,7 @@ export default async function TpoPlacementTeamPage() {
         </section>
       ) : null}
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <section className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-5">
         {[
           ["Distinct active members", String(summary.total)],
           ["TPO memberships", String(summary.tpoMemberships)],

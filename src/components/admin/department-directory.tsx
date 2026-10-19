@@ -67,15 +67,16 @@ export function DepartmentDirectory({
   return (
     <section className="space-y-4" aria-label={DEPARTMENT_COPY.existingTitle}>
       <h2 className="m-0 text-base font-semibold text-foreground">{DEPARTMENT_COPY.existingTitle}</h2>
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-3 print:hidden">
         <div className="min-w-48 flex-1">
-          <label htmlFor="department-directory-search" className="mb-1.5 block text-xs font-semibold text-body">
+          <label htmlFor="department-directory-search" className="mb-1.5 block text-[13px] font-semibold text-body">
             Search departments
           </label>
           <Input
             id="department-directory-search"
             placeholder="Search departments"
             value={search}
+            className="min-h-11 md:min-h-9"
             onChange={(event) => {
               setSearch(event.target.value);
               setPage(1);
@@ -83,11 +84,11 @@ export function DepartmentDirectory({
           />
         </div>
         <div className="flex flex-wrap items-end gap-2">
-          <label htmlFor="department-directory-page-size" className="grid gap-1 text-xs font-semibold text-body">
+          <label htmlFor="department-directory-page-size" className="grid gap-1 text-[13px] font-semibold text-body">
             Rows per page
             <Select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground md:min-h-9">
               {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
             </Select>
           </label>
@@ -96,7 +97,7 @@ export function DepartmentDirectory({
             <a
               href={exportHref}
               download="departments.csv"
-              className="inline-flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-link"
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
             >
               Export CSV
             </a>
@@ -120,11 +121,11 @@ export function DepartmentDirectory({
       <DataTable
         columns={columns.map(column => column.key === "name" ? {
           ...column,
-          header: <Button type="button" aria-label="Sort Department Name"
+          header: <><span className="hidden print:inline">Department Name</span><Button type="button" aria-label="Sort Department Name"
             onClick={() => { setNameOrder(nameOrder === "ASC" ? "DESC" : "ASC"); setPage(1); }}
-            className="inline-flex items-center gap-2">
+            className="inline-flex min-h-11 items-center gap-2 md:min-h-9 print:hidden">
             Department Name {nameOrder === "ASC" ? "↑" : "↓"}
-          </Button>,
+          </Button></>,
         } : column)}
         rows={result.items}
         getRowKey={(row) => row.id}
@@ -143,7 +144,7 @@ export function DepartmentDirectory({
         </p>
       ) : null}
       {result.total > 0 ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground print:hidden">
           <span>
             Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}
           </span>

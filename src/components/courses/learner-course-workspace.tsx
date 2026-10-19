@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
@@ -783,11 +784,8 @@ export function LearnerCourseWorkspace({
         }))}
       />
 
-      <details className="rounded-xl border border-border bg-surface md:hidden">
-        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">
-          Jump to lesson ({mobileOutline.length})
-          <span aria-hidden="true">⌄</span>
-        </summary>
+      <Disclosure title={"Jump to lesson ("+mobileOutline.length+")"}
+          className="rounded-xl border border-border bg-surface md:hidden [&>summary]:min-h-11 [&>summary]:p-4">
         {mobileOutline.length ? (
           <nav aria-label="Published lesson index" className="border-t border-border p-2">
             <ol className="space-y-1">
@@ -806,7 +804,7 @@ export function LearnerCourseWorkspace({
         ) : <p className="border-t border-border p-4 text-sm text-body">
           No published items match this filter.
         </p>}
-      </details>
+      </Disclosure>
       {emptyState ? (
         <EmptyState title={emptyState.title} description={emptyState.description} />
       ) : null}
@@ -838,17 +836,16 @@ export function LearnerCourseWorkspace({
           };
 
           return (
-            <details
-              id={`lesson-${lesson.id}`}
-              key={lesson.id}
-              open={
+            <Disclosure id={`lesson-${lesson.id}`} key={lesson.id}
+              defaultOpen={
                 focusLessonId === lesson.id ||
                 (!focusLessonId && (workspace.nextItem?.lessonId === lesson.id ||
                   (!workspace.nextItem && lessonIndex === 0)))
               }
-              className="group rounded-xl border border-border bg-[var(--lms-neutral-50)]"
-            >
-              <summary className="cursor-pointer list-none px-4 py-4 md:px-5">
+              preserveSummary
+              summaryClassName="cursor-pointer list-none px-4 py-4 md:px-5"
+              title={<>
+
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
@@ -907,7 +904,9 @@ export function LearnerCourseWorkspace({
                     </span>
                   </div>
                 </div>
-              </summary>
+              
+              </>}
+              className="group rounded-xl border border-border bg-[var(--lms-neutral-50)]">
 
               <div className="border-t border-border bg-surface p-4 md:p-5">
                 {focusLessonId===lesson.id?<nav aria-label="Lesson navigation"
@@ -1000,7 +999,7 @@ export function LearnerCourseWorkspace({
                   </div>
                 )}
               </div>
-            </details>
+            </Disclosure>
           );
         })}
       </div>

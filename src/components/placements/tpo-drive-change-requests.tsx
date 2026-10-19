@@ -5,6 +5,9 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdAt:string;updatedAt:string;
@@ -62,7 +65,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
   </section>
   <section className="space-y-3">
    <h2 className="text-lg font-semibold">Change requests · {requests.length}</h2>
-   {!requests.length?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm">No change requests for this drive.</p>:requests.map(item=>
+   {!requests.length?<EmptyState title="No change requests for this drive."/>:requests.map(item=>
     <article key={item.id} className="space-y-3 border-b border-border py-5">
      <div className="flex flex-wrap items-center justify-between gap-3">
       <h3 className="font-semibold">{item.field.replaceAll("_"," ")} · {item.mode.toLowerCase()}</h3>
@@ -70,8 +73,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      </div>
      <p className="whitespace-pre-wrap text-sm">{item.proposedValue}</p>
      <p className="text-sm text-body">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
-     {item.decisionNote?<p className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm">
-      Decision: {item.decisionNote}</p>:null}
+     {item.decisionNote?<Alert tone="info">Decision: {item.decisionNote}</Alert>:null}
      <div className="space-y-2 border-t border-border pt-3">
       <h4 className="text-sm font-semibold">Discussion</h4>
       {item.messages.map(message=><p key={message.id} className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm">
@@ -99,8 +101,8 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      </div>
     </article>)}
   </section>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {success?<p role="status" className="text-sm text-body">{success}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {success?<InlineNotice tone="success" message={success}/>:null}
   <ConfirmDialog open={confirmation!==null} onOpenChange={open=>{if(!open&&!busy)setConfirmation(null);}}
    title={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
    confirmLabel={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
@@ -108,7 +110,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    onConfirm={()=>{if(confirmation)void send({action:confirmation.action,requestId:confirmation.requestId,
      expectedUpdatedAt:confirmation.expectedUpdatedAt,note:confirmation.note});}}>
    <p className="text-sm text-body">Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
-   {error?<p role="alert" className="mt-2 text-sm text-foreground">{error}</p>:null}
+   {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>
  </div>;
 }

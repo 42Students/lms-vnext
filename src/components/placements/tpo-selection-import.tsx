@@ -3,6 +3,8 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
 import { DataTable } from "@/components/ui/data-table";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -59,7 +61,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
    <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
    <div className="max-h-52 min-w-0 overflow-auto print:max-h-none print:overflow-visible">
     <DataTable<SelectionImportEntry> caption="Selection import preview" rows={entries}
-     getRowKey={item=>item.applicationId} empty={<p>No matched selections yet.</p>}
+     getRowKey={item=>item.applicationId} empty={<EmptyState title="No matched selections yet."/>}
      columns={[
       {key:"student",header:"Student",cell:item=>item.name,mobilePriority:"primary"},
       {key:"role",header:"Role",cell:item=>item.roleTitle,mobilePriority:"secondary"},
@@ -77,9 +79,9 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     confirmLabel={"Confirm and record "+entries.length+" selections"}
     onConfirm={()=>void confirm()}/>
   {unmatched.length?<Disclosure title={`${unmatched.length} unmatched or unusable rows`} className="border-t border-border pt-3" defaultOpen>
-   <div role="region" aria-label="Unmatched selection import rows" tabIndex={0} className="mt-2 max-h-40 min-w-0 overflow-auto print:max-h-none print:overflow-visible"><DataTable caption="Unmatched selection import rows" rows={unmatched} getRowKey={row=>String(row.line)} empty={<p>No unmatched rows.</p>} columns={[{key:"line",header:"Row",mobilePriority:"primary",cell:row=>row.line},{key:"identity",header:"Identifier",mobilePriority:"secondary",cell:row=>row.value||"Empty identifier"},{key:"reason",header:"Reason",mobilePriority:"secondary",cell:row=>row.reason}]}/></div>
+   <div role="region" aria-label="Unmatched selection import rows" tabIndex={0} className="mt-2 max-h-40 min-w-0 overflow-auto print:max-h-none print:overflow-visible"><DataTable caption="Unmatched selection import rows" rows={unmatched} getRowKey={row=>String(row.line)} empty={<EmptyState title="No unmatched rows."/>} columns={[{key:"line",header:"Row",mobilePriority:"primary",cell:row=>row.line},{key:"identity",header:"Identifier",mobilePriority:"secondary",cell:row=>row.value||"Empty identifier"},{key:"reason",header:"Reason",mobilePriority:"secondary",cell:row=>row.reason}]}/></div>
   </Disclosure>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {done?<p role="status" className="text-sm text-body">{done}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {done?<InlineNotice tone="success" message={done}/>:null}
  </section>;
 }
