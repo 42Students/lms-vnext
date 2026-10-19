@@ -15,9 +15,9 @@
  *     <section role="dialog" aria-modal="true" aria-label="Edit"
  *       className="max-w-lg ..."><h2>Edit</h2> ...body... </section>
  *   </div>}
- * into an always-mounted <Dialog open={open} onOpenChange={setOpen} ...>.
+ * into an always-mounted shared Dialog or side Drawer.
  *
- * The AST is used for EVERY opening and closing tag. We replace the entire
+ * Drawer identification requires exactly one left-0/right-0 side and a full-height\n * panel. The AST is used for EVERY opening and closing tag. We replace the entire
  * conditional expression and entire outer wrapper, never only the opening
  * element, to avoid leaving behind an orphan </section></div>.
  *
@@ -145,12 +145,19 @@ function eligible(outer, condition, source, sf) {
   const heading = children[0];
   const body = source.slice(bodyStart, heading.getStart(sf)) +
     source.slice(heading.getEnd(), bodyEnd);
+  const left = /(?:^|\s)left-0(?:\s|$)/.test(panelClasses);
+  const right = /(?:^|\s)right-0(?:\s|$)/.test(panelClasses);
+  const fullHeight = /(?:^|\s)(?:h-full|inset-y-0)(?:\s|$)/.test(panelClasses);
+  const kind = fullHeight && left !== right ? "Drawer" : "Dialog";
+  if (kind === "Drawer" && role === "alertdialog") return { skip: "alertdialog-is-not-a-drawer" };
   return {
-    replacement: "<Dialog open={" + condition.text + "} onOpenChange={" + setter + "}" +
+    kind,
+    replacement: "<" + kind + " open={" + condition.text + "} onOpenChange={" + setter + "}" +
       " title=" + JSON.stringify(title) +
       (role === "alertdialog" ? ' role="alertdialog"' : "") +
+      (kind === "Drawer" ? ' side="' + (left ? "left" : "right") + '"' : "") +
       (maxWidth ? " className=" + JSON.stringify(maxWidth) : "") + ">" +
-      body + "</Dialog>",
+      body + "</" + kind + ">",
   };
 }
 function importPosition(sf, source) {
@@ -182,7 +189,7 @@ for (const file of filesIn(root)) {
           stats.candidates++;
           const result = eligible(overlay, unwrap(expression.left), source, sf);
           if (result.replacement) {
-            edits.push({ start: expression.getStart(sf), end: expression.getEnd(), value: result.replacement });
+            edits.push({ start: expression.getStart(sf), end: expression.getEnd(), value: result.replacement, kind: result.kind });
           } else count(result.skip);
         }
       }
@@ -191,22 +198,32 @@ for (const file of filesIn(root)) {
   }
   visit(sf);
   if (!edits.length) continue;
-  if (!/import\s*\{\s*[^}]*\bDialog\b[^}]*\}\s*from\s*["']@\/components\/ui\/dialog["']/.test(source)) {
+  const names = [...new Set(edits.map((edit) => edit.kind))].filter(Boolean);
+  const missing = names.filter((name) => {
+    const moduleName = name.toLowerCase();
+    return !new RegExp('import\\s*\\{[^}]*\\b' + name + '\\b[^}]*\\}\\s*from\\s*["\\\']@/components/ui/' + moduleName + '["\\\']').test(source);
+  });
+  if (missing.length) {
     const pos = importPosition(sf, source);
-    edits.push({ start: pos, end: pos, value: '\nimport { Dialog } from "@/components/ui/dialog";' });
+    edits.push({ start: pos, end: pos,
+      value: missing.map((name) => '\nimport { ' + name + ' } from "@/components/ui/' + name.toLowerCase() + '";').join("") });
   }
   edits.sort((a, b) => b.start - a.start);
   let updated = source;
   for (const edit of edits)
     updated = updated.slice(0, edit.start) + edit.value + updated.slice(edit.end);
   const parsed = ts.createSourceFile(file, updated, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-  if (parsed.parseDiagnostics.length || (updated.match(/<Dialog\b/g) || []).length <
-      (updated.match(/<\/Dialog>/g) || []).length) {
+  if (parsed.parseDiagnostics.length ||
+      ["Dialog", "Drawer"].some((name) => {
+        const opens = updated.match(new RegExp("<" + name + "\\b", "g")) || [];
+        const closes = updated.match(new RegExp("</" + name + ">", "g")) || [];
+        return opens.length < closes.length;
+      })) {
     stats.errors.push(relative + ": generated TSX failed parsing/tag structural guard");
     continue;
   }
   stats.filesChanged++;
-  stats.converted += edits.filter((edit) => edit.value.startsWith("<Dialog")).length;
+  stats.converted += edits.filter((edit) => !!edit.kind).length;
   stats.changes.push(relative);
   if (apply) fs.writeFileSync(file, updated, "utf8");
 }
