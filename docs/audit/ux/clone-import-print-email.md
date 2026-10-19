@@ -1337,3 +1337,60 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 ```
 
 **Responsive source:** 44px `min-h-11` until 767px, 36px `md:min-h-9` from 768px where those overrides exist; no phone/tablet browser measurement. **Print source:** mutating forms and pagination do not appear in paper output; stored sign-in setting, branding preview and existing academic rows are legible as noninteractive text/graphics. Academic scope pagination still limits the underlying loaded data, so print is **not** the entire hierarchy. No CI/app/compile or printer validation. **G4/G5 remain unticked.**
+
+## chat-6 creation forms: responsive and print controls
+
+Source remediation completed, without changing form validation, existing input labels, tenant authorization, create requests or navigation:
+- [x] `src/components/admin/college-create-form.tsx` — visible inputs or selects meet 44px minimum phone, 36px at 768px+ where locally sized; creation controls hidden on printed output.
+- [x] `src/components/admin/organization-create-form.tsx` — visible inputs or selects meet 44px minimum phone, 36px at 768px+ where locally sized; creation controls hidden on printed output.
+- [x] `src/components/admin/department-create-form.tsx` — visible inputs or selects meet 44px minimum phone, 36px at 768px+ where locally sized; creation controls hidden on printed output.
+- [ ] **Next exact file:** `src/components/admin/tenant-domain-manager.tsx` — inspect domain verification/export/printed records without exposing sensitive DNS tokens. G4/G5 global strict parity remains open.
+
+Reference values: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` 44px mobile through 767px; `docs/design/ui-clone-checklist.md:46-47` measured 36px desktop/9px radius/14px weight-650; `docs/design/legacy-styles/components___accessibility.scss:18-21` 2px teal keyboard ring offset 3px. Actual old-LMS create form/paper fixtures were not provided.
+
+#### `src/components/admin/college-create-form.tsx`
+
+| State | Old LMS source / value | Current vNext source / value | Proof |
+|---|---|---|---|
+| Phone field/action height | `pages___admin-list-pages.scss:8,193-214`: 44px at ≤767px | `src/components/admin/college-create-form.tsx:105, 126, 143, 165, 173` `min-h-11` | Source value only |
+| Desktop size | `ui-clone-checklist.md:46-47`: 36px, radius 9px | `src/components/admin/college-create-form.tsx:105, 126, 143, 165, 173` `md:min-h-9`, shared radius | Source only |
+| Focus/disabled/errors | `components___accessibility.scss:18-21` 2px teal +3px | Shared Input/Select/Button inherited focus and disabled states, existing form errors `:none` | Still need browser and full state table |
+| Paper view | No legacy authenticated print values | `src/components/admin/college-create-form.tsx:95` `print:hidden` form | Conservative interactive form exclusion, no actual PDF |
+| Regression | Original request validation preserved | Same handlers/props except local visual classes | Source-level, no code execution |
+
+#### `src/components/admin/organization-create-form.tsx`
+
+| State | Old LMS source / value | Current vNext source / value | Proof |
+|---|---|---|---|
+| Phone field/action height | `pages___admin-list-pages.scss:8,193-214`: 44px at ≤767px | `src/components/admin/organization-create-form.tsx:69, 77` `min-h-11` | Source value only |
+| Desktop size | `ui-clone-checklist.md:46-47`: 36px, radius 9px | `src/components/admin/organization-create-form.tsx:69, 77` `md:min-h-9`, shared radius | Source only |
+| Focus/disabled/errors | `components___accessibility.scss:18-21` 2px teal +3px | Shared Input/Select/Button inherited focus and disabled states, existing form errors `:none` | Still need browser and full state table |
+| Paper view | No legacy authenticated print values | `src/components/admin/organization-create-form.tsx:59` `print:hidden` form | Conservative interactive form exclusion, no actual PDF |
+| Regression | Original request validation preserved | Same handlers/props except local visual classes | Source-level, no code execution |
+
+#### `src/components/admin/department-create-form.tsx`
+
+| State | Old LMS source / value | Current vNext source / value | Proof |
+|---|---|---|---|
+| Phone field/action height | `pages___admin-list-pages.scss:8,193-214`: 44px at ≤767px | `src/components/admin/department-create-form.tsx:66, 74` `min-h-11` | Source value only |
+| Desktop size | `ui-clone-checklist.md:46-47`: 36px, radius 9px | `src/components/admin/department-create-form.tsx:66, 74` `md:min-h-9`, shared radius | Source only |
+| Focus/disabled/errors | `components___accessibility.scss:18-21` 2px teal +3px | Shared Input/Select/Button inherited focus and disabled states, existing form errors `:79` | Still need browser and full state table |
+| Paper view | No legacy authenticated print values | `src/components/admin/department-create-form.tsx:55` `print:hidden` form | Conservative interactive form exclusion, no actual PDF |
+| Regression | Original request validation preserved | Same handlers/props except local visual classes | Source-level, no code execution |
+
+### Scoped grep proof
+| File | Native button/input/select/textarea/table | Hex literal | Button open/close |
+|---|---|---:|---:|
+| `src/components/admin/college-create-form.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/admin/organization-create-form.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/admin/department-create-form.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+
+Checkout command for reproducibility (documented, **not run**):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+ 'src/components/admin/college-create-form.tsx' \\
+ 'src/components/admin/organization-create-form.tsx' \\
+ 'src/components/admin/department-create-form.tsx'
+```
+
+**Responsive source**: 0–767px classes target 44px, 768px+ target 36px. **Print**: interactive creation forms hidden. No runtime app, TypeScript strict pass, CI or screenshot; G4/G5 remain `[ ]`.
