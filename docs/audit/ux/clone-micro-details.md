@@ -81,7 +81,7 @@ This batch changed only `src/styles/micro-details.css` plus this audit; componen
 | Keyboard-focus ring for cards | `components___accessibility.scss:25-36`: `2px` / `2px` offset, `0 0 0 4px rgba(26,149,161,.12)` | `micro-details.css:55-59` same | Already source-matched; no change |
 | Ordinary table cell, resting | `components___common.scss:697-714` `.ln-table td`: `background:#fff` | `table.tsx:14-17`, `data-table.tsx:93-110`: white surface via component/skin | Existing shared table source read; not a new override |
 | Ordinary `.ln-table` cell, hovered | `components___common.scss:849-855`: `background:none !important` on `tr:hover td` | `micro-details.css:421-425` Table and `:427-432` responsive DataTable: `background:none !important` on unselected hovered cells | **Exact hover-property match** for these shared-table states |
-| Legacy hover opt-out | `components___common.scss:130-139` `.ln-table-no-hover`: `background:#fff !important` | `micro-details.css:281-286` existing white exemption; `:423,429` excludes descendant `.ln-table-no-hover` from new clear | Exemption preserved |
+| Legacy hover opt-out | `components___common.scss:130-139` `.ln-table-no-hover`: `background:#fff !important` | `micro-details.css:287-290` existing white exemption; `:423,429` excludes descendant `.ln-table-no-hover` from new clear | Exemption preserved |
 | Selected row, mouse / keyboard | Legacy SCSS supplies no general selected-row colour; `old-lms-shell.css:45-48` is sidebar only | `micro-details.css:130-137,271-280`: `#eff8fa` when selected state is explicit | **Unknown legacy value; unticked** |
 | Exam-table odd-row hover | `components___common.scss:808-815` odd cells `#f8fbff !important` | No change to `Table` striped option or exam-specific styling in this lane | **Special-case parity not claimed; chat-14 owns table types** |
 
@@ -91,7 +91,7 @@ This batch changed only `src/styles/micro-details.css` plus this audit; componen
 | --- | ---: | --- |
 | `@import "../styles/micro-details.css"` | 1 | `src/app/globals.css:9`, exactly once after legacy skin at line 6 |
 | `data-slot="table"` | 3 | `src/components/ui/table.tsx:14`; `src/styles/micro-details.css`; `src/app/globals.css` |
-| `data-slot="data-table"` | 14 | `src/components/ui/data-table.tsx:59,85`; remaining hits are skin/print CSS and tests; only one production component source |
+| `data-slot="data-table"` | 14 | `src/components/ui/data-table.tsx:38,93`; remaining hits are skin/print CSS and tests; only one production component source |
 | `data-slot="scroll-cue"` | 12 | `src/components/ui/scroll-cue.tsx:61-69` provides `[tabindex]` and its actual first-child scroll viewport; remaining matches are style/audit/test references |
 
 Whole-repository negative greps required by the STRICT TICK RULE remain **unrun** because this lane is expressly not permitted to run code. Re-run these source-only commands in the orchestrator before ticking broad closure:
