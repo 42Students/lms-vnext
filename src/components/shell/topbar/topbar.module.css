@@ -461,3 +461,6 @@
   border-color:#e7ecf2;
   box-shadow:none;
 }
+
+.orgPopover label { color:#334155; }
+.orgPopover [role="alert"] { padding:8px 0; font-size:12px; }
