@@ -49,6 +49,7 @@
  }
  .lms-desktop-sidebar .lms-sidebar-nav .lms-nav-heading {
   justify-content:center;
+  font-size:0;
  }
  .lms-desktop-sidebar .lms-sidebar-nav .lms-nav-heading-text {
   display:none;
