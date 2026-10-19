@@ -41,9 +41,9 @@ export default async function HrJobActivityPage({searchParams}:{
      <input type="hidden" name="collegeId" value={result.collegeId}/>
      <input type="hidden" name="kind" value={input.data.kind}/>
      <label htmlFor="hr-activity-q" className="sr-only">Search authorized drive titles</label>
-     <input id="hr-activity-q" name="q" defaultValue={input.data.q} maxLength={120}
-       placeholder="Search hiring drive titles" className="min-h-11 min-w-48 flex-1 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/>
-     <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Search</button>
+     <Input id="hr-activity-q" name="q" defaultValue={input.data.q} maxLength={120}
+       placeholder="Search hiring drive titles" className="min-w-48 flex-1"/>
+     <Button variant="secondary" type="submit">Search</Button>
    </form>
    <nav aria-label="Hiring activity event type" className="flex flex-wrap gap-2">
      {HR_ACTIVITY_FILTER_KINDS.map(kind=><Link key={kind}

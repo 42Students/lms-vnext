@@ -1,4 +1,6 @@
 import { ScrollCue } from "@/components/ui/scroll-cue";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -392,7 +394,7 @@ export default async function HrCalendarPage({
             {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {calendar.resultsDue.map(item => (
                 <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
-                  className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                  className="min-w-0 rounded-lg border border-border bg-muted p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                   <span className="block break-words font-semibold text-primary-text">{item.roundName}</span>
                   <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
                   <span className="mt-2 block text-xs text-muted-foreground">Due {eventDateTime(item.dueAt)} IST · {item.status}</span>
@@ -505,27 +507,22 @@ export default async function HrCalendarPage({
 
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Jump to date
-                <input
+                <Input
                   key={anchor}
                   type="date"
                   name="date"
                   defaultValue={anchor}
                   required
-                  className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  className="w-full"
                 />
               </label>
 
-              <button
-                type="submit"
-                className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-              >
-                Go to date
-              </button>
+              <Button type="submit">Go to date</Button>
             </form>
           </section>
 
           {nextVisible ? (
-            <section className="rounded-xl border border-border bg-surface-secondary p-4">
+            <section className="rounded-xl border border-border bg-muted p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Next event in this period
               </p>
@@ -567,7 +564,7 @@ export default async function HrCalendarPage({
             >
               <div className="space-y-4 md:hidden">
                 {mobileDays.map((day) => (
-                  <article key={day.day} className="space-y-3 rounded-lg border border-border bg-surface-secondary p-3">
+                  <article key={day.day} className="space-y-3 rounded-lg border border-border bg-muted p-3">
                     <h3 className="text-sm font-semibold text-foreground">{dateLabel(day.day)}</h3>
                     <div className="grid gap-3">
                       {day.events.map((event) => (
@@ -628,7 +625,7 @@ export default async function HrCalendarPage({
                         "min-h-32 rounded-lg border border-border p-2 " +
                         (outsideMonth
                           ? "bg-muted/40"
-                          : "bg-surface-secondary")
+                          : "bg-muted")
                       }
                     >
                       <p
