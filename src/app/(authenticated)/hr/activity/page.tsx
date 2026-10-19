@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -45,16 +46,10 @@ export default async function HrJobActivityPage({searchParams}:{
        placeholder="Search hiring drive titles" className="min-w-48 flex-1"/>
      <Button variant="secondary" type="submit">Search</Button>
    </form>
-   <nav aria-label="Hiring activity event type" className="flex flex-wrap gap-3 border-b border-border">
-     {HR_ACTIVITY_FILTER_KINDS.map(kind=><Link key={kind}
-       href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind+"&q="+encodeURIComponent(input.data.q)}
-       aria-current={kind===input.data.kind?"page":undefined}
-       className={kind===input.data.kind
-         ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-         : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
-       {kind==="ALL"?"All events":kind==="PUBLISHED"?"Published":"Closed"}
-     </Link>)}
-   </nav>
+   <Tabs renderPanel={false} ariaLabel="Hiring activity event type" value={input.data.kind}
+    items={HR_ACTIVITY_FILTER_KINDS.map(kind=>({value:kind,
+      label:kind==="ALL"?"All events":kind==="PUBLISHED"?"Published":"Closed",
+      href:"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind+"&q="+encodeURIComponent(input.data.q)}))}/>
    {result.events.length?<ol className="divide-y divide-border border-y border-border">{result.events.map(item=>
     <li key={item.id} className="py-4">
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
