@@ -80,7 +80,7 @@ export default async function TrackerIssuesPage({
   }
 
   const inputClass =
-    "min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:text-sm";
+    "min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
 
   return (
     <div className="space-y-6">
