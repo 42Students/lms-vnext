@@ -7,5 +7,5 @@ export default function CollegeContactProfileErrorPage({ reset }: {
   return <ErrorState title="College profile unavailable"
     description="The college contact profile could not be loaded. No blank values are assumed."
     action={<button type="button" onClick={reset}
-      className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Retry</button>} />;
+      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Retry</button>} />;
 }
