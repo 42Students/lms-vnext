@@ -26,7 +26,7 @@ export function StatTile({ label, value, detail, href, className, variant = "def
     </>
   );
   const classes = cx("block min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] shadow-none sm:p-[var(--lms-canvas-padding)]", safeHref ? "min-h-11 transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none" : "", className);
-  const styledClasses = cx(classes, variant === "college" ? "rounded-lg border-[rgba(38,186,199,0.35)] bg-[var(--lms-primary-subtle)] p-3 sm:px-4 sm:py-3" : "");
+  const styledClasses = cx(classes, variant === "college" ? "rounded-lg border-[rgba(38,186,199,0.35)] bg-[var(--lms-primary-subtle)] px-4 py-3" : "");
   return safeHref ? <Link href={safeHref} className={styledClasses} data-slot="stat-tile">{content}</Link> :
     <section className={styledClasses} data-slot="stat-tile">{content}</section>;
 }
