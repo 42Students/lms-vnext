@@ -65,12 +65,13 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   return ()=>mq.removeEventListener("change",update);
  },[]);
  useEffect(()=>{
-  if(!open||mobile||!compact)return;
+  if(!open||mobile)return; // Both compact and full desktop popovers dismiss on outside interaction.
   const onPointer=(event:PointerEvent)=>{
    if(root.current&&!root.current.contains(event.target as Node))setOpen(false);
   };
   const onKey=(event:KeyboardEvent)=>{
-   if(event.key!=="Escape"||!root.current?.contains(event.target as Node))return;
+   if(event.defaultPrevented||event.key!=="Escape"||
+      !(event.target instanceof Node)||!root.current?.contains(event.target))return;
    event.preventDefault();setOpen(false);trigger.current?.focus();
   };
   document.addEventListener("pointerdown",onPointer);
@@ -133,9 +134,10 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
    {error?<p role="alert" className={style.topbarNotificationError}>{error}</p>:null}
 </>;
  return <div className="relative min-w-0" ref={root}>
-  <Button ref={trigger} variant="secondary" size="sm" type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending} disabled={pending} onClick={()=>changeOpen(!open)}
+  <Button ref={trigger} variant="secondary" size="sm" type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending}
+   aria-controls={open ? (mobile ? "tpo-notification-drawer" : "tpo-notification-popover") : undefined} disabled={pending} onClick={()=>changeOpen(!open)}
    className={compact
-    ? "relative inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center md:h-9 md:w-9 md:min-h-9 md:min-w-9 rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    ? "relative inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center md:h-9 md:w-9 md:min-h-9 md:min-w-9 rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"}>
    {compact ? <>
     <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none"
@@ -149,12 +151,13 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
    </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}
   </Button>
   {mobile
-   ? <Drawer open={open} onOpenChange={changeOpen} className={compact ? style.topbarNotificationDrawer : undefined}
+   ? <Drawer id="tpo-notification-drawer" open={open} onOpenChange={changeOpen} className={compact ? style.topbarNotificationDrawer : undefined}
        bodyClassName={compact ? style.topbarNotificationBody : undefined} title="Notifications"
        description="Most recent notifications from your own college." footer={panelFooter}>
        {panelBody}
      </Drawer>
-   : open ? <PopoverPanel data-slot="notification-popover" label="Notifications"
+   : open ? <PopoverPanel id="tpo-notification-popover" data-slot="notification-popover" label="Notifications"
+       onDismiss={()=>{setOpen(false);trigger.current?.focus();}}
        className="absolute right-0 top-[calc(100%_+_8px)] z-[70] w-[min(420px,calc(100vw_-_24px))] max-h-[min(520px,calc(100dvh_-_120px))] overflow-y-auto p-4">
        <div className="mb-3 border-b border-border pb-3">
         <h2 className="text-lg font-semibold text-foreground">Notifications</h2>
