@@ -63,7 +63,7 @@ export function CollegeStudentImportHistory(){
      <Button variant="secondary" type="button" onClick={close}
       className="min-h-11 md:min-h-9">Close</Button></div>
     {error?<Alert tone="error">{error}</Alert>:null}
-    {busy?<Skeleton variant="list-row" label="Loading import history"/>:null}
+    {busy?<Skeleton variant="row" label="Loading import history"/>:null}
     <DataTable<Receipt> caption="Bulk import history" rows={rows} getRowKey={row=>row.id}
       columns={[
         {key:"when",header:"When",cell:row=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
@@ -73,7 +73,7 @@ export function CollegeStudentImportHistory(){
         {key:"partial",header:"Partial",cell:row=>row.partial,mobilePriority:"secondary"},
         {key:"failed",header:"Failed",cell:row=>row.failed,mobilePriority:"secondary"},
       ]}
-      empty={busy?<Skeleton variant="list-row" label="Loading import history"/>:
+      empty={busy?<Skeleton variant="row" label="Loading import history"/>:
         error?<Alert tone="error">{error}</Alert>:
         <EmptyState title="No bulk import history" description="No bulk imports have been recorded yet."/>}/>
     <nav aria-label="Import history pages" className="flex justify-between gap-3 text-sm">
