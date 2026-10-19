@@ -1,5 +1,6 @@
 "use client";
 
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
@@ -94,7 +95,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                     <input type="checkbox" className="ml-3" checked={value === true} disabled={pending}
                       onChange={event => update(row.id, field.name, event.target.checked)} />
                   ) : field.multiline ? (
-                    <textarea className="mt-1.5 min-h-24 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
+                    <Textarea className="mt-1.5 min-h-24 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
                       maxLength={field.maxLength} value={typeof value === "string" ? value : ""}
                       disabled={pending || currentDegreeEndYear} required={field.required}
                       onChange={event => update(row.id, field.name, event.target.value)} />
