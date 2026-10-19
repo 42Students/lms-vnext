@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 
@@ -25,10 +26,10 @@ export function RecruiterDriveFocusRefresh(){
   return ()=>{window.removeEventListener("focus",refresh);
    document.removeEventListener("visibilitychange",visible);};
  },[router]);
- return stale?<div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-warning bg-surface px-4 py-3 text-sm text-body">
+ return stale?<Alert tone="warning"><div className="flex flex-wrap items-center justify-between gap-3">
   <span>Some drive information may be stale or unavailable.</span>
   <Button variant="secondary" type="button" onClick={()=>{setStale(false);router.refresh();}}>
    Refresh drive
   </Button>
- </div>:null;
+ </div></Alert>:null;
 }
