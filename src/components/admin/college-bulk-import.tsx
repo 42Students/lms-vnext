@@ -81,7 +81,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    </div>:null}
   </div>:null}
   <ConfirmDialog open={confirmImport} onOpenChange={setConfirmImport} title={"Create "+valid+" colleges?"} description="Existing codes will be skipped." confirmLabel="Import colleges" pending={busy} confirmDisabled={!valid||!organizationId||Boolean(validation)||confirmedVersionRef.current!==versionRef.current} onConfirm={()=>void submit()}>
-   {(error||validation)?<p role="alert" className="text-sm text-foreground">{error||validation}</p>:null}
+   {(error||validation)?<p role="alert" className="text-sm text-error">{error||validation}</p>:null}
   </ConfirmDialog>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard} title="Discard Bulk Import draft?" description="Unsaved CSV content will be discarded." confirmLabel="Discard draft" confirmVariant="danger" pending={busy} onConfirm={discard}/>
  </section>;
