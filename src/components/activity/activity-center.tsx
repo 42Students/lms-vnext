@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Disclosure } from "@/components/ui/disclosure";
 import {Fragment} from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Card } from "@/components/ui/card";
@@ -187,8 +188,7 @@ export function ActivityCenter({
                   </Link>
                 </div>
               </div>
-              <details className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
-                <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Details</summary>
+              <Disclosure title="Details" className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
                 <dl className="mt-2 grid gap-1 sm:grid-cols-2">
                   <div><dt>Action</dt><dd>{humanize(item.event.eventType)}</dd></div>
                   <div><dt>Entity</dt><dd className="break-all">{item.event.subjectType}: {item.event.subjectId}</dd></div>
@@ -198,7 +198,7 @@ export function ActivityCenter({
                     <dt>{humanize(name)}</dt><dd className="break-all">{typeof value==="string"?value:JSON.stringify(value)}</dd>
                   </div>)}
                 </dl>
-              </details>
+              </Disclosure>
             </Card>
             </Fragment>
           );
