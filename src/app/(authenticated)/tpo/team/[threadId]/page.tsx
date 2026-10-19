@@ -71,12 +71,11 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    recipientName={result.thread.counterpartName}
    items={asks.items.map(ask=>({...ask,dueAt:ask.dueAt?.toISOString()??null}))}
    highlightAskId={highlightAskId} serverNowMs={serverNow.getTime()}/>:asks.status==="FAILED"?
-   <p role="alert" className="text-sm text-danger">Could not load team asks. Other messages are still available.</p>:null}
+   <p role="alert" className="text-sm text-error">Could not load team asks. Other messages are still available.</p>:null}
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
-   <Button variant="secondary" type="submit"
-    >
+   <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9">
     Mark this conversation&apos;s alerts as read
    </Button>
   </form>
