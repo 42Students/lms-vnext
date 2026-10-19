@@ -10,6 +10,9 @@ export const tpoGridQuerySchema = z.object({
 export type TpoGridColumn<Row> = {
   key: string; label: string; read: (row: Row) => string | number | null | undefined;
   exportOnly?: boolean; editable?: boolean;
+  /** Only numeric or date columns may sort in the legacy sheet. */
+  sortKind?: "number" | "date";
+  sortValue?: (row: Row) => number | null;
   tooltip?: (row: Row) => string | undefined;
   filter?:{urlKey:string;options:readonly {value:string;label:string}[]};
 };
