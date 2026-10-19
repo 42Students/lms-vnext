@@ -48,7 +48,7 @@ export default async function TpoSeasonPipelinePage({
         description="Recorded application, screening, offer and joining evidence for one placement season."
         actions={report.season ? (
           <a href={"/api/placements/reports/season-pipeline?" + csvQuery.toString()}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
             Export funnel CSV
           </a>
         ) : null} />
@@ -80,7 +80,7 @@ export default async function TpoSeasonPipelinePage({
           </select>
         </label>
         <button type="submit" disabled={!report.season}
-          className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+          className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
           Apply filters
         </button>
       </form>
