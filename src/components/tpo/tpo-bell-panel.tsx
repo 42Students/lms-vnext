@@ -103,7 +103,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
       className="w-full min-h-11">
      <span className="block font-medium">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-primary"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
-     {item.body?<p className="break-words text-muted-foreground">{item.body}</p>:null}
+     {item.body?<span className="block break-words text-muted-foreground">{item.body}</span>:null}
      <time dateTime={item.createdAt} className="mt-1 block text-xs text-muted-foreground">
       {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))}
      </time>
