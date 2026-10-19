@@ -62,7 +62,7 @@ export default async function SuperAdminCompaniesPage({
       <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show deleted (archived) companies →</Link>
       <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Active companies →</Link>
     </div>
-    <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
+    <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Company
         <Input name="q" defaultValue={data.query.q} placeholder="Search company name or domain"
           className="min-h-11 sm:min-h-9" />
@@ -141,7 +141,7 @@ export default async function SuperAdminCompaniesPage({
           <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{count}</p>
         </div>)}
     </div>
-    <section className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4" aria-label="Company curation candidates">
+    <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Company curation candidates">
       <div>
         <h2 className="text-base font-semibold text-foreground">Potential duplicate companies</h2>
         <p className="mt-1 text-sm text-body">Different company identities sharing the same website domain within this authorized result page. These are suggestions, not verified merges.</p>
@@ -157,7 +157,7 @@ export default async function SuperAdminCompaniesPage({
         </li>)}</ul>}
       {data.truncated?<p className="text-xs text-muted-foreground">Only this 50-row page was checked. Move through pages before concluding there are no duplicate identities.</p>:null}
     </section>
-    <section className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4" aria-label="Name identity review">
+    <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Name identity review">
       <h2 className="text-base font-semibold text-foreground">Same-name identities to review</h2>
       <p className="text-sm text-body">Distinct employer IDs with matching normalized names may be aliases, franchises or unrelated companies. No automatic verification or merge is made.</p>
       {nameConflicts.length===0?<p className="text-sm text-muted-foreground">No distinct IDs share a normalized name in this page.</p>:
