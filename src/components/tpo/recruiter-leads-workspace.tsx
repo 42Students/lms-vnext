@@ -60,6 +60,25 @@ type Lead = {
   inviteStatus:string;
 };
 
+type RosterGridRow=Lead & {drivesRan:number|null};
+const RECRUITER_GRID_COLUMNS:readonly TpoGridColumn<RosterGridRow>[]=[
+ {key:"Contact",label:"Contact",read:lead=>lead.name||"Unnamed contact"},
+ {key:"Company",label:"Company",read:lead=>lead.companyName??""},
+ {key:"Status",label:"Status",read:lead=>lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"},
+ {key:"Stage",label:"Stage",read:lead=>RECRUITER_STAGE_LEGACY_LABELS[lead.stage]},
+ {key:"Owner",label:"Owner",read:lead=>lead.ownerName??""},
+ {key:"Last activity",label:"Last activity",read:lead=>lead.lastActivityAt??"",sortKind:"date"},
+ {key:"Next follow-up",label:"Next follow-up",read:lead=>lead.nextFollowupAt??"",sortKind:"date"},
+ {key:"Company drives",label:"Company drives",read:lead=>lead.drivesRan,sortKind:"number"},
+ {key:"Invite",label:"Invite",read:lead=>lead.inviteStatus.replaceAll("_"," ")},
+ {key:"Added",label:"Added",read:lead=>lead.createdAt,sortKind:"date"},
+ {key:"Flags",label:"Flags",read:lead=>lead.chips.map(chip=>RECRUITER_ATTENTION_LABELS[chip]).join("; ")},
+ {key:"Source",label:"Source",read:lead=>lead.source??"Manual"},
+ {key:"Email",label:"Email",read:lead=>lead.emailNorm},
+ {key:"Phone",label:"Phone",read:lead=>lead.phoneNorm},
+ {key:"Actions",label:"Actions",read:lead=>lead.recruiterUserId?"Joined":"Invite"},
+];
+
 type CompanySummary = {
   key: string;
   name: string;
