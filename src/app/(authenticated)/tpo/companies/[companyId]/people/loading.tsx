@@ -1,1 +1,5 @@
-export default function Loading() { return <div aria-busy="true" aria-label="Loading contact people" className="space-y-4"><div className="h-20 animate-pulse rounded-[var(--lms-canvas-radius)] bg-muted" /><div className="h-48 animate-pulse rounded-[var(--lms-canvas-radius)] bg-muted" /></div>; }
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function Loading() {
+  return <GracefulPageLoading label="Loading contact people" shape="directory" />;
+}
