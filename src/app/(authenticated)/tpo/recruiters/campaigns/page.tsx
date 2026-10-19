@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -39,10 +41,10 @@ export default async function CampaignHistory({searchParams}:PageProps){
   </p>
   <form method="get" action="/tpo/recruiters/campaigns" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="text-sm">Purpose
-    <input name="purpose" maxLength={120} defaultValue={first(params.purpose)??""}
+    <Input name="purpose" maxLength={120} defaultValue={first(params.purpose)??""}
      placeholder="Filter by purpose" className="mt-1 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3"/>
    </label>
-   <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Apply</button>
+   <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Apply</Button>
    <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-link underline">Clear</Link>
   </form>
   <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
