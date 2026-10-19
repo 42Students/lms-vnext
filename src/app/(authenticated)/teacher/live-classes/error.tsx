@@ -1,3 +1,5 @@
-import { PageHeader } from "@/components/ui/page-header";
 "use client";
-import {Button} from "@/components/ui/button";export default function Error({reset}:{error:Error;reset:()=>void}){return <section role="alert" className="space-y-3 py-6"><PageHeader title={"Live classes are unavailable"} /><p>A failed read is not an empty schedule.</p><Button variant="secondary" type="button" onClick={reset} >Retry</Button></section>}
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+
+export default function Error({reset}:{error:Error;reset:()=>void}){return <section role="alert" className="space-y-3 py-6"><PageHeader title={"Live classes are unavailable"} /><p>A failed read is not an empty schedule.</p><Button variant="secondary" type="button" onClick={reset} >Retry</Button></section>}
