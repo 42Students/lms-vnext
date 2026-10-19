@@ -25,7 +25,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  const raw=await searchParams;
  let filter:ReturnType<typeof parseCollegeContactsSearchParams>;
  try{filter=parseCollegeContactsSearchParams(raw);}
- catch(error){return <div className="min-w-0 overflow-x-clip space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
+ catch(error){return <div className="min-w-0 overflow-x-clip space-y-4"><PageHeader title="Contacts"/>
   <ErrorState title="Invalid contact filters" description={collegeContactFilterMessage(error)}
    action={<Link href="/college/contacts" className="underline">Reset contact filters</Link>}/></div>;}
  const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
@@ -34,7 +34,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  const roleCounts=collegeContactPageRoleCounts(results.items);
  if(filter.page>pageCount)redirect(collegeContactsHref({...filter,page:pageCount}));
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="College Admin · People" title="Contacts"
+  <PageHeader title="Contacts"
    description="Read-only college contacts. Student contact details are masked; account management is separate."
    actions={<div className="flex flex-wrap gap-2"><Link href="/college/students" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold">Student accounts</Link><Link href="/college/faculty" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold">Faculty accounts</Link><Link href="/college/faculty-assignment" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold">Teaching assignments</Link></div>}/>
   <Tabs ariaLabel="Contacts categories" renderPanel={false} value={filter.tab}
