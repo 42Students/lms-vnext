@@ -141,7 +141,7 @@ function ResourceForm({
           </Select>
         </label>
         <label className="flex items-center gap-2 text-sm font-semibold text-body">
-          <input type="checkbox" checked={metadata.pinned}
+          <input data-slot="input" type="checkbox" checked={metadata.pinned}
             onChange={event=>onMetadata({...metadata,pinned:event.target.checked})}/> Pinned
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Access notes
@@ -158,7 +158,7 @@ function ResourceForm({
         </Select>
       </label> : null}
       {!isLearner ? <label className="flex items-center gap-2 text-sm font-semibold text-body">
-        <input
+        <input data-slot="input"
           type="checkbox"
           checked={required}
           onChange={(event) =>
