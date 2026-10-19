@@ -82,22 +82,22 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    <input type="hidden" name="tab" value={tabForm.hiddenTab} />
    <label className="grid gap-1 text-sm font-semibold text-body">Name or college
     <Input type="search" name="q" maxLength={100} defaultValue={query.data.q}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+     className="min-h-9 w-full"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Role
-    <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-9 w-full">
      {roleOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Membership
     <Select name="membershipStatus" defaultValue={query.data.membershipStatus}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+     className="min-h-9 w-full">
      {membershipOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Platform
     <Select name="platformStatus" defaultValue={query.data.platformStatus}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+     className="min-h-9 w-full">
      {platformOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>

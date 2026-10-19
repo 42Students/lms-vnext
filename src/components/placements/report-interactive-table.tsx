@@ -57,45 +57,45 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
  }
  return <section className="space-y-3" aria-label={title}>
   <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-  {rows.length===0?<p role="status" className="rounded-xl border border-border p-4 text-sm">{emptyDescription}</p>:<>
-   <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3">
+  {rows.length===0?<p role="status" className="border-y border-border py-4 text-sm">{emptyDescription}</p>:<>
+   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold">Search table
      <input type="search" value={search} onChange={e=>{setSearch(e.target.value);setLimit(100);}}
-      className="min-h-11 rounded-md border border-border px-3 text-sm" placeholder="Search shown report rows"/>
+      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm" placeholder="Search shown report rows"/>
     </label>
     <label className="grid gap-1 text-xs font-semibold">Rows shown
      <select value={limit} onChange={e=>setLimit(Number(e.target.value))}
-      className="min-h-11 rounded-md border border-border px-3 text-sm">
+      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">
       {[25,50,100,500,1000].map(n=><option key={n} value={n}>{n}</option>)}
      </select>
     </label>
-    <details className="relative self-end rounded-md border border-border p-2 text-sm">
-     <summary className="inline-flex min-h-11 cursor-pointer items-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Column filters ({Object.values(columnFilters).filter(v=>v.trim()).length})</summary>
-     <div role="region" aria-label="Report column filters, scroll for more" tabIndex={0} className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)] rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-md sm:p-3">
+    <details className="relative self-end rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
+     <summary className="inline-flex min-h-11 cursor-pointer items-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Column filters ({Object.values(columnFilters).filter(v=>v.trim()).length})</summary>
+     <div role="region" aria-label="Report column filters, scroll for more" tabIndex={0} className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)] rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[var(--lms-overlay-shadow)] sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-[var(--lms-control-radius)] sm:p-3">
       <button type="button" onClick={event=>{
         const disclosure=event.currentTarget.closest("details");
         disclosure?.removeAttribute("open");
         disclosure?.querySelector("summary")?.focus();
-      }} className="min-h-11 rounded border border-border px-3 text-sm font-semibold sm:hidden">
+      }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold sm:hidden">
        Close filters
       </button>
       {displayedColumns.map(col=><label key={col.index} className="grid gap-1 text-xs font-semibold">
        {col.heading}
        <input type="search" maxLength={100} value={columnFilters[col.index]??""}
         onChange={event=>{setColumnFilters(current=>({...current,[col.index]:event.target.value}));setLimit(100);}}
-        className="min-h-9 rounded border border-border bg-background px-2 text-sm"/>
+        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-2 text-sm"/>
       </label>)}
      </div>
     </details>
-    <details className="relative self-end rounded-md border border-border p-2 text-sm">
-     <summary className="inline-flex min-h-11 cursor-pointer items-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Columns</summary>
-     <fieldset aria-label="Report columns, scroll for more" tabIndex={0} className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)] rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-md sm:p-3">
+    <details className="relative self-end rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
+     <summary className="inline-flex min-h-11 cursor-pointer items-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Columns</summary>
+     <fieldset aria-label="Report columns, scroll for more" tabIndex={0} className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)] rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[var(--lms-overlay-shadow)] sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-[var(--lms-control-radius)] sm:p-3">
       <legend className="sr-only">Choose report columns</legend>
       <button type="button" onClick={event=>{
         const disclosure=event.currentTarget.closest("details");
         disclosure?.removeAttribute("open");
         disclosure?.querySelector("summary")?.focus();
-      }} className="min-h-11 rounded border border-border px-3 text-sm font-semibold sm:hidden">
+      }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold sm:hidden">
        Close columns
       </button>
       {headings.map((heading,index)=><label key={index} className="flex items-center gap-2 text-xs">
@@ -105,10 +105,10 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
        {heading}</label>)}
      </fieldset>
     </details>
-    <button type="button" onClick={()=>void copy()} className="min-h-11 rounded border border-border px-3 text-xs font-semibold">Copy shown</button>
-    <button type="button" onClick={saveCsv} className="min-h-11 rounded border border-border px-3 text-xs font-semibold">Export shown CSV</button>
+    <button type="button" onClick={()=>void copy()} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold">Copy shown</button>
+    <button type="button" onClick={saveCsv} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold">Export shown CSV</button>
     <button type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);}}
-     className="min-h-11 rounded border border-border px-3 text-xs font-semibold">Reset view</button>
+     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold">Reset view</button>
    </div>
    <p role="status" className="text-xs text-muted-foreground">
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Click a column heading to sort.
@@ -118,13 +118,13 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
      <select value={sort??""} onChange={event=>{
        setSort(event.target.value===""?null:Number(event.target.value));
        setDescending(false);
-     }} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3">
+     }} className="min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
       <option value="">Original order</option>
       {displayedColumns.map(col=><option key={col.index} value={col.index}>{col.heading}</option>)}
      </select>
     </label>
     <button type="button" disabled={sort===null} aria-label="Reverse sort direction"
-     onClick={()=>setDescending(value=>!value)} className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
+     onClick={()=>setDescending(value=>!value)} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold disabled:opacity-50">
      {descending?"Descending":"Ascending"}
     </button>
    </div>
@@ -151,7 +151,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     }))}
    />
    {ordered.length>limit?<button type="button" onClick={()=>setLimit(n=>n+500)}
-    className="min-h-11 rounded border border-border px-3 text-sm font-semibold">Show 500 more</button>:null}
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Show 500 more</button>:null}
    {message?<p role="status" className="text-xs">{message}</p>:null}
   </>}
  </section>;

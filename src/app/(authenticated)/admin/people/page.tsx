@@ -114,7 +114,7 @@ export default async function SuperAdminPeoplePage({
           description="Use the Super Admin scope selector in the top bar to choose a college before viewing membership data."
         />
         <Link href="/admin/people/directory"
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Browse all permitted Users &amp; Roles without selecting a college →
         </Link>
       </div>
@@ -144,20 +144,20 @@ export default async function SuperAdminPeoplePage({
       <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
       <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-4">
        <label className="grid gap-1 text-sm font-semibold">Search contacts
-        <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-surface)] px-3"/>
+        <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-9 w-full"/>
        </label>
        <label className="grid gap-1 text-sm font-semibold">Role
-        <Select name="role" defaultValue={role} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-surface)] px-2">
+        <Select name="role" defaultValue={role} className="min-h-9 w-full">
           {["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
        </label>
        <label className="grid gap-1 text-sm font-semibold">Status
-        <Select name="status" defaultValue={status} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-surface)] px-2">
+        <Select name="status" defaultValue={status} className="min-h-9 w-full">
           {["ALL","ACTIVE","SUSPENDED","ENDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
        </label>
        <label className="grid gap-1 text-sm font-semibold">Rows per page
-        <Select name="pageSize" defaultValue={pageSize} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-surface)] px-2">
+        <Select name="pageSize" defaultValue={pageSize} className="min-h-9 w-full">
           {[10,20,50].map(n=><option key={n} value={n}>{n}</option>)}
         </Select>
        </label>
@@ -165,7 +165,7 @@ export default async function SuperAdminPeoplePage({
        <Link href="/admin/people" className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
       </form>
       <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>
-      <Link href="/admin/people/directory" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      <Link href="/admin/people/directory" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Browse platform users & roles →
       </Link>
       <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
