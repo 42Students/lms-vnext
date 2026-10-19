@@ -37,3 +37,8 @@ export function MenuItem({ className, children, type = "button", ...props }: Men
   return <button {...props} type={type} disabled={props.disabled || ariaDisabled} role="menuitem"
     className={cx("flex min-h-11 w-full items-center rounded-[8px] px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-left text-[14px] leading-5 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] hover:bg-[rgba(0,0,0,0.035)] hover:text-[var(--lms-neutral-900)] active:bg-[rgba(0,0,0,0.06)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent", className)}>{children}</button>;
 }
+
+/** Legacy menu separator: 1px neutral rule with 6px/8px breathing space. */
+export function MenuSeparator() {
+  return <div role="separator" aria-orientation="horizontal" className="mx-2 my-1.5 h-px bg-[var(--lms-neutral-200)]" />;
+}
