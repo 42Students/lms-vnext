@@ -21,8 +21,8 @@ export function LearnerProjectTabs({ projectId }: { projectId: string }) {
             aria-current={active === tab.key ? "page" : undefined}
             className={
               active === tab.key
-                ? "border-b-2 border-primary px-4 py-3 text-sm font-semibold text-primary-text"
-                : "border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-body hover:text-primary-text"
+                ? "border-b-[3px] border-primary px-4 py-2.5 text-[13px] font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-primary"
+                : "border-b-[3px] border-transparent px-4 py-2.5 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-primary"
             }
           >
             {tab.label}

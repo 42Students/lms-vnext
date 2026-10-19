@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 import { Button } from "@/components/ui/button";
+import { OverlayCloseIcon } from "@/components/ui/overlay-close-icon";
 
 type ToastTone = "success" | "error" | "info";
 export type ToastItem = { id: string; title: string; description?: string; tone: ToastTone };
@@ -78,7 +79,7 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
         </div>
         <Button variant="ghost" type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
           onClick={() => onDismiss(toast.id)}
-          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)]"><span aria-hidden="true">×</span></Button>
+          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)]"><OverlayCloseIcon /></Button>
       </div>
     </section>)}
   </div>;

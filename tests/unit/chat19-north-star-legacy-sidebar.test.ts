@@ -17,6 +17,15 @@ const college:ShellNavItem={
 };
 
 describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
+ it("maps every literal sidebar destination to an actual image or outlined glyph",()=>{
+  const model=source("src/components/shell/shell-model.ts");
+  const paths=[...model.matchAll(/\bhref\s*:\s*"([^"]+)"/g)].map(match=>match[1]);
+  expect(new Set(paths).size).toBeGreaterThan(50);
+  for(const path of paths){
+   expect(SHELL_NAV_ICON_KEYS[path],path).toBeTruthy();
+   expect(SHELL_NAV_ICON_KEYS[path],path).not.toBe("layers");
+  }
+ });
  it("gives every Super Admin and College Admin row a real SVG icon instead of a letter block",()=>{
   for(const row of [...superAdminItems,...collegeAdminItems]){
    expect(SHELL_NAV_ICON_KEYS[row.href]).toBeTruthy();
@@ -88,7 +97,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
  it("uses unique stroke glyphs rather than the shared Layers fallback for legacy AntD icon families",()=>{
   const glyphs=source("src/components/shell/shell-nav-icons.tsx");
   for(const name of ["solution","usergroup-add","bank","appstore","partition","apartment"]){
-   expect(glyphs).toContain(name+":");
+   expect(glyphs).toContain(name==="usergroup-add" ? '"usergroup-add":' : name+":");
   }
  });
  it("shows one active workspace for multi-role memberships without mixing all portal rows",()=>{
@@ -154,6 +163,9 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(mobile).toContain('role="dialog"');
   expect(mobile).toContain('aria-modal="true"');
   expect(mobile).toContain("onNavigate={() => setOpen(false)}");
+  expect(css).toContain(".lms-mobile-sidebar .lms-sidebar-nav {padding-inline:12px;}");
+  expect(css).toContain("margin-bottom:2px;");
+  expect(mobile).toContain("pb-[calc(24px+env(safe-area-inset-bottom,0px))]");
  });
  it("uses the legacy thin TPO scrollbar only on expanded rails",()=>{
   const css=source("src/components/shell/sidebar-legacy.css");

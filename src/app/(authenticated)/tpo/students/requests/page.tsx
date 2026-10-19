@@ -1,4 +1,4 @@
-import {Select} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -289,12 +289,12 @@ export default async function TpoStudentRequestsPage({
         </label>
 
         <div className="sm:col-span-3">
-          <button
+          <Button variant="primary"
             type="submit"
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+            className="min-h-9 px-5"
           >
             Apply filters
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -366,8 +366,8 @@ export default async function TpoStudentRequestsPage({
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-border bg-surface md:block">
-            <table className="w-full min-w-[65rem] text-left text-sm">
+          <div className="hidden md:block">
+            <Table scrollLabel="Student requests" className="min-w-[65rem]">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-4 py-3">Student</th>
@@ -449,7 +449,7 @@ export default async function TpoStudentRequestsPage({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
           </>
         )}

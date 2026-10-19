@@ -1,4 +1,4 @@
-import {Select} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
@@ -581,7 +581,7 @@ export default async function TpoStudentsPage({
            defaultValue={value??""} placeholder="Any"
            className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
          </label>)}
-        <button className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4">Show students</button>
+        <Button variant="secondary" type="submit" className="min-h-9 px-4">Show students</Button>
       </form>
       {query.batchId?<p className="text-sm text-muted-foreground">
         Students from a finished batch include completed enrollments for follow-up and reporting.
@@ -765,8 +765,8 @@ export default async function TpoStudentsPage({
             No learners are available for this selection.
           </p>
         ) : (
-          <div className="hidden overflow-x-auto sm:block">
-            <table className="w-full min-w-[52rem] text-left text-sm">
+          <div className="hidden sm:block">
+            <Table scrollLabel="Branch intelligence" className="min-w-[52rem]">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-4 py-3">Branch</th>
@@ -818,7 +818,7 @@ export default async function TpoStudentsPage({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
         )}
 
@@ -923,12 +923,12 @@ export default async function TpoStudentsPage({
           </label>
 
           <div className="sm:col-span-2 lg:col-span-4">
-            <button
+            <Button variant="primary"
               type="submit"
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+              className="min-h-9 px-5"
             >
               Apply filters
-            </button>
+            </Button>
           </div>
         </form>
 

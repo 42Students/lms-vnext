@@ -263,7 +263,7 @@ export function FacultyAssessmentEditor({
           onSubmit={save}
           className="space-y-4"
         >
-          {titleOnly?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">
+          {titleOnly?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
             Learner submissions exist. Deadline, points, audience, resources and submission methods are locked. You can still correct the title.
           </p>:null}
           <label className="block text-sm font-semibold text-body">

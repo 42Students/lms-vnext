@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import {TpoHomeReturnRefresh} from "@/components/tpo/tpo-home-return-refresh";
 import {eq} from "drizzle-orm";
@@ -207,7 +208,7 @@ export default async function TpoHome(){
      <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary-subtle text-sm font-semibold">{row.title.slice(0,1)}</span>
      <span className="min-w-0 flex-1"><strong className="block text-sm text-foreground">{row.title}</strong>
       <span className="block break-words text-xs text-muted-foreground">{row.status}</span></span>
-     {row.needsAttention?<span aria-label="Needs you" className="shrink-0 rounded-full bg-warning-subtle px-2 py-1 text-xs font-semibold text-foreground">Needs you</span>:null}
+     {row.needsAttention?<Badge aria-label="Needs you"  tone="warning" className="shrink-0">Needs you</Badge>:null}
      <span aria-hidden="true" className="shrink-0 text-link">›</span>
     </Link>
    </li>)}</ul>

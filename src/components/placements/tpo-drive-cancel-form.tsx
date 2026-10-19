@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { TpoDriveCancelImpact } from "@/modules/placements/tpo-drive-cancel-model";
@@ -123,9 +124,9 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             I reviewed the affected applications, rounds and offers. I understand cancellation
             will notify affected learners and cannot be silently undone.
           </label>
-          <button type="submit" disabled={pending || !reviewed} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-5 font-[650] disabled:opacity-50 text-primary-foreground">
+          <Button variant="primary" type="submit" disabled={pending || !reviewed} className="min-h-11 md:min-h-9 px-5">
             {pending ? "Cancelling…" : "Review and cancel drive"}
-          </button>
+          </Button>
     </form>
   );
 }

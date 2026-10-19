@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "42tracker_theme_v1";
@@ -43,14 +44,14 @@ export function TrackerThemeToggle() {
   }
 
   return (
-    <button
+    <Button variant="secondary"
       type="button"
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       aria-pressed={theme === "dark"}
       onClick={toggleTheme}
-      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+      className="min-h-9 px-4"
     >
       {theme === "dark" ? "Light mode" : "Dark mode"}
-    </button>
+    </Button>
   );
 }
