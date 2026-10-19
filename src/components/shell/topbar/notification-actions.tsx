@@ -19,7 +19,7 @@ function IconLink({
   href, label, count, message = false,
 }: { href: string; label: string; count: number | null; message?: boolean }) {
   return <Link href={href} className={style.iconButton}
-    aria-label={label + (count !== null ? ", " + count + " unread" : "")}
+    aria-label={label + (count !== null ? count >= 40 ? ", at least " + count + " unread" : ", " + count + " unread" : "")}
     title={label}>
     {message ? <MessageIcon /> : <BellIcon />}
     <CountBadge count={count}/>
@@ -44,7 +44,7 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
     if (config.portal === "hr" || config.portal === "learn" || config.portal === "tpo") return;
     try {
       const next = await apiFetch<unknown>("/api/notifications?limit=40", {
-        cache: "no-store", credentials: "same-origin",
+        cache: "no-store", credentials: "same-origin", timeoutMs: 12000,
       });
       if (!next || typeof next !== "object" || !("notifications" in next)) return;
       const records = (next as { notifications: unknown }).notifications;
@@ -53,7 +53,11 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
         "notification" in record &&
         (record as { notification: unknown }).notification &&
         typeof (record as { notification: unknown }).notification === "object" &&
-        "readAt" in ((record as { notification: Record<string, unknown> }).notification));
+        "readAt" in ((record as { notification: Record<string, unknown> }).notification) &&
+        (() => {
+          const date = (record as {notification:{readAt:unknown}}).notification.readAt;
+          return date === null || typeof date === "string";
+        })());
       if (!valid) return;
       setGeneral(records.filter(record =>
         (record as {notification:{readAt:unknown}}).notification.readAt === null).length);
@@ -61,12 +65,15 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
   }, [config.portal]);
 
   useEffect(() => {
+    if (config.portal === "hr" || config.portal === "learn" || config.portal === "tpo") return;
     void update();
     const timer = window.setInterval(() => void update(), 30000);
     document.addEventListener("visibilitychange", update);
+    window.addEventListener("focus", update);
     return () => {
       window.clearInterval(timer);
       document.removeEventListener("visibilitychange", update);
+      window.removeEventListener("focus", update);
     };
   }, [update]);
 
