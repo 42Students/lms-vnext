@@ -429,7 +429,7 @@ export function LearnerCourseDiscussion({
           {moderate && canPost ? (
             <Button type="button" disabled={pinningId!==null}
               onClick={()=>void togglePin(pinned.id)}
-              variant="secondary" className="mt-3 min-h-9 text-xs">
+              variant="secondary" className="mt-3 min-h-11 text-xs md:min-h-9">
               {pinningId===pinned.id?"Saving…":"Unpin pinned message"}
             </Button>
           ) : null}
@@ -479,7 +479,7 @@ export function LearnerCourseDiscussion({
               <p className="mt-2 text-sm text-body">
                 Check your connection and try again.
               </p>
-              <Button className="mt-4" variant="secondary" onClick={() => void load()}>
+              <Button className="mt-4 min-h-11 md:min-h-9" variant="secondary" onClick={() => void load()}>
                 Retry
               </Button>
             </div>
@@ -489,12 +489,12 @@ export function LearnerCourseDiscussion({
                 <h3 className="text-base font-semibold text-foreground">Start the conversation</h3>
                 <p className="text-sm text-body">Welcome your class or share the week&apos;s focus.</p>
                 <div className="flex flex-wrap justify-center gap-3">
-                  <Button type="button" size="sm" variant="secondary"
+                  <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9"
                     onClick={()=>{
                       setDraft("Welcome! Use this space for questions about the course.");
                       focusComposer();
                     }}>Post a welcome message</Button>
-                  <Button type="button" size="sm" variant="secondary"
+                  <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9"
                     onClick={()=>{
                       setDraft("This week we are focusing on: ");
                       focusComposer();
@@ -511,7 +511,7 @@ export function LearnerCourseDiscussion({
             <div className="space-y-2" role="log" aria-live="polite" aria-relevant="additions">
               {olderCursor ? (
                 <div className="flex flex-col items-center gap-2 pb-3">
-                  <Button size="sm" variant="secondary" disabled={loadingOlder}
+                  <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={loadingOlder}
                     onClick={() => void loadOlder()}>
                     {loadingOlder ? "Loading earlier messages…" : "Load earlier messages"}
                   </Button>
@@ -568,7 +568,7 @@ export function LearnerCourseDiscussion({
                       {row.item.messageText}
                     </p>
                     {canPost ? <Button type="button"
-                      variant="ghost" className="mt-2 min-h-9 !text-[var(--lms-primary-text)] underline"
+                      variant="ghost" className="mt-2 min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
                       onClick={() => {
                         setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
                         focusComposer();
@@ -585,7 +585,7 @@ export function LearnerCourseDiscussion({
                             onClick={() =>
                               void togglePin(row.item.id)
                             }
-                            variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)] hover:underline"
+                            variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] hover:underline md:min-h-9"
                           >
                             {pinningId === row.item.id
                               ? "Saving…"
@@ -598,7 +598,7 @@ export function LearnerCourseDiscussion({
                           type="button"
                           disabled={deletingId === row.item.id}
                           onClick={() => setDeleteTarget(row.item.id)}
-                          variant="ghost" className="min-h-9 !text-[var(--lms-error)] hover:underline"
+                          variant="ghost" className="min-h-11 !text-[var(--lms-error)] hover:underline md:min-h-9"
                         >
                           {deletingId === row.item.id ? "Deleting…" : "Delete"}
                         </Button> : null}
@@ -633,7 +633,7 @@ export function LearnerCourseDiscussion({
         ) : null}
 
         {canPost ? (
-        <form onSubmit={submit} className="border-t border-border p-4 sm:p-5">
+        <form onSubmit={submit} className="border-t border-border p-4 md:p-5">
           <p className="mb-3 text-xs leading-5 text-muted-foreground">
             {moderate
               ? "Post an announcement, answer a learner, or add class context."
@@ -641,7 +641,7 @@ export function LearnerCourseDiscussion({
           </p>
           {replyTo ? <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-surface-subtle p-3">
             <p className="min-w-0 break-words text-xs text-body">Replying to: {replyTo.text}</p>
-            <Button type="button" variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)] underline"
+            <Button type="button" variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
               onClick={() => setReplyTo(null)}>Cancel reply</Button>
           </div> : null}
           <label className="text-xs font-semibold text-body" htmlFor="course-discussion-message">
@@ -678,7 +678,7 @@ export function LearnerCourseDiscussion({
           </div>
         </form>
         ) : (
-          <div className="border-t border-border bg-surface-subtle p-4 text-sm font-semibold text-muted-foreground sm:p-5">
+          <div className="border-t border-border bg-surface-subtle p-4 text-sm font-semibold text-muted-foreground md:p-5">
             Past semester · this discussion is read only.
           </div>
         )}
