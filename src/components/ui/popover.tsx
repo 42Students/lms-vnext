@@ -16,7 +16,7 @@ export const PopoverPanel = forwardRef<HTMLElement, PopoverPanelProps>(
   function PopoverPanel({ label, className, children, ...rest }, ref) {
     return <section {...rest} ref={ref} role="dialog" aria-modal={false} aria-label={label}
       data-slot={rest["data-slot"] ?? "popover"}
-      className={cx("min-w-0 rounded-[12px] border border-[var(--lms-canvas-border)] bg-white shadow-[var(--lms-overlay-shadow)]", className)}>
+      className={cx("min-w-0 rounded-[6px] border border-[var(--lms-canvas-border)] bg-white shadow-[var(--lms-dropdown-shadow)]", className)}>
       {children}
     </section>;
   },
