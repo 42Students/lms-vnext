@@ -246,7 +246,7 @@ export default async function HrCalendarPage({
       <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
         Invalid calendar filters.
       </p>
-      <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text underline">
+      <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Clear filters
       </Link>
     </div>;
