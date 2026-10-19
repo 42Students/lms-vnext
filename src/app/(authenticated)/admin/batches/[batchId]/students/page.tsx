@@ -19,8 +19,8 @@ export default async function SuperAdminBatchStudentsPage({params}:{
  return <div className="min-w-0 space-y-5">
   <Breadcrumbs items={[{label:"Batches",href:"/admin/batches"},{label:data.batch.name}]}/>
   <PageHeader eyebrow="Super Admin · Academic Setup" title={"Manage students · "+data.batch.name} description={`${data.batch.programName} · ${data.batch.code} · ${total} active class assignments`}/>
-  <a href={"/api/admin/batches/"+encodeURIComponent(batchId)+"/students/export"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export batch students (CSV)</a>
-  <p className="rounded-md border border-border bg-surface p-4 text-sm text-body">Select a class to search its roster by learner name, roll number or email and move learners through the existing capacity-checked class assignment controls. A learner may have distinct period-based assignments.</p>
+  <a href={"/api/admin/batches/"+encodeURIComponent(batchId)+"/students/export"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-primary-subtle sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Export batch students (CSV)</a>
+  <p className="text-sm leading-6 text-body">Select a class to search its roster by learner name, roll number or email and move learners through the existing capacity-checked class assignment controls. A learner may have distinct period-based assignments.</p>
   <section className="min-w-0 space-y-3" aria-label="Batch classes">
     <DataTable<(typeof data.classes)[number]> caption="Batch classes" rows={data.classes} getRowKey={row=>row.id}
       empty={<p role="status">No classes exist for this batch. Create a class before managing its roster.</p>}
