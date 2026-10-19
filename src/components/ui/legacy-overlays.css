@@ -14,48 +14,51 @@
 [data-slot="bottom-sheet"]::backdrop {
   background: rgba(30, 54, 63, .1);
 }
-[data-slot="dialog"] > div > div:first-child {
+[data-slot="dialog-header"] {
   border-bottom: 1px solid var(--lms-canvas-border);
   padding: 16px 24px;
   background: #fff;
 }
-[data-slot="dialog"] > div > div:first-child {
+[data-slot="dialog-header"] {
   position: relative;
 }
-[data-slot="dialog"] > div > div:first-child > div:first-child {
+[data-slot="dialog-header"] > div:first-child {
   padding-right: 50px;
 }
-[data-slot="dialog"] > div > div:first-child > button[aria-label="Close dialog"] {
+[data-slot="dialog-header"] > button[aria-label="Close dialog"] {
   position: absolute;
   top: 16px;
   right: 16px;
   z-index: 1;
 }
-[data-slot="dialog"] > div > div:last-child:not(:first-child) {
+[data-slot="dialog-header"] > button[aria-label="Close dialog"]:hover {
+  color: #1a1d21;
+}
+[data-slot="dialog-footer"] {
   background: #fff;
 }
 @media (max-width: 767px) {
-  [data-slot="dialog"] > div > div:last-child:not(:first-child):has(button) {
+  [data-slot="dialog-footer"] {
     gap: 8px;
   }
-  [data-slot="dialog"] > div > div:last-child:not(:first-child) button {
+  [data-slot="dialog-footer"] button {
     min-height: 44px;
   }
 }
-[data-slot="drawer"] > div > header {
+[data-slot="drawer-header"] {
   background: var(--lms-neutral-50);
   border-bottom: 1px solid var(--lms-canvas-border);
 }
-[data-slot="drawer"] > div > footer {
+[data-slot="drawer-footer"] {
   padding: 12px 20px max(12px, env(safe-area-inset-bottom));
   background: var(--lms-neutral-50);
 }
-[data-slot="bottom-sheet"] > div > header {
+[data-slot="bottom-sheet-header"] {
   padding: 16px 20px;
   background: var(--lms-neutral-50);
   border-bottom: 1px solid var(--lms-canvas-border);
 }
-[data-slot="bottom-sheet"] > div > footer {
+[data-slot="bottom-sheet-footer"] {
   padding: 12px 20px max(12px, env(safe-area-inset-bottom));
   background: var(--lms-neutral-50);
 }
@@ -79,6 +82,11 @@
   border-radius: 6px;
   border-color: var(--lms-canvas-border);
 }
+[data-slot="menu"] [role="menuitem"][aria-disabled="true"] {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: .5;
+}
 [data-slot="menu"] [role="menuitem"]:not(:disabled):hover {
   background: rgba(0, 0, 0, .035);
   color: var(--lms-neutral-900);
@@ -95,6 +103,42 @@
 }
 [data-slot="dropdown"] a[href]:active:not([aria-disabled="true"]) {
   background: rgba(0, 0, 0, .06);
+}
+[data-slot="notification-popover"] > div:first-child {
+  margin: -16px -16px 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--lms-neutral-200);
+  border-radius: 12px 12px 0 0;
+  background: var(--lms-neutral-50);
+}
+[data-slot="notification-popover"] > div:first-child > h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.02em;
+  color: var(--lms-neutral-900);
+}
+[data-slot="notification-popover"] :is(ul, ol) a[href]:hover {
+  background: rgba(0, 0, 0, .035);
+}
+[data-slot="notification-popover"] :is(ul, ol) a[href]:active {
+  background: rgba(0, 0, 0, .06);
+}
+[data-slot="notification-popover"] :is(ul, ol) {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+[data-slot="notification-popover"] :is(ul, ol)::-webkit-scrollbar {
+  display: none;
+}
+[data-slot="notification-popover"] {
+  max-width: min(420px, calc(100vw - 24px));
+  max-height: min(520px, calc(100dvh - 120px));
+  border: 1px solid var(--lms-neutral-200);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .04);
 }
 [role="dialog"][aria-modal="false"]:not([data-slot]) {
   border: 1px solid var(--lms-canvas-border);
@@ -124,6 +168,7 @@
   }
   [data-slot="dropdown-root"][open] > [data-slot="dropdown"],
   [role="dialog"][aria-modal="false"]:not([data-slot]),
+  [data-slot="notification-popover"],
   [data-slot="toast-stack"] > section {
     animation: lms-legacy-popup-enter 200ms ease-out both;
   }
@@ -134,6 +179,7 @@
   [data-slot="bottom-sheet"],
   [data-slot="dropdown"],
   [role="dialog"][aria-modal="false"],
+  [data-slot="notification-popover"],
   [data-slot="toast-stack"] > section {
     animation: none !important;
     transition: none !important;
