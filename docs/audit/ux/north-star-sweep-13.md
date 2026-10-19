@@ -60,5 +60,6 @@ Changes are limited to semantic tokens, 9px control radius and 12px canvas radiu
 - [x] Super Admin verification UI: bulk actions, export, filters, tabs, queue search, selection and review drawer now use shared `Button`, `Input`, `Select`, `Checkbox` and `Textarea`. Preserved persisted review/authorization workflow, route links and notifications.
 - [x] Source-only re-read: checked every changed `Button` and `Select` opening/closing tag pair, incomplete `</Select>` tags, duplicated radius utilities, CSS braces, and native-control leftovers in newly swept admin components.
 - [ ] UI screenshot comparison, TypeScript builds, tests, application execution and CI intentionally not run per owner.
+- [x] Final upstream sync: merged `main` at `0a542bfcf587` as an additional parent; preferred its newer `app-shell.tsx` and Course Progress files on overlap and retained all nonconflicting chat-13 styling and shared UI conversions.
 
 **Verification policy:** dev-only; no TypeScript builds, tests, app execution or CI were run. Review and integration still required after mainline merges.
