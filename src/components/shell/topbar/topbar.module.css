@@ -511,3 +511,6 @@
 
 .hrNotificationBody { flex:1; min-height:0; overflow:auto; overscroll-behavior:contain; padding:12px 0; scrollbar-width:none; }
 .hrNotificationBody::-webkit-scrollbar { display:none; }
+
+.hrNotificationBody ul { list-style:none; padding:0 12px; margin:0; }
+.hrNotificationBody ul > li { margin-bottom:6px; overflow:hidden; border-radius:8px; }
