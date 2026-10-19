@@ -49,10 +49,10 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   Suggested: make them eligible <Link href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
    className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Do it</Link>
   </p>:ready&&!lifecycle?.invitedAt&&invitePreview.invitable>0?<p data-testid="batch.suggest"
-   className="rounded border border-border bg-surface p-3 text-sm">
+   className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
    Suggested: invite the batch (Next step, above) <Link href="#batch-next-step"
     className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Show me</Link>
-  </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="rounded border border-border bg-surface p-3 text-sm">
+  </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
    Suggested: remind them to register <Link href="#batch-reminder" className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Show me</Link>
   </p>:null}
  {own?<Link href={"/tpo/batches/"+batchId+"/students?source=LEARNER"}
