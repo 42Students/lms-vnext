@@ -79,7 +79,7 @@ export default async function HrMessagesPage({searchParams}:{
        <ol className="mt-3 divide-y divide-border">{group.items.map(row=>
          <li key={row.id} className="py-3">
            <div className="flex flex-wrap justify-between gap-2">
-             <span className="text-sm text-body">{row.label}{row.unread?" · Unread":""}</span>
+             <span className="text-sm text-body">{row.label}{row.unread?<span className="ml-2 inline-flex rounded-full bg-[#eff8fa] px-2 py-0.5 text-xs font-semibold text-[#1a95a1]">Unread</span>:null}</span>
              <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
            </div>
            {row.unread?<HrNotificationReadButton notificationId={row.id}
