@@ -83,7 +83,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   </div>
   {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}
   {dirty?<p role="status" className="text-sm font-semibold">Unsaved changes</p>:null}
-  <Button type="submit" disabled={busy||!dirty}
+  <Button type="submit" loading={busy} disabled={busy||!dirty}
    >
    {busy?"Saving…":"Save changes"}</Button>
   {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className="text-sm">{feedback}</p>:null}
