@@ -158,3 +158,22 @@ This continuation changes **24 production TSX files** (24 lane commits) plus the
 - [x] `/tpo/notifications`: flat status/empty-state treatment
 
 **Validation:** 17 production TSX pages committed and individually re-read from `chatgpt/chat-2-b`. JSX closing-tag source checks found no truncated `</Select>`, `</Button>` or `</Textarea>`; original actions, routes, field names and messages retained. No runtime, compiler, tests, CI or screenshots were performed. Full React/TSX compile and visual acceptance remain the owner's integration step.
+
+## TPO reporting page continuation — North Star source review (2026-10-19)
+
+The reporting routes below now inherit the white page canvas instead of wrapping metrics, controls and grids in nested white cards. Existing page copy, filter names, URLs, query semantics and export behavior are preserved. Shared `Input`, `Select` and `Button` components replace native visible controls where applicable; hidden native inputs remain untouched.
+
+- [x] `/tpo/reports`: report gallery navigation, search and group controls, border-divided report cards
+- [x] `/tpo/reports/accreditation`: batch selector and scoped export, hairline-separated panels
+- [x] `/tpo/reports/after-college`: shared selectors/Filter action, flat filter toolbar
+- [x] `/tpo/reports/by-company`: shared search/select/Apply controls; dividers for KPI and drill-down
+- [x] `/tpo/reports/branch-season`: shared season selector and outlined button, flat summary statistics
+- [x] `/tpo/reports/ctc`: flat metric rows
+- [x] `/tpo/reports/failure-reasons`: flat failure metrics and source-scope notes
+- [x] `/tpo/reports/intelligence`: remove redundant nested summary cards
+- [x] `/tpo/reports/joining-status`: flat summary metrics
+- [x] `/tpo/reports/offers-acceptance`: flat status breakdown
+- [x] `/tpo/reports/leads`: shared company filter and action; divided recruiter engagement summaries
+- [x] `/tpo/reports/placement-summary`: shared company/work-mode/pay-category filters and Apply action; flat placement statistics
+
+**Source inspection only:** every TSX closing tag in the changed sections was re-read after push, especially full `</Select>` and `</Button>`; the next final source scan checks imports and pair counts across this full continuation. No application execution, CI, lint, TypeScript compiler, unit tests or screenshot checks. Owner verification is still needed.
