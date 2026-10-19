@@ -18,11 +18,11 @@ export default async function AdminDeviceSessionsPage({params}:{
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
  }).format(new Date(value));
  return <div className="space-y-5">
-  <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} className="text-[var(--lms-teal-deep)] underline">← Admins</Link>
+  <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">← Admins</Link>
   <PageHeader eyebrow="Super Admin · Tenant" title={data.target.name+" · Active sessions"}
    description="Current device sessions for the selected administrator. Times are in IST. An unknown or out-of-scope person cannot be inspected."/>
   <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Administrator activity history →</Link>
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">Administrator activity history →</Link>
   <p className="text-sm text-body">{data.devices.length} active session(s), up to 100 shown.</p>
   <DataTable<DeviceRow> caption="Active administrator device sessions" rows={data.devices} getRowKey={row=>row.id}
     empty={<p role="status">No active sessions for this account.</p>}
@@ -31,6 +31,7 @@ export default async function AdminDeviceSessionsPage({params}:{
       {key:"ip",header:"IP",mobilePriority:"secondary",cell:row=>row.ip_address??"Unknown"},
       {key:"last",header:"Last used",mobilePriority:"secondary",cell:row=>format(row.last_seen_at)},
       {key:"expires",header:"Expires",mobilePriority:"secondary",cell:row=>format(row.expires_at)},
-    ]}/>  <AdminRevokeSessions collegeId={collegeId} userId={userId} count={data.devices.length}/>
+    ]}/>
+  <AdminRevokeSessions collegeId={collegeId} userId={userId} count={data.devices.length}/>
  </div>;
 }
