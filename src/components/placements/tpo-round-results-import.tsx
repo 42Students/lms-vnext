@@ -101,11 +101,15 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </div>:null}
    <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
     <summary className="cursor-pointer font-semibold">Not in file ({preview.notInFile.length})</summary>
-    {preview.notInFile.length?<ul tabIndex={0} aria-label="Learners not in import file, scroll for more" className="mt-2 max-h-48 min-h-0 space-y-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
-     {preview.notInFile.map(row=><li key={row.applicationId} className="border-b border-border py-1">
-      {row.name} · <span className="font-mono text-xs">{row.applicationId}</span>
-     </li>)}
-    </ul>:<p className="mt-2">Every candidate in this round is represented in the file.</p>}
+    {preview.notInFile.length?<div className="mt-2 max-h-48 min-w-0 overflow-auto overscroll-contain">
+     <DataTable caption="Learners not in the import file" rows={preview.notInFile}
+      getRowKey={row=>row.applicationId}
+      empty={<p>Every candidate in this round is represented in the file.</p>}
+      columns={[
+       {key:"student",header:"Student",cell:row=>row.name,mobilePriority:"primary"},
+       {key:"application",header:"Application ID",cell:row=><span className="font-mono text-xs">{row.applicationId}</span>,mobilePriority:"secondary"},
+      ]}/>
+    </div>:<p className="mt-2">Every candidate in this round is represented in the file.</p>}
    </details>
    <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
     <legend className="font-semibold">Students not in the file</legend>
