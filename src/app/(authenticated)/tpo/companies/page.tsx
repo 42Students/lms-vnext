@@ -9,6 +9,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { TpoCompanyMemoryWorkspace } from "@/components/tpo/tpo-company-memory-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { TpoCompanyCreateForm } from "@/components/tpo/tpo-company-create-form";
 import { can } from "@/modules/permissions/policy";
 import {
@@ -58,14 +59,15 @@ function companiesHref(
 
 /** Reject ambiguous multi-valued deep-links without silently choosing one. */
 function invalidCompanyFilters(){
- return <section role="alert" className="space-y-3">
+ return <section className="space-y-3">
   <PageHeader title="Invalid companies filters" />
-  <p className="mt-2 text-sm text-body">
+  <Alert tone="error">
    The requested search or pagination values are invalid. No company data was loaded.
   </p>
   <Link href="/tpo/companies" className="mt-4 inline-block font-semibold text-link hover:underline lms-inline-link">
    Clear filters
   </Link>
+  </Alert>
  </section>;
 }
 
@@ -144,16 +146,13 @@ export default async function TpoCompanyMemoryPage({
       />
 
       {!data.contactsAvailable ? (
-        <section
-          role="status"
-          className="rounded-[var(--lms-canvas-radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm leading-6 text-body"
-        >
+        <Alert tone="warning">
           Recruiter CRM tables are not available in the registered
           database. Contact counts and companies known only from
           recruiter leads are unavailable; zero is not inferred.
           Existing employer relationships and placement outcomes
           remain visible.
-        </section>
+        </Alert>
       ) : null}
 
       <div className="grid gap-3 sm:grid-cols-3">
