@@ -1,3 +1,6 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -78,30 +81,30 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     <section className="border-t border-border pt-4" aria-label="People filters">
       <form action="/college/people/manage" method="get" role="search" className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Name, email or phone
-          <input name="q" type="search" maxLength={100} defaultValue={filter.q}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+          <Input name="q" type="search" maxLength={100} defaultValue={filter.q}
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Role
-          <select name="role" defaultValue={filter.role}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+          <Select name="role" defaultValue={filter.role}
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="ALL">All roles</option>
             <option value="LEARNER">Learner</option>
             <option value="FACULTY">Faculty</option>
             <option value="COLLEGE_ADMIN">College Admin</option>
             <option value="MENTOR">Mentor</option>
             <option value="TPO">TPO</option>
-          </select>
+          </Select>
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Membership
-          <select name="status" defaultValue={filter.status}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+          <Select name="status" defaultValue={filter.status}
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="ALL">All statuses</option>
             <option value="ACTIVE">Active</option>
             <option value="SUSPENDED">Suspended</option>
             <option value="ENDED">Ended</option>
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply</button>
+        <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply</Button>
         <Link href="/college/people" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
     </section>

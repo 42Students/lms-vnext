@@ -1,5 +1,7 @@
 "use client";
 
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -60,16 +62,16 @@ export function CollegeStudyMemberActions({
     }} className="flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4">
       <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
         Add learner
-        <select value={selection} onChange={(event) => setSelection(event.target.value)}
-          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+        <Select value={selection} onChange={(event) => setSelection(event.target.value)}
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
           <option value="">Choose from first 100 members</option>
           {available.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
         Or learner membership ID
-        <input value={manualId} onChange={(event) => setManualId(event.target.value)}
-          placeholder="UUID" className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
+        <Input value={manualId} onChange={(event) => setManualId(event.target.value)}
+          placeholder="UUID" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
       </label>
       <Button type="submit" disabled={pending}>Review add</Button>
     </form>

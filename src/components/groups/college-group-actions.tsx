@@ -1,5 +1,7 @@
 "use client";
 
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
@@ -139,16 +141,16 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
       description="This form manages college-owned study groups only.">
       <form onSubmit={(event) => { event.preventDefault(); save(); }} className="space-y-4">
         <label className="block text-sm font-semibold text-body">Group name
-          <input required maxLength={150} value={draft.name}
+          <Input required maxLength={150} value={draft.name}
             onChange={(event) => update("name", event.target.value)} className={inputClass} />
         </label>
         <label className="block text-sm font-semibold text-body">Description
-          <textarea maxLength={1000} value={draft.description} rows={3}
+          <Textarea maxLength={1000} value={draft.description} rows={3}
             onChange={(event) => update("description", event.target.value)}
             className={inputClass} />
         </label>
         <label className="block text-sm font-semibold text-body">Capacity (optional)
-          <input inputMode="numeric" type="number" min={1} max={10000} value={draft.capacity}
+          <Input inputMode="numeric" type="number" min={1} max={10000} value={draft.capacity}
             onChange={(event) => update("capacity", event.target.value)} className={inputClass} />
         </label>
         {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}

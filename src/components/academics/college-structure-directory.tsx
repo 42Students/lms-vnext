@@ -1,3 +1,6 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CollegeClassRowActions } from "@/components/academics/college-section-management";
 import { CollegeSectionLifecycleAction } from "@/components/academics/college-section-lifecycle-action";
@@ -43,30 +46,30 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
         <form method="get" action={path} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">
             {classes ? "Class, batch or program" : "Elective or program"}
-            <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
+            <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
               placeholder="Search registered records" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Program
-            <select name="programId" defaultValue={data.query.programId ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            <Select name="programId" defaultValue={data.query.programId ?? ""}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="">All programs</option>
               {data.programs.map(program => (
                 <option key={program.id} value={program.id}>
                   {program.name} ({program.code})
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Status
-            <select name="status" defaultValue={data.query.status}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            <Select name="status" defaultValue={data.query.status}
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="ACTIVE">Active</option>
               <option value="ARCHIVED">Archived</option>
               <option value="ALL">All</option>
-            </select>
+            </Select>
           </label>
           <details className="col-span-full rounded-[var(--lms-control-radius)] border border-border p-3">
             <summary className="cursor-pointer text-sm font-semibold text-body">More filters</summary>
@@ -74,278 +77,278 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Minimum slot credits
-              <input name="minimumCredits" type="number" min={1} max={500} step={1}
+              <Input name="minimumCredits" type="number" min={1} max={500} step={1}
                 defaultValue={data.query.minimumCredits??""} placeholder="Any credits"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Maximum slot credits
-              <input name="maximumCredits" type="number" min={1} max={500} step={1}
+              <Input name="maximumCredits" type="number" min={1} max={500} step={1}
                 defaultValue={data.query.maximumCredits ?? ""} placeholder="No upper bound"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Semester number
-              <input name="semesterNumber" type="number" min={1} max={24} step={1}
+              <Input name="semesterNumber" type="number" min={1} max={24} step={1}
                 defaultValue={data.query.semesterNumber ?? ""} placeholder="All semesters"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Capacity configuration
-              <select name="capacityState" defaultValue={data.query.capacityState}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="capacityState" defaultValue={data.query.capacityState}
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">Any configuration</option>
                 <option value="CONFIGURED">Configured seats</option>
                 <option value="UNSET">Not configured</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Batch code
-              <input name="cohortCode" type="text" maxLength={64}
+              <Input name="cohortCode" type="text" maxLength={64}
                 defaultValue={data.query.cohortCode ?? ""} placeholder="Exact batch code"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Maximum configured capacity
-              <input name="maximumCapacity" type="number" min={1} max={100000} step={1}
+              <Input name="maximumCapacity" type="number" min={1} max={100000} step={1}
                 defaultValue={data.query.maximumCapacity??""} placeholder="No upper bound"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Minimum configured capacity
-              <input name="minimumCapacity" type="number" min={1} max={100000} step={1}
+              <Input name="minimumCapacity" type="number" min={1} max={100000} step={1}
                 defaultValue={data.query.minimumCapacity ?? ""} placeholder="Any capacity"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Batch status
-              <select name="cohortStatus" defaultValue={data.query.cohortStatus ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="cohortStatus" defaultValue={data.query.cohortStatus ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="PLANNED">Planned</option>
                 <option value="ACTIVE">Active</option>
                 <option value="COMPLETED">Completed</option>
                 <option value="ARCHIVED">Archived</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Program status
-              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active</option>
                 <option value="ARCHIVED">Archived</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Academic period
-              <select name="periodState" defaultValue={data.query.periodState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="periodState" defaultValue={data.query.periodState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="LINKED">Linked to a period</option>
                 <option value="UNLINKED">No period assigned</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Program status
-              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active programs</option>
                 <option value="ARCHIVED">Archived programs</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Class academic period code
-              <input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
-                placeholder="Exact registered code" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
+                placeholder="Exact registered code" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Class code
-              <input name="classCode" type="search" maxLength={64} defaultValue={data.query.classCode ?? ""}
-                placeholder="Exact registered code" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="classCode" type="search" maxLength={64} defaultValue={data.query.classCode ?? ""}
+                placeholder="Exact registered code" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Number of choices
-              <select name="choiceMode" defaultValue={data.query.choiceMode ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="choiceMode" defaultValue={data.query.choiceMode ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="FLEXIBLE">Minimum and maximum differ</option>
                 <option value="FIXED">Exact selection count</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Course offerings
-              <select name="offeringState" defaultValue={data.query.offeringState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="offeringState" defaultValue={data.query.offeringState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="HAS_ACTIVE">Has active course offerings</option>
                 <option value="NONE_ACTIVE">No active course offerings</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Academic year
-              <select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="RECORDED">Academic year recorded</option>
                 <option value="MISSING">No academic year recorded</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Academic period code
-              <input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
-                placeholder="Exact linked period code" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
+                placeholder="Exact linked period code" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Academic period status
-              <select name="periodLifecycle" defaultValue={data.query.periodLifecycle} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="periodLifecycle" defaultValue={data.query.periodLifecycle} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All periods</option>
                 <option value="PLANNED">Planned</option>
                 <option value="ACTIVE">Active</option>
                 <option value="CLOSED">Closed</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Exact program code
-              <input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Class name
-              <input name="className" type="search" maxLength={255} defaultValue={data.query.className ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="className" type="search" maxLength={255} defaultValue={data.query.className ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Batch name
-              <input name="cohortName" type="search" maxLength={255} defaultValue={data.query.cohortName ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="cohortName" type="search" maxLength={255} defaultValue={data.query.cohortName ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Saved section schedule
-              <select name="schedulePresence" defaultValue={data.query.schedulePresence} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="schedulePresence" defaultValue={data.query.schedulePresence} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All classes</option>
                 <option value="HAS_EVENTS">With schedule events</option>
                 <option value="NO_EVENTS">No saved schedule events</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Faculty assignments
-              <select name="facultyCoverage" defaultValue={data.query.facultyCoverage} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="facultyCoverage" defaultValue={data.query.facultyCoverage} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All classes</option>
                 <option value="HAS_FACULTY">Has active Faculty assignments</option>
                 <option value="NO_FACULTY">No active Faculty assignments</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Courses
-              <select name="deliveryPresence" defaultValue={data.query.deliveryPresence} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="deliveryPresence" defaultValue={data.query.deliveryPresence} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All classes</option>
                 <option value="HAS_DELIVERIES">Has course deliveries</option>
                 <option value="NO_DELIVERIES">No course deliveries</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Period start date on or after
-              <input name="periodStartsOnOrAfter" type="date" defaultValue={data.query.periodStartsOnOrAfter ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="periodStartsOnOrAfter" type="date" defaultValue={data.query.periodStartsOnOrAfter ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Period end date on or before
-              <input name="periodEndsOnOrBefore" type="date" defaultValue={data.query.periodEndsOnOrBefore ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="periodEndsOnOrBefore" type="date" defaultValue={data.query.periodEndsOnOrBefore ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Department code
-              <input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Elective name
-              <input name="slotName" type="search" maxLength={150} defaultValue={data.query.slotName ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="slotName" type="search" maxLength={150} defaultValue={data.query.slotName ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Program code
-              <input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Department code
-              <input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Minimum required elective choices
-              <input name="minimumRequiredPicks" type="number" min={0} max={1000} step={1} defaultValue={data.query.minimumRequiredPicks ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="minimumRequiredPicks" type="number" min={0} max={1000} step={1} defaultValue={data.query.minimumRequiredPicks ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Maximum allowed elective choices
-              <input name="maximumAllowedPicks" type="number" min={1} max={1000} step={1} defaultValue={data.query.maximumAllowedPicks ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="maximumAllowedPicks" type="number" min={1} max={1000} step={1} defaultValue={data.query.maximumAllowedPicks ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Semester from
-              <input name="semesterFrom" type="number" min={1} max={24} step={1} defaultValue={data.query.semesterFrom ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="semesterFrom" type="number" min={1} max={24} step={1} defaultValue={data.query.semesterFrom ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Semester through
-              <input name="semesterThrough" type="number" min={1} max={24} step={1} defaultValue={data.query.semesterThrough ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="semesterThrough" type="number" min={1} max={24} step={1} defaultValue={data.query.semesterThrough ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Linked academic-period lifecycle
-              <select name="periodLifecycle" defaultValue={data.query.periodLifecycle} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="periodLifecycle" defaultValue={data.query.periodLifecycle} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All linked and unlinked</option><option value="PLANNED">Planned</option><option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Elective description availability
-              <select name="descriptionPresence" defaultValue={data.query.descriptionPresence} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <Select name="descriptionPresence" defaultValue={data.query.descriptionPresence} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">Any description state</option><option value="RECORDED">Field is recorded</option><option value="MISSING">Field is missing</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Elective linked period starts on or after
-              <input name="periodStartsOnOrAfter" type="date" defaultValue={data.query.periodStartsOnOrAfter ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="periodStartsOnOrAfter" type="date" defaultValue={data.query.periodStartsOnOrAfter ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">Elective linked period ends on or before
-              <input name="periodEndsOnOrBefore" type="date" defaultValue={data.query.periodEndsOnOrBefore ?? ""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              <Input name="periodEndsOnOrBefore" type="date" defaultValue={data.query.periodEndsOnOrBefore ?? ""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
             </div>
           </details>
           <div className="flex items-end gap-2">
-            <button type="submit"
-              className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+            <Button variant="primary" type="submit"
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
               Filter
-            </button>
+            </Button>
             <Link href={path}
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Clear

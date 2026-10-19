@@ -23,7 +23,7 @@ export function VerificationExportControl({query,url="/api/college/verification/
   finally{setBusy(false);}
  }
  return <div className="space-y-1">
-  <Button variant="secondary" type="button" onClick={()=>void download()} disabled={busy} className="min-h-11 sm:min-h-9">{busy?"Preparing CSV…":error?"Retry export":"Export CSV"}</Button>
+  <Button variant="secondary" type="button" onClick={()=>void download()} disabled={busy} className="min-h-[var(--lms-control-height)] ">{busy?"Preparing CSV…":error?"Retry export":"Export CSV"}</Button>
   {error&&<p role="alert" className="max-w-72 break-words text-xs">CSV failed: {error}</p>}
  </div>;
 }
