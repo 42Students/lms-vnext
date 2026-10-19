@@ -12,8 +12,7 @@ import { learnerBoardTaskStatusTone, learnerBoardTaskPriorityTone } from "@/modu
 import { createLearnerBoardTaskDialogNavigationGuard } from "@/modules/projects/learner-board-task-dialog-navigation-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useRouter } from "next/navigation";
-import type { LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
-import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
+import { learnerBoardTaskHref, type LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
 
 export function LearnerBoardTaskDetailDialog({
   projectId, filters, task, sprintTitle, currentMembershipId, assigneeName, commentCount=0, submissionUrl=null,
