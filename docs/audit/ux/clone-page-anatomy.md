@@ -98,3 +98,61 @@ Shared `PageHeader` now supports responsive phone title/subtitle and stacked act
 ## Next files and blockers
 
 Continue `src/components/tpo/tpo-company-memory-workspace.tsx` header, `src/components/tpo/recruiter-lead-detail-workspace.tsx`, `src/components/profile/learner-profile-workspace.tsx`, `src/components/attendance/faculty-attendance-workspace.tsx`, then `src/components/courses/learner-quiz-attempt.tsx` and remaining genuine authenticated page h1 imports. Follow with full grep-driven card wrapper classification and per-screen responsive checks. Reintegrate upstream `main` when it stops moving rapidly; do not reset branch or overwrite other lane files. No test/CI/runtime/visual verification performed as directed.
+
+## Work queue — bounded turn, 2026-10-19 (chat-9)
+
+**Branch integration:** commit `02d01f48` integrated `main` at `d915bd67` into `chatgpt/chat-9-b` using a two-parent merge, preserving the lane's 29 pre-existing commits. This was **not** a literal git rebase: the connected GitHub interface did not expose a checked-out worktree. Non-overlapping files inherited main; six overlaps were replayed onto current-main file contents, with the TPO company header reconciled separately. No edits were pushed to `main`.
+
+**Shared header:** `src/components/ui/page-header.tsx:26-50` now matches the legacy listing header separator, mobile/desktop bottom spacing, desktop action gap and top inset:
+
+| State/property | Legacy source:line | vNext source:line | Source-level result |
+| --- | --- | --- | --- |
+| Desktop full-width row | `legacy-styles/components___listing-page-header.scss:26-32` flex/width 100%/gap 24px | `page-header.tsx:26-30` flex/md gap-6/w-full | Match |
+| Divider | `legacy-styles/components___listing-page-header.scss:33-35` border-bottom 1px solid `#e5e9f0` | `page-header.tsx:28` border-b with `--lms-canvas-border` | Match in source |
+| Desktop bottom spacing | `legacy-styles/components___listing-page-header.scss:33-35` margin-bottom 16px/padding-bottom 16px | `page-header.tsx:28` md:mb-4/pb-4 | Match |
+| Phone bottom spacing | `legacy-styles/components___listing-page-header.scss:131-135` margin-bottom 8px/padding-bottom 16px | `page-header.tsx:28` mb-2/pb-4 | Match |
+| Desktop right actions | `legacy-styles/components___listing-page-header.scss:80-85` flex/gap16px/padding-top8px | `page-header.tsx:49` md:flex-row/md:gap-4/md:pt-2 | Match for shared action container |
+| Phone actions | `legacy-styles/components___listing-page-header.scss:149-154` width100%, column, top inset zero, top margin4px | `page-header.tsx:49` w-full/flex-col/mt-1; md:pt-2 | Match |
+| Desktop title/subtitle | `old-lms-shell-spec.md:26-28` h1 30px/600/`#172033`; `legacy-styles/components___listing-page-header.scss:45-49` baseline gap16 | `page-header.tsx:30-45` h1 scoped 30px/600, inline muted subtitle/gap-4 | Match measured TPO on source values |
+
+**Remaining discrepancy:** legacy listing SCSS specifies 28px/1.3 headings while measured TPO shell specifies 30px/1.35; the measured TPO value is used. The full visual/interaction contract is **not** certified. No app, tests, typecheck, screenshots or CI were run.
+
+### Converted from literal `<h1>` into shared `PageHeader` (24 files)
+
+The following are individually fetched and updated on the lane branch, with their original error/loading copy and control handlers left intact. They are *coverage progress*, not a completed global grep:
+
+- [x] `src/app/(authenticated)/admin/settings/error.tsx`
+- [x] `src/app/(authenticated)/hr/profile/error.tsx`
+- [x] `src/app/(authenticated)/tpo/students/error.tsx`
+- [x] `src/app/(authenticated)/mentor/reports/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/error.tsx`
+- [x] `src/app/(authenticated)/hr/messages/error.tsx`
+- [x] `src/app/(authenticated)/hr/activity/error.tsx`
+- [x] `src/app/(authenticated)/tpo/requests/error.tsx`
+- [x] `src/app/(authenticated)/learn/profile/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/error.tsx`
+- [x] `src/app/(authenticated)/learn/calendar/error.tsx`
+- [x] `src/app/(authenticated)/mentor/reviews/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/error.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/error.tsx`
+- [x] `src/app/(authenticated)/teacher/results/error.tsx`
+- [x] `src/app/(authenticated)/admin/attendance/error.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/error.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/error.tsx`
+- [x] `src/app/(authenticated)/mentor/activity/error.tsx`
+- [x] `src/app/(authenticated)/college/attendance/error.tsx`
+- [x] `src/app/(authenticated)/teacher/live-classes/error.tsx`
+- [x] `src/app/(authenticated)/mentor/task-reviews/error.tsx`
+- [x] `src/app/(authenticated)/activity/loading.tsx`
+- [x] `src/app/(authenticated)/college/verification/loading.tsx`
+
+### Open proof and next work
+
+- [ ] **B5 global coverage**: GitHub indexed code query `<h1 path:src/app` returned 50 items at the search limit, *not* a whole-repository count. Exempt public/auth routes separately; inventory any remaining dynamic titles by following imported components. Worktree command still needed: `grep -RnlE '<h1([[:space:]>])' src/app --include='*.tsx'`.
+- [ ] **B5 breadcrumbs/back links**: full caller and interactive-state audit pending.
+- [ ] **B6 responsive**: check 320, 390, 767, 768, 991, 1024, 1199px; no browser verification or whole-repo grep was performed.
+- [ ] **E6 nested cards**: classify every remaining container. Existing interactive project tiles remain exempt until specifically evidenced.
+- [ ] **Last-third Super Admin + Projects delegated components**: the earlier 37/37 route inventory had zero direct ordinary `page.tsx` h1, but imported components, error boundaries and individual cards remain open.
+- [ ] **Skipped** `src/app/(authenticated)/learn/courses/error.tsx` from automatic plain-text heading replacement because it did not match the safe literal-heading rule. Review manually.
+
+**Next exact file:** `src/components/projects/project-admin-workspace-list.tsx` — classify project workspace cards against E6, then resume remaining admin error-page `<h1>` migration and source-only grep inventory. B5/B6/E6 category ticks remain **open** under the strict rule.
