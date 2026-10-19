@@ -5,6 +5,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
@@ -71,7 +72,7 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
    <p className="text-xs text-body">{job.applicationDeadline?
     "New deadline must be later than the current deadline and in the future.":
     "First deadline must be in the future."} Expiry is validated again under the database lock.</p>
-   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+   {error?<InlineNotice tone="error" message={error}/>:null}
    <Button disabled={pending} type="submit" className="min-h-11 md:min-h-9">
     {pending?"Saving…":job.applicationDeadline?"Review and extend deadline":"Review and set deadline"}</Button>
   </form>
