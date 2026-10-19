@@ -80,7 +80,7 @@ export function TpoDebarControl({
   }
 
   return (
-    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+    <section className="min-w-0 space-y-3 border-y border-border py-5">
       <h2 className="m-0 text-lg font-semibold text-foreground">
         Debar / remove learner restriction
       </h2>
@@ -124,12 +124,12 @@ export function TpoDebarControl({
                   setConfirmed(false);
                 }}
                 placeholder="Reason for restricting placement applications"
-                className="min-h-9"
+                className="min-h-11 w-full md:min-h-9"
               />
             </label>
           ) : null}
 
-          <label className="flex items-start gap-3 text-sm text-body">
+          <label className="flex min-h-11 items-start gap-3 text-sm text-body">
             <Checkbox
               checked={confirmed}
               disabled={pending}
@@ -147,7 +147,7 @@ export function TpoDebarControl({
           <Button variant="primary"
             type="submit"
             disabled={pending || !confirmed || (!debarred && !reason.trim())}
-            className="min-h-9 px-5"
+            className="min-h-11 px-5 md:min-h-9"
           >
             {pending
               ? "Saving…"
