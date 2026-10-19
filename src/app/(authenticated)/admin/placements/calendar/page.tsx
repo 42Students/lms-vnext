@@ -22,7 +22,7 @@ export default async function SuperAdminPlacementInterviewCalendarPage({
 
   if (!collegeId) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           title="Interviews"
           description="Interview-calendar oversight requires an exact college safety scope."
