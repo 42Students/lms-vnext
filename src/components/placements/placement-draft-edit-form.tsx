@@ -352,14 +352,14 @@ export function PlacementDraftEditForm({
   }
 
   return (
-    <details className="rounded-xl border border-border bg-surface">
-      <summary className="cursor-pointer px-5 py-4 text-base font-semibold text-foreground">
+    <details className="border-y border-border">
+      <summary className="cursor-pointer py-4 text-base font-semibold text-foreground">
         Edit draft opportunity
       </summary>
       <form
         onSubmit={submit}
       onChange={markDirty}
-        className="grid gap-5 border-t border-border p-5"
+        className="grid gap-5 border-t border-border py-5"
       >
         <div className="grid gap-4 lg:grid-cols-2">
           <label className="lg:col-span-2">
