@@ -35,7 +35,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
      </option>)}
     </Select>
    </label>
-   <Button type="submit" className="min-h-11">View Section</Button>
+   <Button variant="primary" type="submit" className="justify-center">View Section</Button>
   </form>
   {data.invalid?<p role="alert" className="text-sm text-error">The selected Section is unavailable for this Course Offering.</p>:null}
   {data.truncated?<p role="status" className="text-xs text-muted-foreground">Only the first 200 active Sections are listed. Use the Section management page for the full directory.</p>:null}
