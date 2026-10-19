@@ -27,7 +27,7 @@ describe("chat13: topbar TPO authorized suggestion URL boundary", () => {
       "/tpo/students\rInjected",
       "/tpo/students\tInjected",
       "/tpo/\u007f",
-      "/tpo/x".repeat(300),
+      "/tpo/x".repeat(400),
     ]) expect(safeTpoFindResult(valid(href)), href).toBe(false);
   });
   it("rejects malformed typed responses and oversized or empty copy", () => {
