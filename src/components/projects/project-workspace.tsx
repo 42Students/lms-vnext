@@ -1573,8 +1573,7 @@ export function ProjectWorkspace({
                       const detail=mentorMeetingFacilitationSchema.parse(meeting.facilitation??{});
                       const hasDetail=Boolean(detail.notes||detail.actionItems||detail.wentWell||
                         detail.improve||detail.nextTime||detail.followUpAt||detail.followUpNotes);
-                      return hasDetail?<details className="mt-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
-                        <summary className="cursor-pointer font-semibold text-foreground">Meeting notes and follow-up</summary>
+                      return hasDetail?<Disclosure title="Meeting notes and follow-up" className="mt-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
                         {([
                           ["Notes",detail.notes],["Action items",detail.actionItems],
                           ["What went well?",detail.wentWell],["What could improve?",detail.improve],
@@ -1585,7 +1584,7 @@ export function ProjectWorkspace({
                         {detail.followUpAt?<p className="mt-2">
                           Follow-up: {formatDateTime(new Date(detail.followUpAt))}
                           {" · "}{label(detail.followUpStatus)}</p>:null}
-                      </details>:null;
+                      </Disclosure>:null;
                     })():null}
                     {mode==="MENTOR"? (
                       <Link
