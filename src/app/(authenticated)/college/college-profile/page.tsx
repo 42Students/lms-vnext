@@ -15,7 +15,7 @@ export default async function CollegeContactProfilePage() {
       title="College contact profile"
       description="Manage the college display name, public support contacts and policy links."
       actions={<Link href="/college/branding"
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">
         Branding workspace
       </Link>}
     />
