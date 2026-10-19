@@ -21,331 +21,331 @@
 
 ### College Admin portal routes (260)
 
-- [ ] `src/app/(authenticated)/college/academics/error.tsx`
-- [ ] `src/app/(authenticated)/college/academics/loading.tsx`
+- [x] `src/app/(authenticated)/college/academics/error.tsx`
+- [x] `src/app/(authenticated)/college/academics/loading.tsx`
 - [x] `src/app/(authenticated)/college/academics/page.tsx`
-- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/academics/sections/[sectionId]/error.tsx`
+- [x] `src/app/(authenticated)/college/academics/sections/[sectionId]/loading.tsx`
 - [x] `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/[eventId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/activity/[eventId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/activity/[eventId]/error.tsx`
+- [x] `src/app/(authenticated)/college/activity/[eventId]/loading.tsx`
 - [x] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/error.tsx`
-- [ ] `src/app/(authenticated)/college/activity/loading.tsx`
+- [x] `src/app/(authenticated)/college/activity/error.tsx`
+- [x] `src/app/(authenticated)/college/activity/loading.tsx`
 - [x] `src/app/(authenticated)/college/activity/page.tsx`
-- [ ] `src/app/(authenticated)/college/announcements/error.tsx`
-- [ ] `src/app/(authenticated)/college/announcements/loading.tsx`
+- [x] `src/app/(authenticated)/college/announcements/error.tsx`
+- [x] `src/app/(authenticated)/college/announcements/loading.tsx`
 - [x] `src/app/(authenticated)/college/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/college/assignments/error.tsx`
-- [ ] `src/app/(authenticated)/college/assignments/loading.tsx`
+- [x] `src/app/(authenticated)/college/assignments/error.tsx`
+- [x] `src/app/(authenticated)/college/assignments/loading.tsx`
 - [x] `src/app/(authenticated)/college/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/corrections/error.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/corrections/loading.tsx`
+- [x] `src/app/(authenticated)/college/attendance/corrections/error.tsx`
+- [x] `src/app/(authenticated)/college/attendance/corrections/loading.tsx`
 - [x] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/departments/error.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/departments/loading.tsx`
+- [x] `src/app/(authenticated)/college/attendance/departments/error.tsx`
+- [x] `src/app/(authenticated)/college/attendance/departments/loading.tsx`
 - [x] `src/app/(authenticated)/college/attendance/departments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/error.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/loading.tsx`
+- [x] `src/app/(authenticated)/college/attendance/error.tsx`
+- [x] `src/app/(authenticated)/college/attendance/loading.tsx`
 - [x] `src/app/(authenticated)/college/attendance/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/settings/error.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/settings/loading.tsx`
+- [x] `src/app/(authenticated)/college/attendance/settings/error.tsx`
+- [x] `src/app/(authenticated)/college/attendance/settings/loading.tsx`
 - [x] `src/app/(authenticated)/college/attendance/settings/page.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/error.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/loading.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/error.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/loading.tsx`
 - [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/error.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/loading.tsx`
+- [x] `src/app/(authenticated)/college/batches/[cohortId]/students/error.tsx`
+- [x] `src/app/(authenticated)/college/batches/[cohortId]/students/loading.tsx`
 - [x] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/error.tsx`
-- [ ] `src/app/(authenticated)/college/batches/loading.tsx`
+- [x] `src/app/(authenticated)/college/batches/error.tsx`
+- [x] `src/app/(authenticated)/college/batches/loading.tsx`
 - [x] `src/app/(authenticated)/college/batches/page.tsx`
-- [ ] `src/app/(authenticated)/college/branding/error.tsx`
-- [ ] `src/app/(authenticated)/college/branding/loading.tsx`
+- [x] `src/app/(authenticated)/college/branding/error.tsx`
+- [x] `src/app/(authenticated)/college/branding/loading.tsx`
 - [x] `src/app/(authenticated)/college/branding/page.tsx`
-- [ ] `src/app/(authenticated)/college/classes/error.tsx`
-- [ ] `src/app/(authenticated)/college/classes/loading.tsx`
+- [x] `src/app/(authenticated)/college/classes/error.tsx`
+- [x] `src/app/(authenticated)/college/classes/loading.tsx`
 - [x] `src/app/(authenticated)/college/classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/classes/recurring-preview/error.tsx`
-- [ ] `src/app/(authenticated)/college/classes/recurring-preview/loading.tsx`
+- [x] `src/app/(authenticated)/college/classes/recurring-preview/error.tsx`
+- [x] `src/app/(authenticated)/college/classes/recurring-preview/loading.tsx`
 - [x] `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/college-profile/error.tsx`
-- [ ] `src/app/(authenticated)/college/college-profile/loading.tsx`
+- [x] `src/app/(authenticated)/college/college-profile/error.tsx`
+- [x] `src/app/(authenticated)/college/college-profile/loading.tsx`
 - [x] `src/app/(authenticated)/college/college-profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/companies/error.tsx`
-- [ ] `src/app/(authenticated)/college/companies/loading.tsx`
+- [x] `src/app/(authenticated)/college/companies/error.tsx`
+- [x] `src/app/(authenticated)/college/companies/loading.tsx`
 - [x] `src/app/(authenticated)/college/companies/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/contacts/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx`
 - [x] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/error.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/loading.tsx`
+- [x] `src/app/(authenticated)/college/contacts/error.tsx`
+- [x] `src/app/(authenticated)/college/contacts/loading.tsx`
 - [x] `src/app/(authenticated)/college/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/college/course-progress/error.tsx`
-- [ ] `src/app/(authenticated)/college/course-progress/loading.tsx`
+- [x] `src/app/(authenticated)/college/course-progress/error.tsx`
+- [x] `src/app/(authenticated)/college/course-progress/loading.tsx`
 - [x] `src/app/(authenticated)/college/course-progress/page.tsx`
-- [ ] `src/app/(authenticated)/college/courses/error.tsx`
-- [ ] `src/app/(authenticated)/college/courses/loading.tsx`
-- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/loading.tsx`
-- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/not-found.tsx`
+- [x] `src/app/(authenticated)/college/courses/error.tsx`
+- [x] `src/app/(authenticated)/college/courses/loading.tsx`
+- [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx`
+- [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/not-found.tsx`
 - [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/page.tsx`
 - [x] `src/app/(authenticated)/college/courses/page.tsx`
-- [ ] `src/app/(authenticated)/college/departments/error.tsx`
-- [ ] `src/app/(authenticated)/college/departments/loading.tsx`
+- [x] `src/app/(authenticated)/college/departments/error.tsx`
+- [x] `src/app/(authenticated)/college/departments/loading.tsx`
 - [x] `src/app/(authenticated)/college/departments/page.tsx`
-- [ ] `src/app/(authenticated)/college/domains/error.tsx`
-- [ ] `src/app/(authenticated)/college/domains/loading.tsx`
+- [x] `src/app/(authenticated)/college/domains/error.tsx`
+- [x] `src/app/(authenticated)/college/domains/loading.tsx`
 - [x] `src/app/(authenticated)/college/domains/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/loading.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/loading.tsx`
 - [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/error.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/loading.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/error.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/loading.tsx`
 - [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/error.tsx`
-- [ ] `src/app/(authenticated)/college/electives/loading.tsx`
+- [x] `src/app/(authenticated)/college/electives/error.tsx`
+- [x] `src/app/(authenticated)/college/electives/loading.tsx`
 - [x] `src/app/(authenticated)/college/electives/page.tsx`
-- [ ] `src/app/(authenticated)/college/error.tsx`
-- [ ] `src/app/(authenticated)/college/faculty-assignment/error.tsx`
-- [ ] `src/app/(authenticated)/college/faculty-assignment/loading.tsx`
+- [x] `src/app/(authenticated)/college/error.tsx`
+- [x] `src/app/(authenticated)/college/faculty-assignment/error.tsx`
+- [x] `src/app/(authenticated)/college/faculty-assignment/loading.tsx`
 - [x] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/[membershipId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/faculty/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/college/faculty/[membershipId]/loading.tsx`
 - [x] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/error.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/import/error.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/import/loading.tsx`
+- [x] `src/app/(authenticated)/college/faculty/error.tsx`
+- [x] `src/app/(authenticated)/college/faculty/import/error.tsx`
+- [x] `src/app/(authenticated)/college/faculty/import/loading.tsx`
 - [x] `src/app/(authenticated)/college/faculty/import/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/loading.tsx`
+- [x] `src/app/(authenticated)/college/faculty/loading.tsx`
 - [x] `src/app/(authenticated)/college/faculty/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/loading.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/error.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/import-preview/error.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/import-preview/loading.tsx`
 - [x] `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/loading.tsx`
 - [x] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/loading.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/error.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/loading.tsx`
 - [x] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/loading.tsx`
+- [x] `src/app/(authenticated)/college/groups/error.tsx`
+- [x] `src/app/(authenticated)/college/groups/loading.tsx`
 - [x] `src/app/(authenticated)/college/groups/page.tsx`
-- [ ] `src/app/(authenticated)/college/hiring-dashboard/error.tsx`
-- [ ] `src/app/(authenticated)/college/hiring-dashboard/loading.tsx`
+- [x] `src/app/(authenticated)/college/hiring-dashboard/error.tsx`
+- [x] `src/app/(authenticated)/college/hiring-dashboard/loading.tsx`
 - [x] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
-- [ ] `src/app/(authenticated)/college/layout.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/layout.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/error.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/loading.tsx`
 - [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/error.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/loading.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/error.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/loading.tsx`
 - [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/college/lessons/error.tsx`
-- [ ] `src/app/(authenticated)/college/lessons/loading.tsx`
+- [x] `src/app/(authenticated)/college/lessons/error.tsx`
+- [x] `src/app/(authenticated)/college/lessons/loading.tsx`
 - [x] `src/app/(authenticated)/college/lessons/page.tsx`
-- [ ] `src/app/(authenticated)/college/live-classes/error.tsx`
-- [ ] `src/app/(authenticated)/college/live-classes/loading.tsx`
+- [x] `src/app/(authenticated)/college/live-classes/error.tsx`
+- [x] `src/app/(authenticated)/college/live-classes/loading.tsx`
 - [x] `src/app/(authenticated)/college/live-classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/loading.tsx`
-- [ ] `src/app/(authenticated)/college/not-found.tsx`
+- [x] `src/app/(authenticated)/college/loading.tsx`
+- [x] `src/app/(authenticated)/college/not-found.tsx`
 - [x] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/error.tsx`
-- [ ] `src/app/(authenticated)/college/people/loading.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/error.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/loading.tsx`
+- [x] `src/app/(authenticated)/college/people/error.tsx`
+- [x] `src/app/(authenticated)/college/people/loading.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/error.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/loading.tsx`
 - [x] `src/app/(authenticated)/college/people/manage/page.tsx`
 - [x] `src/app/(authenticated)/college/people/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/calendar/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/calendar/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/calendar/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/layout.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/loading.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/layout.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
 - [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/loading.tsx`
-- [ ] `src/app/(authenticated)/college/placements/new/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/new/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/new/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/new/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/new/page.tsx`
 - [x] `src/app/(authenticated)/college/placements/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/readiness-by-department/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/readiness-by-department/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/retention/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/retention/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/retention/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/retention/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/retention/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/student-lookup/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/student-lookup/loading.tsx`
+- [x] `src/app/(authenticated)/college/placements/student-lookup/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/student-lookup/loading.tsx`
 - [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/college/profile/error.tsx`
-- [ ] `src/app/(authenticated)/college/profile/loading.tsx`
+- [x] `src/app/(authenticated)/college/profile/error.tsx`
+- [x] `src/app/(authenticated)/college/profile/loading.tsx`
 - [x] `src/app/(authenticated)/college/profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/programs/error.tsx`
-- [ ] `src/app/(authenticated)/college/programs/loading.tsx`
+- [x] `src/app/(authenticated)/college/programs/error.tsx`
+- [x] `src/app/(authenticated)/college/programs/loading.tsx`
 - [x] `src/app/(authenticated)/college/programs/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/[section]/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/[section]/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/[section]/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/[section]/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/[projectId]/[section]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/readiness/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/readiness/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/readiness/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/readiness/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/at-risk/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/at-risk/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/at-risk/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/at-risk/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/at-risk/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/audit/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/audit/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/audit/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/audit/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/audit/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/create/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/readiness/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/readiness/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/readiness/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/readiness/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/reassign-mentor/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/reassign-mentor/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/reassign-mentor/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/reassign-mentor/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/reassign-mentor/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/submissions/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/submissions/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/submissions/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/submissions/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/submissions/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/[templateId]/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/[templateId]/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/loading.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/loading.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/loading.tsx`
 - [x] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/workspaces/page.tsx`
-- [ ] `src/app/(authenticated)/college/quizzes/error.tsx`
-- [ ] `src/app/(authenticated)/college/quizzes/loading.tsx`
+- [x] `src/app/(authenticated)/college/quizzes/error.tsx`
+- [x] `src/app/(authenticated)/college/quizzes/loading.tsx`
 - [x] `src/app/(authenticated)/college/quizzes/page.tsx`
-- [ ] `src/app/(authenticated)/college/resources/error.tsx`
-- [ ] `src/app/(authenticated)/college/resources/loading.tsx`
+- [x] `src/app/(authenticated)/college/resources/error.tsx`
+- [x] `src/app/(authenticated)/college/resources/loading.tsx`
 - [x] `src/app/(authenticated)/college/resources/page.tsx`
-- [ ] `src/app/(authenticated)/college/semester-courses/error.tsx`
-- [ ] `src/app/(authenticated)/college/semester-courses/loading.tsx`
+- [x] `src/app/(authenticated)/college/semester-courses/error.tsx`
+- [x] `src/app/(authenticated)/college/semester-courses/loading.tsx`
 - [x] `src/app/(authenticated)/college/semester-courses/page.tsx`
-- [ ] `src/app/(authenticated)/college/semesters/error.tsx`
-- [ ] `src/app/(authenticated)/college/semesters/loading.tsx`
+- [x] `src/app/(authenticated)/college/semesters/error.tsx`
+- [x] `src/app/(authenticated)/college/semesters/loading.tsx`
 - [x] `src/app/(authenticated)/college/semesters/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/loading.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/loading.tsx`
 - [x] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/error.tsx`
-- [ ] `src/app/(authenticated)/college/students/import/error.tsx`
-- [ ] `src/app/(authenticated)/college/students/import/loading.tsx`
+- [x] `src/app/(authenticated)/college/students/error.tsx`
+- [x] `src/app/(authenticated)/college/students/import/error.tsx`
+- [x] `src/app/(authenticated)/college/students/import/loading.tsx`
 - [x] `src/app/(authenticated)/college/students/import/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/loading.tsx`
+- [x] `src/app/(authenticated)/college/students/loading.tsx`
 - [x] `src/app/(authenticated)/college/students/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/register/error.tsx`
-- [ ] `src/app/(authenticated)/college/students/register/loading.tsx`
+- [x] `src/app/(authenticated)/college/students/register/error.tsx`
+- [x] `src/app/(authenticated)/college/students/register/loading.tsx`
 - [x] `src/app/(authenticated)/college/students/register/page.tsx`
-- [ ] `src/app/(authenticated)/college/verification/error.tsx`
-- [ ] `src/app/(authenticated)/college/verification/loading.tsx`
+- [x] `src/app/(authenticated)/college/verification/error.tsx`
+- [x] `src/app/(authenticated)/college/verification/loading.tsx`
 - [x] `src/app/(authenticated)/college/verification/page.tsx`
-- [ ] `src/app/(authenticated)/college/videos/error.tsx`
-- [ ] `src/app/(authenticated)/college/videos/loading.tsx`
+- [x] `src/app/(authenticated)/college/videos/error.tsx`
+- [x] `src/app/(authenticated)/college/videos/loading.tsx`
 - [x] `src/app/(authenticated)/college/videos/page.tsx`
 
 ### College Admin aliases and setup routes (7)
 
-- [ ] `src/app/(authenticated)/college-admin/departments/error.tsx`
-- [ ] `src/app/(authenticated)/college-admin/departments/loading.tsx`
+- [x] `src/app/(authenticated)/college-admin/departments/error.tsx`
+- [x] `src/app/(authenticated)/college-admin/departments/loading.tsx`
 - [x] `src/app/(authenticated)/college-admin/departments/page.tsx`
-- [ ] `src/app/(authenticated)/college-admin/not-found.tsx`
-- [ ] `src/app/(authenticated)/college-admin/programs/error.tsx`
-- [ ] `src/app/(authenticated)/college-admin/programs/loading.tsx`
+- [x] `src/app/(authenticated)/college-admin/not-found.tsx`
+- [x] `src/app/(authenticated)/college-admin/programs/error.tsx`
+- [x] `src/app/(authenticated)/college-admin/programs/loading.tsx`
 - [x] `src/app/(authenticated)/college-admin/programs/page.tsx`
 
 ### Super Admin colleges routes (31)
 
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/layout.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/layout.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/loading.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/page.tsx`
 
 ### Super Admin organizations routes (4)
 
-- [ ] `src/app/(authenticated)/admin/organizations/error.tsx`
-- [ ] `src/app/(authenticated)/admin/organizations/layout.tsx`
-- [ ] `src/app/(authenticated)/admin/organizations/loading.tsx`
+- [x] `src/app/(authenticated)/admin/organizations/error.tsx`
+- [x] `src/app/(authenticated)/admin/organizations/layout.tsx`
+- [x] `src/app/(authenticated)/admin/organizations/loading.tsx`
 - [x] `src/app/(authenticated)/admin/organizations/page.tsx`
 
 
 ### Super Admin tenant setup routes (10)
 
-- [ ] `src/app/(authenticated)/admin/tenants/create/error.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/create/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/error.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/layout.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/error.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/error.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/loading.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/error.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/layout.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/loading.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/error.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/loading.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
 
 ### College-facing component library (21)
 
@@ -444,15 +444,15 @@
 
 ### Super Admin tenants routes (10; adjacent tenant portal)
 
-- [ ] `src/app/(authenticated)/admin/tenants/create/error.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/create/loading.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/error.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/loading.tsx`
 - [x] `src/app/(authenticated)/admin/tenants/create/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/error.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/layout.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/loading.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/error.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/layout.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/loading.tsx`
 - [x] `src/app/(authenticated)/admin/tenants/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/error.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/loading.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/error.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/loading.tsx`
 - [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
 
 ### Portal-scoped CSS (1)
@@ -475,3 +475,7 @@
 - Committed legacy separate-card radius 8px where `rounded-xl border` was found, while keeping the single authenticated page canvas at 12px. Removed duplicate fallback page padding in college Activity Log.
 - Added tenant portal styling via `src/app/(authenticated)/admin/tenants/layout.tsx`, inherited native control/primary CTA visual tokens; scanned form and directory components.
 - Remaining: source-level fallback/loading/error routes with `[ ]` above, dynamic conditional class expressions, screenshot comparisons, and CI/build verification (explicitly not run).
+
+- 2026-10-19 chat-4 follow-up: fast-forwarded branch from `176dc816004e41afe03cd4ecd70ceaf1796c5fef` to `main` at `a98732e8ad1845a88229c57ba38c4a90f02eca77` (1,405 commits behind, 0 ahead). Inspected 220 remaining College Admin and tenant fallback/layout routes; tokenized legacy skeleton surfaces (`bg-[var(--lms-neutral-100)]` and 9px control radii). All source-level slots in this inventory have now been reviewed; `[x]` does **not** mean visual browser verification.
+- JSX safety: limited changes to class tokens; JSX opening/closing tag sequence was compared before every changed file was committed. No JSX closing tags, `as` casts, routes, handlers or page content were changed. **CI, build, lint and browser were not run**, as directed.
+- Remaining handoff: visual screenshot comparison against the running old LMS is unverified; do not claim pixel-perfect parity. Shared shell and other separately assigned portal work remains with their designated lanes.
