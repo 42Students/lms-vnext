@@ -139,3 +139,10 @@ The lane branch was 651 commits behind `main` and had no unique commits (GitHub 
 - [x] `src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx` delegates its visual skin to the authorized AdminProjectSectionPage.
 - [x] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/page.tsx`, `interviews/[roundId]/page.tsx`, `joining/[offerId]/page.tsx`, `offers/[offerId]/page.tsx`, `screenings/[applicationId]/page.tsx` and `shortlisted/[applicationId]/page.tsx` use the now-swept `SuperAdminPlacementDetailView`; no route-specific card wrappers.
 - [ ] Browser screenshot/computed-style and functional checks remain open; intentionally no app execution, build, test suite, or CI.
+
+
+### Placement lookup and version rollback visual completion
+- [x] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`: Analytics action now has legacy focus/border hover, search label uses semantic body text and student heading uses the  legacy heading token; the selected-college query/response, table columns, and safe truncated states remain untouched.
+- [x] `src/components/projects/super-admin-template-rollback-control.tsx`: rollback section and heading use semantic text tokens. Confirm/rollback behavior, version tokens, API and status/error messages unchanged.
+- [x] `src/components/projects/template-metadata-edit-control.tsx` and `project-template-controls.tsx`: source-reviewed; already consume shared Button, Input, Textarea, Checkbox and Dialog; no hard-coded palette rewrite needed in their form skin.
+- [ ] Screenshots/computed-style comparison and functional verification still pending; changes are source-only, and no app, TypeScript build, tests, or CI were run.
