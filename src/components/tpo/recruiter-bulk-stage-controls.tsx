@@ -3,6 +3,9 @@
 import { useState } from "react";
 import {tpoBulkFailedLines,tpoBulkFailedSummary} from "@/modules/placements/tpo-bulk-failed-result-model";
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/checkbox";
 
 type LeadChoice = {
   id: string;
@@ -20,7 +23,7 @@ type BulkResult = {
 };
 
 const fieldClass =
-  "min-h-10 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+  "min-h-11 md:min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground";
 
 export function RecruiterBulkStageControls({
   rows,
@@ -152,7 +155,7 @@ export function RecruiterBulkStageControls({
 
   return (
     <section
-      className="space-y-3 rounded-lg border border-border bg-surface p-4"
+      className="min-w-0 space-y-3 border-y border-border py-4"
       aria-label="Bulk recruiter lead stage actions"
     >
       <div>
@@ -171,9 +174,8 @@ export function RecruiterBulkStageControls({
         <>
           <div className="max-h-52 space-y-1 overflow-y-auto rounded-md border border-border p-2">
             {available.map((row) => (
-              <label key={row.id} className="flex min-h-9 items-center gap-2 px-1 py-1 text-sm">
-                <input
-                  type="checkbox"
+              <label key={row.id} className="flex min-h-11 md:min-h-9 items-center gap-2 px-1 py-1 text-sm">
+                <Checkbox
                   checked={chosenIds.includes(row.id)}
                   onChange={(event) => choose(row.id, event.target.checked)}
                   disabled={busy || (chosenIds.length >= 100 && !chosenIds.includes(row.id))}
@@ -189,7 +191,7 @@ export function RecruiterBulkStageControls({
           <div className="flex flex-wrap items-end gap-3">
             <label className="text-sm font-medium text-foreground">
               New manual stage
-              <select
+              <Select
                 value={action}
                 onChange={(event) => {
                   setAction(event.target.value as "CONTACTED" | "NOT_NOW" | "NEW");
@@ -201,13 +203,13 @@ export function RecruiterBulkStageControls({
                 <option value="CONTACTED">Mark Contacted</option>
                 <option value="NEW">Restore to New</option>
                 <option value="NOT_NOW">Not Now</option>
-              </select>
+              </Select>
             </label>
             {action === "NOT_NOW" ? (
               <>
                 <label className="min-w-44 flex-1 text-sm font-medium text-foreground">
                   Reason (required)
-                  <input
+                  <Input
                     value={reason}
                     onChange={(event) => {setReason(event.target.value);setReviewOpen(false);}}
                     maxLength={255}
@@ -217,7 +219,7 @@ export function RecruiterBulkStageControls({
                 </label>
                 <label className="text-sm font-medium text-foreground">
                   Revisit date (optional)
-                  <input
+                  <Input
                     type="date"
                     min={todayIst}
                     value={revisitDate}
@@ -237,10 +239,10 @@ export function RecruiterBulkStageControls({
               {busy ? "Applying…" : reviewOpen&&reviewSignature===currentSignature ? "Confirm stage changes" : "Review and confirm"}
             </Button>
           </div>
-          {reviewOpen&&reviewSignature===currentSignature?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+          {reviewOpen&&reviewSignature===currentSignature?<div role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
             Confirm {selected.length} recruiter lead stage changes to {action==="CONTACTED"?"Contacted":action==="NEW"?"New":"Not now"}.
             {action==="NOT_NOW"?<p>Reason: {reason.trim()}{revisitDate?" · Revisit "+revisitDate:""}</p>:null}
-            <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewOpen(false)}>Edit selection</button>
+            <Button variant="secondary" type="button" className="lms-inline-link mt-2 min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" onClick={()=>setReviewOpen(false)}>Edit selection</Button>
           </div>:null}
           <p aria-live="polite" className="text-xs text-body">
             {selected.length} / 100 leads selected.
@@ -256,21 +258,21 @@ export function RecruiterBulkStageControls({
            <p>Undo this audited batch within five minutes. Undo is rejected if any changed lead has since been edited.</p>
            {undoReview?<p role="status" className="mt-2">Restore the previous manual stage, reason and revisit date for each changed recruiter?</p>:null}
            <div className="mt-2 flex gap-2">
-            <button type="button" disabled={undoBusy} className={fieldClass} onClick={()=>void restore()}>
-             {undoBusy?"Restoring…":undoReview?"Confirm undo":"Undo stage batch"}</button>
-            {undoReview?<button type="button" className={fieldClass} onClick={()=>setUndoReview(false)}>Cancel</button>:null}
+            <Button variant="secondary" type="button" disabled={undoBusy} className={fieldClass} onClick={()=>void restore()}>
+             {undoBusy?"Restoring…":undoReview?"Confirm undo":"Undo stage batch"}</Button>
+            {undoReview?<Button variant="secondary" type="button" className={fieldClass} onClick={()=>setUndoReview(false)}>Cancel</Button>:null}
            </div>
           </div>:null}
           {tpoBulkFailedLines(results).length>0?(
-            <button type="button" className={fieldClass+" mt-2"}
-              onClick={()=>void copyFailed()}>Copy failed</button>
+            <Button variant="secondary" type="button" className={fieldClass+" mt-2"}
+              onClick={()=>void copyFailed()}>Copy failed</Button>
           ):null}
           {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
-          {retryable.length>0?<button type="button" disabled={busy} className={fieldClass+" mt-2"}
+          {retryable.length>0?<Button variant="secondary" type="button" disabled={busy} className={fieldClass+" mt-2"}
             onClick={()=>{setChosenIds(retryable.slice(0,100).map(item=>item.leadId));setReviewOpen(false);setError("");
               setCopyNotice("Failed rows selected for review. Check their current stage after refreshing before retrying.");}}>
             Select failed for review ({retryable.length})
-          </button>:null}
+          </Button>:null}
           <p className="text-sm text-body">
             Updated: {results.filter((item) => item.status === "updated").length};
             unchanged: {results.filter((item) => item.status === "unchanged").length};
