@@ -112,16 +112,16 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
       <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
        <label className="flex min-w-48 flex-1 flex-col gap-1 text-sm font-semibold text-body">Search organizations
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
-         className="min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
+         className="w-full" />
        </label>
        <label className="flex flex-col gap-1 text-sm font-semibold text-body">Rows per page
-        <Select name="pageSize" defaultValue={String(pageSize)} className="min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3">
+        <Select name="pageSize" defaultValue={String(pageSize)} className="w-full">
          {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </Select>
        </label>
        <Button type="submit">Search</Button>
-       <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline">Clear search</Link>
-       <Link href={href(page)} className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline">Refresh</Link>
+       <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link>
+       <Link href={href(page)} className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Refresh</Link>
       </form>
       <p role="status" className="text-sm text-body">{q?matching.length+" of "+organizations.length:organizations.length} organizations · Page {page} of {totalPages}</p>
       {organizations.length===0 ? <EmptyState title="No organizations in this scope" description="There are no active organizations visible under the current Super Admin safety scope. Create one only when your role and scope permit it."/> : null}
