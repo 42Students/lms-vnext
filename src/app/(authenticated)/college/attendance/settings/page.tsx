@@ -35,7 +35,7 @@ export default async function CollegeAttendanceSettingsPage() {
         actions={
           <Link
             href="/college/attendance"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle"
           >
             Back to Attendance
           </Link>
