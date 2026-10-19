@@ -827,7 +827,7 @@ export default async function HrPlacementJobPage({
                         <article key={candidate.key} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
                           <p className="break-words font-semibold text-foreground">{candidate.name}</p>
                           <div className="mt-2 flex flex-wrap gap-2">
-                            <StatusBadge>{candidate.outcome ?? "UNRECORDED"}</StatusBadge>
+                            <StatusBadge tone={candidate.outcome==="PASS"?"success":candidate.outcome==="FAIL"?"error":candidate.outcome==="HOLD"?"warning":"neutral"}>{candidate.outcome ?? "UNRECORDED"}</StatusBadge>
                             <StatusBadge>{candidate.status}</StatusBadge>
                           </div>
                           {candidate.scorePercent != null
