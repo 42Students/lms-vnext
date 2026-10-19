@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import { Textarea } from "@/components/ui/textarea";
 import {
   type FormEvent,
@@ -491,20 +492,12 @@ export function FacultyAttendanceWorkspace({
       <section className="border-b border-border pb-5">
         <PageHeader
           title="Attendance"
+          eyebrow={workspace.course.courseCode + " · " + workspace.course.sectionName}
           description="See attendance history and monthly trends in one place."
-          actions={
-            <Button variant="secondary" onClick={() => setScheduleOpen(true)}>
-              Schedule Class
-            </Button>
-          }
+          actions={<Button variant="secondary" onClick={() => setScheduleOpen(true)}>Schedule Class</Button>}
         />
-        <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-          {workspace.course.courseCode} ·{" "}
-          {workspace.course.sectionName}
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {workspace.course.courseName} ·{" "}
-          {workspace.course.academicPeriodName}
+        <p className="text-xs text-muted-foreground">
+          {workspace.course.courseName} · {workspace.course.academicPeriodName}
         </p>
 
         <div className="mt-4 inline-flex rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-1">
