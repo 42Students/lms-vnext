@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -259,9 +260,7 @@ export function KnownErrorsWorkspace({
         </Button>
       </div>
       {items.length === 0 ? (
-        <p className="border-y border-border py-6 text-sm text-muted-foreground">
-          No tracked errors yet. This does not prove that live Cloud Logging contains no errors.
-        </p>
+        <EmptyState title="No tracked errors" description="This does not prove that live Cloud Logging contains no errors."/>
       ) : (
         <div className="divide-y divide-border border-y border-border">
           {items.map((item) => <KnownErrorCard key={item.id} item={item} />)}
