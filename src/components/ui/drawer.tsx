@@ -53,3 +53,81 @@ export function Drawer({ open, onOpenChange, title, description, children, foote
     </div>
   </dialog>;
 }
+
+/** A single form subtree lives inside this shared drawer both inline (tablet)
+ * and as a modal panel (phone). No duplicate inputs, names, or form state. */
+export function ResponsiveFilterDrawer({
+  id, open, onOpenChange, title, launcher, children,
+}: {
+  id: string;
+  open: boolean;
+  onOpenChange: (next: boolean) => void;
+  title: string;
+  launcher: React.RefObject<HTMLButtonElement | null>;
+  children: ReactNode;
+}) {
+  const panel = useRef<HTMLDivElement>(null);
+  const { availableHeight } = useOverlayWebview({
+    open, dismissible: true, onDismiss: () => onOpenChange(false),
+  });
+  useEffect(() => {
+    if (!open) return;
+    const media = window.matchMedia("(min-width: 640px)");
+    const onResize = () => { if (media.matches) onOpenChange(false); };
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    panel.current?.querySelector<HTMLElement>(
+      'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href]',
+    )?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onOpenChange(false);
+      }
+      if (event.key !== "Tab" || !panel.current) return;
+      const elements = Array.from(panel.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )).filter(el => el.getClientRects().length > 0);
+      if (!elements.length) return;
+      if (event.shiftKey && document.activeElement === elements[0]) {
+        event.preventDefault();
+        elements.at(-1)?.focus();
+      } else if (!event.shiftKey && document.activeElement === elements.at(-1)) {
+        event.preventDefault();
+        elements[0]?.focus();
+      }
+    };
+    media.addEventListener("change", onResize);
+    document.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    return () => {
+      document.body.style.overflow = overflow;
+      media.removeEventListener("change", onResize);
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("keydown", onKey);
+      if (!media.matches) launcher.current?.focus();
+    };
+  }, [open, onOpenChange, launcher]);
+  return <>
+    {open ? <button type="button" aria-label="Close filters" onClick={() => onOpenChange(false)}
+      className="fixed inset-0 z-30 bg-[rgba(30,54,63,0.1)] sm:hidden" /> : null}
+    <div id={id} ref={panel} data-slot="responsive-filter-drawer"
+      style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties}
+      role={open ? "dialog" : undefined} aria-modal={open || undefined}
+      aria-label={open ? title + " options" : undefined}
+      className={cx(
+        "min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4",
+        "sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none",
+        open ? "fixed inset-0 z-40 flex max-h-[var(--lms-visual-height)] min-h-0 w-full flex-col overflow-hidden pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-[var(--lms-overlay-shadow)]"
+          : "hidden sm:block",
+      )}>
+      <div data-slot="responsive-filter-header" className="mb-4 flex shrink-0 items-center justify-between gap-3 sm:hidden">
+        <h2 className="m-0 text-[18px] font-semibold leading-6 text-[var(--lms-heading)]">{title}</h2>
+        <Button type="button" variant="ghost" aria-label="Close filters"
+          onClick={() => onOpenChange(false)}><OverlayCloseIcon /></Button>
+      </div>
+      <ScrollCue axis="y" label={title + " options"} className={open ? "min-h-0 flex-1" : undefined}
+        viewportClassName={open ? "h-full min-h-0 pb-4" : "overflow-visible"}>{children}</ScrollCue>
+    </div>
+  </>;
+}
