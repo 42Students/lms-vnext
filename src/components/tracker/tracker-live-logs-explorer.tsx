@@ -225,13 +225,13 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       {!muteTarget?.muted?<label className="grid gap-1 text-sm font-semibold">
         Reason (optional)
         <input value={muteReason} maxLength={255} onChange={event=>setMuteReason(event.target.value)}
-          className="min-h-9 rounded border border-border bg-background px-3"/>
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
       </label>:null}
     </ConfirmDialog>
     <Dialog open={reportOpen} onOpenChange={setReportOpen} title="Report for Claude">
       <p className="mt-1 text-sm text-body">Copy a redacted report or download the selected time range.</p>
       <textarea readOnly aria-label="Redacted tracker log report" value={trackerLogMarkdown(items)} rows={8}
-        className="mt-3 w-full rounded border border-border bg-surface p-3 text-xs"/>
+        className="mt-3 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-xs"/>
       <div className="mt-3 flex flex-wrap gap-3">
         <button type="button" onClick={()=>void copy(trackerLogMarkdown(items))}
           className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Copy report</button>
