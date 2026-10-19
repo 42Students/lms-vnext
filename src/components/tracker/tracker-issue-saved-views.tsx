@@ -1,4 +1,6 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -54,26 +56,26 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
     <h2 className="mb-2 font-semibold">Saved views</h2>
     <div className="flex flex-wrap items-end gap-2">
       <label className="grid gap-1 text-sm font-semibold">View name
-        <input value={name} onChange={event=>setName(event.target.value)}
+        <Input value={name} onChange={event=>setName(event.target.value)}
           maxLength={60} placeholder="Name these filters"
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3"/>
+         />
       </label>
-      <button type="button" onClick={save}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
+      <Button variant="secondary" type="button" onClick={save}
+       >
         Save current filters
-      </button>
+      </Button>
     </div>
     {views.length?<ul className="mt-3 flex flex-wrap gap-2">
       {views.map(view=><li key={view.name} className="flex items-center gap-1 rounded-[var(--lms-control-radius)] border border-border">
-        <button type="button" onClick={()=>router.push("/tracker/issues"+(view.filters?"?"+view.filters:""))}
-          className="min-h-9 px-3 text-sm font-semibold text-primary-text">
+        <Button variant="ghost" type="button" onClick={()=>router.push("/tracker/issues"+(view.filters?"?"+view.filters:""))}
+         >
           {view.name}
-        </button>
-        <button type="button" aria-label={"Delete saved view "+view.name}
+        </Button>
+        <Button variant="ghost" className="border-l border-border" type="button" aria-label={"Delete saved view "+view.name}
           onClick={()=>persist(views.filter(item=>item.name!==view.name))}
-          className="min-h-9 border-l border-border px-3 text-sm font-semibold">
+         >
           Delete
-        </button>
+        </Button>
       </li>)}
     </ul>:<p className="mt-2 text-sm text-body">No saved views yet.</p>}
     {notice?<p role="alert" className="mt-2 text-sm text-error">{notice}</p>:null}
