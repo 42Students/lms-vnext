@@ -46,6 +46,13 @@ export function HrRecruiterBell(){
   const id=setInterval(()=>{void load();},30000);
   return ()=>{clearInterval(id);loadGate.current.invalidate();};
  },[load]);
+ useEffect(()=>{
+  const mq=window.matchMedia("(max-width:767px)");
+  const check=()=>setMobile(mq.matches);
+  check();
+  mq.addEventListener("change",check);
+  return ()=>mq.removeEventListener("change",check);
+ },[]);
  async function markAll(){
   if(!markAllGate.current.tryBegin())return;
   setLoading(true);setSaveError("");
