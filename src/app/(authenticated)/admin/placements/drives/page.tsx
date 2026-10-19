@@ -75,10 +75,10 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   <PageHeader title="All drives"
    description="Review and open every persisted non-archived drive in the selected college."
    actions={<Link href="/admin/placements/new"
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">Create drive →</Link>} />
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Create drive →</Link>} />
   <div className="flex flex-wrap gap-3">
    <Link href="/admin/placements" className="text-sm font-semibold text-primary-text">← Placement overview</Link>
-   <Link href="/admin/placements/student-lookup" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Look up a student&apos;s placement status →</Link>
+   <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Look up a student&apos;s placement status →</Link>
   </div>
   <form action="/admin/placements/drives" method="get"
    className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
