@@ -49,6 +49,7 @@
  }
  .lms-desktop-sidebar .lms-sidebar-nav .lms-nav-heading {
   justify-content:center;
+  font-size:0;
  }
  .lms-desktop-sidebar .lms-sidebar-nav .lms-nav-heading-text {
   display:none;
@@ -61,6 +62,7 @@
  }
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-nav .lms-nav-heading {
   justify-content:flex-start;
+  font-size:12px;
  }
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-nav .lms-nav-heading-text {
   display:block;
@@ -138,7 +140,7 @@
  line-height:1;
  opacity:.55;
 }
-.lms-sidebar-nav .lms-sidebar-item-icon svg {display:block;width:20px;height:20px;}
+.lms-sidebar-nav .lms-sidebar-item-icon svg {display:block;width:20px;height:20px;flex-shrink:0;}
 /* The original legacy icon box keeps 0.55 opacity in every state:
  * active/hover recolor its inherited foreground, not its opacity. */
 .lms-sidebar-nav .lms-nav-label {
@@ -166,6 +168,7 @@
  white-space:nowrap;
 }
 .lms-sidebar-nav .lms-nav-heading {
+ padding:0;
  height:18px;
  min-height:18px;
  display:flex;
@@ -182,7 +185,7 @@
 /* The legacy AntD mobile drawer uses 12px body gutters and 10px
  * item padding, not the 8px desktop icon-rail gutter. */
 @media (max-width:767px) {
- .lms-mobile-sidebar .lms-sidebar-nav {padding-inline:12px;}
+ .lms-mobile-sidebar .lms-sidebar-nav {padding-inline:12px;overflow-x:hidden;scrollbar-width:none;}
  .lms-mobile-sidebar .lms-sidebar-item {
   padding:10px;
   margin-bottom:2px;
@@ -217,13 +220,14 @@
  }
 }
 .lms-mobile-sidebar .lms-nav-group-rule {
+ pointer-events:none;
  align-self:stretch;
  width:auto;
  margin-inline:12px;
 }
 .lms-sidebar-heading-label {min-width:0; white-space:nowrap;}
-.lms-sidebar-role-details {z-index:2;min-width:0;margin-top:auto;transition:opacity .15s cubic-bezier(.2,0,0,1);}
-.lms-sidebar-scroll {overscroll-behavior-y:contain;overflow-x:hidden;scrollbar-width:none;}
+.lms-sidebar-role-details {z-index:2;min-width:0;margin-top:auto;padding:25px 16px;transition:opacity .15s cubic-bezier(.2,0,0,1);}
+.lms-sidebar-scroll {overscroll-behavior-y:contain;overflow-x:hidden;text-wrap:nowrap;scrollbar-width:none;}
 .lms-sidebar-scroll::-webkit-scrollbar {display:none;width:0;height:0;}
 /* Legacy TPO rail exposes a 4px scroll thumb only while expanded.
  * Keep it hidden for the collapsed icon rail and non-TPO workspaces. */
