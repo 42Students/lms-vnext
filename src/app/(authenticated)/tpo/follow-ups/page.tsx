@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { TpoDueFollowupWorkspace } from "@/components/tpo/tpo-due-followup-workspace";
 import { getTpoDueFollowupQueue } from "@/modules/placements/tpo-followup-queue-service";
 import { tpoFollowupQueueHref,tpoFollowupQueueExportHref } from "@/modules/placements/tpo-followup-queue-model";
@@ -64,13 +65,13 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
           Export filtered follow-ups CSV
         </a><TpoDueFollowupWorkspace data={data} />
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3"><span className="text-body">Showing {data.total===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.total,data.page*data.pageSize)} of {data.total} matching tasks · page {data.page} of {data.totalPages}</span><Pagination label="Follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>tpoFollowupQueueHref({scope,window,q,page})}/></div></> : (
-        <section role="status" className="border-t border-border py-6">
+        <Alert tone="warning" className="border-t border-border">
           <h2 className="font-semibold text-foreground">Recruiter follow-ups unavailable</h2>
           <p className="mt-2 text-sm text-body">
             DB09 must be verified before recruiter follow-ups can be loaded or changed.
             Unavailable records are not counted as zero.
           </p>
-        </section>
+        </Alert>
       )}
     </div>
   );
