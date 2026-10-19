@@ -83,7 +83,7 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
     <ul className="space-y-2">
       {files.map(file => {
         const descriptor = fileStatusDescriptor(file.status);
-        return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface p-3">
+        return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-3">
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={descriptor.detail}><StatusBadge tone={descriptor.tone}>{descriptor.label}</StatusBadge></span>
           {descriptor.usable ? <Button type="button" variant="secondary" size="sm"
