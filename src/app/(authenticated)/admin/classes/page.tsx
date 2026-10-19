@@ -35,7 +35,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
     {!selected ? <p role="status" className="rounded-xl border border-border bg-surface p-5">Select a college to continue. Choose a college in the header above to see its classes.</p> : null}
     {data && options ? <>
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
-      <section aria-label="Filter managed classes" className="">
+      <section aria-label="Filter managed classes" className="border-b border-border pb-4">
         <form method="get" action="/admin/classes" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 w-full sm:min-w-44 gap-1 text-sm font-semibold text-body">Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
@@ -67,7 +67,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
           <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
         </form>
       </section>
-      <section aria-label="Manage classes" className="space-y-3">
+      <section aria-label="Manage classes" className="space-y-3 pt-2">
         <h2 className="text-lg font-semibold">Manage classes</h2>
         <p className="text-sm text-muted-foreground">Edit class names, codes and capacities within the selected college.</p>
         <DataTable<(typeof data.items)[number]> caption="Manage classes" rows={data.items} getRowKey={row=>row.id}
