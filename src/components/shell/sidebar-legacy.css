@@ -185,7 +185,7 @@
 /* The legacy AntD mobile drawer uses 12px body gutters and 10px
  * item padding, not the 8px desktop icon-rail gutter. */
 @media (max-width:767px) {
- .lms-mobile-sidebar .lms-sidebar-nav {padding-inline:12px;}
+ .lms-mobile-sidebar .lms-sidebar-nav {padding-inline:12px;overflow-x:hidden;scrollbar-width:none;}
  .lms-mobile-sidebar .lms-sidebar-item {
   padding:10px;
   margin-bottom:2px;
