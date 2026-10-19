@@ -5,6 +5,7 @@ import { cx } from "@/lib/class-names";
 
 export type DropdownProps = Omit<HTMLAttributes<HTMLDetailsElement>, "children"> & {
   trigger: ReactNode;
+  triggerClassName?: string;
   children: ReactNode;
   label?: string;
   align?: "start" | "end";
@@ -13,7 +14,7 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDetailsElement>, "children">
 };
 
 /** Native disclosure handles Enter/Space without a JavaScript dependency. */
-export function Dropdown({ trigger, children, label, align = "start", mobileSheet = false, className, ...props }: DropdownProps) {
+export function Dropdown({ trigger, triggerClassName, children, label, align = "start", mobileSheet = false, className, ...props }: DropdownProps) {
   const rootRef = useRef<HTMLDetailsElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -90,7 +91,7 @@ export function Dropdown({ trigger, children, label, align = "start", mobileShee
       rootRef.current.open = true;
       const options = Array.from(rootRef.current.querySelectorAll<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"]):not(:disabled), [data-slot="dropdown"] a[href]:not([aria-disabled="true"])'));
       (event.key === "ArrowUp" ? options.at(-1) : options[0])?.focus();
-    }} className="inline-flex min-h-9 cursor-pointer list-none items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden", mobileSheet ? "min-h-11" : "")}>{trigger}</summary>
+    }} className="inline-flex min-h-9 cursor-pointer list-none items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden", mobileSheet ? "min-h-11" : "", triggerClassName)}>{trigger}</summary>
     <div ref={panelRef} data-slot="dropdown"
       className={cx("z-40 min-w-[100px] overflow-y-auto overscroll-contain border border-[var(--lms-canvas-border)] bg-white text-[14px] leading-5 text-[var(--lms-body-text)] shadow-[var(--lms-dropdown-shadow)]", mobileSheet ? "fixed inset-x-0 bottom-0 max-h-[70dvh] rounded-t-[12px] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:absolute sm:inset-x-auto sm:bottom-auto sm:top-[calc(100%_+_5px)] sm:max-h-72 sm:w-72 sm:rounded-[6px] sm:p-3" : "absolute top-[calc(100%_+_5px)] max-h-[min(32rem,calc(100dvh_-_2rem))] max-w-[calc(100vw_-_1.5rem)] rounded-[6px] px-6 py-4", align === "end" ? "sm:right-0" : "sm:left-0")}
       onClick={event => {
