@@ -148,7 +148,7 @@ export function CollegeBrandingForm({
                 {key === "primaryColor" ? "Primary colour" : "Secondary colour"}
               </span>
               <div className="flex items-center gap-2">
-                <input
+                <Input
                   type="color"
                   aria-label={`${key} picker`}
                   value={validColor(values[key]) ?? "#26BAC7"}
