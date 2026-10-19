@@ -127,9 +127,10 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           onChange={event => { setQuery(event.target.value); setOpen(true); }}
           onKeyDown={event => {
             if (event.key === "Enter") { event.preventDefault(); submit(); }
-            if (event.key === "ArrowDown" && open) {
-              const first = root.current?.querySelector<HTMLElement>('[role="option"], button[data-tpo-result]');
-              if (first) { event.preventDefault(); first.focus(); }
+            if ((event.key === "ArrowDown" || event.key === "ArrowUp") && open) {
+              const options = root.current?.querySelectorAll<HTMLElement>('[role="option"]');
+              const target = event.key === "ArrowDown" ? options?.[0] : options?.[options.length - 1];
+              if (target) { event.preventDefault(); target.focus(); }
             }
             if (event.key === "Escape") { event.preventDefault(); setOpen(false); setMobileOpen(false); }
           }}/>
