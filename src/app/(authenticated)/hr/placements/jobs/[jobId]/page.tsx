@@ -693,7 +693,7 @@ export default async function HrPlacementJobPage({
               { key: "kind", header: "Type", mobilePriority: "secondary", cell: offer => offer.kind === "LOI" ? "Letter of intent" : "Offer" },
               { key: "ctc", header: "CTC (LPA)", mobilePriority: "secondary", cell: offer => offer.annualCtcInr == null ? "—" :
                 (offer.annualCtcInr / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) },
-              { key: "status", header: "Status", mobilePriority: "secondary", cell: offer => <StatusBadge>{recruiterOfferStatusLabel(offer.status)}</StatusBadge> },
+              { key: "status", header: "Status", mobilePriority: "secondary", cell: offer => <StatusBadge tone={offer.status==="ACCEPTED"?"success":offer.status==="DECLINED"?"error":"info"}>{recruiterOfferStatusLabel(offer.status)}</StatusBadge> },
               { key: "deadline", header: "Reply by", mobilePriority: "secondary", cell: offer => offer.expiresAt ?
                 new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(offer.expiresAt) : "Not set" },
               { key: "joining", header: "Joining", mobilePriority: "secondary", cell: offer =>
