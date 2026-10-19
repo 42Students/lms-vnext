@@ -495,8 +495,8 @@ export function AdminCourseOverview({
         {catalogue&&catalogueQuery?<form method="get" action={courseBasePath}
          className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
          <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-sm font-semibold">Search courses
-          <input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
-           placeholder="Name, code or department" className="min-h-11 min-w-0 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/>
+          <Input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
+           placeholder="Name, code or department" className="min-h-11 min-w-0"/>
          </label>
          <label className="grid gap-1 text-sm font-semibold">Sort
           <Select name="sort" defaultValue={catalogueQuery.sort}
