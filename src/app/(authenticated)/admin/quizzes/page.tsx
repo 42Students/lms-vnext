@@ -48,8 +48,9 @@ export default async function SuperAdminQuizzesPage({
   </div>;
   const data=dataResult.value;
   return <div className="space-y-4">
+    <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <a href={adminAssessmentExportHref("QUIZ",query.data)}
-     className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">Export quizzes.csv</a>
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle sm:min-h-9">Export quizzes.csv</a>
     {lessonsResult.status==="fulfilled"?
       <CollegeQuizCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>:
       <p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
