@@ -1,0 +1,43 @@
+import { describe, expect, it } from "vitest";
+import { existsSync, readFileSync } from "node:fs";
+
+const mobile = () => readFileSync("src/components/shell/learner-faculty-mobile-footer.tsx", "utf8");
+const styles = () => readFileSync("src/components/shell/legacy-mobile-footer.css", "utf8");
+const shell = () => readFileSync("src/components/shell/app-shell.tsx", "utf8");
+const legacy = () => readFileSync("docs/design/legacy-styles/components___antddesign.scss", "utf8");
+
+/** Static old-LMS guardrails; no app/CI is executed in the owner sprint. */
+describe("chat-19 legacy learner/faculty mobile footer", () => {
+  it("retains original bottom height and phone safe-area geometry", () => {
+    expect(legacy()).toContain("height: calc(64px + env(safe-area-inset-bottom, 0px))");
+    expect(styles()).toContain("height:calc(64px + env(safe-area-inset-bottom,0px))");
+    expect(styles()).toContain("bottom:0");
+    expect(styles()).toContain("padding-bottom:env(safe-area-inset-bottom,0px)");
+    expect(styles()).toContain("box-shadow:0 -2px 8px rgba(0,0,0,.04)");
+  });
+  it("uses 30px original artwork, neutral inactive opacity and active opacity 1", () => {
+    expect(mobile()).toContain("width={30} height={30}");
+    expect(styles()).toContain("opacity:.5");
+    expect(styles()).toContain(".active .lms-legacy-mobile-footer-icon {opacity:1;}");
+  });
+  it("retains learner and faculty icon order without mixing portal links", () => {
+    const content = mobile();
+    const learner = content.slice(content.indexOf("const learnerLinks"), content.indexOf("const facultyLinks"));
+    const faculty = content.slice(content.indexOf("const facultyLinks"), content.indexOf("/** The original LMS"));
+    expect(learner).toContain('href: "/learn/courses"');
+    expect(learner).toContain('href: "/learn/notifications"');
+    expect(learner).toContain('href: "/learn/profile"');
+    expect(faculty).toContain('href: "/teacher/allQuizzes"');
+    expect(faculty).toContain('href: "/teacher/allAssignments"');
+    expect(faculty).not.toContain("/tpo/");
+    expect(content).toContain("if (!learner && !faculty) return null");
+    const imagePaths = [...content.matchAll(/icon: "(\/assets\/images\/[^"]+)"/g)];
+    for (const match of imagePaths) expect(existsSync("public" + match[1]), match[1]).toBe(true);
+  });
+  it("mounts once outside main and keeps route-level TPO footer separate", () => {
+    expect(shell()).toContain('import { LearnerFacultyMobileFooter } from "./learner-faculty-mobile-footer"');
+    expect(shell()).toContain("<LearnerFacultyMobileFooter />");
+    expect(shell().indexOf("<LearnerFacultyMobileFooter />")).toBeGreaterThan(shell().indexOf("</main>"));
+    expect(mobile()).toContain('data-slot="legacy-mobile-footer"');
+  });
+});
