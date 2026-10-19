@@ -26,7 +26,7 @@ export default async function FacultyCourseAssessmentHealthPage({
     page:first(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid Section report filters</h1>
+    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid Section report filters</h1>
     <Link href="/teacher/courses" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to courses</Link>
   </section>;
   const context = await getCurrentRequestContext();
@@ -37,7 +37,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       description={[data.delivery.courseName,data.delivery.sectionName,
         data.delivery.academicPeriodName].join(" · ")}
       actions={<Link href={back + "/students"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Section students
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-5">
@@ -48,10 +48,10 @@ export default async function FacultyCourseAssessmentHealthPage({
       </p>
     </section>
     <form action={facultyCourseHealthHref({...data.query,page:1}).split("?")[0]}
-      method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      method="get" className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment type
         <select name="kind" defaultValue={data.query.kind}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All published assessments</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>

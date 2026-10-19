@@ -56,7 +56,7 @@ export default async function SuperAdminModuleAccessPage({
           className="w-full"/>
       </label>
       <Button type="submit">Filter</Button>
-      <Link className="inline-flex min-h-11 items-center px-3 py-3 text-sm font-semibold text-primary-text"
+      <Link className="inline-flex min-h-9 items-center px-3 py-3 text-sm font-semibold text-primary-text"
         href="/admin/module-access">Clear filters</Link>
     </form>
     <p role="status" className="text-sm text-body">

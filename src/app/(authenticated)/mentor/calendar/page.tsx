@@ -25,8 +25,8 @@ export default async function MentorCalendarPage({searchParams}:{
     projectState:raw.projectState,search:raw.search,period:raw.period,
   }));
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <h1>Invalid meeting filters</h1>
-    <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+    <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid meeting filters</h1>
+    <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const access=await resolveOptionalModuleAccess(context).catch(()=>null);
@@ -48,9 +48,9 @@ export default async function MentorCalendarPage({searchParams}:{
           defaultValue={parsed.data.search} placeholder="Meeting or project"/>
       </label>}>
     <form id="mentor-calendar-filters" method="get" action="/mentor/calendar"
-       className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+       className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="grid min-w-0 max-w-full gap-1 text-sm font-semibold text-body">Action needed
-        <Select name="attention" defaultValue={parsed.data.attention} className="min-h-11 w-full max-w-full rounded-md border border-border bg-background px-3">
+        <Select name="attention" defaultValue={parsed.data.attention} className="min-h-11 w-full max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="ALL">All meetings</option><option value="OVERDUE_REQUESTED">Past-dated meeting requests still awaiting response</option>
           <option value="SOON_SCHEDULED">Scheduled within 48 hours</option>
           <option value="MISSED_SCHEDULED">Past-day scheduled meetings without completion</option>
@@ -58,7 +58,7 @@ export default async function MentorCalendarPage({searchParams}:{
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
         <Select name="projectId" defaultValue={parsed.data.projectId??""}
-          className="min-h-11 max-w-full rounded-md border border-border bg-background px-3">
+          className="min-h-11 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="">All projects with meetings</option>
           {[...new Map(meetings.map(row=>[row.projectId,row.projectTitle])).entries()]
             .sort((a,b)=>a[1].localeCompare(b[1])||a[0].localeCompare(b[0]))
@@ -66,28 +66,28 @@ export default async function MentorCalendarPage({searchParams}:{
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sprint association
-        <Select name="sprint" defaultValue={parsed.data.sprint} className="min-h-11 rounded-md border border-border bg-background px-3">
+        <Select name="sprint" defaultValue={parsed.data.sprint} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="ALL">All meetings</option><option value="LINKED">Linked to a recorded Sprint</option>
           <option value="UNLINKED">No linked Sprint</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Join link
         <Select name="join" defaultValue={parsed.data.join}
-          className="min-h-11 rounded-md border border-border bg-background px-3">
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="ALL">All meetings</option><option value="HAS_SAFE_LINK">Valid join link</option>
           <option value="NO_SAFE_LINK">No safe join link</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <Select name="status" defaultValue={parsed.data.status}
-          className="min-h-11 rounded-md border border-border bg-background px-3">
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           {(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"] as const).map(status=>
             <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Meeting type
         <Select name="type" defaultValue={parsed.data.type}
-          className="min-h-11 rounded-md border border-border bg-background px-3">
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="ALL">All types</option>
           <option value="GENERAL">General</option><option value="PLANNING">Planning</option>
           <option value="STANDUP">Standup</option><option value="REVIEW">Review</option>
@@ -96,7 +96,7 @@ export default async function MentorCalendarPage({searchParams}:{
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assigned project state
         <Select name="projectState" defaultValue={parsed.data.projectState}
-          className="min-h-11 rounded-md border border-border bg-background px-3">
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="ALL">All project states</option>
           <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
           <option value="COMPLETED">Completed</option><option value="ARCHIVED">Archived</option>
@@ -104,14 +104,14 @@ export default async function MentorCalendarPage({searchParams}:{
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">IST dates
         <Select name="period" defaultValue={parsed.data.period}
-          className="min-h-11 rounded-md border border-border bg-background px-3">
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="ALL">All dates</option><option value="TODAY">Today</option>
           <option value="NEXT_7_DAYS">Next 7 IST days</option>
           <option value="PAST_7_DAYS">Previous 7 IST days</option>
         </Select>
       </label>
       <Button type="submit" variant="primary">Filter</Button>
-      <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+      <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
     </form>
     </FilterBar>
      <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -119,7 +119,7 @@ export default async function MentorCalendarPage({searchParams}:{
         sprint:parsed.data.sprint,join:parsed.data.join,projectId:parsed.data.projectId??"",attention:parsed.data.attention,status:parsed.data.status,type:parsed.data.type,
         projectState:parsed.data.projectState,
         search:parsed.data.search,period:parsed.data.period,
-      }).toString()} download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      }).toString()} download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Export filtered meeting metadata CSV (max 200)
       </Link>
       {displayed.length>200?<span role="status">Export omits {displayed.length-200} meetings.</span>:null}

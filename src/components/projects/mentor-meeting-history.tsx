@@ -19,14 +19,14 @@ export function MentorMeetingHistory({meetings}:{meetings:readonly MentorMeeting
   <h4 className="font-semibold">Past meetings / Meeting history ({meetings.length})</h4>
   {meetings.length===0?<p className="text-muted-foreground">No past meetings yet.</p>:
     <ul className="space-y-2">
-      {visible.map(item=><li key={item.id} className="rounded-lg border border-border p-2">
+      {visible.map(item=><li key={item.id} className="rounded-[var(--lms-control-radius)] border border-border p-2">
         <span className="font-medium">{item.title}</span>
         <span className="block text-xs text-muted-foreground">{when(item.startsAt)} · {item.status}</span>
       </li>)}
     </ul>}
   {meetings.length>PREVIEW?<button type="button"
     aria-expanded={expanded} onClick={()=>setExpanded(value=>!value)}
-    className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+    className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
     {expanded?"Show fewer":"View all "+meetings.length}
   </button>:null}
  </section>;

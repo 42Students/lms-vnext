@@ -23,7 +23,7 @@ export default async function FacultyCalendarPage({
     deliveryId:raw.deliveryId||undefined,
   }:{invalid:true});
   if(!input.success)return <section role="alert" className="space-y-3">
-    <h1 className="text-lg font-semibold">Invalid month or Section filter</h1>
+    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid month or Section filter</h1>
     <Link href="/teacher/calendar" className="font-semibold text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Clear filters
     </Link>
@@ -44,7 +44,7 @@ export default async function FacultyCalendarPage({
     <PageHeader title="Class Schedule" />
     <div className="flex justify-end">
       <Link href="/teacher/live-classes"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         View live classes
       </Link>
     </div>
@@ -67,11 +67,11 @@ export default async function FacultyCalendarPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Month (IST)
           <input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
           <select name="deliveryId" defaultValue={selected??""}
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
               {course.courseCode} · {course.courseName}

@@ -1,0 +1,445 @@
+# North Star visual sweep — lane chat-4
+
+**Branch:** `chatgpt/chat-4-b`  
+**Owner:** College Admin portal and Super Admin colleges / organizations.  
+**Baseline:** `main` at `371eb3168b5aa494ab29926e915003ee7a765d66` (fast-forwarded with branch lease).  
+**Status:** Inventory created before style edits; each path below requires visual-token audit, not a claim of completion.
+
+## Binding references
+
+`docs/orchestrator/queues/master-queue.md` NORTH STAR; `docs/design/old-lms-shell-spec.md`; `old-lms-shell.css`; `old-lms-pages.md`; `vnext-vs-old-lms-gap.md`; SCSS in `docs/design/legacy-styles/` (variables, forms, buttons, dropdowns, header, admin lists).
+
+## Rules and ownership
+
+- Preserve all existing page sections, actions, text, routes, state, layout order and behaviour. This is **shell and visual treatment**, not a content redesign.
+- One authenticated canvas: white `#fff`, border `#e5e9f0`, radius 12, padding 24, shell `#f1f4f9`. Do not add nested page-level white cards.
+- Use shared tokens and primitives. Primary button `#0a7c88` with **white** text, 9px radius, 36px height; Inter; h1 30px/600 `#172033`; tokenized controls, shadows, tables, spacing, rings, focus and states.
+- **Do not edit** shared `src/components/ui/**`, global CSS, shell/sidebar/topbar, or their layouts (chat-17/19/13 own them). Keep existing semantic status colours and genuinely separate cards.
+- No test, build, lint or CI execution. Avoid broad automated changes that modify business logic or dynamic TS strings; validate balanced JSX and `as` casts by inspection.
+
+## File-by-file sweep inventory
+
+### College Admin portal routes (260)
+
+- [ ] `src/app/(authenticated)/college/academics/error.tsx`
+- [ ] `src/app/(authenticated)/college/academics/loading.tsx`
+- [ ] `src/app/(authenticated)/college/academics/page.tsx`
+- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/activity/[eventId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/activity/[eventId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/activity/error.tsx`
+- [ ] `src/app/(authenticated)/college/activity/loading.tsx`
+- [ ] `src/app/(authenticated)/college/activity/page.tsx`
+- [ ] `src/app/(authenticated)/college/announcements/error.tsx`
+- [ ] `src/app/(authenticated)/college/announcements/loading.tsx`
+- [ ] `src/app/(authenticated)/college/announcements/page.tsx`
+- [ ] `src/app/(authenticated)/college/assignments/error.tsx`
+- [ ] `src/app/(authenticated)/college/assignments/loading.tsx`
+- [ ] `src/app/(authenticated)/college/assignments/page.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/corrections/error.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/corrections/loading.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/departments/error.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/departments/loading.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/departments/page.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/error.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/loading.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/page.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/settings/error.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/settings/loading.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/settings/page.tsx`
+- [ ] `src/app/(authenticated)/college/batch-promotion/error.tsx`
+- [ ] `src/app/(authenticated)/college/batch-promotion/loading.tsx`
+- [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/error.tsx`
+- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/loading.tsx`
+- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
+- [ ] `src/app/(authenticated)/college/batches/error.tsx`
+- [ ] `src/app/(authenticated)/college/batches/loading.tsx`
+- [ ] `src/app/(authenticated)/college/batches/page.tsx`
+- [ ] `src/app/(authenticated)/college/branding/error.tsx`
+- [ ] `src/app/(authenticated)/college/branding/loading.tsx`
+- [ ] `src/app/(authenticated)/college/branding/page.tsx`
+- [ ] `src/app/(authenticated)/college/classes/error.tsx`
+- [ ] `src/app/(authenticated)/college/classes/loading.tsx`
+- [ ] `src/app/(authenticated)/college/classes/page.tsx`
+- [ ] `src/app/(authenticated)/college/classes/recurring-preview/error.tsx`
+- [ ] `src/app/(authenticated)/college/classes/recurring-preview/loading.tsx`
+- [ ] `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`
+- [ ] `src/app/(authenticated)/college/college-profile/error.tsx`
+- [ ] `src/app/(authenticated)/college/college-profile/loading.tsx`
+- [ ] `src/app/(authenticated)/college/college-profile/page.tsx`
+- [ ] `src/app/(authenticated)/college/companies/error.tsx`
+- [ ] `src/app/(authenticated)/college/companies/loading.tsx`
+- [ ] `src/app/(authenticated)/college/companies/page.tsx`
+- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/contacts/error.tsx`
+- [ ] `src/app/(authenticated)/college/contacts/loading.tsx`
+- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
+- [ ] `src/app/(authenticated)/college/course-progress/error.tsx`
+- [ ] `src/app/(authenticated)/college/course-progress/loading.tsx`
+- [ ] `src/app/(authenticated)/college/course-progress/page.tsx`
+- [ ] `src/app/(authenticated)/college/courses/error.tsx`
+- [ ] `src/app/(authenticated)/college/courses/loading.tsx`
+- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/not-found.tsx`
+- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/courses/page.tsx`
+- [ ] `src/app/(authenticated)/college/departments/error.tsx`
+- [ ] `src/app/(authenticated)/college/departments/loading.tsx`
+- [ ] `src/app/(authenticated)/college/departments/page.tsx`
+- [ ] `src/app/(authenticated)/college/domains/error.tsx`
+- [ ] `src/app/(authenticated)/college/domains/loading.tsx`
+- [ ] `src/app/(authenticated)/college/domains/page.tsx`
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx`
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/loading.tsx`
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/error.tsx`
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/loading.tsx`
+- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- [ ] `src/app/(authenticated)/college/electives/error.tsx`
+- [ ] `src/app/(authenticated)/college/electives/loading.tsx`
+- [ ] `src/app/(authenticated)/college/electives/page.tsx`
+- [ ] `src/app/(authenticated)/college/error.tsx`
+- [ ] `src/app/(authenticated)/college/faculty-assignment/error.tsx`
+- [ ] `src/app/(authenticated)/college/faculty-assignment/loading.tsx`
+- [ ] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/[membershipId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/[membershipId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/error.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/import/error.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/import/loading.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/import/page.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/loading.tsx`
+- [ ] `src/app/(authenticated)/college/faculty/page.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/error.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/loading.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/error.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/loading.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
+- [ ] `src/app/(authenticated)/college/groups/error.tsx`
+- [ ] `src/app/(authenticated)/college/groups/loading.tsx`
+- [ ] `src/app/(authenticated)/college/groups/page.tsx`
+- [ ] `src/app/(authenticated)/college/hiring-dashboard/error.tsx`
+- [ ] `src/app/(authenticated)/college/hiring-dashboard/loading.tsx`
+- [ ] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
+- [ ] `src/app/(authenticated)/college/layout.tsx`
+- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/lecture-halls/error.tsx`
+- [ ] `src/app/(authenticated)/college/lecture-halls/loading.tsx`
+- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [ ] `src/app/(authenticated)/college/lessons/error.tsx`
+- [ ] `src/app/(authenticated)/college/lessons/loading.tsx`
+- [ ] `src/app/(authenticated)/college/lessons/page.tsx`
+- [ ] `src/app/(authenticated)/college/live-classes/error.tsx`
+- [ ] `src/app/(authenticated)/college/live-classes/loading.tsx`
+- [ ] `src/app/(authenticated)/college/live-classes/page.tsx`
+- [ ] `src/app/(authenticated)/college/loading.tsx`
+- [ ] `src/app/(authenticated)/college/not-found.tsx`
+- [ ] `src/app/(authenticated)/college/page.tsx`
+- [ ] `src/app/(authenticated)/college/people/error.tsx`
+- [ ] `src/app/(authenticated)/college/people/loading.tsx`
+- [ ] `src/app/(authenticated)/college/people/manage/error.tsx`
+- [ ] `src/app/(authenticated)/college/people/manage/loading.tsx`
+- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [ ] `src/app/(authenticated)/college/people/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/calendar/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/calendar/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/calendar/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/drives/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/drives/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/interviews/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/interviews/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/layout.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/new/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/new/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/new/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/retention/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/retention/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/retention/page.tsx`
+- [ ] `src/app/(authenticated)/college/placements/student-lookup/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/student-lookup/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- [ ] `src/app/(authenticated)/college/profile/error.tsx`
+- [ ] `src/app/(authenticated)/college/profile/loading.tsx`
+- [ ] `src/app/(authenticated)/college/profile/page.tsx`
+- [ ] `src/app/(authenticated)/college/programs/error.tsx`
+- [ ] `src/app/(authenticated)/college/programs/loading.tsx`
+- [ ] `src/app/(authenticated)/college/programs/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/[projectId]/[section]/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/[projectId]/[section]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/[projectId]/[section]/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/[projectId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/[projectId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/[projectId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/[projectId]/readiness/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/[projectId]/readiness/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/at-risk/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/at-risk/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/at-risk/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/audit/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/audit/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/audit/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/create/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/readiness/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/readiness/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/readiness/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/reassign-mentor/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/reassign-mentor/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/reassign-mentor/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/submissions/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/submissions/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/submissions/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/templates/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/templates/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/templates/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/new/error.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/new/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/page.tsx`
+- [ ] `src/app/(authenticated)/college/quizzes/error.tsx`
+- [ ] `src/app/(authenticated)/college/quizzes/loading.tsx`
+- [ ] `src/app/(authenticated)/college/quizzes/page.tsx`
+- [ ] `src/app/(authenticated)/college/resources/error.tsx`
+- [ ] `src/app/(authenticated)/college/resources/loading.tsx`
+- [ ] `src/app/(authenticated)/college/resources/page.tsx`
+- [ ] `src/app/(authenticated)/college/semester-courses/error.tsx`
+- [ ] `src/app/(authenticated)/college/semester-courses/loading.tsx`
+- [ ] `src/app/(authenticated)/college/semester-courses/page.tsx`
+- [ ] `src/app/(authenticated)/college/semesters/error.tsx`
+- [ ] `src/app/(authenticated)/college/semesters/loading.tsx`
+- [ ] `src/app/(authenticated)/college/semesters/page.tsx`
+- [ ] `src/app/(authenticated)/college/students/[membershipId]/error.tsx`
+- [ ] `src/app/(authenticated)/college/students/[membershipId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/students/error.tsx`
+- [ ] `src/app/(authenticated)/college/students/import/error.tsx`
+- [ ] `src/app/(authenticated)/college/students/import/loading.tsx`
+- [ ] `src/app/(authenticated)/college/students/import/page.tsx`
+- [ ] `src/app/(authenticated)/college/students/loading.tsx`
+- [ ] `src/app/(authenticated)/college/students/page.tsx`
+- [ ] `src/app/(authenticated)/college/students/register/error.tsx`
+- [ ] `src/app/(authenticated)/college/students/register/loading.tsx`
+- [ ] `src/app/(authenticated)/college/students/register/page.tsx`
+- [ ] `src/app/(authenticated)/college/verification/error.tsx`
+- [ ] `src/app/(authenticated)/college/verification/loading.tsx`
+- [ ] `src/app/(authenticated)/college/verification/page.tsx`
+- [ ] `src/app/(authenticated)/college/videos/error.tsx`
+- [ ] `src/app/(authenticated)/college/videos/loading.tsx`
+- [ ] `src/app/(authenticated)/college/videos/page.tsx`
+
+### College Admin aliases and setup routes (7)
+
+- [ ] `src/app/(authenticated)/college-admin/departments/error.tsx`
+- [ ] `src/app/(authenticated)/college-admin/departments/loading.tsx`
+- [ ] `src/app/(authenticated)/college-admin/departments/page.tsx`
+- [ ] `src/app/(authenticated)/college-admin/not-found.tsx`
+- [ ] `src/app/(authenticated)/college-admin/programs/error.tsx`
+- [ ] `src/app/(authenticated)/college-admin/programs/loading.tsx`
+- [ ] `src/app/(authenticated)/college-admin/programs/page.tsx`
+
+### Super Admin colleges routes (31)
+
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/error.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/error.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/error.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/error.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/error.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/error.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/error.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/error.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/layout.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/page.tsx`
+
+### Super Admin organizations routes (4)
+
+- [ ] `src/app/(authenticated)/admin/organizations/error.tsx`
+- [ ] `src/app/(authenticated)/admin/organizations/layout.tsx`
+- [ ] `src/app/(authenticated)/admin/organizations/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/organizations/page.tsx`
+
+### College-facing component library (21)
+
+- [ ] `src/components/college/college-admin-profile-editor.tsx`
+- [ ] `src/components/college/college-department-insights.tsx`
+- [ ] `src/components/college/college-faculty-assignment-actions.tsx`
+- [ ] `src/components/college/college-faculty-csv-import.tsx`
+- [ ] `src/components/college/college-faculty-lifecycle-action.tsx`
+- [ ] `src/components/college/college-faculty-reassign-action.tsx`
+- [ ] `src/components/college/college-faculty-schedule-reassign.tsx`
+- [ ] `src/components/college/college-legacy-group-tabs.tsx`
+- [ ] `src/components/college/college-offering-lifecycle-action.tsx`
+- [ ] `src/components/college/college-offering-metadata-action.tsx`
+- [ ] `src/components/college/college-person-audit-modal.tsx`
+- [ ] `src/components/college/college-person-edit-action.tsx`
+- [ ] `src/components/college/college-person-profile-overview-modal.tsx`
+- [ ] `src/components/college/college-role-directory-workspace.tsx`
+- [ ] `src/components/college/college-student-csv-import.tsx`
+- [ ] `src/components/college/college-student-import-history.tsx`
+- [ ] `src/components/college/college-student-lifecycle-action.tsx`
+- [ ] `src/components/college/college-student-register-form.tsx`
+- [ ] `src/components/college/student-class-move-action.tsx`
+- [ ] `src/components/college/use-college-confirmation.tsx`
+- [ ] `src/components/colleges/college-contact-profile-form.tsx`
+
+### Academic, department, elective and group components (25)
+
+- [ ] `src/components/academics/academics-actions.tsx`
+- [ ] `src/components/academics/academics-create-panel.tsx`
+- [ ] `src/components/academics/academics-overview.tsx`
+- [ ] `src/components/academics/academics-section-page.tsx`
+- [ ] `src/components/academics/college-academic-directory.tsx`
+- [ ] `src/components/academics/college-archived-programs.tsx`
+- [ ] `src/components/academics/college-cohort-management.tsx`
+- [ ] `src/components/academics/college-hall-booking-action.tsx`
+- [ ] `src/components/academics/college-hall-cancellation-action.tsx`
+- [ ] `src/components/academics/college-promotion-confirmation.tsx`
+- [ ] `src/components/academics/college-recurring-preview.tsx`
+- [ ] `src/components/academics/college-section-lifecycle-action.tsx`
+- [ ] `src/components/academics/college-section-management.tsx`
+- [ ] `src/components/academics/college-semester-management.tsx`
+- [ ] `src/components/academics/college-structure-directory.tsx`
+- [ ] `src/components/academics/college-term-mapping-manager.tsx`
+- [ ] `src/components/academics/learner-class-schedule.tsx`
+- [ ] `src/components/academics/section-operations.tsx`
+- [ ] `src/components/electives/college-elective-lifecycle-action.tsx`
+- [ ] `src/components/electives/college-elective-offering-manager.tsx`
+- [ ] `src/components/electives/college-slot-manager.tsx`
+- [ ] `src/components/groups/college-group-actions.tsx`
+- [ ] `src/components/groups/college-group-detail-writes.tsx`
+- [ ] `src/components/groups/college-group-import-preview.tsx`
+- [ ] `src/components/groups/college-study-member-actions.tsx`
+
+### Shared admin components used by these areas (40)
+
+- [ ] `src/components/admin/academic-directory-refresh.tsx`
+- [ ] `src/components/admin/academic-module-scope-inventory.tsx`
+- [ ] `src/components/admin/academic-setup-steps.tsx`
+- [ ] `src/components/admin/admin-dashboard-actions.tsx`
+- [ ] `src/components/admin/admin-program-directory.tsx`
+- [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
+- [ ] `src/components/admin/college-archive-button.tsx`
+- [ ] `src/components/admin/college-at-glance-panel.tsx`
+- [ ] `src/components/admin/college-branding-form.tsx`
+- [ ] `src/components/admin/college-branding-preview.tsx`
+- [ ] `src/components/admin/college-bulk-import.tsx`
+- [ ] `src/components/admin/college-closing-quizzes-card.tsx`
+- [ ] `src/components/admin/college-create-form.tsx`
+- [ ] `src/components/admin/college-dashboard-cards.tsx`
+- [ ] `src/components/admin/college-dashboard-section-failure.tsx`
+- [ ] `src/components/admin/college-edit-dialog.tsx`
+- [ ] `src/components/admin/college-feature-rule-editor.tsx`
+- [ ] `src/components/admin/college-logo-uploader.tsx`
+- [ ] `src/components/admin/college-setup-checklist.tsx`
+- [ ] `src/components/admin/college-signin-method-form.tsx`
+- [ ] `src/components/admin/department-actions.tsx`
+- [ ] `src/components/admin/department-create-form.tsx`
+- [ ] `src/components/admin/department-directory.tsx`
+- [ ] `src/components/admin/lecture-hall-manager.tsx`
+- [ ] `src/components/admin/managed-college-subdomain.tsx`
+- [ ] `src/components/admin/organization-actions.tsx`
+- [ ] `src/components/admin/organization-create-form.tsx`
+- [ ] `src/components/admin/person-membership-actions.tsx`
+- [ ] `src/components/admin/person-onboard-dialog.tsx`
+- [ ] `src/components/admin/person-profile-dialog.tsx`
+- [ ] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
+- [ ] `src/components/admin/student-rule-editor.tsx`
+- [ ] `src/components/admin/super-admin-college-company-actions.tsx`
+- [ ] `src/components/admin/super-admin-student-bulk-access.tsx`
+- [ ] `src/components/admin/super-admin-student-import-history.tsx`
+- [ ] `src/components/admin/tenant-directory-csv-control.tsx`
+- [ ] `src/components/admin/tenant-domain-manager.tsx`
+- [ ] `src/components/admin/tenant-restore-action.tsx`
+- [ ] `src/components/admin/tenant-settings-editor.tsx`
+- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
+
+### Portal-scoped CSS (1)
+
+- [ ] `src/styles/college-admin-north-star.css`
+
+## Pass checklist
+
+1. Remove direct palette literals, non-token spacing/radii/font/shadow classes from interactive and page-shell elements; retain meaningful status colours.
+2. Convert faux button/input styles to shared `Button`, `Input`, `Select`, `Textarea` where prop/handler semantics are preserved, otherwise bind equivalent tokenized classes.
+3. Remove extra whole-page card/panel wrappers only, without flattening genuinely separate panels or rearranging page content.
+4. Verify page heading through `PageHeader` or portal token; retain page content and sidebar/topbar ownership.
+5. Record changed files/remaining exceptions and commit SHAs in this document.
+
+## Execution log
+
+- Inventory written before source edits. Actual edits and remaining exceptions to be recorded per batch.

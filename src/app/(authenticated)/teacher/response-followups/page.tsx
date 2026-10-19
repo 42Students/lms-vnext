@@ -18,7 +18,7 @@ export default async function FacultyResponseFollowUpsPage({
   const raw = await searchParams;
   const parsed = parseFacultyFollowUpSearchParams(raw);
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid follow-up filters</h1>
+    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid follow-up filters</h1>
     <Link href="/teacher/response-followups" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
 
@@ -29,19 +29,19 @@ export default async function FacultyResponseFollowUpsPage({
     <PageHeader eyebrow="Faculty · Assessments" title="Response follow-ups"
       description="Published assessments past their due date with missing responses from learners in your current teaching Sections."
       actions={<Link href="/teacher/results"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Results overview
       </Link>} />
     <form action="/teacher/response-followups" method="get"
-      className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <input type="search" name="search" defaultValue={data.query.search} maxLength={120}
           placeholder="Course, Section or assessment"
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment type
         <select name="kind" defaultValue={data.query.kind}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
@@ -49,7 +49,7 @@ export default async function FacultyResponseFollowUpsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
         <select name="deliveryId" defaultValue={data.query.deliveryId ?? ""}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="">All current Sections</option>
           {data.sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
             {section.courseCode} · {section.courseName} · {section.sectionName}
@@ -58,7 +58,7 @@ export default async function FacultyResponseFollowUpsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sort
         <select name="sort" defaultValue={data.query.sort}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="RECENT_DUE">Most recently due</option>
           <option value="OLDEST_DUE">Oldest overdue first</option>
           <option value="TITLE">Assessment title</option>
@@ -66,7 +66,7 @@ export default async function FacultyResponseFollowUpsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assessments per page
         <select name="pageSize" defaultValue={data.query.pageSize}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="5">5</option><option value="10">10</option>
         </select>
       </label>
@@ -81,7 +81,7 @@ export default async function FacultyResponseFollowUpsPage({
         {data.total} matching past-due published assessment{data.total === 1 ? "" : "s"}
       </p>
       <Link href={facultyFollowUpCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+       className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Export this page counts (no learner details)
       </Link>
     </div>

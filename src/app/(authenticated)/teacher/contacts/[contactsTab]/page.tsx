@@ -48,7 +48,7 @@ export default async function FacultyContactsPage({
   const raw=await searchParams;
   const filters=parseFacultyContactsQuery(raw);
   if(!filters)return <section role="alert" className="space-y-3 p-5">
-    <h1 className="text-lg font-semibold">Invalid directory filters</h1>
+    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid directory filters</h1>
     <Link href={"/teacher/contacts/"+contactsTab}
       className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Return to Contacts
@@ -134,7 +134,7 @@ export default async function FacultyContactsPage({
               Contacts per page
               <select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
-                className="mt-1.5 block min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                className="mt-1.5 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>

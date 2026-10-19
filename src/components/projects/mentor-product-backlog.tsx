@@ -45,14 +45,14 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    <div><h2 className="text-lg font-semibold">Product backlog</h2>
     <p className="mt-1 text-sm text-body">{backlog.length} backlog tasks</p>
    </div>
-   <div className="rounded-lg bg-surface-subtle p-3">
+   <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3">
     <p className="text-xs font-semibold text-body">Velocity</p>
     <p className="text-xl font-bold">{velocity} points completed</p>
    </div>
   </div>
   {!readOnly?<section className="space-y-2">
     <button type="button" onClick={()=>adding?guard.requestClose():setAdding(true)}
-      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Add backlog task
     </button>
     {adding?<form onSubmit={async e=>{
@@ -75,55 +75,55 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         router.refresh();
       }catch{setError("Could not add backlog task");}
       finally{setBusy(false);}
-    }} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
-      <label className="text-sm font-semibold">Title<input required maxLength={200} value={title}
+    }} className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-2">
+      <label className="text-sm font-semibold">Title<input data-slot="input" required maxLength={200} value={title}
         onChange={e=>setTitle(e.target.value)}
-        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
-      <label className="text-sm font-semibold">Priority<select value={priority}
+        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
+      <label className="text-sm font-semibold">Priority<select data-slot="select" value={priority}
         onChange={e=>setPriority(e.target.value)}
-        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
       </select></label>
-      <label className="text-sm font-semibold">Description<textarea maxLength={4000}
+      <label className="text-sm font-semibold">Description<textarea data-slot="textarea" maxLength={4000}
         value={description} onChange={e=>setDescription(e.target.value)}
-        className="mt-1 w-full rounded-md border border-border bg-background p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
-      <label className="text-sm font-semibold">Approach (optional)<textarea maxLength={4000}
+        className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
+      <label className="text-sm font-semibold">Approach (optional)<textarea data-slot="textarea" maxLength={4000}
         value={approach} onChange={event=>setApproach(event.target.value)}
-        className="mt-1 w-full rounded-md border border-border bg-background p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
-      <label className="text-sm font-semibold">Done when<textarea maxLength={4000}
+        className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
+      <label className="text-sm font-semibold">Done when<textarea data-slot="textarea" maxLength={4000}
         value={criteria} onChange={e=>setCriteria(e.target.value)}
-        className="mt-1 w-full rounded-md border border-border bg-background p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
-      <label className="text-sm font-semibold">Estimate points<input type="number" min={0} max={1000}
+        className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
+      <label className="text-sm font-semibold">Estimate points<input data-slot="input" type="number" min={0} max={1000}
         value={points} onChange={e=>setPoints(e.target.value)}
-        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
+        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
       <label className="text-sm font-semibold">Task type
-        <select value={taskType} onChange={e=>setTaskType(e.target.value)}
-          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <select data-slot="select" value={taskType} onChange={e=>setTaskType(e.target.value)}
+          className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="">Not specified</option>
           <option value="STORY">Story</option><option value="BUG">Bug</option>
           <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
         </select>
       </label>
       <label className="text-sm font-semibold">Due date
-        <input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
-          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
+        <input data-slot="input" type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
+          className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
       <label className="text-sm font-semibold sm:col-span-2">What&apos;s blocking this task?
-        <textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
-          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
+        <textarea data-slot="textarea" value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
+          className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
       <div className="flex items-end gap-2"><button type="submit"
         disabled={busy||!title.trim()||(points!==""&&
           (!Number.isInteger(Number(points))||Number(points)<0||Number(points)>1000))}
-        className="min-h-11 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground">Add task</button>
+        className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm font-semibold text-primary-foreground">Add task</button>
       <button type="button" onClick={guard.requestClose}
-        className="min-h-11 rounded-md border border-border px-3 text-sm">Cancel</button></div>
+        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Cancel</button></div>
     </form>:null}
   </section>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
   <div className="grid gap-3 sm:grid-cols-2">
-   {backlog.map(task=><article key={task.id} className="rounded-lg border border-border p-3">
+   {backlog.map(task=><article key={task.id} className="rounded-[var(--lms-control-radius)] border border-border p-3">
     <p className="font-semibold">{task.title}</p>
     {task.approach?<p className="mt-2 whitespace-pre-wrap break-words text-xs text-body">
       Approach: {task.approach}
@@ -142,8 +142,8 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           dueDate={task.dueDate} blockerReason={task.blockerReason}/>
       </div>:null}
     {!readOnly?<label className="mt-2 block text-sm font-semibold">Pull into sprint
-     <select disabled={busy} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
-      className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+     <select data-slot="select" disabled={busy} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       <option value="">Choose sprint</option>
       {targets.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
      </select>
@@ -151,12 +151,12 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    </article>)}
    {!backlog.length?<p className="py-4 text-sm text-muted-foreground">Backlog is empty.</p>:null}
   </div>
-  {!readOnly&&returnable.length>0?<details><summary className="cursor-pointer text-sm font-semibold text-primary-text">
+  {!readOnly&&returnable.length>0?<details><summary className="cursor-pointer text-sm font-semibold text-link">
     Return unfinished tasks to backlog</summary>
     <div className="mt-2 space-y-2">
      {returnable.map(task=><button key={task.id} type="button" disabled={busy}
         onClick={()=>setMoveRequest({task,targetSprintId:null})}
-        className="block min-h-11 w-full rounded-md border border-border p-2 text-left text-sm">
+        className="block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-left text-sm">
         {task.title} · Return to backlog
        </button>)}
     </div>

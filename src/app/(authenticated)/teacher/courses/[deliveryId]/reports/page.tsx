@@ -11,14 +11,14 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  const [{deliveryId},raw]=await Promise.all([params,searchParams]);
  const parsed=parseFacultyReportsHubLocation(deliveryId,raw);
  if(!parsed.success)return <section role="alert">
- <h1 className="text-xl font-semibold">Invalid report filters</h1>
+ <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid report filters</h1>
  <Link href="/teacher/courses" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Courses</Link>
  </section>;
  const data=await getFacultyReportsHub(await getCurrentRequestContext(),parsed.data);
  const root="/teacher/courses/"+encodeURIComponent(deliveryId);
  return <div className="min-w-0 max-w-full space-y-6">
  <PageHeader title="Section reports"
- actions={<Link href={root+"/home"} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Section workspace</Link>}/>
+ actions={<Link href={root+"/home"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Section workspace</Link>}/>
  <p className="text-sm text-body">{data.rosterSize} current eligible learners.</p>
  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
  {([["Assignments",data.breakdown.assignments],
@@ -40,9 +40,9 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  <p className="mt-2 text-sm text-body">Published assessment counts are not a final grade. Individual published scores are shown only in the gradebook.</p>
  <Link href={root+"/gradebook"} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open gradebook →</Link>
  </section></div>
- <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+ <form method="get" className="flex flex-wrap items-end gap-3">
  <label className="grid gap-1 text-sm font-semibold">Assessment type
- <select name="kind" defaultValue={data.query.kind} className="min-h-11 rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+ <select name="kind" defaultValue={data.query.kind} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
  <option value="ALL">All</option><option value="ASSIGNMENT">Assignments</option><option value="QUIZ">Quizzes</option>
  </select></label>
  <Button type="submit" variant="primary">Filter</Button>
