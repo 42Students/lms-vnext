@@ -1,5 +1,5 @@
 "use client";
-import { PageHeader } from "@/components/ui/page-header";
+import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
@@ -97,7 +97,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  return <section className="space-y-4">
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-link underline">Back to project</Link>
-  <PageHeader title="Board" actions={   <div className="flex flex-wrap items-center gap-2">
+  <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
+   <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Board</h2>
+   <div className="flex flex-wrap items-center gap-2">
      {!readOnly?<MentorTaskCreate projectId={projectId}
        sprintId={creationDefault?.id??""}
        updatedAt={creationDefault?new Date(creationDefault.updatedAt).toISOString():""}
@@ -110,8 +112,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link">
       Review submission</Link>
-   </div>} />
-  <div className="flex flex-wrap gap-3 rounded-xl border border-border p-3">
+   </div>
+  </div>
+  <div className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
    <label className="text-sm font-semibold">Release
     <Select data-slot="select" value={release} onChange={e=>{setRelease(e.target.value);setSprint("");remember("release",e.target.value);remember("sprint","");}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
@@ -188,7 +191,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
-    <h2 className="flex justify-between font-semibold"><span>{lane.label}</span><span>{lane.tasks.length}</span></h2>
+    <h2 className="flex items-center justify-between gap-2 font-semibold"><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h2>
     <ul className="mt-3 space-y-2">{lane.tasks.map(task=>{
      const sprintRow=task.sprintId?bySprint.get(task.sprintId):null;
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
