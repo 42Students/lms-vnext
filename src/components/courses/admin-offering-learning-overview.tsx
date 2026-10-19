@@ -110,7 +110,7 @@ function ContentCard({
           href={item.externalUrl}
           
           rel="noopener noreferrer"
-          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
+          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
         >
           Open link ↗
         </a>
@@ -395,9 +395,9 @@ export function AdminOfferingLearningOverview({
       <section aria-label="In this course" className="min-w-0 border-b border-border pb-5">
         <h2 className="text-lg font-semibold text-foreground">In this course</h2>
         <p className="mt-1 text-sm text-muted-foreground">Recorded shared learning items only. Visibility and publication are separate controls.</p>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
           {summarizeCollegeCourseContents(workspace.lessons).map(item=>(
-            <StatTile key={item.key} label={item.label} value={item.count} className="p-3 sm:p-3" />
+            <StatTile key={item.key} label={item.label} value={item.count} className="p-3 md:p-3" />
           ))}
         </div>
       </section>
@@ -434,7 +434,7 @@ export function AdminOfferingLearningOverview({
                 <section
                   id={"lesson-"+lesson.id}
                   key={lesson.id}
-                  className="rounded-xl border border-border bg-surface-subtle p-4 sm:p-5"
+                  className="rounded-xl border border-border bg-surface-subtle p-4 md:p-5"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
