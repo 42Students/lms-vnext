@@ -1,6 +1,7 @@
 "use client";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import {useRouter,usePathname,useSearchParams} from "next/navigation";
 import {useState} from "react";
 import {BottomSheet} from "@/components/ui/bottom-sheet";
@@ -25,9 +26,8 @@ export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter stude
  });
  const content=<>
   <div className="flex flex-wrap gap-2" role="group" aria-label="Active grid filters">
-   {chips.map(chip=><Button variant="secondary" key={chip.key} type="button" onClick={()=>update(chip.field,"")}
-    className="rounded-full text-xs"
-    aria-label={"Remove "+chip.label}>{chip.label} ×</Button>)}
+   {chips.map(chip=><FilterChip key={chip.key} type="button" onClick={()=>update(chip.field,"")}
+    aria-label={"Remove "+chip.label}>{chip.label} ×</FilterChip>)}
   </div>
   <h2 className={mobileSheet?"hidden font-semibold md:block":"font-semibold"}>{title}</h2>
   <p role="status" className="text-xs text-muted-foreground">{activeCount} active {activeCount===1?"filter":"filters"}</p>
