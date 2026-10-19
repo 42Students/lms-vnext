@@ -86,4 +86,10 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(mobile).toContain("<ShellLogoMark />");
  expect(icons).toContain('width="38" height="36"');
 });
+ it("preserves AntD mobile drawer width and safe-area body padding",()=>{
+ const mobile=read("src/components/shell/mobile-navigation.tsx");
+ expect(mobile).toContain("w-[min(82vw,300px)]");
+ expect(mobile).toContain("env(safe-area-inset-bottom,0px)");
+ expect(sidebar()).toContain("padding-inline:12px;");
+});
 });
