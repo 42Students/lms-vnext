@@ -22,7 +22,7 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
    <section role="alertdialog" aria-modal="true" aria-labelledby={"delete-title-"+id}
     aria-describedby={"delete-desc-"+id}
     onKeyDown={event=>{if(event.key==="Escape")dismiss();}}
-    className="w-full max-w-md rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-6 shadow-xl">
+    className="w-full max-w-md rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 shadow-[var(--lms-popover-shadow,0_12px_32px_rgba(25,35,55,.12))]">
     <h2 id={"delete-title-"+id} className="font-semibold text-foreground">Delete this announcement?</h2>
     <p id={"delete-desc-"+id} className="mt-3 text-sm text-body">
      Students stop seeing it, and its notices are taken back.
