@@ -70,14 +70,14 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    description={result.status==="READY"
     ? result.unreadInView+" unread across "+result.items.filter(row=>row.unread>0).length+" conversation(s) on this page"
     : "Conversations with the placement cell, one per drive, plus a general one."}/>
-  <Link href="/hr/notifications" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Notification inbox</Link>
+  <Link href="/hr/notifications" className="inline-flex min-h-11 sm:min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Notification inbox</Link>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
    {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
-    className="block rounded-[var(--lms-control-radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{g.collegeName}</Link>)}
+    className="block rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 sm:min-h-9">{g.collegeName}</Link>)}
   </section>:<>
    {decisionNoticeResult && !decisionNoticeResult.ok?
-     <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
+     <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-sm text-body">
        Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
      </p>:null}
    {decisionNotices.length>0?<section aria-label="Drive request decisions"
@@ -89,7 +89,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <p className="font-semibold text-foreground">{item.title}{item.unread?" · New":""}</p>
       <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
       <p className="mt-1 text-xs text-muted-foreground">{when(item.createdAt)} IST</p>
-      <Link href={item.href} className="mt-2 inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <Link href={item.href} className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        View your drive request
       </Link>
       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
@@ -98,13 +98,13 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    {result.choices.length>1?<nav aria-label="College conversations" className="flex flex-wrap gap-3">
     {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
      aria-current={g.collegeId===result.collegeId?"page":undefined}
-     className={g.collegeId===result.collegeId ? "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle"}>{g.collegeName}</Link>)}
+     className={g.collegeId===result.collegeId ? "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle"}>{g.collegeName}</Link>)}
    </nav>:null}
    <section className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
     {generalThread?<details className="mt-3 border-b border-border py-3">
-      <summary className="min-h-11 cursor-pointer rounded-[var(--lms-control-radius)] py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Message the placement cell · General</summary>
+      <summary className="min-h-11 cursor-pointer rounded-[var(--lms-control-radius,9px)] py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Message the placement cell · General</summary>
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
       {generalThread.preview&&!generalHistory&&!generalHistoryResult?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
         {generalThread.preview!.text}
@@ -124,7 +124,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </ol></ScrollCue>:null}
       {generalHistoryResult?.ok?<div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>:null}
       <Link href={"/hr/conversations/"+generalThread.id}
-        className="mt-3 inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open full conversation</Link>
+        className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open full conversation</Link>
     </details>:null}
     {generalLookup && !generalLookup.ok?
       <p role="status" className="mt-3 text-sm text-body">
@@ -154,17 +154,17 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,
       unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:item.value,page:1})}
      aria-current={parsed.data.scope===item.value?"page":undefined}
-     className={parsed.data.scope===item.value ? "inline-flex min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
+     className={parsed.data.scope===item.value ? "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
       {item.label}
     </Link>)}
    </nav>
    <nav aria-label="Conversation status" className="flex flex-wrap gap-3 border-b border-border">
     <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"false",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}
      aria-current={parsed.data.unreadOnly==="false"?"page":undefined}
-     className={parsed.data.unreadOnly==="false" ? "inline-flex min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>All</Link>
+     className={parsed.data.unreadOnly==="false" ? "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>All</Link>
     <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"true",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}
      aria-current={parsed.data.unreadOnly==="true"?"page":undefined}
-     className={parsed.data.unreadOnly==="true" ? "inline-flex min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>Unread</Link>
+     className={parsed.data.unreadOnly==="true" ? "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>Unread</Link>
    </nav>
    <p role="status" className="text-sm text-body">
     {result.unreadInView} unread placement cell messages in these conversations
@@ -183,7 +183,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
    {result.items.length?<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
-    {visibleRows.map(row=><li key={row.id} className="rounded-[8px] px-2 py-4 transition-colors hover:bg-[var(--lms-neutral-50)] first:pt-3 last:pb-3">
+    {visibleRows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius,9px)] px-2 py-4 transition-colors hover:bg-[var(--lms-neutral-50)] first:pt-3 last:pb-3">
      <Link href={"/hr/conversations/"+row.id}
       className="block min-h-11 break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="mt-2">{row.unread} new</Badge>:null}
@@ -195,9 +195,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    </ol>:<p role="status" className="border-y border-border py-5 text-body">No matching conversations with the placement cell for this college.</p>}
    <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">
     {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
-      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
     {result.page<result.pages?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page+1})}
-      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
    </nav>
   </>}
  </div>;
