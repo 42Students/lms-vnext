@@ -157,7 +157,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   }
   return <div className="space-y-6">
     <p className="text-sm text-body">Choose one team, split a class into teams, or give each learner a workspace.</p>
-    {mode==="TEAMS" ? <p className="rounded-md border border-border bg-surface p-3 text-sm text-body">Pick a class and a team size, preview the teams, move anyone between teams, then create. Each team gets its own workspace named after the title (“Title - Team 1”, “Title - Team 2”…), with the same template and mentor.</p> : null}
+    {mode==="TEAMS" ? <p className="border-l-2 border-border pl-3 text-sm text-body">Pick a class and a team size, preview the teams, move anyone between teams, then create. Each team gets its own workspace named after the title (“Title - Team 1”, “Title - Team 2”…), with the same template and mentor.</p> : null}
     {emptyMessages.classes?<p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">{emptyMessages.classes}</p>:null}
     {emptyMessages.templates?<p role="alert" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">{emptyMessages.templates}</p>:null}
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -211,7 +211,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {mode==="INDIVIDUAL"&&currentPreflight?<section aria-label="Before creating: one workspace per student" className="rounded-lg border border-border p-3 text-sm">
       <h2 className="font-semibold">Before creating: one workspace per student</h2>
       <p>{currentPreflight.toCreate} to create · {currentPreflight.alreadyCovered} already covered · {currentPreflight.duplicates} duplicates · {currentPreflight.eligible} eligible</p>
-      <div className="max-h-72 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] rounded-md border focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
+      <div className="max-h-72 overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius,9px)] border border-border focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
         <DataTable
           caption="Learner creation preflight"
           rows={currentPreflight.items.map((row,index)=>({...row,index}))}
