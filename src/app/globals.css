@@ -1075,3 +1075,10 @@ body {
   --lms-warning-border: #92400e;
   --lms-warning-surface: #422f1c;
 }
+
+/* The tracker dark override must also win over native disabled-control selectors. */
+:root[data-tracker-theme="dark"] :is([data-slot="input"], [data-slot="select"], [data-slot="textarea"]):disabled {
+  background: var(--lms-neutral-50);
+  color: var(--lms-neutral-400);
+  border-color: var(--lms-border);
+}
