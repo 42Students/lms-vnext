@@ -114,7 +114,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
         className={selectedCollege === grant.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-body hover:border-primary hover:text-primary-text"}>{grant.collegeName}</Link>)}</nav> : null}
     {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
-      className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 sm:p-5">
+      className="border-b border-border pb-4 sm:pb-5">
       <h2 className="font-semibold text-foreground">Deadline attention</h2>
       <p className="mt-1 text-xs text-muted-foreground">Recorded application deadlines only; past dates do not prove a drive is closed.</p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
