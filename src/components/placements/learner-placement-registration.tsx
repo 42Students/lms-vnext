@@ -65,7 +65,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
       <button type="button" disabled={busy} onClick={()=>void submit()}
         className="min-h-11 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] disabled:opacity-50 sm:min-h-9">
         {busy?"Saving…":registration.choice?LEARNER_REGISTRATION_COPY.update:LEARNER_REGISTRATION_COPY.register}
-      </button>
+      </Button>
     </>:<p className="text-sm" role="status">{registration.stage==="NOT_INVITED"?
       LEARNER_REGISTRATION_COPY.notInvited:LEARNER_REGISTRATION_COPY.closed}</p>}
     {registration.choice?<p className="text-sm">Your choice: {learnerPlacementChoices.find(item=>item.value===registration.choice)?.label}</p>:null}
