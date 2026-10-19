@@ -51,6 +51,8 @@ describe("chat-13 legacy header portal navigation and measured shell values",()=
    expect(topbarSearchDestinations("/admin/companies","Acme")).toEqual([
      {label:"Search people",href:"/admin/people/directory?q=Acme"},
      {label:"Search companies",href:"/admin/companies?q=Acme"},
+     {label:"Search placement drives",href:"/admin/placements/drives?q=Acme"},
+     {label:"Search project workspaces",href:"/admin/projects?search=Acme"},
    ]);
    expect(topbarSearchDestinations("/hr/drives","Jobs")).toEqual([
      {label:"Search drives",href:"/hr/drives?q=Jobs"},
