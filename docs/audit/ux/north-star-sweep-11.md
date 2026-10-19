@@ -13,7 +13,7 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 ## Follow-on execution
 
 - Fast-forwarded `chatgpt/chat-11-b` to `main` (`7e3ab610`) before edits; the historical chat-11 sweep was already merged.
-- **118 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 72 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
+- **124 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 72 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
 - Eliminated duplicate filters/form shell cards in TPO blocked dates and Super Admin module filters, plus redundant section padding in settings and public placements. Preserved distinct metric/tenant/setup cards and status notices.
 - Replaced residual literal 9px, generic `rounded-md`, and legacy `--radius` control overrides with the canonical `--lms-control-radius`, without changing inputs' values, forms, labels or handlers. Fixed inconsistent tap targets on tenant setup tabs.
 - Removed invalid standalone `-`/`-subtle` utility tokens in tenant domains, college sign-in, logo upload, college setup checklist, and tenant settings scope.
@@ -198,6 +198,21 @@ At the start of this pass, `origin/main` at `8175bfbde69c` was reconciled into `
 - `src/components/tpo/tpo-team-rename.tsx`
 - `src/components/tpo/tpo-team-search.tsx`
 - `src/components/tpo/tpo-team-thread-details.tsx`
+
+## Fifth pass — team-setting component consolidation
+
+Six more `[chat-11]` source commits refined the already-listed TPO team-setting components:
+
+- `src/components/tpo/tpo-team-ask-panel.tsx`
+- `src/components/tpo/tpo-team-assign-unowned.tsx`
+- `src/components/tpo/tpo-team-decision-toggle.tsx`
+- `src/components/tpo/tpo-team-message-actions.tsx`
+- `src/components/tpo/tpo-team-search.tsx`
+- `src/components/tpo/tpo-team-thread-details.tsx`
+
+These convert remaining inline ask, assignment, decision and thread-detail form controls to shared `Input`, `Textarea`, `Select` and `Button` skins where appropriate. An accidental duplicated responsive-height utility introduced in the previous pass was corrected in ask and assignment controls. The message-edit and conversation-search inputs now inherit shared focus rings and control spacing. A static readback of all six files found no targeted repeated-height or obsolete `--radius` class patterns and no excess JSX closing tags for the shared components.
+
+**Aggregate:** 124 continuation source commits across 72 distinct TSX paths. All writes remain on `chatgpt/chat-11-b`. Browser parity, TypeScript compilation and CI are still unverified per owner instruction.
 
 ## Remaining verification and ownership boundaries
 
