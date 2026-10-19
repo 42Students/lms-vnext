@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -102,7 +103,7 @@ export default async function FacultyContactsPage({
         )}
       </nav>
 
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -132,13 +133,13 @@ export default async function FacultyContactsPage({
             </label>
             <label className="text-xs font-semibold text-body">
               Contacts per page
-              <select name="pageSize" aria-label="Contacts per page"
+              <Select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
                 className="mt-1.5 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
-              </select>
+              </Select>
             </label>
             <Button type="submit" variant="primary">
               Search
