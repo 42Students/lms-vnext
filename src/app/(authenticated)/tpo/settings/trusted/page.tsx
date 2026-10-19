@@ -38,7 +38,7 @@ export default async function TpoTrustedCompaniesPage() {
         actions={
           <Link
             href="/tpo/settings/team"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Placement Team
           </Link>
@@ -148,7 +148,7 @@ export default async function TpoTrustedCompaniesPage() {
 
       {data.explicitDomainsAvailable?
         <TpoTrustedDomainEditor domains={data.trustedDomains.map(entry=>entry.domain)}/>:
-        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">
+        <p role="status" className="border-t border-border pt-4 text-sm">
          Trusted-domain editor is unavailable until the table is registered.
         </p>}
 

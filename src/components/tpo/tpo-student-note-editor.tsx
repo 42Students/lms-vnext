@@ -26,15 +26,15 @@ export function TpoStudentNoteEditor({membershipIds,afterSave}:{
   }catch(error){setError(error instanceof Error?error.message:"Could not save note.");}
   finally{inFlight.current=false;setBusy(false);}
  }
- return <section className="space-y-2 rounded-[var(--radius)] border border-border p-3">
+ return <section className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
   <h4 className="font-semibold">Add a note</h4>
   <p className="text-xs text-muted-foreground">Private to the college placement team, appended permanently to each selected student&apos;s history.</p>
   <textarea aria-label="Internal student note" value={note} rows={3} maxLength={2000}
    onChange={e=>setNote(e.target.value)} onKeyDown={e=>{
     if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();void runGuarded(save);}
-   }} className="w-full rounded-[var(--radius)] border border-border bg-surface p-3"/>
+   }} className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
   <button type="button" disabled={busy||guardedPending||!note.trim()||!membershipIds.length}
-   onClick={()=>void runGuarded(save)} className="min-h-10 rounded-[var(--radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+   onClick={()=>void runGuarded(save)} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
    {busy?"Saving…":"Add note"+(membershipIds.length>1?" to "+membershipIds.length+" students":"")}</button>
   <p className="text-xs text-muted-foreground">Ctrl+Enter to save</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

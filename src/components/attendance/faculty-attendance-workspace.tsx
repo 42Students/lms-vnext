@@ -508,7 +508,7 @@ export function FacultyAttendanceWorkspace({
           </Button>
         </div>
 
-        <div className="mt-4 inline-flex rounded-lg border border-border bg-surface-subtle p-1">
+        <div className="mt-4 inline-flex rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-1">
           <Button
             size="sm"
             variant={
@@ -679,7 +679,7 @@ export function FacultyAttendanceWorkspace({
                     const learner = workspace.roster.find((row) => row.membershipId === membershipId);
                     const summary = monthSummary.learners.find((row) => row.membershipId === membershipId);
                     return (
-                      <li key={membershipId} className="rounded-md border border-border bg-surface px-3 py-2">
+                      <li key={membershipId} className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
                         <button
                           type="button"
                           onClick={() => setSelectedLearnerId(membershipId)}
@@ -702,8 +702,8 @@ export function FacultyAttendanceWorkspace({
               description="Choose another month or schedule a class for this Course."
             />
           ) : (
-            <section className="rounded-xl border border-border bg-surface p-4">
-              <ScrollCue axis="x" label="Faculty attendance monthly grid" className="min-w-0">
+            <section className="min-w-0">
+              <ScrollCue axis="x" label="Faculty attendance monthly grid" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border">
               <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
                 <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
@@ -935,7 +935,7 @@ export function FacultyAttendanceWorkspace({
               </div>
 
               <div
-                className="mt-4 overflow-hidden rounded-lg border border-border"
+                className="mt-4 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border"
                 aria-label="Attendance roster"
               >
                 {visibleRoster.length === 0 ? (

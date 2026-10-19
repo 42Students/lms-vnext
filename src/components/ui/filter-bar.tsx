@@ -15,12 +15,16 @@ export type FilterBarProps = {
   filters?: ReactNode;
   children?: ReactNode;
   action?: ReactNode;
+  /** Optional list toolbar actions; render only controls the page actually implements. */
+  views?: ReactNode;
+  columns?: ReactNode;
+  exportAction?: ReactNode;
   className?: string;
 };
 
 const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
-export function FilterBar({ title = "Filters", activeCount = 0, search, filters, children, action, className }: FilterBarProps) {
+export function FilterBar({ title = "Filters", activeCount = 0, search, filters, children, action, views, columns, exportAction, className }: FilterBarProps) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const { availableHeight } = useOverlayWebview({ open, dismissible: true, onDismiss: () => setOpen(false) });
@@ -63,12 +67,13 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
   }, [open]);
 
   return <section data-slot="filter-bar" aria-label={title} className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
-    <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
-      {search ? <div className="min-w-0 flex-1 basis-40 sm:basis-48">{search}</div> : null}
+    <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
+      {search ? <div className="min-w-0 flex-1 basis-40 sm:basis-[220px] sm:max-w-[380px]">{search}</div> : null}
       <div className="sm:hidden">
         <Button ref={launcher} variant="secondary" aria-expanded={open} aria-controls={panelId}
           onClick={() => setOpen(true)}>{title} ({count})</Button>
       </div>
+      {views || columns || exportAction ? <div role="toolbar" aria-label="List actions" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">{views}{columns}{exportAction}</div> : null}
       {action}
     </div>
     {open ? <button type="button" aria-label="Close filters" onClick={() => setOpen(false)}
@@ -77,12 +82,12 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
       aria-label={open ? title : undefined}
       className={cx("min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-space-4)] sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none",
         open ? "fixed inset-0 z-40 flex max-h-[var(--lms-visual-height)] min-h-0 w-full flex-col overflow-hidden pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-[var(--lms-elevation-4)]" : "hidden sm:block")}>
-      <div className="mb-4 flex shrink-0 items-center justify-between gap-3 sm:hidden">
+      <div className="mb-[var(--lms-space-4)] flex shrink-0 items-center justify-between gap-[var(--lms-space-3)] sm:hidden">
         <h2 className="m-0 text-[18px] font-semibold leading-6 text-[var(--lms-heading)]">{title}</h2>
         <Button variant="ghost" aria-label="Close filters" onClick={() => setOpen(false)}>×</Button>
       </div>
       <ScrollCue axis="y" label={`${title} options`} className={open ? "min-h-0 flex-1" : undefined}
-        viewportClassName={open ? "h-full min-h-0 pb-4" : "overflow-visible"}>{filters ?? children}</ScrollCue>
+        viewportClassName={open ? "h-full min-h-0 pb-[var(--lms-space-4)]" : "overflow-visible"}>{filters ?? children}</ScrollCue>
     </div>
   </section>;
 }

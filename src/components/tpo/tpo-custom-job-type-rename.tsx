@@ -1,4 +1,6 @@
 "use client";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 export function TpoCustomJobTypeRename({id,label,version}:{id:string;label:string;version:string}){
@@ -25,11 +27,11 @@ export function TpoCustomJobTypeRename({id,label,version}:{id:string;label:strin
  }
  return <div className="min-w-0 space-y-1">
   <label className="text-xs text-muted-foreground">Custom job type name
-   <input value={name} maxLength={40} disabled={busy} onChange={e=>setName(e.target.value)}
-    className="mt-1 block min-h-11 sm:min-h-9 min-w-0 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm"/>
+   <Input value={name} maxLength={40} disabled={busy} onChange={e=>setName(e.target.value)}
+    className="mt-1 block min-h-11 sm:min-h-9 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
   </label>
-  <button type="button" disabled={busy||!changed||name.trim().length<2} onClick={()=>void save()}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-xs text-primary-text disabled:opacity-50">Rename</button>
+  <Button variant="secondary" type="button" disabled={busy||!changed||name.trim().length<2} onClick={()=>void save()}
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs text-primary-text disabled:opacity-50">Rename</Button>
   {error?<p role="alert" className="max-w-xs text-xs text-error">{error}</p>:null}
  </div>;
 }

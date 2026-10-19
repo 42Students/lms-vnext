@@ -91,7 +91,7 @@ export default async function TpoFailureReasonsPage({
 
       <section
         aria-label="Recorded adverse outcomes"
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
+        className="border-b border-border py-4"
       >
         <p className="text-sm font-semibold text-body">
           Recorded adverse events and current decisions
@@ -103,7 +103,7 @@ export default async function TpoFailureReasonsPage({
 
       <section
         aria-label="Report methodology"
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+        className="border-t border-border py-4 text-sm leading-6 text-body"
       >
         <p className="font-semibold text-foreground">
           Reporting methodology

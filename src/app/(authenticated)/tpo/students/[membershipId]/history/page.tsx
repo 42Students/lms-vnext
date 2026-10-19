@@ -58,7 +58,7 @@ export default async function TpoLearnerPlacementHistoryPage({
           <Link
             href={"/tpo/students/" +
               encodeURIComponent(history.learner.membershipId) + "/participation"}
-            className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
           >
             Participation decision
           </Link>
@@ -73,7 +73,7 @@ export default async function TpoLearnerPlacementHistoryPage({
           ["Accepted offer versions (this page)", history.pageFacts.acceptedOfferVersions],
           ["Confirmed joins (this page)", history.pageFacts.confirmedJoins],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-[12px] border border-border bg-surface p-5">
+          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
             <p className="text-sm font-medium text-body">{label}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
@@ -85,7 +85,7 @@ export default async function TpoLearnerPlacementHistoryPage({
         when an accepted offer has a recorded JOINED outcome.
       </p>
       {history.items.length === 0 ? (
-        <p role="status" className="rounded-[12px] border border-border bg-surface p-6 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
           No persisted placement applications were found for this learner on this page.
           External placement records and unmigrated placement registration sources are
           not included.
@@ -93,7 +93,7 @@ export default async function TpoLearnerPlacementHistoryPage({
       ) : (
         <div className="space-y-4">
           {history.items.map((item) => (
-            <article key={item.id} className="space-y-4 rounded-[12px] border border-border bg-surface p-5">
+            <article key={item.id} className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="text-lg font-semibold text-foreground">{item.jobTitle}</h2>
@@ -104,7 +104,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   {item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
                     className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline">Open drive</Link>:null}
                 </div>
-                <span className="rounded-[var(--radius)] border border-border bg-surface-subtle px-3 py-1 text-xs font-semibold text-foreground">
+                <span className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-1 text-xs font-semibold text-foreground">
                   {item.applicationStatus}
                 </span>
               </div>
@@ -123,7 +123,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                 ) : (
                   <ul className="flex flex-wrap gap-2 text-sm">
                     {item.applicationEvents.map((event) => (
-                      <li key={event.id} className="rounded-[var(--radius)] border border-border px-3 py-2">
+                      <li key={event.id} className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2">
                         {event.fromStatus ?? "NEW"} → {event.toStatus}
                         {" · "}{dateFormat.format(new Date(event.at))} IST
                       </li>
@@ -141,13 +141,13 @@ export default async function TpoLearnerPlacementHistoryPage({
                   ) : (
                     <ul className="space-y-2">
                       {item.appliedRounds.map((round) => (
-                        <li key={round.id} className="rounded-[var(--radius)] border border-border p-3 text-sm">
+                        <li key={round.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
                           {round.name}: <strong>{round.outcome}</strong>
                         </li>
                       ))}
                     </ul>
                   )}
-                  <details className="mt-4 rounded-[var(--radius)] border border-border p-3">
+                  <details className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3">
                     <summary className="cursor-pointer text-sm font-semibold text-foreground">
                       All recorded round result versions ({item.resultVersions.length})
                     </summary>
@@ -158,7 +158,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                     ) : (
                       <ul className="mt-3 space-y-2 text-sm">
                         {item.resultVersions.map((version) => (
-                          <li key={version.id} className="rounded-[var(--radius)] bg-surface-secondary p-3">
+                          <li key={version.id} className="rounded-[var(--lms-control-radius)] bg-surface-secondary p-3">
                             {version.name} · version {version.version}:{" "}
                             <strong>{version.status}</strong> · {version.outcome}
                             <p className="mt-1 text-xs text-muted-foreground">
@@ -182,7 +182,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   ) : (
                     <ul className="space-y-2">
                       {item.offers.map((offer) => (
-                        <li key={offer.id} className="rounded-[var(--radius)] border border-border p-3 text-sm text-body">
+                        <li key={offer.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
                           <p className="font-semibold text-foreground">
                             {offer.roleTitle} · {offer.status}
                           </p>

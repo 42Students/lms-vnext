@@ -25,7 +25,7 @@ export default async function LearnerApplicationCompanyPage({
       <Link
         href={"/learn/my-placements/applications?applicationId=" +
           encodeURIComponent(company.applicationId)}
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
+        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
       >
         ← Back to application
       </Link>
@@ -51,7 +51,7 @@ export default async function LearnerApplicationCompanyPage({
           <div><dt className="font-semibold">Learner</dt><dd>{company.companySharePreview.learnerName}</dd></div>
           <div><dt className="font-semibold">Email</dt><dd className="break-all">{company.companySharePreview.email??"No email recorded"}</dd></div>
         </dl>
-        <p className="mt-4 rounded-md bg-surface-subtle p-3 text-xs text-body">
+        <p className="mt-4 rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-xs text-body">
           This is the current selected-applicant share projection, not proof that a recruiter opened your record.
           Short-lived or revoked employer links cannot reveal your application. Phone numbers, private documents,
           attendance and other learners are not included.

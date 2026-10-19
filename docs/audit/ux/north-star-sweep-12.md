@@ -112,3 +112,51 @@ After the initial sweep and its merge into main, fast-forwarded `chatgpt/chat-12
 - Respected intentional standalone object styles (pills, branded previews, grouped table boxes, overlays) rather than deleting their content structures. Most changes were narrow replacements of literal `rounded-[9px]` with `rounded-[var(--lms-control-radius)]`, literal `rounded-xl` with the 12px canvas/card token, legacy heading `#172033` with `var(--lms-heading)`, and link literals with semantic `text-link`.
 - Current unmerged delta at this checkpoint: **26 commits ahead**, **613 behind**, **26 changed files**; changed-file groups Reports: 0, Placements/drives: 20, Other TPO routes: 1, TPO components: 5. Parallel lanes continued merging into `main` while this one authored commits. Do not force-update the branch; perform a normal merge/reconciliation of `main` before the orchestrator merges further.
 - Source changes only; no tests, TypeScript checker, app execution, CI, browser screenshot or pixel comparison. Audit mark means **source-inspected/changed**, not runtime-certified.
+
+## Continuation — chat-12 focused third-pass source styling (2026-10-19)
+
+- Fast-forwarded `chatgpt/chat-12-b` cleanly to then-current `main` at `f7dd3e81786adf00538daebf63a075046d159b4c` before editing; no force update and no writes to `main`.
+- **30 verified styling commits across 30 unique route/component files**, all prefixed `[chat-12]`; GitHub source writes only. Changes include:
+- find/page.tsx, find/error.tsx, batches/page.tsx
+- tpo-team-forms, tpo-team-rename, tpo-team-search, tpo-team-message-actions
+- tpo-students-bulk-add, tpo-student-quick-panel, tpo-students-drive-visibility, tpo-student-saved-views, tpo-student-nudge-panel, tpo-student-note-editor, tpo-timed-debar-control
+- tpo-batch-rule-editor, tpo-batch-facet-filters, tpo-batch-workspace-tabs, tpo-batch-student-saved-views, tpo-batch-student-bulk-notes, tpo-batch-instant-search, tpo-batch-decision-control, tpo-batch-inline-decision, tpo-batch-invitation-control
+- tpo-company-create-form, tpo-company-visibility-editor
+- tpo-grid-column-chooser, tpo-spreadsheet-grid, tpo-grid-filter-panel, tpo-bulk-action-preview, tpo-inbox-search
+- Collapsed TPO finder search-result cards into one bordered list per result category with hairline row dividers; switched its error fallback to the shared secondary `Button`. Retained results, route links, form state, and ARIA semantics.
+- Removed duplicate `Select`/`Button` styling on batch directory controls to inherit shared 9px/36px component behavior. Normalized first-third TPO roster/student/company/batch/team editor actions to 36px, using `--lms-control-radius` (9px) and separate content surfaces using `--lms-canvas-radius` (12px).
+- Preserved semantic pill styles, independent dialog/panel content, grouped tables, checkbox/touch targets not explicitly targeted, conditional renders, and all interaction/state behavior.
+- Applied source-level assertions on each changed token occurrence, examined closings for truncated `</Select` tags, and avoided bracket/cast edits. **No TypeScript compiler, tests, CI, dev server, browser/pixel diff or runtime execution**. Compile and visual parity remain unverified.
+- Branch relation at tracker write: **ahead `30`**, **behind `0`** relative to current `main`; main may continue advancing concurrently, so use regular merge/reconciliation, never force-update.
+
+### Fourth-pass completion — batch/roster and first-third fallback details
+
+- **18 additional verified source commits** after the 30-commit checkpoint, for **48 unique source files changed** since the latest fast-forward (plus this tracker). All commit prefixes are `[chat-12]` and branch is `chatgpt/chat-12-b` only.
+- Batch/class eligibility, lifecycle controls and CSV eligibility import; student spreadsheet export, bulk debarment, preparation assignment, bulk profile verification, clipboard actions, and whole-view bulk action panel now use the canonical control-radius and canvas-radius tokens. Kept independent panels and checkbox/touch rows rather than flattening meaningful content areas.
+- First-third TPO error fallbacks for batch list, batch-student eligibility grid, batch-history, students, company listing/detail, individual student history and team now use shared retry styling where native buttons existed and the canvas-radius token on bordered error panels. No failure wording or behavior was changed.
+- Team asks action controls and confirmation panel normalized, preserving stateful confirmation and role guards.
+- Read `docs/design/legacy-styles/README.md`, `components___button.scss`, `components___form.scss`, `components___listing-page-header.scss` along with NORTH STAR and extracted exact old TPO shell rules. Preferred measured 36px/9px TPO control rules where broader legacy SCSS variants differ by module.
+- Source-only replacements with exact occurrence checks; `<Button>` opening/closing counts verified for newly converted fallbacks; no truncated `</Select` introduced. No compiler, tests, CI, application execution, browser or visual comparison was run. Strict TypeScript compile and pixel parity require the orchestrator's final check.
+- Branch comparison immediately before tracker write: ahead `49`, behind `436` relative to `main`. Other lanes may advance concurrently. Do not force-update.
+
+## Next North Star continuation — merged main and 50 more source commits (2026-10-19)
+
+- **Sync first:** existing chat-12 branch had diverged. Compared its 49-file delta against `main`, identified five overlapping Team components, reconciled each to the newer main implementation, then merged commit `a98732e8ad1845a88229c57ba38c4a90f02eca77` into `chatgpt/chat-12-b` with merge commit `996b048951e794b769d87a263bda12fae091bc2d` (PR #182 targeting chat-12). The base branch `main` was never modified. No force push.
+- **50 new styling commits** after the merge, all prefixed `[chat-12]`, covering:
+  - TPO batch/student: eligibility and registrations pages, class decisions, batch history, student selection keyboard actions, student placement and participation history, academic import preview/workspace, shortcut/search, safe CSV export, debarment and preparation planning, error and loading fallbacks.
+  - TPO companies: archived list, linked people, contact log, feedback, company team conversation/composer and CRM memory surfaces; company-level errors and visibility actions.
+  - TPO team: everyone/team/thread pages, asks and follow-up controls, thread error fallback, reconciled message/rename/create forms with the newer shared `Button`/`Input`/`Select`/`Textarea` components.
+- Replaced remaining hardcoded `rounded-[12px]` and `rounded-[var(--radius)]` cases in these files with `--lms-canvas-radius` for distinct panels and `--lms-control-radius` for controls/links. Set specific action rows formerly forced to `min-h-10` or `min-h-11 sm:min-h-9` to the measured 36px control height, without changing checkboxes' independent mobile touch rows or content order.
+- Swapped native Retry buttons to the shared secondary `Button` on TPO registration, batch-rules and company-person error states. Other error panels received the canonical radius. Preserved existing user-facing copy, filters, data flow, conditional states, accessibility attributes and behavior.
+- **Source-only checks:** exact old/new occurrence assertions for each edit; trailing malformed `</Select` check; JSX closing-tag count checks on page work; `<Button>` opening/closing balance on fallback conversions. No application execution, no TypeScript typecheck, tests, CI, browser, deployment or screenshots.
+- **Snapshot before this tracker write:** relative to moving `main`, `106` commits ahead, `198` behind, `93` changed files including this tracker (42 TPO route files, 50 TPO component files, one documentation file). Concurrent lanes have continued to update `main` since the sync; reconcile using a normal merge before orchestrator integration, not a forced branch update.
+
+### Follow-up: five core TPO portal pages
+
+- Added **five further** `[chat-12]` commits after the 50-commit post-merge batch: `/tpo/more`, `/tpo/home`, `/tpo/companies`, `/tpo/companies/[companyId]`, and `/tpo/students`.
+- Applied 12px canonical canvas/card radius to distinct home, shortcut, company listing/detail and student directory panels, while changing native controls, list action links and filter fields to 9px canonical control radius. Distinct student-directory filter `details` and metrics blocks retain grouped-surface treatment. All existing company CRM layouts, roster filters, search bindings, CTA semantics, chart bars and tabs remain intact.
+- This continuation totals **55 verified source commits following the main merge**, with exact text-occurrence checks and JSX closing-tag counts per edit. No compiler, CI, tests, dev server, runtime or browser used.
+- Live branch comparison before this audit commit: **ahead `112`, behind `198`, changed files `98`** versus moving `main`. Any further main integration must preserve all chat-12 source commits and use a normal merge.
+
+- **Linked company contact form follow-through:** `src/components/placements/tpo-company-person-editor.tsx` now uses the measured 36px control height on all select/input/save controls and semantic `text-on-primary` for its primary CTA. The TPO company trust switch was inspected and already retained a purposeful mobile touch-target height; no change was necessary.
+- This makes **56 verified post-merge source commits** in this continuation. Branch relation at this final source checkpoint: **ahead `114`, behind `198`, 99 changed files** relative to moving `main`; no forced updates, no CI or runtime execution.

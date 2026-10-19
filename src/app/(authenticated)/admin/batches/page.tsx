@@ -35,7 +35,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin · Academic Setup" title="Batches"/>
       {data ? <AcademicSetupSteps step={5} /> : null}
-    {!selected ? <p role="status" className="rounded-xl border border-border bg-surface p-5">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
+    {!selected ? <p role="status" className="text-sm text-body">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
     {data ? <>
       <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} />
       <section aria-label="Filter managed batches" className="border-b border-border pb-4">
@@ -67,13 +67,13 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           </label>
           <Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9">Refresh</Button>
-          <Link href="/admin/batches" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
+          <Link href="/admin/batches" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
         </form>
       </section>
       <nav aria-label="Batch lifecycle views" className="flex flex-wrap gap-3 text-sm">
-        <Link href="/admin/batches?status=ACTIVE" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Active batches</Link>
-        <Link href="/admin/batches?status=INACTIVE" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show inactive</Link>
-        <Link href="/admin/batches?status=COMPLETED" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show completed</Link>
+        <Link href="/admin/batches?status=ACTIVE" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text">Active batches</Link>
+        <Link href="/admin/batches?status=INACTIVE" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text">Show inactive</Link>
+        <Link href="/admin/batches?status=COMPLETED" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text">Show completed</Link>
       </nav>
       <section aria-label="Manage batches" className="space-y-3 pt-2">
         <h2 className="text-lg font-semibold">Manage batches</h2>
@@ -83,7 +83,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           columns={[
             {key:"batch",header:"Batch",mobilePriority:"primary",cell:row=><div className="min-w-0">
               <span className="font-semibold">{row.name} ({row.code})</span>
-              <Link href={`/admin/batches/${encodeURIComponent(row.id)}/students`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Manage students →</Link>
+              <Link href={`/admin/batches/${encodeURIComponent(row.id)}/students`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Manage students →</Link>
             </div>},
             {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
             {key:"start",header:"Start Date",mobilePriority:"secondary",cell:row=>row.startDate??"—"},
@@ -99,12 +99,12 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           ]} />
         <nav aria-label="Batch pages" className="flex items-center justify-between gap-3 text-sm">
           <span role="status" aria-live="polite">{data.items.length} of {data.total} results · Page {data.query.page} of {data.totalPages}</span>
-          <div className="flex gap-3">
-            {data.query.page>1?<Link href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
-            {data.query.page<data.totalPages?<Link href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
+          <div className="flex flex-wrap gap-2">
+            {data.query.page>1?<Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
+            {data.query.page<data.totalPages?<Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
           </div>
         </nav>
-        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">
+        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text">
           Batch Promotion →
         </Link>
       </section>

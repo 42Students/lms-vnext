@@ -127,7 +127,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   }
  }
  return <section aria-label={"Company Team conversation for "+companyName}
-   className="space-y-4 rounded-[12px] border border-border bg-surface p-4">
+   className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <div className="flex flex-wrap items-start justify-between gap-3">
    <div>
     <h2 className="font-semibold text-foreground">Team · {companyName}</h2>
@@ -154,7 +154,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   {data?.status==="READY"?<>
    {data.truncated?<p role="status" className="text-xs text-warning">Showing the latest 100 messages. Earlier history remains stored.</p>:null}
    {data.messages.some(m=>m.decision&&!m.deletedAt)?<aside aria-label="Pinned company Team decisions"
-     className="rounded-[var(--radius)] border border-border p-3 text-sm">
+     className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
      <h3 className="font-semibold">Decided:</h3>
      {data.messages.filter(m=>m.decision&&!m.deletedAt).slice(-5).map(m=>
        <a key={m.id} href={"#company-team-"+m.id} className="block truncate text-primary-text underline">{m.body}</a>)}
@@ -162,7 +162,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    <ScrollCue axis="y" label="Company Team message history" viewportClassName="max-h-[35rem]"><ol role="log" aria-live="polite" aria-label="Company Team messages" className="space-y-3">
     {data.messages.length===0?<li className="text-sm text-muted-foreground">
       Nothing here yet. Write the first message. @ someone to bring them in, or Ask someone to give a task a name and a date.
-    </li>:data.messages.map((m,index)=><li key={m.id} id={"company-team-"+m.id} className="rounded-[var(--radius)] border border-border p-3">
+    </li>:data.messages.map((m,index)=><li key={m.id} id={"company-team-"+m.id} className="rounded-[var(--lms-control-radius)] border border-border p-3">
       {(index===0||data.messages[index-1].dayKey!==m.dayKey)?<p className="mb-2 text-center text-xs font-semibold text-body">{m.dayLabel}</p>:null}
       <p className="text-xs text-muted-foreground">
         {m.authorMembershipId===actorMembershipId?"You":m.authorName??"Team member"} · {m.createdLabel}
@@ -172,7 +172,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
       <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">
        {m.deletedAt?"Message removed":formatTokens(m.body,data.members)}
       </p>
-      {m.askAssigneeMembershipId?<div className="mt-2 rounded-[var(--radius)] border border-border p-2 text-xs">
+      {m.askAssigneeMembershipId?<div className="mt-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-xs">
         {m.askOverdue?"Overdue ask":"Open ask"} · {data.members.find(person=>person.membershipId===m.askAssigneeMembershipId)?.name??"Team member"}
         {m.dueLabel?" · by "+m.dueLabel:""} · {m.askStatus??"OPEN"}
         {m.askStatus==="OPEN"&&m.askAssigneeMembershipId===actorMembershipId?
@@ -195,7 +195,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
        </div>:null}
        {editing===m.id?<form className="mt-2 space-y-2" onSubmit={event=>{event.preventDefault();
           void mutate({action:"EDIT",messageId:m.id,body:editBody}).then(ok=>{if(ok)setEditing(null);});}}>
-        <textarea required maxLength={4000} rows={3} className="w-full rounded-[var(--radius)] border border-border p-2"
+        <textarea required maxLength={4000} rows={3} className="w-full rounded-[var(--lms-control-radius)] border border-border p-2"
           value={editBody} onChange={event=>setEditBody(event.target.value)}/>
         <button type="submit" disabled={busy||!editBody.trim()} className="text-primary-text underline">Save edit</button>
         <button type="button" className="ml-3 text-primary-text underline" onClick={()=>setEditing(null)}>Cancel</button>
@@ -210,10 +210,10 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
        onKeyDown={event=>{if(event.key==="Enter"&&!event.shiftKey&&!event.nativeEvent.isComposing){
         event.preventDefault();event.currentTarget.form?.requestSubmit();
        }}}
-       className="rounded border border-border bg-surface p-3"/>
+       className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
     </label>
     <label className="grid gap-1 text-sm">Mention a teammate
-      <select disabled={busy} defaultValue="" className="min-h-10 rounded-[var(--radius)] border border-border bg-surface px-2"
+      <select disabled={busy} defaultValue="" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"
         onChange={event=>{if(event.target.value){
           updateDraft({body:(body.trimEnd()+" @member:"+event.target.value+" ").slice(0,4000),decision,assignee,dueAt});
           event.currentTarget.value="";
@@ -227,7 +227,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
     <div className="grid gap-3 sm:grid-cols-2">
      <label className="grid gap-1 text-sm">Ask someone (optional)
        <select value={assignee} disabled={busy} onChange={event=>updateDraft({body,decision,assignee:event.target.value,dueAt:event.target.value?dueAt:""})}
-        className="min-h-10 rounded-[var(--radius)] border border-border bg-surface px-2">
+        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
         <option value="">No ask attached</option>
         {data.members.filter(member=>member.membershipId!==actorMembershipId).map(member=>
          <option key={member.membershipId} value={member.membershipId}>{member.name}</option>)}
@@ -235,7 +235,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
      </label>
      {assignee?<label className="grid gap-1 text-sm">By (IST, optional)
        <input type="datetime-local" value={dueAt} onChange={event=>updateDraft({body,decision,assignee,dueAt:event.target.value})}
-        className="min-h-10 rounded-[var(--radius)] border border-border bg-surface px-2"/>
+        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
      </label>:null}
     </div>
     <label className="flex items-center gap-2 text-sm">
@@ -245,7 +245,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
     <div className="flex items-center justify-between gap-3">
      <span className="text-xs text-muted-foreground">{body.length}/4000</span>
      <button type="submit" disabled={busy||!body.trim()}
-      className="min-h-10 rounded-[var(--radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
+      className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
        {busy?"Sending…":"Send"}
      </button>
     </div>
