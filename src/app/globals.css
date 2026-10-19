@@ -1065,7 +1065,9 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
    on popup, toast, modal and drawer actions without removing focus visibility. */
 :is([data-slot="dropdown-root"] > summary, [data-slot="info-popover"] > summary,
     [data-slot="menu"] [role="menuitem"], [data-slot="toast-stack"] button,
-    [data-slot="dialog"] button, [data-slot="drawer"] button):focus-visible {
+    [data-slot="dialog"] button, [data-slot="drawer"] button,
+    [data-slot="bottom-sheet"] button,
+    [role="dialog"][aria-modal="false"] button):focus-visible {
   outline: 2px solid var(--lms-primary-text);
   outline-offset: 3px;
   box-shadow: 0 0 0 4px rgba(26, 149, 161, .12);
@@ -1076,7 +1078,9 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="dropdown"],
 [data-slot="toast-stack"],
 [data-slot="drawer"] [data-slot="scroll-cue"] [role="region"],
-[data-slot="dialog"] [data-slot="scroll-cue"] [role="region"] {
+[data-slot="dialog"] [data-slot="scroll-cue"] [role="region"],
+[data-slot="bottom-sheet"] [data-slot="scroll-cue"] [role="region"],
+[role="dialog"][aria-modal="false"] [data-slot="scroll-cue"] [role="region"] {
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -1085,6 +1089,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="dropdown"]::-webkit-scrollbar,
 [data-slot="toast-stack"]::-webkit-scrollbar,
 [data-slot="drawer"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar,
-[data-slot="dialog"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar {
+[data-slot="dialog"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar,
+[data-slot="bottom-sheet"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar,
+[role="dialog"][aria-modal="false"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar {
   display: none;
 }
