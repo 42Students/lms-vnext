@@ -37,7 +37,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     <PageHeader eyebrow="College Admin · Placements" title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Drive overview</Link>} />
-    <form method="get" role="search" aria-label="Application filters" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
+    <form method="get" role="search" aria-label="Application filters" className="grid gap-3 rounded-[8px] border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
         <input name="q" defaultValue={query.q} maxLength={100} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm" />
       </label>
