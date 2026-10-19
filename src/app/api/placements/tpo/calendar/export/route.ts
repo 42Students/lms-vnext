@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoCalendarRoundExport } from "@/modules/placements/tpo-calendar-export-service";
@@ -15,7 +16,7 @@ export async function GET(request: Request) {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="tpo-upcoming-rounds.csv"',
+        "Content-Disposition": 'attachment; filename="' + gridExportFilename("tpo-upcoming-rounds", "csv") + '"',
         "Cache-Control": "private, no-store",
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",
