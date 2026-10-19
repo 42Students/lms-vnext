@@ -2,6 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "./legacy-calendar-theme.module.css";
+import styles from "./learner-career-calendar.module.css";
 
 import Link from "next/link";
 import {useSearchParams} from "next/navigation";
@@ -131,10 +132,10 @@ export function LearnerCareerCalendar({
 
   return (
     <div className="space-y-5" aria-label="Learner Career Calendar">
-      <section className="border-b border-border pb-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <section className={styles.toolbar}>
+        <div className={styles.header}>
           <div>
-            <h2 className="m-0 text-base font-semibold text-foreground">Career calendar</h2>
+            <h2 className={styles.heading}>Career calendar</h2>
             <p className="mt-2 text-sm text-body">
               Scheduled employer assessments, interviews and other rounds for your applications.
               Approved reschedules replace the original slot.
@@ -149,7 +150,7 @@ export function LearnerCareerCalendar({
             Export selected period .ics
           </Button>
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-2" role="group" aria-label="Calendar view">
+        <div className={styles.views} role="group" aria-label="Calendar view">
           {views.map((option) => (
             <Button
               type="button"
@@ -163,27 +164,27 @@ export function LearnerCareerCalendar({
             </Button>
           ))}
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <Button variant="secondary"
+        <div className={styles.nav}>
+          <Button variant="ghost" className={styles.navArrow}
             type="button"
             aria-label="Previous calendar period"
             onClick={() => {if(previousDate)changeCalendar({date:previousDate});}}
             disabled={previousDate===null}
             
           >←</Button>
-          <Button variant="secondary"
+          <Button variant="secondary" className={styles.today}
             type="button"
             onClick={() => changeCalendar({date:initialCareerCalendarDay()})}
             
           >Today</Button>
-          <Button variant="secondary"
+          <Button variant="ghost" className={styles.navArrow}
             type="button"
             aria-label="Next calendar period"
             onClick={() => {if(nextDate)changeCalendar({date:nextDate});}}
             disabled={nextDate===null}
             
           >→</Button>
-          <span className="text-sm font-semibold text-foreground">
+          <span className={styles.period}>
             {view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}
           </span>
         </div>
@@ -197,9 +198,11 @@ export function LearnerCareerCalendar({
             }}
             className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
         </label>
-        <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter career events">
+        <div className={styles.legend} role="group" aria-label="Filter career events">
           {filters.map((option) => (
             <FilterChip
+              className={styles.legendChip}
+              data-kind={option.key}
               type="button"
               key={option.key}
               aria-pressed={filter === option.key}
@@ -219,10 +222,10 @@ export function LearnerCareerCalendar({
       ) : null}
 
       {calendarDays.length ? (
-        <section className="hidden overflow-x-auto rounded-xl border border-border bg-surface p-3 md:block" aria-label={view + " calendar grid"}>
-          <CalendarGrid variant="hairline" className={"min-w-[38rem] "+calendarStyles.calendarHairline}>
+        <section className={"hidden p-3 md:block "+styles.gridFrame} aria-label={view + " calendar grid"}>
+          <CalendarGrid variant="hairline" className={styles.grid}>
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label, index) => (
-              <p key={label} className={"py-2 text-center text-xs font-semibold uppercase text-muted-foreground "+calendarStyles.calendarWeekday+" "+(index===6?calendarStyles.calendarSunday:"")}>
+              <p key={label} className={styles.weekday+" "+(index===6?calendarStyles.calendarSunday:"")}>
                 {label}
               </p>
             ))}
@@ -238,19 +241,19 @@ export function LearnerCareerCalendar({
                   aria-label={`${prettyDay(day)}: ${dayEvents.length} events`}
                   aria-current={day===todayAnchor?"date":undefined}
                   onClick={() => { changeCalendar({date:day,view:"day"}); }}
-                  className={`min-h-24 border p-2 text-left transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] ${calendarStyles.calendarDay} ${day===todayAnchor?calendarStyles.calendarCurrentDay:""} ${isSunday?calendarStyles.calendarSunday:""} ${outside ? "opacity-50" : ""}`}
+                  className={[styles.day,day===todayAnchor?styles.todayDay:"",outside?styles.outsideDay:""].filter(Boolean).join(" ")}
                 >
-                  <span className={"block text-xs font-semibold text-foreground "+(isSunday?calendarStyles.calendarSunday:"")}>{day.slice(-2)}</span>
+                  <span className={styles.dayNumber+" "+(isSunday?calendarStyles.calendarSunday:"")}>{day.slice(-2)}</span>
                   <span className="mt-2 block text-xs text-body">
                     {dayEvents.length ? `${dayEvents.length} event${dayEvents.length === 1 ? "" : "s"}` : "—"}
                   </span>
                   {chips.visible.map((chip) => (
-                    <span key={chip.key} className="mt-1 block max-w-full truncate rounded bg-primary-subtle px-1.5 py-0.5 text-xs font-semibold text-primary-text"
+                    <span key={chip.key} data-kind={chip.kind} className={styles.chip}
                       title={chip.title + " · " + chip.kind}>
                       {chip.kind === "ASSESSMENT" ? "Assessment" : chip.kind === "INTERVIEW" ? "Interview" : "Other"} · {chip.title}
                     </span>
                   ))}
-                  {chips.hidden > 0 ? <span className="mt-1 block text-xs text-body">+{chips.hidden} more</span> : null}
+                  {chips.hidden > 0 ? <span className={styles.more}>+{chips.hidden} more</span> : null}
                 </button>
               );
             })}
@@ -270,19 +273,19 @@ export function LearnerCareerCalendar({
       ) : null}
 
       {calendarDays.length ? (
-        <section className="space-y-4 md:hidden" aria-label="Mobile career calendar agenda">
+        <section className={styles.agenda+" md:hidden"} aria-label="Mobile career calendar agenda">
           <h3 className="text-base font-semibold text-foreground">Agenda by day (IST)</h3>
           {mobileDays.length===0 ? (
             <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
               No scheduled placement events match this period and filter.
             </p>
           ) : mobileDays.map(day=>(
-            <div key={day.dayKey} className="rounded-xl border border-border bg-surface p-4">
+            <div key={day.dayKey} className={styles.mobileDay}>
               <h4 className="text-sm font-semibold text-foreground">{prettyDay(day.dayKey)}</h4>
               {day.events.length===0?<p className="mt-2 text-sm text-body">No scheduled rounds on this day.</p>:null}
-              <ul className="mt-3 divide-y divide-border">
+              <ul className={styles.mobileList}>
                 {day.events.map(event=>(
-                  <li key={event.key} className="py-3 first:pt-0 last:pb-0">
+                  <li key={event.key} data-kind={event.kind} className={styles.mobileRow}>
                     <p className="text-sm font-semibold text-foreground">{event.title} · {event.companyName}</p>
                     <p className="mt-1 text-xs text-body">{displayDate(event.start)} · {event.kind}</p>
                     <div className="mt-2 flex flex-wrap gap-3">
@@ -321,7 +324,8 @@ export function LearnerCareerCalendar({
         ) : period.events.map((event) => (
           <article
             key={event.key}
-            className="rounded-xl border border-border bg-surface p-4 sm:p-5"
+            data-kind={event.kind}
+            className={styles.agendaEvent}
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>

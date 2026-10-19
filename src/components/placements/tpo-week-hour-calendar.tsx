@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import weekStyles from "./tpo-week-hour-calendar.module.css";
 import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
 import { Select } from "@/components/ui/select";
@@ -14,7 +15,7 @@ import {TpoCalendarMoveFollowup,type TpoCalendarLeadOption} from "./tpo-calendar
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
 
-const FIRST=7,LAST=21,HEIGHT=64;
+const FIRST=7,LAST=21,HEIGHT=52;
 const label=(day:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",weekday:"short",day:"numeric",month:"short"})
  .format(new Date(day+"T12:00:00Z"));
 const clock=(hour:number)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",hour:"numeric",hour12:true})
@@ -129,22 +130,22 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    </label>
   </div>
   <p className="text-xs text-muted-foreground">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p>
-  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className="overflow-x-auto overscroll-x-contain rounded-[var(--lms-canvas-radius)] border border-border bg-surface [mask-image:linear-gradient(to_right,black_0%,black_95%,transparent_100%)]">
-   <div className="grid min-w-[63rem] grid-cols-[5rem_repeat(7,minmax(0,1fr))]">
-    <div className="sticky left-0 z-10 border-b border-r border-border bg-surface p-2 text-xs">IST</div>
-    {days.map(day=><div key={day} className="border-b border-r border-border p-3 text-center text-xs font-semibold">
+  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain bg-surface "+weekStyles.grid}>
+   <div className={"grid min-w-[56rem] "+weekStyles.weekColumns}>
+    <div className={"sticky left-0 z-10 border-b border-r bg-surface "+weekStyles.corner}>IST</div>
+    {days.map(day=><div key={day} className={"border-b border-r text-center text-xs font-semibold "+weekStyles.dayHead}>
      {label(day)}{day===today?" · Today":""}{blocked.has(day)?" · Blocked":""}
     </div>)}
     <div className="relative border-r border-border bg-surface" style={{height}}>
-     {Array.from({length:LAST-FIRST},(_,offset)=><div key={offset} className="absolute w-full border-t border-border pl-1 text-xs text-muted-foreground"
-       style={{top:offset*HEIGHT}}>{clock(FIRST+offset)}</div>)}
+     {Array.from({length:LAST-FIRST},(_,offset)=><div key={offset} className="absolute w-full border-t border-[#e7ecf2]"
+       style={{top:offset*HEIGHT}}><span className={weekStyles.hourMarker}>{clock(FIRST+offset)}</span></div>)}
     </div>
     {days.map(day=>{
      const positioned=(byDay.get(day)??[]).filter(e=>!filter.trim()||
       [e.title,e.companyName,e.roundKind??""].some(x=>x.toLocaleLowerCase("en-IN").includes(filter.trim().toLocaleLowerCase("en-IN"))));
      const offHours=positioned.filter(e=>e.outsideHours);
      const inHours=positioned.filter(e=>!e.outsideHours);
-     return <div key={day} className="relative border-r border-border" style={{height}} aria-label={label(day)+" events"}>
+     return <div key={day} className={"relative border-r "+weekStyles.dayColumn} style={{height}} aria-label={label(day)+" events"}>
       {Array.from({length:LAST-FIRST},(_,offset)=><Button variant="ghost" key={offset} type="button"
        aria-label={"Add follow-up on "+label(day)+" at "+clock(FIRST+offset)}
        disabled={!canCreate||saving} onClick={clickEvent=>void open(day,FIRST+offset,clickEvent.currentTarget)}
@@ -153,33 +154,34 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         event.preventDefault();const followupId=event.dataTransfer.getData("application/x-tpo-followup");
         if(followupId)void moveFollowup(followupId,day,FIRST+offset);
        }}
-       className="absolute inset-x-0 z-0 rounded-none border-b border-[var(--lms-canvas-border)] px-1 text-left hover:bg-[var(--lms-primary-subtle)] focus-visible:z-20"
+       className={"absolute inset-x-0 z-0 border-b px-1 text-left focus-visible:z-20 "+weekStyles.slot}
        style={{top:offset*HEIGHT,height:HEIGHT}}/>)}
       {day===today&&nowMinutes>=FIRST*60&&nowMinutes<=LAST*60?
-       <div aria-label="Current time" className="pointer-events-none absolute inset-x-0 z-10 border-t-2 border-warning"
+       <div aria-label="Current time" className={"pointer-events-none absolute inset-x-0 border-t-2 "+weekStyles.nowLine}
         style={{top:(nowMinutes-FIRST*60)/60*HEIGHT}}/>:null}
       {inHours.map(event=>{
        const top=Math.max(0,(event.startMinute-FIRST*60)/60*HEIGHT);
-       const blockHeight=Math.max(24,(event.endMinute-event.startMinute)/60*HEIGHT);
-       const position={top,height:blockHeight,left:(event.column/event.columns*100)+"%",
-        width:(100/event.columns)+"%"};
+       const blockHeight=Math.max(22,(event.endMinute-event.startMinute)/60*HEIGHT);
+       const position={top,height:blockHeight,
+        left:"calc("+(event.column/event.columns*100)+"% + 2px)",
+        width:"calc("+(100/event.columns)+"% - 4px)"};
        const inner=<><strong className="block truncate">{event.title}</strong>
         <span className="block truncate">{event.companyName}</span>
-        <span className="block text-[10px]">{kinds[event.kind]??event.kind}</span></>;
+        <span className="block text-xs">{kinds[event.kind]??event.kind}</span></>;
        return canCreate&&event.followupId&&event.status==="OPEN"?
         <button key={event.id} type="button"
-         aria-label={"Move follow-up: "+event.title}
+         aria-label={"Move follow-up: "+event.title} data-event-kind={event.kind}
          onClick={()=>setMove({id:event.followupId!,currentIst:calendarDueAtToIstLocal(new Date(event.startsAt))})}
-         style={position} className={"absolute z-10 overflow-hidden rounded-[var(--lms-control-radius)] border border-border px-1 py-0.5 text-left text-[11px] leading-tight "+tone(event.kind)}>{inner}</button>:
-       event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title}
+         style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 text-left "+tone(event.kind)+" "+weekStyles.event}>{inner}</button>:
+       event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title} data-event-kind={event.kind}
         draggable={canCreate&&Boolean(event.followupId)}
         onDragStart={dragEvent=>{
          if(!event.followupId)return;
          dragEvent.dataTransfer.setData("application/x-tpo-followup",event.followupId);
          dragEvent.dataTransfer.effectAllowed="move";
         }}
-        style={position} className={"absolute z-10 overflow-hidden rounded-[var(--lms-control-radius)] border border-border px-1 py-0.5 text-[11px] leading-tight "+tone(event.kind)}>{inner}</Link>:
-       <div key={event.id} style={position} className={"absolute z-10 overflow-hidden rounded-[var(--lms-control-radius)] border border-border px-1 py-0.5 text-[11px] leading-tight "+tone(event.kind)}>{inner}</div>;
+        style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles.event}>{inner}</Link>:
+       <div key={event.id} data-event-kind={event.kind} style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles.event}>{inner}</div>;
       })}
       {offHours.length?<div className="absolute inset-x-0 bottom-0 z-20 space-y-1 border-t border-border bg-surface/95 p-1">
        {offHours.map(e=><p key={e.id} className="truncate text-[10px]" title={e.title}>Outside displayed hours · {e.title}</p>)}

@@ -1,0 +1,80 @@
+/*
+ * Original TPO time-grid paint: lms2-fe@prod-2026
+ * src/styles/components/_tpo-ui.scss:201-215 and _tpo-tokens.scss:6-25.
+ * The slot geometry is defined in ui/calendarGrid.js:4-6 (52px per hour);
+ * event paint is in _tpo-calendar.scss:217-250.
+ * Keep appointment times, event semantics and all data handling in the caller.
+ */
+.grid {
+  border: 1px solid #e7ecf2 !important;
+  border-radius: 10px !important;
+  background: #fff;
+}
+.weekColumns {
+  grid-template-columns: 56px repeat(7, minmax(120px, 1fr));
+}
+.corner {
+  padding: 6px;
+  color: #5b6b82;
+  font-size: 12px;
+  text-align: right;
+  border-color: #e7ecf2 !important;
+}
+.dayHead {
+  padding: 8px;
+  border-color: #e7ecf2 !important;
+  color: #5b6b82;
+  background: #fff;
+}
+.hourMarker {
+  display: block;
+  padding: 0 6px;
+  color: #5b6b82;
+  font-size: 12px;
+  text-align: right;
+  transform: translateY(-8px);
+}
+.dayColumn {
+  border-color: #e7ecf2 !important;
+  cursor: cell;
+}
+.slot {
+  border-color: #e7ecf2 !important;
+  border-radius: 0 !important;
+  cursor: cell;
+}
+.slot:hover:not(:disabled) {
+  background: rgba(38, 186, 199, 0.04) !important;
+}
+.slot:focus-visible {
+  outline: 2px solid #26bac7;
+  outline-offset: -2px;
+}
+.nowLine {
+  border-top: 2px solid #d92d20 !important;
+  z-index: 3;
+}
+.event {
+  border: 1px solid #e7ecf2 !important;
+  border-left: 4px solid #0a7c88 !important;
+  border-radius: 7px !important;
+  padding: 5px 7px !important;
+  background: #f8fafc !important;
+  color: #334155 !important;
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+.event:hover {
+  background: #f6f9fd !important;
+  border-top-color: #dde6f0 !important;
+  border-right-color: #dde6f0 !important;
+  border-bottom-color: #dde6f0 !important;
+}
+.event[data-event-kind="ROUND"] { border-left-color: #0958d9 !important; }
+.event[data-event-kind="APPLICATION_DEADLINE"] { border-left-color: #b34700 !important; }
+.event[data-event-kind="FOLLOW_UP"] { border-left-color: #0a7c88 !important; }
+.event[data-event-kind="INTERVIEW_SLOT"] { border-left-color: #6b2fd1 !important; }
+@media (prefers-reduced-motion: reduce) {
+  .event { transition: none; }
+}
