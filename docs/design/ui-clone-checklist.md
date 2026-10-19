@@ -4,6 +4,16 @@ Owner goal (2026-10-19): stakeholders must not be able to tell vNext from the ol
 
 Each category has ONE owner lane (single owner per file set). Owners: compare vNext to the legacy value by value, fix, write `docs/audit/ux/clone-<category>.md` listing every value checked and its result, then migrate every page that hand-rolls the element onto the shared component. Tick items in your own audit file.
 
+
+## STRICT TICK RULE (owner, binding)
+An item may be ticked ONLY when ALL of these are true; otherwise leave it unticked and write what is missing:
+1. VALUE PROOF: your audit file docs/audit/ux/clone-<category>.md has, for the item, a table of every property with the legacy value (file:line in docs/design/legacy-styles/ or old-lms-shell.css) and the vNext value (file:line), and every row matches exactly. No "approximately", no "similar", no row left out. States included: default, hover, active, focus, disabled, loading, error, empty where the element has them.
+2. COVERAGE PROOF: zero remaining hand-rolled instances. State the grep you ran and its output count, e.g. raw buttons: grep -rlE "<button[ >]" src --include=*.tsx must list only the shared Button file and files with a written exemption; raw selects/inputs/textareas the same; hard-coded hex colours: only in globals.css and src/components/ui; hand-rolled overlays: grep fixed inset-0 and role=dialog only in the shared Dialog/Drawer. Paste the command and count in the audit file.
+3. RESPONSIVE PROOF: phone and tablet behaviour compared with the old LMS rules for the element.
+4. NO REGRESSION: props and behaviour of the shared component unchanged for existing callers; valid JSX (every open/close tag name matches).
+The orchestrator re-runs the greps itself and un-ticks anything that fails. Visual side-by-side verification is a separate later step (section J); do not claim it.
+Format in the audit file: "- [x] item (greps: <cmd> => <count>; values: <n> rows, all match)" or "- [ ] item (missing: ...)".
+
 ## A. Foundations (owner: chat-17, with chat-12 for typography/icons)
 1. Font family, weights, sizes, line-heights, letter-spacing for every text role (h1-h6, body, caption, label, helper, table text, button text, numeric/tabular).
 2. Colour palette: text, muted text, borders, backgrounds, shell bg #f1f4f9, canvas, brand teal, success/warning/error/info, link colour and hover, selection colour, disabled colours.
