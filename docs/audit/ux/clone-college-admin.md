@@ -465,3 +465,32 @@
 Native hidden inputs, file uploads, checkbox/radio controls and externally provided widget markup may need native semantics. An exemption requires a path, line and reason; the item stays unticked until counted and documented. Do not tick based only on an earlier north-star inventory marked `[x]`.
 
 ## Change batches
+
+### 2026-10-19 bounded-turn source edits — branch pushed
+
+- **Source edits:** 17 TSX files; shared components now used for interactive buttons, selects, visible inputs, textareas and checkboxes in the edited files. Preserved existing form names, submitted values, event handlers, disabled and required props, and explicit `type="submit"` when replacing native submit buttons.
+- **Post-edit source-level check:** fetched all 17 edited TSX files from `chatgpt/chat-4-b` and scanned `<(button|input|select|textarea|table)(?=[\\s>])`; 7 matches, **all** native `type="hidden"` in the elective roster (action/assignmentId/membershipId). **Zero non-exempt raw controls within these 17 edited TSX files.** In the edited files `<Select>` has balanced `</Select>`, `<Button>` has balanced `</Button>`, and no duplicate named Button imports were observed. This is **not** a TypeScript build or JSX parser pass.
+- **Exemption ledger:** `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`: 7 native hidden inputs, which only convey server-action form intent. `src/app/(authenticated)/college/contacts/page.tsx:60-61`: 2 previously observed hidden form inputs (tab and membershipId; not edited in this batch). `src/components/admin/college-branding-form.tsx:154,162`: `#26BAC7` and `#1A95A1` are brand-colour **input values**, not CSS skin declarations; retain pending a complete data-vs-visual-colour scan.
+- **Styling:** removed hand-rolled control classes in edited files and flattened nested filter/result cards in college companies, drives, roster, placement lookup, faculty assignments, batch promotion and elective roster. These are source changes; desktop/tablet/phone pixel parity remains unverified.
+- **Strict rule still open:** full 416-file grep with line-numbered exclusions, legacy/vNext line-by-line value/state matrix, all PageHeader and single-canvas coverage, accessible interaction review, tablet/phone proof, and later visual side-by-side verification. No checklist item ticked; no code/CI run in this turn.
+- **Next exact file:** `src/app/(authenticated)/college/contacts/page.tsx` — reconcile all shared controls, native-hidden exemptions, local card wrappers, and PageHeader states; then continue the Work queue in the listed order.
+
+**Changed TSX paths (source-reviewed from the pushed branch):**
+- `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- `src/app/(authenticated)/college/companies/page.tsx`
+- `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- `src/app/(authenticated)/college/faculty-assignment/page.tsx`
+- `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
+- `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- `src/app/(authenticated)/college/people/manage/page.tsx`
+- `src/app/(authenticated)/college/placements/drives/page.tsx`
+- `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- `src/components/academics/college-semester-management.tsx`
+- `src/components/college/college-faculty-assignment-actions.tsx`
+- `src/components/electives/college-elective-offering-manager.tsx`
+- `src/components/groups/college-group-detail-writes.tsx`
+- `src/components/placements/college-drive-bulk-actions.tsx`
+- `src/components/verification/CollegeVerificationPanel.tsx`
+
