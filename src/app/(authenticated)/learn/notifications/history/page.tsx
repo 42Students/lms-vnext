@@ -68,7 +68,7 @@ export default async function LearnerNotificationHistoryPage({
         Counts are page-local; this is not a complete-inbox count.
       </p>
       {emptyMessage ? (
-        <section role="status" className="rounded-xl border border-border bg-surface p-5">
+        <section role="status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5">
           <p className="text-sm text-body">{emptyMessage}</p>
         </section>
       ) : (
@@ -78,7 +78,7 @@ export default async function LearnerNotificationHistoryPage({
         {page.nextCursor ? (
           <Link
             href={learnerNotificationHistoryHref(page.nextCursor, page.unreadOnly)}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
           >
             Older notifications →
           </Link>
