@@ -1,4 +1,6 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
+
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -44,7 +46,7 @@ export function FacultyReportDownload(props: Props) {
         description="Some learners have not submitted or some submitted assignments have not been graded. The PDF will be marked incomplete."
         confirmLabel="Download marked incomplete" confirmVariant="primary"
         onConfirm={()=>{setConfirmationOpen(false);downloadPdf();}}/>
-      {error ? <p role="alert" className="text-sm font-semibold text-error">{error}</p> : null}
+      {error ? <Alert tone="error">{error}</Alert> : null}
     </div>
   );
 }

@@ -92,8 +92,8 @@ const tones = [
   [/^(?:red|rose|error)/, "error"],
   [/^(?:yellow|amber|orange|warning)/, "warning"],
   [/^(?:green|emerald|success)/, "success"],
-  [/^(?:blue|sky|teal|cyan|info)/, "info"],
-  [/^(?:gray|grey|slate|neutral|zinc)/, "neutral"],
+  [/^(?:blue|sky|teal|cyan|info|primary)/, "info"],
+  [/^(?:gray|grey|slate|neutral|zinc|muted)/, "neutral"],
 ];
 function chipTone(className) {
   const semantic = className.match(/(?:bg|text)-\[var\(--lms-(success|warning|error|primary|info|neutral)[a-z-]*\)\]/);
@@ -118,7 +118,7 @@ function lineAt(source, pos) {
 }
 for (const file of collect(root)) {
   const original = fs.readFileSync(file, "utf8");
-  if (!/<(?:table|span|nav|div)[\s>]/.test(original)) continue;
+  if (!/<(?:table|span|nav|div|button|Button)[\s>]/.test(original)) continue;
   stats.scanned++;
   const source = ts.createSourceFile(file, original, ts.ScriptTarget.Latest, true, JSX_KIND);
   if (source.parseDiagnostics.length) {

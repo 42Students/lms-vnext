@@ -1,49 +1,59 @@
 "use client";
-import {BottomSheet} from "@/components/ui/bottom-sheet";
-import {Button} from "@/components/ui/button";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import Link from "next/link";
 import "@/components/shell/legacy-mobile-footer.css";
-import {useState} from "react";
-import {usePathname} from "next/navigation";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 
-/** Compact legacy TPO daily-work footer. The full sidebar remains available via More. */
-const links=[
- {label:"Home",href:"/tpo/home"},
- {label:"Engage",href:"/tpo/recruiters"},
- {label:"Drives",href:"/tpo/placements"},
- {label:"Students",href:"/tpo/students"},
- {label:"More",href:"/tpo/settings"},
-];
-export function TpoMobileFooter(){
- const pathname=usePathname();
- const [moreOpen,setMoreOpen]=useState(false);
- const moreLinks=[
+/** Source: lms2-fe/prod-2026 MobileFooter.jsx:175-191 and mobileFooter.scss:1-41.
+ * Keep the present vNext destinations; copy the five distinct icons/labels. */
+const links = [
+  {label:"Home",href:"/tpo/home",icon:"/assets/images/common/analytics.svg"},
+  {label:"Engage",href:"/tpo/recruiters",icon:"/assets/images/common/contact.svg"},
+  {label:"Drives",href:"/tpo/placements",icon:"/assets/images/common/assignment.svg"},
+  {label:"Students",href:"/tpo/students",icon:"/assets/images/common/myAccount.svg"},
+  {label:"More",href:"/tpo/settings",icon:"/assets/images/common/Menu-Icon.svg"},
+] as const;
+
+const moreLinks = [
   ["Requests","/tpo/requests"],["Verification","/tpo/verification"],["Calendar","/tpo/calendar"],
   ["Team","/tpo/team"],["Reports","/tpo/reports"],["Messages","/tpo/messages"],
   ["Announcements","/tpo/announcements"],["Notifications","/tpo/notifications"],
   ["Settings","/tpo/settings"],["Audit log","/tpo/audit"],
- ];
- const moreActive=moreLinks.some(([,href])=>pathname===href||pathname.startsWith(href+"/"));
- return <><nav aria-label="TPO mobile footer" className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 md:hidden">
-  {links.map(link=>{
-   const active=pathname===link.href||pathname.startsWith(link.href+"/")||
-    (link.label==="Engage"&&pathname.startsWith("/tpo/companies"));
-   if(link.label==="More")return <Button key="more" variant="ghost" type="button" aria-label="More TPO workspaces"
-    aria-expanded={moreOpen} aria-pressed={moreOpen} aria-current={moreActive?"page":undefined} onClick={()=>setMoreOpen(open=>!open)}
-    className={"h-full min-h-16 w-full rounded-none px-1 py-2 text-xs font-semibold "+(moreOpen||moreActive?"bg-primary-subtle text-primary-text":"text-body")}>More</Button>;
-   return <Link key={link.label} href={link.href}
-    aria-current={active?"page":undefined}
-    className={"flex min-h-16 items-center justify-center px-1 py-2 text-center text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"bg-primary-subtle text-primary-text":"text-body")}>
-    {link.label}
-   </Link>;
-  })}
- </nav>
- <BottomSheet open={moreOpen} onOpenChange={setMoreOpen} title="More TPO workspaces">
-   <nav aria-label="More TPO destinations" className="grid grid-cols-2 gap-2">
-    {moreLinks.map(([label,href])=><Link key={href} href={href}
-     onClick={()=>setMoreOpen(false)}
-     className="inline-flex min-h-11 items-center rounded-[8px] border border-border px-3 py-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)]">{label}</Link>)}
-   </nav>
-  </BottomSheet>
- </>;
+] as const;
+
+export function TpoMobileFooter() {
+  const pathname = usePathname();
+  const [moreOpen,setMoreOpen] = useState(false);
+  const moreActive = moreLinks.some(([,href])=>pathname===href||pathname.startsWith(href+"/"));
+  return <>
+    <nav aria-label="TPO mobile footer" className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 md:hidden">
+      {links.map(link=>{
+        const active=pathname===link.href||pathname.startsWith(link.href+"/")||
+          (link.label==="Engage"&&pathname.startsWith("/tpo/companies"));
+        if(link.label==="More")return <Button key="more" variant="ghost" type="button"
+          aria-label="More TPO workspaces" aria-expanded={moreOpen} aria-pressed={moreOpen}
+          aria-current={moreActive?"page":undefined} onClick={()=>setMoreOpen(open=>!open)}
+          className={"lms-tpo-mobile-footer-item flex h-full min-h-16 w-full flex-col items-center justify-center gap-[3px] rounded-none px-1 py-1 "+(moreOpen||moreActive?"active":"")}>
+          <Image src={link.icon} alt="" width={24} height={24} className="lms-tpo-mobile-footer-icon"/>
+          <span className="lms-tpo-mobile-footer-label">More</span>
+        </Button>;
+        return <Link key={link.label} href={link.href}
+          aria-current={active?"page":undefined}
+          className={"lms-tpo-mobile-footer-item flex min-h-16 flex-col items-center justify-center gap-[3px] px-1 py-1 text-center focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"active":"")}>
+          <Image src={link.icon} alt="" width={24} height={24} className="lms-tpo-mobile-footer-icon"/>
+          <span className="lms-tpo-mobile-footer-label">{link.label}</span>
+        </Link>;
+      })}
+    </nav>
+    <BottomSheet open={moreOpen} onOpenChange={setMoreOpen} title="More TPO workspaces">
+      <nav aria-label="More TPO destinations" className="grid grid-cols-2 gap-2">
+        {moreLinks.map(([label,href])=><Link key={href} href={href}
+          onClick={()=>setMoreOpen(false)}
+          className="inline-flex min-h-11 items-center rounded-[8px] border border-border px-3 py-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)]">{label}</Link>)}
+      </nav>
+    </BottomSheet>
+  </>;
 }

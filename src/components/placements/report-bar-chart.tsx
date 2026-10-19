@@ -18,7 +18,7 @@ export function ReportBarChart({title,rows,units="items",limit=20}:{
     <MetricBar label={row.label} value={row.value} maximum={maximum} unit={units}
       className={styles.track}/>
     <span className={styles.value} title={row.value.toLocaleString("en-IN")+" "+units}>
-      {row.value.toLocaleString("en-IN")}
+      {row.value.toLocaleString("en-IN")} {units}
     </span>
    </div>
    {row.detail?<p className="mt-1 text-xs text-muted-foreground">{row.detail}</p>:null}

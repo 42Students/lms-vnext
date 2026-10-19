@@ -185,6 +185,12 @@ grep -rn 'PageHeader' 'src/app/(authenticated)/hr' 'src/app/(authenticated)/recr
 
 Count: **unverified**. This lane cannot run repository code, grep, CI, visual comparison or browser screenshots. The orchestrator must run coverage and computed-style parity checks before any STRICT TICK RULE visual item is marked complete.
 
+## Current branch integration
+
+Rebased with GitHub tree-level three-way comparison onto `origin/main` `dba6bbd5456152d9acc1ba31601d9ca32bcab3aa`, commit `2e9083ea773731ae0f233189c2874685e8e37ac7`. GitHub comparison showed branch ahead by one and behind by zero at that reference. Preserved main's new legacy calendar CSS-module styling rather than overwriting it. Conflict handling kept main's existing calendar/conversation shared route fallback and applied only our local calendar PageHeader/one-canvas, notification Tabs, and icon bell changes on top of latest main.
+
+Queue status: **10 ticked non-rendering files; 77 visual files still open** under the STRICT TICK RULE. Source changes on those visual files are not equivalent to pixel-perfect parity proof. The branch has not been typechecked or rendered, as requested.
+
 ## STRICT TICK RULE closure
 
 - [ ] HR secondary visual coverage (missing: complete file-by-file matched property table, exact aggregate greps, phone/tablet proof and visual comparison).

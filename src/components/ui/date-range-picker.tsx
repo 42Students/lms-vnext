@@ -1,6 +1,9 @@
-import type { ComponentPropsWithRef } from "react";
+"use client";
+
+import { useId, type ComponentPropsWithRef } from "react";
 import { DateInput } from "./date-input";
 import { cx } from "@/lib/class-names";
+
 export type DateRangePickerProps = {
   start: string;
   end: string;
@@ -17,16 +20,51 @@ export type DateRangePickerProps = {
   startInputProps?: Omit<ComponentPropsWithRef<"input">, "type" | "value" | "onChange">;
   endInputProps?: Omit<ComponentPropsWithRef<"input">, "type" | "value" | "onChange">;
 };
-/** Keep two editable dates instead of guessing a date-range popup format. */
-export function DateRangePicker({start,end,onStartChange,onEndChange,startLabel="Start date",endLabel="End date",min,max,disabled,error=false,className,required,startInputProps,endInputProps}:DateRangePickerProps) {
+
+/** True field associations even when a date field has an adjacent calendar button. */
+export function DateRangePicker({
+  start, end, onStartChange, onEndChange, startLabel = "Start date",
+  endLabel = "End date", min, max, disabled, error = false, className,
+  required, startInputProps, endInputProps,
+}: DateRangePickerProps) {
+  const generatedId = useId();
+  const startId = startInputProps?.id ?? `${generatedId}-start`;
+  const endId = endInputProps?.id ?? `${generatedId}-end`;
   const invalidOrder = Boolean(start && end && start > end);
-  return <div data-slot="date-range-picker" role="group" aria-label={`${startLabel} to ${endLabel}`} className={cx("grid min-w-0 gap-3 min-[768px]:grid-cols-2",className)}>
-    <label className="grid gap-1.5 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{startLabel}
-      <DateInput {...startInputProps} mode="date" value={start} min={min} max={end && (!max || end < max) ? end : max} disabled={disabled} required={required} error={error || invalidOrder} onChange={event=>onStartChange(event.currentTarget.value)} />
-    </label>
-    <label className="grid gap-1.5 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{endLabel}
-      <DateInput {...endInputProps} mode="date" value={end} min={start && (!min || start > min) ? start : min} max={max} disabled={disabled} required={required} error={error || invalidOrder} onChange={event=>onEndChange(event.currentTarget.value)} />
-    </label>
-    {invalidOrder ? <p role="alert" className="text-[12px] leading-5 text-[var(--lms-error-text)] min-[768px]:col-span-2">End date must be on or after start date.</p> : null}
-  </div>;
+  const errorId = `${generatedId}-error`;
+  const startDescribedBy = [startInputProps?.["aria-describedby"], invalidOrder ? errorId : null]
+    .filter(Boolean).join(" ") || undefined;
+  const endDescribedBy = [endInputProps?.["aria-describedby"], invalidOrder ? errorId : null]
+    .filter(Boolean).join(" ") || undefined;
+
+  return (
+    <div data-slot="date-range-picker" role="group" aria-label={`${startLabel} to ${endLabel}`}
+      className={cx("grid min-w-0 gap-3 min-[768px]:grid-cols-2", className)}>
+      <div className="grid min-w-0 gap-1.5">
+        <label htmlFor={startId} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          {startLabel}
+        </label>
+        <DateInput {...startInputProps} id={startId} mode="date" value={start} min={min}
+          max={end && (!max || end < max) ? end : max} disabled={disabled} required={required}
+          error={error || invalidOrder} aria-describedby={startDescribedBy}
+          aria-errormessage={invalidOrder ? errorId : startInputProps?.["aria-errormessage"]}
+          onChange={event => onStartChange(event.currentTarget.value)} />
+      </div>
+      <div className="grid min-w-0 gap-1.5">
+        <label htmlFor={endId} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          {endLabel}
+        </label>
+        <DateInput {...endInputProps} id={endId} mode="date" value={end}
+          min={start && (!min || start > min) ? start : min} max={max} disabled={disabled} required={required}
+          error={error || invalidOrder} aria-describedby={endDescribedBy}
+          aria-errormessage={invalidOrder ? errorId : endInputProps?.["aria-errormessage"]}
+          onChange={event => onEndChange(event.currentTarget.value)} />
+      </div>
+      {invalidOrder
+        ? <p id={errorId} role="alert" className="text-[12px] leading-5 text-[var(--lms-error-text)] min-[768px]:col-span-2">
+            End date must be on or after start date.
+          </p>
+        : null}
+    </div>
+  );
 }
