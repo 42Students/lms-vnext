@@ -14,6 +14,7 @@ import { topbarConfigForPath } from "./portal-config";
 import { TopbarCommandSearch } from "./command-search";
 import { TopbarNotifications } from "./notification-actions";
 import { TopbarAccountMenu } from "./account-menu";
+import { TopbarOrganizationSwitcher } from "./organization-switcher";
 import { PlusIcon } from "./icons";
 import { TpoQuickCreate } from "./tpo-quick-create";
 import style from "./topbar.module.css";
