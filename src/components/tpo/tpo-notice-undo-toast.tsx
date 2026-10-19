@@ -1,8 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { ToastAction } from "@/components/ui/toast";
 
 import {useEffect,useState} from "react";
-import {Button} from "@/components/ui/button";
 
 export function TpoNoticeUndoToast({id,version,createdAt}:{
  id:string;version:number;createdAt:string;
@@ -16,8 +16,7 @@ export function TpoNoticeUndoToast({id,version,createdAt}:{
  if(now===null)return <p role="status" className="text-sm text-body">Announcement saved. Undo is available for 30 seconds.</p>;
  const remaining=Math.max(0,30000-(now-new Date(createdAt).getTime()));
  if(!Number.isFinite(remaining)||remaining<=0)return null;
- return <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-  <p className="text-sm text-body">Announcement saved. Undo send ({Math.ceil(remaining/1000)}s remaining).</p>
+ return <ToastAction tone="info" title={"Announcement saved. Undo send ("+Math.ceil(remaining/1000)+"s remaining)."}>
   <form action={"/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/lifecycle"} method="post">
    <input type="hidden" name="expectedVersion" value={version}/>
    <input type="hidden" name="action" value="UNDO_SEND"/>
@@ -25,5 +24,5 @@ export function TpoNoticeUndoToast({id,version,createdAt}:{
     Undo send
    </Button>
   </form>
- </div>;
+ </ToastAction>;
 }
