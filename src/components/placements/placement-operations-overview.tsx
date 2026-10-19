@@ -8,7 +8,7 @@ import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operati
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
 function Metric({ label, value, description }: { label: string; value: number; description: string }) {
-  return <section className="border-b border-border pb-6">
+  return <section className="border-b border-border px-4 py-4 last:border-r-0 sm:border-r sm:border-b-0">
     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">{label}</p>
     <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
     <p className="mt-1 text-xs leading-5 text-body">{description}</p>
@@ -44,13 +44,13 @@ function FunnelMetric({
 }
 export function PlacementOperationsOverview({ operations, basePath, showDriveSearch = false, staleDays=7 }: { operations: Operations; basePath: string; showDriveSearch?: boolean; staleDays?: number }) {
   return <div className="space-y-6">
-    {showDriveSearch ? <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    {showDriveSearch ? <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
       <Metric label="Active drives" value={operations.jobs.filter(r=>r.job.status==="PUBLISHED").length} description="Currently published opportunities." />
       <Metric label="Closed / draft" value={operations.jobs.filter(r=>["CLOSED","DRAFT"].includes(r.job.status)).length} description="Closed and draft opportunities." />
       <Metric label="All drives" value={operations.jobs.length} description="Non-archived drives in this college." />
       <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Drives with outstanding operations." />
     </div> : null}
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
       <Metric label="Live jobs" value={operations.summary.publishedJobs} description="Published opportunities currently operated by the placement cell." />
       <Metric label="Applications" value={operations.summary.submittedApplications} description="Active submitted applications across current jobs." />
       <Metric label="Needs screening" value={operations.summary.pendingScreening} description="Candidates waiting for a placement-cell screening decision." />
