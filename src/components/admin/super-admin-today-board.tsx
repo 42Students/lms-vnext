@@ -11,9 +11,9 @@ export function SuperAdminTodayBoard({data}:{data:SuperAdminTodayMetrics|null}){
    {" · "}Ended by schedule: {data?.classesEnded??"—"}
    {" · "}Attendance taken: {data?.attendanceTaken??"—"}
   </p>
-  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+  <div className="grid gap-3 border-y border-border sm:grid-cols-2 xl:grid-cols-3">
    {SUPER_ADMIN_TODAY_LABELS.map((label,index)=><Link key={label} href={hrefs[index]}
-    className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    className="border-l-2 border-border py-3 pl-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
     <p className="text-xs font-semibold text-muted-foreground">{label}</p>
     <p className="mt-2 text-2xl font-semibold tabular-nums">{counts[index]??"—"}</p>
     {counts[index]===null?<p className="mt-1 text-xs text-body">Not yet measurable from registered evidence</p>:null}
