@@ -425,3 +425,5 @@
   color:#334155; font-size:12px; font-weight:600;
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
+
+.orgTrigger:hover { background:#fafbfc; border-color:#e7ecf2; }
