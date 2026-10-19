@@ -44,8 +44,8 @@ export default async function MentorNotificationsPage({
   const projectId=mentorAttentionProjectSchema.safeParse(first(raw.projectId)??undefined);
   const attentionOrder=mentorAttentionOrderSchema.safeParse(first(raw.attentionOrder)??"RECENT");
   if (!parsed.success||!kind.success||!projectId.success||!attentionOrder.success) return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid notification filters</h1>
-    <Link href={MENTOR_INBOX} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Return to newest notifications</Link>
+    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid notification filters</h1>
+    <Link href={MENTOR_INBOX} className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Return to newest notifications</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -96,7 +96,7 @@ export default async function MentorNotificationsPage({
         Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
       </p>
       <Link href={MENTOR_INBOX}
-        className="mt-3 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Retry sources</Link>
+        className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry sources</Link>
     </div> : null}
     <AnnouncementFeed enabled={announcementsEnabled}
       items={announcements.map(item=>({
@@ -109,24 +109,24 @@ export default async function MentorNotificationsPage({
         Project attention ({visibleAlerts.length} of {alerts.length})
       </h2>
       <form method="get" action={MENTOR_INBOX}
-        className="flex flex-wrap items-end gap-3 rounded-lg border border-border p-3">
+        className="flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius)] border-b border-border p-3">
         <label className="grid gap-1 text-sm font-semibold">Project with recorded attention
-          <select name="projectId" defaultValue={projectId.data??""}
-            className="min-h-11 max-w-full rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="projectId" defaultValue={projectId.data??""}
+            className="min-h-11 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All assigned Projects</option>
             {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention order
-          <select name="attentionOrder" defaultValue={attentionOrder.data}
-            className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="attentionOrder" defaultValue={attentionOrder.data}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="RECENT">Most recent recorded first</option>
             <option value="REVIEW_FIRST">Reviews and requests first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention type
-          <select name="kind" defaultValue={kind.data}
-            className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="kind" defaultValue={kind.data}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All</option><option value="REVIEW">Reviews</option>
             <option value="STALLED">Stalled</option>
             <option value="REQUESTED">Meeting requests</option>
@@ -136,7 +136,7 @@ export default async function MentorNotificationsPage({
         <Button type="submit" variant="primary">
           Filter attention
         </Button>
-        <Link href={MENTOR_INBOX} className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href={MENTOR_INBOX} className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       {!projectAccess?.projects.enabled
         ? <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
@@ -148,7 +148,7 @@ export default async function MentorNotificationsPage({
             </p>
           : <div className="grid gap-3">{visibleAlerts.map(alert=>
               <Link key={alert.key} href={alert.href}
-                className="min-h-11 block rounded-xl border border-border bg-surface p-4 transition hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                className="min-h-11 block rounded-xl border border-border bg-surface p-4 transition hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3 className="font-semibold text-foreground">{alert.title}</h3>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
@@ -172,7 +172,7 @@ export default async function MentorNotificationsPage({
         ? <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
             The notification page link is invalid.{" "}
             <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
-              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+              className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Return to newest notifications
             </Link>
           </div>
@@ -181,7 +181,7 @@ export default async function MentorNotificationsPage({
               emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
             {nextHref ? <div className="flex justify-center">
               <Link href={nextHref}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Older notifications
               </Link>
             </div> : null}
