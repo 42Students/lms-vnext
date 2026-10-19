@@ -80,10 +80,18 @@ function run() {
     const imports = new Set();
     const existing = importedNames(sf);
     const declared = declaredNames(sf);
+    const modules = {
+      GracefulPageLoading: "graceful-page-loading",
+      Alert: "alert", Banner: "banner", EmptyState: "empty-state", ErrorState: "error-state",
+    };
     const skip = reason => bump(stats.skipped, reason);
     function requireComponent(name) {
       if (declared.has(name) && !existing.has(name)) {
         skip("name-clash:" + name);
+        return false;
+      }
+      if (existing.has(name) && !hasNamedImportFrom(sf, name, "@/components/ui/" + modules[name])) {
+        skip("import-from-another-module:" + name);
         return false;
       }
       if (!existing.has(name)) imports.add(name);
@@ -156,7 +164,7 @@ function run() {
             const pTag = ts.isJsxElement(description) ? description.openingElement.tagName.getText(sf) : "";
             const headText = /^h[1-3]$/.test(hTag) ? plainText(heading) : null;
             const bodyText = pTag === "p" ? plainText(description) : null;
-            const actionTag = ts.isJsxElement(action)
+            const actionTag = action && ts.isJsxElement(action)
               ? action.openingElement.tagName.getText(sf) : "";
             const actionOk = !action || /^(Button|Link|a)$/.test(actionTag);
             if (headText && bodyText && actionOk && !hasAttribute(node.openingElement, "aria-label") &&
@@ -191,7 +199,7 @@ function run() {
                   ? "warning" : isError ? "error" : "info";
           const restAttrs = attrs.filter(a => attrName(a) !== "className").map(a => a.getText(sf)).join(" ");
           const action = children.length >= 2 ? children[children.length - 1] : null;
-          const actionTag = ts.isJsxElement(action) ? action.openingElement.tagName.getText(sf) : "";
+          const actionTag = action && ts.isJsxElement(action) ? action.openingElement.tagName.getText(sf) : "";
           const isBanner = tone === "warning" && /(bg-(?:amber|yellow|warning))/.test(klass) &&
             /^(Button|Link|a)$/.test(actionTag);
           let component = "Alert", payload = rawBody;
@@ -224,10 +232,6 @@ function run() {
     for (const [start, end, text] of edits) {
       result = result.slice(0, start) + text + result.slice(end);
     }
-    const modules = {
-      GracefulPageLoading: "graceful-page-loading",
-      Alert: "alert", Banner: "banner", EmptyState: "empty-state", ErrorState: "error-state",
-    };
     const lines = [...imports].map(n =>
       'import { ' + n + ' } from "@/components/ui/' + modules[n] + '";');
     if (lines.length) {
@@ -246,9 +250,7 @@ function run() {
     const check = ts.createSourceFile(file, result, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
     if (check.parseDiagnostics.length) {
       skip("generated-jsx-parse-failed");
-      for (const k of Object.keys(stats.converted)) {
-        // Keep any candidate counts descriptive; the skipped file is not written.
-      }
+      // The candidate counts are diagnostic only; the file remains unchanged.
       continue;
     }
     stats.changedFiles++;
@@ -296,6 +298,14 @@ function importedNames(sf) {
     }
   }
   return found;
+}
+function hasNamedImportFrom(sf, name, source) {
+  return sf.statements.some(s =>
+    ts.isImportDeclaration(s) && ts.isStringLiteral(s.moduleSpecifier) &&
+    s.moduleSpecifier.text === source &&
+    s.importClause?.namedBindings && ts.isNamedImports(s.importClause.namedBindings) &&
+    s.importClause.namedBindings.elements.some(e => e.name.text === name)
+  );
 }
 function declaredNames(sf) {
   const found = importedNames(sf);
