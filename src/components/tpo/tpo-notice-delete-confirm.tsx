@@ -15,7 +15,7 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
  },[open]);
  function dismiss(){setOpen(false);trigger.current?.focus();}
  return <div className="mt-4">
-  <Button ref={trigger} variant="secondary" type="button" onClick={()=>setOpen(true)}>
+  <Button ref={trigger} variant="secondary" type="button" className="min-h-11 min-[768px]:min-h-9" onClick={()=>setOpen(true)}>
    Delete
   </Button>
   {<Dialog open={open} onOpenChange={next=>{if(!pending.current){if(!next)dismiss();else setOpen(true);}}} dismissible={!pending.current}
@@ -26,10 +26,10 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
      onSubmit={event=>{if(pending.current)event.preventDefault();else pending.current=true;}}>
      <input type="hidden" name="expectedVersion" value={version}/>
      <input type="hidden" name="action" value="DELETE"/>
-     <Button ref={confirmButton} type="submit" variant="danger">
+     <Button ref={confirmButton} type="submit" variant="danger" className="min-h-11 min-[768px]:min-h-9">
       Delete announcement
      </Button>
-     <Button variant="secondary" type="button" onClick={dismiss}>
+     <Button variant="secondary" type="button" className="min-h-11 min-[768px]:min-h-9" onClick={dismiss}>
       Cancel
      </Button>
     </form>

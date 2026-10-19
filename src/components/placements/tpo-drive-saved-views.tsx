@@ -3,6 +3,8 @@ import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 type Saved={name:string;query:string};
 const MAX=8;
 export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
@@ -46,14 +48,14 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
     Save current filters
    </Button>
   </div>
-  {error?<p role="alert" className="mt-2 text-xs text-error">{error}</p>:null}{copied?<p role="status" className="mt-2 text-xs text-body">Link copied for {copied}.</p>:null}
-  {views.length>1?<button type="button" onClick={()=>{
+  {error?<InlineNotice tone="error" message={error}/>:null}{copied?<InlineNotice tone="success" message={"Link copied for "+copied+"."}/>:null}
+  {views.length>1?<Button variant="link" type="button" onClick={()=>{
    if(!window.confirm("Delete all "+views.length+" saved drive views from this browser?"))return;
    try{localStorage.removeItem(key);setViews([]);setCopied("");setError("");}
    catch{setError("Browser storage is unavailable.");}
   }} className="mt-2 min-h-11 md:min-h-9 text-sm font-semibold text-error underline">
     Clear all saved views
-  </button>:null}
+  </Button>:null}
   {views.length?<ul className="mt-3 flex flex-wrap gap-2">{views.map(view=>
    <li key={view.name} className="inline-flex items-center gap-1 rounded-[var(--lms-control-radius)] border border-border">
     <Button variant="ghost" type="button" onClick={()=>router.push("/tpo/placements/lifecycle"+(view.query?"?"+view.query:""))}
@@ -62,6 +64,6 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
      aria-label={"Copy link for saved view "+view.name} >Copy link</Button>
     <Button variant="ghost" type="button" onClick={()=>remove(view.name)}
      aria-label={"Delete saved view "+view.name} >×</Button>
-   </li>)}</ul>:<p className="mt-2 text-sm text-body">No views saved in this browser yet.</p>}
+   </li>)}</ul>:<EmptyState title="No views saved in this browser yet."/>}
  </section>;
 }

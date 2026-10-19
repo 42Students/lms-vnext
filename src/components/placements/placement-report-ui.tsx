@@ -57,14 +57,14 @@ export function ReportFilters({
   return (
     <section
       aria-label="Report filters"
-      className="grid gap-4 lg:grid-cols-2 border-b border-border pb-6"
+      className="grid gap-4 border-b border-border pb-6 lg:grid-cols-2 print:hidden"
     >
       <form action={path} method="get" className="flex flex-wrap items-end gap-3">
         <label className="min-w-48 flex-1 text-sm font-semibold text-body">
           Placement season
           <Select
             name="seasonId"
-            className="mt-1.5"
+            className="mt-1.5 min-h-11 md:min-h-9"
             defaultValue={workspace.selectedSeasonId ?? ""}
             disabled={workspace.seasons.length === 0}
           >
@@ -79,7 +79,7 @@ export function ReportFilters({
             ))}
           </Select>
         </label>
-        <Button variant="secondary"
+        <Button variant="secondary" className="min-h-11 md:min-h-9"
           type="submit"
           disabled={workspace.seasons.length === 0}
           
@@ -100,7 +100,7 @@ export function ReportFilters({
           Drive
           <Select
             name="jobId"
-            className="mt-1.5"
+            className="mt-1.5 min-h-11 md:min-h-9"
             defaultValue={workspace.selectedJobId ?? ""}
             disabled={workspace.noSeason}
           >
@@ -112,7 +112,7 @@ export function ReportFilters({
             ))}
           </Select>
         </label>
-        <Button variant="secondary"
+        <Button variant="secondary" className="min-h-11 md:min-h-9"
           type="submit"
           disabled={workspace.noSeason}
           
@@ -219,13 +219,13 @@ export function ReportNavigation({
      For the filters below: {reportNumber(m.studentsPlaced)} students placed · {reportNumber(m.offers)} offers ·
      {" "}{reportPercent(m.placementRatePercent)} placement rate · {reportNumber(m.acceptedOffers)} accepted offers
     </p>
-    <div className="flex flex-wrap justify-end"><TpoReportPresentation/></div>
-    <nav aria-label="Reports navigation" className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap justify-end print:hidden"><TpoReportPresentation/></div>
+    <nav aria-label="Reports navigation" className="flex flex-wrap gap-2 print:hidden">
       {links.map((link) => (
         <Link
           key={link.href}
           href={reportHref(link.href, workspace)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           {link.label}
         </Link>
@@ -264,7 +264,7 @@ export function ReportCsvLink({
     <a
       href={`/api/placements/reports?${params.toString()}`}
       aria-label={`Export ${kind.replaceAll("-", " ")} CSV`}
-      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9"
+      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden"
     >
       Export CSV
     </a>

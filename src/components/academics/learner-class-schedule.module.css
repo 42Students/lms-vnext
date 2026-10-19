@@ -100,8 +100,8 @@
   transition: color .2s ease,border-color .2s ease,background .2s ease;
 }
 .today:hover:not(:disabled) {
-  color: #0e7c87 !important;
-  border-color: #0e7c87 !important;
+  color: #1e9aa8 !important;
+  border-color: #1e9aa8 !important;
   background: rgba(38,186,199,.08) !important;
 }
 .period {
