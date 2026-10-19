@@ -238,7 +238,7 @@ Coverage proof: HR route/component scan is recorded above; recruiter alias, trac
 
 ## Next file
 
-`src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
+`src/components/placements/recruiter-placement-portfolio.tsx`
 
 ## chat-15 bounded turn — source-level changes after main sync
 
@@ -262,3 +262,21 @@ No CI, typecheck, tests, local app or browser checks were executed. Source contr
 ## 2026-10-19 continuation — SMARTER PLAN codemod
 
 - [ ] HR/recruiter PageHeader role-label judgement case: `scripts/codemods/chat15-hr-header-eyebrows.cjs` targets static `eyebrow="Recruiter"` / `"Employer Recruiter"` only in the HR/recruiter route trees; dry-run: `node scripts/codemods/chat15-hr-header-eyebrows.cjs`; apply: `node scripts/codemods/chat15-hr-header-eyebrows.cjs --apply`. **Script committed but not run**; orchestrator owns local run and source/captured style verification. Keep dynamic eyebrow/description expressions unchanged.
+
+## 2026-10-19 chat-15 continuation — HR source judgement cases
+
+Main at turn start: `5a2abb4bba7e3bcfcf7523ffde18a0346e3590ed`; lane was fast-forwarded before changes. The SMARTER PLAN block was read. The requested computed-style `docs/audit/ux/parity-report.md` was not present in the inspected repository, so the evidence below is **source-level only**.
+
+| Source reference | HR/recruiter vNext source | Outcome / limitation |
+| --- | --- | --- |
+| `docs/design/old-lms-pages.md:6-12` single canvas and compact sheet | `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx:354-382,644-685` | Removed decorative nested cards around job facts, funnel, readiness and selection history; page content unchanged; no screenshot proof |
+| `docs/design/old-lms-pages.md:9-11` tabs, filters, table rows | `src/app/(authenticated)/hr/notifications/page.tsx:44-61` | College chips and unread-state Tabs use shared kit; original server queries, search form, CSV link and pagination retained |
+| `docs/design/old-lms-pages.md:10-12` sheet, status and summary strip | `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx:663-706,822-835` | Selection/offer/round rows now use shared `TpoGrid` fallback; original status labels, export link and pagination preserved; native AG Grid not supplied |
+| `docs/design/old-lms-pages.md:6-9` title/action row | `src/app/(authenticated)/hr/notifications/page.tsx:37-40` | Primary conversation action moved into existing `PageHeader.actions`; no duplicated CTA |
+| `docs/design/legacy-styles/components___common.scss:22-29` page spacing and mobile main wrap | `src/app/(authenticated)/hr/company/reports/page.tsx:181-193` | Dynamic college buttons replaced by shared chips; unverified mobile measure |
+
+- [ ] **H HR** (missing: actual computed-style parity report; full current revision regex counts, responsive and keyboard validation, grid screenshot/reference; this work is not ticked).
+- [ ] **E8** (missing: native ag-grid dependencies/source/Quartz theme; `src/components/tpo/grid/tpo-grid.tsx:12` still declares `shared-table-fallback`; see `clone-sheets.md`).
+- [ ] **Remaining next work:** `src/components/placements/recruiter-placement-portfolio.tsx` rich action-card list, then `src/app/(authenticated)/hr/drives/page.tsx` toolbar/exports and `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx` per-round value states.
+
+No CI, typecheck, browser or app execution was attempted. All modified TSX files were re-read from the branch after editing; shared UI source was not changed.
