@@ -29,7 +29,7 @@ export default async function PublicPlacementSettingsPage({
  return <div className="space-y-6">
   <TpoSettingsNav active="public-page"/>
   <section className="border-t border-border pt-5">
-   <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Public placements</h1>
+   <h1 className="m-0 text-[26px] font-semibold leading-[1.35] tracking-[-0.02em] text-[#172033] sm:text-[30px]">Public placements</h1>
    <p className="mt-2 text-sm text-body">{view.label}</p>
    {updated==="1"?<p role="status" className="mt-2 text-sm">{view.enabled?"Your placements page is live":"Your placements page is off"}</p>:null}
    <p className="mt-2 text-sm text-body">
