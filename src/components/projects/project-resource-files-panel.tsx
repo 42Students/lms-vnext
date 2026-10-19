@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { MetricBar } from "@/components/ui/metric-bar";
+import barStyles from "./project-workspace-readiness.module.css";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -198,7 +200,8 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       <p className="text-xs text-muted-foreground">{limitsSummary("project-resource")}</p>
       {progress!==null&&<div role="status" className="text-xs text-body">
         Uploading… {progress}%
-        <progress value={progress} max={100} className="ml-2 max-w-full"/>
+        <MetricBar role="progressbar" label="Project file upload progress"
+          value={progress} maximum={100} unit="percent" className={barStyles.track+" mt-2 w-full"} />
       </div>}
       <div className="flex flex-wrap gap-2">
         <Button variant="primary" type="submit" disabled={busy||!selected}
