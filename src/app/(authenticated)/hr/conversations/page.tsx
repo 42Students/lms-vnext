@@ -142,7 +142,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </p>:null}
     {!generalThread && (!generalLookup || generalLookup.ok)?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <Input name="collegeId" type="hidden" value={result.collegeId}/>
-      <Button type="submit">Open general conversation</Button>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open general conversation</Button>
     </form>:null}
    </section>
    <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
@@ -180,12 +180,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,
       sort:parsed.data.sort,scope:parsed.data.scope,page:result.page,
      })}/>
-     <Button type="submit" variant="secondary">Mark visible unread conversations as read</Button>
+     <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Mark visible unread conversations as read</Button>
      <span className="text-xs text-muted-foreground">Only incoming placement-cell messages on this page.</span>
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
    {result.items.length?<ol className="divide-y divide-border border-y border-border">
-    {visibleRows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] px-4 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
+    {visibleRows.map(row=><li key={row.id} className="min-w-0 px-1 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
      <Link href={"/hr/conversations/"+row.id}
       className="block min-h-9 max-md:min-h-11 break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="mt-2">{row.unread} new</Badge>:null}
