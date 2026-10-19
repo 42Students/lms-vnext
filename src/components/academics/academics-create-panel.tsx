@@ -229,7 +229,7 @@ export function AcademicsCreatePanel({
   }
 
   return (
-    <section className="grid gap-4 xl:grid-cols-2">
+    <section className="grid min-w-0 gap-[var(--lms-space-5)] xl:grid-cols-2">
       <form
         onSubmit={createPeriod}
         className="border-t border-border pt-5"
