@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -61,9 +62,6 @@ type OfferOption = {
   companyName: string;
   expiresAt: string | null;
 };
-
-const textareaClass =
-  "min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-[var(--lms-placeholder)] focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 function legacyRequestStatus(value:RequestItem["status"]):string{
  return value==="PENDING"?"Waiting for the placement cell":
@@ -366,8 +364,8 @@ export function LearnerPlacementRequests({
         </div>
       </div>
 
-      <div role="group" aria-label="What do you need?" className="grid gap-5 py-5 xl:grid-cols-2">
-        <div id="round-reschedule" className="scroll-mt-24 rounded-lg border border-border bg-muted p-4">
+      <div role="group" aria-label="What do you need?" className="grid min-w-0 gap-5 py-5 xl:grid-cols-2">
+        <div id="round-reschedule" className="min-w-0 scroll-mt-24 rounded-lg border border-border bg-muted p-4">
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Round reschedule
           </h3>
@@ -380,7 +378,7 @@ export function LearnerPlacementRequests({
             </p>
           ) : (
             <div className="mt-4 grid gap-3">
-              <Select
+              <Select className="min-h-11 md:min-h-9"
                 aria-label="Round to reschedule"
                 value={roundId}
                 onChange={(event) => {
@@ -438,8 +436,8 @@ export function LearnerPlacementRequests({
                     : ""}
                 </p>
               ) : null}
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Input
+              <div className="grid min-w-0 gap-3 md:grid-cols-2">
+                <Input className="min-h-11 md:min-h-9"
                   aria-label="Requested round time"
                   type="datetime-local"
                   value={roundAt}
@@ -449,7 +447,7 @@ export function LearnerPlacementRequests({
                     )
                   }
                 />
-                <Select
+                <Select className="min-h-11 md:min-h-9"
                   aria-label="Requested round mode"
                   value={roundMode}
                   onChange={(event) =>
@@ -469,7 +467,7 @@ export function LearnerPlacementRequests({
                   </option>
                 </Select>
               </div>
-              <Input
+              <Input className="min-h-11 md:min-h-9"
                 aria-label={
                   roundMode === "ON_CAMPUS"
                     ? "Requested venue"
@@ -487,9 +485,9 @@ export function LearnerPlacementRequests({
                   )
                 }
               />
-              <textarea
+              <Textarea
                 aria-label="Reschedule reason"
-                className={textareaClass}
+                className="min-h-28"
                 placeholder="Tell the placement cell why"
                 value={roundReason}
                 onChange={(event) =>
@@ -498,7 +496,7 @@ export function LearnerPlacementRequests({
                   )
                 }
               />
-              <Button
+              <Button className="max-md:min-h-11"
                 size="sm"
                 disabled={pendingKey !== null}
                 onClick={submitRound}
@@ -511,7 +509,7 @@ export function LearnerPlacementRequests({
           )}
         </div>
 
-        <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
+        <div className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Offer deadline extension
           </h3>
@@ -526,7 +524,7 @@ export function LearnerPlacementRequests({
             </p>
           ) : (
             <div className="mt-4 grid gap-3">
-              <Select
+              <Select className="min-h-11 md:min-h-9"
                 aria-label="Offer to extend"
                 value={offerId}
                 onChange={(event) => {
@@ -570,7 +568,7 @@ export function LearnerPlacementRequests({
                   )}
                 </p>
               ) : null}
-              <Input
+              <Input className="min-h-11 md:min-h-9"
                 aria-label="Requested offer deadline"
                 type="datetime-local"
                 value={offerAt}
@@ -580,9 +578,9 @@ export function LearnerPlacementRequests({
                   )
                 }
               />
-              <textarea
+              <Textarea
                 aria-label="Offer extension reason"
-                className={textareaClass}
+                className="min-h-28"
                 placeholder="Tell the placement cell why"
                 value={offerReason}
                 onChange={(event) =>
@@ -591,7 +589,7 @@ export function LearnerPlacementRequests({
                   )
                 }
               />
-              <Button
+              <Button className="max-md:min-h-11"
                 size="sm"
                 disabled={pendingKey !== null}
                 onClick={submitOffer}
@@ -614,7 +612,7 @@ export function LearnerPlacementRequests({
             {requests.map((item) => (
               <article
                 key={item.id}
-                className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4"
+                className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
@@ -660,7 +658,7 @@ export function LearnerPlacementRequests({
                     </StatusBadge>
                     {item.status ===
                     "PENDING" ? (
-                      <Button
+                      <Button className="max-md:min-h-11"
                         size="sm"
                         variant="secondary"
                         disabled={

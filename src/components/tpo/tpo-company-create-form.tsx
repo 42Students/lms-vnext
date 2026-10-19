@@ -66,6 +66,7 @@ export function TpoCompanyCreateForm() {
       <Button
         type="button"
         
+        className="min-h-11 md:min-h-9"
         onClick={() => { setOpen(true); setReviewing(false); setError(""); }}
       >
         Add company
@@ -76,7 +77,7 @@ export function TpoCompanyCreateForm() {
             className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <strong className="text-base font-semibold text-foreground">Company details</strong>
-              <Button variant="ghost" type="button" disabled={pending} className="text-link"
+              <Button variant="ghost" type="button" disabled={pending} className="min-h-11 text-link md:min-h-9"
                 onClick={close}>Cancel</Button>
             </div>
             <p className="text-sm text-body">
@@ -85,7 +86,7 @@ export function TpoCompanyCreateForm() {
             </p>
             <label className="block text-sm font-semibold text-foreground">
               Company name
-              <Input className="mt-1" required minLength={2} maxLength={200}
+              <Input className="mt-1 min-h-11 w-full md:min-h-9" required minLength={2} maxLength={200}
                 
                 value={form.name} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, name: event.target.value }));}}/>
@@ -105,13 +106,13 @@ export function TpoCompanyCreateForm() {
                 value={form.primaryDomain} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, primaryDomain: event.target.value }));}}/>
             </label>
-            {reviewing?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm text-body">
+            {reviewing?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
               Create or link {form.name.trim()} to this college?
               Existing canonical companies will be reused where identity matches.
               This creates an auditable college relationship.
             </p>:null}
             {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
-            <Button type="submit" disabled={pending}
+            <Button type="submit" variant="primary" className="min-h-11 md:min-h-9" disabled={pending}
               >
               {pending ? "Saving relationship…" : reviewing ? "Confirm company creation" : "Review and create company"}
             </Button>

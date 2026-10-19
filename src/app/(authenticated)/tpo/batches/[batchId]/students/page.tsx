@@ -1,4 +1,5 @@
 import {Button} from "@/components/ui/button";
+import {Disclosure} from "@/components/ui/disclosure";
 import {Badge} from "@/components/ui/badge";
 import {DataTable} from "@/components/ui/data-table";
 import {Select} from "@/components/ui/select";
@@ -150,15 +151,15 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   <Button type="submit" variant="primary" className="min-h-11 w-full md:w-auto">Filter</Button>
  </form>
  {!result.registrationAvailable&&view.data.registration!=="ALL"?<p role="status">Registration filtering unavailable; no learners are classified without records.</p>:null}
- <details className="border-b border-border py-3" aria-label="Batch student exports">
-  <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Export</summary>
+ <Disclosure title="Export" ariaLabel="Batch student exports"
+   className="border-b border-border py-3 [&>summary]:min-h-11 [&>summary]:text-link">
   <div className="flex flex-wrap items-center gap-2 py-2">
    <a href={batchStudentViewExportHref(batchId,result.page,view.data)}
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Export filtered current page CSV</a>
    <a href={"/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/students/export?page="+result.page}
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Export current page CSV (unfiltered)</a>
   </div>
- </details>
+ </Disclosure>
  <p className="text-xs text-muted-foreground">Name/roll-number search runs against the full active batch roster before pagination. Other evidence filters apply to this loaded page. {visible.length} of {result.students.length} loaded learners match.</p>
  <dl aria-label="Loaded-page eligibility evidence" className="grid grid-cols-2 gap-2 md:grid-cols-3">{[["Loaded",pageSummary.assessed],["Eligible",pageSummary.eligible],["Ineligible",pageSummary.ineligible],["Not decided",pageSummary.undecided],["Needs review",pageSummary.needsReview],["Direct overrides",pageSummary.directOverrides]].map(([name,count])=><div key={name} className="min-w-0 border-l-2 border-border px-3 py-2 [overflow-wrap:anywhere]"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
  <p className="text-xs text-muted-foreground">These metrics cover the currently loaded 25-person slice before the filters above, not the full cohort.</p>

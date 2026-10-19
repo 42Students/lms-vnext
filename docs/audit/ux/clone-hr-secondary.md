@@ -296,3 +296,60 @@ Read back the most complex eight files after the mutations: paired div/section/o
 STRICT TICK RULE: 10/87 existing non-rendering ticks remain; **77 visual items stay open**. The exact shared component computed values (hover, active, keyboard focus, disabled, error/loading) and side-by-side real phone/tablet/desktop visual comparison were not available in this lane. No new visual item is falsely ticked on source-only evidence. No shared UI, global skin, or chat-15 primary HR pages were edited.
 
 Next unticked file: src/app/(authenticated)/hr/calendar/page.tsx — measured phone 375px / tablet 768px / desktop 1280px calendar states, followed by src/app/(authenticated)/hr/conversations/page.tsx.
+
+
+## Chat-18 successor bounded batch — legacy recruiter reference verification
+
+Main sync: the previous chat-18 branch was a direct ancestor of current main 6807f03b (0 commits ahead, 457 behind). Fast-forwarded with expected SHA, preserving all prior chat-18 history; all new work was pushed only to chatgpt/chat-18-b.
+
+### Matched source properties (latest source read-back)
+
+| Element/property | Legacy exact source and value | vNext source and declaration | Static result |
+| --- | --- | --- | --- |
+| Recruiter week/month board columns | lms2-fe@prod-2026/src/styles/components/_recruiter-v2.scss:141: repeat(7,minmax(150px,1fr)) | recruiter-calendar-legacy.module.css:23-29: repeat(7,minmax(150px,1fr)) | Exact source declaration |
+| Recruiter board gap/padding | _recruiter-v2.scss:141: gap 10px, padding-bottom 6px, overflow-x auto | recruiter-calendar-legacy.module.css:20-29 + boardFrame: 10px / 6px / x-scroll | Source matched |
+| Recruiter date-cell min height | _recruiter-v2.scss:142: min-height 140px | recruiter-calendar-legacy.module.css day: min-height 140px | Exact |
+| Recruiter current-day outline | _recruiter-v2.scss:143: #2f6fed inset 1px | recruiter-calendar-legacy.module.css day[data-today=true]: #2f6fed inset 1px | Exact (this HR calendar intentionally does NOT use the TPO #26bac7 colour) |
+| Recruiter event box gap | _recruiter-v2.scss:145: flex column, 2px gap | recruiter-calendar-legacy.module.css event: flex column, 2px gap | Exact |
+| Recruiter event padding/border/radius | _recruiter-v2.scss:145: 8px, 1px #e3e8ef, radius 8px, white | recruiter-calendar-legacy.module.css event: 8px, 1px #e3e8ef, radius 8px, white | Exact |
+| Recruiter event hover | _recruiter-v2.scss:145: #f6f8fb | recruiter-calendar-legacy.module.css event:hover: #f6f8fb | Exact |
+| Recruiter timestamp font | _recruiter-v2.scss:146: 12px #4a5568, tabular numbers | recruiter-calendar-legacy.module.css .time: 12px #4a5568, tabular | Exact |
+| Calendar tablet collapse | _recruiter-v2.scss:157-163: board 1 column at max-width 860px | hr/calendar/page.tsx:497,521 now uses compact occupied-day list up to 860px, 7-day board from 861px; avoids invalid seven stacked weekday headers at 768-860 | Equivalent narrow layout intention; DOM/visual difference remains unverified |
+| Calendar phone touch targets | old-lms-shell.css:73-85: mobile through 767px; legacy calendar/tpo navigation mobile 44px | hr/calendar/page.tsx:319,328,411,418,430,463 have mobile 44px / desktop 36px | Declared hit-area matched, real devices not rendered |
+| Legacy quick-search field | legacy-styles/components___listing-page-header.scss:87-102: width 220px, min-height 44px, radius 8px | hr/activity, hr/notifications, hr/company, hr/conversations and tracker-report-form search field class: md:w-[220px], min-h-11; shared Input owns border/radius | Width/height matched; shared hover/focus computed proof open |
+| Legacy mobile quick-search | listing-page-header.scss:131-164: <=767px full width, 44px input; full width action button | Same five search fields use basis-full below md, desktop basis-auto; Search action uses w-full / md:w-auto with min-h-11 / md:min-h-9 | Breakpoint and declared dimensions matched |
+| Recruiter bell count | legacy-styles/components___notification-drawer.scss:53-60: 10px font, min-width/height 16px, 4px horizontal padding | hr-recruiter-bell.tsx and recruiter-notification-bell.tsx: text-[10px], min-w-4, min-h-4, px-1; 99+ clipped on large unread counts | Declaration matched |
+| Recruiter bell responsive context | old-lms-shell.css:73: mobile cutover 767px; shell spec: desktop 36px icon actions | hr-recruiter-bell.tsx: min-h/w-11 below md, 9 above; recruiter-notification-bell.tsx same | Declared size mapping (44/36); base drawer SCSS trigger 44px across widths creates unresolved source specificity question |
+| Notification rows | notification-drawer.scss:180-216: gap 6px, radius 8px, padding 12px 16px, shadow 0 1px 3px on hover, 200ms transitions | Both bell list sources already matched; retained shared Drawer/Popover, error/loading/empty states | Source matching; computed state and phone scroll proof open |
+| Hiring footprint summary | old-lms-pages.md:4-10: one continuous white canvas with single hairline funnel strip, not nested metric cards | hr/company/page.tsx uses shared SummaryStrip (all visible/live/closed) and divide-y recent drives; same labels/counts/URLs/status badges | Structural parity corrected |
+| Report page signals | old-lms-pages.md:9-12: big-number funnel strip and report option cards only | hr/company/reports/page.tsx now uses SummaryStrip for the same current-page totals; its AG Grid remained untouched for chat-15 ownership | Structural parity corrected |
+| Conversation details | old-lms-pages.md:9-11: one border-separated list, no card per ordinary row | hr/conversations/[threadId]/page.tsx change requests and messages have divide-y rows with single canvas | Source structure matched, interaction preserved |
+| Conversation actions | listing-page-header.scss:131-164 mobile full-width action, 44px | hr/conversations/page.tsx uses mobile full-width Search/open/bulk acknowledgement and 44px, desktop 36px | Source size and breakpoint matched |
+| Tracker issue filter/rows | old-lms-shell.css:73 responsive threshold 767px; old-lms-pages.md:9-11 hairline rows | tracker/issues/page.tsx uses md 2-column forms/row split, 44px phone links/buttons, preserves status/priority pills and hairlines | Source responsive layout matched |
+| Tracker findings filters | old-lms-shell.css:73 responsive threshold 767px; old-lms-pages.md:9-11 | tracker/audit-findings/page.tsx uses md filters and 44px phone actions/pagination, retains shared Tabs, Chips, DataTable | Source responsive layout matched |
+
+The calendar has a distinct original recruiter portal palette (#2f6fed), rather than the TPO calendar palette (#26bac7). The previously recorded TPO calendar paint evidence remains applicable to that separate portal but must not be mistaken for recruiter-v2 exact parity. No shared UI primitive, shell, global skin or chat-15 AG Grid component was edited. Source-specific modules remain owned by the appropriate lanes.
+
+### Refreshed full Work queue regex-equivalent scan, 87 of 87 files
+
+Fetched all 87 queued TSX files from the chat-18 branch via the GitHub connector after this batch; evaluated source regexes in groups of ten, with one final seven-file group. These are exact **source-text** pattern counts, not an actual shell grep nor a rendered DOM inspection:
+
+| Pattern on queued source | Count | Notes |
+| --- | ---: | --- |
+| Native visible button, input, select, textarea, table opening tags | 0 | Shared controls used |
+| Native hidden input | 1 | tracker/audit-findings/page.tsx:99 hidden view query; no visual paint, documented exemption |
+| Literal six-digit hex in TSX | 0 | CSS module tokens are excluded from TSX scan |
+| Page-owned h1 | 0 | Shared PageHeader |
+| Manual border-b-2 tabs | 0 | Shared Tabs |
+| Literal fixed inset-0 or role=dialog string | 1 | recruiter-conversation-live-refresh.tsx:15 querySelector checks an already-open dialog; not authored overlay |
+| Authored overlays identified by scan | 0 | Shared Dialog/Drawer used |
+
+Commands for the owner/orchestrator to reproduce (NOT executed here):
+    node scripts/codemods/chat18-source-audit.cjs
+    grep -rnE '<(button|input|select|textarea|table)([ >])|#[0-9a-fA-F]{6}|fixed inset-0|role="(dialog|alertdialog)"' 'src/app/(authenticated)/hr' 'src/app/(authenticated)/recruiter' 'src/app/(authenticated)/tracker' src/components/hr src/components/tracker
+
+Codemods saved (not executed): scripts/codemods/chat18-recruiter-bell-sizes.cjs (3 components) and chat18-search-width.cjs (5 source files), in addition to the previous codemods. They are scoped and idempotent. The edits were made through direct GitHub tree commits, and those source files were read back. One targeted paired-tag review checked div/section/article/ol/li/Button/Link/Card/CalendarGrid/SummaryStrip/form across seven edited complex files: no duplicate named imports, no unmatched real JSX tags. The SummaryStrip arrow-function JSX attribute cannot be evaluated by naive self-closing regex; its ending `}))}/>` is present and was read back. No executable compiler or renderer was run.
+
+STRICT TICK RULE: 10/87 non-rendering files completed previously; 77/87 rendered visual files remain OPEN because we cannot establish computed hover/focus/disabled parity and real 375px/768px/1280px viewport comparisons from connector source alone. Source-patched files are **not** marked as pixel-perfect completed. App/test/CI execution remains forbidden by owner. Do not tick visual entries without the missing proofs.
+
+Exact next file for the following bounded turn: src/components/hr/recruiter-calendar-legacy.module.css (reconcile 768-860 tablet rendering and remaining computed palette values), then src/app/(authenticated)/hr/calendar/page.tsx, and src/app/(authenticated)/hr/conversations/page.tsx.
