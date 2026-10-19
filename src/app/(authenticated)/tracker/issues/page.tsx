@@ -161,11 +161,11 @@ export default async function TrackerIssuesPage({
               <p className="mt-1 line-clamp-2 text-sm text-body">{issue.description}</p>
             </div>},
             {key:"status",header:"Status",mobilePriority:"secondary",cell:issue=>
-              <StatusBadge tone={issue.status==="RESOLVED"||issue.status==="CLOSED"?"success":issue.status==="OPEN"?"warning":"info"}>
+              <StatusBadge tone={issue.status==="CLOSED"?"success":issue.status==="NEW"?"warning":"info"}>
                 {issue.status.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}
               </StatusBadge>},
             {key:"severity",header:"Severity",mobilePriority:"secondary",cell:issue=>
-              <StatusBadge tone={issue.severity==="CRITICAL"?"error":issue.severity==="HIGH"?"warning":"neutral"}>
+              <StatusBadge tone={issue.severity==="BLOCKER"||issue.severity==="CRITICAL"?"error":issue.severity==="MAJOR"?"warning":"neutral"}>
                 {issue.severity.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}
               </StatusBadge>},
             {key:"environment",header:"Environment",mobilePriority:"secondary",cell:issue=><StatusBadge>{issue.environment}</StatusBadge>},
