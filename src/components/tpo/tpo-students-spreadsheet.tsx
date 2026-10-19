@@ -221,7 +221,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    selection={{selected:noteSelection,onChange:setNoteSelection}}
    filters={filters} rollOf={row=>[row.rollNumber??"",row.registrationNumber??""]}
-   filterTitle="Filter students" exportName="tpo-students" xlsxHref={xlsxHref}
+   filterTitle="Filter students" exportName="students" xlsxHref={xlsxHref}
    savedViews={canManageViews?<TpoStudentSavedViews embedded/>:undefined}>
   <TpoGrid integratedWorkspace mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
