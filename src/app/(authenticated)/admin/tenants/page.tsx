@@ -20,7 +20,7 @@ export default async function TenantDirectory({searchParams}:{
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
   return <div className="min-w-0 space-y-4">
-   <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"/>
+   <PageHeader title="Tenant Setup"/>
    <ErrorState title="Tenant directory access denied"
     description="Your account cannot view platform tenant records."
     action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
@@ -28,7 +28,7 @@ export default async function TenantDirectory({searchParams}:{
  const raw=await searchParams;
  const parsed=parseTenantLifecycleSearchParams(raw);
  if(!parsed) return <div className="space-y-4">
-  <PageHeader eyebrow="Super Admin" title="Tenant Setup" />
+  <PageHeader title="Tenant Setup" />
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
    action={<Link href="/admin/tenants" className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
@@ -39,7 +39,7 @@ export default async function TenantDirectory({searchParams}:{
   // A failed tenant directory read must not appear as an empty tenant list.
   // Preserve the validated filters so a retry cannot silently expand scope.
   return <div className="min-w-0 space-y-4">
-   <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"/>
+   <PageHeader title="Tenant Setup"/>
    <ErrorState title="Tenant directory unavailable"
     description="Colleges and organizations could not be loaded. Try again with the same filters."
     action={<Link href={tenantLifecycleHref(parsed)} className="font-semibold text-primary-text">Retry tenant directory</Link>}/>
@@ -48,7 +48,7 @@ export default async function TenantDirectory({searchParams}:{
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
  const statuses = ["ACTIVE", "ARCHIVED", "ALL"] as const;
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"
+  <PageHeader title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<div className="flex flex-wrap items-center justify-end gap-2">
     <TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />
@@ -82,7 +82,7 @@ export default async function TenantDirectory({searchParams}:{
   </form>
   <p className="text-xs text-muted-foreground">{data.total} matching colleges · page {data.query.page} of {data.totalPages}</p>
   {data.items.length?<div className="grid gap-3 md:grid-cols-2">
-   {data.items.map(x=><article key={x.id} className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
+   {data.items.map(x=><article key={x.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <h2 className="m-0 break-words font-semibold text-foreground">{x.name}</h2>
     <p className="mt-1 text-sm text-body">{x.organizationName} · {x.code}</p>
     <div className="mt-2 flex flex-wrap gap-2"><StatusBadge tone={x.status==="ACTIVE"?"success":"neutral"}>College {x.status}</StatusBadge>
