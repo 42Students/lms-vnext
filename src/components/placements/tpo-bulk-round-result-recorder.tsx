@@ -1,5 +1,8 @@
 "use client";
 import { Disclosure } from "@/components/ui/disclosure";
+import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -143,10 +146,7 @@ export function TpoBulkRoundResultRecorder({
         </p>
       </div>
       {available.length === 0 ? (
-        <p role="status" className="text-sm text-body">
-          No roster applicants are awaiting an initial result. Edit a staged result
-          with its individual control, or apply it when the round is completed.
-        </p>
+        <EmptyState title="No roster applicants are awaiting an initial result." description="Edit a staged result with its individual control, or apply it when the round is completed."/>
       ) : (
         <>
           <fieldset className="space-y-2 print:hidden">
@@ -234,13 +234,13 @@ export function TpoBulkRoundResultRecorder({
               className="mt-1 block min-h-11 md:min-h-9 w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
             <span className="mt-1 block text-xs font-normal text-body">Chosen learners are assigned consecutive ranks. Check existing waitlisted results to avoid duplicate ranks.</span>
           </label>:null}
-          {selected.length>0?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm text-body">
+          {selected.length>0?<Alert tone="info">
             <p className="font-semibold">Result staging preview</p>
             <p>{pendingTotal} total staged outcomes · {selected.length} explicitly selected · {failUnselected?unselected.length:0} additional Not cleared.</p>
             <p>{selected.length} unmarked applicant(s) selected · {outcome==="PASS"?"Cleared":outcome==="FAIL"?"Not cleared":outcome==="HOLD"?"Waitlisted":"Marked absent"}.</p>
             {outcome==="HOLD"?<p>Ranks {firstWaitlistRank}–{firstWaitlistRank+selected.length-1} in selection order. Existing rank collisions are rejected.</p>:null}
             <p>Saved as staged only. Learners are not told until the separate Apply results step.</p>
-          </div>:null}
+          </Alert>:null}
           <Button variant="primary"
             type="button"
             onClick={() => void stageSelected()}
@@ -258,7 +258,7 @@ export function TpoBulkRoundResultRecorder({
         title={"Stage "+pendingTotal+" result(s) as "+({PASS:"Shortlisted",FAIL:"Not selected",HOLD:"Waitlisted",ABSENT:"Marked absent"}[outcome])+"?"}
         description={(failUnselected?unselected.length+" additional unmarked applicants will be staged Not cleared. ":"")+"Each successful result will be audited individually. This does NOT publish results; a completed round requires separate APPLY confirmation. Some rows may succeed even if others fail. Continue?"}
         confirmLabel="Review and confirm staged results" onConfirm={()=>void stageSelected(true)}/>
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
       {results.length > 0 ? (
         <div role="status" className="space-y-2 text-sm text-body">
           <Button variant="secondary" type="button" onClick={()=>{
