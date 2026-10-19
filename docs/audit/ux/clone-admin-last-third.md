@@ -192,3 +192,16 @@ These were remote source reads and writes, **not** local script execution, CI, a
 
 ### Next exact file
 - [ ] `src/app/(authenticated)/admin/placements/applications/page.tsx` (thin wrapper using `AdminScopedReadPage`; verify shared component ownership and skip unrelated shared changes). Continue through `admin/placements/calendar/page.tsx`, then Projects admin/college queue. Codemods `chat10-admin-eyebrows.cjs` and `chat10-project-helper-eyebrows.cjs` are committed for the orchestrator to run and review locally; they have **not** been executed in this lane.
+
+### Continuation: nested drive applications and schedule (source re-read)
+| Owned source | Legacy source / desired behaviour | Implemented | Strict verification still needed |
+| --- | --- | --- | --- |
+| `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx` | `docs/design/old-lms-pages.md:5-6`: page title and recovery actions remain inside one canvas in every state | Invalid-query result now has `PageHeader`, `ErrorState`, scoped Clear filters link, and `min-w-0` | Browser error-state screenshot and full scoped grep |
+| `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx` | Same page-head/error requirement | Invalid-query result now has `PageHeader`, `ErrorState` and scoped Clear filters link; the existing validated filters and applicant workflow are unchanged | Browser error-state screenshot and scoped grep |
+| `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx` | `docs/design/ui-clone-checklist.md` A7 and I: link underline/focus visibility | Existing Open drive controls link now has underline and focus-visible outline | Keyboard/hover computed values |
+| `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx` | `docs/design/old-lms-pages.md:5`: one responsive canvas, no horizontal page spill | Added `min-w-0` to the top-level drive workspace container | Phone/tablet view and overflow measurement |
+| `src/app/(authenticated)/admin/placements/drives/page.tsx` | `docs/design/ui-clone-checklist.md` A7: link affordance | Clear filters recovery now consistently underlined and semibold | Browser hover/focus state |
+
+Portal navigation cross-check: `src/components/projects/project-admin-nav.tsx` intentionally suppresses its own tabs for the two owned base paths. This is not a missing-nav change: `src/app/(authenticated)/admin/layout.tsx` and `src/app/(authenticated)/college/layout.tsx` both mount the route-aware legacy group Tabs components, so this lane deliberately did not create duplicate tab strips.
+
+This continuation has eleven separately committed, remote re-read TSX files plus the initial audit update. No code, app, test, codemod, screenshot, or CI was executed. Work queue checkboxes remain open under STRICT TICK RULE. Next inspect `src/app/(authenticated)/admin/placements/calendar/page.tsx` and Projects admin/college helpers, with special attention to duplicated tabs and fallback state.
