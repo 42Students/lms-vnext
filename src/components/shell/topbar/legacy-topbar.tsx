@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import type { MembershipChoice } from "@/modules/identity/context-service";
 import type { AdminScopeChoices } from "@/modules/admin-scope/service";
@@ -43,7 +44,11 @@ export function LegacyTopbar({
     <div className={style.command}>
       <TopbarCommandSearch items={navigation}/>
       {config.portal === "tpo" && tpoCollegeId
-        ? <TpoQuickCreate collegeId={tpoCollegeId}/>
+        ? <Suspense fallback={<Link href="/tpo/placements/new" className={style.new} aria-label="New placement work">
+            <PlusIcon/><span className={style.newLabel}>New</span>
+          </Link>}>
+            <TpoQuickCreate collegeId={tpoCollegeId}/>
+          </Suspense>
         : config.newHref ? <Link href={config.newHref} title="Create new"
             className={style.new} aria-label="New">
             <PlusIcon/> <span className={style.newLabel}>New</span>
