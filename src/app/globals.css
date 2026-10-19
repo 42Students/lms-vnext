@@ -1146,3 +1146,10 @@ body {
   opacity: .5;
   pointer-events: none;
 }
+
+
+/* components___antddesign.scss:134-137; native option rendering varies by UA. */
+[data-slot="multi-select"] option:checked {
+  background-color: var(--lms-primary);
+  color: var(--lms-white);
+}
