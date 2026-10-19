@@ -5,11 +5,11 @@ Base: `42Students/lms-vnext` `main` at `1fae38d2c433f5b5b0a90a22be12754ab28796e0
 Scope: `src/app/(authenticated)/learn/**` except `courses/**` (chat-7), learner projects and `src/components/placements/learner-*`, `src/components/attendance/learner-*`. No shared UI, `legacy-skin.css`, shell or non-learner components edited.
 
 ## Work queue (GitHub directory inventory and targeted JSX inspection; exhaustive grep is pending)
-- [ ] LRN-01: `my-placements/applications/page.tsx`, `jobs/page.tsx`, `placement/page.tsx`, `schedule/page.tsx` missing shared `PageHeader`. Script `scripts/codemods/chat1-learner-page-headings.cjs` handles all **4** while preserving the two existing top-row links as actions. Run `node scripts/codemods/chat1-learner-page-headings.cjs --apply` after reviewing dry-run. Script authored but **not run**; no tick.
-- [ ] LRN-02: **partial**: filter link states and min-height changed in Announcements / My offers; source-level comparison and other routes remain. Remaining placement pages `my-placements/{announcements,assessments,calendar,interviews,notification-preferences,offers,preparation,rules,schedule,support}/page.tsx`, main `my-placements/page.tsx`: titles, tab order, filters, links, notices, single canvas.
+- [ ] LRN-01: **source fix delivered** in `my-placements/{applications,jobs,placement,schedule}/page.tsx`: four `PageHeader`s, two preserved destination/action links and schedule shared `Tabs` (4 file commits, 2026-10-19). Existing `scripts/codemods/chat1-learner-page-headings.cjs` authored for repeatable 4-file migration; GitHub edits applied its planned JSX transformations without running Node. Strict tick blocked by computed title values, full markup grep and phone/tablet screenshot proof.
+- [ ] LRN-02: **partial**: Announcements (8) and My offers (5) filter link instances now share exact learner SCSS pill dimensions, active/hover/focus selectors and 767px horizontal scroll rules; applied on 2026-10-19. Dynamic route checks, actual computed values and other placement routes remain. Remaining placement pages `my-placements/{announcements,assessments,calendar,interviews,notification-preferences,offers,preparation,rules,schedule,support}/page.tsx`, main `my-placements/page.tsx`: titles, tab order, filters, links, notices, single canvas.
 - [ ] LRN-03: `src/components/placements/learner-{applications,jobs}-browse.tsx`: **partial**: removed hand-rolled `aria-pressed` controls in these two files; shared `SegmentedControl` uses native radio states with 44px min mobile target and `Tabs` supplies underline for application views. Verify keyboard, routing and remaining components before tick.
 - [ ] LRN-04: `src/components/placements/learner-placements-tabs.tsx`, `learner-placements-dashboard.tsx`, `learner-placement-{jobs,offers,alerts}.tsx` and other `learner-*.tsx`: UI states and card-in-card / spacing / token pass.
-- [ ] LRN-05: **partial**: learner project detail now renders `PageHeader` for audit and invalid-board-filter states, while regular project workspace keeps its own header. `learn/{attendance,calendar,profile,projects,notifications,placements}/page.tsx` plus nested pages, `src/components/attendance/learner-attendance-workspace.tsx`: PageHeader, responsive titles and controls.
+- [ ] LRN-05: **partial**: `learn/attendance/page.tsx` and `learn/calendar/page.tsx` now put their existing action link in the same `PageHeader` row (2026-10-19); learner project detail already renders `PageHeader` for audit and invalid-board-filter states, while regular project workspace keeps its own header. `learn/{attendance,calendar,profile,projects,notifications,placements}/page.tsx` plus nested pages, `src/components/attendance/learner-attendance-workspace.tsx`: PageHeader, responsive titles and controls.
 - [ ] LRN-06: `loading.tsx`/`error.tsx`/`not-found.tsx` in learner trees: shared UI, retry, mobile and tablet states.
 - [ ] LRN-07: `allAssignments`, `allQuizzes`, `assignments`, `quizzes` potentially overlap chat-7's COURSES ownership. No edits before ownership check.
 
@@ -41,3 +41,25 @@ grep -RIn 'PageHeader' 'src/app/(authenticated)/learn' --include='*.tsx'
 | Learner project audit/error route headers | `docs/design/legacy-styles/components___listing-page-header.scss:26-60` | `src/app/(authenticated)/learn/projects/[projectId]/page.tsx:80-84,135-140`: `PageHeader` on two otherwise titleless conditional branches | Responsive and live proof missing |
 
 Source reread: after write, checked placement filter components' tag boundaries (2 `SegmentedControl`, 1 `Tabs`), no leftover `aria-pressed` raw buttons in those two files; removed eight accidentally orphaned `sm:` class fragments from notice link styles; fixed heading codemod to use exact action link boundaries rather than a brittle regex. **No TypeScript checker, codemod, runtime, CI or UI screenshot was run.**
+
+## Replacement lane chat-1 batch (2026-10-19, branch reset onto current main)
+
+- Branch force-with-lease reset onto origin/main commit `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` because prior chat-1 branch was **0 ahead / 1679 behind**; all previous [chat-1] commits already merged into main. Changes below are new commits on top of main.
+- Updated: `learn/my-placements/{applications,jobs,placement,schedule,announcements,offers}/page.tsx` and `learn/{attendance,calendar}/page.tsx` (8 files). No shared UI or shell or `legacy-skin.css` edited. No course files edited.
+- Legacy headers: `docs/design/old-lms-pages.md:5-13` (one canvas, one heading/action row); `docs/design/legacy-styles/components___listing-page-header.scss:40-81,131-145` (title-row wrapping, mobile heading); PageHeader implementation `src/components/ui/page-header.tsx:17-56`. Source comparison: four placement headings + two general learner action rows now use shared page header. Title-size conflict remains (`listing-page-header.scss:52` 28px versus `page-header.tsx` desktop 30px), owned by chat-9/17. Do not tick.
+- Legacy learner filters: `docs/design/legacy-styles/components___learn-notifications.scss:58-74,82-124`. Value table:
+
+| Property | Legacy value (source) | New notice/offer value | Status |
+|---|---|---|---|
+| Minimum hit target | `min-height:44px` (line 89) | `min-h-11` (44px) | Source match |
+| Pill geometry | `padding:8px 16px`, radius 8px (lines 88-94) | `py-2 px-4 rounded-lg` | Source match |
+| Font | 14px / 500 / line-height 1.3 (lines 91-95) | `text-[14px] font-medium leading-[1.3]` | Source match |
+| Neutral boundary | `1px solid $neutral-200` (line 97; variables.scss) | `border-[var(--lms-neutral-200)]` | Source match |
+| Selected | `$clrThird` background/border, white text (lines 110-115) | `--lms-primary: #26bac7`, `--lms-on-primary` white | Source match |
+| Hover | `rgba($primary,.4)` border / `rgba($primary,.05)` fill / 150ms (lines 101-107) | `rgba(38,186,199,.4/.05)`, `duration-150` | Source match |
+| Focus | 2px primary, offset 2px (lines 108-111) | `focus-visible:outline-2 ...` | Source match |
+| Mobile strip | <=767px, nowrap, horizontal scrolling, hidden scrollbar, 8px gap (lines 56-74) | `flex-nowrap overflow-x-auto ... sm:flex-wrap`, `gap-2`, scrollbars hidden | Source match pending rendered proof |
+
+Static source proof on modified files (GitHub fetch inspection; **not** local exhaustive grep): four new `PageHeader` occurrences, one route using `Tabs`, and zero old `aria-[current=page]:hover:bg-[var(--lms-button-primary)]` filter link class blocks in the two filtered route files. `learn/attendance` and `learn/calendar` preserve one action link each. No TypeScript parser, application runtime, CI, or screenshot executed. The strict tick rule therefore keeps all queue items OPEN.
+
+**Next file:** `src/components/placements/learner-placements-tabs.tsx`, then `src/components/placements/learner-placements-dashboard.tsx` (LRN-04).
