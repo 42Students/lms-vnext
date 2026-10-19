@@ -180,7 +180,7 @@ export function LearnerPlacementsDashboard({
         </div>
         {applicationFunnel===null ? <p role="status" className="mt-2 text-sm text-body">Application stages are currently unavailable. They have not been counted as zero.</p>
           : <SummaryStrip className="mt-3" label="Application stages"
-              steps={applicationFunnel.stages.map(stage=>({label:stage.label,value:stage.count}))} />
+              steps={applicationFunnel.stages.map(stage=>({label:stage.label,value:stage.count}))} />}
         <p className="mt-2 text-xs text-muted-foreground">Based on your saved application and screening stages; not offer or hiring outcomes.</p>
       </section>
       {display.urgentAssessment ? (
