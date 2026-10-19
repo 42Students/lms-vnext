@@ -18,6 +18,8 @@ type GridWorkspaceProps<Row>={
  children:ReactNode|((visibleKeys:readonly string[])=>ReactNode);
  columnScope?:"url"|"local";
  columnStorageKey?:string;
+ columnKeys?:readonly string[];
+ onColumnKeysChange?:(keys:string[])=>void;
  filters?:readonly TpoFilterField[];
  selection?:Selection;
  rollOf?:(row:Row)=>string|readonly string[]|null|undefined;
