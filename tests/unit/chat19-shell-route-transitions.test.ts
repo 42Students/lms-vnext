@@ -38,4 +38,8 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(css()).toContain("animation:none;transition:none;transform:none");
  expect(css()).toContain("opacity:1;transform:none;will-change:auto");
 });
+ it("keys route entry only on pathname, not the query string",()=>{
+ expect(route()).toContain("key={pathname}");
+ expect(route()).not.toContain("useSearchParams");
+});
 });
