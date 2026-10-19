@@ -443,3 +443,25 @@ No app/test/CI runs; route JSX was read back manually. The error wrappers use le
 **10/87 complete (pure redirects/effects without owned paint), 77/87 visually rendered items remain unticked**. This turn supplied source-value, coverage and responsive *declaration* evidence but did not obtain the real computed CSS/default/hover/active/focus/disabled/loading/error matrices and phone/tablet/desktop old-vs-vNext captures needed for true pixel-perfect closure. We do not mark these items [x] on incomplete proof.
 
 **Next unticked queue item:** `src/app/(authenticated)/hr/activity/error.tsx` — computed inline ErrorState and recovery-button parity first; then `hr/activity/loading.tsx`, `hr/activity/page.tsx`, and recruiter calendar viewport comparison.
+
+
+### Second successor micro-batch — tracker report and detail navigation
+
+Owner rule: no PageHeader eyebrow, stand-alone per-section cards, or small phone targets. This follow-on batch touches only the tracker source queue. No shared primitives or global CSS were edited.
+
+| File and state | Legacy measurement/source | vNext source declaration | Status |
+| --- | --- | --- | --- |
+| `tracker/page.tsx` report link | `old-lms-shell-spec.md:23-24` desktop 36px, `old-lms-shell.css:73-85` mobile max 767px, mobile min 44px | My reports action now `min-h-11 md:min-h-9`; retains href and focus outline | Declared value proof; computed paint open |
+| `tracker/mine/page.tsx` (normal/error/list) | `old-lms-pages.md:4-11` inline link/button, one canvas; mobile 44px | Three existing links (retry, report new, report detail) use `inline-flex min-h-11 md:min-h-9`; status, copy and URLs untouched | All three route states covered by source |
+| `tracker/mine/[publicId]/page.tsx` | Same legacy mobile links and white canvas | Back-to-reports action `min-h-11 md:min-h-9`; original authorized data and status/createdAt unchanged | Source dimensions |
+| `tracker/audit-findings/[publicId]/page.tsx` | Same navigation, source report metadata as content, hairline sections | Back and Looks similar actions now 44px phone/36px desktop; other sections and event timeline unchanged | Source dimensions |
+| `tracker/issues/[publicId]/page.tsx` missing runtime | `old-lms-pages.md:4-7`: inline error state rather than a second independent rounded card | Replaced ad-hoc `rounded border bg-surface p-5` unavailable message with shared `ErrorState`; PageHeader/Nav retained | One-canvas anatomy corrected |
+| `tracker/issues/[publicId]/page.tsx` authorized detail | `old-lms-shell.css:73-85`: phone through 767px; `old-lms-pages.md:4-11`: hairline detail rows, 36px outlined desktop controls | Grid fields single-column to 767px, 2 columns 768+, 3 at lg; 3 scoped pager/back links now 44px phone/36px desktop | Source responsive proof |
+
+The five-file transformation and exact source guards were saved as `scripts/codemods/chat18-tracker-detail-links.cjs`, which is idempotent and supports `--dry-run`. The script was not executed; branch edits were written through the GitHub connector. The queued native-control source coverage remains 87/87 with one explicitly exempt input type=hidden and one non-rendering dialog selector string.
+
+### Strict status after this batch
+
+The owner requires value rows for default, hover, active, focus, disabled, loading and error where applicable, plus true old-vs-vNext responsive comparison. The source checks above establish only the layout declarations and route JSX; they do not replace computed-style inspection or real 375px/768px/1280px viewport proof. **Still 10/87 ticked; 77 open.** No CI, app execution, Node script execution or screenshots.
+
+**Next item:** `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx` — finish old-vs-new computed detail typography, link and event timeline at 375/768/1280px, then `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`.
