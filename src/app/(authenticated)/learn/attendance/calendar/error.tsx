@@ -5,7 +5,7 @@ export default function Error({reset}:{
   reset:()=>void;
 }) {
   return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
-    <h1 className="font-semibold text-foreground">Attendance calendar could not be loaded</h1>
+    <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Attendance calendar could not be loaded</h1>
     <p className="mt-2 text-sm text-body">
       The read failed; missing or unmarked sessions cannot be inferred from this error.
     </p>
