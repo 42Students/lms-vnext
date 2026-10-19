@@ -78,7 +78,7 @@ export default async function TpoTeamPage({searchParams}:{
   <nav aria-label="Team tabs" className="flex flex-wrap gap-2">
    {(["conversations","people"] as const).map(item=><Link key={item} href={"/tpo/team?tab="+item}
      aria-current={tab===item?"page":undefined}
-     className={tab===item?"rounded-[var(--lms-control-radius)] bg-primary px-4 py-3 text-sm text-on-primary":"rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-sm text-body"}>
+     className={tab===item?"border-b-[3px] border-[var(--lms-primary)] px-4 py-3 text-sm font-semibold text-[var(--lms-primary-text)]":"border-b-[3px] border-transparent px-4 py-3 text-sm text-body"}>
     {item==="people"?"People":"Conversations"}
    </Link>)}
   </nav>
