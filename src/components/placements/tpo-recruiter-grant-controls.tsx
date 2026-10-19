@@ -35,7 +35,7 @@ export function TpoRecruiterGrantForm({ companies }: {
     } finally { setBusy(false); }
   }
   return (
-    <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+    <section className="space-y-3 border-t border-border pt-5">
       <h3 className="text-base font-semibold text-foreground">Grant recruiter college access</h3>
       <p className="text-sm text-body">
         Choose an active linked company and an existing active user email. Duplicate
@@ -49,23 +49,23 @@ export function TpoRecruiterGrantForm({ companies }: {
             <label className="grid gap-1 text-sm font-semibold text-body">Company
               <select value={relationshipId} disabled={busy}
                 onChange={(event) => setRelationshipId(event.target.value)}
-                className="min-h-11 rounded-md border border-border bg-surface px-3">
+                className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3">
                 {companies.map((company) => <option key={company.relationshipId} value={company.relationshipId}>{company.name}</option>)}
               </select>
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">Existing user email
               <input type="email" value={email} disabled={busy}
                 onChange={(event) => setEmail(event.target.value)}
-                className="min-h-11 rounded-md border border-border bg-surface px-3" required />
+                className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3" required />
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">Recruiter title (optional)
               <input type="text" value={title} maxLength={160} disabled={busy}
                 onChange={(event) => setTitle(event.target.value)}
-                className="min-h-11 rounded-md border border-border bg-surface px-3" />
+                className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3" />
             </label>
           </div>
           <button type="button" disabled={busy || !email.trim()} onClick={() => setConfirmOpen(true)}
-            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
+            className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
             {busy ? "Saving..." : "Review and confirm grant"}
           </button>
         </>
@@ -109,7 +109,7 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
   }
   return <div className="mt-2">
     <button type="button" disabled={busy} onClick={() => setConfirmOpen(true)}
-      className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-[var(--lms-teal-deep)] disabled:opacity-60">
+      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)] disabled:opacity-60">
       {busy ? "Revoking..." : "Revoke access"}
     </button>
     {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}
@@ -147,12 +147,12 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
   <label className="text-xs">{ended?"Give access again":"Extend access"}
    <select value={months} disabled={busy}
     onChange={e=>setMonths(Number(e.target.value) as 3|6|12)}
-    className="ml-2 min-h-11 rounded border border-border bg-surface px-2">
+    className="ml-2 min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-2">
     <option value={3}>3 months</option><option value={6}>6 months</option><option value={12}>12 months</option>
    </select>
   </label>
   <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-   className="min-h-11 rounded border border-border px-3 text-xs text-[var(--lms-teal-deep)] disabled:opacity-50">
+   className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 text-xs text-[var(--lms-link-text)] disabled:opacity-50">
    {busy?"Saving…":ended?"Give access again":"Extend"}
   </button>
   {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}

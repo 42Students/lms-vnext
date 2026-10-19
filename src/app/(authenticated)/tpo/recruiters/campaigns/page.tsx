@@ -47,7 +47,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   </form>
   <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
    <Link href="/tpo/recruiters/campaigns/new"
-    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-white">
+    className="inline-flex min-h-11 items-center border-b-2 border-[var(--lms-primary)] px-4 text-sm font-semibold text-[var(--lms-primary-text)] sm:min-h-9">
     New email campaign
    </Link>
    <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-[var(--lms-link-text)]">Back to Engage</Link>
@@ -62,7 +62,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     <p role="status" className="text-sm text-body">No email campaigns yet.</p>:
     <ul className="grid gap-3 sm:grid-cols-2">
      {drafts.rows.map(item=><li key={item.campaign_id}
-      className="rounded-md border border-border bg-surface p-4">
+      className="border-b border-border py-4">
       <Link className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline"
        href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}>
        {item.title}
@@ -82,7 +82,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   <h2 className="text-lg font-semibold text-foreground">Delivery batch receipts</h2>
   <p role="status" className="text-sm text-body">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
   {result.rows.length ? <ol className="grid gap-3 sm:grid-cols-2">
-    {result.rows.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+    {result.rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
       <h2 className="break-words font-semibold text-foreground">
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}
         className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline-offset-2 hover:underline">{row.purpose}</Link>

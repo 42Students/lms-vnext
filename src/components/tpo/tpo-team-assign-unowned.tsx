@@ -31,19 +31,19 @@ export function TpoTeamAssignUnowned({drives,companies,members}:{
   }finally{pending.current=false;setBusy(false);}
  }
  if(!drives&&!companies)return null;
- return <section aria-label="Assign unowned placement work" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Assign unowned placement work" className="space-y-3 border-t border-border pt-4">
   <h2 className="font-semibold">Nobody owns {drives} drives and {companies} companies</h2>
   <p className="text-xs text-muted-foreground">Give the unassigned active drives and company relationships to one placement team member. Work with an owner is not moved.</p>
   <div className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-48 flex-1 gap-1 text-sm">Who takes them?
     <select disabled={busy} value={assignee} onChange={event=>setAssignee(event.target.value)}
-     className="min-h-11 rounded-md border border-border bg-surface px-3">
+     className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3">
      <option value="">Choose a team member</option>
      {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
     </select>
    </label>
    <button type="button" disabled={busy||!assignee} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
     {busy?"Assigning…":"Assign work"}
    </button>
   </div>

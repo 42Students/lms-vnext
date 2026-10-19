@@ -8,7 +8,7 @@ type SelectedAudiencePreview={
  selected:number;eligible:number;leftOut:number;unavailable:number;
  suppressed:{NO_EMAIL:number;UNSUBSCRIBED:number;BOUNCED:number;NOT_NOW:number;DUPLICATE:number};
 };
-const field="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const field="mt-1 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-sm text-foreground";
 const SEGMENTS=[
  {value:"ALL_ELIGIBLE",label:"All eligible contacts"},
  {value:"NEW",label:"New recruiter leads"},
@@ -68,7 +68,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   }catch(e){setError(e instanceof Error?e.message:CAMPAIGN_DRAFT_UNAVAILABLE);}
   finally{setBusy(false);}
  }
- return <section className="space-y-5 rounded-xl border border-border bg-surface p-5" aria-label="Campaign composer">
+ return <section className="space-y-5 border-t border-border pt-5" aria-label="Campaign composer">
   <h2 className="text-lg font-semibold text-foreground">Write a campaign</h2>
   <p className="text-sm text-body">Save a draft for your placement cell. No message is sent until a separate, verified dispatch action is enabled.</p>
   <form onSubmit={e=>{e.preventDefault();void save();}} className="space-y-4">
@@ -125,14 +125,14 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     </span>
    </label>
    {!selectedLeadIds.length?<Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+    className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
     Preview audience
    </Link>:<Link href="/tpo/recruiters"
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+    className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
     Change selected recruiters in Engage
    </Link>}
    {!deliveryReady?<p role="alert" className="rounded-md border border-border p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}
-   <button type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="block min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+   <button type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="block min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Saving…":"Save draft"}
    </button>
   </form>

@@ -141,7 +141,7 @@ export default async function TpoRecruiterAccessPage({
         name: company.name,
       }))} />
 
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="border-t border-border pt-4 sm:p-5">
         <h2 className="text-lg font-semibold text-foreground">
           College recruiter grants
         </h2>

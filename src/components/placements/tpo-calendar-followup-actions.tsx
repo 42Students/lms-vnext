@@ -38,7 +38,7 @@ async function submitFollowup(
 }
 
 const inputClass =
-  "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground";
+  "min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground";
 
 export function TpoCalendarCreateFollowup({
   leads,
@@ -84,7 +84,7 @@ export function TpoCalendarCreateFollowup({
   }
 
   return (
-    <section aria-label="Create recruiter follow-up" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <section aria-label="Create recruiter follow-up" className="border-t border-border pt-4 sm:p-5">
       <h2 className="m-0 text-base font-semibold text-foreground">Create recruiter follow-up</h2>
       <p className="mt-1 text-sm text-body">
         Schedule for an existing recruiter lead. Enter the due date and time in IST.
@@ -128,7 +128,7 @@ export function TpoCalendarCreateFollowup({
             <input name="note" maxLength={500} className={inputClass} />
           </label>
           <div className="flex items-end">
-            <button type="submit" disabled={busy || !leadId} className="min-h-10 w-full rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+            <button type="submit" disabled={busy || !leadId} className="min-h-10 w-full rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
               {busy ? "Saving…" : "Create follow-up"}
             </button>
           </div>

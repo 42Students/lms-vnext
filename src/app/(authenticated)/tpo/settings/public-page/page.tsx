@@ -28,7 +28,7 @@ export default async function PublicPlacementSettingsPage({
  const updated=Array.isArray(raw.updated)?raw.updated[0]:raw.updated;
  return <div className="space-y-6">
   <TpoSettingsNav active="public-page"/>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-t border-border pt-5">
    <h1 className="text-xl font-semibold">Public placements</h1>
    <p className="mt-2 text-sm text-body">{view.label}</p>
    {updated==="1"?<p role="status" className="mt-2 text-sm">{view.enabled?"Your placements page is live":"Your placements page is off"}</p>:null}
@@ -46,7 +46,7 @@ export default async function PublicPlacementSettingsPage({
    {value.ready&&!view.canEnable&&!view.enabled?<p role="status" className="mt-3 text-sm text-muted-foreground">
      Public statistics cannot be enabled without a recorded cohort of at least five.
     </p>:null}
-   <section aria-label="Published placement preview" className="mt-5 space-y-3 rounded-xl border border-border bg-surface-subtle p-4">
+   <section aria-label="Published placement preview" className="mt-5 space-y-3 border-t border-border bg-surface-subtle pt-4">
     <h2 className="font-semibold">How your public placements look</h2>
     <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>
     {!view.enabled?<p role="status" className="text-sm text-body">Publication is off; this preview does not make any statistics public.</p>:null}
