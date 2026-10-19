@@ -1,7 +1,7 @@
 export function RecordedOutsideForm({collegeId,choices}:{
  collegeId:string;choices:readonly {id:string;name:string}[];
 }){
- return <form method="post" action="/api/placements/recorded-outside" className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
+ return <form method="post" action="/api/placements/recorded-outside" className="grid gap-4 sm:grid-cols-2">
   <input type="hidden" name="collegeId" value={collegeId}/>
   <label className="grid gap-1 text-sm text-body">Company relationship
    <select name="companyRelationshipId" required defaultValue="" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
