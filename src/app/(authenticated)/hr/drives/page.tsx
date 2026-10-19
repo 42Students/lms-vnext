@@ -146,9 +146,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       </Link>
     </div>:null}
     <form method="get" action="/recruiter/drives" className="flex flex-wrap items-end gap-3">
-      <input type="hidden" name="collegeId" value={selectedCollege} />
-      <input type="hidden" name="view" value={query.data.view} />
-      <input type="hidden" name="page" value="1" />
+      <Input type="hidden" name="collegeId" value={selectedCollege} />
+      <Input type="hidden" name="view" value={query.data.view} />
+      <Input type="hidden" name="page" value="1" />
       <label className="grid min-w-52 flex-1 gap-1 text-sm text-body">Search role
         <Input name="q" defaultValue={query.data.q} maxLength={100} placeholder="Job title" className="w-full" /></label>
       <label className="grid min-w-36 gap-1 text-sm text-body">Employment
