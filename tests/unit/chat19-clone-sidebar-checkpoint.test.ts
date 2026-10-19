@@ -117,4 +117,9 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(report).toContain("- [ ] **B3 sidebar**");
  expect(report).toContain("coverage proof fails");
 });
+ it("does not tick B4 without measured route loader and transitions",()=>{
+ const report=read("docs/audit/ux/clone-sidebar.md");
+ expect(report).toContain("- [ ] **B4 footer, route progress bar and transitions**");
+ expect(report).toContain("cannot infer absent means parity");
+});
 });
