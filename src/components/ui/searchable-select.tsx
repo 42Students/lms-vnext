@@ -6,6 +6,7 @@ import {
 } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
+import { PopoverListbox } from "./popover";
 import { cx } from "@/lib/class-names";
 
 export type SearchableSelectProps = Omit<ComponentPropsWithRef<"input">, "list" | "type"> & {
@@ -135,19 +136,20 @@ export function SearchableSelect({
           className="absolute right-1 top-0 z-[1] !h-9 !w-9 !min-w-9 max-[767px]:!h-11 max-[767px]:!w-11"
           onClick={() => select("")}>×</Button> : null}
     {open && !disabled && !readOnly
-      ? <div id={listId} role="listbox" aria-label={props["aria-label"] ?? "Available options"}
-          className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[44px] w-full min-w-0 overflow-y-auto rounded-[12px] border border-[var(--lms-neutral-200)] bg-white pt-[5px] shadow-[var(--lms-search-dropdown-shadow)]">
+      ? <PopoverListbox id={listId} label={String(props["aria-label"] ?? "Available options")}
+          onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
+          className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[44px] w-full min-w-0 overflow-y-auto pt-[5px]">
           {matches.length
             ? matches.map((option, index) =>
-              <button key={option.value} id={`${listId}-option-${index}`} type="button" role="option"
+              <Button key={option.value} id={`${listId}-option-${index}`} type="button" variant="ghost" size="md" role="option"
                 aria-selected={option.value === visibleQuery} disabled={option.disabled} tabIndex={-1}
                 onPointerEnter={() => { if (!option.disabled) setActiveIndex(index); }}
-                className={cx("flex min-h-11 w-full items-center px-[10px] py-[5px] text-left text-[14px] leading-5 text-[var(--lms-body-text)] transition-colors duration-200 hover:bg-[#d1f1f1] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50", index === activeIndex ? "bg-[#d1f1f1]" : "")}
+                className={cx("!flex !min-h-11 !w-full !items-center !justify-start !rounded-none !border-0 !px-[10px] !py-[5px] !text-left !text-[14px] !font-normal !leading-5 !text-[var(--lms-body-text)] !shadow-none enabled:hover:!bg-[#d1f1f1] focus-visible:!outline-2 focus-visible:!outline-[var(--lms-primary)] disabled:!opacity-50", index === activeIndex ? "!bg-[#d1f1f1]" : "!bg-transparent")}
                 onPointerDown={event => event.preventDefault()} onClick={() => select(option.value)}>
                 {option.label ?? option.value}
-              </button>)
+              </Button>)
             : <p role="status" className="px-[10px] py-[10px] text-center text-[13px] text-[var(--lms-muted-text)]">No results</p>}
-        </div> : null}
+        </PopoverListbox> : null}
     {selectionError
       ? <p id={validationId} role="alert" className="mt-1 text-[12px] leading-5 text-[var(--lms-error-text)]">{selectionError}</p>
       : null}

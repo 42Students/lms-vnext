@@ -122,7 +122,7 @@ export async function SuperAdminTemplateSubviewPage({
     // exception text or version JSON to an unverified viewer.
     return <div className="min-w-0 space-y-5">
       <ProjectAdminNav basePath="/admin/projects" active="templates"/>
-      <PageHeader eyebrow="Super Admin · Projects" title="Template section"/>
+      <PageHeader title="Template section"/>
       <ErrorState title="Template section unavailable"
         description="Template details could not be loaded. No version or college assignment data is shown."
         action={<Link href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/"+section}
@@ -175,7 +175,6 @@ export async function SuperAdminTemplateSubviewPage({
       />
 
       <PageHeader
-        eyebrow={`Super Admin · Project Template · ${sectionTitle}`}
         title={detail.template.title}
         description={
           detail.template.summary ??

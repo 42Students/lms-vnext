@@ -71,7 +71,7 @@
 - [ ] C2 native/AntD/multi/searchable/tag/creatable selects (missing: AntD-style dropdown/menu parity, keyboard/typeahead listbox and tag removal UX; non-creatable enforcement is not implemented).
 - [ ] C3 date/time/range pickers and popup calendar (missing: native browser popups are not AntD calendar overlays; range popup/month grid and all keyboard states unverified).
 - [ ] C4 checkbox/radio/switch/slider/segmented (missing: complete ant switch geometry/animation, checked/indeterminate/error states, responsive screenshot comparisons).
-- [ ] C5 file/image upload/dropzone/progress/list (missing: image preview/crop; picker and drag/drop now expose opt-in selected-file lists and caller-owned real progress but need legacy file-list geometry, adoption, drag-drop/mobile picker comparison, and full-source grep).
+- [ ] C5 file/image upload/dropzone/progress/list (missing: image cropping; picker and drag/drop now expose opt-in selected-file lists and caller-owned real progress but need legacy file-list geometry, adoption, drag-drop/mobile picker comparison, and full-source grep).
 - [ ] C6 labels/helper/errors/readonly/disabled/input groups/layout (missing: global form layout grid grep, every helper/required/readonly mismatch and responsive proof).
 - [ ] C7 rich-text/long-form editors (missing: actual rich-text toolbar and format state parity; shared Textarea only covers plain text).
 
@@ -245,9 +245,9 @@ grep -rnE '#[0-9A-Fa-f]{3,8}\\b' src --include='*.tsx' --include='*.css'
 | C2 multi-select | `components___antddesign.scss:134-140` selected #26bac7/white, wrapped text | `multi-select.tsx:22-73` native multiple with optional removable tags, `globals.css:1148-1152` | Selected color declarations match; native dropdown/chip geometry and event propagation not verified |
 | C3 day/time picker | `components___antddesign.scss:93-97,191-203,219-224` themed AntD day/time popup | `date-input.tsx:8-10`, `date-range-picker.tsx:21-32` native date fields with range validity | **Mismatch**: browser-native picker not equivalent to AntD month/day/time overlay |
 | C4 checked checkbox/radio | `components___antddesign.scss:123-131,742+` teal checked state; `components___variables.scss:10` | `checkbox.tsx:7-10`, `radio.tsx:7-10`, `selection-controls.tsx:11-20` | Native teal checked, checkbox indeterminate and disabled/focus added; exact geometry missing |
-| C4 switch | `components___common.scss:226-229` checked teal | `selection-controls.tsx:22-30` role switch, 48×28px, checked teal, error outline, disabled | Checked color declaration matches, legacy geometry/animation unmeasured |
+| C4 switch | `components___common.scss:226-229` checked teal | `selection-controls.tsx:22-30` role switch, 44×22px, checked #26bac7, error outline, disabled | Checked color declaration matches, legacy geometry/animation unmeasured |
 | C4 slider/segment | `components___variables.scss:10,139,148-157` teal and touch 44px | `range-slider.tsx:5-9`, `segmented-control.tsx:16-25` keyboard radios; mobile 44px | Missing thumb/track comparison and full focus/pressed state |
-| C5 file selection and progress | `components___button.scss:295+` upload affordance | `file-upload.tsx:74-109`, `file-dropzone.tsx:27-50`: validation, aria-errormessage, opt-in file list, real caller-owned progress | Preview/crop and file-list parity not yet complete |
+| C5 file selection and progress | `components___button.scss:295+` upload affordance | `file-upload.tsx:74-109`, `file-dropzone.tsx:27-50`: validation, aria-errormessage, opt-in file list, real caller-owned progress | Optional local image preview implemented; crop and file-list parity not yet complete |
 | C6 required/help/error | `components___form.scss:110-115,136-143` 13px/600/16px label, red 2px/20% focus | `form-field.tsx:13-38`, `globals.css:600,883-889` | Label/error declarations match; every caller spread and reading order unverified |
 | C6 grid/breakpoints | `components___variables.scss:148-157` <=767 phone, >=768 tablet, >=992 desktop | `form-grid.tsx:15-22`, `globals.css:1154-1165` 1/2/3 cols | Source breakpoint parity, page-wide migration not proven |
 | C7 rich text | `components___common.scss:7-8` Jodit-specific styling (editor in legacy stack) | Shared `textarea.tsx:8-9` plain long-form only | **Missing:** editor toolbar, selection and formatting parity |
@@ -289,7 +289,7 @@ GitHub indexed searches for `<button`, `<input`, `<select`, `<textarea` returned
 - [ ] C2 selects/searchable/multi/tag/creatable (missing: AntD parity for native select popup and tag UI, all keyboard modes verified).
 - [ ] C3 date/time/range (missing: fully custom/AntD-like popup and month/day keyboard states).
 - [ ] C4 checkbox/radio/switch/slider/segmented (missing: exact geometry, animations, touch and screen-reader results).
-- [ ] C5 file/image upload (missing: image preview/crop and end-to-end progress/list visual comparison).
+- [ ] C5 file/image upload (missing: editing/cropping, external progress adoption and end-to-end responsive/file-list visual comparison; local preview is implemented).
 - [ ] C6 labels/helper/error/disabled/readonly/layout (missing: full form caller migration and fieldset/focus proof).
 - [ ] C7 rich text (missing: rich-text toolbar/editor and format-state parity).
 - [ ] D buttons (missing: complete raw markup grep, icon/sizes/variants caller migration, focused/hovered/disabled browser proof).
@@ -317,4 +317,39 @@ GitHub indexed searches for `<button`, `<input`, `<select`, `<textarea` returned
 
 **No layout overrides:** the skin does not assign `margin`, `padding`, `width`, `height`, `position`, `display`, `flex`, `grid`, `transform`, or table row padding/height. Existing page owners retain those values. The style of visually different hand-rolled controls that have explicitly set `[data-unskin]` is preserved.
 
-**Verification performed:** compared the connected repository's exact `globals.css` and new stylesheet content. Exactly **one** import was found. CSS static delimiter scan returned **zero unmatched braces/brackets/parentheses and zero unterminated quoted strings**. Inspected **53 non-@ selectors**: all start in authenticated `main` or a canvas and include the `[data-unskin]` ancestor escape. No app, browser, typecheck, tests, or CI were run. Source-only checks do **not** prove computed-style parity; per SMARTER PLAN the orchestrator's browser-based `docs/audit/ux/parity-report.md` should identify concrete remaining mismatches. This does not entitle any of the prior 12 audit items to a strict tick.
+**Verification performed:** compared the connected repository's exact `globals.css` and new stylesheet content. Exactly **one** import was found. CSS static delimiter scan returned **zero unmatched braces/brackets/parentheses and zero unterminated quoted strings**. Previously inspected **53 non-@ selectors** (updated to 62 in the latest section): all start in authenticated `main` or a canvas and include the `[data-unskin]` ancestor escape. No app, browser, typecheck, tests, or CI were run. Source-only checks do **not** prove computed-style parity; per SMARTER PLAN the orchestrator's browser-based `docs/audit/ux/parity-report.md` should identify concrete remaining mismatches. This does not entitle any of the prior 12 audit items to a strict tick.
+
+
+## 2026-10-19 chat-17 file-completion pass — skin and form primitives
+
+**Completed source files (checked here means the file update and its source review are complete, NOT that a category passes the strict tick rule):**
+
+- [x] `src/styles/legacy-skin.css` — table/thead/th/td/tr, field/select/textarea, plain button, h1–h6, anchor, label, dialog/alertdialog, details/summary, hr, placeholder, selection, scrollbars and focus states; explicit SCSS file:line comments, element/ancestor `[data-unskin]`, no geometry declarations.
+- [x] `src/app/globals.css` — exactly one import of the skin; existing other-lane styles unchanged in this pass.
+- [x] `src/components/ui/checkbox.tsx` — teal checked/indeterminate, disabled ink, focus/error state and forwarded ref preserved.
+- [x] `src/components/ui/radio.tsx` — checked teal and muted disabled state; removed duplicated utility.
+- [x] `src/components/ui/selection-controls.tsx` — compact checked teal switch, labeled checkbox/radio/switch, visible invalid focus, 44px label hit target.
+- [x] `src/components/ui/segmented-control.tsx` — checked teal, disabled/invalid focus, phone 44px hit target.
+- [x] `src/components/ui/file-upload.tsx` — caller-owned real progress, selected-file list, optional local image preview with object URL revocation, and invalid/disabled state clearing.
+- [x] `src/components/ui/file-dropzone.tsx` — drag/picker validation parity, dropped-file list, progress and optional local image preview with URL cleanup.
+- [x] `src/components/ui/searchable-select.tsx` — existing keyboard-operable combobox now uses the shared Button for options, not raw skinned buttons.
+
+**Exact source/value spot checks for the completed updates:**
+
+| UI value/state | Legacy source file:line | Current implementation | Source-check result |
+| --- | --- | --- | --- |
+| Header text in table | `components___common.scss:831-837`, `components___variables.scss:28-32` — #a9a7ae muted heading, white/off-white cells | `src/styles/legacy-skin.css:40-63` | Equivalent neutral palette declarations |
+| Row divider/hover | `components___common.scss:700-713` — #e5e9f0, last row borderless; `old-lms-shell.css:45-48` soft teal highlight | `src/styles/legacy-skin.css:65-96` | Same separator and hover colors without row-size changes |
+| Input default/error/focus | `components___form.scss:117-143` — #fbfcfd, radius 10px, 14px, 2px teal/15% focus, red/6% error and 20% error halo | `src/styles/legacy-skin.css:99-189`, extended `.error`/`:user-invalid` rules | Same paint values; native popup geometry excluded |
+| Action button default | `old-lms-shell-spec.md:23-24` — #0a7c88, white, 9px, 14px/650; `components___antddesign.scss:153-185` hover/disabled/loading | `src/styles/legacy-skin.css:190-250`, shared `button.tsx:11-29` | Equivalent painted states for ordinary/shared variants; caller audit pending |
+| Choice checked teal | `components___antddesign.scss:123-131,742-745` — #26bac7; `components___common.scss:226-229` switch teal | `checkbox.tsx:7-10`, `radio.tsx:7-10`, `selection-controls.tsx:20-30`, `segmented-control.tsx:16-25` | Checked color now consistent; rendered dimensions need measurement |
+| Field label | `components___form.scss:110-115` — 13px/600 and muted color; `components___antddesign.scss:213-216` checked choice label dark | `legacy-skin.css` label/choice selectors and `form-field.tsx:30-38` | Muted field vs 14px body-toned choice labels separated |
+| Image upload | `components___button.scss:295+` — upload affordance | `file-upload.tsx`, `file-dropzone.tsx` preview/list/progress additions | Functional states improved; original legacy crop/preview visual geometry not fully proven |
+| Responsive titles | `components___typo.scss:3-40` — 24px phone h1, 22/30px h2, 18/20px h3 | `legacy-skin.css` heading + media rules, 767/768/992px | Breakpoint rules source-matched; no viewport screenshot run |
+
+**Static source verification on the repository's actual files (not CI):** `legacy-skin.css` currently has **62 scoped selector blocks**, 193 source-path:line references, 0 unscoped selectors, 0 selectors missing `[data-unskin]`, no unbalanced brackets/braces/quotes, and no width/height/margin/padding/display/position/flex/grid/transform/overflow/line-height declarations. The skin is imported **once** by `src/app/globals.css`. Edited JSX source was reviewed for paired opening and closing components; `searchable-select.tsx` now opens and closes `<Button>` for listbox options.
+
+**STRICT CATEGORY TICKS: none.** The 12 existing A1–A4, C1–C7 and D categories above remain unchecked under the owner rule until global raw-element and hard-coded-color grep counts, every portal caller, responsive visual proof, and the native/AntD picker and rich-text parity are satisfied. Do **not** misrepresent the checked file ledger as completion of those 12 categories.
+
+**Remaining material gaps (not source-complete):** native AntD-equivalent date/time calendar popups (C3), native select/menu and removable tag parity in every browser (C2), Jodit/rich-text editing (C7), image editing/crop and end-to-end upload adoption (C5), and repo-wide raw-control/code-style searches plus phone/tablet comparisons (A1–A4, C1, C4, C6, D). The orchestrator's computed-style parity report is still not available in this branch.
+

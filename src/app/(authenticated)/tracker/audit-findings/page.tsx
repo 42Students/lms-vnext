@@ -26,7 +26,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  if(ctx.adminScope?.collegeId||ctx.adminScope?.organizationId)redirect("/dashboard");
  requirePermission(ctx,"admin-scope.select");
  const parsed=parseIndependentFindingFilters(await searchParams);
- const header=<><AuditFindingFilterMemory/><PageHeader eyebrow="42 Tracker · Super Admin" title="Audit findings"
+ const header=<><AuditFindingFilterMemory/><PageHeader title="Audit findings"
   description="Independent findings imported from the audit repository, not user bug reports."/><TrackerAdminNav/></>;
  if(!parsed)return <div className="space-y-5">{header}
   <ErrorState title="Invalid audit findings filters." description="Independent findings imported from the audit repository, not user bug reports."

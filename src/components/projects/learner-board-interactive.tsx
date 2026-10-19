@@ -1,5 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { BoardColumn } from "@/components/ui/board-column";
@@ -114,7 +115,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
       const editable=!readOnly&&own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);
       return <li key={task.id} draggable={editable&&!busy}
        onDragStart={event=>{if(editable)event.dataTransfer.setData("text/plain",task.id)}}
-       className="rounded-lg border border-border bg-surface p-3 text-sm">
+       className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm">
         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
          className="block break-words font-semibold text-primary-text">{task.title}</Link>
         <p className="mt-2 text-xs text-muted-foreground">{task.priority}</p>
@@ -145,7 +146,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
         </label>:null}
        </li>;
      })}
-     {!lane.tasks.length?<li className="py-5 text-center text-xs text-muted-foreground">No tasks</li>:null}
+     {!lane.tasks.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
      </ul>
     </BoardColumn>)}</div>
   </div>
