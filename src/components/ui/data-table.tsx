@@ -99,7 +99,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
         </thead>
         <tbody className="block space-y-3 sm:table-row-group sm:space-y-0">
           {prepared.map(item=><tr key={item.key}
-            className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:transition-colors sm:duration-[var(--lms-motion-fast)] sm:hover:bg-[rgba(38,186,199,0.045)] motion-reduce:transition-none">
+            className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:transition-colors sm:duration-[var(--lms-motion-fast)] sm:hover:bg-[rgba(38,186,199,0.045)] sm:focus-within:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none">
             {columns.map(col=>{
               const phoneVisible=visibleOnPhone.has(col.key);
               const content=cell(item,col);
