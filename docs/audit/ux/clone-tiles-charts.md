@@ -573,3 +573,23 @@ All `MetricBar` instances are **self-closing JSX**, not unmatched paired tags. `
 - **Not performed:** TypeScript parsing/build, app render, PDF/XLS exports, snapshots, whole-repo grep, side-by-side legacy comparison at computed/browser level. Therefore E7 stat tiles, charts/legends and progress remain **[ ]** at umbrella level.
 
 **Next exact file:** `src/components/courses/learner-course-workspace.tsx` (dashboard course completion chart), then `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx` and any unscoped calendar/kanban surfaces.
+
+
+## 2026-10-19 chat-2 last learner course progress pass
+
+**Additional file-level source migrations:** `src/components/courses/learner-course-workspace.tsx` and `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`. They reuse the already authored `src/components/courses/learner-course-progress.module.css` (no duplicate stylesheet or shared UI control change).
+
+| Old LMS source/state | vNext source | Result |
+| --- | --- | --- |
+| `lms2-fe@prod-2026/src/styles/components/_learn-courses.scss:2486-2492`: course dashboard progress background neutral100 `#f1f4f9` | `learner-course-progress.module.css:6-12`, both measured `MetricBar` components now have `progressStyles.track` | Exact paint token |
+| `_learn-courses.scss:2494-2500`: muted fill `#6b7280` | `learner-course-progress.module.css:13-16` fill via `.track > div` | Exact paint token |
+| Legacy neutral course track height matches 8px common `MetricBar` compact | CSS :6-12 height8px; both caller calculations retain percent and labels | Source match for compact; vNext workspace used `MetricBar size="medium"` (2.5 Tailwind unit = 10px), overridden to 8px by module; intentional colour/height parity |
+| Responsive <=767px, full-width completion within course card | CSS :17-19, retains 100% width and min-width0 | Source responsive match; no physical phone rendering |
+| Reduced motion | CSS :20-22 removes transition on bar fill | Safe addition |
+
+**Scoped source greps:**
+`grep -o '<MetricBar' src/components/courses/learner-course-workspace.tsx` ⇒ **1 mapped `ProgressBar` source call**, now `progressStyles.track` **1**; no raw native button/input/select/textarea tags (complete file fetch). `grep -o '<MetricBar' 'src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx'` ⇒ **1 mapped lesson loop**, `progressStyles.track` **1**; no raw form controls. All used module class identifiers exist, and both TSX complete file bodies had 0 malformed double-quote-before-className patterns.
+
+**Preserved semantics:** Course video playback progress, aggregate completion status, null/unknown messaging, lesson drilldown, authorized persisted counts, links, badges, teaching content and interactions were not edited. No app execution, typecheck, CI, screenshots, full-repository grep or computed media-query comparison.
+
+**Next exact untouched file:** `src/components/courses/learner-quiz-attempt.tsx` progress indicator, to compare against `lms2-fe@prod-2026/src/styles/components/_learn-assessments.scss` and quiz-specific styles before choosing neutral/semantic track tones. Overall E7 remains **[ ]**.
