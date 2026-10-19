@@ -209,3 +209,18 @@
   overflow:hidden;
   border-radius:8px;
 }
+
+.recruiterBell > div > section li a,
+.learnerBell > div > section li a {
+  padding:12px 16px;
+  border:1px solid #e5e9f0;
+  border-radius:8px;
+  background:#fff;
+  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.recruiterBell > div > section li a:hover,
+.learnerBell > div > section li a:hover {
+  background:#fafbfc;
+  border-color:#e5e9f0;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
