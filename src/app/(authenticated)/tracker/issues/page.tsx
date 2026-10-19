@@ -10,7 +10,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-service";
@@ -149,9 +148,9 @@ export default async function TrackerIssuesPage({
         <EmptyState title="No matching issues." description="Review and triage reported LMS issues."
           action={<Link href="/tracker/issues" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Reset</Link>}/>
       ) : (
-        <div className="grid gap-3">
+        <div className="divide-y divide-[var(--lms-canvas-border)]">
           {page.items.map((issue) => (
-            <Card as="article" key={issue.id}>
+            <article key={issue.id} className="min-w-0 py-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap gap-2">
@@ -176,7 +175,7 @@ export default async function TrackerIssuesPage({
                   Open issue
                 </Link>
               </div>
-            </Card>
+            </article>
           ))}
         </div>
       )}
