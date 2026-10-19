@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
@@ -41,7 +40,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleSkills.length)}</span>
-    <Button variant="secondary" type="button" className="rounded px-2 py-1" onClick={()=>setSearch("")}>Clear Skill search</Button>
+    <Button variant="secondary" type="button" className="rounded border border-border px-2 py-1" onClick={()=>setSearch("")}>Clear Skill search</Button>
    </div>:null}
   {rows.length>5&&visibleSkills.length===0?<p role="status" className="text-sm text-muted-foreground">No matching skills. Clear the search to show all.</p>:null}
   {rows.length>5&&!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)?<p className="text-xs text-muted-foreground">Clear search to reorder Skills.</p>:null}
@@ -58,19 +57,19 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
     <div className="flex flex-wrap gap-2 sm:col-span-3">
       <Button variant="secondary" type="button" disabled={pending||index===0||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
        onClick={async()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index-1));setChanged(true);}}
-       className="min-h-11">Move up</Button>
+       >Move up</Button>
       <Button variant="secondary" type="button" disabled={pending||index===rows.length-1||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
        onClick={async()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index+1));setChanged(true);}}
-       className="min-h-11">Move down</Button>
+       >Move down</Button>
     </div>
     <Button variant="secondary" type="button" disabled={pending} onClick={async()=>{if(!(await askConfirm("Remove skill "+(index+1)+" from the unsaved draft?")))return;
       setRows(current=>removeFacultySkillDraft(current,skill.id));setChanged(true);}}
-     className="min-h-11 text-error">Remove</Button>
+     className="text-error">Remove</Button>
    </div>)}
   </div>
   <div className="flex flex-wrap gap-3">
    <Button variant="secondary" type="button" disabled={pending||rows.length>=100}
-    className="min-h-11"
+    
     onClick={async()=>{setRows(current=>[...current,{id:crypto.randomUUID(),skill:"",proficiency:""}]);
      setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);}}>
     Add skill
@@ -78,9 +77,9 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
    {changed?<Button variant="secondary" type="button" disabled={pending} onClick={async()=>{
      if(!(await askConfirm("Discard unsaved skill edits and restore saved skills?")))return;
      setRows(restoreFacultySkills(initial));setChanged(false);
-    }} className="min-h-11">Discard unsaved skill edits</Button>:null}
+    }} >Discard unsaved skill edits</Button>:null}
    {changed&&skillsIssue?<p role="alert" className="text-sm text-error">Review Skills: {skillsIssue}</p>:null}
-   <Button type="submit" disabled={pending||!changed||Boolean(skillsIssue)}
+   <Button variant="primary" type="submit" disabled={pending||!changed||Boolean(skillsIssue)}
     >
     {pending?"Saving…":"Save skills"}
    </Button>
