@@ -217,6 +217,7 @@ export function ProjectAdminPagination({
         <Link
           href={href(Math.max(1, page - 1))}
           aria-disabled={page <= 1}
+          tabIndex={page <= 1 ? -1 : undefined}
           className={
             "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 " +
             (page <= 1
@@ -231,6 +232,7 @@ export function ProjectAdminPagination({
             Math.min(totalPages, page + 1),
           )}
           aria-disabled={page >= totalPages}
+          tabIndex={page >= totalPages ? -1 : undefined}
           className={
             "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 " +
             (page >= totalPages
