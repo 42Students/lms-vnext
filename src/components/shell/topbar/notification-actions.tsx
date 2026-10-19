@@ -65,6 +65,7 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
   }, [config.portal]);
 
   useEffect(() => {
+    if (config.portal === "hr" || config.portal === "learn" || config.portal === "tpo") return;
     void update();
     const timer = window.setInterval(() => void update(), 30000);
     document.addEventListener("visibilitychange", update);
