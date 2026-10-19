@@ -39,9 +39,9 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
     onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
     onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
     style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px" } as CSSProperties}
-    className="fixed inset-x-0 top-[var(--lms-visual-top)] m-0 h-[var(--lms-visual-height)] max-h-none w-full max-w-none border-0 bg-surface p-0 text-foreground backdrop:bg-foreground/30 sm:m-auto sm:h-auto sm:max-h-[var(--lms-visual-height)] sm:w-[min(36rem,calc(100%_-_2rem))] sm:rounded-[var(--lms-canvas-radius)] sm:border sm:border-[var(--lms-canvas-border)] sm:shadow-[var(--lms-elevation-4)]">
-    <div className="flex h-full max-h-[var(--lms-visual-height)] min-h-0 flex-col overflow-hidden sm:max-h-[var(--lms-visual-height)]">
-      <div className="flex shrink-0 items-start justify-between gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] p-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-[var(--lms-canvas-padding)]">
+    className="fixed left-1/2 top-[calc(var(--lms-visual-top)+var(--lms-visual-height)/2)] m-0 h-auto max-h-[calc(var(--lms-visual-height)-3rem)] w-[calc(100%-2rem)] max-w-[36rem] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-0 text-foreground shadow-[var(--lms-elevation-4)] backdrop:bg-foreground/30">
+    <div className="flex max-h-[calc(var(--lms-visual-height)-3rem)] min-h-0 flex-col overflow-hidden">
+      <div className="flex shrink-0 items-start justify-between gap-4 border-b border-[var(--lms-canvas-border)] bg-surface px-4 py-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-[var(--lms-canvas-padding)]">
         <div className="min-w-0">
           <h2 id={titleId} className="m-0 break-words text-[var(--lms-font-lg)] font-semibold leading-[1.35] text-[var(--lms-heading)]">{title}</h2>
           {description ? <p id={descriptionId} className="mt-[var(--lms-space-1)] text-[13px] leading-5 text-[var(--lms-body-text)]">{description}</p> : null}
