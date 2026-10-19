@@ -37,24 +37,24 @@ export function LearnerVerificationWithdraw({
  }
  return <div className="mt-3 space-y-2">
   {!confirm?<Button type="button" onClick={()=>setConfirm(true)}
-   variant="secondary" className="min-h-11 sm:min-h-9">
+   variant="secondary" className="min-h-11 min-[768px]:min-h-9">
    Withdraw
   </Button>:<div role="group" aria-label="Withdraw" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-3">
    <p className="text-sm text-body">Withdraw</p>
    <div className="mt-3 flex flex-wrap gap-3">
     <Button type="button" disabled={pending||stale} onClick={withdraw}
-     variant="danger" className="min-h-11 sm:min-h-9">
+     variant="danger" className="min-h-11 min-[768px]:min-h-9">
      Withdraw
     </Button>
     <Button type="button" disabled={pending} onClick={()=>setConfirm(false)}
-     variant="secondary" className="min-h-11 sm:min-h-9">
+     variant="secondary" className="min-h-11 min-[768px]:min-h-9">
      Cancel
     </Button>
    </div>
   </div>}
   {message?<p role="alert" className="text-sm text-body">{message}</p>:null}
   {stale?<Button type="button" onClick={()=>router.refresh()}
-   variant="secondary" className="min-h-11 sm:min-h-9">
+   variant="secondary" className="min-h-11 min-[768px]:min-h-9">
    Refresh verification status
   </Button>:null}
  </div>;
