@@ -953,6 +953,7 @@ export function FacultyAttendanceWorkspace({
                             <div className="flex gap-2">
                               <Button
                                 size="sm"
+                                className="min-h-11 sm:min-h-[var(--lms-control-height)]"
                                 variant={
                                   !isAbsent
                                     ? "primary"
@@ -973,6 +974,7 @@ export function FacultyAttendanceWorkspace({
                               </Button>
                               <Button
                                 size="sm"
+                                className="min-h-11 sm:min-h-[var(--lms-control-height)]"
                                 variant={
                                   isAbsent
                                     ? "danger"
