@@ -44,7 +44,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
         );
       })}
       <Dropdown align="end" label="More drive sections" trigger="More sections ▾">
-        <div className="absolute right-0 z-30 mt-1 grid min-w-52 gap-1 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-2 shadow-[0_14px_16px_rgba(0,0,0,0.04)]">
+        <div className="grid min-w-52 gap-1">
           {tpoDriveMoreTabs(jobId).map(tab=>(
             <Link key={tab.href} href={tab.href}
               aria-current={pathname===tab.href.split("#")[0]?"page":undefined}
