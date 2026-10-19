@@ -255,7 +255,7 @@ function AssignmentItem({
 
       <Link
         href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(deliveryId)}`}
-        className="mt-3 inline-flex min-h-9 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+        className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
       >
         Assignment Report
       </Link>
@@ -349,7 +349,7 @@ function QuizItem({
 
       <Link
         href={`/teacher/report/quiz/${item.id}?deliveryId=${encodeURIComponent(deliveryId)}`}
-        className="mt-3 inline-flex min-h-9 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+        className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
       >
         Quiz Report
       </Link>
@@ -400,13 +400,13 @@ export function FacultyCourseWorkspace({
       <nav aria-label="Overview actions" className="flex flex-wrap gap-3">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
-          className="inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
         >
           Section reports hub
         </Link>
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
         >
           Current Section students
         </Link>

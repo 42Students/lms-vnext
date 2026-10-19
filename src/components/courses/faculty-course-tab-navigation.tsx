@@ -68,15 +68,15 @@ export function FacultyCourseTabNavigation({
       </div>
       <div className="flex flex-wrap gap-2 text-sm">
         <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 font-semibold text-primary-text">
+          className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text">
           Author Assignments
         </Link>
         <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 font-semibold text-primary-text">
+          className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text">
           Build Quizzes
         </Link>
         <Link href={"/teacher/live-classes?deliveryId="+encodeURIComponent(deliveryId)}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 font-semibold text-primary-text">
+          className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text">
           Live Classes
         </Link>
       </div>
