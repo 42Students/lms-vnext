@@ -7,7 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
-import {Card} from "@/components/ui/card";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {EmptyState} from "@/components/ui/empty-state";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
@@ -31,7 +31,7 @@ export default async function HrRoundsEditorPage({params}:{
   <PageHeader title="Edit hiring rounds"
    description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."/>
   <nav className="flex flex-wrap gap-4 text-sm">
-   <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive rounds</Link>
+   <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Back to drive rounds"/>
    <Link href="/hr/drives" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to Drives</Link>
   </nav>
   <section className="space-y-4 border-b border-border pb-4">
@@ -60,7 +60,7 @@ export default async function HrRoundsEditorPage({params}:{
   <section className="space-y-3">
    <h2 className="font-semibold text-foreground">Current rounds ({rounds.length})</h2>
    {rounds.length===0?<EmptyState title="No hiring rounds" description="This drive has no hiring rounds. Add a round using the form above."/>:null}
-   {rounds.map(round=><Card as="article" key={round.id} className="space-y-3">
+   {rounds.map(round=><article key={round.id} className="min-w-0 space-y-3 border-b border-border pb-5 last:border-b-0">
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
      <span className="flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge>{round.status}</StatusBadge></span></div>
     {round.editable?<form action={endpoint} method="post" className="grid gap-3 md:grid-cols-2">
@@ -86,7 +86,7 @@ export default async function HrRoundsEditorPage({params}:{
       className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       Review round removal
     </Link>:null}
-   </Card>)}
+   </article>)}
   </section>
  </div>;
 }
