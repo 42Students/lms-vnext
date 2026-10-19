@@ -19,6 +19,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { Banner } from "@/components/ui/banner";
 import { InlineNotice } from "@/components/ui/inline-notice";
+import { EmptyState } from "@/components/ui/empty-state";
 import { tpoBatchNextAction, tpoBatchNextActionLink } from "@/modules/placements/tpo-batch-next-action-model";
 import { tpoBatchCardDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
 import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref,tpoBatchClearFiltersHref,tpoBatchEmptyReason } from "@/modules/placements/tpo-batch-directory-pagination-model";
@@ -137,13 +138,11 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    {batchPage.hasNext?<Link className="min-h-9 inline-flex items-center rounded-[var(--radius)] border border-border px-3 text-link lms-inline-link" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
 
   </nav>
-  {batches.length===0?<section role="status" className="space-y-2 rounded-[var(--radius)] border border-border p-4">
-   <p>{tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?
-     "No placement batches or academic cohorts are available to list yet.":
-     "No batches match these filters."}</p>
-   {data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
-      className="inline-flex min-h-9 items-center text-link underline">Clear batch filters</Link>:null}
-  </section>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+  {batches.length===0?<EmptyState
+   title={tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?
+     "No placement batches or academic cohorts are available to list yet.":"No batches match these filters."}
+   action={data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
+      className="inline-flex min-h-11 items-center text-link underline">Clear batch filters</Link>:undefined}/>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id+"?returnTo="+encodeURIComponent(tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize))} className="text-link underline lms-inline-link">{b.name}</Link></h2>
     <p className="text-sm">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
     <p className="text-xs text-muted-foreground">{data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:eligibility?.get(b.id)?.eligible??null}):"Status unavailable"}</p>
