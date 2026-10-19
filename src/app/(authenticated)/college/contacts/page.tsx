@@ -63,106 +63,106 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
     <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
    <label className="min-w-0 flex-1 basis-32 text-sm">Name begins with
-    <Select name="initial" defaultValue={filter.initial??""} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="initial" defaultValue={filter.initial??""} className="mt-1 w-full">
      <option value="">Any letter</option>{initials.map(letter=><option key={letter} value={letter}>{letter}</option>)}
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Membership
-    <Select name="status" defaultValue={filter.status} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="status" defaultValue={filter.status} className="mt-1 w-full">
      <option value="ACTIVE">Active</option><option value="SUSPENDED">Suspended</option>
      <option value="ENDED">Ended</option><option value="ALL">All statuses</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Contact roles
-    <Select name="audience" defaultValue={filter.audience} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="audience" defaultValue={filter.audience} className="mt-1 w-full">
      <option value="ALL">Any contact roles</option><option value="FACULTY_ONLY">Faculty only</option><option value="LEARNER_ONLY">Learner only</option><option value="DUAL">Faculty and learner</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Contact profile availability
-    <Select name="profile" defaultValue={filter.profile} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="profile" defaultValue={filter.profile} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="PROFILED">Has role profile</option><option value="UNPROFILED">Missing role profile</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Learner active enrollment
-    <Select name="enrollment" defaultValue={filter.enrollment} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="enrollment" defaultValue={filter.enrollment} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="ACTIVE">active</option><option value="NONE">none</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Faculty current teaching
-    <Select name="teaching" defaultValue={filter.teaching} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="teaching" defaultValue={filter.teaching} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="ASSIGNED">assigned</option><option value="NONE">none</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Active Faculty teaching role
-    <Select name="teachingRole" defaultValue={filter.teachingRole} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="teachingRole" defaultValue={filter.teachingRole} className="mt-1 w-full">
      <option value="ALL">Any teaching role</option><option value="PRIMARY">Primary</option><option value="CO_TEACHER">Co-teacher</option><option value="TA">Teaching assistant</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Learner roll number availability
-    <Select name="rollPresence" defaultValue={filter.rollPresence} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="rollPresence" defaultValue={filter.rollPresence} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="PRESENT">present</option><option value="MISSING">missing</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Learner registration availability
-    <Select name="registrationPresence" defaultValue={filter.registrationPresence} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="registrationPresence" defaultValue={filter.registrationPresence} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="PRESENT">present</option><option value="MISSING">missing</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Faculty academic-title availability
-    <Select name="titlePresence" defaultValue={filter.titlePresence} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="titlePresence" defaultValue={filter.titlePresence} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="PRESENT">present</option><option value="MISSING">missing</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Faculty primary-department coverage
-    <Select name="departmentPresence" defaultValue={filter.departmentPresence} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="departmentPresence" defaultValue={filter.departmentPresence} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="ASSIGNED">assigned</option><option value="MISSING">missing</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Learner active-class placement
-    <Select name="classPresence" defaultValue={filter.classPresence} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="classPresence" defaultValue={filter.classPresence} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="ASSIGNED">assigned</option><option value="NONE">none</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Active class
-    <Select name="sectionId" defaultValue={filter.sectionId??""} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="sectionId" defaultValue={filter.sectionId??""} className="mt-1 w-full">
      <option value="">Any class</option>
      {filter.sectionId&&!choices.sections.some(x=>x.id===filter.sectionId)&&<option value={filter.sectionId}>Selected class (outside first 200)</option>}
      {choices.sections.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>{choices.sectionsTruncated&&<span className="mt-1 block text-xs">First 200 classes shown.</span>}
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Academic program
-    <Select name="programId" defaultValue={filter.programId??""} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="programId" defaultValue={filter.programId??""} className="mt-1 w-full">
      <option value="">Any program</option>
      {filter.programId&&!choices.programs.some(x=>x.id===filter.programId)&&<option value={filter.programId}>Selected program (outside first 200)</option>}
      {choices.programs.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>{choices.programsTruncated&&<span className="mt-1 block text-xs">First 200 programs shown.</span>}
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Cohort / batch
-    <Select name="cohortId" defaultValue={filter.cohortId??""} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="cohortId" defaultValue={filter.cohortId??""} className="mt-1 w-full">
      <option value="">Any cohort</option>
      {filter.cohortId&&!choices.cohorts.some(x=>x.id===filter.cohortId)&&<option value={filter.cohortId}>Selected cohort (outside first 200)</option>}
      {choices.cohorts.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>{choices.cohortsTruncated&&<span className="mt-1 block text-xs">First 200 cohorts shown.</span>}
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Faculty academic title contains
-    <Input type="search" name="facultyTitleQ" maxLength={80} defaultValue={filter.facultyTitleQ??""} placeholder="e.g. Associate Professor" className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm"/>
+    <Input type="search" name="facultyTitleQ" maxLength={80} defaultValue={filter.facultyTitleQ??""} placeholder="e.g. Associate Professor" className="mt-1 w-full"/>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Faculty employment type
-    <Select name="employmentType" defaultValue={filter.employmentType??""} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="employmentType" defaultValue={filter.employmentType??""} className="mt-1 w-full">
      <option value="">Any employment type</option>
      {filter.employmentType&&!choices.employmentTypes.includes(filter.employmentType)&&<option value={filter.employmentType}>Selected type (outside first 100)</option>}
      {choices.employmentTypes.map(value=><option key={value} value={value}>{value}</option>)}
     </Select>{choices.employmentTypesTruncated&&<span className="mt-1 block text-xs">First 100 types shown.</span>}
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Faculty primary department
-    <Select name="facultyDepartmentId" defaultValue={filter.facultyDepartmentId??""} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="facultyDepartmentId" defaultValue={filter.facultyDepartmentId??""} className="mt-1 w-full">
      <option value="">Any department</option>
      {filter.facultyDepartmentId&&!choices.departments.some(x=>x.id===filter.facultyDepartmentId)&&<option value={filter.facultyDepartmentId}>Selected department (outside first 200)</option>}
      {choices.departments.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>{choices.departmentsTruncated&&<span className="mt-1 block text-xs">First 200 departments shown.</span>}
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Account status
-    <Select name="accountStatus" defaultValue={filter.accountStatus} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="accountStatus" defaultValue={filter.accountStatus} className="mt-1 w-full">
      <option value="ALL">All accounts</option><option value="ACTIVE">Active account</option><option value="DISABLED">Disabled account</option>
     </Select>
    </label>
@@ -173,12 +173,12 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     <Input name="joinedThrough" type="date" defaultValue={filter.joinedThrough??""} className="mt-1 block min-h-[var(--lms-control-height)] w-full rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm"/>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Sort
-    <Select name="sort" defaultValue={filter.sort} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="sort" defaultValue={filter.sort} className="mt-1 w-full">
      <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="NEWEST">Newest joined</option><option value="OLDEST">Longest-serving</option>
     </Select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Rows per page
-    <Select name="pageSize" defaultValue={filter.pageSize} className="mt-1 block min-h-[var(--lms-control-height)] w-full min-w-0 rounded-[var(--lms-control-radius)] border bg-surface px-3 text-base sm:text-sm">
+    <Select name="pageSize" defaultValue={filter.pageSize} className="mt-1 w-full">
      <option value="10">10</option><option value="20">20</option><option value="50">50</option>{filter.pageSize===25?<option value="25">25 (saved view)</option>:null}
     </Select>
    </label>
