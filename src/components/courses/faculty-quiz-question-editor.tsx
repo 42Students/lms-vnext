@@ -441,7 +441,7 @@ export function FacultyQuizQuestionEditor({
               ) => (
                 <section
                   key={question.key}
-                  className="rounded-lg border border-border bg-surface p-4"
+                  className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="m-0 text-sm font-semibold text-foreground">
