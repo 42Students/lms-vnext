@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { KnownErrorsWorkspace } from "@/components/tracker/known-errors-workspace";
@@ -98,23 +99,10 @@ export default async function TrackerLogsPage({
   return (
     <div className="space-y-6">
       {header}
-      <nav aria-label="Log environment" className="flex flex-wrap gap-3 border-b border-border">
-        {(["PRODUCTION", "UAT", "DEVELOPMENT"] as const).map((value) => (
-          <Link
-            key={value}
-            href={"/tracker/logs?environment=" + value}
-            aria-current={environment === value ? "page" : undefined}
-            className={
-              "inline-flex min-h-[var(--lms-control-height)] items-center border-b-[3px] px-3 py-2 text-[13px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] " +
-              (environment === value
-                ? "border-primary text-foreground"
-                : "border-transparent text-body hover:text-primary-text")
-            }
-          >
-            {value}
-          </Link>
-        ))}
-      </nav>
+      <Tabs ariaLabel="Log environment" renderPanel={false} value={environment}
+        items={(["PRODUCTION","UAT","DEVELOPMENT"] as const).map(value=>({
+          value, label:value, href:"/tracker/logs?environment="+value,
+        }))} />
       <TrackerTelegramManualPanel items={items} configured={telegramAlertsConfigured()}
         deploy={/^[0-9a-f]{7,64}$/i.test(process.env.DEPLOY_COMMIT??"")
           ?process.env.DEPLOY_COMMIT??null:null} />
