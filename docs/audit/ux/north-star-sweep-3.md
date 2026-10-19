@@ -280,6 +280,10 @@ The initial 211-file sweep was marked completed, so this extension continues the
 ## Follow-on portal: Super Admin attendance
 Continue legacy-shell skin in the attendance portion of Super Admin academic operations, which shares read-only widgets with College Admin. Keep service calls, table structure, action flows and page content as-is. Table grids may retain their hairline table container; metric and filter-card wrappers should flatten onto the page canvas.
 
-- [ ] `src/app/(authenticated)/admin/attendance/page.tsx`
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
-- [ ] `src/components/admin/super-admin-attendance-settings-editor.tsx`
+- [x] `src/app/(authenticated)/admin/attendance/page.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/admin/super-admin-attendance-settings-editor.tsx`
+
+### Attendance pass result
+- Reviewed all three source files; flattened policy metrics and monthly-health block separators in `admin-attendance-workspace.tsx` while retaining the hairline table boundary.
+- Server route and settings editor inherit the shared UI tokens and require no presentation-only changes. No code, tests, typecheck or CI executed.
