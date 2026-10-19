@@ -336,40 +336,12 @@ export function TpoCompanyMemoryWorkspace({
         <div className="space-y-5">
           <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">Drives</h2>
-            <Button variant="secondary" type="button" className="mt-3"
-              disabled={visibleDrives.length===0}
-              onClick={()=>{
-                const blob=new Blob([companyDriveCsv(visibleDrives)],{type:"text/csv;charset=utf-8"});
-                const url=URL.createObjectURL(blob);
-                const link=document.createElement("a");
-                link.href=url;
-                link.download=company.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,70)+"-drives.csv";
-                document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
-              }}>
-              Export drives CSV
-            </Button>
-            <label className="mt-3 block text-sm text-body">Search drives
-              <Input className="mt-1"
-                type="search" value={driveSearch} onChange={e=>setDriveSearch(e.target.value)}
-                placeholder="Search role, status or year"/>
-            </label>
-            {company.drives.length === 0 ? (
-              <p className="mt-3 text-sm text-muted-foreground">No drives yet.</p>
-            ) : (
+            {company.drives.length===0?
+              <p className="mt-3 text-sm text-muted-foreground">No drives yet.</p>:
               <div className="mt-3">
-                <DataTable rows={visibleDrives} getRowKey={drive=>drive.id}
-                  caption="Company drives" empty={<p>No matching drives.</p>}
-                  columns={[
-                    {key:"role",header:"Role",mobilePriority:"primary",cell:drive=>
-                      <Link className="inline-flex min-h-9 items-center font-semibold text-link hover:underline lms-inline-link"
-                        href={"/tpo/placements/jobs/" + encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>},
-                    {key:"status",header:"Status",mobilePriority:"secondary",cell:drive=>statusLabel(drive.status)},
-                    {key:"year",header:"Year",mobilePriority:"secondary",cell:drive=>new Intl.DateTimeFormat("en-IN",{year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(drive.createdAt))},
-                    {key:"applied",header:"Applied",mobilePriority:"secondary",cell:drive=>drive.applied+" · "+drive.offers+" offers"},
-                    {key:"created",header:"Created",mobilePriority:"secondary",cell:drive=>dateLabel(drive.createdAt)},
-                  ]}/>
-              </div>
-            )}
+                <TpoCompanyMemoryDriveGrid companyName={company.name} drives={company.drives}
+                  search={driveSearch} onSearchChange={setDriveSearch}/>
+              </div>}
           </section>
 
           <section className="border-b border-border py-4">
