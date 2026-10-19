@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -23,7 +24,7 @@ export default async function FacultyQuizAttemptPage({
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid Quiz Section or pagination</h1>
-    <Link href="/teacher/allQuizzes" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">All Quizzes</Link>
+    <Link href="/teacher/allQuizzes" className="text-primary-text underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">All Quizzes</Link>
   </section>;
   const context=await getCurrentRequestContext();
   let data: Awaited<ReturnType<typeof getFacultyQuizAttemptDrilldown>>;
@@ -39,7 +40,7 @@ export default async function FacultyQuizAttemptPage({
     <PageHeader eyebrow="Faculty · Quiz Report" title="Individual Quiz attempts"
       description={data.quiz.title+" · "+data.quiz.sectionName}
       actions={<Link href={back}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Full Quiz report
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-4">
@@ -68,15 +69,15 @@ export default async function FacultyQuizAttemptPage({
     </section>
     <nav aria-label="Quiz attempt view" className="flex flex-wrap gap-3">
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,data.query.q,"ALL")}
-        aria-current={data.query.view==="ALL"?"page":undefined} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">All attempts</Link>
+        aria-current={data.query.view==="ALL"?"page":undefined} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">All attempts</Link>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,data.query.q,"LATEST")}
-        aria-current={data.query.view==="LATEST"?"page":undefined} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Latest per learner</Link>
+        aria-current={data.query.view==="LATEST"?"page":undefined} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Latest per learner</Link>
     </nav>
     <nav aria-label="Quiz attempt order" className="flex flex-wrap gap-3">
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,"NEWEST",data.query.q,data.query.view)}
-        aria-current={data.query.order==="NEWEST"?"page":undefined} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Newest first</Link>
+        aria-current={data.query.order==="NEWEST"?"page":undefined} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Newest first</Link>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,"OLDEST",data.query.q,data.query.view)}
-        aria-current={data.query.order==="OLDEST"?"page":undefined} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Oldest first</Link>
+        aria-current={data.query.order==="OLDEST"?"page":undefined} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Oldest first</Link>
     </nav>
     <form method="get" className="flex flex-wrap items-end gap-3">
       <input type="hidden" name="deliveryId" value={data.query.deliveryId} />
@@ -84,12 +85,12 @@ export default async function FacultyQuizAttemptPage({
       {data.query.view!=="ALL"?<input type="hidden" name="view" value={data.query.view}/>:null}
       <label className="grid min-w-0 flex-1 basis-56 gap-1 text-sm font-semibold text-body">
         Search learner attempts
-        <input type="search" name="q" defaultValue={data.query.q} maxLength={120}
-          placeholder="Learner name" className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-body text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
+        <Input type="search" name="q" defaultValue={data.query.q} maxLength={120}
+          placeholder="Learner name" className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-body text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
       </label>
       <Button type="submit" variant="primary">Search</Button>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,"",data.query.view)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
     </form>
     {data.items.length===0?<EmptyState title="No matching Quiz attempts"
       description={data.query.q||data.query.view!=="ALL"?"No attempts match these filters in your authorized Section. Clear the filters to see the full history.":"There are no persisted attempts in your authorized Section. This does not mean that results were published."} />
@@ -120,9 +121,9 @@ export default async function FacultyQuizAttemptPage({
       <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-3">
         {data.page>1?<Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,data.page-1,data.query.order,data.query.q,data.query.view)}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
+          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
         {data.page<data.totalPages?<Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,data.page+1,data.query.order,data.query.q,data.query.view)}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
+          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">
