@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
@@ -147,8 +148,8 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  return <section className="space-y-3 rounded border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center gap-3">
    <h2 className="font-semibold">{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
-   <button type="button" className="min-h-10 rounded border px-3 text-sm" disabled={!lessons.length}
-    onClick={fresh}>{text}</button>
+   <Button variant="secondary" type="button" className="min-h-10 rounded border px-3 text-sm" disabled={!lessons.length}
+    onClick={fresh}>{text}</Button>
   </div>
   {!lessons.length&&<p className="text-sm">Create a course offering, learning path and lesson before adding content.</p>}
   {open&&<div className="grid max-w-3xl gap-3 md:grid-cols-2">
@@ -209,9 +210,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     Remove existing resource link
    </label>:null}
    <div className="flex gap-2 md:col-span-2">
-    <button type="button" className="rounded bg-primary px-3 py-2 text-on-primary" disabled={busy} onClick={()=>void save()}>
-     {busy?"Saving…":"Save"}</button>
-    <button type="button" className="rounded border px-3 py-2" onClick={()=>setOpen(false)}>Cancel</button>
+    <Button variant="primary" type="button" className="rounded bg-primary px-3 py-2 text-on-primary" disabled={busy} onClick={()=>void save()}>
+     {busy?"Saving…":"Save"}</Button>
+    <Button variant="secondary" type="button" className="rounded border px-3 py-2" onClick={()=>setOpen(false)}>Cancel</Button>
    </div>
   </div>}
   {existing.length>0&&<div className="space-y-2">
@@ -262,15 +263,15 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        onChange={e=>setOrderDraft(old=>({...old,[item.id]:e.target.value}))}
        className="w-16 rounded border border-border bg-background p-1"/>
      </label>
-     <button type="button" className="underline" disabled={busy} onClick={()=>void saveOrder(item)}>Save order</button>
-     {kind==="RESOURCE"&&materialsEnabled?<button type="button" className="underline"
+     <Button variant="ghost" type="button" className="underline" disabled={busy} onClick={()=>void saveOrder(item)}>Save order</Button>
+     {kind==="RESOURCE"&&materialsEnabled?<Button variant="ghost" type="button" className="underline"
       aria-expanded={openMaterialsId===item.id} disabled={busy}
-      onClick={()=>setOpenMaterialsId(openMaterialsId===item.id?null:item.id)}>Materials</button>:null}
-     <button type="button" className="underline" disabled={busy} onClick={()=>select(item)}>Edit</button>
-     {item.status==="DRAFT"&&<button type="button" className="underline" disabled={busy}
-       onClick={()=>void transition(item,"PUBLISH")}>Publish</button>}
-     <button type="button" className="underline text-error" disabled={busy}
-       onClick={()=>void transition(item,"ARCHIVE")}>Delete</button>
+      onClick={()=>setOpenMaterialsId(openMaterialsId===item.id?null:item.id)}>Materials</Button>:null}
+     <Button variant="ghost" type="button" className="underline" disabled={busy} onClick={()=>select(item)}>Edit</Button>
+     {item.status==="DRAFT"&&<Button variant="ghost" type="button" className="underline" disabled={busy}
+       onClick={()=>void transition(item,"PUBLISH")}>Publish</Button>}
+     <Button variant="secondary" type="button" className="underline text-error" disabled={busy}
+       onClick={()=>void transition(item,"ARCHIVE")}>Delete</Button>
     </div>
     {kind==="RESOURCE"&&materialsEnabled&&openMaterialsId===item.id?
       <LessonResourceMaterialsControl key={item.id} contentId={item.id}
