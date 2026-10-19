@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -44,12 +46,12 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   {data.truncated?<p role="status" className="text-sm text-body">Source capped at 500 application records; counts may be incomplete.</p>:null}
   <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="min-w-0 flex-1 text-sm">Student or role
-    <input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9"/>
+    <Input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9"/>
    </label>
    <label className="text-sm">Result state
-    <select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9">
+    <Select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9">
      <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
-    </select>
+    </Select
    </label>
    <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-primary-foreground md:min-h-9">Filter</button>
   </form>
