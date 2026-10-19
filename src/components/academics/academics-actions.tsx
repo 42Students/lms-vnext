@@ -141,7 +141,7 @@ export function ProgramActions({
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button
           size="sm"
-          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+          className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={openEdit}
         >
@@ -149,7 +149,7 @@ export function ProgramActions({
         </Button>
         <Button
           size="sm"
-          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+          className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="ghost"
           disabled={programHasLinkedRecords}
           title={programHasLinkedRecords
@@ -212,7 +212,7 @@ export function ProgramActions({
             </Select>
           </label> : null}
           <div className="md:col-span-2">
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Program name
             </label>
             <Input
@@ -224,7 +224,7 @@ export function ProgramActions({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Code
             </label>
             <Input
@@ -236,7 +236,7 @@ export function ProgramActions({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               {displayDurationYears?"Duration (years)":"Duration terms"}
             </label>
             <Input
@@ -384,7 +384,7 @@ export function AcademicPeriodActions({
         ) : (
           <Button
             size="sm"
-            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="secondary"
             onClick={() => setCloseOpen(true)}
           >
@@ -440,7 +440,7 @@ export function AcademicPeriodActions({
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Name
             </label>
             <Input
@@ -452,7 +452,7 @@ export function AcademicPeriodActions({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Code
             </label>
             <Input
@@ -464,7 +464,7 @@ export function AcademicPeriodActions({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Start date
             </label>
             <Input
@@ -478,7 +478,7 @@ export function AcademicPeriodActions({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               End date
             </label>
             <Input
@@ -610,7 +610,7 @@ export function CohortActions({
         ) : cohort.status === "ACTIVE" ? (
           <Button
             size="sm"
-            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="secondary"
             onClick={() =>
               setConfirmAction("COMPLETE")
@@ -621,7 +621,7 @@ export function CohortActions({
         ) : (
           <Button
             size="sm"
-            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             onClick={() =>
               setConfirmAction("ARCHIVE")
@@ -677,7 +677,7 @@ export function CohortActions({
       >
         <div className="grid gap-4">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Name
             </label>
             <Input
@@ -689,7 +689,7 @@ export function CohortActions({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Code
             </label>
             <Input
@@ -701,7 +701,7 @@ export function CohortActions({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Expected end period
             </label>
             <Select
@@ -814,13 +814,13 @@ export function SectionActions({
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Link
           href={operationsHref}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
         >
           Open
         </Link>
         <Button
           size="sm"
-          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+          className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={openEdit}
         >
@@ -828,7 +828,7 @@ export function SectionActions({
         </Button>
         <Button
           size="sm"
-          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+          className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="ghost"
           onClick={() => setArchiveOpen(true)}
         >
@@ -882,7 +882,7 @@ export function SectionActions({
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Name
             </label>
             <Input
@@ -894,7 +894,7 @@ export function SectionActions({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Code
             </label>
             <Input
@@ -906,7 +906,7 @@ export function SectionActions({
             />
           </div>
           <div className="md:col-span-2">
-            <label className="mb-1.5 block text-xs font-semibold text-body">
+            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
               Capacity · blank for unlimited
             </label>
             <Input
