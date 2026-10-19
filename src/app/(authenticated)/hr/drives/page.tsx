@@ -92,7 +92,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     <PageHeader eyebrow="Recruiter" title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
-        className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
+        className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
         Request a drive
       </Link>} />
     <nav aria-label="Recruiter proposal history">
@@ -164,7 +164,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           <option value="TITLE">Title A–Z</option>
         </select>
       </label>
-      <button type="submit" className="min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Search</button>
+      <button type="submit" className="min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Search</button>
       <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="py-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Reset</Link>
     </form>
     {requestView.length>0?<section aria-label="Your drive requests" className="space-y-3">
