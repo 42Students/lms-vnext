@@ -681,26 +681,22 @@ export default async function HrPlacementJobPage({
                 className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next selections</Link>:null}
               </nav>
             </section>:null}
-          {offers.length ? <DataTable
-            caption="Offers for shared applicants at this college"
-            rows={offers}
-            getRowKey={offer => offer.id}
-            empty={<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>}
-            columns={[
-              { key: "candidate", header: "Candidate", mobilePriority: "primary", cell: offer =>
-                <>{offer.name || "Unnamed applicant"}<span className="block text-xs font-normal text-muted-foreground">{offer.role}</span></> },
-              { key: "kind", header: "Type", mobilePriority: "secondary", cell: offer => offer.kind === "LOI" ? "Letter of intent" : "Offer" },
-              { key: "ctc", header: "CTC (LPA)", mobilePriority: "secondary", cell: offer => offer.annualCtcInr == null ? "—" :
-                (offer.annualCtcInr / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) },
-              { key: "status", header: "Status", mobilePriority: "secondary", cell: offer => <StatusBadge tone={offer.status==="ACCEPTED"?"success":offer.status==="DECLINED"?"error":"info"}>{recruiterOfferStatusLabel(offer.status)}</StatusBadge> },
-              { key: "deadline", header: "Reply by", mobilePriority: "secondary", cell: offer => offer.expiresAt ?
-                new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(offer.expiresAt) : "Not set" },
-              { key: "joining", header: "Joining", mobilePriority: "secondary", cell: offer =>
-                <>{offer.joiningStatus === "JOINED" ? "Joined" :
-                  offer.joiningStatus === "DEFERRED" ? "Deferred" :
-                  offer.joiningStatus === "DID_NOT_JOIN" ? "Did not join" : "Not recorded"}
-                  <span className="block text-xs text-muted-foreground">{offer.joiningDate ?? "Date not set"}</span></> },
-            ]}
+          {offers.length ? <HrJobOffersGrid
+            scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id].join(":")}
+            rows={offers.map(offer=>({
+              id:offer.id,candidate:offer.name||"Unnamed applicant",role:offer.role,
+              kind:offer.kind==="LOI"?"Letter of intent":"Offer",
+              ctcLpa:offer.annualCtcInr==null?"—":
+                (offer.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2}),
+              ctcSort:offer.annualCtcInr,status:recruiterOfferStatusLabel(offer.status),
+              deadline:offer.expiresAt?new Intl.DateTimeFormat("en-IN",{
+                timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+              }).format(offer.expiresAt):"Not set",
+              joining:offer.joiningStatus==="JOINED"?"Joined":
+                offer.joiningStatus==="DEFERRED"?"Deferred":
+                offer.joiningStatus==="DID_NOT_JOIN"?"Did not join":"Not recorded",
+              joiningDate:offer.joiningDate??"Date not set",
+            }))}
           /> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>:null}
           {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
