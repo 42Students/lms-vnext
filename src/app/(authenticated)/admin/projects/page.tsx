@@ -36,7 +36,7 @@ export default async function SuperAdminProjectsPage({
   // or non-Super-Admin actor before any project or template service call.
   if (!isSuperAdmin(context)) {
     return <div className="min-w-0 space-y-6">
-      <PageHeader eyebrow="Super Admin" title="Project workspaces" />
+      <PageHeader title="Project workspaces" />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
         action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}
@@ -53,7 +53,6 @@ export default async function SuperAdminProjectsPage({
           active="workspaces"
         />
         <PageHeader
-          eyebrow="Super Admin"
           title="Project workspaces"
           description="Live projects, each run by a mentor with a team of students."
         />
@@ -68,7 +67,7 @@ export default async function SuperAdminProjectsPage({
   const parsed = parseAdminProjectsQuery(await searchParams);
   if (!parsed.success) {
     return <div className="min-w-0 space-y-6">
-      <PageHeader eyebrow="Super Admin" title="Project workspaces"
+      <PageHeader title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
@@ -114,7 +113,7 @@ export default async function SuperAdminProjectsPage({
     const suffix = retryParams.toString();
     return <div className="min-w-0 space-y-6">
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
-      <PageHeader eyebrow="Super Admin" title="Project workspaces"
+      <PageHeader title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Project workspaces unavailable"
         description="The workspace list could not be loaded. Your search and filters were not changed."
@@ -133,7 +132,6 @@ export default async function SuperAdminProjectsPage({
         active="workspaces"
       />
       <PageHeader
-        eyebrow="Super Admin"
         title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={
