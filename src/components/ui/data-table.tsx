@@ -34,7 +34,7 @@ export type DataTableProps<Row> = {
 export { isSafeInternalHref as isSafeDataTableHref } from "@/lib/safe-internal-href";
 
 export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref }: DataTableProps<Row>) {
-  if(rows.length===0) return <div className="rounded-[10px] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-6">{empty}</div>;
+  if(rows.length===0) return <div className="rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-6">{empty}</div>;
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
     columns.find(col=>col.mobilePriority===undefined || col.mobilePriority==="secondary");
   const actions=columns.filter(col=>col.mobilePriority==="action");
@@ -90,16 +90,16 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   });
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
   return <div data-slot="data-table" className="min-w-0">
-    <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 sm:rounded-[10px] sm:border sm:border-[var(--lms-canvas-border)]">
+    <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 sm:rounded-[var(--lms-radius-md)] sm:border sm:border-[var(--lms-canvas-border)]">
       <table className="block w-full border-separate border-spacing-0 text-left text-sm leading-5 sm:table sm:border-collapse">
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden sm:table-header-group sm:bg-[var(--lms-table-header)]">
           <tr>{columns.map(col=><th key={col.key} scope="col"
-            className={cx("border-b border-[var(--lms-canvas-border)] px-4 py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] sm:sticky sm:top-0 sm:z-10 sm:bg-[#fafbfc] sm:first:left-0 sm:first:z-20",col.className)}>{col.header}</th>)}</tr>
+            className={cx("border-b border-[var(--lms-canvas-border)] px-4 py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] sm:sticky sm:top-0 sm:z-10 sm:bg-[var(--lms-table-header)] sm:first:left-0 sm:first:z-20",col.className)}>{col.header}</th>)}</tr>
         </thead>
         <tbody className="block space-y-3 sm:table-row-group sm:space-y-0">
           {prepared.map(item=><tr key={item.key}
-            className="block min-w-0 overflow-hidden rounded-[12px] border border-[#e5e9f0] bg-surface p-4 sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:hover:bg-[rgba(38,186,199,0.045)]">
+            className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:hover:bg-[rgba(38,186,199,0.045)]">
             {columns.map(col=>{
               const phoneVisible=visibleOnPhone.has(col.key);
               const content=cell(item,col);
@@ -126,13 +126,13 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
               <ul className="space-y-2" aria-label="Fields on detail page">
                 {recoverable.filter(col=>item.detailLinks.get(col.key)).map(col=>
                   <li key={col.key}><Link href={item.detailLinks.get(col.key)!}
-                    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+                    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                     {col.mobileLabel??col.header} · View details
                   </Link></li>)}
               </ul>
             </td>:null}
             {item.detailHref ? <td className="block min-w-0 py-1 sm:hidden">
-              <Link href={item.detailHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">View details</Link>
+              <Link href={item.detailHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View details</Link>
             </td>:null}
           </tr>)}
         </tbody>
