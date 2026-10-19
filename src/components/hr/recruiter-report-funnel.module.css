@@ -1,0 +1,17 @@
+/* lms2-fe@prod-2026 src/styles/components/_recruiter-v2.scss:150-163 */
+.row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) minmax(120px, auto);
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+}
+.label { font-weight: 600; }
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 860px) {
+  .row { grid-template-columns: 90px minmax(0, 1fr); }
+  .num { grid-column: 1 / -1; text-align: left; }
+}

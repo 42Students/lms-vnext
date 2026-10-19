@@ -4,6 +4,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState,type KeyboardEvent} from "react";
 import {Dialog} from "@/components/ui/dialog";
+import { PopoverListbox } from "@/components/ui/popover";
 import {apiFetch} from "@/lib/api-fetch";
 import {isTpoFindShortcut} from "@/modules/placements/tpo-find-shortcut-model";
 import {Input} from "@/components/ui/input";
@@ -87,7 +88,7 @@ export function TpoFindShortcut(){
       onChange={event=>changeQuery(event.target.value)} placeholder="Type at least 2 characters"
       maxLength={100} className="mt-2 w-full"/>
    </label>
-   <div id="tpo-find-results" role="listbox" aria-label="Matching records" className="mt-4 max-h-80 space-y-1 overflow-y-auto">
+   <PopoverListbox id="tpo-find-results" label="Matching records" className="mt-4 max-h-80 space-y-1 overflow-y-auto" onDismiss={() => inputRef.current?.focus()}>
     {query.trim().length<2?<h3 className="text-xs font-semibold text-muted-foreground">Recently opened</h3>:null}
     {showing.map((row,index)=><button type="button" key={row.href}
       id={"tpo-find-result-"+index} role="option" aria-selected={active===index}
@@ -100,7 +101,7 @@ export function TpoFindShortcut(){
       {query.trim().length<2?"Open a record to see it here.":"No matching records."}</p>:null}
     {loading?<p role="status" className="p-3 text-sm text-muted-foreground">Searching…</p>:null}
     {error?<p role="alert" className="p-3 text-sm text-error">{error}</p>:null}
-   </div>
+   </PopoverListbox>
    <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
     <span>↑ ↓ Navigate · Enter Open · Esc Close</span>
     <Link href={"/tpo/find"+(query.trim()?"?q="+encodeURIComponent(query.trim()):"")}

@@ -166,3 +166,31 @@ A repeatable complete-tree `git grep` ledger is committed as `scripts/audit/chat
 **STRICT OUTCOME:** B3 and B4 remain `[ ]`. B3 still needs executable complete-tree coverage counts and any uncovered sidebar states. B4 still needs complete-tree grep counts, the exact fullscreen loader treatment, and a historical or measured source for TPO footer-specific states. These are not represented as passes.
 
 **Next file:** `src/components/shell/sidebar-legacy.css` (remaining B3 strict coverage and mobile geometry), then `src/components/tpo/tpo-mobile-footer.tsx` (TPO footer reference/state closure). The HR route inventory is owned by chat-15 in `docs/audit/ux/clone-hr.md`; do not overwrite it without an explicitly unclaimed path.
+
+
+## Chat-19 continuation: 40-file shell import check and route progress adapter
+
+The lane was reconciled with origin/main at `1308e7c9748b6c164a6761c2296501732761539b` before edits. The complete recursively enumerated GitHub tree was used to identify the HR files not claimed by chat-15/chat-18. **Four** unclaimed adapter files were audited source-complete in `docs/audit/ux/clone-chat19-hr-unclaimed.md`; every HR/recruiter route page in those trees is already assigned to those lanes.
+
+**Current shell import scan:** all **40** source/style files under `src/components/shell/**` were fetched in three batches; **144** relative / `@/` imports were checked against the same GitHub tree: **0 unresolved**. Scan of `<button|<input|<select|<textarea` opening tags in all 40 source/style files: **0**. The navigation icon import remains explicit in `shell-nav-icons.tsx:3`: `legacyAntPaths` from `./legacy-ant-paths`. This is an exhaustive *shell subtree source scan*, not an executable `git grep` in a locally mounted checkout. The root checkout is not available in this tool environment; `scripts/audit/chat19-shell-grep.cjs` is committed as the reproducible command-level proof to be run after checkout.
+
+### Route progress, original loader and current vNext implementation
+
+| Feature/state | Legacy evidence (file:line) | Implemented vNext (file:line) | Strict result |
+|---|---|---|---|
+| Teal navigation accent | `old-lms-shell.css:45-48` #26bac7 active 3px rail | `route-progress.css:11-18` 3px indicator using the same #26bac7 | Shared legacy **colour** only, **not** an original top bar |
+| Fullscreen loading | `legacy-styles/components___common.scss:1008-1019` white .99, fixed, z999 | `route-progress.tsx:64-68`, `route-progress.css:7-19` indeterminate top bar | **Different behavior**, leave B4 unticked |
+| Original route progress | No progress-bar rule in `old-lms-shell.css:1-101`; original `lms2-fe/src/pages/_app.js:1-34` has no route-change listener or NProgress configuration | `route-progress.tsx:14-68` Next App Router progress | Modern adaptation, not historic visual parity |
+| No layout interference | Legacy sidebar is relative flex sibling: `old-lms-shell.css:13,18` | `app-shell.tsx:73-126` progress after topbar, outside main, fixed with pointer-events none | Shell preservation |
+| Rejected navigation recovery | Original sources do not define recovery interval | `route-progress.tsx:23-31` 8s fallback + pathname change reset | Adaptation, no legacy value comparison |
+| Reduced motion | `components___learn-layout.scss:577-585` disables page animation | `route-progress.css:23-25` static full-width bar | Preserves reduced-motion intent; original top-bar state unmeasured |
+| Accessible pending state | No `aria-valuenow` in original sources | `route-progress.tsx:64-68` indeterminate ARIA progressbar | Accessibility improvement |
+| Desktop/mobile | Original top header is 68px desktop / 58px min mobile: `old-lms-shell.css:55,74-75` | `route-progress.css:7-18` fixed at viewport top, 3px, all widths | Adaptation; no measured original thin-bar width |
+
+### Remaining strict blockers
+
+- **B3:** Every rail/hover/group/badge/logo/drawer property in the B3 table has its old and new file:line references; exact full-repository `git grep` output counts have not been captured, and no rendered source-vs-vNext comparison of the icon artwork/viewport has occurred. The checklist allows visual comparison later, but requires actual coverage and no regressions now. B3 remains **[ ]**.
+- **B4:** The completed learner/faculty footer is source-grounded; the TPO footer still lacks an original TPO-specific mobile reference. The modern progress bar is accessible and functional by source but not pixel-equivalent to the documented legacy fullscreen loader. Both are explicitly recorded rather than falsely compared as equal. B4 remains **[ ]**.
+- Full local reproduction script: `node scripts/audit/chat19-shell-grep.cjs`, committed, **not run**. New `tests/unit/chat19-route-progress.test.ts` and `tests/unit/chat19-unclaimed-hr-grid-parity.test.ts` were authored, **not run**.
+
+**Next file if the remaining evidence becomes available:** `docs/audit/ux/clone-sidebar.md` — paste real repo-wide grep counts and old live loader/TPO-footer reference, then tick. No unclaimed HR portal pages remain.

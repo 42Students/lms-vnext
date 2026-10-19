@@ -326,6 +326,16 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
 :root {
   --lms-heading: #172033;
   --lms-header-border: #e7ecf2;
+  --lms-topbar-ink: #334155;
+  --lms-topbar-search: #f8fafc;
+  --lms-topbar-muted: #5b6b82;
+  --lms-topbar-placeholder: #64748b;
+  --lms-topbar-key-border: #e2e8f0;
+  --lms-topbar-unread: #ff7576;
+  --lms-topbar-avatar-bg: #e6f5f6;
+  --lms-topbar-avatar-border: #d7ecee;
+  --lms-topbar-avatar-hover: #d4f0f2;
+  --lms-topbar-heading: #18212f;
   --lms-canvas-border: #e5e9f0;
   --lms-table-header: #fafbfc;
   --lms-control-height: 36px;

@@ -1,4 +1,5 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -404,7 +405,7 @@ export function ProjectWorkspace({
       ) : null}
 
       {mode === "LEARNER" && show("delivery") ? (
-        <section className="rounded-xl border border-border bg-surface p-4">
+        <section className="border-b border-[var(--lms-canvas-border)] pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="m-0 text-base font-semibold text-foreground">
@@ -450,7 +451,7 @@ export function ProjectWorkspace({
       ) : null}
 
       {show("overview") ? (
-        <section className={mode==="ADMIN"||mode==="MENTOR"?"border-b border-border pb-5":"rounded-xl border border-border bg-surface p-5"}>
+        <section className="border-b border-[var(--lms-canvas-border)] pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</h2>
             {mentorReviewHref ? <Link href={mentorReviewHref}
@@ -1220,9 +1221,7 @@ export function ProjectWorkspace({
         ) : null}
         {workspace.finalDelivery.submissions.length ===
         0 ? (
-          <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-            Not submitted
-          </div>
+          <EmptyState title="Not submitted" description="No final delivery has been submitted." />
         ) : (
           <div className="space-y-3">
             {workspace.finalDelivery.submissions.map(
@@ -1518,9 +1517,7 @@ export function ProjectWorkspace({
           </h3>:null}
           <div className="space-y-3">
             {workspace.meetings.length === 0 ? (
-              <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-                {mode==="LEARNER"?"No meetings yet.":"No meetings yet."}
-              </div>
+              <EmptyState title="No meetings yet." description="No project meetings have been recorded." />
             ) : (
               workspace.meetings.map((meeting) => {
                 const href = safeHttpHref(
