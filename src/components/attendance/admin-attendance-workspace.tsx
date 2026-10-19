@@ -320,7 +320,7 @@ export function AdminAttendanceWorkspace({
 
   return (
     <div className="space-y-5">
-      {notice?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm font-semibold text-body">{notice}</p>:null}
+      {notice?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-semibold text-body">{notice}</p>:null}
       <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="border-b border-border pb-4">
@@ -676,7 +676,7 @@ export function AdminAttendanceWorkspace({
       >
         {target ? (
           <div className="space-y-4 text-sm">
-            <div className="rounded-lg bg-surface-subtle p-4">
+            <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4">
               <p className="font-semibold text-foreground">
                 Current status
               </p>
