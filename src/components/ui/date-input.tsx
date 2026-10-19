@@ -218,14 +218,28 @@ export function DateInput({
     setViewMonth(current => new Date(current.getFullYear(), current.getMonth() + delta, 1));
   }
   function handleCalendarKey(event: KeyboardEvent<HTMLElement>) {
-    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
-    const days = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[data-calendar-day]:not(:disabled)'));
-    const index = days.indexOf(document.activeElement as HTMLButtonElement);
-    if (index < 0 || days.length === 0) return;
-    const movement = event.key === "ArrowLeft" ? -1 : event.key === "ArrowRight" ? 1 :
-      event.key === "ArrowUp" ? -7 : 7;
+    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
+    if (event.target instanceof Element && event.target.closest("input, select, textarea")) return;
+    const selector = mode === "month" ? "[data-picker-month]:not(:disabled)" :
+      mode === "time" ? "[data-picker-hour]:not(:disabled), [data-picker-minute]:not(:disabled)" :
+      "[data-calendar-day]:not(:disabled)";
+    const choices = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>(selector));
+    const index = choices.indexOf(document.activeElement as HTMLButtonElement);
+    if (index < 0 || choices.length === 0) return;
+    const columns = mode === "month" ? 3 : mode === "time" ? 1 : 7;
+    let next = event.key === "Home" ? 0 : event.key === "End" ? choices.length - 1 :
+      event.key === "ArrowUp" ? index - columns : event.key === "ArrowDown" ? index + columns :
+      event.key === "ArrowLeft" ? index - 1 : index + 1;
+    if (mode === "time" && event.key === "ArrowRight" && choices[index]?.dataset.pickerHour !== undefined) {
+      const minuteIndex = choices.findIndex(item => item.dataset.pickerMinute !== undefined);
+      if (minuteIndex >= 0) next = minuteIndex;
+    }
+    if (mode === "time" && event.key === "ArrowLeft" && choices[index]?.dataset.pickerMinute !== undefined) {
+      const hourIndex = choices.findIndex(item => item.dataset.pickerHour !== undefined);
+      if (hourIndex >= 0) next = hourIndex;
+    }
     event.preventDefault();
-    days[Math.max(0, Math.min(days.length - 1, index + movement))]?.focus();
+    choices[Math.max(0, Math.min(choices.length - 1, next))]?.focus();
   }
 
   const first = new Date(viewMonth.getFullYear(), viewMonth.getMonth(), 1);
@@ -269,7 +283,7 @@ export function DateInput({
       {open && enabled
         ? <PopoverPanel id={popupId} label={mode === "time" ? "Choose time" : mode === "datetime-local" ? "Choose date and time" : mode === "month" ? "Choose month" : mode === "week" ? "Choose week" : "Choose date"}
             onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
-            onKeyDown={mode === "date" || mode === "week" || mode === "datetime-local" ? handleCalendarKey : undefined}
+            onKeyDown={handleCalendarKey}
             data-slot={mode === "time" ? "legacy-time-picker" : mode === "datetime-local" ? "legacy-datetime-picker" : mode === "month" ? "legacy-month-picker" : mode === "week" ? "legacy-week-picker" : "legacy-date-calendar"}
             className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] max-[767px]:w-[min(22rem,calc(100vw_-_2rem))] !rounded-[12px] border border-[var(--lms-neutral-200)] bg-white p-3 !shadow-[var(--lms-search-dropdown-shadow)]">
             {mode !== "time"
@@ -289,7 +303,7 @@ export function DateInput({
                   <div aria-label="Hour" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {Array.from({ length: 24 }, (_, hour) => {
                       const available = Array.from({ length: 60 }, (_, minute) => timeAllowed(hour, minute)).some(Boolean);
-                      return <Button key={hour} variant="ghost" type="button" size="sm" disabled={!available}
+                      return <Button key={hour} data-picker-hour={hour} variant="ghost" type="button" size="sm" disabled={!available}
                         aria-pressed={draftHour === hour} onClick={() => setDraftHour(hour)}
                         className={cx("mb-1 !w-full !justify-center !rounded-[6px] !border-0 max-[767px]:!min-h-11",
                           draftHour === hour ? "!bg-[var(--lms-primary)] !text-white" : "hover:!bg-[var(--lms-primary-subtle)]")}>
@@ -299,7 +313,7 @@ export function DateInput({
                   </div>
                   <div aria-label="Minute" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {Array.from({ length: 60 }, (_, minute) => (
-                      <Button key={minute} variant="ghost" type="button" size="sm"
+                      <Button key={minute} data-picker-minute={minute} variant="ghost" type="button" size="sm"
                         disabled={!timeAllowed(draftHour, minute)}
                         aria-pressed={selected === `${pad2(draftHour)}:${pad2(minute)}`}
                         onClick={() => choose(`${pad2(draftHour)}:${pad2(minute)}`)}
@@ -318,7 +332,7 @@ export function DateInput({
                       const limited = (props.min != null && monthValue < String(props.min)) ||
                         (props.max != null && monthValue > String(props.max)) ||
                         !calendarStepAllowed(monthValue);
-                      return <Button key={month} type="button" variant="ghost" size="sm" disabled={Boolean(limited)}
+                      return <Button key={month} data-picker-month={index} type="button" variant="ghost" size="sm" disabled={Boolean(limited)}
                         aria-pressed={selected === monthValue} onClick={() => choose(monthValue)}
                         className={cx("!rounded-[6px] !border-0 !px-1 max-[767px]:!min-h-11",
                           selected === monthValue ? "!bg-[var(--lms-primary)] !text-white" : "hover:!bg-[var(--lms-primary-subtle)]")}>
