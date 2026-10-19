@@ -927,7 +927,7 @@ export function SectionOperations({
               ))}
             </Select>
           </div>
-          <div className="md:col-span-2 xl:col-span-6">
+          <div className="min-w-0 md:col-span-2 xl:col-span-3 2xl:col-span-6">
             <Button
               disabled={
                 pending ||
