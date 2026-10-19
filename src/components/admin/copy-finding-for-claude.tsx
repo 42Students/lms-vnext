@@ -17,7 +17,7 @@ export function CopyFindingForClaude({finding}:{finding:string}){
   catch{setMessage("Copy failed. Check clipboard permission.");}
  }
  return <div className="inline-flex flex-wrap items-center gap-3">
-  <Button variant="secondary" type="button" onClick={()=>void copy()}>Copy for Claude</Button>
+  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>void copy()>Copy for Claude</Button>
   {message?<span role="status" className="text-xs text-body">{message}</span>:null}
  </div>;
 }
