@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {CollegeContentCsvExport} from "./college-content-csv-export";
@@ -62,7 +63,7 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
       <input type="date" name="to" defaultValue={data.to??""}
         className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
     </label>
-    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+    <Button variant="primary" type="submit" >Filter</Button>
     <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
   </form>
   <CollegeContentCsvExport filename={"live-classes-page-"+data.query.page+".csv"}
