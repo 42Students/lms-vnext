@@ -83,3 +83,12 @@ Measured against `docs/design/old-lms-shell.css` and `old-lms-shell-spec.md`:
 - Removed the full-size rounded/bordered/white wrapping card from `RecordedOutsideForm`, allowing the shared one-white-canvas contract to own the surface; preserved its grid, fields, validation and action. Removed only the duplicate outer `p-5` on the invalid-conversation-filters state.
 
 These refinements are captured in `tests/unit/chat19-sidebar-hr-original-icons-and-secondary-surfaces.test.ts` alongside previous chat-19 source contracts. They were authored, not executed; no CI/typecheck/browser work was run.
+
+
+## Follow-up after concurrent main integrations
+
+A fresh source sweep of **all 22 canonical HR pages and all 19 HR client widgets** detected legacy-style regressions introduced by concurrent merges in recruiter notification controls, read/reply actions, feedback and one conversation link. The checks found literal `rounded-[9px]` and `focus-visible:outline-primary` classes after the earlier token pass. These were normalized again to `rounded-[var(--lms-control-radius)]` and `focus-visible:outline-[var(--lms-primary)]` without modifying route data or behavior.
+
+The secondary `/recruiter` portal was also inspected: 16 of its 17 pages are re-exports/redirects of canonical `/hr` routes, and the independently rendered change-request page now uses the same old-LMS control tokens. Shared recruiter form, results, portfolio, resume and applicant notes components were included in the sweep. The old-LMS icon assets, 9px mobile group headings and 96px/256px push transition remain unchanged.
+
+This is a **source-only parity audit**, not a claim of visually confirmed pixel equality: typecheck, CI, browser and accessibility execution remain outside chat-19 per the instruction.
