@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 "use client";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -96,9 +97,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  return <section className="space-y-4">
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-link underline">Back to project</Link>
-  <div className="flex flex-wrap items-center justify-between gap-3">
-   <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Board</h1>
-   <div className="flex flex-wrap items-center gap-2">
+  <PageHeader title="Board" actions={   <div className="flex flex-wrap items-center gap-2">
      {!readOnly?<MentorTaskCreate projectId={projectId}
        sprintId={creationDefault?.id??""}
        updatedAt={creationDefault?new Date(creationDefault.updatedAt).toISOString():""}
@@ -111,8 +110,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link">
       Review submission</Link>
-   </div>
-  </div>
+   </div>} />
   <div className="flex flex-wrap gap-3 rounded-xl border border-border p-3">
    <label className="text-sm font-semibold">Release
     <Select data-slot="select" value={release} onChange={e=>{setRelease(e.target.value);setSprint("");remember("release",e.target.value);remember("sprint","");}}
