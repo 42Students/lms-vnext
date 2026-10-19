@@ -1,4 +1,5 @@
 "use client";
+import { Disclosure } from "@/components/ui/disclosure";
 import {Button} from "@/components/ui/button";
 
 import type { BulkPreviewRow, BulkOutcome } from "@/modules/placements/tpo-bulk-action-model";
@@ -26,13 +27,12 @@ export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConf
         <strong>{row.label}</strong> — {row.status}{row.reason ? ": " + row.reason : ""}
       </li>)}
     </ul>
-    {groupedSkipped.length>0?<details className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
-      <summary className="font-semibold">Left out: {rows.length-ready} grouped by reason</summary>
+    {groupedSkipped.length>0?<Disclosure title={`Left out: ${rows.length-ready} grouped by reason`} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
       {groupedSkipped.map(([reason,names])=><div key={reason} className="mt-2">
        <h3 className="font-medium">{reason} ({names.length})</h3>
        <p className="break-words text-body">{names.join(", ")}</p>
       </div>)}
-    </details>:null}
+    </Disclosure>:null}
     <Button type="button" disabled={busy || ready === 0} onClick={onConfirm}
       className="w-full sm:w-auto">
       {busy ? "Applying…" : "Confirm " + actionLabel}
