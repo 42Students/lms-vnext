@@ -30,14 +30,14 @@ export default async function HrMessagesPage({searchParams}:{
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Recruiter" title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."/>
-  <Link href="/hr/conversations" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+  <Link href="/hr/conversations" className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    Open recruiter conversations
   </Link>
   {result.status!=="READY"?<section className="space-y-3 rounded-lg border border-border bg-surface p-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
    {result.choices.map(grant=><Link key={grant.id}
     href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
-    className="block rounded-[var(--radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11">{grant.collegeName}</Link>)}
+    className="block rounded-[var(--radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-9">{grant.collegeName}</Link>)}
   </section>:<>
    <nav aria-label="Inbox filters" className="flex flex-wrap gap-2">
     {result.choices.length>1?result.choices.map(grant=><Link key={grant.id}
@@ -53,14 +53,13 @@ export default async function HrMessagesPage({searchParams}:{
      <input type="hidden" name="collegeId" value={result.collegeId} />
      <input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
      <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
-     <Input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
-       placeholder="Search drive titles" className="min-h-11 min-w-48 flex-1" />
+     <Input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120} placeholder="Search drive titles" className="min-h-11 min-w-48 flex-1" />
      <Button type="submit" variant="secondary" className="min-h-11">Search</Button>
    </form>
    <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
    <div className="flex justify-end">
      <Link href={"/api/placements/recruiter/notifications/export?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)}
-       className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+       className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
        Export scoped notifications CSV
      </Link>
    </div>
