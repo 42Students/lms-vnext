@@ -135,3 +135,26 @@ This continuation changes **24 production TSX files** (24 lane commits) plus the
 - [x] `src/components/tpo/tpo-after-college-bulk-editor.tsx`: shared checkbox, select and buttons; canonical radius
 
 **JSX source verification:** all 18 TSX files re-read after push. Complete `</Select>`, `</Button>`, `</Textarea>` syntax checked; all `<Select>` and `<Button>` counts match closing counts and every referenced shared-control import is present. Old native closing tags not left after replacement. No application, tests, typecheck, CI, or screenshots run per lane instruction; owner must still perform complete compile and screenshot parity verification.
+
+## TPO settings and people page canvas continuation (2026-10-19)
+
+- Merged latest main `10ac677d5ab403f3c037d559c3321ac55c6cffa6` into lane branch, merge commit `4a9d92488efe7385a2c32d3c77f8a2a9eab833e2`. Retained 24 nonoverlapping lane files, kept main versions of 4 overlapping files pending independent review.
+- [x] `/tpo/settings/notifications`: link radius token and flat KPI metric rows
+- [x] `/tpo/settings/notices`: communication warning radius token
+- [x] `/tpo/settings/branding`: remove nested branding field card, radius token for logo and placeholders
+- [x] `/tpo/settings/season`: seasons shown as hairline sections rather than secondary cards
+- [x] `/tpo/settings/see`: metrics and permission fields flattened into the single canvas
+- [x] `/tpo/settings/rules`: border-separated policy details, canonical action radii
+- [x] `/tpo/settings/trusted`: canonical controls and unobtrusive status section
+- [x] `/tpo/settings/team`: canonical navigation control radius
+- [x] `/tpo/settings/public-page`: metric keys displayed as flat divided sections
+- [x] `/tpo/team`: canonical navigation, filters and conversation link radii
+- [x] `/tpo/team/[threadId]`: canonical chat bubble/canvas radii and whitespace
+- [x] `/tpo/team/everyone`: flat conversation list and inherited page canvas
+- [x] `/tpo/profile`: remove redundant outer profile card
+- [x] `/tpo/follow-ups`: flatten filter/empty-result containers
+- [x] `/tpo/messages`: flat KPI metrics and conversation filter section
+- [x] `/tpo/announcements`: shared `Checkbox` for pinned/notification targeting choices, white-on-teal selected tab, outlined secondary actions, hairline announcement rows
+- [x] `/tpo/notifications`: flat status/empty-state treatment
+
+**Validation:** 17 production TSX pages committed and individually re-read from `chatgpt/chat-2-b`. JSX closing-tag source checks found no truncated `</Select>`, `</Button>` or `</Textarea>`; original actions, routes, field names and messages retained. No runtime, compiler, tests, CI or screenshots were performed. Full React/TSX compile and visual acceptance remain the owner's integration step.
