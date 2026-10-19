@@ -35,7 +35,7 @@ export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
   <h2 className="font-semibold text-foreground">Add Lesson</h2>
   <label className="grid gap-1 text-sm font-semibold">Course / Offering
    <select required value={pathId} onChange={event=>setPathId(event.target.value)}
-    className="min-h-11 rounded border border-border bg-surface px-3">
+    className="min-h-9 rounded-[9px] border border-border bg-surface px-3">
     {paths.map(path=><option key={path.id} value={path.id}>
      {path.courseName} · {path.cohortName} · {path.periodName}
     </option>)}
@@ -43,16 +43,16 @@ export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
   </label>
   <label className="grid gap-1 text-sm font-semibold">Lesson name
    <input required maxLength={255} value={name} onChange={event=>setName(event.target.value)}
-    className="min-h-11 rounded border border-border bg-surface px-3"/>
+    className="min-h-9 rounded-[9px] border border-border bg-surface px-3"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold">Description (optional)
    <textarea maxLength={5000} rows={2} value={description}
     onChange={event=>setDescription(event.target.value)}
-    className="rounded border border-border bg-surface p-3"/>
+    className="rounded-[9px] border border-border bg-surface p-3"/>
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <button type="submit" disabled={pending||!name.trim()||!pathId}
-   className="min-h-11 rounded border border-border px-4 font-semibold disabled:opacity-50">
+   className="min-h-9 rounded-[9px] border border-border px-4 font-semibold disabled:opacity-50">
    {pending?"Saving…":"Add Lesson"}</button>
  </form>;
 }
