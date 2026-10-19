@@ -1,5 +1,12 @@
 # State-route work queue — chat-5
 
+## Replacement lane continuation (2026-10-19)
+
+Main fast-forward base: `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0`; only `chatgpt/chat-5-b` was updated. **26 route/page source files** changed (21 state-route files indexed below, 1 round-results page, 4 other TPO placement pages), alongside 2 owned shared primitives. Exactly **0 strict F3/F4/F5 category items ticked**, because whole-project counts and legacy responsive measurements are still missing. See `clone-states.md` replacement-turn evidence. Do not conflate source conversion with verified pixel parity.
+
+**Next exact file:** `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`. Invalid-filter `role="alert"` and Suspense fallback `role="status"` remain. Follow with share-audit and round-slot pages. The older 1,041-path route checklist remains intentionally unticked even when a listed route has been migrated.
+
+
 Generated from the complete, non-truncated main Git tree (2026-10-19), with duplicate paths removed. These are path-inventory counts, not in-file content grep counts, compilation results or proof of visual parity.
 
 Totals: **1041 unique files** = **511 loading**, **512 error**, **18 not-found**. Prior turn changed **38 loading routes**, and the second bounded turn changed **20 TPO loading routes**; all strict parity checkboxes stay OPEN until the F3–F5 value/state, grep and responsive proofs are completed.
@@ -956,26 +963,26 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/messages/notifications/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/more/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/error.tsx`
@@ -999,14 +1006,14 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/new/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/preview/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/recruiters/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/accreditation/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/accreditation/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/reports/after-college/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/branch-season/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/branch-season/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/reports/by-branch/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
 - [ ] `src/app/(authenticated)/tpo/reports/by-company/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
-- [ ] `src/app/(authenticated)/tpo/reports/ctc/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/ctc/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/error.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/reports/intelligence/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/joining-followups/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/joining-status/error.tsx` — source-complete 2026-10-19: value table, per-file grep counters and phone/tablet source review in clone-states.md; strict runtime/whole-area parity remains open
@@ -1048,7 +1055,7 @@ Every item below requires inspection. Routes already using shared components may
 
 ## tpo / loading (126)
 
-- [ ] `src/app/(authenticated)/tpo/announcements/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/announcements/loading.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/audit/actors/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/audit/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/classes/loading.tsx`
@@ -1131,8 +1138,8 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/reports/accreditation/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/after-college/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/branch-season/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-branch/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-company/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/by-branch/loading.tsx` — replacement source updated; F3–F5 strict proof OPEN
+- [ ] `src/app/(authenticated)/tpo/reports/by-company/loading.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/reports/ctc/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/intelligence/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
@@ -1149,7 +1156,7 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/requests/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/after-college/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/blocked-dates/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/branding/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/branding/loading.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/settings/job-types/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/notices/loading.tsx`
@@ -1157,11 +1164,11 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/settings/prep-readiness/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/public-link/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/public-page/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/rules/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/season/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/recruiters/loading.tsx` — replacement source updated; F3–F5 strict proof OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/rules/loading.tsx` — replacement source updated; F3–F5 strict proof OPEN
+- [ ] `src/app/(authenticated)/tpo/settings/season/loading.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/settings/see/loading.tsx` — migrated with source-label preservation; strict parity open
-- [ ] `src/app/(authenticated)/tpo/settings/team/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/team/loading.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/settings/templates/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/trusted/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
@@ -1169,8 +1176,8 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/students/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/preparation-plan/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/preparation-prep/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/students/requests/loading.tsx` — replacement source updated; F3–F5 strict proof OPEN
+- [ ] `src/app/(authenticated)/tpo/team/[threadId]/loading.tsx` — replacement source updated; F3–F5 strict proof OPEN
 - [ ] `src/app/(authenticated)/tpo/team/everyone/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/team/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/verification/loading.tsx`
