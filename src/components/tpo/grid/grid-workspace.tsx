@@ -76,7 +76,10 @@ export function GridWorkspace<Row>({
   }catch{/* Local storage is optional; default columns remain available. */}
  },[columnScope,columnStorageKey,keySignature]);
  const urlKeys=parseTpoGridColumns(params.get("columns")??undefined,permitted);
- const activeKeys=columnScope==="local"&&localKeys.length?localKeys:urlKeys.length&&columnScope==="url"?urlKeys:permitted;
+ const controlledKeys=columnKeys?columnKeys.filter(key=>permitted.includes(key)):null;
+ const activeKeys=controlledKeys?.length?controlledKeys:
+  columnScope==="local"&&localKeys.length?localKeys:
+  urlKeys.length&&columnScope==="url"?urlKeys:permitted;
  const chosen=chosenTpoGridColumns(columns,activeKeys.length?activeKeys:permitted)
    .filter(column=>!column.exportOnly);
  const pageIds=useMemo(()=>new Set(rows.map(rowKey)),[rows,rowKey]);
