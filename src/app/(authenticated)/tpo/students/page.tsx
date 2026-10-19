@@ -413,7 +413,7 @@ export default async function TpoStudentsPage({
         <nav aria-label="Student roster tools" className="flex min-w-52 flex-col gap-2">
         <Link href="/tpo/students/requests" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Student Requests</Link>
         <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Preparation support</Link>
-        <TpoSafeCsvDownload href={exportHref} filename="tpo-students.csv" label="Export filtered CSV" />
+        <TpoSafeCsvDownload href={exportHref} filename="students.csv" label="Export filtered CSV" />
        </nav>
       </Dropdown>
 
