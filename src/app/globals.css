@@ -394,10 +394,6 @@ body {
   cursor: not-allowed;
   opacity: .5;
 }
-[data-slot="button"]:disabled {
-  cursor: not-allowed;
-  opacity: .5;
-}
 [data-slot="input"]:disabled,
 [data-slot="select"]:disabled,
 [data-slot="textarea"]:disabled {
@@ -1002,7 +998,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   scrollbar-color: var(--lms-scrollbar-thumb) var(--lms-scrollbar-track);
 }
 .lms-scrollbar-thin::-webkit-scrollbar { display: block; width: 8px; height: 8px; }
- .lms-scrollbar-thin::-webkit-scrollbar-thumb {
+.lms-scrollbar-thin::-webkit-scrollbar-thumb {
   background: var(--lms-scrollbar-thumb);
   border-radius: 1px;
 }
