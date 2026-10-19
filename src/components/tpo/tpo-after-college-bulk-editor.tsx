@@ -85,7 +85,7 @@ export function TpoAfterCollegeBulkEditor({
   }
 
   return <section aria-label="After college bulk actions"
-    className="space-y-3 - border-t border-border pt-5">
+    className="space-y-3 border-t border-border pt-5">
     <h2 className="font-semibold">After college · Bulk update</h2>
     <p className="text-sm text-muted-foreground">
       Select students on this page, choose their outcome, preview the count and confirm.
@@ -111,7 +111,7 @@ export function TpoAfterCollegeBulkEditor({
     <div className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">After college
         <select value={outcome} onChange={event => setOutcome(event.target.value as AfterCollegeOutcome)}
-          disabled={!available || busy} className="min-h-10 rounded border border-border bg-surface px-2">
+          disabled={!available || busy} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-2">
           {!MANUAL_AFTER_COLLEGE_OUTCOMES.includes(outcome)?<option value={outcome} disabled>{AFTER_COLLEGE_LABELS[outcome]} · Automatic</option>:null}
           {afterCollegeOptions().map(option => <option key={option.value} value={option.value}>
             {option.label}</option>)}
@@ -123,7 +123,7 @@ export function TpoAfterCollegeBulkEditor({
         Update {ids.length} student(s)
       </button>
       {undo?.length ? <button type="button" disabled={busy} onClick={() => setConfirmation("UNDO")}
-        className="min-h-10 rounded border border-border px-4 font-semibold text-primary-text">Undo last bulk update</button> : null}
+        className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 font-semibold text-primary-text">Undo last bulk update</button> : null}
     </div>
     <Dialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setConfirmation(null);}}
       title={confirmation==="SAVE"?"Update after-college outcomes":"Undo bulk after-college update"}
