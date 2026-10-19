@@ -2,6 +2,8 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
+import {FileUpload} from "@/components/ui/file-upload";
+import {Checkbox} from "@/components/ui/checkbox";
 import { useRef, useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -54,9 +56,8 @@ export function CollegeFacultyCsvImport(){
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
         Download CSV template
       </a>
-      <label className="grid gap-2 text-sm font-semibold">Choose CSV
-        <input type="file" accept=".csv,text/csv" disabled={pending} onChange={async event=>{
-          const file=event.currentTarget.files?.[0];
+      <FileUpload label="Choose CSV" maxBytes={1_000_000} accept=".csv,text/csv" disabled={pending} onFiles={async files=>{
+          const file=files?.[0];
           if(!file)return;
           const version=++csvRevision.current;
           setReport(null);setConfirmed(false);setError("");
@@ -68,7 +69,6 @@ export function CollegeFacultyCsvImport(){
             if(facultyCsvResponseBelongsToDraft(version,csvRevision.current))setError("Unable to read CSV. Choose the file again.");
           }
         }}/>
-      </label>
       <label className="grid gap-2 text-sm font-semibold">CSV contents
         <Textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
@@ -76,7 +76,7 @@ export function CollegeFacultyCsvImport(){
         }} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-mono text-xs"/>
       </label>
       <Button variant="primary" type="button" disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
-        className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+        >
         {pending?"Validating…":"Validate CSV"}
       </Button>
       {error&&<p role="alert" className="text-sm text-error">{error}</p>}
@@ -102,11 +102,11 @@ export function CollegeFacultyCsvImport(){
       {report.preview&&report.valid>0&&report.structuralErrors.length===0&&
       <div className="space-y-3">
         <label className="flex gap-2 text-sm">
-          <input type="checkbox" checked={confirmed} onChange={event=>setConfirmed(event.target.checked)}/>
+          <Checkbox checked={confirmed} onChange={event=>setConfirmed(event.target.checked)}/>
           I understand valid rows create real faculty memberships; partial failures require manual review.
         </label>
         <Button variant="primary" type="button" disabled={pending||!confirmed} onClick={()=>run("IMPORT")}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+          >
           {pending?"Registering…":"Confirm faculty registration"}
         </Button>
       </div>}
