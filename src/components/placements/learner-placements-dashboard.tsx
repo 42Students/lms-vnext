@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { StatTile } from "@/components/ui/stat-tile";
+import metricStyles from "./learner-placement-metrics.module.css";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { learnerDashboardPartialState,type PlacementDashboardAvailability } from "@/modules/placements/learner-dashboard-partial-model";
@@ -28,9 +29,9 @@ function Metric({
   const metric = learnerDashboardMetricView(value, label, detail);
   return (
     <Link href={href} aria-label={metric.ariaLabel}
-      className="group block rounded-[var(--lms-radius-card)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className={metricStyles.link+" group block outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
       <StatTile label={label} value={metric.display}
-        className="h-full p-4 md:p-4 transition-colors group-hover:border-[var(--lms-primary)] group-hover:bg-[var(--lms-primary-subtle)]">
+        className={metricStyles.tile+" h-full"}>
         <span className="mt-2 block text-xs leading-5 text-[var(--lms-body-text)] group-hover:text-[var(--lms-primary-text)]">
           {metric.detail} →
         </span>
@@ -138,7 +139,7 @@ export function LearnerPlacementsDashboard({
         </section>
       ) : null}
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Placement snapshot">
+      <div className="grid grid-cols-2 gap-2 md:gap-3 xl:grid-cols-4" aria-label="Placement snapshot">
         <Metric
           label="Published drives before deadline"
           value={display.openJobs}
