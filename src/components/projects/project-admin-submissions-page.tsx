@@ -44,7 +44,6 @@ function tone(status: string) {
 export async function ProjectAdminSubmissionsPage({
   collegeId,
   basePath,
-  eyebrow,
   searchParams,
 }: {
   collegeId: string;
@@ -61,7 +60,7 @@ export async function ProjectAdminSubmissionsPage({
   const parsed = parseProjectAdminSubmissionsQuery(searchParams);
   if (!parsed.success) {
     return <div className="space-y-6">
-      <PageHeader eyebrow={eyebrow} title="Submissions dashboard"
+      <PageHeader title="Submissions dashboard"
         description="Final project deliverables across all workspaces." />
       <ErrorState title="Invalid submission filters"
         description="Check the submission view, status, page and rows filters, or clear them to continue."
@@ -99,7 +98,7 @@ export async function ProjectAdminSubmissionsPage({
     const suffix=params.toString();
     return <div className="space-y-6">
       <ProjectAdminNav basePath={basePath} active="submissions"/>
-      <PageHeader eyebrow={eyebrow} title="Submissions dashboard"
+      <PageHeader title="Submissions dashboard"
         description="Final project deliverables across all workspaces."/>
       <ErrorState title="Submissions unavailable"
         description="The submissions list could not be loaded. Your filters have not changed."
@@ -115,7 +114,6 @@ export async function ProjectAdminSubmissionsPage({
         active="submissions"
       />
       <PageHeader
-        eyebrow={eyebrow}
         title="Submissions dashboard"
         description="Final project deliverables across all workspaces."
         needsDoingLabel="Review status:"
