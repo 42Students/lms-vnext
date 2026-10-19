@@ -34,7 +34,7 @@ export default async function CollegeActivityDetailPage({
     </dl>
     <section className="- border-t border-border pt-5">
       <h2 className="m-0 text-base font-semibold text-foreground">Sanitized event metadata</h2>
-      <pre className="mt-3 overflow-x-auto overscroll-x-contain whitespace-pre-wrap break-words rounded-lg bg-muted p-4 text-xs text-body">
+      <pre className="mt-3 overflow-x-auto overscroll-x-contain whitespace-pre-wrap break-words rounded-[var(--lms-control-radius,9px)] bg-muted p-4 text-xs text-body">
         {JSON.stringify(event.metadata, null, 2)}
       </pre>
     </section>

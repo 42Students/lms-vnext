@@ -59,7 +59,7 @@ export default async function CollegeActivityPage({
           : data.query.category===category;
         return <Link key={key} aria-current={active?"page":undefined}
           href={collegeActivityHref({...data.query,category,view,module:undefined,importance:undefined})}
-          className={"inline-flex min-h-11 items-center rounded-md border px-3 text-sm font-semibold " +
+          className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border px-3 text-sm font-semibold " +
             (active ? "border-primary bg-primary-subtle text-[var(--lms-teal-deep)]" : "border-border text-body")}>
           {label}
         </Link>;
