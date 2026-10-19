@@ -77,9 +77,12 @@ export function DateInput({
   const stepBaseMinute = minimumMinute ?? 0;
   function timeAllowed(hour: number, minute: number) {
     const time = hour * 60 + minute;
-    return minuteStep !== null && (time - stepBaseMinute) % minuteStep === 0 &&
-      (minimumMinute === null || time >= minimumMinute) &&
-      (maximumMinute === null || time <= maximumMinute);
+    // Native time inputs allow a min-to-max interval that crosses midnight.
+    const insideRange = minimumMinute !== null && maximumMinute !== null && minimumMinute > maximumMinute
+      ? time >= minimumMinute || time <= maximumMinute
+      : (minimumMinute === null || time >= minimumMinute) &&
+        (maximumMinute === null || time <= maximumMinute);
+    return minuteStep !== null && (time - stepBaseMinute) % minuteStep === 0 && insideRange;
   }
 
   useEffect(() => {
@@ -139,7 +142,7 @@ export function DateInput({
   const native = <Input {...props} id={inputId} ref={bindRef} type={mode}
     value={value} defaultValue={defaultValue} disabled={disabled} readOnly={readOnly}
     aria-readonly={readOnly || undefined} error={error}
-    className={cx(enabled ? "pr-12" : "", className)}
+    className={cx(enabled ? "pr-12 [&::-webkit-calendar-picker-indicator]:opacity-0" : "", className)}
     onChange={onChange} onKeyDown={onKeyDown} />;
 
   if (!hasPanel || !calendarPopup) return native;
