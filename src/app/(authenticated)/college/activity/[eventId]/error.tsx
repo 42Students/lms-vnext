@@ -7,5 +7,5 @@ export default function CollegeActivityDetailError({ reset }: {
   return <ErrorState title="Activity detail unavailable"
     description="The requested event cannot be shown. It may be outside the permitted college scope."
     action={<button type="button" onClick={reset}
-      className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Retry</button>} />;
+      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Retry</button>} />;
 }
