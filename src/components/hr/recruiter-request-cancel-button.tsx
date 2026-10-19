@@ -32,7 +32,7 @@ export function RecruiterRequestCancelButton({requestId,collegeId,updatedAt}:{
   finally{lock.current=false;setBusy(false);}
  }
  return <div className="mt-2">
-  <Button variant="secondary" type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
+  <Button variant="secondary" type="button" loading={busy} disabled={busy} onClick={()=>setConfirmOpen(true)}
   >
    {busy?"Cancelling…":"Cancel request"}
   </Button>
