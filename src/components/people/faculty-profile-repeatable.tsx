@@ -69,7 +69,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       {rows.length === 0 ? <p className="text-sm text-muted-foreground">No records added yet.</p> : null}
       {rows.length>5?<label className="block text-sm font-semibold text-body">Find {title.toLowerCase()} records
         <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-          className="mt-1.5 min-h-11 sm:min-h-9 w-full" placeholder="Search section fields"/>
+          className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full" placeholder="Search section fields"/>
       </label>:null}
       {rows.length>5&&search.trim()?<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
@@ -79,14 +79,14 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       {rows.length>5 && !facultyProfileCanReorderVisible(rows.length,visibleRows.length)?<p className="text-xs text-muted-foreground">Clear search to reorder records in their full saved order.</p>:null}
       <div className="space-y-3">
         {visibleRows.map(({row,index}) => (
-          <fieldset key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3 sm:p-4">
+          <fieldset key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3 min-[768px]:p-4">
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
-            <Button variant="secondary" type="button" className="mb-3 min-h-11 sm:min-h-9 px-3"
+            <Button variant="secondary" type="button" className="mb-3 min-h-11 min-[768px]:min-h-9 px-3"
               aria-expanded={!collapsedIds.includes(row.id)}
               onClick={()=>setCollapsedIds(current=>toggleFacultyProfileCollapsed(current,row.id))}>
               {collapsedIds.includes(row.id)?"Show record fields":"Hide record fields"}
             </Button>
-            {!collapsedIds.includes(row.id)?<div className="grid gap-3 sm:grid-cols-2">
+            {!collapsedIds.includes(row.id)?<div className="grid gap-3 min-[768px]:grid-cols-2">
               {fields.map(field => {
                 const value = row[field.name];
                 const currentDegreeEndYear = section === "education" && field.name === "endYear" &&
@@ -102,7 +102,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                       disabled={pending || currentDegreeEndYear} required={field.required}
                       onChange={event => update(row.id, field.name, event.target.value)} />
                   ) : (
-                    <Input className="mt-1.5 min-h-11 sm:min-h-9 w-full min-w-0"
+                    <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0"
                       type={field.kind ?? "text"} maxLength={field.maxLength}
                       value={typeof value === "string" ? value : ""}
                       disabled={pending || currentDegreeEndYear} required={field.required}
@@ -142,12 +142,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           Add {title.toLowerCase()} record
         </Button>
         <Button variant="primary" type="submit" disabled={!changed || pending || missingRequired || Boolean(sectionIssue)}
-          className="min-h-11 sm:min-h-9 px-4">
+          className="min-h-11 min-[768px]:min-h-9 px-4">
           {pending ? "Saving…" : "Save " + title.toLowerCase()}
         </Button>
       </div>
       {changed && sectionIssue?<p role="alert" className="text-sm text-error">Review this section: {sectionIssue}</p>:null}
-      {changed ? <Button variant="secondary" type="button" disabled={pending} className="min-h-11 sm:min-h-9 px-4"
+      {changed ? <Button variant="secondary" type="button" disabled={pending} className="min-h-11 min-[768px]:min-h-9 px-4"
         onClick={async()=>{if(!(await askConfirm("Discard unsaved changes to "+title+"?")))return;
           setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
         Discard unsaved edits
