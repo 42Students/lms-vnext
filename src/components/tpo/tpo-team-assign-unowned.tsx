@@ -37,13 +37,13 @@ export function TpoTeamAssignUnowned({drives,companies,members}:{
   <div className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-48 flex-1 gap-1 text-sm">Who takes them?
     <select disabled={busy} value={assignee} onChange={event=>setAssignee(event.target.value)}
-     className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3">
+     className="min-h-9 sm:min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
      <option value="">Choose a team member</option>
      {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
     </select>
    </label>
    <button type="button" disabled={busy||!assignee} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+    className="min-h-9 rounded-[var(--radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
     {busy?"Assigning…":"Assign work"}
    </button>
   </div>

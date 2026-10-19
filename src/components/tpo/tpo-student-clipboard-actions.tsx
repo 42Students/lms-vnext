@@ -21,13 +21,13 @@ export function TpoStudentClipboardActions({rows,selected,onSelect}:{
   setMissing(result.missing);
   setMessage("Matched "+result.found.length+" of "+result.requested+" roll number(s) on this page.");
  }
- return <section className="space-y-2 rounded-xl border border-border bg-surface p-4">
+ return <section className="space-y-2 rounded-[12px] border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center gap-2">
-   <button type="button" onClick={()=>void copy()} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">
+   <button type="button" onClick={()=>void copy()} className="min-h-10 rounded-[var(--radius)] border border-border px-3 text-sm font-semibold text-primary-text">
     Copy {selected.length?"selected":"visible"} rows
    </button>
    <button type="button" aria-expanded={open} onClick={()=>setOpen(v=>!v)}
-    className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">
+    className="min-h-10 rounded-[var(--radius)] border border-border px-3 text-sm font-semibold text-primary-text">
     Paste roll numbers
    </button>
   </div>
@@ -36,7 +36,7 @@ export function TpoStudentClipboardActions({rows,selected,onSelect}:{
     <textarea rows={3} maxLength={15000} value={text} onChange={e=>setText(e.target.value)}
      className="rounded border border-border bg-surface p-3"/></label>
    <button type="button" disabled={!text.trim()} onClick={paste}
-    className="min-h-10 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+    className="min-h-10 rounded-[var(--radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
     Select matching students on this page
    </button>
    {missing.length?<p role="alert" className="text-sm text-warning">Not on this page: {missing.slice(0,30).join(", ")}{missing.length>30?" and "+(missing.length-30)+" more":""}.</p>:null}

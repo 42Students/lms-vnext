@@ -11,7 +11,7 @@ export default function TpoStudentsError({
   return (
     <section
       role="alert"
-      className="rounded-xl border border-border bg-surface px-6 py-10 text-center"
+      className="rounded-[12px] border border-border bg-surface px-6 py-10 text-center"
     >
       <h1 className="text-lg font-semibold text-foreground">
         Could not load students
