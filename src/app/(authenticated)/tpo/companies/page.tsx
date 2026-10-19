@@ -66,7 +66,7 @@ function companyHref(company: TpoCompanyRow) {
 /** Reject ambiguous multi-valued deep-links without silently choosing one. */
 function invalidCompanyFilters(){
  return <section role="alert" className="space-y-3">
-  <h1 className="text-[30px] font-semibold leading-9 text-[var(--lms-heading)]">Invalid companies filters</h1>
+  <PageHeader title="Invalid companies filters" />
   <p className="mt-2 text-sm text-body">
    The requested search or pagination values are invalid. No company data was loaded.
   </p>
