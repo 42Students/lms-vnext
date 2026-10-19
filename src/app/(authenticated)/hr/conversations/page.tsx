@@ -76,6 +76,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
    {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
+      aria-current={g.collegeId===result.collegeId?"page":undefined}
     className="block rounded-[var(--lms-control-radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{g.collegeName}</Link>)}
   </section>:<>
    {decisionNoticeResult && !decisionNoticeResult.ok?
@@ -97,9 +98,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
     </li>)}</ul>
    </section>:null}
-   {result.choices.length>1?<nav aria-label="College conversations" className="flex flex-wrap gap-2">
+   {result.choices.length>1?<nav aria-label="College conversations" className="flex flex-wrap gap-3">
     {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
-     className="rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{g.collegeName}</Link>)}
+     className={g.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle"}>{g.collegeName}</Link>)}
    </nav>:null}
    <section className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
