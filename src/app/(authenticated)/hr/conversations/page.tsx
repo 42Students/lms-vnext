@@ -154,9 +154,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
     </label>
-    <label className="min-w-0 basis-full text-sm text-body md:basis-auto md:flex-1">Search by drive or message
-     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 w-full"/></label>
-    <Button type="submit" variant="secondary" className="min-h-11 self-end md:min-h-9">Search</Button>
+    <label className="min-w-0 w-full basis-full text-sm text-body md:w-[220px] md:basis-auto md:flex-none">Search by drive or message
+     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full"/></label>
+    <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form>
    <Tabs renderPanel={false} ariaLabel="Conversation kind" value={parsed.data.scope}
     items={HR_CONVERSATION_KINDS.map(item => ({value:item.value,label:item.label,
