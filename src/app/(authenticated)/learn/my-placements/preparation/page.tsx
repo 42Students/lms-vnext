@@ -21,9 +21,9 @@ export default async function LearnerPlacementPreparationPage({
   const raw=await searchParams;
   const parsed=learnerPreparationQuerySchema.safeParse({view:first(raw.view)??undefined});
   if(!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] leading-9">Invalid preparation filter</h1>
+    <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Invalid preparation filter</h1>
     <Link href="/learn/my-placements/preparation"
-      className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
+      className="text-primary-text underline">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   if(!hasMembershipRole(context,"LEARNER")) redirect("/dashboard");
@@ -32,12 +32,12 @@ export default async function LearnerPlacementPreparationPage({
     <PageHeader eyebrow="Learner · My Placements" title="Placement preparation"
       description="A checklist of information and activity actually recorded for your account."
       actions={<Link href="/learn/my-placements"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
         My Placements
       </Link>} />
     {(await placementTableExists("placement_tpo_prep_assignments"))?<LearnerPrepAssignmentCards/>:null}
     <section aria-label="Recorded preparation summary"
-      className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      className="border-b border-border pb-5">
       <p className="text-sm font-semibold text-foreground">
         {data.recorded} of {data.total} information categories recorded
       </p>
@@ -67,7 +67,7 @@ export default async function LearnerPlacementPreparationPage({
         : "No categories match this filter. Try All categories."}/>
       : <ol className="grid gap-3 sm:grid-cols-2">
         {data.items.map(item=>
-          <li key={item.id} className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <li key={item.id} className="border-b border-border pb-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-foreground">{item.title}</h2>
               <span className="text-xs font-semibold text-body">
@@ -76,7 +76,7 @@ export default async function LearnerPlacementPreparationPage({
             </div>
             <p className="mt-2 text-sm leading-6 text-body">{item.description}</p>
             <Link href={item.href}
-              className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+              className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               {item.recorded?"Review recorded information":"Review this section"} →
             </Link>
           </li>)}
