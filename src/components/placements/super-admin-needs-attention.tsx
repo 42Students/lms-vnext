@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 type Attention={code:string;jobId:string;jobTitle:string;companyName:string;count:number;priority:string};
 const categories=[
@@ -28,11 +29,11 @@ export function SuperAdminNeedsAttention({items,basePath}:{items:readonly Attent
        {item.companyName} · {item.jobTitle}
        <span className="ml-2 text-xs text-muted-foreground">{item.count} affected</span>
      </Link>)}
-     {category.rows.length>3?<button type="button" onClick={()=>
+     {category.rows.length>3?<Button variant="ghost" size="sm" type="button" onClick={()=>
       setExpanded(old=>showAll?old.filter(x=>x!==category.code):[...old,category.code])}
-      className="min-h-10 text-sm font-semibold text-primary-text underline">
+      className="text-primary-text underline">
        {showAll?"Show less":"+"+(category.rows.length-3)+" more"}
-     </button>:null}
+     </Button>:null}
      {category.rows.length? <p className="text-xs text-muted-foreground">
       Showing top {visible.length} of {category.rows.length}</p>:null}
     </div>;

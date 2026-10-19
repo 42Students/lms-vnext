@@ -4,6 +4,7 @@ import { useState } from "react";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import type { BulkDriveResult } from "@/modules/placements/bulk-drive-model";
 
@@ -165,12 +166,11 @@ export function PlacementBulkAddApplicants({
                   key={candidate.membershipId}
                   className="flex min-h-11 cursor-pointer items-center gap-3 border-b border-border px-3 py-2 hover:bg-muted"
                 >
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={selected.has(candidate.membershipId)}
                     onChange={(event) => toggle(candidate, event.target.checked)}
                     disabled={busy || (selected.size >= 200 && !selected.has(candidate.membershipId))}
-                    className="h-4 w-4 accent-primary"
+                    
                   />
                   <span className="text-sm font-medium text-foreground">
                     {candidate.displayName}

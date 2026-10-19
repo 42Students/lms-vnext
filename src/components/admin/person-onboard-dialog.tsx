@@ -14,6 +14,7 @@ import { onboardingRoleSelection } from "@/modules/people/college-faculty-onboar
 import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 
 function roleLabel(role: MembershipRole) {
@@ -205,7 +206,7 @@ export function PersonOnboardDialog({
           {forcedRole==="FACULTY" ? <fieldset className="sm:col-span-2 space-y-2 border-b border-border py-3">
             <legend className="text-xs font-semibold text-body">Faculty Type</legend>
             <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
-              <input type="checkbox" checked={registerAsMentor} disabled={pending}
+              <Checkbox checked={registerAsMentor} disabled={pending}
                 onChange={event=>setRegisterAsMentor(event.target.checked)}/>
               Mentor
             </label>
@@ -226,11 +227,10 @@ export function PersonOnboardDialog({
                   <span className="text-sm font-semibold text-body">
                     {roleLabel(role)}
                   </span>
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={roles.includes(role)}
                     onChange={() => toggleRole(role)}
-                    className="h-4 w-4 accent-[var(--lms-primary)]"
+                    
                   />
                 </label>
               ))}
