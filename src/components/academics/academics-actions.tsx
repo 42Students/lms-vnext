@@ -205,7 +205,7 @@ export function ProgramActions({
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {departments.length ? <label className="grid gap-1 text-sm font-semibold">Department
             <Select value={departmentId} onChange={event=>setDepartmentId(event.target.value)}>
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
@@ -438,7 +438,7 @@ export function AcademicPeriodActions({
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-body">
               Name
@@ -880,7 +880,7 @@ export function SectionActions({
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-body">
               Name
