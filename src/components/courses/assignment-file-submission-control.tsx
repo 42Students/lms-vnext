@@ -192,7 +192,7 @@ export function AssignmentFileSubmissionControl({
     <ul className="space-y-2" aria-label="Staged assignment files">
       {staged.map(file => {
         const state = fileStatusDescriptor(file.status);
-        return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface p-3">
+        return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-3">
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={state.detail}><StatusBadge tone={state.tone}>{state.label}</StatusBadge></span>
           {file.status === "VERIFYING" || file.status === "UPLOADING" ? <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => retry(file.id)}>Check file</Button> : null}
@@ -204,7 +204,7 @@ export function AssignmentFileSubmissionControl({
       onTextChange={value=>{setResponseText(value);setConfirmed(false);}}
       links={links} onLinksChange={value=>{setLinks(value);setConfirmed(false);}}
       disabled={busy||loading}/>:null}
-    {staged.length||hasWrittenOrLinkParts ? <div className="space-y-3 rounded-lg border border-border bg-surface p-3">
+    {staged.length||hasWrittenOrLinkParts ? <div className="space-y-3 rounded-xl border border-border bg-surface p-3">
       {hasPending ? <p role="status" className="text-sm text-muted-foreground">Files must pass security checks before final submission.</p> : null}
       <label className="flex min-h-11 items-start gap-2 text-sm text-body">
         <input type="checkbox" checked={confirmed} disabled={busy || hasPending} className="mt-1"
