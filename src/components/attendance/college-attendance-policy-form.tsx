@@ -88,7 +88,7 @@ export function CollegeAttendancePolicyForm({
     <>
     <form
       onSubmit={save}
-      className="space-y-6 rounded-xl border border-border bg-surface p-5 sm:p-6"
+      className="space-y-6 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:p-6"
     >
       <div>
         <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -165,7 +165,7 @@ export function CollegeAttendancePolicyForm({
         </div>
       </div>
 
-      <p className="rounded-lg bg-muted px-4 py-3 text-sm leading-6 text-body">
+      <p className="rounded-[var(--lms-control-radius)] bg-muted px-4 py-3 text-sm leading-6 text-body">
         Changing the correction window affects
         the permitted correction period for
         existing as well as future sessions.
