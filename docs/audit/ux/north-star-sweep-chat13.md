@@ -82,3 +82,15 @@ The adjacent completed `docs/audit/ux/north-star-sweep-chat-15.md` was read and 
 - Next-portal HR `drives`, `conversations`, `notifications` form inputs/actions were converted to shared primitives; original query names and POST/GET forms remain unchanged. A static JSX-tag balance review found matching `Select` and `Button` pairs across these three files. This is not a substitute for TypeScript compilation or UI testing.
 
 **Open acceptance** remains exact old-LMS screenshot/pixel comparison, mobile keyboard/overlay navigation, authenticated permission checks, and CI. None was executed per the owner's current no-CI directive.
+
+### Further adjacent HR and Super Admin pass (source-only)
+
+Following the first HR search-form migration, independently reviewed `hr/{profile,company,calendar,activity,round-results,drives/new,conversations/[threadId],company/reports}`. The profile, calendar, activity, new drive and results pages primarily use shared semantic tokens or intentional independently actionable cards and were not unnecessarily flattened.
+
+- `hr/company/page.tsx`: five undefined `bg-surface-secondary` utilities mapped to supported `bg-muted`; own-company team filter switched to shared `Input` and secondary `Button`.
+- `hr/conversations/[threadId]/page.tsx`: two undefined `bg-surface-secondary`/`bg-surface-subtle` surfaces mapped to `bg-muted` while preserving the message proposal and read history.
+- `hr/company/reports/page.tsx`: both employer report selector controls and the Apply filters button now use the shared `Select` and `Button`, with `collegeId` and existing GET query preserved.
+- `admin/colleges/[collegeId]/readiness/page.tsx`: two `bg-surface-subtle` panels converted to the supported muted token. Genuine launch-readiness and per-college independent panels retained. Review of companies drive totals, elective items, module-impact cards and trace panels found functional individually actionable objects, not wrappers fighting the PageCanvas.
+- Added `tests/unit/chat13-north-star-hr-secondary-sweep.test.ts` as source contract checking HR employer flows, shared controls and retained action endpoints. This test is **authored but not executed**, in keeping with the no-CI directive.
+
+Legacy source still defines 68px header with 36px controls and green-teal primary text/white button labels; routes keep mobile accessible tap area. Final browser pixel diff and build/test execution remain unverified.
