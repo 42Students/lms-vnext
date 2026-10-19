@@ -169,6 +169,7 @@
 [data-slot="popover"] {
   box-shadow: 9px 11px 28px rgba(0, 0, 0, .1);
 }
+[data-slot="popover-listbox"] { border-radius: 12px; }
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
