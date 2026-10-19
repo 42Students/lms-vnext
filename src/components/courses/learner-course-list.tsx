@@ -1,7 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 import Link from "next/link";
 import { LearnerCourseCardImage } from "./learner-course-card-image";
@@ -277,27 +275,27 @@ export function LearnerCourseList({
         ) : null}
         <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
           {periodRows[0]?.course.programName ? (
-            <span className="rounded-full bg-muted px-3 py-1.5">
+            <Badge  tone="neutral">
               {periodRows[0].course.programName}
-            </span>
+            </Badge>
           ) : null}
           {selectedPeriod ? (
-            <span className="rounded-full bg-muted px-3 py-1.5">
+            <Badge  tone="neutral">
               {selectedPeriod.name}
-            </span>
+            </Badge>
           ) : null}
-          <span className="rounded-full bg-muted px-3 py-1.5">
+          <Badge  tone="neutral">
             {periodRows.length} {periodRows.length === 1 ? "Course" : "Courses"}
-          </span>
+          </Badge>
           {creditSummary.recordedCount > 0 ? (
-            <span className="rounded-full bg-muted px-3 py-1.5">
+            <Badge  tone="neutral">
               {creditSummary.credits} recorded credits
               {creditSummary.missingCount > 0
                 ? ` · ${creditSummary.missingCount} course credit values unavailable`
                 : ""}
-            </span>
+            </Badge>
           ) : creditSummary.missingCount > 0 ? (
-            <span className="rounded-full bg-muted px-3 py-1.5">Credits not recorded</span>
+            <Badge  tone="neutral">Credits not recorded</Badge>
           ) : null}
         </div>
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
@@ -416,16 +414,16 @@ export function LearnerCourseList({
                       </p>
 
                       <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                        <span className="rounded-full bg-muted px-2.5 py-1">
+                        <Badge  tone="neutral">
                           {row.course.sectionName}
-                        </span>
-                        {row.course.cohortName ? <span className="rounded-full bg-muted px-2.5 py-1">
+                        </Badge>
+                        {row.course.cohortName ? <Badge  tone="neutral">
                           Batch: {row.course.cohortName}
-                        </span> : null}
+                        </Badge> : null}
                         {row.course.credits ? (
-                          <span className="rounded-full bg-muted px-2.5 py-1">
+                          <Badge  tone="neutral">
                             {row.course.credits} Credits
-                          </span>
+                          </Badge>
                         ) : null}
                       </div>
 
