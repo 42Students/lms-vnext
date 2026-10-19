@@ -60,8 +60,8 @@ export default async function MentorProjectsPage({
   );
   if (!parsed.success) {
     return <section role="alert" className="space-y-3">
-      <PageHeader title="Invalid Project filters" />
-      <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+      <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid Project filters</h1>
+      <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
     </section>;
   }
   const query = parsed.data;
