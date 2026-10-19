@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 "use client";
 import {useEffect,useState} from "react";
 import type {EngageColumn} from "@/modules/placements/tpo-recruiter-table-view-model";
@@ -85,9 +86,9 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
   {ready===null?<p role="status" className="text-sm">Loading views…</p>:
    !ready?<p role="status" className="text-sm">Saved views are unavailable until storage is registered.</p>:<>
    <div className="flex flex-wrap items-center gap-2">
-    <input aria-label="View name" maxLength={100} placeholder="View name" value={name}
+    <Input aria-label="View name" maxLength={100} placeholder="View name" value={name}
      onChange={e=>setName(e.target.value)} className="min-h-10 rounded border border-border px-3"/>
-    <input aria-label="View note" maxLength={500} placeholder="Note (optional)" value={note}
+    <Input aria-label="View note" maxLength={500} placeholder="Note (optional)" value={note}
      onChange={e=>setNote(e.target.value)} className="min-h-10 rounded border border-border px-3"/>
     <button type="button" disabled={busy||!name.trim()||views.length>=100} className={button}
      onClick={()=>void apply("CREATE")}>Save current view</button>
@@ -112,8 +113,8 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
      </select>
     </label>
     {active?<div className="flex flex-wrap gap-2">
-     <label className="text-sm">Rename view<input maxLength={100} className="ml-2 min-h-10 rounded-[9px] border border-border px-3" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
-     <label className="text-sm">Note<input maxLength={500} className="ml-2 min-h-10 rounded-[9px] border border-border px-3" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
+     <label className="text-sm">Rename view<Input maxLength={100} className="ml-2 min-h-10 rounded-[9px] border border-border px-3" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
+     <label className="text-sm">Note<Input maxLength={500} className="ml-2 min-h-10 rounded-[9px] border border-border px-3" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
      <button type="button" className={button} onClick={()=>open(active)}>Open</button>
      <button type="button" className={button} disabled={busy||!editingName.trim()} onClick={()=>void apply("UPDATE",active)}>Update filters and columns</button>
      <button type="button" className={button} disabled={busy||(!active.pinned&&views.filter(view=>view.pinned).length>=5)} onClick={()=>void apply("PIN",active)}>
