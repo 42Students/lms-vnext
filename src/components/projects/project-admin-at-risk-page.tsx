@@ -62,6 +62,15 @@ export async function ProjectAdminAtRiskPage({
         eyebrow={eyebrow}
         title="At-risk projects"
         description="Workspaces with no recent activity, an active blocker, or a pending review."
+        actions={
+        <ProjectAtRiskPageExport collegeId={collegeId}
+          rows={result.items.map(project=>({
+            id:project.id,title:project.title,mentorName:project.mentorName,
+            inactiveDays:project.inactiveDays,riskReasons:project.riskReasons,
+            blockerReason:project.blockerReason,
+            lastActivityAt:safeProjectAdminUtcIso(project.lastActivityAt),
+          }))}/>
+        }
       />
       {!result.blockerSignalSupported ? (
         <section className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm leading-5 text-body">
@@ -81,16 +90,7 @@ export async function ProjectAdminAtRiskPage({
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>)}
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <ProjectAtRiskPageExport collegeId={collegeId}
-          rows={result.items.map(project=>({
-            id:project.id,title:project.title,mentorName:project.mentorName,
-            inactiveDays:project.inactiveDays,riskReasons:project.riskReasons,
-            blockerReason:project.blockerReason,
-            lastActivityAt:safeProjectAdminUtcIso(project.lastActivityAt),
-          }))}/>
-        <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
-      </div>
+      <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
       <ProjectAdminFilters query={query} includeRiskSort />
 
       {!result.items.length ? (
