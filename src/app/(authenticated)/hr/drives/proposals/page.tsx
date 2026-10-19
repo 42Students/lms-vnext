@@ -2,6 +2,9 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrDriveProposalHistoryQuerySchema} from "@/modules/placements/hr-drive-proposal-history-model";
 import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-history-service";
@@ -36,18 +39,16 @@ export default async function RecruiterDriveProposalHistory({
    <form action="/hr/drives/proposals" method="get" className="flex flex-wrap items-end gap-3">
     <input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-48 flex-1 text-sm text-body">Search by role title
-     <input name="q" maxLength={100} defaultValue={input.data.q}
-       className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-       placeholder="Role title"/>
+     <Input name="q" maxLength={100} defaultValue={input.data.q}
+       className="mt-1 w-full" placeholder="Role title" />
     </label>
     <label className="text-sm text-body">Order
-      <select name="sort" defaultValue={input.data.sort}
-        className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <Select name="sort" defaultValue={input.data.sort} className="mt-1">
         <option value="LATEST">Most recent</option>
         <option value="OLDEST">Oldest first</option>
-      </select>
+      </Select>
     </label>
-    <button type="submit" className="self-end min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Search</button>
+    <Button type="submit" variant="secondary" className="self-end">Search</Button>
    </form>
    {data.items.length?<Link
      href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
