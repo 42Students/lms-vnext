@@ -94,7 +94,7 @@ export function TpoJoiningUpdateForm({
         <Select
           value={status}
           onChange={(event) => setStatus(event.target.value as JoiningChoice)}
-          className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
+          className="mt-1 min-h-11 md:min-h-9 w-full "
         >
           <option value="JOINED">Joined</option>
           <option value="DEFERRED">Deferred</option>
@@ -106,7 +106,7 @@ export function TpoJoiningUpdateForm({
           {status === "JOINED" ? "Actual joining date" : "Revised joining date"}
           <Input type="date" value={joiningDate}
             onChange={(event) => setJoiningDate(event.target.value)}
-            className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
+            className="mt-1 min-h-11 w-full  md:min-h-9" />
         </label>
       ) : null}
       {needsReason ? (
@@ -114,7 +114,7 @@ export function TpoJoiningUpdateForm({
           Outcome reason
           <Textarea rows={2} value={reason} maxLength={2000}
             onChange={(event) => setReason(event.target.value)}
-            className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
+            className="mt-1 min-h-11 w-full  md:min-h-9" />
         </label>
       ) : null}
       {corrected ? (
@@ -122,12 +122,12 @@ export function TpoJoiningUpdateForm({
           Reason for correcting the recorded outcome
           <Textarea rows={2} value={correctionReason} maxLength={2000}
             onChange={(event) => setCorrectionReason(event.target.value)}
-            className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
+            className="mt-1 min-h-11 w-full  md:min-h-9" />
         </label>
       ) : null}
       <div className="sm:col-span-2">
         <Button variant="primary" type="button" disabled={busy} onClick={() => void save()}
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-on-primary">
+          className="min-h-11 md:min-h-9">
           {busy ? "Saving..." : corrected ? "Confirm corrected outcome" : "Confirm joining outcome"}
         </Button>
         {error ? <p role="alert" className="mt-2 text-sm text-foreground">{error}</p> : null}
