@@ -140,7 +140,7 @@ export function SearchableSelect({
     {open && !disabled && !readOnly
       ? <PopoverListbox id={listId} label={String(props["aria-label"] ?? "Available options")}
           onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
-          className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[44px] w-full min-w-0 overflow-y-auto pt-[5px]">
+          className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[120px] w-full min-w-0 overflow-y-auto pt-[5px]">
           {matches.length
             ? matches.map((option, index) =>
               <Button key={option.value} id={`${listId}-option-${index}`} type="button" variant="ghost" size="md" role="option"
