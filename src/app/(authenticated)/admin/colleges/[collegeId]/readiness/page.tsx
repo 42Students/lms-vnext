@@ -86,9 +86,13 @@ export default async function CollegeReadinessPage({
   const parsed=parseSuperAdminReadinessParams(raw);
   // A malformed filter is a recoverable URL error. Avoid expensive scoped
   // readiness queries until both the tenant ID and filters are valid.
-  if(!parsed)return <ErrorState title="Invalid readiness filter"
-    description="Choose a supported check status."
-    action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/readiness"}>Clear</Link>}/>;
+  if(!parsed)return <div className="min-w-0 space-y-5">
+    <PageHeader title="Readiness Gate"
+      actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
+    <ErrorState title="Invalid readiness filter"
+      description="Choose a supported check status."
+      action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/readiness"}>Clear</Link>}/>
+  </div>;
 
 
   const result =
@@ -209,12 +213,12 @@ export default async function CollegeReadinessPage({
         </div>
 
         <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
-          <label className="grid gap-1 text-sm font-semibold text-body">Show checks
+          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body sm:w-auto sm:min-w-40">Show checks
             <Select name="status" defaultValue={parsed.status} className="min-h-11 min-[768px]:min-h-9 ">
               <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">Setup area
+          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body sm:w-auto sm:min-w-40">Setup area
             <Select name="area" defaultValue={parsed.area} className="min-h-11 min-[768px]:min-h-9 ">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </Select>
