@@ -32,7 +32,7 @@ export default async function TpoRoundCalendarPage({searchParams}:{
       <Input type="search" name="q" maxLength={100} defaultValue={result.q}
        placeholder="Company, drive or round name" className="min-h-11 rounded-[9px] border border-border px-3 sm:min-h-9"/>
      </label>
-     <Button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-semibold text-white sm:min-h-9">Find</Button>
+     <Button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-[650] text-white sm:min-h-9">Find</Button>
      <Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline">Clear</Link>
     </form>
     <p role="status" className="text-sm">Page {result.page}: {result.rows.length} rounds{result.limited?" · more available":""}</p>

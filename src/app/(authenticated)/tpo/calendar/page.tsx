@@ -39,7 +39,7 @@ export default async function TpoCalendarPage({
     date:first(raw.date),view:first(raw.view)??initialTpoCalendarView(agent),company:first(raw.company),kind:first(raw.kind),
   });
   if(!parsed.success)return <div className="space-y-4">
-    <h1 className="text-xl font-semibold">Invalid calendar filters</h1>
+    <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Invalid calendar filters</h1>
     <p role="alert" className="rounded border border-border bg-surface p-4 text-sm text-body">
       Enter a valid day, calendar view, event kind and company filter. No events were queried.
     </p>

@@ -30,7 +30,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
   </Link>
   {!ready?<p role="alert" className="rounded-md border border-border bg-surface p-5">{CAMPAIGN_DRAFT_UNAVAILABLE}</p>:
    draft?<article className="space-y-4 rounded-xl border border-border bg-surface p-5">
-    <h1 className="text-xl font-semibold text-foreground">{draft.title}</h1>
+    <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">{draft.title}</h1>
     <p className="text-sm text-body">{draft.sender_name} · {draft.status} · {draft.total_recipients} potential recipients · {draft.segment.replaceAll("_"," ")}</p>
     <dl className="grid grid-cols-3 gap-3 text-sm">
       <div><dt>Provider accepted</dt><dd className="font-semibold">{draft.sent}</dd></div>

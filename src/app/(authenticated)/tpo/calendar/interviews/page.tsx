@@ -31,7 +31,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
     <Select name="days" defaultValue={String(data.days)} className="mt-2 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
       {[7,14,30,60,90].map(n=><option key={n} value={n}>{n} days</option>)}
     </Select></label>
-   <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-white">Apply</Button>
+   <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-white">Apply</Button>
   </form>
   <section aria-label="Interview readiness counts" className="grid grid-cols-2 gap-3 sm:grid-cols-3">
    {Object.entries(data.counts).map(([key,n])=><div key={key} className="py-4">

@@ -191,7 +191,7 @@ export default async function TpoRecruiterAccessPage({
           </label>
           <button
             type="submit"
-            className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
           >
             Apply
           </button>
