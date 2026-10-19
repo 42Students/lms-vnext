@@ -115,7 +115,7 @@ export function TpoAuditSavedViews({filters}:{filters:{
   await mutate({action:"DELETE",id:selectedView.id,
    expectedRevision:selectedView.revision},"Saved view deleted.");
  }
- return <details className="rounded-xl border border-border bg-surface p-4">
+ return <details className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <summary className="cursor-pointer font-semibold">Saved audit views ({views.length}/12)</summary>
   <p className="mt-1 text-xs text-muted-foreground">
    {ready?"Saved audit views sync across your signed-in devices, privately for your TPO account and college.":
@@ -126,15 +126,15 @@ export function TpoAuditSavedViews({filters}:{filters:{
    <label className="grid min-w-44 flex-1 gap-1 text-xs">View name
     <input value={name} maxLength={50} disabled={!ready||busy}
      onChange={event=>setName(event.target.value)}
-     className="min-h-11 rounded border border-border px-2 text-sm"/>
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-sm"/>
    </label>
    <button type="button" onClick={()=>void save()} disabled={!ready||busy||!name.trim()}
-    className="min-h-11 rounded border border-border px-3 text-sm disabled:opacity-50">Save current</button>
+    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50">Save current</button>
   </div>
   {views.length?<div className="mt-3 flex flex-wrap gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs">Saved view
     <select value={selected} onChange={event=>setSelected(event.target.value)}
-     disabled={!ready||busy} className="min-h-11 rounded border border-border px-2 text-sm">
+     disabled={!ready||busy} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-sm">
      <option value="">Select a view</option>
      {views.map(view=><option key={view.id} value={view.id}>
       {view.pinned?"★ ":""}{view.name}
@@ -142,15 +142,15 @@ export function TpoAuditSavedViews({filters}:{filters:{
     </select>
    </label>
    <button type="button" disabled={!selectedView||busy} onClick={()=>void open()}
-    className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">Open</button>
+    className="min-h-9 rounded-[var(--lms-control-radius)] border px-3 text-xs disabled:opacity-50">Open</button>
    <button type="button" disabled={!selectedView||busy} onClick={()=>void pin()}
-    className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">
+    className="min-h-9 rounded-[var(--lms-control-radius)] border px-3 text-xs disabled:opacity-50">
     {selectedView?.pinned?"Unpin":"Pin"}
    </button>
    <button type="button" disabled={!selectedView||busy||!name.trim()} onClick={()=>void rename()}
-    className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">Rename</button>
+    className="min-h-9 rounded-[var(--lms-control-radius)] border px-3 text-xs disabled:opacity-50">Rename</button>
    <button type="button" disabled={!selectedView||busy} onClick={()=>void remove()}
-    className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">Delete</button>
+    className="min-h-9 rounded-[var(--lms-control-radius)] border px-3 text-xs disabled:opacity-50">Delete</button>
   </div>:null}
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}

@@ -1,1 +1,1 @@
-export default function Loading(){return <p role="status">Loading registration choices…</p>;}
+export default function Loading(){return <p role="status" className="text-sm text-body">Loading registration choices…</p>;}
