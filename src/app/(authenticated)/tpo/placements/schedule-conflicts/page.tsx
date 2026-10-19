@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -55,12 +56,12 @@ export default async function TpoScheduleConflictsPage({
       <form method="get" className="flex flex-wrap items-end gap-3">
         <label className="text-sm font-semibold text-foreground">
           Upcoming window
-          <select name="days" defaultValue={String(data.days)}
+          <Select name="days" defaultValue={String(data.days)}
             className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal">
             {[7, 14, 30, 60, 90].map((days) => (
               <option key={days} value={days}>{days} days</option>
             ))}
-          </select>
+          </Select
         </label>
         <button type="submit"
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground">
