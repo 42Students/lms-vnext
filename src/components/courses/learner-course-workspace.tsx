@@ -729,14 +729,14 @@ export function LearnerCourseWorkspace({
           <LearnerCourseStateRetry/>
         </aside>
       ) : null}
-      {filterNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{filterNotice}</p> : null}
+      {filterNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">{filterNotice}</p> : null}
       {focusLessonId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId)
-        ? <p role="alert" className="rounded-lg border border-border p-3 text-sm text-body">
+        ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">
             Lesson not found. This lesson is unavailable in your current learning path.
           </p>
         : focusLessonId && focusContentId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId &&
             lesson.items.some(item=>item.id===focusContentId))
-          ? <p role="alert" className="rounded-lg border border-border p-3 text-sm text-body">
+          ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">
               Content unavailable. This item is not published in the selected lesson.
             </p>:null}
       <div>
@@ -746,7 +746,7 @@ export function LearnerCourseWorkspace({
         </p>
       </div>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr] lg:items-center">
           <div>
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
