@@ -176,7 +176,6 @@ export async function ProjectAdminAuditPage({
         active="audit"
       />
       <PageHeader
-        eyebrow="Projects"
         title="Project audit"
         description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
         actions={<div className="flex flex-wrap items-center justify-end gap-2">

@@ -7,7 +7,7 @@ export function AdminOfferingTeachersPanel({roster,academicPeriodName}:{
  roster:Roster;academicPeriodName:string;
 }){
  return <section id="who-teaches-it" aria-label="Who teaches it"
-  className="space-y-3 border-b border-border pb-5">
+  className="scroll-mt-24 space-y-3 border-b border-border pb-5">
   <h2 className="text-lg font-semibold text-foreground">Who teaches it</h2>
   {!roster.faculty.length?<p className="text-sm text-muted-foreground">
    No active Faculty assignment was found for this Course Offering.

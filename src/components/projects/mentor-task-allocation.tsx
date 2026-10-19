@@ -1,4 +1,7 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {useEffect,useMemo,useState} from "react";
 import { Select } from "@/components/ui/select";
@@ -156,8 +159,8 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     {activeFilterCount} active {activeFilterCount===1?"filter":"filters"} ·
     {" "}{filtered.length} matching {filtered.length===1?"task":"tasks"}
   </p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {notice?<Alert tone="success">{notice}</Alert>:null}
   <section className="rounded-xl border border-border p-3" aria-labelledby="mentor-allocation-workload">
     <h2 id="mentor-allocation-workload" className="mb-2 text-sm font-semibold">Workload by learner</h2>
     <DataTable
@@ -183,12 +186,10 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         {key:"points",header:"Points",cell:row=>row.points,mobilePriority:"secondary"},
         {key:"unsized",header:"Unsized",cell:row=>row.unsized,mobilePriority:"secondary"},
       ]}
-      empty={<p>No learners to summarize yet.</p>}
+      empty={<EmptyState title="No learners to summarize" description="No learners to summarize yet." />}
     />
   </section>
-  {filtered.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
-    {tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters. Use Clear all to see every task."}
-  </p>:null}
+  {filtered.length===0?<EmptyState title={tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters."} description={tasks.length===0?"There are no tasks to assign.":"Use Clear all to see every task."} />:null}
   <div role="region" aria-label="Task allocation cards; scroll sideways for more learners" tabIndex={0}
     className="overflow-x-auto overscroll-x-contain pb-3 [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"><div className="flex min-w-max gap-3">
    {groups.map(group=>{
@@ -196,7 +197,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     return <BoardColumn key={group.membershipId??"unassigned"} label={group.displayName??"Learner"}
       onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,group.membershipId)}>
      <h2 className="flex justify-between text-sm font-semibold">
-      <span>{group.displayName??"Learner"}</span><span>{cards.length}</span></h2>
+      <span>{group.displayName??"Learner"}</span><Badge tone="neutral">{cards.length}</Badge></h2>
      <p className="mt-1 text-xs text-muted-foreground">
       {cards.filter(task=>task.status==="DONE").length} done ·
       {" "}{cards.filter(task=>task.status==="BLOCKED").length} blocked ·
@@ -205,7 +206,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
      <ul className="mt-3 space-y-3">{cards.map(task=><li key={task.id}
        draggable={!readOnly&&!busy&&!["DONE","IN_REVIEW"].includes(task.status)}
        onDragStart={event=>event.dataTransfer.setData("text/plain",task.id)}
-       className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
+       className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm">
        <p className="break-words font-semibold">{task.title}</p>
        <p className="mt-1 text-xs text-body">{task.priority} · {task.status}</p>
        <p className="mt-1 text-xs text-body">
@@ -233,7 +234,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
           <option key={member.membershipId} value={member.membershipId}>{member.displayName??"Learner"}</option>)}
         </Select></label>:null}
       </li>)}
-      {!cards.length?<li className="py-5 text-center text-xs text-muted-foreground">No tasks</li>:null}
+      {!cards.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
      </ul>
     </BoardColumn>;
    })}

@@ -1,3 +1,5 @@
+import { Alert } from "@/components/ui/alert";
+import { PageLoading } from "@/components/ui/page-loading";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJourneyItem } from "@/components/placements/learner-placement-journey";
@@ -63,11 +65,11 @@ export default async function LearnerPlacementApplicationsPage() {
       <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Review all official offers →
       </Link>
-      {!roundsRead.available ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
+      {!roundsRead.available ? <Alert tone="error">
         Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
         <Link href="/learn/my-placements/applications" className="ml-2 font-semibold text-primary-text underline">Retry round shortcuts</Link>
-      </p> : null}
-      <Suspense fallback={<p className="text-sm text-body">Loading application filters…</p>}>
+      </Alert> : null}
+      <Suspense fallback={<PageLoading label="Loading application filters" variant="form" count={2} />}>
         <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks}
           scheduledRounds={rounds.map(row=>({
             applicationId:row.applicationId,roundId:row.roundId,roundName:row.roundName,

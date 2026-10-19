@@ -1,11 +1,19 @@
 "use client";
-import { PageHeader } from "@/components/ui/page-header";
-import { Button } from "@/components/ui/button";
 
-export default function ErrorView({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  return <section role="alert" className="space-y-4 border-b border-border pb-6">
-    <PageHeader title="Conversations unavailable" />
-    <p className="text-sm text-body">Your employer messages could not be loaded.</p>
-    <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
-  </section>;
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+import { PageHeader } from "@/components/ui/page-header";
+
+export default function RouteError({ reset }: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return <div className="min-w-0 space-y-4">
+    <PageHeader title="Messages" />
+    <ErrorState
+      title="Conversations unavailable"
+      description="Your employer messages could not be loaded."
+      action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+    />
+  </div>;
 }

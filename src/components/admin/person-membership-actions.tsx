@@ -199,7 +199,7 @@ export function PersonMembershipActions({
 
   return (
     <>
-      <div className="flex flex-wrap justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <PersonProfileDialog
           membershipId={membershipId}
           collegeId={collegeId}
@@ -210,7 +210,8 @@ export function PersonMembershipActions({
         <Button
           variant="secondary"
           size="sm"
-          disabled={currentStatus === "ENDED" || lifecyclePending || Boolean(rolePending)}
+          className="min-h-11 md:min-h-[var(--lms-control-height)]"
+          disabled={currentStatus === "ENDED" || lifecyclePending || Boolean(rolePending) || roleRequestPending.current}
           onClick={() => setRolesOpen(true)}
         >
           Roles
@@ -220,6 +221,7 @@ export function PersonMembershipActions({
           <Button
             variant="secondary"
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={lifecyclePending || Boolean(rolePending)}
             onClick={() => setSuspendOpen(true)}
           >
@@ -231,6 +233,7 @@ export function PersonMembershipActions({
           <Button
             variant="secondary"
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={lifecyclePending || Boolean(rolePending)}
             onClick={() =>
               lifecycle({ action: "REACTIVATE" })
@@ -246,6 +249,7 @@ export function PersonMembershipActions({
           <Button
             variant="ghost"
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={lifecyclePending || Boolean(rolePending)}
             onClick={() => setEndOpen(true)}
           >
@@ -256,12 +260,13 @@ export function PersonMembershipActions({
 
       <Dialog
         open={rolesOpen}
-        onOpenChange={setRolesOpen}
+        onOpenChange={next => { if (!roleRequestPending.current && !lifecyclePending) setRolesOpen(next); }}
+        dismissible={!Boolean(rolePending) && !lifecyclePending}
         title={`Manage roles · ${displayName}`}
         description="Roles are membership-scoped. SUPER_ADMIN is never assigned here."
       >
         <p className="mb-3 text-sm text-body">The College Admin role can only be assigned or removed by a Super Admin.</p>
-        <div className="divide-y divide-border border-y border-border">
+        <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
           {MEMBERSHIP_ROLES.map((role) => {
             const checked = currentRoles.includes(role);
             const pending = rolePending === role;
@@ -269,7 +274,7 @@ export function PersonMembershipActions({
             return (
               <label
                 key={role}
-                className="flex min-h-[var(--lms-control-height)] cursor-pointer items-center justify-between gap-4 px-3 py-2 hover:bg-primary-subtle"
+                className="flex min-h-11 cursor-pointer items-center justify-between gap-[var(--lms-space-4)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:bg-[var(--lms-primary-subtle)] md:min-h-[var(--lms-control-height)]"
               >
                 <span className="text-sm font-semibold text-body">
                   {roleLabel(role)}
@@ -282,7 +287,7 @@ export function PersonMembershipActions({
                     currentStatus === "ENDED"
                   }
                   onChange={() => mutateRole(role)}
-                  className="h-4 w-4 accent-[var(--lms-primary)]"
+                  className="size-4"
                 />
                 <span className="sr-only">
                   {pending ? "Updating role" : ""}
@@ -295,7 +300,8 @@ export function PersonMembershipActions({
 
       <Dialog
         open={suspendOpen}
-        onOpenChange={setSuspendOpen}
+        onOpenChange={next => { if (!lifecycleRequestPending.current && !lifecyclePending) setSuspendOpen(next); }}
+        dismissible={!lifecyclePending}
         title={`Suspend ${displayName}`}
         description="Suspension blocks this college membership without disabling the canonical user or their other college memberships."
         footer={
@@ -347,7 +353,7 @@ export function PersonMembershipActions({
 
       <ConfirmDialog
         open={endOpen}
-        onOpenChange={setEndOpen}
+        onOpenChange={next => { if (!lifecycleRequestPending.current && !lifecyclePending) setEndOpen(next); }}
         title={`End ${displayName}'s membership?`}
         description="Ending is terminal for this college membership. It does not delete the canonical user or memberships in other colleges."
         confirmLabel="End membership"

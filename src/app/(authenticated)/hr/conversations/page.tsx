@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -187,7 +188,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      </p>:null}
      <p className="mt-2 text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
     </li>)}
-   </ol>:<p role="status" className="border-y border-border py-5 text-body">No matching conversations with the placement cell for this college.</p>}
+   </ol>:<EmptyState title="No matching conversations" description="No matching conversations with the placement cell for this college."/>}
    <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">
     {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
       className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}

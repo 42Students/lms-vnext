@@ -1,6 +1,9 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 
 import { Disclosure } from "@/components/ui/disclosure";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -126,10 +129,10 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         className="min-h-11 px-3">Cancel</Button></div>
     </form>:null}
   </section>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {notice?<Alert tone="success">{notice}</Alert>:null}
   <div className="grid gap-3 sm:grid-cols-2">
-   {backlog.map(task=><article key={task.id} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+   {backlog.map(task=><article key={task.id} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] p-3">
     <p className="font-semibold">{task.title}</p>
     {task.approach?<p className="mt-2 whitespace-pre-wrap break-words text-xs text-body">
       Approach: {task.approach}
@@ -137,7 +140,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
     <p className="mt-1 text-xs text-body">
       {task.priority} · {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
     </p>
-    {task.carriedFromSprintId?<span className="mt-1 inline-flex rounded border border-border px-2 py-1 text-xs font-semibold text-warning-text">Carried over</span>:null}
+    {task.carriedFromSprintId?<Badge tone="warning" className="mt-1">Carried over</Badge>:null}
     {!readOnly&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?
       <div className="mt-2">
         <MentorTaskDetailsEdit projectId={projectId} taskId={task.id}
@@ -155,7 +158,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
      </Select>
     </label>:null}
    </article>)}
-   {!backlog.length?<p className="py-4 text-sm text-muted-foreground">Backlog is empty.</p>:null}
+   {!backlog.length?<div className="sm:col-span-2"><EmptyState title="Backlog is empty." description="No backlog tasks to display." /></div>:null}
   </div>
   {!readOnly&&returnable.length>0?<Disclosure title="Return unfinished tasks to backlog">
     <div className="mt-2 space-y-2">
@@ -170,7 +173,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    title={moveRequest?.targetSprintId?"Pull task into selected sprint?":"Move task into the product backlog?"}
    description={moveRequest?.task.title??"Task movement will update the project board."}
    confirmLabel="Confirm" pending={busy} confirmVariant="primary" onConfirm={move}>
-   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+   {error?<Alert tone="error">{error}</Alert>:null}
   </ConfirmDialog>
   <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
    title="Discard backlog task changes?"

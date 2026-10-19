@@ -8,6 +8,8 @@ Equivalent local path inventory command (not executed): git ls-tree -r --name-on
 
 Next required source command (not executed): grep -rlE 'animate-pulse|bg-muted|bg-surface-secondary' src/app --include='loading.tsx' | sort
 
+Extended sprint (2026-10-19): **62** source `loading.tsx` and **24** source `error.tsx` conversions, all separately committed to `chatgpt/chat-5-b`. The 15 authenticated `not-found.tsx` pages were read and remain unchanged because they already preserve headings and recovery links. No route checkbox is ticked without value, grep and responsive proof.
+
 Every item below requires inspection. Routes already using shared components may need no source changes. Do not tick a path merely because its loader was migrated.
 
 
@@ -192,35 +194,35 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/admin/module-access/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/organizations/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/admin/people/directory/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/people/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/people/unassigned/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/people/unassigned/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/admin/placements/analytics/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/admin/placements/applications/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/admin/placements/calendar/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/drives/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/hiring/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/interviews/[roundId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/interviews/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/job-settings/[jobId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/job-settings/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/placements/interviews/[roundId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/admin/placements/interviews/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/admin/placements/job-settings/[jobId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/admin/placements/job-settings/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/joining/[offerId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/joining/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/placements/joining/[offerId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/admin/placements/joining/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/admin/placements/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/new/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/offers/[offerId]/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/placements/offers/[offerId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/admin/placements/offers/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/retention/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/screenings/[applicationId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/screenings/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/seasons/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/placements/screenings/[applicationId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/admin/placements/screenings/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/admin/placements/seasons/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/shortlisted/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/student-lookup/loading.tsx`
@@ -309,7 +311,7 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/college/live-classes/error.tsx`
 - [ ] `src/app/(authenticated)/college/people/error.tsx`
 - [ ] `src/app/(authenticated)/college/people/manage/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/calendar/error.tsx`
+- [ ] `src/app/(authenticated)/college/placements/calendar/error.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/placements/drives/error.tsx`
 - [ ] `src/app/(authenticated)/college/placements/error.tsx`
 - [ ] `src/app/(authenticated)/college/placements/interviews/error.tsx`
@@ -355,12 +357,12 @@ Every item below requires inspection. Routes already using shared components may
 
 - [ ] `src/app/(authenticated)/college/academics/loading.tsx`
 - [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/loading.tsx`
-- [ ] `src/app/(authenticated)/college/activity/[eventId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/activity/[eventId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/activity/loading.tsx`
 - [ ] `src/app/(authenticated)/college/announcements/loading.tsx`
 - [ ] `src/app/(authenticated)/college/assignments/loading.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/corrections/loading.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/departments/loading.tsx`
+- [ ] `src/app/(authenticated)/college/attendance/corrections/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/college/attendance/departments/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/attendance/loading.tsx`
 - [ ] `src/app/(authenticated)/college/attendance/settings/loading.tsx`
 - [ ] `src/app/(authenticated)/college/batch-promotion/loading.tsx`
@@ -368,47 +370,47 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/college/batches/loading.tsx`
 - [ ] `src/app/(authenticated)/college/branding/loading.tsx`
 - [ ] `src/app/(authenticated)/college/classes/loading.tsx`
-- [ ] `src/app/(authenticated)/college/classes/recurring-preview/loading.tsx`
+- [ ] `src/app/(authenticated)/college/classes/recurring-preview/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/college-profile/loading.tsx`
 - [ ] `src/app/(authenticated)/college/companies/loading.tsx`
 - [ ] `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx`
 - [ ] `src/app/(authenticated)/college/contacts/loading.tsx`
 - [ ] `src/app/(authenticated)/college/course-progress/loading.tsx`
 - [ ] `src/app/(authenticated)/college/courses/loading.tsx`
-- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/loading.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/college/departments/loading.tsx`
 - [ ] `src/app/(authenticated)/college/domains/loading.tsx`
 - [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/loading.tsx`
 - [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/loading.tsx`
 - [ ] `src/app/(authenticated)/college/electives/loading.tsx`
-- [ ] `src/app/(authenticated)/college/faculty-assignment/loading.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/[membershipId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/faculty-assignment/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/college/faculty/[membershipId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/faculty/import/loading.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/loading.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/loading.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/loading.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/loading.tsx`
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/groups/loading.tsx`
 - [ ] `src/app/(authenticated)/college/hiring-dashboard/loading.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/lecture-halls/loading.tsx`
 - [ ] `src/app/(authenticated)/college/lessons/loading.tsx`
 - [ ] `src/app/(authenticated)/college/live-classes/loading.tsx`
 - [ ] `src/app/(authenticated)/college/loading.tsx`
 - [ ] `src/app/(authenticated)/college/people/loading.tsx`
 - [ ] `src/app/(authenticated)/college/people/manage/loading.tsx`
-- [ ] `src/app/(authenticated)/college/placements/calendar/loading.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/calendar/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/college/placements/drives/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/placements/interviews/loading.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/loading.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/loading.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/loading.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/loading.tsx`
 - [ ] `src/app/(authenticated)/college/placements/loading.tsx`
 - [ ] `src/app/(authenticated)/college/placements/new/loading.tsx`
-- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/loading.tsx`
+- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/placements/retention/loading.tsx`
 - [ ] `src/app/(authenticated)/college/placements/student-lookup/loading.tsx`
 - [ ] `src/app/(authenticated)/college/profile/loading.tsx`
@@ -427,12 +429,12 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/loading.tsx`
 - [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/loading.tsx`
 - [ ] `src/app/(authenticated)/college/projects/workspaces/loading.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/loading.tsx`
+- [ ] `src/app/(authenticated)/college/projects/workspaces/new/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/quizzes/loading.tsx`
 - [ ] `src/app/(authenticated)/college/resources/loading.tsx`
 - [ ] `src/app/(authenticated)/college/semester-courses/loading.tsx`
 - [ ] `src/app/(authenticated)/college/semesters/loading.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/students/[membershipId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/college/students/import/loading.tsx`
 - [ ] `src/app/(authenticated)/college/students/loading.tsx`
 - [ ] `src/app/(authenticated)/college/students/register/loading.tsx`
@@ -472,45 +474,45 @@ Every item below requires inspection. Routes already using shared components may
 
 ## hr / error (23)
 
-- [ ] `src/app/(authenticated)/hr/activity/error.tsx`
-- [ ] `src/app/(authenticated)/hr/calendar/error.tsx`
+- [ ] `src/app/(authenticated)/hr/activity/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
+- [ ] `src/app/(authenticated)/hr/calendar/error.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/hr/colleges/error.tsx`
-- [ ] `src/app/(authenticated)/hr/company/error.tsx`
+- [ ] `src/app/(authenticated)/hr/company/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/hr/company/reports/error.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/[threadId]/error.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/error.tsx`
+- [ ] `src/app/(authenticated)/hr/conversations/[threadId]/error.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/hr/conversations/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/error.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/messages/error.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/error.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/error.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/error.tsx`
+- [ ] `src/app/(authenticated)/hr/drives/error.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/hr/drives/new/error.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/proposals/error.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/recorded-outside/error.tsx`
 - [ ] `src/app/(authenticated)/hr/error.tsx`
-- [ ] `src/app/(authenticated)/hr/home/error.tsx`
-- [ ] `src/app/(authenticated)/hr/messages/error.tsx`
+- [ ] `src/app/(authenticated)/hr/home/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
+- [ ] `src/app/(authenticated)/hr/messages/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/hr/notifications/error.tsx`
 - [ ] `src/app/(authenticated)/hr/placements/error.tsx`
 - [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx`
-- [ ] `src/app/(authenticated)/hr/profile/error.tsx`
+- [ ] `src/app/(authenticated)/hr/profile/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/hr/round-results/error.tsx`
 
 ## hr / loading (23)
 
 - [ ] `src/app/(authenticated)/hr/activity/loading.tsx`
-- [ ] `src/app/(authenticated)/hr/calendar/loading.tsx`
+- [ ] `src/app/(authenticated)/hr/calendar/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/hr/colleges/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/company/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/company/reports/loading.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/[threadId]/loading.tsx`
+- [ ] `src/app/(authenticated)/hr/conversations/[threadId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/hr/conversations/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/loading.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/messages/loading.tsx`
+- [ ] `src/app/(authenticated)/hr/drives/[jobId]/messages/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/loading.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/new/loading.tsx`
+- [ ] `src/app/(authenticated)/hr/drives/new/loading.tsx` — migrated with source-label preservation; strict parity open
 - [ ] `src/app/(authenticated)/hr/drives/proposals/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/recorded-outside/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/home/loading.tsx`
@@ -562,15 +564,15 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/learn/my-placements/rules/error.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/schedule/error.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/support/error.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/error.tsx`
+- [ ] `src/app/(authenticated)/learn/notifications/error.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/learn/notifications/history/error.tsx`
 - [ ] `src/app/(authenticated)/learn/placements/error.tsx`
 - [ ] `src/app/(authenticated)/learn/profile/academic-record/error.tsx`
 - [ ] `src/app/(authenticated)/learn/profile/completeness/error.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/error.tsx`
+- [ ] `src/app/(authenticated)/learn/profile/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/learn/profile/verification/error.tsx`
 - [ ] `src/app/(authenticated)/learn/projects/[projectId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/error.tsx`
+- [ ] `src/app/(authenticated)/learn/projects/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/learn/quizzes/error.tsx`
 
 ## learn / loading (43)
@@ -631,13 +633,13 @@ Every item below requires inspection. Routes already using shared components may
 
 ## mentor / error (26)
 
-- [ ] `src/app/(authenticated)/mentor/activity/error.tsx`
+- [ ] `src/app/(authenticated)/mentor/activity/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/mentor/calendar/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/notifications/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx`
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/error.tsx`
@@ -649,12 +651,12 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/reports/error.tsx`
+- [ ] `src/app/(authenticated)/mentor/projects/error.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/reports/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/mentor/review-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/reviews/error.tsx`
+- [ ] `src/app/(authenticated)/mentor/reviews/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/mentor/sprint-progress/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-review-history/error.tsx`
+- [ ] `src/app/(authenticated)/mentor/task-review-history/error.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/mentor/task-reviews/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/team-coverage/error.tsx`
 
@@ -663,27 +665,27 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/mentor/activity/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/calendar/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/loading.tsx`
+- [ ] `src/app/(authenticated)/mentor/notifications/loading.tsx` — migrated with source-label preservation; strict parity open
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/loading.tsx`
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/mentor/projects/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/reports/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/review-history/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/reviews/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/sprint-progress/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-review-history/loading.tsx`
+- [ ] `src/app/(authenticated)/mentor/task-review-history/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/mentor/task-reviews/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/team-coverage/loading.tsx`
 
@@ -869,7 +871,7 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/response-followups/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/results/error.tsx`
+- [ ] `src/app/(authenticated)/teacher/results/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 
 ## teacher / loading (37)
 
@@ -1015,7 +1017,7 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/reports/placement-summary/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/unplaced/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/requests/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/requests/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/tpo/settings/after-college/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/blocked-dates/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/branding/error.tsx`
@@ -1032,15 +1034,15 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/settings/see/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/team/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/templates/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/trusted/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/trusted/error.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/[membershipId]/participation/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/students/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/tpo/students/preparation-plan/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/preparation-prep/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/requests/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/team/[threadId]/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/team/error.tsx` — migrated to shared component in extended sprint; strict parity proof pending
 - [ ] `src/app/(authenticated)/tpo/team/everyone/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/verification/error.tsx`
 
@@ -1100,7 +1102,7 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/loading.tsx`
@@ -1132,15 +1134,15 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/reports/by-branch/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/by-company/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/ctc/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/intelligence/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/joining-followups/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
-- [ ] `src/app/(authenticated)/tpo/reports/joining-status/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/joining-status/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/leads/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/offers-acceptance/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
-- [ ] `src/app/(authenticated)/tpo/reports/placed-branch/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/placed-branch/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/placement-summary/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/loading.tsx` — migrated/labelled on bounded turn 2; strict proof pending
 - [ ] `src/app/(authenticated)/tpo/reports/unplaced/loading.tsx`
@@ -1151,19 +1153,19 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/settings/job-types/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/notices/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notifications/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/notifications/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/tpo/settings/prep-readiness/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/public-link/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/public-page/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/recruiters/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/rules/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/season/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/see/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/see/loading.tsx` — migrated with source-label preservation; strict parity open
 - [ ] `src/app/(authenticated)/tpo/settings/team/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/templates/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/trusted/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/participation/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/trusted/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
+- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/participation/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/tpo/students/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/preparation-plan/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/preparation-prep/loading.tsx`

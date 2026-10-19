@@ -32,7 +32,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
   rowKey={company=>company.companyId??"unlinked:"+company.name}
   searchMode="hidden" searchParam="search" searchMaxLength={150} searchPlaceholder="Company name or website"
   columnScope="local" columnStorageKey="tpo-company-directory-columns-v1"
-  exportName="tpo-companies-page">
+  exportName="companies">
   {visible=>{
    const active=new Set(visible.length?visible:keys);
    return <DataTable caption="Companies on this page" rows={rows}

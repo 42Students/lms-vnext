@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import {useEffect,useId,useRef,useState} from "react";
 import { Input } from "@/components/ui/input";
+import { PopoverListbox } from "@/components/ui/popover";
 
 type Item={id:string;name:string;displayName:string;category:string|null};
 export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange:(value:string)=>void}){
@@ -52,14 +53,16 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
   {status==="unavailable"?<p role="status" className="mt-1 text-xs text-body">
    Skill catalog temporarily unavailable. You can save the entered skill name.
   </p>:null}
-  {status==="ready"&&items.length>0?<ul id={id+"-choices"} role="listbox"
-    className="mt-2 max-h-48 space-y-1 overflow-y-auto rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-1">
+  {status==="ready"&&items.length>0?<PopoverListbox id={id+"-choices"} label="Suggested skills"
+    className="mt-2 max-h-48 overflow-y-auto p-1" onDismiss={() => setItems([])}>
+    <ul className="space-y-1">
     {items.map((item,index)=><li id={id+"-choice-"+index} key={item.id} role="option" aria-selected={activeIndex===index||item.displayName===value}>
       <Button type="button" variant="ghost" className="min-h-11 sm:min-h-9 w-full justify-start text-left text-sm"
        onClick={()=>{selectedSkill.current=item.displayName;onChange(item.displayName);setItems([]);setActiveIndex(-1);}}>
        {item.displayName}{item.category?<span className="ml-2 text-xs text-muted-foreground">{item.category}</span>:null}
       </Button>
     </li>)}
-  </ul>:null}
+  </ul>
+  </PopoverListbox>:null}
  </div>;
 }
