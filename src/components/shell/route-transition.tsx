@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import "./route-transition.css";
 
@@ -10,6 +10,7 @@ import "./route-transition.css";
 export function RouteTransition({children}:{children:ReactNode}) {
  const pathname=usePathname();
  const [leaving,setLeaving]=useState(false);
+ const recoveryTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
  useEffect(()=>{
   const onNavigate=(event:MouseEvent)=>{
    if(event.button!==0||event.metaKey||event.ctrlKey||event.altKey||event.shiftKey)return;
