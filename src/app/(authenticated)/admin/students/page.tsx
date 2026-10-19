@@ -44,7 +44,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
    return <div className="min-w-0 space-y-5">
     <ErrorState title="Student register unavailable"
      description="The selected college's student registration and import details could not be verified. No registration actions are available until the read succeeds."
-     action={<Link href="/admin/students" className="font-semibold text-[var(--lms-teal-deep)]">Retry student register</Link>}/>
+     action={<Link href="/admin/students" className="font-semibold text-primary-text">Retry student register</Link>}/>
    </div>;
   }
  }
@@ -58,8 +58,8 @@ export default async function SuperAdminStudentsPage({searchParams}:{
  });
  return <div className="min-w-0 space-y-4">
   {context.adminScope?.collegeId?<div className="flex flex-wrap items-center gap-3 border-b border-border pb-4">
-    <a href="#register-student" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Register New Student ↓</a>
-    <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" href="/admin/people">
+    <a href="#register-student" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Register New Student ↓</a>
+    <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text" href="/admin/people">
       Manage memberships, profiles and account status →
     </Link>
   </div>:null}
