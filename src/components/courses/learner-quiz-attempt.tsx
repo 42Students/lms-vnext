@@ -1,4 +1,6 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Radio } from "@/components/ui/radio";
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -373,7 +375,7 @@ export function LearnerQuizAttempt() {
                   : "No attempt is available to review."}
             </p>
           </div>
-          <button type="button" onClick={leaveQuiz} className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Back</button>
+          <Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)]">← Back</Button>
         </div>
         {deadlineMissing && !latestAttempt ? (
           <p role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
@@ -454,15 +456,15 @@ export function LearnerQuizAttempt() {
               <p role="status" className="mt-2 rounded-md border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>
             ) : null}
           </div>
-          <button type="button" onClick={leaveQuiz} className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back</button>
+          <Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)]">Back</Button>
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-body" aria-live="polite">
           <span>{answerProgress.answered} answered · {answerProgress.total-answerProgress.answered} unanswered</span>
           {answerProgress.firstUnanswered!==null ? (
-            <button type="button" onClick={() => setStep(answerProgress.firstUnanswered!)}
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text hover:bg-primary-subtle">
+            <Button type="button" onClick={() => setStep(answerProgress.firstUnanswered!)}
+              variant="secondary" className="min-h-11">
               Go to first unanswered
-            </button>
+            </Button>
           ) : <span className="font-semibold text-success">All questions answered</span>}
         </div>
         <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
@@ -475,7 +477,7 @@ export function LearnerQuizAttempt() {
           <p className="text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">Progress</p>
           <div className="mt-3 grid grid-cols-5 gap-2 lg:grid-cols-3">
             {questions.map((question, index) => (
-              <button
+              <Button
                 key={question.id}
                 type="button"
                 onClick={() => setStep(index)}
@@ -483,12 +485,11 @@ export function LearnerQuizAttempt() {
                   index,step,answers[question.id] ?? [],question.options.map(option=>option.id),
                 ).label}
                 aria-current={index === step ? "step" : undefined}
-                className={`min-h-11 rounded-md border text-sm font-semibold ${index === step ? "border-primary bg-primary text-on-primary" : learnerQuizQuestionNavState(
-                  index,step,answers[question.id] ?? [],question.options.map(option=>option.id),
-                ).answered ? "border-success bg-success-subtle text-foreground" : "border-border bg-surface text-body"}`}
+                variant={index === step ? "primary" : "secondary"}
+                className={`min-h-11 ${index !== step && learnerQuizQuestionNavState(index,step,answers[question.id] ?? [],question.options.map(option=>option.id)).answered ? "!border-[var(--lms-success)] !bg-[var(--lms-success-subtle)] !text-[var(--lms-body-text)]" : ""}`}
               >
                 {index + 1}
-              </button>
+              </Button>
             ))}
           </div>
         </aside>
@@ -506,10 +507,10 @@ export function LearnerQuizAttempt() {
               <div className="mt-5 space-y-3">
                 {current.options.map((option) => {
                   const checked = (answers[current.id] ?? []).includes(option.id);
+                  const ChoiceControl = current.type === "MULTIPLE_CHOICE" ? Checkbox : Radio;
                   return (
                     <label key={option.id} className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-surface-subtle p-4 hover:border-primary">
-                      <input
-                        type={current.type === "MULTIPLE_CHOICE" ? "checkbox" : "radio"}
+                      <ChoiceControl
                         name={current.id}
                         checked={checked}
                         onChange={() => choose(current.id, option.id, current.type === "MULTIPLE_CHOICE")}
@@ -521,31 +522,31 @@ export function LearnerQuizAttempt() {
                 })}
               </div>
               {(answers[current.id] ?? []).length > 0 ? (
-                <button type="button"
+                <Button type="button"
                   onClick={() => setAnswers(currentAnswers => clearLearnerQuizAnswer(currentAnswers,current.id))}
-                  className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+                  variant="secondary" className="mt-4 min-h-11">
                   Clear this answer
-                </button>
+                </Button>
               ) : null}
             </>
           ) : null}
           <div className="mt-6">
-            <button type="button" aria-expanded={showReview}
+            <Button type="button" aria-expanded={showReview}
               onClick={()=>setShowReview(value=>!value)}
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              variant="secondary" className="min-h-11">
               {showReview ? "Hide answer review" : "Review answers before submitting"}
-            </button>
+            </Button>
             {showReview ? (
               <section aria-label="Your quiz answer review" className="mt-3 rounded-xl border border-border bg-surface-subtle p-4">
                 <p className="text-sm text-body">Review your responses. These are not grading results.</p>
                 <ol className="mt-3 grid gap-2 sm:grid-cols-2">
                   {reviewRows.map((item,index)=>(
                     <li key={item.questionId}>
-                      <button type="button" onClick={()=>{setStep(index);setShowReview(false);}}
-                        className="flex min-h-11 sm:min-h-9 w-full items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-left text-sm text-primary-text">
+                      <Button type="button" onClick={()=>{setStep(index);setShowReview(false);}}
+                        variant="secondary" className="min-h-11 w-full justify-between gap-2 text-left">
                         <span>Question {index+1}</span>
                         <span>{item.answered ? item.selectedCount+" selected" : "Unanswered"}</span>
-                      </button>
+                      </Button>
                     </li>
                   ))}
                 </ol>

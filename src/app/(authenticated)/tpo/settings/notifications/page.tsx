@@ -71,7 +71,7 @@ export default async function TpoMyNotificationsPage({
           action={
             <Link
               href="/tpo/settings/notifications"
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
             >
               Clear filters
             </Link>
@@ -207,7 +207,7 @@ export default async function TpoMyNotificationsPage({
 
           <Link
             href="/tpo/settings/notifications"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Clear filters
           </Link>
@@ -289,7 +289,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Previous
               </Link>
@@ -302,7 +302,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Next
               </Link>

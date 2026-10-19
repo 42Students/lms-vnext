@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { useId, useState } from "react";
 
@@ -15,15 +16,15 @@ export function ExpandableCourseUpdate({ body }: { body: string }) {
         {expanded || !long ? body : `${body.slice(0, PREVIEW_LENGTH).trimEnd()}…`}
       </p>
       {long ? (
-        <button
+        <Button
           type="button"
           aria-controls={contentId}
           aria-expanded={expanded}
           onClick={() => setExpanded((value) => !value)}
-          className="min-h-10 text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+          variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] hover:underline"
         >
           {expanded ? "Show less" : "Read more"}
-        </button>
+        </Button>
       ) : null}
     </div>
   );

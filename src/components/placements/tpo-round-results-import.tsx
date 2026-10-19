@@ -62,9 +62,9 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     disabled={busy} onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}
     className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground md:min-h-9"/>
   </label>
-  <button type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
+  <Button variant="secondary" type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
-   {busy?"Checking…":"Preview matching results"}</button>
+   {busy?"Checking…":"Preview matching results"}</Button>
   {preview?<div className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
    <h3 className="font-semibold">Import preview</h3>
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>

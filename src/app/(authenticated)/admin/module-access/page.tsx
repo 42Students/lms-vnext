@@ -64,9 +64,9 @@ export default async function SuperAdminModuleAccessPage({
     </p>
     {result.items.length===0?<EmptyState title="No matching colleges"
       description="No college in the current scope matches these filters."/>:
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="divide-y divide-border border-y border-border">
         {result.items.map(college=><article key={college.id}
-          className="min-w-0 rounded-[12px] border border-border bg-surface p-4">
+          className="min-w-0 py-4">
           <h2 className="font-semibold text-foreground">{college.name}</h2>
           <p className="mt-1 text-sm text-body">{college.code}</p>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)}
