@@ -265,11 +265,11 @@ export function CollegeBrandingPreview({
           maths. This is not a live tenant-host login or a pixel-perfect legacy preview.
         </p>
         <div className="grid gap-5 lg:grid-cols-2">
-          <article className="rounded-[var(--college-card-radius,8px)] border border-border bg-surface p-4">
+          <article className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
             <h3 className="mb-3 text-sm font-semibold text-foreground">Desktop</h3>
             <SignInStylePreview branding={branding} mobile={false} />
           </article>
-          <article className="rounded-[var(--college-card-radius,8px)] border border-border bg-surface p-4">
+          <article className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
             <h3 className="mb-3 text-sm font-semibold text-foreground">Mobile</h3>
             <SignInStylePreview branding={branding} mobile />
           </article>
