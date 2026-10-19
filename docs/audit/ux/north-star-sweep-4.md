@@ -333,6 +333,20 @@
 - [ ] `src/app/(authenticated)/admin/organizations/loading.tsx`
 - [x] `src/app/(authenticated)/admin/organizations/page.tsx`
 
+
+### Super Admin tenant setup routes (10)
+
+- [ ] `src/app/(authenticated)/admin/tenants/create/error.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/create/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/error.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/layout.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/page.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/setup/error.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/setup/loading.tsx`
+- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+
 ### College-facing component library (21)
 
 - [x] `src/components/college/college-admin-profile-editor.tsx`
