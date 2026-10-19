@@ -9,10 +9,10 @@ export type SkeletonProps = {
 
 const shape = {
   line: "h-4 w-full",
-  card: "h-40 w-full",
-  kpi: "h-28 w-full",
-  row: "h-24 w-full",
-  form: "h-16 w-full",
+  card: "h-40 w-full rounded-[var(--lms-radius-card)]",
+  kpi: "h-28 w-full rounded-[var(--lms-radius-card)]",
+  row: "h-24 w-full rounded-[var(--lms-radius-sm)]",
+  form: "h-16 w-full rounded-[var(--lms-radius-control)]",
 } as const;
 
 export function Skeleton({ variant = "line", count = 1, label = "Loading…", className }: SkeletonProps) {
