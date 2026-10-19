@@ -1,2 +1,11 @@
 "use client";
-export default function ErrorView({reset}:{error:Error&{digest?:string};reset:()=>void}){return <main role="alert" className="space-y-3"><h2 className="font-semibold">Unable to load conversation</h2><p className="text-sm text-body">Message history could not be read. This does not mean there are no messages.</p><button type="button" onClick={reset} className="min-h-11 rounded-md border border-border px-4">Retry</button></main>;}
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+
+export default function ErrorView({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <main role="alert" className="space-y-4 border-b border-border pb-6">
+    <PageHeader title="Unable to load conversation" />
+    <p className="text-sm text-body">Message history could not be read. This does not mean there are no messages.</p>
+    <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
+  </main>;
+}
