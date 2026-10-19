@@ -36,6 +36,7 @@
   .lms-shell-frame article { break-inside:avoid; }
   .lms-shell-frame [data-slot="data-table"] td,
   .lms-shell-frame [data-slot="data-table"] th {
+    position:static !important;
     white-space:normal !important; overflow-wrap:anywhere;
   }
   .lms-shell-frame a[href] { text-decoration:underline; }
