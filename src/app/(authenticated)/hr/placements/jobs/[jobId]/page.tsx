@@ -278,7 +278,7 @@ export default async function HrPlacementJobPage({
             "Date to be decided")}
       />
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge
             tone={
@@ -337,7 +337,7 @@ export default async function HrPlacementJobPage({
       </section>
 
       {filters.tab === "overview" && !requestsTab && !discussionTab ? (
-        <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <section className="space-y-4 border-b border-border pb-4 sm:pb-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
               <p className="mt-1 text-sm text-body">Employer-visible pipeline for this college. Applicants are limited to records shared by the placement cell; offer history may contain multiple versions per recipient.</p></div>
@@ -502,7 +502,7 @@ export default async function HrPlacementJobPage({
           <button type="submit" className="min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Open drive discussion</button>
         </form>}
       </section>:null}
-      {requestsTab&&requestData?.party==="COMPANY" ? <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      {requestsTab&&requestData?.party==="COMPANY" ? <section className="space-y-4 border-b border-border pb-4 sm:pb-5">
         <h2 className="text-lg font-semibold text-foreground">Requests</h2>
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
         {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
@@ -510,7 +510,7 @@ export default async function HrPlacementJobPage({
          <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{requestData.pendingMessage}</p>}
       </section>:null}
       {filters.tab === "applicants" ? (
-        <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <section className="space-y-4 border-b border-border pb-4 sm:pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
             {applicants.rows.some(row=>row.status==="SUBMITTED") ? <Link
@@ -636,7 +636,7 @@ export default async function HrPlacementJobPage({
         </section>
       ) : null}
       {filters.tab === "offers" ? (
-        <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <section className="space-y-4 border-b border-border pb-4 sm:pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">Job offers · read only</h2>
             {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<Link href={"/api/placements/recruiter/jobs/"+workspace.job.id+"/offers/export?offerState="+filters.offerState}
@@ -772,7 +772,7 @@ export default async function HrPlacementJobPage({
               : "Stage employer outcomes here. The college placement team retains final apply authority."}
           </p>
         </div>
-        {filters.tab==="rounds"?<section className="mb-5 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        {filters.tab==="rounds"?<section className="mb-5 space-y-3 border-b border-border pb-4 sm:pb-5">
           <h3 className="font-semibold text-foreground">Scheduled rounds and potential time conflicts</h3>
           <p className="text-sm text-body">IST times from this employer-owned drive. Overlap is calculated only for rounds with recorded durations; room and interviewer availability is unknown.</p>
           <RecruiterRoundInlineEditor jobId={workspace.job.id}
@@ -831,7 +831,7 @@ export default async function HrPlacementJobPage({
         />
         ) : null}
 
-        {filters.tab === "rounds" ? <section className="mt-6 space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        {filters.tab === "rounds" ? <section className="mt-6 space-y-4 border-b border-border pb-4 sm:pb-5">
           <div>
             <h3 className="text-lg font-semibold text-foreground">Results from table</h3>
             <p className="mt-1 text-sm text-body">Authorized, placement-cell-shortlisted candidates only. STAGED means awaiting college review; APPLIED means official college-applied outcome.</p>
