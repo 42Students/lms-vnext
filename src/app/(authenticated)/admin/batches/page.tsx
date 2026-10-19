@@ -65,7 +65,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
               {[10,25,50,100].map(n=><option value={n} key={n}>{n}</option>)}
             </Select>
           </label>
-          <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</Button>
+          <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
           <Link href="/admin/batches" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
         </form>
