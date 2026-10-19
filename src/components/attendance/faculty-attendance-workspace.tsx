@@ -1,4 +1,5 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
 import {
   type FormEvent,
   useEffect,
@@ -1024,7 +1025,7 @@ export function FacultyAttendanceWorkspace({
               {selectedSession?.attendanceStatus==="MARKED"?(
                 <label className="mt-4 block space-y-2 text-sm font-semibold text-body">
                   Correction explanation (required)
-                  <textarea value={correctionReason} maxLength={500} rows={3}
+                  <Textarea value={correctionReason} maxLength={500} rows={3}
                     className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal"
                     placeholder="What changed in the recorded attendance?"
                     onChange={event=>setCorrectionReason(event.target.value)}/>
