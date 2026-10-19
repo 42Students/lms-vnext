@@ -92,7 +92,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                   aria-pressed={reason === preset}
                   onClick={() => setReason(preset)}
                   className={`min-h-11 md:min-h-9 rounded-full border px-3 text-sm font-medium ${reason === preset
-                    ? "border-primary bg-primary-soft text-foreground"
+                    ? "border-primary bg-primary-subtle text-foreground"
                     : "border-border bg-surface text-body hover:border-primary"}`}
                 >
                   {preset}

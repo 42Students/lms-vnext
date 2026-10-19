@@ -16,7 +16,7 @@ const label=(day:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",weekda
 const clock=(hour:number)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",hour:"numeric",hour12:true})
  .format(new Date(Date.UTC(2026,0,1,hour)));
 const kinds:Record<string,string>={ROUND:"Round",FOLLOW_UP:"Follow-up",APPLICATION_DEADLINE:"Deadline",INTERVIEW_SLOT:"Interview"};
-const tone=(kind:string)=>kind==="APPLICATION_DEADLINE"?"bg-warning-subtle text-warning-text":kind==="FOLLOW_UP"?
+const tone=(kind:string)=>kind==="APPLICATION_DEADLINE"?"bg-warning-subtle text-[var(--lms-gold-accent)]":kind==="FOLLOW_UP"?
  "bg-success-subtle text-success-text":"bg-primary-subtle text-primary-text";
 export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,blockedDates,blockedDatesAvailable}:{
  days:readonly string[];events:readonly WeekGridEvent[];collegeId:string;
