@@ -142,7 +142,7 @@ export function CollegeBrandingForm({
     <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <form
         onSubmit={save}
-        className="min-w-0 space-y-5 border-t border-border pt-6"
+        className="min-w-0 space-y-5 border-t border-border pt-6 print:hidden"
       >
         <div className="grid min-w-0 gap-4 md:grid-cols-2">
           {(["primaryColor", "secondaryColor"] as const).map((key) => (
@@ -166,7 +166,7 @@ export function CollegeBrandingForm({
                   disabled={!canEdit}
                   maxLength={7}
                   aria-invalid={Boolean(errors[key])}
-                  className="min-h-11 min-[768px]:min-h-9"
+                  className="min-h-11 md:min-h-9"
                 />
               </div>
               {errors[key] ? (
@@ -192,7 +192,7 @@ export function CollegeBrandingForm({
               placeholder={field.placeholder}
               disabled={!canEdit}
               aria-invalid={Boolean(errors[field.key])}
-              className="min-h-11 min-[768px]:min-h-9"
+              className="min-h-11 md:min-h-9"
             />
             {field.hint ? (
               <span className="mt-1 block text-xs text-muted-foreground">
@@ -246,7 +246,7 @@ export function CollegeBrandingForm({
             <span className="py-2 text-center text-body">Email</span>
           </div>
           <div className="mt-3 h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface" />
-          <div className="mt-3 flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] bg-primary text-sm font-semibold text-on-primary">
+          <div className="mt-3 flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary md:min-h-9 text-sm font-semibold text-on-primary">
             Send code
           </div>
           <p className="mb-0 mt-3 text-xs text-link">Resend code</p>
