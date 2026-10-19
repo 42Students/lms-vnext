@@ -1,6 +1,7 @@
 "use client";
 
 import { Select } from "@/components/ui/select";
+import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -81,26 +82,12 @@ export function FacultyCourseTabNavigation({
           Live Classes
         </Link>
       </div>
-      <nav aria-label="Faculty course tabs" className="flex max-w-full gap-1 overflow-x-auto border-b border-border pb-1" tabIndex={0}>
-        {facultyCourseTabs.map((tab) => {
-          const active = tab.path === activeTab;
-          return (
-            <Link
-              key={tab.path}
-              href={facultyCourseTabHref(deliveryId, tab.path)}
-              aria-current={active ? "page" : undefined}
-              className={
-                "inline-flex min-h-11 shrink-0 whitespace-nowrap items-center border-b-2 px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary " +
-                (active
-                  ? "border-primary text-primary-text"
-                  : "border-transparent text-body hover:border-border-strong hover:text-primary-text")
-              }
-            >
-              {tab.label}
-            </Link>
-          );
-        })}
-      </nav>
+      <Tabs ariaLabel="Faculty course tabs" value={activeTab} renderPanel={false}
+        items={facultyCourseTabs.map(tab => ({
+          value: tab.path,
+          label: tab.label,
+          href: facultyCourseTabHref(deliveryId, tab.path),
+        }))} />
     </div>
   );
 }
