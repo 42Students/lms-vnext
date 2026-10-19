@@ -104,7 +104,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
      columns={[
       {key:"row",header:"Row",mobilePriority:"primary",cell:row=>row.row},
       {key:"name",header:"Name",mobilePriority:"secondary",cell:row=>row.name},
-      {key:"result",header:"Result",mobilePriority:"secondary",cell:row=>row.status},
+      {key:"result",header:"Result",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="CREATED"?"success":row.status==="FAILED"?"error":"neutral"}>{row.status}</StatusBadge>},
       {key:"reason",header:"Reason",mobilePriority:"secondary",cell:row=>row.message},
      ]}/>
    </div>
