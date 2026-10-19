@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
+import styles from "./legacy-project-touch-actions.module.css";
 export function MentorSprintDeleteControl({projectId,sprintId,title,taskCount,updatedAt}:{
  projectId:string;sprintId:string;title:string;taskCount:number;updatedAt:string;
 }){
@@ -23,11 +24,11 @@ export function MentorSprintDeleteControl({projectId,sprintId,title,taskCount,up
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to delete sprint.");}
   finally{setBusy(false);}
  }
- return <><span className="inline-flex flex-col gap-1">
+ return <div className={styles.legacy+" "+styles.contents}><span className="inline-flex flex-col gap-1">
   <Button variant="danger" type="button" disabled={busy}
-   onClick={()=>void remove()} className="min-h-9 px-3">
+   onClick={()=>void remove()} className="min-h-11 px-3 md:min-h-9">
    {busy?"Deleting…":"Delete sprint"}
   </Button>
   {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
- </span>{dialog}</>;
+ </span>{dialog}</div>;
 }

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
+import styles from "./legacy-project-touch-actions.module.css";
 export function SuperAdminTemplateArchiveControl({templateId,title,status}:{
  templateId:string;title:string;status:string;
 }){
@@ -19,9 +20,9 @@ export function SuperAdminTemplateArchiveControl({templateId,title,status}:{
   }catch(e){setError(e instanceof Error?e.message:"Unable to archive template");}
   finally{setBusy(false);}
  }
- return <><span><Button type="button" variant="secondary" disabled={busy} onClick={()=>void archive()}
-    className="text-xs">
+ return <div className={styles.legacy+" "+styles.contents}><span><Button type="button" variant="secondary" disabled={busy} onClick={()=>void archive()}
+    className="">
     {busy?"Archiving…":"Archive"}</Button>
     {error?<span role="alert" className="block text-xs text-error">{error}</span>:null}
-  </span>{dialog}</>;
+  </span>{dialog}</div>;
 }
