@@ -35,7 +35,7 @@ export default async function FacultyResponseFollowUpsPage({
         Results overview
       </Link>} />
     <form action="/teacher/response-followups" method="get"
-      className="flex flex-wrap items-end gap-3">
+      className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
           placeholder="Course, Section or assessment"
