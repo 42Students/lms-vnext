@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { ErrorState } from "@/components/ui/error-state";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
+import styles from "@/components/hr/recruiter-calendar-legacy.module.css";
 import { Tabs } from "@/components/ui/tabs";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
@@ -395,7 +396,7 @@ export default async function HrCalendarPage({
                   href:calendarHref(anchor,option,category)}))}/>
             </div>
 
-            <div className="mt-5 flex flex-wrap items-center gap-2">
+            <div className={"mt-5 "+styles.nav}>
               <Link
                 href={calendarHref(
                   previous,
@@ -491,13 +492,13 @@ export default async function HrCalendarPage({
           {view !== "agenda" ? (
             <section
               aria-label={`${view} recruiter calendar`}
-              className="border-y border-border py-3 md:overflow-x-auto"
+              className={styles.boardFrame}
             >
               <div className="space-y-4 md:hidden">
                 {mobileDays.map((day) => (
-                  <article key={day.day} className="space-y-3 border-b border-border py-3">
+                  <article key={day.day} className={styles.mobileDay}>
                     <h3 className="text-sm font-semibold text-foreground">{dateLabel(day.day)}</h3>
-                    <div className="grid gap-3">
+                    <div className={styles.mobileEvents}>
                       {day.events.map((event) => (
                         <RecruiterCalendarEventCard key={event.id} event={event} />
                       ))}
@@ -517,7 +518,7 @@ export default async function HrCalendarPage({
                   </p>
                 ) : null}
               </div>
-              <CalendarGrid className="hidden min-w-[56rem] gap-2 md:grid">
+              <CalendarGrid className={"hidden md:grid "+styles.board}>
                 {[
                   "Mon",
                   "Tue",
@@ -529,7 +530,7 @@ export default async function HrCalendarPage({
                 ].map((label,index) => (
                   <div
                     key={label}
-                    className={"py-3 text-center text-xs font-bold uppercase text-muted-foreground "+(index===6?calendarStyles.calendarSunday:"")}
+                    className={styles.dayHead+" "+(index===6?calendarStyles.calendarSunday:"")}
                   >
                     {label}
                   </div>
@@ -552,12 +553,9 @@ export default async function HrCalendarPage({
                     <div
                       key={day}
                       aria-label={`${dateLabel(day)}: ${events.length + resultsDue.length} events`}
-                      className={
-                        "min-h-32 rounded-[var(--lms-control-radius)] border border-border p-2 " +
-                        (outsideMonth
-                          ? "bg-muted/40"
-                          : "bg-muted")
-                      }
+                      data-today={isToday}
+                      data-outside={outsideMonth}
+                      className={styles.day}
                     >
                       <p
                         className={
@@ -586,9 +584,9 @@ export default async function HrCalendarPage({
                               key={event.id}
                               href={href}
                               title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                              className="block rounded-[var(--lms-control-radius)] bg-primary-subtle px-2 py-2 text-xs text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9"
+                              className={styles.event}
                             >
-                              <span className="block font-semibold">
+                              <span className={styles.time+" block font-semibold"}>
                                 {eventTime(
                                   event.startsAt,
                                 )}
@@ -604,7 +602,7 @@ export default async function HrCalendarPage({
                         {resultsDue.map((item) => (
                           <Link key={"due:" + item.id} href={hrResultsDueHref(item.jobId,item.id)}
                             title={"Results due at " + eventTime(item.dueAt) + " IST"}
-                            className="block rounded-[var(--lms-control-radius)] border border-warning/40 bg-surface px-2 py-2 text-xs text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
+                            className={styles.event+" "+styles.due}>
                             <span className="block font-semibold">Results due · {eventTime(item.dueAt)}</span>
                             <span className="mt-1 block break-words">{item.roundName}</span>
                           </Link>
