@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import { Tabs } from "@/components/ui/tabs";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
@@ -208,17 +209,7 @@ export default async function TpoAuditPage({
             count: summary.canonicalEvents,
           },
         ].map((metric) => (
-          <article
-            key={metric.label}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
-          >
-            <p className="m-0 text-xs font-semibold text-muted-foreground">
-              {metric.label}
-            </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {metric.count}
-            </p>
-          </article>
+          <StatTile key={metric.label} label={metric.label} value={metric.count} />
         ))}
       </section>
 
