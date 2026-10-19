@@ -52,7 +52,8 @@ export function TopbarOrganizationSwitcher({
       title={organizationName} aria-label={"Switch workspace, current "+organizationName}
       aria-haspopup="dialog" aria-expanded={open} aria-keyshortcuts="ArrowDown"
       aria-controls={open?"lms-topbar-org-switcher":undefined}
-      onClick={()=>setOpen(value=>!value)}>
+      onClick={()=>setOpen(value=>!value)}
+      onKeyDown={event=>{if(event.key==="ArrowDown"){event.preventDefault();setOpen(true);}}}>
       <span className={style.orgName}>{organizationName}</span>
       <ChevronIcon/>
     </button>
