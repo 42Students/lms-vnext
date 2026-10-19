@@ -105,7 +105,7 @@ export function FacultyCourseHomeSignals({
           </div>
           <Link
             href={reviewHref}
-            className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
           >
             {firstPending
               ? "Review work"
