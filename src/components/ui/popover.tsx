@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, type ComponentPropsWithoutRef } from "react";
+import { forwardRef, type ComponentPropsWithoutRef, type KeyboardEvent } from "react";
 import { cx } from "@/lib/class-names";
 
 /**
@@ -26,9 +26,29 @@ export const PopoverPanel = forwardRef<HTMLElement, PopoverPanelProps>(
  * search field inert. Native links inside remain real navigation targets. */
 export type PopoverListboxProps = Omit<ComponentPropsWithoutRef<"div">, "role" | "aria-label"> & {
   label: string;
+  onDismiss?: () => void;
 };
-export function PopoverListbox({ label, children, className, ...props }: PopoverListboxProps) {
-  return <div {...props} data-slot="popover-listbox" role="listbox" aria-label={label}
+export function PopoverListbox({ label, children, className, onDismiss, onKeyDown, ...props }: PopoverListboxProps) {
+  function handleKey(event: KeyboardEvent<HTMLDivElement>) {
+    onKeyDown?.(event);
+    if (event.defaultPrevented) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      onDismiss?.();
+      event.currentTarget.parentElement?.querySelector<HTMLInputElement>("input")?.focus();
+      return;
+    }
+    if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+    const links = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('a[href]:not([aria-disabled="true"])'));
+    if (!links.length) return;
+    const index = links.indexOf(document.activeElement as HTMLElement);
+    const next = event.key === "Home" ? 0 : event.key === "End" ? links.length - 1 :
+      event.key === "ArrowUp" ? (index < 0 ? links.length - 1 : (index - 1 + links.length) % links.length) :
+      (index + 1) % links.length;
+    event.preventDefault();
+    links[next]?.focus();
+  }
+  return <div {...props} onKeyDown={handleKey} data-slot="popover-listbox" role="listbox" aria-label={label}
     className={cx("min-w-0 overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-white p-2 shadow-[var(--lms-overlay-shadow)]", className)}>
     {children}
   </div>;
