@@ -1,6 +1,8 @@
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { DataTable } from "@/components/ui/data-table";
+import { Tabs } from "@/components/ui/tabs";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
