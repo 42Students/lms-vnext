@@ -152,7 +152,7 @@ export function LearnerCareerCalendar({
               aria-pressed={view === option}
               onClick={() => changeCalendar({view:option})}
               className={view === option
-                ? "min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-3 text-[14px] font-[650] capitalize text-on-primary sm:min-h-9"
+                ? "min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-[650] capitalize text-[var(--lms-on-primary)] sm:min-h-9"
                 : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold capitalize text-body sm:min-h-9 hover:text-primary-text"}
             >
               {option}
@@ -209,7 +209,7 @@ export function LearnerCareerCalendar({
       </section>
 
       {view === "month" ? (
-        <section className="flex flex-wrap gap-3 rounded-xl border border-border bg-surface p-3 text-sm text-body" aria-label="Selected month round totals">
+        <section className="flex flex-wrap gap-3 border-b border-border pb-4 text-sm text-body" aria-label="Selected month round totals">
           <strong className="text-foreground">{new Intl.DateTimeFormat("en-IN",{month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(period.start+"T12:00:00Z"))}: {monthCounts.total} scheduled round{monthCounts.total===1?"":"s"}</strong>
           <span>{monthCounts.assessments} assessments</span>
           <span>{monthCounts.interviews} interviews</span>
