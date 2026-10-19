@@ -303,7 +303,7 @@ Do not edit shared `src/app/globals.css`, `src/components/ui/**`, `src/component
 ## Progress log
 
 - Inventory created against latest main tree after fast-forwarding chat-7 branch to main.
-- UI edits: in progress. 62 files listed in the two completed visual batches have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
+- UI edits: in progress. 95 distinct files listed in the three completed visual batches have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
 
 
 ## Completed visual edits — 2026-10-19 (first sweep batch)
@@ -377,3 +377,41 @@ Changes include 9px semantic control radii, 36px desktop / 44px mobile touch hei
 - [x] `src/app/(authenticated)/learn/profile/error.tsx`
 
 Additional controls now use semantic colors/radii and mobile touch targets; learner quiz/assignment detail links no longer use raw teal aliases, and one course-workspace back link no longer renders white text on a white button. Attendance/calendar and profile pages shed redundant shell-like filter/intro cards. Eight learner error pages now use the shared outer canvas instead of nesting another full-page white card. Loading/error routes that delegate to shared graceful components were inspected without altering shared ownership files. Static edited-source JSX close-tag checks only; project tests, typecheck, execution, and CI not run. The rest of the inventory remains for follow-on audit.
+
+## Completed visual edits — continued learner routes and fallbacks (33 files)
+
+- [x] `src/app/(authenticated)/learn/profile/completeness/error.tsx`
+- [x] `src/app/(authenticated)/learn/profile/verification/error.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/calendar/error.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/not-found.tsx`
+- [x] `src/app/(authenticated)/learn/profile/loading.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/loading.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/loading.tsx`
+- [x] `src/components/profile/learner-verification-withdraw.tsx`
+- [x] `src/components/courses/learner-roadmap-item-dialog.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/error.tsx`
+- [x] `src/app/(authenticated)/learn/projects/error.tsx`
+
+Retained learner placements/projects data, behavior, and page contents while aligning local link colors, buttons, warning banners, 9px control corners, and exception/skeleton states. Removed duplicated page-size cards within the authenticated white canvas. Normalized verification action styling and profile skill input focus. The extra touches to previously marked files reflect continued file-by-file polish. The remainder of the inventory is still open. No app execution, CI, lint, typecheck, tests or deployment; edited JSX closing-tag string checks only.
