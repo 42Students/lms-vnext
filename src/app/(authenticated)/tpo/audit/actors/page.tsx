@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
@@ -150,15 +151,7 @@ export default async function TpoActorAuditPage({
             <span title="No safe direct page is registered for this entity type">{row.entityId}</span>},
         ]}
       />
-      <nav aria-label="Actor audit pagination" className="flex items-center justify-between gap-3 text-sm">
-        <span>Page {data.page} of {data.totalPages}</span>
-        <div className="flex gap-4">
-          {data.page > 1 && <Link href={urlForPage(data.page - 1)}
-            className="font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>}
-          {data.page < data.totalPages && <Link href={urlForPage(data.page + 1)}
-            className="font-semibold text-[var(--lms-teal-deep)]">Next →</Link>}
-        </div>
-      </nav>
+      <Pagination label="Actor audit pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>urlForPage(page)}/>
     </section>
     <p className="text-xs text-muted-foreground">
       TPO-only tenant scope. Export is capped at 2,000 rows and uses neutralized CSV
