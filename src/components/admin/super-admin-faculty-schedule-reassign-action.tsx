@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {Select} from "@/components/ui/select";
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -48,15 +49,15 @@ export function SuperAdminFacultyScheduleReassignAction({
     });
   }
   return <div className="space-y-2">
-    <Button variant="secondary" size="sm" disabled={pending||choices.length===0}
+    <Button variant="secondary" size="md" disabled={pending||choices.length===0}
       onClick={()=>{setOpen(true);setError("");}}>
       Reassign class schedules
     </Button>
-    {report?<p role="status" className="text-xs text-body">
+    {report?<Alert tone="success">
       Reassigned {report.reassigned} of {report.total} upcoming session(s).
       {report.skippedConflicts>0?" "+report.skippedConflicts+" conflicting session(s) kept with the original faculty.":""}
-    </p>:null}
-    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+    </Alert>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
     <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}}
       title="Reassign class schedules"
       description={"Move future scheduled sessions from "+sourceName+" to another active faculty member. Conflicts are skipped, never double-booked."}
@@ -65,7 +66,7 @@ export function SuperAdminFacultyScheduleReassignAction({
         <Button disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Review transfer</Button>
       </>}>
       <label htmlFor={id} className="mb-2 block text-[13px] font-semibold text-body">Replacement faculty</label>
-      <Select id={id} className="min-h-11 w-full min-[768px]:min-h-9"
+      <Select id={id} className="min-h-11 w-full md:min-h-[var(--lms-control-height)]"
         value={replacementMembershipId} onChange={event=>setReplacementMembershipId(event.target.value)}>
         <option value="">Select faculty</option>
         {choices.map(item=><option key={item.membershipId} value={item.membershipId}>{item.displayName}</option>)}
