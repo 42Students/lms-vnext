@@ -145,3 +145,27 @@ This is a source inventory, **not** visual parity. Do not infer an email or lett
 - **Next file:** `src/components/placements/report-interactive-table-export-model.ts`, checking exact export header names and ordering against the legacy grid/export documentation; do not conflate G4's report CSV with the E8 owner lane's AG Grid exporting.
 
 G4 and G5 remain unticked under the STRICT TICK RULE; no tests, parser, typecheck, runtime or CI were invoked in this lane.
+
+## One-hour G4/G5 sprint continuation, 2026-10-19 — strict-tick source evidence
+
+### Main synchronization and report export model
+- Fast-forwarded `chatgpt/chat-6-b` onto `main` commit `3a77aebd651756d5a16b9fea375ffc276fa4404b` before edits; previous 30 lane commits had already been incorporated into main. This sprint owns only new [chat-6] lane commits.
+- Read `src/components/placements/report-interactive-table-export-model.ts` and `report-interactive-table-download-model.ts`: exported column order is the caller's `headings` order filtered by visible columns; CSV values are quoted and neutralized for formula-starting strings; CSV receives BOM at browser-download boundary; name helper is `report-<slug>.csv`. No value guessing or rewrite of the model was justified.
+- `docs/design/legacy-grid/gridExport.js.txt` is **not in the current main tree**; neither this file nor any `docs/design/legacy-grid/*` entry appeared in the recursive tree listing. As such exact old AG Grid export header/filename matching is NOT verified. E8 AG Grid itself remains the separate owner lane's responsibility.
+- `src/components/placements/report-interactive-table.tsx` now visibly distinguishes sorted headings, reports selected/total column count, labels copy/export by shown-row count, and suppresses its toolbars on paper via a scoped `data-report-toolbar` marker. No raw controls were introduced.
+- `src/app/(authenticated)/authenticated-print.css` hides those marked report toolbars, neutralizes mobile card/padding on table rows, and still does not set an invented legacy print @page/margin/font.
+
+### Import wizard judgement states
+- `src/components/college/college-student-csv-import.tsx`: removed an actual stray literal `-` from section classes and removed redundant primary visual overrides from import confirmation.
+- `src/components/tpo/tpo-batch-eligibility-import.tsx`: removed the nested drag/drop handler surrounding the shared FileUpload (which already owns drop interaction), retaining CSV instructions and download; validation outcomes now have neutral/success/warning StatusBadge semantics.
+- `src/components/tpo/tpo-academic-import-workspace.tsx`: matched vs unmatched academic import rows now show shared success/warning status pills.
+- `src/components/placements/tpo-round-results-import.tsx`: staging outcome pills and error tones; removed ordinary card shells around missing-candidate review, policy group and staged results.
+- `src/components/placements/tpo-selection-import.tsx`: removed the nested border card around unmatched selection rows and applies semantic error tone.
+- `src/components/admin/college-bulk-import.tsx`: CREATED/SKIPPED/FAILED result pills; removed duplicate scroll container around DataTable and used semantic error tone.
+- `src/components/tpo/recruiter-lead-csv-import.tsx`: preview and results status pills; old-LMS slim pale warning strip before confirm; focus/copy status text. Row result CSV now reuses `safeReportCsvCell` for formula neutralization while preserving original header `Row,Status,Reason` and filename `recruiter-import-results.csv`.
+- These are scoped SOURCE inspections only, not runtime screenshots or legacy property-value proof. No semantic input field, confirmation, post endpoint or return value was deliberately changed.
+
+### Remaining strict-tick conditions
+- [ ] **G4 still OPEN:** exhaustive legacy source-value tables for every wizard/report visual property and default/hover/active/focus/loading/error states; repository-wide grep counts; phone/tablet screenshots; legacy grid export source absent. This turn did not invoke scripts/tests/typecheck/CI.
+- [ ] **G5 still OPEN:** no provider-hosted ZeptoMail/other email HTML, old PDF/certificate/letter/receipt templates or actual printed samples in checked-in references; cannot attest to exact font, header/footer, branded button, margin or pagination parity. `authenticated-print.css` is a conservative baseline, NOT a cloned old-LMS print template.
+- [ ] **Next work:** `src/components/courses/faculty-report-download.tsx` — compare PDF link wording/state, then `src/modules/courses/faculty-report-pdf.ts` with actual legacy print evidence if supplied; finish unresolved email template source capture once hosted HTML is available.
