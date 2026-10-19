@@ -78,6 +78,8 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         eyebrow="Super Admin · Platform"
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
+        actions={<Link href="/admin/settings/auth"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Authentication and privileged access checklist →</Link>}
       />
 
       <section aria-label="Tenant Settings overview" className="border-b border-border pb-5">
@@ -123,10 +125,6 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
-      <Link href="/admin/settings/auth"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">
-        Authentication and privileged access checklist →
-      </Link>
 
       <form className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
