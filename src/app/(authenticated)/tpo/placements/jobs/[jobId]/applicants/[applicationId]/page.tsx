@@ -2,6 +2,8 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
 import {TpoApplicantReviewForm} from "@/components/placements/tpo-applicant-review-form";
 import {canReviewApplicant} from "@/modules/placements/tpo-applicant-review-model";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -50,8 +52,8 @@ export default async function TpoApplicantDetailPage({params}:Params){
    snapshot={notes} audience="the college placement cell (TPO)"/>
   <section className="border-b border-border pb-6">
    <h2 className="font-semibold text-foreground">Applied round outcomes</h2>
-   {data.resultsTruncated?<p role="status" className="text-sm text-body">Only 100 applied result versions examined.</p>:null}
-   {data.appliedRoundResults.length===0?<p className="mt-2 text-sm text-body">No applied round outcomes recorded for this application.</p>:
+   {data.resultsTruncated?<Alert tone="warning">Only 100 applied result versions examined.</Alert>:null}
+   {data.appliedRoundResults.length===0?<EmptyState title="No applied round outcomes recorded for this application."/>:
     <div className="mt-3 grid gap-3">{data.appliedRoundResults.map(r=>
      <article key={r.roundId} className="rounded-[var(--lms-control-radius)] border border-border p-3">
       <h3 className="font-semibold text-foreground">{r.roundName}</h3>
@@ -61,8 +63,8 @@ export default async function TpoApplicantDetailPage({params}:Params){
   </section>
   <section className="border-b border-border pb-6">
    <h2 className="font-semibold text-foreground">Offer and joining evidence</h2>
-   {data.offersTruncated?<p role="status" className="text-sm text-body">Only the latest 100 offer versions examined.</p>:null}
-   {data.offers.length===0?<p className="mt-2 text-sm text-body">No persisted offer versions for this application.</p>:
+   {data.offersTruncated?<Alert tone="warning">Only the latest 100 offer versions examined.</Alert>:null}
+   {data.offers.length===0?<EmptyState title="No persisted offer versions for this application."/>:
     <div className="mt-3 grid gap-3">{data.offers.map(offer=>
      <article key={offer.offerId} className="rounded-[var(--lms-control-radius)] border border-border p-3">
       <h3 className="font-semibold text-foreground">{offer.roleTitle} · Version {offer.version}</h3>
