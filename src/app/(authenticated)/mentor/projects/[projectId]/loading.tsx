@@ -1,5 +1,5 @@
 import { PageLoading } from "@/components/ui/page-loading";
 
 export default function LoadingMentorProject() {
-  return <PageLoading label="Loading project…" variant="card" count={3} />;
+  return <PageLoading label="Loading project…" variant="row" count={3} />;
 }
