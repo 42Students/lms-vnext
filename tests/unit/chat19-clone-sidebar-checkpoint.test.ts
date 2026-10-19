@@ -28,4 +28,10 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(sidebar()).toContain("background:#fff;");
  expect(sidebar()).toContain("border-right:1px solid #f1f4f9;");
 });
+ it("matches 44px navigation items and 8px corners",()=>{
+ expect(legacy()).toContain("border-radius: 8px; min-height: 44px; padding: 10px 12px");
+ expect(sidebar()).toContain("min-height:44px;");
+ expect(sidebar()).toContain("padding:10px 12px;");
+ expect(sidebar()).toContain("border-radius:8px;");
+});
 });
