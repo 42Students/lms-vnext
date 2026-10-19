@@ -111,8 +111,8 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
       <Checkbox checked={acknowledged} onChange={e=>setAcknowledged(e.target.checked)}/>
       I have checked their documents by another method. Each verification will be recorded with my name.
      </label>}
-    <Button variant="secondary" type="button" disabled={bulkBusy||!applicable.length||bulkAction==="VERIFY"&&!acknowledged||bulkAction==="SEND_BACK"&&reason.trim().length<3}
-     onClick={()=>void submitBulk()} variant="primary" className="min-h-11">
+    <Button variant="primary" type="button" disabled={bulkBusy||!applicable.length||bulkAction==="VERIFY"&&!acknowledged||bulkAction==="SEND_BACK"&&reason.trim().length<3}
+     onClick={()=>void submitBulk()} className="min-h-11">
      {bulkBusy?"Processing…":"Confirm "+applicable.length+" selected"}
     </Button>
    </div>:null}
@@ -126,8 +126,8 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    onReview={row=>{setSequence([]);setSequenceIndex(0);setSelected(row);}}/>
   <nav aria-label="Verification pages" className="flex flex-wrap gap-3 text-sm">
    <span>Showing {rows.length} of {total} in this status</span>
-   {page>1?<Button variant="secondary" type="button" onClick={()=>navigate({page:String(page-1)})} variant="ghost" className="min-h-11 underline">Previous</Button>:null}
-   {hasMore?<Button variant="secondary" type="button" onClick={()=>navigate({page:String(page+1)})} variant="ghost" className="min-h-11 underline">Next</Button>:null}
+   {page>1?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page-1)})} className="min-h-11 underline">Previous</Button>:null}
+   {hasMore?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page+1)})} className="min-h-11 underline">Next</Button>:null}
   </nav>
   {selected?<VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
    row={selected} apiBase="/api/admin/verification"
