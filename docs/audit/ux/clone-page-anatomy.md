@@ -230,3 +230,7 @@ Note: three connector read timeouts occurred on the first attempt for the learne
 - [ ] **Next exact file:** `src/app/(authenticated)/learn/courses/error.tsx` — replace conditional dynamic `<h1>` with `PageHeader` safely, then audit its title-dependent error state; after that, inventory other JSX expression headings and breadcrumbs in the Super Admin last-third and Projects admin delegated components.
 
 **Category summary:** no top-level B5/B6/E6 ticks added; the ledger is a record of bounded work, not full pixel-level certification.
+
+## SMARTER PLAN codemod delegation
+
+- [ ] **SMARTER PLAN codemod (chat-9, orchestration pending):** `scripts/codemods/chat9-page-header.cjs` scans authenticated `src/app/(authenticated)/**/*.tsx` plus authenticated workspace `src/components/{activity,admin,announcements,attendance,college,courses,hr,learn,learner,mentor,messaging,placements,profile,projects,tpo,verification}/**/*.tsx`; converts safe own `<h1>` title blocks to shared `PageHeader` with expression/ID preservation and simple inline subtitles, skips complex/action headers and public/overlay markup; dry-run `node scripts/codemods/chat9-page-header.cjs`, apply `node scripts/codemods/chat9-page-header.cjs --apply` (or `--scope=app|components --only=projects`); orchestrator must run locally, review skipped headings, typecheck, and commit transformed pages; B5/B6/E6 and breadcrumbs/responsive proof remain unticked.
