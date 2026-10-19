@@ -20,12 +20,12 @@ export function DisabledReason({ reason, children }: { reason: string; children:
   const describedBy = [...new Set([...existing.split(/\s+/).filter(Boolean), id])].join(" ");
   const control = action ? cloneElement(action, { "aria-describedby": describedBy }) : children;
   return (
-    <span className="inline-flex min-w-0 flex-col gap-1" title={reason}
+    <span data-slot="disabled-reason" className="inline-flex min-w-0 flex-col gap-1 rounded-[9px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7]" title={reason}
       role={disabled ? "group" : undefined}
       tabIndex={disabled ? 0 : undefined}
       aria-describedby={disabled ? id : undefined}>
       {control}
-      <span id={id} className="text-xs text-muted-foreground">{reason}</span>
+      <span id={id} className="text-[12px] leading-[18px] text-[#a9a7ae]">{reason}</span>
     </span>
   );
 }

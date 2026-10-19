@@ -39,8 +39,8 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
 
  return <div className="min-w-0 space-y-3">
   {rows.length===0?<p role="status" className="rounded-xl border border-border p-5">No inbound messages match these filters.</p>:
-   <div className="grid min-w-0 gap-3">
-    {rows.map(row=><article key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+   <div className="min-w-0 divide-y divide-border border-y border-border">
+    {rows.map(row=><article key={row.id} className="min-w-0 py-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
        <h2 className="min-w-0 break-words text-base font-semibold">{row.subject||"(No subject)"}</h2>
        <StatusBadge>{({NEW:"To read",TRIAGED:"Being handled",RESOLVED:"Done"} as Record<string,string>)[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>
@@ -63,7 +63,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
     <div className="mt-4 flex flex-wrap gap-2">
      {inboundMailStatusActions(overrides[selected.id]?.status??selected.status).map(action=>
       <button key={action.status} type="button" disabled={busy} onClick={()=>void change(selected,action.status)}
-       className={action.status==="RESOLVED"?"min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] disabled:opacity-50":"min-h-11 rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"}>
+       className={action.status==="RESOLVED"?"min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] disabled:opacity-50":"min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"}>
        {busy?"Saving…":action.label}
       </button>)}
     </div>
