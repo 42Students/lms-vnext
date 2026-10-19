@@ -40,7 +40,7 @@ export function LearnerNotificationBell(){
    setCount(body.notifications.filter(item=>item.notification.readAt===null).length);
    setError("");setEverLoaded(true);
   }catch{setError("Notifications could not be loaded. Retry without leaving this page.");}
-  finally{setLoading(false);}
+  finally{setLoading(false);refreshInFlight.current=false;}
  },[]);
  useEffect(()=>{
   // eslint-disable-next-line react-hooks/set-state-in-effect -- initial and 30s polling load.
