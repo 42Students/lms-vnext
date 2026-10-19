@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {projectMutation} from "./project-api";
+import styles from "./legacy-project-touch-actions.module.css";
 
 export function MentorProjectCloseoutControl({
   projectId,expectedUpdatedAt,
@@ -32,7 +33,7 @@ export function MentorProjectCloseoutControl({
     }catch{setError("Project completion could not be saved. Please check the project status and try again.");}
     finally{setPending(false);}
   }
-  return <div className="space-y-3">
+  return <div className={"space-y-3 "+styles.legacy}>
     {labels.map((label,i)=><label key={label}
       className="flex min-h-11 min-w-0 items-start gap-3 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body last:border-b-0">
       <input type="checkbox" checked={checks[i]??false}
