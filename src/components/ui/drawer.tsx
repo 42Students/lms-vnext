@@ -6,6 +6,7 @@ import { ScrollCue } from "@/components/ui/scroll-cue";
 import { cx } from "@/lib/class-names";
 import { OverlayCloseIcon } from "@/components/ui/overlay-close-icon";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
+import { useOverlayExit } from "@/components/ui/use-overlay-exit";
 
 export type DrawerProps = {
   open: boolean;
@@ -29,12 +30,7 @@ export function Drawer({ open, onOpenChange, title, description, children, foote
   const titleId = useId();
   const descriptionId = useId();
   const { availableHeight, viewportTop } = useOverlayWebview({ open, dismissible, historyMode, onDismiss: () => onOpenChange(false) });
-  useEffect(() => {
-    const modal = ref.current;
-    if (!modal) return;
-    if (open && !modal.open) { opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; modal.showModal(); }
-    else if (!open && modal.open) { modal.close(); opener.current?.focus(); }
-  }, [open]);
+  useOverlayExit(ref, opener, open, 200);
   return <dialog ref={ref} data-slot="drawer" data-side={side} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
     onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
     onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
