@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import { Button } from "@/components/ui/button";
 
@@ -13,9 +14,7 @@ export default function RecruiterProfileError({
       role="alert"
       className="space-y-4"
     >
-      <h1 className="text-[30px] font-semibold text-[var(--lms-heading)]">
-        Couldn&apos;t load your recruiter profile
-      </h1>
+      <PageHeader title={"Couldn't load your recruiter profile"} />
       <p className="mt-2 max-w-xl text-sm leading-6 text-body">
         Your account or college access details could not
         be retrieved. No access status or grant date is
