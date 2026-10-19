@@ -141,19 +141,19 @@ export function LearnerNotificationsInbox({
             onChange={event=>setSearch(event.target.value)}
             onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applySearch();}}}
             placeholder="Search title or message"
-            className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
+            className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
         </label>
         <button type="button" aria-pressed={unread==="unread"}
           onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
-          className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground">
           {unread==="unread"?"Unread only ✓":"Unread only"}
         </button>
         <button type="button" onClick={applySearch}
-          className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
           Apply search
         </button>
         <button type="button" disabled={!filtered} onClick={resetFilters}
-          className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
           Clear filters
         </button>
       </div>
@@ -233,14 +233,14 @@ export function LearnerNotificationsInbox({
               <Link
                 href={learnerNotificationPlacementAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
+                className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
               >
                 {learnerNotificationPlacementAction(selected?.actionHref)?.label??"Open details"}
               </Link>
             ) : null}
             {selected?.source==="ANNOUNCEMENT"&&selected.externalCta?
               <a href={selected.externalCta.href} target="_blank" rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
                 {selected.externalCta.label} ↗
               </a>:null}
             <Button onClick={() => setSelected(null)}>Got it</Button>
