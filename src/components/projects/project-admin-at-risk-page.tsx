@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { parseProjectAdminRiskQuery } from "@/modules/projects/admin-risk-query-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
@@ -95,9 +96,7 @@ export async function ProjectAdminAtRiskPage({
       <ListToolbar label="At-risk workspaces" viewCount={result.total} />
 
       {!result.items.length ? (
-        <section className="border-b border-border py-6 text-sm text-muted-foreground">
-          No at-risk project workspaces match these filters.
-        </section>
+        <EmptyState title="No at-risk projects" description="No at-risk project workspaces match these filters."/>
       ) : (
         <div className="divide-y divide-border">
           {result.items.map((project) => (
