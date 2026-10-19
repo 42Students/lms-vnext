@@ -38,6 +38,9 @@
   [data-slot="dialog"] > div > div:last-child:not(:first-child):has(button) {
     gap: 8px;
   }
+  [data-slot="dialog"] > div > div:last-child:not(:first-child) button {
+    min-height: 44px;
+  }
 }
 [data-slot="drawer"] > div > header {
   background: var(--lms-neutral-50);
