@@ -66,7 +66,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
      ["Students",String(report.students)],
      ["Not started",String(report.notStarted)],
      ["Items measured",String(report.itemsMeasured)],
-    ].map(([label,value])=><StatTile key={label} label={label} value={value} className="p-3 sm:p-3" />)}
+    ].map(([label,value])=><StatTile key={label} label={label} value={value} className="p-3" />)}
    </div>
    <Link prefetch={false} download
     href={"/api/courses/college/learner-progress/export?"+
