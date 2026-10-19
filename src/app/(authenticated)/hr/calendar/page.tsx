@@ -246,7 +246,7 @@ export default async function HrCalendarPage({
   if (Object.values(query).some(Array.isArray)) {
     return <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="Calendar" />
-      <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
+      <p role="alert" className="border-b border-border py-4 text-sm text-body">
         Invalid calendar filters.
       </p>
       <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text underline">
@@ -503,11 +503,11 @@ export default async function HrCalendarPage({
           {view !== "agenda" ? (
             <section
               aria-label={`${view} recruiter calendar`}
-              className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 md:overflow-x-auto"
+              className="border-y border-border py-3 md:overflow-x-auto"
             >
               <div className="space-y-4 md:hidden">
                 {mobileDays.map((day) => (
-                  <article key={day.day} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
+                  <article key={day.day} className="space-y-3 border-b border-border py-3">
                     <h3 className="text-sm font-semibold text-foreground">{dateLabel(day.day)}</h3>
                     <div className="grid gap-3">
                       {day.events.map((event) => (
