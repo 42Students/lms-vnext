@@ -303,4 +303,37 @@ Do not edit shared `src/app/globals.css`, `src/components/ui/**`, `src/component
 ## Progress log
 
 - Inventory created against latest main tree after fast-forwarding chat-7 branch to main.
-- UI edits: pending file-by-file audit.
+- UI edits: in progress. First 27 files below have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
+
+
+## Completed visual edits — 2026-10-19 (first sweep batch)
+
+- [x] `src/components/courses/admin-offering-section-preview.tsx`
+- [x] `src/components/courses/admin-course-actions.tsx`
+- [x] `src/components/courses/admin-course-overview.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/learner-course-attendance.tsx`
+- [x] `src/components/courses/learner-course-list.tsx`
+- [x] `src/components/courses/super-admin-course-bulk-visibility.tsx`
+- [x] `src/components/courses/super-admin-lesson-bulk-visibility.tsx`
+- [x] `src/components/courses/admin-offering-learning-overview.tsx`
+- [x] `src/components/courses/learner-course-tabs.tsx`
+- [x] `src/components/courses/learner-quiz-attempt.tsx`
+- [x] `src/components/courses/assignment-submission-control.tsx`
+- [x] `src/components/courses/lesson-resource-materials-control.tsx`
+- [x] `src/components/courses/super-admin-content-directory-page.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-workspace.tsx`
+- [x] `src/components/courses/admin-assessment-read-directory.tsx`
+- [x] `src/components/courses/admin-offering-teachers-panel.tsx`
+- [x] `src/components/courses/super-admin-content-actions.tsx`
+- [x] `src/components/courses/admin-offering-learning-page.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/components/courses/learner-live-class-link.tsx`
+- [x] `src/components/courses/learner-course-state-retry.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/page.tsx`
+- [x] `src/app/(authenticated)/admin/lessons/page.tsx`
+- [x] `src/app/(authenticated)/admin/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/admin/assignments/page.tsx`
+
+Changes include 9px semantic control radii, 36px desktop / 44px mobile touch heights, teal-white primary actions and tab focus treatments, input focus rings, 12px card radii for distinct objects, and removal of redundant outer surface wrappers. Course Progress filter button's malformed doubled-radius class was fixed. Individual course/lesson object cards remain distinct; page data, section order, wording, and actions are unchanged. Static JSX closing-tag spot checks performed on modified source text; no code execution, typecheck, tests, or CI performed. Remaining inventory is not claimed complete.
