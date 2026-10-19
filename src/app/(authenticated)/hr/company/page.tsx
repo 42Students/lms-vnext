@@ -7,6 +7,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { buildRecruiterCompanyOverview } from "@/modules/placements/recruiter-company-overview-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -40,7 +42,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   // value. Keep the existing recoverable invalid-college state on ambiguity.
   const repeated=Object.values(query).some(Array.isArray);
   const collegeQuery = z.string().uuid().optional().safeParse(repeated?null:one(query.collegeId));
-  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Company & Team" />
+  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
       action={<Link href="/hr/company" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose college</Link>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
@@ -58,7 +60,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   }
 
   const tab = requestedTab === "team" ? "team" : "company";
-  if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader eyebrow="Recruiter" title="Company & Team" />
+  if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid team filter" description="Search must be 120 characters or fewer."
       action={<Link href="/hr/company?tab=team" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear search</Link>} /></div>;
   const result = await getRecruiterCompanyTeam(context, requestedCollegeId);
@@ -67,33 +69,19 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     return (
       <div className="min-w-0 max-w-full space-y-6">
         <PageHeader
-          eyebrow="Recruiter"
           title="Company & Team"
           description="Choose the college whose recruiter relationship you want to view. We never guess a college when more than one access grant is active."
         />
-        <section className="border-b border-border pb-5">
-          <h2 className="text-base font-semibold text-foreground">
-            {result.status === "NO_ACCESS" ? "No active college access" : "Choose a college"}
-          </h2>
-          {result.status === "NO_ACCESS" ? (
-            <p className="mt-2 text-sm text-muted-foreground">
-              Your recruiter account has no active college access. Contact the placement cell that invited you.
-            </p>
-          ) : (
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {result.choices.map((grant) => (
-                <Link
-                  key={grant.id}
-                  href={"/hr/company?collegeId=" + encodeURIComponent(grant.collegeId)}
-                  className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                >
-                  <div className="font-medium text-foreground">{grant.collegeName}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">Open Company & Team</div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </section>
+        {result.status==="NO_ACCESS"?<EmptyState
+          title="No active college access"
+          description="Your recruiter account has no active college access. Contact the placement cell that invited you."/>:
+          <section className="space-y-3 border-b border-border pb-5">
+            <h2 className="text-base font-semibold text-foreground">Choose a college</h2>
+            <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(grant=>({
+              key:grant.collegeId,label:grant.collegeName,
+              href:"/hr/company?collegeId="+encodeURIComponent(grant.collegeId),
+            }))}/>
+          </section>}
       </div>
     );
   }
@@ -106,19 +94,13 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const base = "/hr/company?collegeId=" + encodeURIComponent(result.grant.collegeId);
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <PageHeader
-          eyebrow="Recruiter"
-          title="Company & Team"
-          description={"Your work with " + result.grant.collegeName}
-        />
-        <Link
-          href="/hr/profile"
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-        >
+      <PageHeader
+        title="Company & Team"
+        description={"Your work with "+result.grant.collegeName}
+        actions={<Link href="/hr/profile"
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Your profile
-        </Link>
-      </div>
+        </Link>}/>
 
       {result.choices.length > 1 ? <NeedsDoingChips label="College access:"
         selectedKey={result.grant.collegeId}
@@ -178,7 +160,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               {overview.recent.map(job=><Link key={job.id} href={"/recruiter/drives/"+job.id+"?tab=overview"}
                 className="flex flex-wrap justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
                 <span className="font-medium text-primary-text">{job.title}</span>
-                <span className="text-muted-foreground">{job.status}</span>
+                <StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge>
               </Link>)}
             </div> : <p className="mt-4 text-sm text-muted-foreground">No published or closed drives for this relationship.</p>}
           </section>
@@ -196,8 +178,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             Colleagues from your company who work with this college. To add one, ask the placement cell to invite them with their work email; the placement cell decides who gets access.
           </p>
           <form action="/hr/company" method="get" className="mt-3 flex flex-wrap gap-2">
-            <input type="hidden" name="collegeId" value={result.grant.collegeId}/>
-            <input type="hidden" name="tab" value="team"/>
+            <Input type="hidden" name="collegeId" value={result.grant.collegeId}/>
+            <Input type="hidden" name="tab" value="team"/>
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <Input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
@@ -207,11 +189,11 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates
             {" · Displaying "+teamPageResult.first+"–"+teamPageResult.last}
           </p>
-          {hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)?
+          {teamPageResult.rows.length>0 && hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)?
             <p role="status" className="mt-3 text-sm text-muted-foreground">
               {hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)}
             </p>:null}
-          {teamPageResult.rows.length===0 ? null : (
+          {teamPageResult.rows.length===0 ? <EmptyState title="No matching teammates" description={hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)??"No teammates on this page."}/> : (
             <div className="mt-4 divide-y divide-border">
               {teamPageResult.rows.map((member) => (
                 <div key={member.userId} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
@@ -222,7 +204,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                     <div>
                       <div className="font-medium text-foreground">
                       {member.displayName || member.email || "Recruiter"}
-                      {member.isYou ? <span className="ml-2 text-xs text-primary">You</span> : null}
+                      {member.isYou ? <Badge tone="info" className="ml-2">You</Badge> : null}
                     </div>
                       <div className="mt-1 text-sm text-muted-foreground">{member.email ?? "Email not available"}</div>
                       <p className="mt-1 text-xs text-muted-foreground">{attributedDriveCounts[member.userId]??0} drive(s) here</p>
