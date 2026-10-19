@@ -149,6 +149,9 @@
 [data-slot="dropdown"] a[href]:active:not([aria-disabled="true"]) {
   background: rgba(0, 0, 0, .06);
 }
+[data-slot="popover"] {
+  transition: background-color .2s ease, box-shadow .2s ease;
+}
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
