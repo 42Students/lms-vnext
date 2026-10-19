@@ -46,7 +46,7 @@ export default async function PublicPlacementSettingsPage({
    {value.ready&&!view.canEnable&&!view.enabled?<p role="status" className="mt-3 text-sm text-muted-foreground">
      Public statistics cannot be enabled without a recorded cohort of at least five.
     </p>:null}
-   <section aria-label="Published placement preview" className="mt-5 space-y-3 border-t border-border bg-surface-subtle pt-4">
+   <section aria-label="Published placement preview" className="mt-5 space-y-3 border-t border-border pt-4">
     <h2 className="font-semibold">How your public placements look</h2>
     <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>
     {!view.enabled?<p role="status" className="text-sm text-body">Publication is off; this preview does not make any statistics public.</p>:null}
@@ -54,7 +54,7 @@ export default async function PublicPlacementSettingsPage({
     {published?<p className="text-xs text-muted-foreground">Published as of {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(published.publishedAt))}.</p>:null}
     {published&&content.about?<p className="whitespace-pre-wrap text-sm text-body">{content.about}</p>:null}
     <div className="grid gap-3 sm:grid-cols-2">
-     {content.metricKeys.map(key=><div key={key} className="rounded-lg border border-border bg-surface p-3">
+     {content.metricKeys.map(key=><div key={key} className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-3">
       <p className="text-xs text-muted-foreground">{PUBLIC_METRIC_LABELS[key]}</p>
       <p className="mt-1 font-semibold">{formatPublicPlacementMetric(key,{
        population:published?.population??null,placed:published?.placed??null,
