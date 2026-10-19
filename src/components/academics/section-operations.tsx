@@ -517,7 +517,7 @@ export function SectionOperations({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-5)]">
-      <section className="grid gap-4 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="Section summary" className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)] sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Program
