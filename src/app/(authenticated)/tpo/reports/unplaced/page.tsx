@@ -85,7 +85,7 @@ export default async function TpoUnplacedReportPage({
         eyebrow="TPO · Reports"
         title="Unplaced students"
         description="Current registered placement-pool learners with no accepted offer in the selected reporting scope."
-        actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Download filtered CSV</a>:null}
+        actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Download filtered CSV</a>:null}
       />
 
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/unplaced" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
@@ -104,12 +104,12 @@ export default async function TpoUnplacedReportPage({
          <option value="">All branches</option>{branches.map(([id,label])=><option key={id} value={id}>{label}</option>)}
         </Select></label>
        <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Filter</Button>
-       {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Clear batch and branch</Link>:null}
+       {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline lms-inline-link">Clear batch and branch</Link>:null}
        <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
         className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Act on them on Students</Link>
       </form>
       {!permittedBatch?<p role="alert">The selected batch does not belong to this college.</p>:null}
-      {!permittedBranch?<p role="alert">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-link underline">Clear filters</Link></p>:null}
+      {!permittedBranch?<p role="alert">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-link underline lms-inline-link">Clear filters</Link></p>:null}
       <p className="text-xs text-muted-foreground">The download uses the selected season, drive, batch and branch. Changing the season/drive control below may reset the batch/branch filter; reapply it before downloading if needed.</p>
       <p className="text-xs text-muted-foreground">Applications and last-applied dates use the selected season and drive. Academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/unplaced" />
