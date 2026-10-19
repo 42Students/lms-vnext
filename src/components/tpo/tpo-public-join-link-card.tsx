@@ -143,8 +143,8 @@ export function TpoPublicJoinLinkCard({
           {status.domain ? <p className="mt-2 text-sm text-body">Email domains: @{status.domain}</p> :
           companyId ? <div className="mt-3 flex flex-wrap gap-2">
            <Input aria-label="Company email domain" value={domainDraft} onChange={event=>setDomainDraft(event.target.value)}
-            placeholder="company.com" className="min-h-11 min-[768px]:min-h-9 min-w-0 flex-1"/>
-           <Button type="button" variant="secondary" className="min-h-11 min-[768px]:min-h-9"
+            placeholder="company.com" className="min-h-11 md:min-h-9 min-w-0 flex-1"/>
+           <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
             disabled={busy||!domainDraft.trim()} onClick={()=>void saveDomain()}>Add domain</Button>
           </div> : null}
         </>
@@ -157,7 +157,7 @@ export function TpoPublicJoinLinkCard({
         <p role="status" className="mt-3 text-sm text-body">
           {isCompany ? "Couldn't load the company link" : "Couldn't load the public link"}
           <Button type="button" variant="ghost" disabled={busy} onClick={()=>void retryStatus()}
-            className="ml-3 min-h-11 min-[768px]:min-h-9 underline">Retry</Button>
+            className="ml-3 min-h-11 md:min-h-9 underline">Retry</Button>
         </p>
       ) : (
         <>
@@ -166,7 +166,7 @@ export function TpoPublicJoinLinkCard({
               Made {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(status.link.createdAt))}. Opened {status.link.opensCount} times, {status.link.joinsCount} joined.
             </p>
           ) : null}
-          {status.link?<label className="mt-3 flex items-center gap-3 text-sm text-body">
+          {status.link?<label className="mt-3 flex min-h-11 items-center gap-3 text-sm text-body">
             <Checkbox checked={status.link.enabled} disabled={busy}
               onChange={()=>void toggleLink()}/>
             Link is on
@@ -174,7 +174,7 @@ export function TpoPublicJoinLinkCard({
           <Button
             type="button" disabled={busy || (isCompany && !status.domain)}
             onClick={()=>{if(status.link)setReplaceOpen(true);else void makeLink();}}
-            className="mt-4 min-h-11 min-[768px]:min-h-9"
+            className="mt-4 min-h-11 md:min-h-9"
           >
             {status.link ? PUBLIC_JOIN_LINK_COPY.replace :
               isCompany ? PUBLIC_JOIN_LINK_COPY.initial : PUBLIC_JOIN_LINK_COPY.publicInitial}
@@ -187,7 +187,7 @@ export function TpoPublicJoinLinkCard({
                   onFocus={(event) => event.currentTarget.select()}
                   className="min-w-0 flex-1" />
                 <Button type="button" variant="secondary" onClick={copyLink}
-                  className="min-h-11 min-[768px]:min-h-9">
+                  className="min-h-11 md:min-h-9">
                   Copy
                 </Button>
               </div>
