@@ -47,18 +47,9 @@ export function TpoFindSuggestions({
     <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Matching records</p>
     {!ready ? <p role="status" className="p-2 text-xs text-muted-foreground">Searching…</p> : null}
     {ready && state.error ? <p role="alert" className="p-2 text-xs text-error">{state.error}</p> : null}
-    {ready && !state.error && state.results.map((result, index) =>
+    {ready && !state.error && state.results.map(result =>
       <button type="button" role="option" aria-selected={false}
         data-tpo-result="" key={result.href} className={style.suggestion}
-        onKeyDown={event => {
-          if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
-          event.preventDefault();
-          const buttons = event.currentTarget.closest("section")?.querySelectorAll<HTMLButtonElement>("button[data-tpo-result]");
-          if (!buttons?.length) return;
-          const next = event.key === "ArrowDown" ? (index + 1) % buttons.length
-            : (index - 1 + buttons.length) % buttons.length;
-          buttons[next]?.focus();
-        }}
         onClick={() => onOpen(result.href)}>
         <SearchIcon/>
         <span className="min-w-0 flex-1 truncate">{result.label}</span>
