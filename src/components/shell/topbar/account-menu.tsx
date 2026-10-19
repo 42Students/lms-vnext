@@ -83,7 +83,7 @@ export function TopbarAccountMenu({
       aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
-      {topbarInitials(identityUid, roleLabel)}
+      <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
     </button>
     {open ? <div role="dialog" aria-label="Account menu" className={style.menu}>
       <div className="px-2 pb-2 text-left">
