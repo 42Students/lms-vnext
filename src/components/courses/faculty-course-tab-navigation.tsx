@@ -1,6 +1,4 @@
 "use client";
-import {Select} from "@/components/ui/select";
-
 import { Select } from "@/components/ui/select";
 import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
