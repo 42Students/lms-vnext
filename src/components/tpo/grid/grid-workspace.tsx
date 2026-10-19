@@ -8,7 +8,8 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {TpoGridColumnChooser} from "@/components/tpo/tpo-grid-column-chooser";
 import {TpoGridFilterPanel,type TpoFilterField} from "@/components/tpo/tpo-grid-filter-panel";
-import {chosenTpoGridColumns,exportTpoGridCsv,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import {chosenTpoGridColumns,exportTpoGridCsv,tpoGridExportColumns,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import {gridExportFilename} from "@/modules/placements/grid-export-filename";
 
 type Selection={selected:readonly string[];onChange:(ids:string[])=>void};
 type GridWorkspaceProps<Row>={
@@ -21,6 +22,7 @@ type GridWorkspaceProps<Row>={
  columnKeys?:readonly string[];
  onColumnKeysChange?:(keys:string[])=>void;
  filters?:readonly TpoFilterField[];
+ externalFilters?:{count:number;open:boolean;controlsId:string;onToggle:()=>void};
  selection?:Selection;
  rollOf?:(row:Row)=>string|readonly string[]|null|undefined;
  savedViews?:ReactNode;
@@ -48,7 +50,7 @@ const safeTsv=(value:unknown)=>{
 /** Legacy TPO list chrome. Accepts only the authorized rows supplied by the page:
  * search persists in its URL, and copy/paste/export never fetch broader datasets. */
 export function GridWorkspace<Row>({
- rows,columns,rowKey,children,filters=[],selection,rollOf,savedViews,extraActions,act,
+ rows,columns,rowKey,children,filters=[],externalFilters,selection,rollOf,savedViews,extraActions,act,
  exportName="tpo-grid",xlsxHref,searchPlaceholder="Search name, roll no., anything",
  searchParam="search",filterTitle="Filters",columnScope="url",columnStorageKey,
  searchMaxLength=120,searchMode="url",searchValue,onSearchChange,
@@ -82,6 +84,7 @@ export function GridWorkspace<Row>({
   urlKeys.length&&columnScope==="url"?urlKeys:permitted;
  const chosen=chosenTpoGridColumns(columns,activeKeys.length?activeKeys:permitted)
    .filter(column=>!column.exportOnly);
+ const exportColumns=tpoGridExportColumns(columns,chosen);
  const pageIds=useMemo(()=>new Set(rows.map(rowKey)),[rows,rowKey]);
  const selectedPage=rows.filter(row=>selection?.selected.includes(rowKey(row)));
  const clearPageSelection=()=>{
@@ -127,11 +130,11 @@ export function GridWorkspace<Row>({
  const downloadCsv=()=>{
   if(!rows.length){setNotice("There are no rows on this page to export.");return;}
   try{
-   const csv=exportTpoGridCsv(chosen,exportedRows);
+   const csv=exportTpoGridCsv(exportColumns,exportedRows);
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const link=document.createElement("a");
-    link.href=url;link.download=exportName.replace(/[^a-z0-9_-]/gi,"-")+".csv";
+    link.href=url;link.download=gridExportFilename(exportName,"csv");
     document.body.appendChild(link);link.click();link.remove();
    }finally{URL.revokeObjectURL(url);}
    setNotice("Exported "+exportedRows.length+" authorized row(s) from this page.");
@@ -139,8 +142,8 @@ export function GridWorkspace<Row>({
  };
  const copyRows=async()=>{
   if(onCopyRows){onCopyRows();return;}
-  const lines=[chosen.map(column=>safeTsv(column.label)).join("\t"),
-   ...exportedRows.map(row=>chosen.map(column=>safeTsv(column.read(row))).join("\t"))];
+  const lines=[exportColumns.map(column=>safeTsv(column.label)).join("\t"),
+   ...exportedRows.map(row=>exportColumns.map(column=>safeTsv(column.read(row))).join("\t"))];
   try{await navigator.clipboard.writeText(lines.join("\r\n"));
    setNotice("Copied "+exportedRows.length+" row(s) as tab-separated columns.");
   }catch{setNotice("Clipboard access is blocked. Use CSV export instead.");}
@@ -184,9 +187,11 @@ export function GridWorkspace<Row>({
      router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
     }}><Image src="/assets/images/common/search.svg" alt="" aria-hidden="true" width={19} height={19}/>Search</Button>
    </div>:null}
-   {filters.length?<Button variant="secondary" type="button" aria-expanded={filterOpen}
-    aria-controls={id+"-filters"} onClick={()=>setFilterOpen(value=>!value)}>
-    Filters{activeFilters.length?" ("+activeFilters.length+")":""}
+   {filters.length||externalFilters?<Button variant="secondary" type="button"
+    aria-expanded={externalFilters?.open??filterOpen}
+    aria-controls={externalFilters?.controlsId??id+"-filters"}
+    onClick={externalFilters?externalFilters.onToggle:()=>setFilterOpen(value=>!value)}>
+    Filters{(externalFilters?.count??activeFilters.length)>0?" ("+(externalFilters?.count??activeFilters.length)+")":""}
    </Button>:null}
    {savedViews?<Button variant="secondary" type="button" aria-expanded={viewsOpen}
     aria-controls={id+"-views"} onClick={()=>setViewsOpen(value=>!value)}>Views</Button>:null}

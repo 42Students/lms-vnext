@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
@@ -113,8 +114,8 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           </label>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" variant="primary">Apply filters</Button>
-          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+          <Button type="submit" variant="primary" className="min-h-11 sm:min-h-[var(--lms-control-height)]">Apply filters</Button>
+          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {rows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
           </p>
@@ -221,12 +222,8 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
       ))}
       </div>
       )}
-      <nav aria-label="Faculty Courses pages" className="flex flex-wrap items-center justify-between gap-3">
-        {pagination.page > 1 ? <Link href={facultyCourseListHref({...query,page:pagination.page-1})}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : <span />}
-        {pagination.page < pagination.totalPages ? <Link href={facultyCourseListHref({...query,page:pagination.page+1})}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
-      </nav>
+      <Pagination label="Faculty Courses pages" page={pagination.page} pageCount={pagination.totalPages}
+        hrefForPage={page=>facultyCourseListHref({...query,page})} />
     </div>
   );
 }

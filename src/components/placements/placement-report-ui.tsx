@@ -215,7 +215,7 @@ export function ReportNavigation({
 
   const m=workspace.report.metrics;
   return (<>
-    <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm font-semibold">
+    <p role="status" className="border-y border-border py-3 text-sm font-semibold text-body">
      For the filters below: {reportNumber(m.studentsPlaced)} students placed · {reportNumber(m.offers)} offers ·
      {" "}{reportPercent(m.placementRatePercent)} placement rate · {reportNumber(m.acceptedOffers)} accepted offers
     </p>
@@ -225,7 +225,7 @@ export function ReportNavigation({
         <Link
           key={link.href}
           href={reportHref(link.href, workspace)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle md:min-h-9"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
         >
           {link.label}
         </Link>
@@ -263,7 +263,8 @@ export function ReportCsvLink({
   return (
     <a
       href={`/api/placements/reports?${params.toString()}`}
-      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground hover:border-primary-hover hover:bg-primary-hover md:min-h-9"
+      aria-label={`Export ${kind.replaceAll("-", " ")} CSV`}
+      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9"
     >
       Export CSV
     </a>

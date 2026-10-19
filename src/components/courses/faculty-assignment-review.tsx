@@ -10,6 +10,7 @@ import {
   useRef,
 } from "react";
 import { Button } from "@/components/ui/button";
+import { Tabs } from "@/components/ui/tabs";
 import { Drawer } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -557,13 +558,18 @@ export function FacultyAssignmentReview({
         </div>
       </div>
 
-      <nav aria-label="Submission grading filters" className="flex flex-wrap gap-2">
-        {SUBMISSION_FILTERS.map(value=><Button key={value} type="button" size="sm"
-          variant={filter===value?"secondary":"ghost"} disabled={loading}
-          aria-pressed={filter===value} onClick={()=>void load({filter:value,page:1})}>
-          {value==="ALL"?"All":value==="UNGRADED"?"Pending":value==="GRADED"?"Graded":"Late"}
-        </Button>)}
-      </nav>
+      <Tabs
+        ariaLabel="Submission grading filters"
+        value={filter}
+        renderPanel={false}
+        controlledOnly
+        onValueChange={value => void load({filter:value as FacultySubmissionFilter,page:1})}
+        items={SUBMISSION_FILTERS.map(value => ({
+          value,
+          label: value==="ALL"?"All":value==="UNGRADED"?"Pending":value==="GRADED"?"Graded":"Late",
+          disabled: loading,
+        }))}
+      />
       {pagination ? <p role="status" className="text-xs text-muted-foreground">
         {pagination.total} matching submissions · Page {pagination.page} of {pagination.totalPages}
       </p> : null}

@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
@@ -14,7 +15,7 @@ import { learnerSafeExternalContentHref } from "@/modules/courses/learner-extern
 import {LearnerLiveClassLink} from "./learner-live-class-link";
 import { assignmentFilesRuntimeEnabled,multipartAssignmentRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
-import { ScrollCue } from "@/components/ui/scroll-cue";
+import { Tabs } from "@/components/ui/tabs";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -125,30 +126,6 @@ function kindLabel(
     case "QUIZ":
       return "Quiz";
   }
-}
-
-function Metric({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string | number;
-  detail: string;
-}) {
-  return (
-    <section className="rounded-xl border border-border bg-surface p-4">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-        {value}
-      </p>
-      <p className="mt-1 text-xs leading-5 text-body">
-        {detail}
-      </p>
-    </section>
-  );
 }
 
 function ContentCard({
@@ -772,50 +749,39 @@ export function LearnerCourseWorkspace({
       </section>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric
+        <StatTile
           label="Overall"
           value={measuredProgress === null ? "Not measured" : `${measuredProgress}%`}
           detail={`${summary.itemsCompleted} of ${summary.itemsTotal} learning items complete.`}
         />
-        <Metric
+        <StatTile
           label="Lessons"
           value={`${summary.lessonsCompleted}/${summary.lessonsTotal}`}
           detail="A lesson is complete when all of its actionable items are complete."
         />
-        <Metric
+        <StatTile
           label="Assessments"
           value={summary.assignmentsCompleted + summary.quizzesCompleted}
           detail={`${summary.assignmentsTotal} assignments · ${summary.quizzesTotal} quizzes.`}
         />
-        <Metric
+        <StatTile
           label="Missed"
           value={summary.itemsMissed}
           detail="Closed quizzes remain visible in the learning path."
         />
       </div>
 
-      <ScrollCue axis="x" label="Learning path content filter" className="rounded-xl border border-border bg-surface" viewportClassName="p-2">
-      <nav aria-label="Learning path content filter">
-        <div className="flex min-w-max gap-1">
-          {filters.map((item) => (
-            <Link
-              key={item.key}
-              href={`/learn/courses/${deliveryId}/roadmap?filter=${item.key}`}
-              aria-current={activeFilter === item.key ? "page" : undefined}
-              className={
-                activeFilter === item.key
-                  ? "inline-flex min-h-11 items-center rounded-lg bg-primary-subtle px-3 py-2 text-sm font-semibold text-primary-text"
-                  : "inline-flex min-h-11 items-center rounded-lg px-3 py-2 text-sm font-semibold text-body hover:bg-muted hover:text-primary-text"
-              }
-            >
-              {item.label}{" "}
-              <span className="text-xs text-muted-foreground">
-                {filterCounts[item.key]}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </nav></ScrollCue>
+      <Tabs
+        ariaLabel="Learning path content filter"
+        value={activeFilter}
+        renderPanel={false}
+        items={filters.map(item => ({
+          value: item.key,
+          label: item.label,
+          count: filterCounts[item.key],
+          href: `/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${encodeURIComponent(item.key)}`,
+        }))}
+      />
 
       <details className="rounded-xl border border-border bg-surface sm:hidden">
         <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">

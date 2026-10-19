@@ -16,7 +16,8 @@ import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
-import {TpoGrid} from "./grid/tpo-grid";
+import dynamic from "next/dynamic";
+import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import {GridWorkspace} from "./grid/grid-workspace";
 import {TpoStudentSavedViews} from "./tpo-student-saved-views";
 import type {TpoFilterField} from "./tpo-grid-filter-panel";
@@ -24,12 +25,18 @@ import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 
+/** Spreadsheet viewport is browser-only; authorization and export remain with the page. */
+const TpoGrid = dynamic<TpoSpreadsheetGridProps<TpoStudentRow>>(
+ () => import("./grid/tpo-grid").then(module => module.TpoGrid<TpoStudentRow>),
+ {ssr:false, loading:() => <div role="status" className="min-h-16 py-4 text-sm text-muted-foreground">Loading student spreadsheet…</div>},
+);
+
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"student",label:"Student",read:row=>row.fromFinishedBatch?
    row.displayName+" · From "+row.cohortName:row.displayName},
  {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
- {key:"branch",label:"Branch",read:row=>row.branchName},
- {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
+ {key:"branch",label:"Branch",exportAlways:true,read:row=>row.branchName},
+ {key:"batch",label:"Batch",exportAlways:true,read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
  {key:"stage",label:"Stage",filter:{urlKey:"journeyState",
   options:TPO_STUDENT_JOURNEY_STATES.map(value=>({value,label:tpoStudentDisplayLabel(value)}))},
   read:row=>tpoStudentDisplayLabel(row.journeyState)},
@@ -216,7 +223,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    filters={filters} rollOf={row=>[row.rollNumber??"",row.registrationNumber??""]}
    filterTitle="Filter students" exportName="tpo-students" xlsxHref={xlsxHref}
    savedViews={canManageViews?<TpoStudentSavedViews embedded/>:undefined}>
-  <TpoGrid mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoGrid integratedWorkspace mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">

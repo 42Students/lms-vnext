@@ -7,7 +7,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -238,9 +238,10 @@ export function SectionOperations({
     });
   }
 
-  const enrollmentColumns = [
+  const enrollmentColumns: DataTableColumn<ProgramEnrollment>[] = [
     {
       key: "learner",
+      mobilePriority: "primary",
       header: "Learner",
       cell: (row: ProgramEnrollment) => (
         <span className="font-semibold text-foreground">
@@ -250,6 +251,7 @@ export function SectionOperations({
     },
     {
       key: "status",
+      mobilePriority: "secondary",
       header: "Program status",
       cell: (row: ProgramEnrollment) => (
         <StatusBadge tone={statusTone(row.status)}>
@@ -259,13 +261,15 @@ export function SectionOperations({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (row: ProgramEnrollment) =>
         row.status === "ACTIVE" ? (
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
             <Button
               size="sm"
+              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={pending}
               onClick={() =>
@@ -284,6 +288,7 @@ export function SectionOperations({
             </Button>
             <Button
               size="sm"
+              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
               variant="ghost"
               disabled={pending}
               onClick={() =>
@@ -305,9 +310,10 @@ export function SectionOperations({
     },
   ];
 
-  const rosterColumns = [
+  const rosterColumns: DataTableColumn<RosterRow>[] = [
     {
       key: "learner",
+      mobilePriority: "primary",
       header: "Learner",
       cell: (row: RosterRow) => (
         <span className="font-semibold text-foreground">
@@ -317,6 +323,7 @@ export function SectionOperations({
     },
     {
       key: "status",
+      mobilePriority: "secondary",
       header: "Section history",
       cell: (row: RosterRow) => (
         <StatusBadge tone={statusTone(row.status)}>
@@ -332,13 +339,15 @@ export function SectionOperations({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (row: RosterRow) =>
         row.status === "ACTIVE" ? (
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
             <Button
               size="sm"
+              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={pending}
               onClick={() =>
@@ -357,6 +366,7 @@ export function SectionOperations({
             </Button>
             <Button
               size="sm"
+              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
               variant="ghost"
               disabled={pending}
               onClick={() =>
@@ -378,9 +388,10 @@ export function SectionOperations({
     },
   ];
 
-  const facultyColumns = [
+  const facultyColumns: DataTableColumn<FacultyAssignment>[] = [
     {
       key: "faculty",
+      mobilePriority: "primary",
       header: "Faculty",
       cell: (row: FacultyAssignment) => (
         <span className="font-semibold text-foreground">
@@ -390,6 +401,7 @@ export function SectionOperations({
     },
     {
       key: "role",
+      mobilePriority: "secondary",
       header: "Responsibility",
       cell: (row: FacultyAssignment) => (
         <StatusBadge
@@ -407,6 +419,7 @@ export function SectionOperations({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (row: FacultyAssignment) =>
@@ -432,9 +445,10 @@ export function SectionOperations({
     },
   ];
 
-  const scheduleColumns = [
+  const scheduleColumns: DataTableColumn<ScheduleEvent>[] = [
     {
       key: "event",
+      mobilePriority: "primary",
       header: "Event",
       cell: (row: ScheduleEvent) => (
         <div>
@@ -457,6 +471,7 @@ export function SectionOperations({
     },
     {
       key: "time",
+      mobilePriority: "secondary",
       header: "Time",
       cell: (row: ScheduleEvent) => (
         <span>
@@ -477,6 +492,7 @@ export function SectionOperations({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (row: ScheduleEvent) =>
@@ -504,8 +520,8 @@ export function SectionOperations({
   ];
 
   return (
-    <div className="space-y-8">
-      <section className="grid gap-4 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="min-w-0 space-y-[var(--lms-space-5)]">
+      <section aria-label="Section summary" className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)] sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Program
@@ -534,7 +550,7 @@ export function SectionOperations({
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Capacity
           </p>
-          <p className="mt-2 font-semibold text-foreground">
+          <p className="mt-2 font-semibold tabular-nums text-[var(--lms-body-text)]">
             {section.capacity ?? "Unlimited"}
           </p>
         </div>
@@ -557,6 +573,7 @@ export function SectionOperations({
             </p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
               <Select
+                aria-label="Learner to admit to program"
                 value={learnerMembershipId}
                 onChange={(event) =>
                   setLearnerMembershipId(
@@ -618,6 +635,7 @@ export function SectionOperations({
             </p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
               <Select
+                aria-label="Active program enrollment to place in section"
                 value={placementEnrollmentId}
                 onChange={(event) =>
                   setPlacementEnrollmentId(
@@ -710,6 +728,7 @@ export function SectionOperations({
 
         <div className="flex flex-col gap-3 border-b border-border pb-5 md:flex-row">
           <Select
+            aria-label="Faculty member to assign"
             value={facultyMembershipId}
             onChange={(event) =>
               setFacultyMembershipId(
@@ -730,12 +749,11 @@ export function SectionOperations({
             ))}
           </Select>
           <Select
+            aria-label="Faculty responsibility"
             value={facultyRole}
             onChange={(event) =>
               setFacultyRole(
-                event.target.value as
-                  | "ADVISOR"
-                  | "COORDINATOR",
+                event.target.value as "ADVISOR" | "COORDINATOR",
               )
             }
           >
@@ -788,7 +806,7 @@ export function SectionOperations({
           </p>
         </div>
 
-        <div className="grid gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-6">
+        <div className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)] md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
           <div>
             <label
               htmlFor="schedule-title"
@@ -913,7 +931,7 @@ export function SectionOperations({
               ))}
             </Select>
           </div>
-          <div className="md:col-span-2 xl:col-span-6">
+          <div className="min-w-0 md:col-span-2 xl:col-span-3 2xl:col-span-6">
             <Button
               disabled={
                 pending ||

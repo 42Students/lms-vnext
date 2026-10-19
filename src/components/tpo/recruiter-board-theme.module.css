@@ -1,0 +1,28 @@
+/*
+ * Legacy recruiter board paint and dimensions.
+ * Source: lms2-fe@prod-2026 src/styles/components/_tpo-crm.scss:203-248,
+ * with neutral values from _tpo-tokens.scss:5-11.
+ */
+.column {
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
+  flex-shrink: 0;
+  border: 1px solid #e7ecf2;
+  border-radius: 13px;
+  background: #f8fafc;
+  box-shadow: none;
+  padding: 10px;
+}
+.columnTitle {
+  min-height: 46px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e8edf3;
+  background: #f4f7fb;
+}
+.leadCard {
+  border: 1px solid #e7ecf2;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+}

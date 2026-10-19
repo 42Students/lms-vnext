@@ -537,3 +537,41 @@ Source head at turn start: `b275ca07455d8eafa3650ce6eb3f352a481edafb`. The compa
 - **Legacy parity blockers remain:** tab active label colour `#26bac7` vs current shared `#1a95a1`, tabs top padding and active underline animation (`docs/design/legacy-styles/components___common.scss:359-415` vs `src/components/ui/tabs.tsx:69-90`); `Switch` checked colour currently uses `--lms-button-primary` `#0a7c88` instead of legacy `$clrThird` `#26bac7` (`components___common.scss:226-228` vs `selection-controls.tsx:24`). Shared UI files remain unmodified per lane ownership.
 - **Responsive/state proof still missing:** old SCSS breakpoint comparisons and phone/tablet interactive behavior have not been rendered or tested. Desktop stylesheet matching is partial and all Section H portal-wide items remain **[ ]**, including coverage counts, keyboard/focus and value-by-value state tables for every relevant element. No code/CI run or visual verification claimed.
 - **Exact next file:** `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx` — replace the remaining computed application pipeline stage classes with shared counted `Tabs`, preserve query filters, then continue the other College Admin and scoped Super Admin dynamic-class Work queue.
+
+
+### 2026-10-19 bounded turn: College/Super Admin PageHeader, counted application tabs, token audit
+
+**Branch snapshot:** fast-forwarded `chatgpt/chat-4-b` to origin/main-equivalent `8b8c39571765204015de301807770b40f8387cd5` first (previous lane commits were already merged into main). **37 new [chat-4] GitHub commits directly persisted on the lane branch** before this audit entry; never touched main or `src/components/ui/*.tsx`. Shared UI components remained untouched. No app code, lint, types, tests or CI executed.
+
+**Changed-file source-level check:** After every update the exact file was fetched again and compared against the intended new content; then all **37 changed TSX** files were fetched in three batches and checked for stray quote-before-`className` patterns, mismatched known shared-component closing-tag counts and remaining `eyebrow=` in modified files. **37 checked, 0 flagged stray-quote patterns, 0 extra closing tags for PageHeader/Tabs/Button/Select/StatusBadge/Switch/Dialog, 0 remaining eyebrow props**. This is a conservative text scan; it is **not** a JSX compiler, TypeScript typecheck, complete import check, all-route grep, or browser proof.
+
+**Specific fixes:** 
+- `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx:89` — stage quick-filter pills replaced with counted shared route `Tabs`, reusing the existing `driveApplicationsHref` query builder and `stageCounts`, preserving selected-stage URL and filter values.
+- `src/app/(authenticated)/admin/tenants/setup/page.tsx:94-99` — restored `Tabs` route links after upstream code had introduced dynamic classes referencing undeclared `active` and `inactive`. Verified no such remaining references or stranded quote in the updated file.
+- Super Admin scope: all owned `/admin/tenants/**` and `/admin/colleges/**` page headers touched in this pass now omit the obsolete eyebrow phrase, retaining true page titles, descriptions, actions, and server-state branches. College Admin scope: academics/sections, activity, announcements, assignments, attendance, batches, branding, classes, companies, contacts, groups, placements, and role-directory headers similarly drop eyebrow where encountered. Previously those extra labels were joined into the grey inline subtitle by `PageHeader`.
+- `src/components/admin/college-branding-preview.tsx:23` converts a literal black RGBA 12% decorative image overlay to `color-mix(in srgb, var(--lms-black) 12%, transparent)`, resolving its colour from `src/app/globals.css:38` while retaining actual user-provided branding image URLs, foreground and secondary colour previews.
+
+#### PageHeader and tabs source comparison (value proof, still incomplete)
+
+| Property / state | Legacy source (path:line, literal value) | vNext source (path:line, literal value) | Finding |
+| --- | --- | --- | --- |
+| Page title separate eyebrow | `docs/design/old-lms-pages.md:7` one row: title with inline subtitle, no eyebrow | Scoped pages now call `PageHeader` without `eyebrow`; `src/components/ui/page-header.tsx:22-45` composes title + description on row | MATCH structure in edited pages only |
+| Desktop title font size | `docs/design/legacy-styles/components___listing-page-header.scss:52-54` 28px / 600 | `src/components/ui/page-header.tsx:33-34` 30px / 600 at md | **MISMATCH font size** (other reference `old-lms-pages.md:7` calls it ~30px) |
+| Title letter spacing | `.../components___listing-page-header.scss:57` -0.02em | `src/components/ui/page-header.tsx:33` tracking -0.02em | MATCH |
+| Title line height | `.../components___listing-page-header.scss:58` 1.3 | `src/components/ui/page-header.tsx:33` 1.35 | **MISMATCH** |
+| Desktop page head gap | `.../components___listing-page-header.scss:30` 24px `$s3` | `src/components/ui/page-header.tsx:28` `md:gap-6` 24px | MATCH |
+| Desktop actions gap | `.../components___listing-page-header.scss:84` 16px `$s2` | `src/components/ui/page-header.tsx:49` `md:gap-4` 16px | MATCH |
+| Header padding bottom + divider | `.../components___listing-page-header.scss:33-35` 16px bottom, 1px `$neutral-200` | `src/components/ui/page-header.tsx:28` `pb-4 border-b` with `--lms-canvas-border` = `#e5e9f0` (`globals.css:322`) | MATCH |
+| Mobile cutoff / order | `.../components___listing-page-header.scss:128-149` <=767px: column, title 20px, title row gap 2px | `src/components/ui/page-header.tsx:28-34` mobile column; `md:` starts 768px; title 20px, inner gap 0.5 (=2px) | MATCH source-level |
+| Mobile action width | `.../components___listing-page-header.scss:146-151` full width, column | `src/components/ui/page-header.tsx:49` `w-full flex-col md:w-auto md:flex-row` | MATCH source-level |
+| Active tab underline / counts | `docs/design/legacy-styles/components___common.scss:365-415` 3px teal animated width, 200ms; `old-lms-pages.md:9` counts | `src/components/ui/tabs.tsx:70-90` border 3px, `TabItem.count` | **PARTIAL**: label colour and underline transition discrepancy from previous value table remains |
+| Brand backdrop overlay | Design preview uses neutral darkening at 12% | `src/components/admin/college-branding-preview.tsx:23` 12% `var(--lms-black)`; `src/app/globals.css:38` #000000 | TOKENIZED source; legacy preview-specific reference not yet found |
+
+**Intentional non-visual hex exception:** `src/components/admin/college-branding-form.tsx:154,162` still includes `#26BAC7` as the *valid HTML colour-input value* fallback and `#1A95A1` as a user-editable colour-text placeholder. Replacing those with CSS `var()` would break the `type="color"` value contract. This is not proof that all other files contain zero hard-coded decorative hex.
+
+- [ ] Changed-file syntax/source audit (missing: TSX parse/typecheck; only GitHub readback + string-level JSX checks available under no-code/no-CI instruction).
+- [ ] PageHeader parity (missing: resolve measured desktop 28px vs 30px and line-height 1.3 vs 1.35 in shared owner; remaining College Admin pages; dynamic states and screenshot proof).
+- [ ] Scoped decorative hex zero (missing: whole-tree source search and exceptions log for all 416+ owned TSX; colour input values exempt).
+- [ ] Full responsive verification (missing: actual desktop/tablet/mobile page render and focus/hover behavior, not just source-level breakpoint comparison).
+
+**Next file:** `src/app/(authenticated)/college/courses/page.tsx` — continue eyebrow removal and component/state/hex value matching; then adjacent College Admin pages and tenant workflows. **No Section H items ticked** before completing the STRICT TICK RULE.
