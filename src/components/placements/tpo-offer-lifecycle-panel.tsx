@@ -1,6 +1,8 @@
+"use client";
+import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-"use client";
+
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -128,7 +130,7 @@ export function TpoOfferLifecyclePanel({
         <div tabIndex={0} role="group" aria-label="Eligible offers, scroll for more" className="max-h-56 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
           {eligible.map((offer) => (
             <label key={offer.id} className="flex min-h-11 items-center gap-3 px-2 text-sm hover:bg-muted md:min-h-9">
-              <input
+              <Checkbox
                 type="checkbox"
                 checked={ids.includes(offer.id)}
                 disabled={busy || (ids.length >= 200 && !ids.includes(offer.id)) ||
@@ -144,7 +146,7 @@ export function TpoOfferLifecyclePanel({
       {action === "EXTEND" ? (
         <label className="block text-sm font-semibold">
           New expiry (IST)
-          <input
+          <Input
             type="datetime-local"
             value={expiresAt}
             disabled={busy}
@@ -156,7 +158,7 @@ export function TpoOfferLifecyclePanel({
       {action === "RECORD_JOINED" ? (
         <label className="block text-sm font-semibold">
           Confirmed joining date
-          <input
+          <Input
             type="date"
             value={joiningDate}
             disabled={busy}
