@@ -3,7 +3,7 @@ import type {TpoStudentRow} from "./tpo-students-model";
 /** SpreadsheetML workbook with native inline strings and a minimal RFC 1951 ZIP container.
  * No dynamic formula elements, external links, macros or untrusted ZIP entry names. */
 export const TPO_STUDENT_EXCEL_COLUMNS={
- student:["Student",(row:TpoStudentRow)=>row.displayName],number:["Student number",(row:TpoStudentRow)=>row.rollNumber??row.registrationNumber],
+ student:["Student",(row:TpoStudentRow)=>row.displayName],number:["Roll no.",(row:TpoStudentRow)=>row.rollNumber??row.registrationNumber],
  batch:["Batch",(row:TpoStudentRow)=>row.cohortName],branch:["Branch",(row:TpoStudentRow)=>row.branchName],
  stage:["Stage",(row:TpoStudentRow)=>row.journeyState],profile:["Profile",(row:TpoStudentRow)=>row.verification.status],
  cgpa:["CGPA",(row:TpoStudentRow)=>row.cgpa],tenth:["10th %",(row:TpoStudentRow)=>row.tenthPct],
