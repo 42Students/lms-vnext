@@ -33,7 +33,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  if(!parsedPage.success)notFound();
  const result=await readTpoInternalConversation(context,parsed.data,parsedPage.data);
  if(result.status==="NOT_FOUND")notFound();
- if(result.status==="NOT_REGISTERED")return <div className="space-y-4 p-5">
+ if(result.status==="NOT_REGISTERED")return <div className="space-y-4">
    <PageHeader eyebrow="TPO · Team" title="Conversations unavailable"/>
    <p role="status">Private messaging tables are not registered.</p>
    <Link href="/tpo/team" className="text-link">Back to team</Link>
@@ -80,7 +80,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    </button>
   </form>
   {result.messages.some(message=>message.decision&&!message.removed)?
-   <aside aria-label="Decisions here" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   <aside aria-label="Decisions here" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
     <h2 className="text-sm font-semibold">Decided:</h2>
     {result.messages.filter(message=>message.decision&&!message.removed).slice(-5).map(message=>
      <Link key={message.id} href={"#team-message-"+message.id}
@@ -132,7 +132,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    </Link> : null}
   </nav>
   <TpoTeamReplyComposer threadId={result.thread.id} actorUserId={context.user.id}/>
-  {!result.messages.length?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-5 text-sm text-body">No messages in this thread yet.</p>:null}
+  {!result.messages.length?<p role="status" className="border-t border-border py-5 text-sm text-body">No messages in this thread yet.</p>:null}
 
  </div>;
 }

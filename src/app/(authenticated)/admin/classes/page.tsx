@@ -32,7 +32,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin · Academic Setup" title="Classes"/>
       {data ? <AcademicSetupSteps step={6} /> : null}
-    {!selected ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle p-4 text-body">Select a college to continue. Choose a college in the header above to see its classes.</p> : null}
+    {!selected ? <p role="status" className="text-sm text-body">Select a college to continue. Choose a college in the header above to see its classes.</p> : null}
     {data && options ? <>
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
       <section aria-label="Filter managed classes" className="border-b border-border pb-4">
