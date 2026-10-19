@@ -55,8 +55,8 @@ export function FacultyProfileTextSection({ section, title, description, fields,
     </div>
     {changed && issue ? <p role="alert" className="text-sm text-foreground">Review {title}: {issue}</p> : null}
     <div className="flex flex-wrap items-center gap-3">
-      {changed ? <Button variant="secondary" disabled={pending} onClick={()=>setDiscardOpen(true)}>Discard edits</Button> : null}
-      <Button type="submit" loading={pending} disabled={!changed||Boolean(issue)}>{pending?"Saving…":"Save "+title}</Button>
+      {changed ? <Button variant="secondary" disabled={pending} className="min-h-11 min-[768px]:min-h-9" onClick={()=>setDiscardOpen(true)}>Discard edits</Button> : null}
+      <Button type="submit" loading={pending} disabled={!changed||Boolean(issue)} className="min-h-11 min-[768px]:min-h-9">{pending?"Saving…":"Save "+title}</Button>
     </div>
     <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen} title={"Discard unsaved changes to "+title+"?"}
       description={"Discard unsaved changes to "+title+"?"} confirmLabel="Discard edits" onConfirm={()=>{
