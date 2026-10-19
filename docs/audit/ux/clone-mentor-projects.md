@@ -180,3 +180,36 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] Project list hover/focus cards (shadow value implemented; missing full verification and responsive proof). Legacy `components___common.scss:141-146`: 0 4px 12px rgba(0,0,0,.08) and 0.2s transition; `src/components/projects/project-list.tsx:81` now uses hover shadow `0_4px_12px_rgba(0,0,0,0.08)` and `duration-200`. Commit `3cad22e`.
 - [ ] Sprints, tasks, backlog, releases, meeting logs, approvals, resources: preserve content and use one canvas; check nested cards separately.
 - [ ] Tracker issues and audit findings: status badges, filters, pagination and loading/empty/error states.
+
+## Replacement chat-8 turn — 2026-10-19 (source review; codemods pending application)
+
+The previous branch head (4dd132d) was **0 ahead / 1,623 behind main**. It was safely fast-forwarded to 12ee0a58 with no exclusive lane commits discarded. This is a remote source review; **no runtime, CI, local grep, device rendering or TypeScript execution** was performed.
+
+### Repeating defects and codemod work queue
+
+- [ ] Duplicate PageHeader import declarations (missing: apply script, grep of rewritten files, TypeScript/JSX proof). Source read identified seven files:
+  - src/app/(authenticated)/mentor/calendar/page.tsx:1,7
+  - src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx:1,8
+  - src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx:1,9
+  - src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx:1,7
+  - src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx:1,10
+  - src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx:1,8
+  - src/app/(authenticated)/mentor/reports/page.tsx:1,8
+  - Pattern: duplicate named import of the same PageHeader identifier. Script: scripts/codemods/chat8-dedupe-page-header-imports.cjs. Run without arguments to preview and with --apply to remove only the redundant import, retaining the first declaration and all JSX. This prevents duplicate binding errors introduced by overlapping heading codemods. No manual per-page rewrites.
+- [ ] Mentor/Tracker/Projects PageHeader action links with 44px desktop minimum heights (missing: apply codemod and complete coverage grep, desktop/phone screenshots). Script: scripts/codemods/chat8-heading-action-heights.cjs, same dry-run / --apply usage. Only existing static min-h-11 classes in the actions JSX subtree are processed. The intended transform leaves min-h-11 (44px) on phones and applies md:min-h-9 (36px) starting at the old 768px desktop breakpoint. Existing sm:min-h-9 on these links becomes md:min-h-9 so phones up to 767px retain touch height. Dynamic JSX cases remain explicitly skipped.
+- [ ] Board and project card surfaces (missing: property-by-property source comparison, dynamic-card skips from existing scripts/codemods/chat8-project-card-radius.cjs, project CSS responsive render, runtime grep). Existing src/components/projects/legacy-project-board.module.css documents the original lms2-fe project board sources (desktop geometry and mobile snap at its lines 1-5); the reference is distinct from the TPO shell. Do not replace these layout-specific 320px/260px desktop widths or 82% phone snap widths with generic table/card geometry.
+- [ ] Remaining first route: src/app/(authenticated)/mentor/activity/page.tsx (missing: value table, full greedy component grep, phone/tablet checks).
+
+### Header action value comparison (script not yet applied)
+
+| Property / state | Legacy value and source | vNext source before script | Intended after application | Status |
+|---|---|---|---|---|
+| Desktop action minimum height | 36px, docs/design/old-lms-shell-spec.md:22-24 | Heading action Links in mentor/projects/[projectId]/board-review/page.tsx:36-39: min-h-11 = 44px | min-h-11 md:min-h-9 = 36px from 768px | Pending apply |
+| Phone action touch minimum | 44px, docs/design/legacy-styles/components___listing-page-header.scss:130-159 | min-h-11 = 44px | Keep min-h-11 through 767px | Source-level match only |
+| Phone/desktop breakpoint | max-width 767px, components___listing-page-header.scss:9,130-132 | Some heading Links omit a breakpoint or use sm:min-h-9 (640px) | md:min-h-9 (768px) | Pending apply |
+| Shared page title | 30px/600/#172033 on desktop, docs/design/old-lms-shell-spec.md:26-28 | Shared src/components/ui/page-header.tsx:30-35, already used by surveyed routes | No lane-owned change; shared owner chat-17/chat-9 | Shared dependency |
+| Page background and canvas | #f1f4f9 shell, #fff canvas, #e5e9f0 1px border, 12px radius, 24px pad, docs/design/old-lms-shell-spec.md:18-20 | Authenticated layout / shared canvas outside lane | No lane-owned change | Shared dependency |
+
+### Inventory method and proof still required
+
+Remote GitHub file reads covered the **40** listed Mentor and Tracker page.tsx routes. The seven duplicate imports above were observed directly; non-redirect pages surveyed used PageHeader or delegated to ProjectWorkspace, while redirect-only compatibility pages do not render UI. This was **not** a repository grep and does not prove zero hand-rolled controls in the remaining 94 project components. Before ticking anything, execute the two codemods, then run and record the actual command outputs (including count) and inspect source/JSX: rg -n 'PageHeader' src/app/\(authenticated\)/mentor src/app/\(authenticated\)/tracker src/components/projects, and rg -n 'rounded-full|border-b-2|aria-pressed|role="tab"|<h1|<button|<select|<input|<textarea' against the same roots. Record visual phone/tablet comparison separately; no side-by-side screenshots were taken in this turn.
