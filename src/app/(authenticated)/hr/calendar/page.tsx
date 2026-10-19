@@ -1,6 +1,7 @@
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
+import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -385,14 +386,40 @@ export default async function HrCalendarPage({
                 </p>
               </div>
 
-              <Tabs renderPanel={false} ariaLabel="Calendar event types" value={category}
-                items={HR_CALENDAR_CATEGORIES.map(option=>({value:option,
+              <Tabs ariaLabel="Calendar event types" renderPanel={false} value={category}
+                items={HR_CALENDAR_CATEGORIES.map(option=>({
+                  value:option,
                   label:option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
                     option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds",
-                  href:calendarHref(anchor,view,option)}))}/>
-              <Tabs renderPanel={false} ariaLabel="Calendar views" value={view}
-                items={VIEWS.map(option=>({value:option,label:option.charAt(0).toUpperCase()+option.slice(1),
-                  href:calendarHref(anchor,option,category)}))}/>
+                  href:calendarHref(anchor,view,option),
+                }))} />
+              <nav
+                aria-label="Calendar views"
+                className="flex flex-wrap gap-3 border-b border-border"
+              >
+                {VIEWS.map((option) => (
+                  <Link
+                    key={option}
+                    href={calendarHref(
+                      anchor,
+                      option,
+                      category,
+                    )}
+                    aria-current={
+                      view === option
+                        ? "page"
+                        : undefined
+                    }
+                    className={
+                      view === option
+                        ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold capitalize text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                        : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold capitalize text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                    }
+                  >
+                    {option}
+                  </Link>
+                ))}
+              </nav>
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-2">
