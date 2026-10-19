@@ -33,6 +33,8 @@ import {
 } from "@/modules/placements/learner-applications-browse-model";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Tabs } from "@/components/ui/tabs";
 import {Textarea} from "@/components/ui/textarea";
 
 const PAGE_SIZE = 20;
@@ -246,34 +248,26 @@ export function LearnerApplicationsBrowse({
           <span aria-hidden="true">{mobileOpen?"−":"+"}</span>
         </Button>
         <div id="learner-app-filters" className={(mobileOpen?"block":"hidden")+" space-y-4 sm:block"}>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Application stage views">
-          {viewOptions.map((option) => (
-            <button
-              key={option.key}
-              type="button"
-              aria-pressed={view===option.key}
-              onClick={() => updateQuery({view:option.key})}
-              className={view===option.key
-                ? "min-h-9 border-b-2 border-[var(--lms-button-primary)] px-4 py-2 text-sm font-semibold text-[var(--lms-primary-text)]"
-                : "min-h-9 border-b-2 border-transparent px-4 py-2 text-sm font-semibold text-body hover:text-[var(--lms-primary-text)]"}
-            >{option.label} ({viewCounts[option.key]})</button>
-          ))}
-        </div>
+        <Tabs ariaLabel="Application stage views" renderPanel={false} controlledOnly
+          value={view}
+          onValueChange={(next) => updateQuery({ view: next })}
+          items={viewOptions.map(option => ({
+            value: option.key,
+            label: option.label,
+            count: viewCounts[option.key],
+          }))} />
         <p className="text-xs leading-5 text-muted-foreground">
           Finished means rejected or withdrawn here. Shortlisting and applied round results
           do not by themselves prove an offer, hiring, or employer completion.
         </p>
-        <div role="group" aria-label="Screening stage filter chips" className="flex flex-wrap gap-2">
-          {stageCounts.map(({stage:stageKey,count})=>(
-            <button type="button" key={stageKey} aria-pressed={filters.stage===stageKey}
-              onClick={()=>updateQuery({stage:stageKey})}
-              className={filters.stage===stageKey
-                ? "min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] sm:min-h-9"
-                : "min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body sm:min-h-9"}>
-              {stageKey==="all"?"All screening stages":humanize(stageKey)} ({count})
-            </button>
-          ))}
-        </div>
+        <SegmentedControl label="Screening stage filter chips"
+          className="w-fit max-w-full"
+          value={filters.stage}
+          onChange={(next) => updateQuery({ stage: next })}
+          options={stageCounts.map(({ stage: stageKey, count }) => ({
+            value: stageKey,
+            label: (stageKey === "all" ? "All screening stages" : humanize(stageKey)) + " (" + count + ")",
+          }))} />
         <div className="grid gap-3 sm:grid-cols-3">
           <label className="text-xs font-semibold text-body">
             Company or role
