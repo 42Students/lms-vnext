@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 export function LearnerCourseStateRetry(){
  const router=useRouter();
  return <button type="button" onClick={()=>router.refresh()}
-  className="mt-3 min-h-10 rounded-md border border-border px-3 font-semibold text-primary-text">
+  className="mt-3 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
   Retry state
  </button>;
 }
