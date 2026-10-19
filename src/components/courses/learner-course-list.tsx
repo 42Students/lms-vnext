@@ -2,6 +2,7 @@
 
 import { MetricBar } from "@/components/ui/metric-bar";
 import progressStyles from "./learner-course-progress.module.css";
+import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FilterChip } from "@/components/ui/filter-chip";
