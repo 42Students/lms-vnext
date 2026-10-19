@@ -71,7 +71,10 @@ export function topbarCommands(
     portal === "other" ? ["/dashboard"] : ["/" + portal + "/"];
   const seen = new Set<string>();
   return navigation.filter(item => (
-    (item.href === "/" + portal || prefixes.some(prefix => item.href.startsWith(prefix))) &&
+    (item.href === "/" + portal ||
+      (portal === "hr" && item.href === "/recruiter") ||
+      (portal === "teacher" && item.href === "/teach") ||
+      prefixes.some(prefix => item.href.startsWith(prefix))) &&
     !seen.has(item.href) && Boolean(seen.add(item.href))
   )).map(({ label, href }) => ({ label, href }));
 }
