@@ -1,10 +1,15 @@
 import type { ReactNode } from "react";
+import { NeedsDoingChips, type NeedsDoingChip } from "@/components/ui/needs-doing-chips";
 
 export type PageHeaderProps = {
   eyebrow?: string;
   title: string;
   description?: string;
   actions?: ReactNode;
+  /** Existing page-owned quick-filter destinations, displayed below the title row. */
+  needsDoingItems?: readonly NeedsDoingChip[];
+  selectedNeedKey?: string;
+  needsDoingLabel?: string;
 };
 
 /**
@@ -12,10 +17,10 @@ export type PageHeaderProps = {
  * Legacy eyebrow and description props remain supported, but both become
  * inline subtitle text instead of a separate eyebrow or paragraph block.
  */
-export function PageHeader({ eyebrow, title, description, actions }: PageHeaderProps) {
+export function PageHeader({ eyebrow, title, description, actions, needsDoingItems, selectedNeedKey, needsDoingLabel }: PageHeaderProps) {
   const subtitle = [eyebrow?.trim(), description?.trim()].filter(Boolean).join(" · ");
 
-  return (
+  const heading = (
     <header
       data-slot="page-header"
       className="flex min-w-0 items-start justify-between gap-4 pb-[var(--lms-space-4)]"
@@ -44,4 +49,13 @@ export function PageHeader({ eyebrow, title, description, actions }: PageHeaderP
       ) : null}
     </header>
   );
+  // Pages frequently use space-y on their root: keep the title and quick
+  // filters in one layout child so they appear immediately below the head.
+  return needsDoingItems?.length ? (
+    <div data-slot="page-heading" className="min-w-0">
+      {heading}
+      <NeedsDoingChips items={needsDoingItems} selectedKey={selectedNeedKey}
+        label={needsDoingLabel}/>
+    </div>
+  ) : heading;
 }

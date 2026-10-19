@@ -422,9 +422,9 @@ export function LearnerCourseDiscussion({
             {pinned.senderName} · {formatTime(pinned.createdAt)}
           </p>
           {moderate && canPost ? (
-            <Button variant="secondary" type="button" disabled={pinningId!==null}
+            <Button type="button" disabled={pinningId!==null}
               onClick={()=>void togglePin(pinned.id)}
-              className="mt-3 min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
+              variant="secondary" className="mt-3 min-h-9 text-xs">
               {pinningId===pinned.id?"Saving…":"Unpin pinned message"}
             </Button>
           ) : null}
@@ -564,8 +564,8 @@ export function LearnerCourseDiscussion({
                     <p className={`${row.grouped ? "mt-0" : "mt-2"} whitespace-pre-wrap text-sm leading-6 text-body`}>
                       {row.item.messageText}
                     </p>
-                    {canPost ? <Button variant="secondary" type="button"
-                      className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center text-xs font-semibold text-primary-text underline"
+                    {canPost ? <Button type="button"
+                      variant="ghost" className="mt-2 min-h-9 !text-[var(--lms-primary-text)] underline"
                       onClick={() => {
                         setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
                         composerRef.current?.focus();
@@ -576,13 +576,13 @@ export function LearnerCourseDiscussion({
                     (moderate || row.item.isMine) ? (
                       <div className="mt-2 flex flex-wrap items-center gap-3">
                         {moderate ? (
-                          <Button variant="secondary"
+                          <Button
                             type="button"
                             disabled={pinningId !== null}
                             onClick={() =>
                               void togglePin(row.item.id)
                             }
-                            className="inline-flex min-h-9 sm:min-h-9 items-center text-xs font-semibold text-primary-text hover:underline disabled:opacity-50"
+                            variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)] hover:underline"
                           >
                             {pinningId === row.item.id
                               ? "Saving…"
@@ -591,11 +591,11 @@ export function LearnerCourseDiscussion({
                                 : "Pin"}
                           </Button>
                         ) : null}
-                        {(moderate || row.item.isMine) ? <Button variant="secondary"
+                        {(moderate || row.item.isMine) ? <Button
                           type="button"
                           disabled={deletingId === row.item.id}
                           onClick={() => setDeleteTarget(row.item.id)}
-                          className="inline-flex min-h-9 sm:min-h-9 items-center text-xs font-semibold text-error hover:underline disabled:opacity-50"
+                          variant="ghost" className="min-h-9 !text-[var(--lms-error)] hover:underline"
                         >
                           {deletingId === row.item.id ? "Deleting…" : "Delete"}
                         </Button> : null}
@@ -614,16 +614,16 @@ export function LearnerCourseDiscussion({
         {scrollEdges.bottom?<span aria-hidden="true" data-scroll-fade="bottom"
           className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-5 bg-gradient-to-t from-surface to-transparent"/>:null}
         {learnerDiscussionMobileJumpVisible(atBottom,unseenCount,messages.length) ? (
-          <Button variant="secondary" type="button" onClick={()=>scrollToBottom()}
-            className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-9 -translate-x-1/2 rounded-full border border-border bg-surface px-4 text-xs font-semibold text-primary-text shadow-lg sm:hidden">
+          <Button type="button" onClick={()=>scrollToBottom()}
+            variant="secondary" className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-9 -translate-x-1/2 shadow-md sm:hidden">
             Jump to latest
           </Button>
         ) : null}
         {unseenCount > 0 ? (
-          <Button variant="secondary"
+          <Button
             type="button"
             onClick={() => scrollToBottom()}
-            className="absolute bottom-[10.5rem] left-1/2 z-10 -translate-x-1/2 rounded-full border border-primary bg-primary px-4 py-2 text-xs font-semibold text-on-primary shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-9 -translate-x-1/2 shadow-md"
           >
             ↓ {unseenCount} new {unseenCount === 1 ? "message" : "messages"}
           </Button>
@@ -638,7 +638,7 @@ export function LearnerCourseDiscussion({
           </p>
           {replyTo ? <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-surface-subtle p-3">
             <p className="min-w-0 break-words text-xs text-body">Replying to: {replyTo.text}</p>
-            <Button variant="secondary" type="button" className="inline-flex min-h-9 sm:min-h-9 items-center text-xs font-semibold text-primary-text underline"
+            <Button type="button" variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)] underline"
               onClick={() => setReplyTo(null)}>Cancel reply</Button>
           </div> : null}
           <label className="text-xs font-semibold text-body" htmlFor="course-discussion-message">
@@ -662,7 +662,7 @@ export function LearnerCourseDiscussion({
             rows={3}
             maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
-            className="mt-1.5 min-h-9 sm:min-h-9 w-full resize-y rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-base text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+            className="mt-1.5 min-h-28 w-full resize-y rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3 py-2 text-[var(--lms-font-base)] text-[var(--lms-form-ink)] focus-visible:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]"
           />
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs text-muted-foreground">

@@ -20,10 +20,10 @@ export function TpoNoticeScheduleControls({count,enabled,minDateTime}:{
   </fieldset>
   {mode==="LATER"?<label className="grid gap-1 text-sm">Schedule for (IST)
     <Input type="datetime-local" name="sendAt" required min={minDateTime}
-      className="min-h-9"/>
+      className="min-h-11 sm:min-h-9"/>
    </label>:null}
   <Button type="submit" disabled={!enabled}
-   className="min-h-9">
+   className="min-h-11 sm:min-h-9">
    {mode==="LATER"?"Schedule":"Send"} {count===null?"announcement":"to "+count+" members"}
   </Button>
  </div>;

@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -63,13 +64,13 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   <p className="text-sm text-muted-foreground">Select up to 20 submitted Education or Identity sections from this current {scope==="roster"?"student roster":"verification queue"} page. Every decision is rechecked, audited, and sent to the student.</p>
   <p role="status" className="text-sm">{checked.length} selected of {waiting.length} visible waiting sections.</p>
   <label className="flex min-h-10 items-center gap-2 text-sm">
-   <input type="checkbox" disabled={busy} checked={waiting.length>0&&waiting.slice(0,20).every(row=>selected.includes(verificationSelectionKey(row)))}
+   <Checkbox  disabled={busy} checked={waiting.length>0&&waiting.slice(0,20).every(row=>selected.includes(verificationSelectionKey(row)))}
     onChange={event=>{setSelected(event.target.checked?waiting.slice(0,20).map(verificationSelectionKey):[]);invalidate();}}/>
    Select first {Math.min(20,waiting.length)} waiting section(s)
   </label>
   <div className="grid max-h-64 gap-2 overflow-y-auto sm:grid-cols-2">
    {waiting.map(row=>{const key=verificationSelectionKey(row);return <label key={key} className="flex min-h-10 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">
-    <input type="checkbox" disabled={busy||selected.length>=20&&!selected.includes(key)}
+    <Checkbox  disabled={busy||selected.length>=20&&!selected.includes(key)}
      checked={selected.includes(key)} onChange={()=>toggle(key)}/>
     <span>{row.learnerName} · {row.section==="EDUCATION"?"Education":"Identity"}{row.missingMarksheet||row.missingIdentityProof?" · Missing document":""}</span>
    </label>;})}
@@ -101,7 +102,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   {preview?<div className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
    <h3 className="font-semibold">Review {eligible.length} eligible, {skipped.length} left out</h3>
    {skipped.length?<p className="text-sm text-warning-text">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
-   {action==="VERIFY"?<label className="flex gap-2 text-sm"><input type="checkbox" checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
+   {action==="VERIFY"?<label className="flex gap-2 text-sm"><Checkbox  checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
     I have checked their documents another way (for example the college&apos;s own records).
    </label>:null}
    <Button variant="primary" type="button" disabled={busy||guardedPending||eligible.length===0||action==="VERIFY"&&!ack}

@@ -506,8 +506,8 @@ function AssignmentCard({
       {!readOnly && !assignment.submissionId && submissionClosed ?
         <div role="status" className="mt-3 space-y-2 text-sm text-warning">
           <p>{assignment.dueAt?"Submissions are closed":"Submission unavailable · deadline missing"}</p>
-          <Button variant="secondary" type="button" disabled aria-disabled="true"
-            className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-muted-foreground">
+          <Button type="button" variant="secondary" disabled aria-disabled="true"
+            className="min-h-9">
             {assignment.dueAt?"Submission closed":"Unavailable"}
           </Button>
         </div>:null}

@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
@@ -219,7 +220,7 @@ export function TpoStudentsBulkAdd({
           <div className="max-h-80 space-y-1 overflow-auto rounded-[var(--lms-control-radius)] border border-border p-2">
             {learners.map((learner) => (
               <label key={learner.membershipId} className="flex min-h-11 items-center gap-3 rounded-[var(--lms-control-radius)] p-2 text-sm hover:bg-surface-secondary">
-                <input type="checkbox" className="h-4 w-4"
+                <Checkbox  className="h-4 w-4"
                   checked={selected.includes(learner.membershipId)}
                   disabled={busy || !drives.length}
                   onChange={(event) => toggle(learner.membershipId, event.target.checked)}/>
@@ -234,7 +235,7 @@ export function TpoStudentsBulkAdd({
             ))}
           </div>
           <label className="flex items-start gap-2 text-sm">
-            <input type="checkbox" checked={includeIneligible} disabled={busy}
+            <Checkbox  checked={includeIneligible} disabled={busy}
               onChange={event=>{setIncludeIneligible(event.target.checked);setError("");}}/>
             Add students who are not eligible anyway, with a recorded inclusion reason
           </label>

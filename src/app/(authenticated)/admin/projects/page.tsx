@@ -13,6 +13,9 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { parseAdminProjectsQuery } from "@/modules/projects/admin-projects-query-model";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
+import { ListToolbar } from "@/components/ui/list-toolbar";
+import { Banner } from "@/components/ui/banner";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -151,24 +154,21 @@ export default async function SuperAdminProjectsPage({
         }
       />
 
-      {!templatesResult.ok && (
-        <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm leading-5 text-body">
-          Project templates are temporarily unavailable. Your workspaces are still visible; refresh to try again.
-        </p>
-      )}
+      {!templatesResult.ok ? <Banner tone="warning">
+        Project templates are temporarily unavailable. Your workspaces are still visible; refresh to try again.
+      </Banner> : null}
+      <Tabs ariaLabel="Workspace display mode" renderPanel={false} value={view}
+        items={[
+          {value:"table",label:"Table",href:viewHref("table"),count:result.total},
+          {value:"cards",label:"Cards",href:viewHref("cards"),count:result.total},
+        ]} />
       <ProjectAdminFilters query={query} legacyWorkspaces />
-
-      <nav className="flex gap-2 border-b border-border text-sm font-semibold" aria-label="Workspace display mode">
-        <Link href={viewHref("table")} aria-current={view==="table"?"page":undefined}
-          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Table</Link>
-        <Link href={viewHref("cards")} aria-current={view==="cards"?"page":undefined}
-          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Cards</Link>
-      </nav>
-      <ProjectWorkspacePageExport items={result.items.map(item=>({
-        id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,
-        riskReasons:item.riskReasons,
-        memberCount:item.memberCount,progressPercent:item.progressPercent,updatedAt:item.updatedAt,
-      }))}/>
+      <ListToolbar label="Project workspaces" viewCount={result.total}
+        exportAction={<ProjectWorkspacePageExport items={result.items.map(item=>({
+          id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,
+          riskReasons:item.riskReasons,
+          memberCount:item.memberCount,progressPercent:item.progressPercent,updatedAt:item.updatedAt,
+        }))}/>} />
       <ProjectAdminWorkspaceList
         view={view}
         items={result.items.map((project) => ({

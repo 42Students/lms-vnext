@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Drawer} from "@/components/ui/drawer";
@@ -25,8 +26,8 @@ export function TpoKeyboardShortcuts({showTrigger=true}:{showTrigger?:boolean}={
   document.addEventListener("keydown",onKey);
   return ()=>{document.removeEventListener("keydown",onKey);if(timeout)clearTimeout(timeout);};
  },[router,open]);
- return <>{showTrigger?<button type="button" aria-label="Keyboard shortcuts" onClick={()=>setOpen(true)}
-  className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text">?</button>:null}
+ return <>{showTrigger?<Button variant="secondary" type="button" aria-label="Keyboard shortcuts" onClick={()=>setOpen(true)}
+  className="min-h-9">?</Button>:null}
   <Drawer title="Keyboard shortcuts" open={open} onOpenChange={setOpen}
    description="Press a key, then the next one. They do nothing while you are typing in a box.">
    <h3 className="font-semibold">Go to</h3>

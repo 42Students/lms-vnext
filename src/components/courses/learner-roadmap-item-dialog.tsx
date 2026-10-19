@@ -21,9 +21,9 @@ export function LearnerRoadmapItemDialog({
   const [open, setOpen] = useState(initiallyOpen);
   return (
     <div className={highlighted ? "rounded-[var(--lms-control-radius)] ring-4 ring-[var(--lms-focus-ring)]" : ""}>
-      <Button variant="secondary" type="button" onClick={() => setOpen(true)}
+      <Button type="button" variant="secondary" onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        className="flex min-h-14 w-full min-w-0 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-left hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+        className="min-h-14 w-full min-w-0 justify-between gap-3 px-4 py-3 text-left">
         <span className="min-w-0">
           <span className="block text-xs font-semibold uppercase text-muted-foreground">
             {caption ?? kind} · {progress.replaceAll("_", " ").toLowerCase()}
