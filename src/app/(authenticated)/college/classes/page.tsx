@@ -25,7 +25,7 @@ export default async function CollegeClassesPage({
     <PageHeader eyebrow="College Admin · Academic Setup" title="Classes" />
     <ErrorState title="Invalid class filters"
       description={collegeDirectoryValidationMessage(parsed.error)}
-      action={<Link href="/college/classes" className="font-semibold text-link">Clear filters</Link>} />
+      action={<Link href="/college/classes" className="font-semibold text-link lms-inline-link">Clear filters</Link>} />
   </div>;
   const [classes, options] = await Promise.all([
     listCollegeClasses(context, parsed.data),
