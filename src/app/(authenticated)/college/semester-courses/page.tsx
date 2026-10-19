@@ -12,7 +12,7 @@ export default async function CollegeSemesterCoursesPage() {
   return <main className="min-w-0 space-y-6">
     <PageHeader title="Semester–Course Mapping"
       actions={<Link href="/college/courses"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Course offerings
       </Link>} />
     <CollegeTermMappingManager data={curriculumData} />
