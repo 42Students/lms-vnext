@@ -324,7 +324,7 @@ export function LearnerFinalDeliveryControl({
         <p>Team submission · The final delivery is shared with your project team.</p>
         {lastEditedBy?<p>Last edited by <strong>{lastEditedBy}</strong></p>:null}
         <p>Mentor review: <strong>{review?.status?.replaceAll("_"," ")??"Waiting for review"}</strong></p>
-        {review?.feedback?<p className="whitespace-pre-wrap rounded-lg border border-border p-3">
+        {review?.feedback?<p className="whitespace-pre-wrap rounded-[var(--lms-control-radius)] border border-border p-3">
           Mentor feedback: {review.feedback}
         </p>:null}
         {latest?.status==="APPROVED"?<p role="status">Accepted · Your final delivery is locked after approval.</p>:null}
@@ -339,7 +339,7 @@ export function LearnerFinalDeliveryControl({
         }
         description="Drafts can be prepared early. Final submission unlocks after Project execution is complete."
       >
-        <section aria-label="What is left before you can submit" className="mb-3 rounded-lg border border-border p-3 text-sm text-body">
+        <section aria-label="What is left before you can submit" className="mb-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           <h3 className="font-semibold text-foreground">What’s left before you can submit</h3>
           {canSubmitDraft?<p className="mt-1">Ready to submit after saving this draft.</p>:<ul className="mt-2 list-disc space-y-1 pl-5">
             <li>{readinessDetail?.tasksRemaining??"Some"} task(s) still need completion</li>
@@ -612,7 +612,7 @@ export function FinalReviewControl({
               <option value="CHANGES_REQUESTED">Request changes</option>
             </Select>
           </label> : null}
-          {staleReview?<div role="alert" className="space-y-2 rounded-md border border-border p-3 text-sm text-body">
+          {staleReview?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
             <p>This submission may have changed since you opened this review. Refresh before accepting, requesting changes, or locking.</p>
             <Button type="button" variant="secondary" disabled={pending}
               onClick={()=>{setConfirmReview(false);setOpen(false);setStaleReview(false);router.refresh();}}>
@@ -787,7 +787,7 @@ export function ProjectEvaluationControl({
           {rows.map((row, index) => (
             <div
               key={index}
-              className="rounded-lg border border-border bg-muted p-3"
+              className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3"
             >
               <div className="grid gap-3 sm:grid-cols-[1fr_7rem_7rem]">
                 <label>
