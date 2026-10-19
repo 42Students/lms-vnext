@@ -1,9 +1,10 @@
 "use client";
 import {useTransition} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 export function AcademicDirectoryRefresh(){
  const router=useRouter(),[pending,start]=useTransition();
- return <button type="button" disabled={pending} onClick={()=>start(()=>router.refresh())}
-  className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
-  aria-busy={pending}>{pending?"Refreshing…":"Refresh"}</button>;
+ return <Button type="button" variant="secondary" disabled={pending} onClick={()=>start(()=>router.refresh())}
+  className="min-h-11 sm:min-h-9"
+  aria-busy={pending}>{pending?"Refreshing…":"Refresh"}</Button>;
 }
