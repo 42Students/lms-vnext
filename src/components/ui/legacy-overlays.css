@@ -180,6 +180,9 @@
 @media (prefers-reduced-motion: no-preference) {
   [data-slot="popover-listbox"] { animation: lms-legacy-popup-enter .2s ease-out both; }
 }
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="popover-listbox"] { animation: none !important; transition: none !important; }
+}
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
