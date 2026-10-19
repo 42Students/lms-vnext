@@ -406,20 +406,11 @@ export function RecruiterLeadDetailWorkspace({
         </div>
       ) : (
         <>
-          <header className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h1 className="text-2xl font-semibold">{lead.name}</h1>
-              <p className="text-sm text-muted-foreground">
-                {lead.companyName || "Company not provided"}
-                {lead.designation ? " · " + lead.designation : ""}
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">Stage: {RECRUITER_STAGE_LEGACY_LABELS[lead.stage as TpoRecruiterLeadStage]??lead.stage}</p>
-               <p className="mt-1 text-sm text-muted-foreground">Added: {formatDateTimeIst(lead.createdAt)}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Invite: {({NOT_SENT:"Not invited",NOT_INVITED:"Not invited",SENT:"Invite sent, not opened",OPENED:"Invite opened",CLICKED:"Invite opened",BOUNCED:"Invite bounced",JOINED:"Joined"} as Record<string,string>)[lead.inviteStatus]??lead.inviteStatus}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Recruiter last login: {lead.recruiterLastLoginAt?
-                formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
-            </div>
+          <PageHeader
+            title={lead.name}
+            description={(lead.companyName || "Company not provided") +
+              (lead.designation ? " · " + lead.designation : "")}
+            actions={
             <div className="flex flex-wrap gap-2">
               {!lead.recruiterUserId&&!lead.unsubscribedAt?<a className={button}
                  href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</a>:null}
@@ -433,7 +424,17 @@ export function RecruiterLeadDetailWorkspace({
               ) : null}
               <button type="button" className={button} onClick={() => setNotNowOpen(true)}>Not now</button>
             </div>
-          </header>
+            }
+          />
+          <div className="space-y-1">
+              <p className="mt-1 text-sm text-muted-foreground">Stage: {RECRUITER_STAGE_LEGACY_LABELS[lead.stage as TpoRecruiterLeadStage]??lead.stage}</p>
+               <p className="mt-1 text-sm text-muted-foreground">Added: {formatDateTimeIst(lead.createdAt)}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Invite: {({NOT_SENT:"Not invited",NOT_INVITED:"Not invited",SENT:"Invite sent, not opened",OPENED:"Invite opened",CLICKED:"Invite opened",BOUNCED:"Invite bounced",JOINED:"Joined"} as Record<string,string>)[lead.inviteStatus]??lead.inviteStatus}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Recruiter last login: {lead.recruiterLastLoginAt?
+                formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
+
+          </div>
           {lead.unsubscribedAt?<div role="alert"
              className="rounded-lg border border-warning bg-surface p-3 text-sm text-body">
              Asked not to be contacted. Invitations and outreach are unavailable.
