@@ -638,3 +638,13 @@ No runtime browser or CI run performed.
 | NORTH-STAR-HR-01 | UX parity | The 22-route HR inventory and child components retained bespoke deep-teal link/focus, generic `--radius` controls and strong notification panel shadows. | Semantic `text-link`, old LMS teal focus outline, 9px controls, old overlay shadow token; 18 pages + 7 HR widgets changed and four already-compatible pages inspected. No content reflow or legacy copy changes. | `tests/unit/chat19-north-star-hr-sweep.test.ts` |
 
 Full page list and reference measurements: `docs/audit/ux/north-star-sweep-chat-19.md`. **CI, typecheck, browser and accessibility execution was deliberately not performed**. Chat-13 should reconcile its topbar-only changes to `app-shell.tsx` without resetting this sidebar layout.
+
+
+## NORTH-STAR-SIDEBAR-02 / NORTH-STAR-HR-02: independent measured follow-up (2026-10-19)
+
+| ID | Severity | Defect found | Correction | Coverage |
+|---|---|---|---|---|
+| NORTH-STAR-SIDEBAR-02 | UX parity / responsive | Collapsed icons were .7 rather than measured .55 opacity, notification badge was 2px too high, rail scroll body used 8px bottom instead of 16px, footer's collapsed visibility class did not match the actual wrapper and footer padding differed from 25px. Topbar wrapper reserved an empty mobile-navigation slot at 768–1023px. | Old measured opacity, badge top 4px, scroll bottom 16px, footer 25px/16px and the actual footer class, 768px mobile breakpoint, and preserved incoming TPO college context at the topbar boundary. | `tests/unit/chat19-sidebar-hr-value-parity.test.ts`; prior `chat19-north-star-legacy-sidebar.test.ts` |
+| NORTH-STAR-HR-02 | UX parity / consistency | Remaining 22 route sources and reusable recruiter controls used numeric 9px corners and inconsistent `outline-primary` / `outline-primary-text` focus tokens, while nine fallback screens added 20px padding inside the authenticated white canvas. | Use shared measured `--lms-control-radius` and `--lms-primary` outline tokens, and remove only redundant outer loading/error padding; all business sections, state labels and forms retained. | `tests/unit/chat19-sidebar-hr-value-parity.test.ts` with source audit of all 22 routes + HR widgets |
+
+**Validation status:** source review and authored tests only. No runtime test suites, typecheck, lint, CI or live browser walkthrough were executed under the owner's directive. See `docs/audit/ux/north-star-sweep-chat-19.md` for the value-by-value matrix and handoff.
