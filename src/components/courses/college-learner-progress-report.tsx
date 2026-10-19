@@ -1,6 +1,5 @@
 "use client";
-import { Select } from "@/components/ui/select";
-
+import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
 import {useState} from "react";
@@ -46,10 +45,10 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
     </Select>
    </label>
    <input type="hidden" name="deliveryId" value={deliveryId}/>
-   <button type="submit" disabled={!deliveryId}
-    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+   <Button variant="primary" type="submit" disabled={!deliveryId}
+    >
     Show progress
-   </button>
+   </Button>
    <Link href="/college/course-progress"
     className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">
     Clear
