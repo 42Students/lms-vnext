@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 import {DataTable} from "@/components/ui/data-table";
 
@@ -65,30 +66,30 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
       </a>
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
         <label className="grid gap-1 text-sm font-semibold">Program
-          <select required value={programId}
+          <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">Choose program</option>
             {choices.programs.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Batch
-          <select required value={cohortId}
+          <Select required value={cohortId}
             onChange={event=>{setCohortId(event.target.value);setSectionId("");setReport(null);}}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">Choose batch</option>
             {choices.batches.filter(option=>option.programId===programId).map(option=>
               <option key={option.id} value={option.id}>{option.name}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Class/Section
-          <select value={sectionId}
+          <Select value={sectionId}
             onChange={event=>{setSectionId(event.target.value);setReport(null);}}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="">No class placement</option>
             {choices.classes.filter(option=>option.cohortId===cohortId).map(option=>
               <option key={option.id} value={option.id}>{option.name} · capacity {option.capacity??"unlimited"}</option>)}
-          </select>
+          </Select>
         </label>
       </div>
       <label className="mt-4 grid gap-2 text-sm font-semibold text-body">
