@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -109,30 +110,30 @@ export default async function CollegeLectureHallsPage({
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Status
-            <select name="status" defaultValue={query.status}
+            <Select name="status" defaultValue={query.status}
               className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Active and archived</option>
               <option value="ACTIVE">Active only</option>
               <option value="ARCHIVED">Archived only</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Room type
-            <select name="roomType" defaultValue={query.roomType}
+            <Select name="roomType" defaultValue={query.roomType}
               className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All room types</option>
               {ROOM_OPTIONS.map(({ value, label }) =>
                 <option key={value} value={value}>{label}</option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Department
-            <select name="departmentId" defaultValue={query.departmentId ?? ""}
+            <Select name="departmentId" defaultValue={query.departmentId ?? ""}
               className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="">All departments</option>
               {departments.map((dept) =>
                 <option key={dept.id} value={dept.id}>{dept.name}</option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Minimum seats
@@ -142,12 +143,12 @@ export default async function CollegeLectureHallsPage({
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Scheduled upcoming classes
-            <select name="upcoming" defaultValue={query.upcoming}
+            <Select name="upcoming" defaultValue={query.upcoming}
               className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Any scheduling</option>
               <option value="YES">Upcoming classes scheduled</option>
               <option value="NO">No upcoming scheduled classes</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Maximum seats
