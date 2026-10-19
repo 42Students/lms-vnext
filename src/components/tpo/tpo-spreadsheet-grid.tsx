@@ -10,6 +10,7 @@ import {TpoGridColumnChooser} from "./tpo-grid-column-chooser";
 import {gridSelectionClick, gridSelectionCheckbox, selectedGridIdsWithin} from "./grid/grid-selection";
 import {sortTpoGridRows,type TpoGridSort} from "./grid/grid-sort";
 import {gridClipboardTsv} from "./grid/grid-export";
+import {GRID_LAYOUT_SUFFIX,parseGridViewMemory,serializeGridViewMemory} from "./grid/view-memory";
 
 export type TpoSpreadsheetGridProps<Row> = {
  rows:readonly Row[];
@@ -38,14 +39,18 @@ export function TpoSpreadsheetGrid<Row>({
  const mobileExtra = display.filter(column=>!mobilePrimary.some(primary=>primary.key===column.key));
  const [columnView,setColumnView]=useState<Record<string,{width:number;pinned:boolean}>>({});
  const [clipboardMessage,setClipboardMessage]=useState("");
- const viewKey=storageKey?storageKey+":layout-v2":null;
+ const viewKey=storageKey?storageKey+GRID_LAYOUT_SUFFIX:null;
+ const legacyViewKey=storageKey?storageKey+":layout-v2":null;
  const colWidth=(key:string)=>columnView[key]?.width??160;
  function updateLayout(key:string,patch:{width?:number;pinned?:boolean}){
   if(!viewKey)return;
   setColumnView(previous=>{
    const next={...previous,[key]:{width:patch.width??previous[key]?.width??160,
     pinned:patch.pinned??previous[key]?.pinned??false}};
-   try{window.localStorage.setItem(viewKey,JSON.stringify(next));}
+   try{window.localStorage.setItem(viewKey,serializeGridViewMemory(
+    permitted.map(key=>({key,width:next[key]?.width??160,pinned:next[key]?.pinned??false,hidden:!active.includes(key)})),
+    permitted,
+   ));}
    catch{/* Browser storage can be disabled; the in-page layout stays usable. */}
    return next;
   });
@@ -94,7 +99,16 @@ export function TpoSpreadsheetGrid<Row>({
   if(!viewKey)return;
   const frame=window.requestAnimationFrame(()=>{
    try{
-    const raw=window.localStorage.getItem(viewKey);
+    const savedV3=window.localStorage.getItem(viewKey);
+    if(savedV3){
+     const restoredV3=parseGridViewMemory(savedV3,permitted);
+     if(restoredV3.length){
+      setColumnView(Object.fromEntries(restoredV3.map(column=>[column.key,
+       {width:column.width,pinned:column.pinned}])));
+      return;
+     }
+    }
+    const raw=legacyViewKey?window.localStorage.getItem(legacyViewKey):null;
     if(!raw)return;
     const stored:unknown=JSON.parse(raw);
     if(!stored||typeof stored!=="object"||Array.isArray(stored))return;
@@ -130,7 +144,10 @@ export function TpoSpreadsheetGrid<Row>({
   if(storageKey){
    if(defaults){
     setColumnView({});
-    try{window.localStorage.removeItem(storageKey+":layout-v2");}catch{/* Ignore disabled storage. */}
+    try{
+     window.localStorage.removeItem(storageKey+GRID_LAYOUT_SUFFIX);
+     window.localStorage.removeItem(storageKey+":layout-v2");
+    }catch{/* Ignore disabled storage. */}
    }
    try{if(defaults)window.localStorage.removeItem(storageKey);
    else window.localStorage.setItem(storageKey,keys.join(","));}
