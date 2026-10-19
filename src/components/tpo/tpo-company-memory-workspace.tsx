@@ -1,3 +1,5 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { PageHeader } from "@/components/ui/page-header";
 "use client";
 import { Badge } from "@/components/ui/badge";
 import {Input} from "@/components/ui/input";
@@ -198,21 +200,13 @@ export function TpoCompanyMemoryWorkspace({
 
   return (
     <section className="space-y-5" aria-label={"Company Memory for " + company.name}>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <Link className="text-sm text-link hover:underline" href="/tpo/recruiters?view=companies">
-            ← Companies
-          </Link>
-          <h1 className="mt-1 text-[30px] font-semibold leading-9 tracking-[-0.02em] text-[var(--lms-heading)]">{company.name}</h1>
-          <p className="text-sm text-muted-foreground">
-            {company.drivesRan>1||company.hiredPerYear.length>1?"Repeat hiring relationship":"Recruiter contacts, drives and hiring history"}
-          </p>
-          {company.alsoTypedAs.length ? (
-            <p className="mt-1 text-xs text-muted-foreground">
-              Also typed as {company.alsoTypedAs.join(", ")}
-            </p>
-          ) : null}
-        </div>
+      <PageBackLink href="/tpo/recruiters?view=companies" label="Companies" />
+      <PageHeader
+        title={company.name}
+        description={company.drivesRan > 1 || company.hiredPerYear.length > 1
+          ? "Repeat hiring relationship"
+          : "Recruiter contacts, drives and hiring history"}
+        actions={
         <div className="flex flex-wrap gap-2">
           <details className="relative">
            <summary className={buttonStyle+" cursor-pointer"}>+ New</summary>
@@ -242,7 +236,13 @@ export function TpoCompanyMemoryWorkspace({
             Create drive
           </Link>
         </div>
-      </div>
+        }
+      />
+      {company.alsoTypedAs.length ? (
+        <p className="text-xs text-muted-foreground">
+          Also typed as {company.alsoTypedAs.join(", ")}
+        </p>
+      ) : null}
 
       <div aria-label="Company numbers" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {[
