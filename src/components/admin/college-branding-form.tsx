@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {LMS_BRANDING_DEFAULT_HEX,LMS_BRANDING_PLACEHOLDER_HEX} from "@/components/ui/branding-color-tokens";
 import { useToast } from "@/components/ui/toast";
 import { brandStyleVariables } from "@/modules/colleges/branding";
 import {safeTpoBrandLogoUrl} from "@/modules/placements/tpo-branding-model";
@@ -151,7 +152,7 @@ export function CollegeBrandingForm({
                 <Input
                   type="color"
                   aria-label={`${key} picker`}
-                  value={validColor(values[key]) ?? "#26BAC7"}
+                  value={validColor(values[key]) ?? LMS_BRANDING_DEFAULT_HEX}
                   onChange={(event) => set(key, event.target.value.toUpperCase())}
                   disabled={!canEdit}
                   className="h-11 !w-12 !min-w-12 shrink-0 cursor-pointer p-1"
@@ -159,7 +160,7 @@ export function CollegeBrandingForm({
                 <Input
                   value={values[key] ?? ""}
                   onChange={(event) => set(key, event.target.value)}
-                  placeholder="#1A95A1"
+                  placeholder={LMS_BRANDING_PLACEHOLDER_HEX}
                   disabled={!canEdit}
                   maxLength={7}
                   aria-invalid={Boolean(errors[key])}
