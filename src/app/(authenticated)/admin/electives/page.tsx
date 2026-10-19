@@ -66,10 +66,10 @@ export default async function SuperAdminElectivesPage({
         <Button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary font-[650]">Filter</Button>
       </form>
       <form method="get" action="/admin/electives" aria-label="Refresh elective directory">
-        {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
-        <input type="hidden" name="status" value={data.query.status} />
-        {data.query.programId?<input type="hidden" name="programId" value={data.query.programId}/>:null}
-        {data.query.semesterNumber?<input type="hidden" name="semesterNumber" value={data.query.semesterNumber}/>:null}
+        {data.query.q ? <Input type="hidden" name="q" value={data.query.q} /> : null}
+        <Input type="hidden" name="status" value={data.query.status} />
+        {data.query.programId?<Input type="hidden" name="programId" value={data.query.programId}/>:null}
+        {data.query.semesterNumber?<Input type="hidden" name="semesterNumber" value={data.query.semesterNumber}/>:null}
         <Button variant="secondary" type="submit" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Refresh</Button>
       </form>
       <p role="status" aria-live="polite" className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
