@@ -41,7 +41,7 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
   </div>
   <p className="text-xs text-body">Focus this area: Ctrl/Cmd+A selects visible rows, Ctrl/Cmd+C copies selected names and roll numbers. Shortcuts never intercept an input field.</p>
   <div className={expanded?"flex flex-wrap gap-2":"hidden flex-wrap gap-2 md:flex"}>
-   <Button variant="secondary" type="button" onClick={selectVisible} className="min-h-9 px-3">Select visible</Button>
+   <Button variant="secondary" type="button" onClick={selectVisible} className="min-h-11 px-3">Select visible</Button>
    <Button variant="secondary" type="button" onClick={()=>{setSelected([]);setMessage("");}}
     className="min-h-9 px-3">Clear selection</Button>
    <Button variant="secondary" type="button" disabled={!valid.length} onClick={()=>void copy()}
