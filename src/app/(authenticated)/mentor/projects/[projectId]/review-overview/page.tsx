@@ -21,7 +21,7 @@ export default async function MentorReviewOverviewPage({
   filters?{projectId,...filters}:null,
  );
  if(!parsed.success)return <section role="alert">
- <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid project review filters</h1>
+ <PageHeader title="Invalid project review filters" />
  <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>
  </section>;
  const data=await getMentorDeliveryReviewOverview(await getCurrentRequestContext(),parsed.data);
