@@ -74,3 +74,29 @@ Public and people: `src/components/placements/tpo-recruiter-grant-controls.tsx`,
 **Main integration:** latest `main` at `a5d88d7cdfce161100ec7233f1d009e8e5b199d4` was merged into `chatgpt/chat-2-b` in commit `adf89b77`, keeping the lane ledger, required shared `Button` imports and round-preview radius. Only the lane branch was updated.
 
 **JSX integrity check:** every changed file was re-read from the pushed branch. Shared `<Select>` and `<Button>` opening/closing counts match; no truncated `</Select`, `</Button` or `</Textarea` closing tags, no obsolete `</select>` after component conversion, and no missing shared-component imports were found in the inspected files. Self-closing `Input`, `Textarea` and `Checkbox` fields stay self-closing. No application code, TypeScript compiler, tests, screenshots or CI were executed; integration/visual validation remains for the owner.
+
+## Further TPO settings, team and announcements sweep (2026-10-19)
+
+Fast-forwarded lane branch from `323ed01f` to then-current `main` `f7dd3e81786adf00538daebf63a075046d159b4c` before modifying source. Branch: `chatgpt/chat-2-b`; all ensuing commits prefixed `[chat-2]`.
+
+Completed source-file work:
+- [x] `src/components/tpo/tpo-team-assign-unowned.tsx` — shared `Select` and `Button`, control tokens
+- [x] `src/components/tpo/tpo-team-follow-controls.tsx` — shared secondary buttons
+- [x] `src/components/tpo/tpo-team-rename.tsx` — shared form fields and buttons
+- [x] `src/components/tpo/tpo-team-decision-toggle.tsx` — shared secondary action
+- [x] `src/components/tpo/tpo-team-search.tsx` — shared `Input`
+- [x] `src/components/tpo/tpo-my-notification-preferences-editor.tsx` — shared `Checkbox`
+- [x] `src/components/tpo/tpo-optional-emails-editor.tsx` — shared `Checkbox`
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx` — shared inputs, textarea and buttons; replace redundant outer/row cards with hairline sections
+- [x] `src/components/tpo/tpo-team-message-actions.tsx` — shared textarea and action buttons
+- [x] `src/components/tpo/tpo-team-thread-details.tsx` — shared detail-toggle button and canvas radius
+- [x] `src/components/tpo/tpo-notice-composer-dialog.tsx` — shared primary button
+- [x] `src/components/tpo/tpo-notice-schedule-controls.tsx` — shared accessible native-backed `Radio` controls
+- [x] `src/components/tpo/tpo-notice-read-progress.tsx` — shared secondary buttons and tokenized radius
+- [x] `src/components/tpo/tpo-notice-acknowledge.tsx` — shared secondary button
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx` — modal/control radii and overlay styling aligned
+- [x] `src/components/tpo/tpo-notice-undo-toast.tsx` — shared undo submit button and canonical radii
+- [x] `src/components/tpo/tpo-bell-panel.tsx` — remove literal hex colors, style the compact bell and notification row using shared tokens
+- [x] `src/components/tpo/tpo-notification-refresh.tsx` — shared retry button and radius token
+
+**Source verification:** all 18 changed TSX files re-read from the lane branch after their commits. Static inspection confirmed that every newly authored `</Select>`, `</Button>`, and `</Textarea>` closing tag is complete, `<Button>`/`<Select>` counts balance, and the referenced shared-control imports exist. Self-closing `Input`, `Checkbox`, `Radio`, and `Textarea` keep JSX self-closing syntax. **No app runtime, compiler, tests, screenshot verification or CI executed**, per lane instructions; final semantic/visual parity remains an owner integration task.
