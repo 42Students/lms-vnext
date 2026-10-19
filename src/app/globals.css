@@ -1093,3 +1093,8 @@ body {
   background: transparent;
   border-color: transparent;
 }
+
+/* Legacy components___form.scss:8-15 — native numeric input chrome is hidden. */
+[data-slot="input"][type="number"] { appearance: textfield; -moz-appearance: textfield; }
+[data-slot="input"][type="number"]::-webkit-inner-spin-button,
+[data-slot="input"][type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
