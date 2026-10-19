@@ -45,7 +45,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
    <ul className="space-y-2">
     {others.map(entry=>{
      const documented=LEGACY_TENANT_SETTING_MAP.get(entry.key);
-     return <li key={entry.key} className="flex min-w-0 flex-wrap items-start justify-between gap-3 border-b border-border py-3 text-sm">
+     return <li key={entry.key} className="flex min-w-0 flex-wrap items-start justify-between gap-3 rounded-[8px] border-b border-border px-3 py-3 text-sm transition-colors duration-200 hover:bg-surface-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
       <div className="min-w-0 flex-1">
        <strong className="break-all">{entry.key}</strong>
        {documented?<p className="text-xs text-warning-text">Never read here — this key is read at {documented.scope} scope.</p>:null}
