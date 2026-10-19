@@ -145,8 +145,8 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       {open ? <PopoverListbox id="lms-topbar-command-results" label="Workspace commands" className={style.dropdown}
         onDismiss={() => {setOpen(false);setMobileOpen(false);input.current?.focus();}}
         onKeyDown={event => {
-          if (event.defaultPrevented || event.isComposing) return;
-          if (event.defaultPrevented || event.isComposing) return;
+          if (event.defaultPrevented || event.nativeEvent.isComposing) return;
+          if (event.defaultPrevented || event.nativeEvent.isComposing) return;
           if (event.key === "Escape") {
             event.preventDefault();
             input.current?.focus();
