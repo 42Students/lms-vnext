@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -48,38 +50,38 @@ export default async function MentorSprintProgressPage({
       <form action="/mentor/sprint-progress" method="get"
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Search
-          <input data-slot="input" type="search" name="search" defaultValue={data.query.search} maxLength={120}
-            placeholder="Sprint, release or project" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+          <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
+            placeholder="Sprint, release or project" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select data-slot="select" name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint status
-          <select data-slot="select" name="state" defaultValue={data.query.state}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          <Select name="state" defaultValue={data.query.state}
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground">
             <option value="ALL">All</option><option value="ACTIVE">Active</option>
             <option value="PLANNED">Planned</option><option value="COMPLETED">Completed</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Registered task attention
-          <select data-slot="select" name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">All sprints</option><option value="BLOCKED">Has blocked tasks</option><option value="IN_REVIEW">Has submitted tasks in review</option><option value="DONE">Sprints with recorded Done tasks</option><option value="TODO">Sprints with recorded To Do tasks</option><option value="NO_TASKS">Sprints without recorded tasks</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Release status
-          <select data-slot="select" name="release" defaultValue={data.query.release}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="release" defaultValue={data.query.release}
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">All releases</option><option value="PLANNED">Planned</option>
             <option value="IN_PROGRESS">In progress</option><option value="SHIPPED">Shipped</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint order
-          <select data-slot="select" name="order" defaultValue={data.query.order} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="order" defaultValue={data.query.order} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="PROJECT">Project and Sprint order</option><option value="ACTIVE_FIRST">Active Sprints first</option>
-          </select>
+          </Select>
         </label>
         <Button type="submit" variant="primary">
           Filter

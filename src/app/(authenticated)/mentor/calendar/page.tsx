@@ -50,7 +50,7 @@ export default async function MentorCalendarPage({searchParams}:{
     <form id="mentor-calendar-filters" method="get" action="/mentor/calendar"
        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="grid min-w-0 max-w-full gap-1 text-sm font-semibold text-body">Action needed
-        <Select name="attention" defaultValue={parsed.data.attention} className="min-h-11 w-full max-w-full">
+        <Select name="attention" defaultValue={parsed.data.attention} className="min-h-11 sm:min-h-9 w-full max-w-full">
           <option value="ALL">All meetings</option><option value="OVERDUE_REQUESTED">Past-dated meeting requests still awaiting response</option>
           <option value="SOON_SCHEDULED">Scheduled within 48 hours</option>
           <option value="MISSED_SCHEDULED">Past-day scheduled meetings without completion</option>
@@ -58,7 +58,7 @@ export default async function MentorCalendarPage({searchParams}:{
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
         <Select name="projectId" defaultValue={parsed.data.projectId??""}
-          className="min-h-11 max-w-full">
+          className="min-h-11 sm:min-h-9 max-w-full">
           <option value="">All projects with meetings</option>
           {[...new Map(meetings.map(row=>[row.projectId,row.projectTitle])).entries()]
             .sort((a,b)=>a[1].localeCompare(b[1])||a[0].localeCompare(b[0]))
@@ -66,28 +66,28 @@ export default async function MentorCalendarPage({searchParams}:{
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sprint association
-        <Select name="sprint" defaultValue={parsed.data.sprint} className="min-h-11">
+        <Select name="sprint" defaultValue={parsed.data.sprint} className="min-h-11 sm:min-h-9">
           <option value="ALL">All meetings</option><option value="LINKED">Linked to a recorded Sprint</option>
           <option value="UNLINKED">No linked Sprint</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Join link
         <Select name="join" defaultValue={parsed.data.join}
-          className="min-h-11">
+          className="min-h-11 sm:min-h-9">
           <option value="ALL">All meetings</option><option value="HAS_SAFE_LINK">Valid join link</option>
           <option value="NO_SAFE_LINK">No safe join link</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <Select name="status" defaultValue={parsed.data.status}
-          className="min-h-11">
+          className="min-h-11 sm:min-h-9">
           {(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"] as const).map(status=>
             <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Meeting type
         <Select name="type" defaultValue={parsed.data.type}
-          className="min-h-11">
+          className="min-h-11 sm:min-h-9">
           <option value="ALL">All types</option>
           <option value="GENERAL">General</option><option value="PLANNING">Planning</option>
           <option value="STANDUP">Standup</option><option value="REVIEW">Review</option>
@@ -96,7 +96,7 @@ export default async function MentorCalendarPage({searchParams}:{
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assigned project state
         <Select name="projectState" defaultValue={parsed.data.projectState}
-          className="min-h-11">
+          className="min-h-11 sm:min-h-9">
           <option value="ALL">All project states</option>
           <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
           <option value="COMPLETED">Completed</option><option value="ARCHIVED">Archived</option>
@@ -104,7 +104,7 @@ export default async function MentorCalendarPage({searchParams}:{
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">IST dates
         <Select name="period" defaultValue={parsed.data.period}
-          className="min-h-11">
+          className="min-h-11 sm:min-h-9">
           <option value="ALL">All dates</option><option value="TODAY">Today</option>
           <option value="NEXT_7_DAYS">Next 7 IST days</option>
           <option value="PAST_7_DAYS">Previous 7 IST days</option>

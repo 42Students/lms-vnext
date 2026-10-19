@@ -28,13 +28,14 @@ export type DataTableProps<Row> = {
   empty: ReactNode;
   caption?: string;
   rowHref?: (row: Row) => string;
+  className?: string;
 };
 
 /** Backwards-compatible export for existing DataTable consumers and tests. */
 export { isSafeInternalHref as isSafeDataTableHref } from "@/lib/safe-internal-href";
 
-export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref }: DataTableProps<Row>) {
-  if(rows.length===0) return <div data-slot="data-table" className="rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] sm:p-[var(--lms-canvas-padding)]">{empty}</div>;
+export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref, className }: DataTableProps<Row>) {
+  if(rows.length===0) return <div data-slot="data-table" aria-label={caption} className={cx("rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] sm:p-[var(--lms-canvas-padding)]", className)}>{empty}</div>;
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
     columns.find(col=>col.mobilePriority===undefined || col.mobilePriority==="secondary");
   const actions=columns.filter(col=>col.mobilePriority==="action");
@@ -89,22 +90,22 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
     };
   });
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
-  return <div data-slot="data-table" className="min-w-0">
+  return <div data-slot="data-table" className={cx("min-w-0", className)}>
     <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 sm:rounded-[var(--lms-radius-md)] sm:border sm:border-[var(--lms-canvas-border)]">
-      <table className="block w-full border-separate border-spacing-0 text-left text-[13px] leading-5 tabular-nums sm:table sm:border-collapse">
+      <table className="block w-full border-separate border-spacing-0 text-left text-[13px] leading-5 tabular-nums sm:table sm:border-collapse sm:[&_tbody_tr:last-child_td]:border-b-0">
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden sm:table-header-group sm:bg-[var(--lms-table-header)]">
           <tr>{columns.map(col=><th key={col.key} scope="col"
-            className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] text-[12px] font-semibold leading-[18px] text-[var(--lms-neutral-400)] sm:sticky sm:top-0 sm:z-10 sm:bg-[var(--lms-table-header)] sm:first:left-0 sm:first:z-20",col.className)}>{col.header}</th>)}</tr>
+            className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] sm:sticky sm:top-0 sm:z-10 sm:bg-[var(--lms-table-header)] sm:first:left-0 sm:first:z-20",col.className)}>{col.header}</th>)}</tr>
         </thead>
         <tbody className="block space-y-[var(--lms-space-3)] sm:table-row-group sm:space-y-0">
           {prepared.map(item=><tr key={item.key}
-            className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:hover:bg-[var(--lms-table-hover)]">
+            className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:transition-colors sm:duration-[var(--lms-motion-fast)] sm:hover:bg-[var(--lms-table-hover)] sm:focus-within:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none">
             {columns.map(col=>{
               const phoneVisible=visibleOnPhone.has(col.key);
               const content=cell(item,col);
               return <td key={col.key} className={cx(
-                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-[var(--lms-canvas-border)] sm:px-[var(--lms-space-4)] sm:py-2.5 sm:align-middle sm:first:sticky sm:first:left-0 sm:first:z-10 sm:first:bg-inherit",
+                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-[var(--lms-canvas-border)] sm:px-[var(--lms-space-4)] sm:py-[10px] sm:align-middle sm:first:sticky sm:first:left-0 sm:first:z-10 sm:first:bg-inherit",
                 phoneVisible?"block":"hidden",col.className,
               )}>
                 {phoneVisible && col.mobilePriority!=="action" ?
