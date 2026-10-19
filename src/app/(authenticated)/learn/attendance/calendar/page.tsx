@@ -8,6 +8,8 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { StatTile } from "@/components/ui/stat-tile";
 import {
   attendanceCalendarDayKey, attendanceCalendarDays,
@@ -24,14 +26,9 @@ const statusNames:Record<string,string> = {
   PRESENT:"Present",ABSENT:"Absent",EXCUSED:"Excused",MEDICAL:"Medical",
   LATE:"Late",NOT_MARKED:"Not marked",SCHEDULED:"Scheduled",
 };
-const statusClass:Record<string,string> = {
-  PRESENT:"bg-success-subtle text-success",
-  ABSENT:"bg-error-subtle text-error",
-  EXCUSED:"bg-warning-subtle text-warning",
-  MEDICAL:"bg-warning-subtle text-warning",
-  LATE:"bg-warning-subtle text-warning",
-  NOT_MARKED:"bg-muted text-body",
-  SCHEDULED:"bg-primary-subtle text-primary-text",
+const statusTone:Record<string,"success"|"error"|"warning"|"neutral"|"info"> = {
+  PRESENT:"success",ABSENT:"error",EXCUSED:"warning",
+  MEDICAL:"warning",LATE:"warning",NOT_MARKED:"neutral",SCHEDULED:"info",
 };
 
 export default async function LearnerAttendanceCalendarPage({
@@ -43,9 +40,10 @@ export default async function LearnerAttendanceCalendarPage({
     deliveryId:first(raw.deliveryId)??undefined,
     status:first(raw.status)??undefined,
   });
-  if(!parsed.success) return <section role="alert" className="space-y-3">
+  if(!parsed.success) return <section className="space-y-3">
     <PageHeader title="Invalid attendance calendar filters" />
-    <Link href="/learn/attendance/calendar" className="text-primary-text underline">
+    <Alert tone="error">These attendance calendar filters are invalid. Use Clear filters to return to the default calendar.</Alert>
+    <Link href="/learn/attendance/calendar" className="inline-flex min-h-11 items-center text-primary-text underline hover:text-primary-hover md:min-h-9">
       Clear filters
     </Link>
   </section>;
@@ -74,16 +72,16 @@ export default async function LearnerAttendanceCalendarPage({
 
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+      actions={<Link href={sourceLink} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Attendance detail
       </Link>} />
     <form action="/learn/attendance/calendar" method="get"
       className="grid gap-3 border-b border-border pb-4 md:grid-cols-3">
-      <label className="grid gap-1 text-sm font-semibold text-body">Month
+      <label className="grid gap-1 text-xs font-semibold text-body">Month
         <Input name="month" type="month" defaultValue={data.query.month}
           className="min-h-11" />
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Course
+      <label className="grid gap-1 text-xs font-semibold text-body">Course
         <Select name="deliveryId" defaultValue={data.query.deliveryId}
           className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All accessible Courses</option>
@@ -93,7 +91,7 @@ export default async function LearnerAttendanceCalendarPage({
             </option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Status
+      <label className="grid gap-1 text-xs font-semibold text-body">Status
         <Select name="status" defaultValue={data.query.status}
           className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All status types</option>
@@ -102,11 +100,11 @@ export default async function LearnerAttendanceCalendarPage({
         </Select>
       </label>
       <div className="flex flex-wrap items-center gap-3 md:col-span-3">
-        <Button type="submit" className="min-h-11">
+        <Button type="submit" className="min-h-11 md:min-h-9">
           Apply filters
         </Button>
         <Link href="/learn/attendance/calendar"
-          className="text-sm font-semibold text-primary-text">Clear</Link>
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover md:min-h-9">Clear</Link>
       </div>
     </form>
     <div className="grid gap-3 md:grid-cols-4" aria-label="Filtered attendance totals">
@@ -166,9 +164,9 @@ export default async function LearnerAttendanceCalendarPage({
             className="rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <h3 className="font-semibold text-foreground">{row.title}</h3>
-              <span className={"rounded-full px-2 py-1 text-xs font-semibold "+(statusClass[row.status]??"bg-muted text-body")}>
+              <StatusBadge tone={statusTone[row.status]??"neutral"}>
                 {statusNames[row.status]??row.status}
-              </span>
+              </StatusBadge>
             </div>
             <p className="mt-2 text-sm text-body">{row.courseName} · {row.courseCode}</p>
             <p className="mt-1 text-sm text-body">
