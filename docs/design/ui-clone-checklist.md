@@ -54,6 +54,7 @@ Primary solid #0a7c88 white text radius 9 height 36 weight 650 14px, hover #0868
 5. Accordions/collapse, steppers and timelines, description lists, list rows with icon + title + detail + pill + chevron. (chat-14)
 6. Cards only for genuinely separate objects (Next up panel, report tiles); remove card-in-card. (chat-9)
 7. Stat tiles, funnel strips, summary strips, progress bars, charts (colours, axes, tooltips, legends), calendar and week/day grid views. (chat-2)
+8. TPO/HR spreadsheet AG Grid parity: legacy TpoGrid, Quartz theme, 48px pinned selection column, filtered select-all, Shift/Ctrl selection, TSV copy, numeric/date sort only, external filters, per-storageKey layout memory, hide-filtered selection, server-safe export/actions and saved views. (chat-14; audit: docs/audit/ux/clone-sheets.md; STRICT TICK RULE applies)
 
 ## F. Overlays and feedback (owners: chat-16 overlays, chat-5 states)
 1. Modals/dialogs, drawers, popconfirm: overlay colour, radius, shadow, header/footer, close icon, padding, animation, button row; every hand-rolled overlay replaced by the shared Dialog/Drawer. (chat-16)
