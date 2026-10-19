@@ -14,7 +14,7 @@ export function LearnerRoundConfirmAttendance({applicationId,roundId,confirmed}:
  if(isConfirmed)return <span role="status" className="text-xs font-semibold">Confirmed</span>;
  return <div className="flex flex-wrap items-center gap-2">
   <span className="text-xs font-semibold text-warning">Please confirm</span>
-  <Button type="button" disabled={pending} onClick={()=>void run(async()=>{
+  <Button className="max-md:min-h-11" type="button" disabled={pending} onClick={()=>void run(async()=>{
    setError("");
    try{
     await apiFetch("/api/placements/learner/rounds/confirm",{

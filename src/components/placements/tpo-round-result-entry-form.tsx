@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -51,8 +52,8 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
   <label className="text-sm text-body sm:col-span-2">{outcome==="PASS"?"Internal result note":"Candidate-visible feedback"}
    <Textarea name="note" rows={2} minLength={1} maxLength={1000} required className={"mt-1 block w-full "+cls}/>
   </label>
-  {error?<p role="alert" className="text-sm text-foreground sm:col-span-2">{error}</p>:null}
-  {saved?<p role="status" className="text-sm text-body sm:col-span-2">Result staged. Refresh to review the new version before another edit.</p>:null}
+  {error?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
+  {saved?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="success" message="Result staged. Refresh to review the new version before another edit."/></div>:null}
   <Button variant="primary" type="submit" disabled={pending||saved} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] disabled:opacity-50 sm:col-span-2 text-primary-foreground">
    {pending?"Saving…":saved?"Result staged":"Confirm staged result"}</Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}

@@ -230,8 +230,8 @@ export function FacultyCourseHomeSignals({
               (bucket.count / total) * 100,
             );
             return (
-              <details key={bucket.label} className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
-                <summary className="grid cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3">
+              <Disclosure key={bucket.label}
+                title={<span className="grid min-w-0 flex-1 grid-cols-[6rem_minmax(0,1fr)_2rem] items-center gap-3">
 
                 <span className="text-body">
                   {bucket.label}
@@ -239,7 +239,8 @@ export function FacultyCourseHomeSignals({
                 <MetricBar label={bucket.label+" grade distribution"}
                   value={width} maximum={100} unit="percent" />
                 <strong className="text-right text-foreground">{bucket.count}</strong>
-                </summary>
+                </span>}
+                className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [&>summary]:px-0">
                 {bucket.count>0?<ul className="mt-2 space-y-1 border-t border-border pt-2">
                   {signals.performance.studentAverages.filter(student=>
                     student.averagePercent>=bucket.min&&student.averagePercent<=bucket.max
@@ -248,7 +249,7 @@ export function FacultyCourseHomeSignals({
                     <span>{student.name}</span><span>{student.averagePercent}%</span>
                   </li>)}
                 </ul>:<p className="mt-2 text-xs text-muted-foreground">No graded learners in this range.</p>}
-              </details>
+              </Disclosure>
             );
           })}
         </div>

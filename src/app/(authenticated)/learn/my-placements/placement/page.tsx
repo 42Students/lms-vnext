@@ -43,9 +43,9 @@ export default async function LearnerPlacementCellPage({
         <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Read placement rules →</Link>
       </section>
       <nav aria-label="Placement cell resources" className="flex flex-wrap gap-3">
-        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read all college notices →</Link>
-        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Placement-cell authored notices →</Link>
-        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Notification preferences →</Link>
+        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read all college notices →</Link>
+        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Placement-cell authored notices →</Link>
+        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Notification preferences →</Link>
       </nav>
       {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
         <section role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
@@ -61,7 +61,7 @@ export default async function LearnerPlacementCellPage({
           <h2 className="text-base font-semibold text-foreground">Official offers</h2>
           <p className="mt-2 text-sm text-body">{learnerPlacementCellOfferEmptyMessage(offerRows.length)}</p>
           <Link href="/learn/my-placements/applications"
-            className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             Review my applications →
           </Link>
         </section>
@@ -89,7 +89,7 @@ export default async function LearnerPlacementCellPage({
       </section>
       <section id="rules" className="scroll-mt-24 border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Placement rules</h2>
-        <Link href="/learn/my-placements/rules?from=cell" className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Read placement rules</Link>
+        <Link href="/learn/my-placements/rules?from=cell" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Read placement rules</Link>
       </section>
     </div>
   );
