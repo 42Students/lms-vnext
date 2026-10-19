@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
@@ -62,11 +63,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
           Export filtered follow-ups CSV
         </a><TpoDueFollowupWorkspace data={data} />
-        <nav aria-label="Follow-up pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-          <span className="text-body">Showing {data.total===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.total,data.page*data.pageSize)} of {data.total} matching tasks · page {data.page} of {data.totalPages}</span>
-          <div className="flex gap-4">{data.page>1?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page-1})} className="font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>:null}
-            {data.page<data.totalPages?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page+1})} className="font-semibold text-[var(--lms-teal-deep)]">Next →</Link>:null}</div>
-        </nav></> : (
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3"><span className="text-body">Showing {data.total===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.total,data.page*data.pageSize)} of {data.total} matching tasks · page {data.page} of {data.totalPages}</span><Pagination label="Follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>tpoFollowupQueueHref({scope,window,q,page})}/></div></> : (
         <section role="status" className="border-t border-border py-6">
           <h2 className="font-semibold text-foreground">Recruiter follow-ups unavailable</h2>
           <p className="mt-2 text-sm text-body">
