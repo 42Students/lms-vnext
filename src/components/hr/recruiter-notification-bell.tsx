@@ -1,4 +1,5 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -52,9 +53,9 @@ export function RecruiterNotificationBell(){
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
     variant="secondary" className="relative min-h-11 min-w-11 !px-2">
     <ShellNavGlyph name="bell" />
-    {data?.unread&&data.unread>0?<span aria-hidden="true"
-      className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-error)] px-1 text-[10px] leading-3 text-white">
-      {data.unread>99?"99+":data.unread}</span>:null}
+    {data?.unread&&data.unread>0?<Badge tone="error" aria-hidden="true"
+      className="absolute -right-1 -top-1 !min-h-4 !min-w-4 !rounded-full !border-0 !bg-[var(--lms-error)] !px-1 !py-0 !text-[10px] !leading-3 !text-white">
+      {data.unread>99?"99+":data.unread}</Badge>:null}
   </Button>
   <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications">
    {!data&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:null}
