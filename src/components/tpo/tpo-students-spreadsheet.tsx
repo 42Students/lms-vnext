@@ -19,6 +19,7 @@ import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import type {TpoFilterField} from "./tpo-grid-filter-panel";
 import {GridWorkspace} from "./grid/grid-workspace";
+import {TpoStudentSavedViews} from "./tpo-student-saved-views";
 import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
@@ -85,7 +86,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"journey",label:"Journey",read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"email",label:"Email (export only)",read:row=>row.email,exportOnly:true},
 ];
-export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,afterCollegeAvailable}:{rows:readonly TpoStudentRow[];programs:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[];
+export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,afterCollegeAvailable,canManageViews=false}:{rows:readonly TpoStudentRow[];programs:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[];canManageViews?:boolean;
  afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string}>;afterCollegeAvailable:boolean}){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
@@ -213,7 +214,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    selection={{selected:noteSelection,onChange:setNoteSelection}}
    filters={filters} rollOf={row=>row.rollNumber??row.registrationNumber}
-   filterTitle="Filter students" exportName="tpo-students" xlsxHref={xlsxHref}>
+   filterTitle="Filter students" exportName="tpo-students" xlsxHref={xlsxHref}
+   savedViews={canManageViews?<TpoStudentSavedViews/>:undefined}>
   <TpoSpreadsheetGrid showColumnChooser={false} mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
