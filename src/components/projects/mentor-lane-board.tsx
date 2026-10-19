@@ -1,5 +1,6 @@
 import { Select } from "@/components/ui/select";
 "use client";
+import { Badge } from "@/components/ui/badge";
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import {useRouter,useSearchParams} from "next/navigation";
@@ -170,9 +171,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
           "border-border bg-surface text-body")}>
         {option.label}
       </button>)}
-    {activeFilterCount>0?<span className="rounded-full bg-muted px-2 py-1 text-xs font-semibold text-body">
+    {activeFilterCount>0?<Badge  tone="neutral">
       {activeFilterCount} active {activeFilterCount===1?"filter":"filters"}
-    </span>:null}
+    </Badge>:null}
   </div>
   <p role="status" className="text-xs text-body">
     {matching.length} matching {matching.length===1?"task":"tasks"} · {tasks.length} total in this project&apos;s full history.
