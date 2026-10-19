@@ -95,14 +95,14 @@ export function TpoAfterCollegeBulkEditor({
     </p>
     {!available && <p role="status" className="text-sm text-warning">
       After college records are unavailable until the database table is registered.</p>}
-    <label className="inline-flex items-center gap-2 text-sm">
+    <label className="inline-flex min-h-11 items-center gap-2 text-sm">
       <Checkbox disabled={!available || busy} checked={selectAll}
         onChange={event => setSelected(event.target.checked ? rows.map(row => row.membershipId) : [])} />
       Select all {rows.length} students on this page
     </label>
-    <div className="max-h-40 space-y-1 overflow-auto rounded-[var(--lms-canvas-radius,12px)] border border-border p-2">
+    <div className="max-h-40 min-w-0 space-y-1 overflow-auto overscroll-contain border-y border-border py-2">
       {rows.map(row => <label key={row.membershipId}
-        className="flex items-center gap-2 p-1 text-sm">
+        className="flex min-h-11 min-w-0 items-center gap-2 break-words py-1 text-sm">
         <Checkbox disabled={!available || busy} checked={ids.includes(row.membershipId)}
           onChange={event => setSelected(current => event.target.checked
             ? [...new Set([...current, row.membershipId])]
@@ -113,7 +113,7 @@ export function TpoAfterCollegeBulkEditor({
     <div className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">After college
         <Select value={outcome} onChange={event => setOutcome(event.target.value as AfterCollegeOutcome)}
-          disabled={!available || busy} className="min-h-11 min-[768px]:min-h-9">
+          disabled={!available || busy} className="min-h-11 md:min-h-9">
           {!MANUAL_AFTER_COLLEGE_OUTCOMES.includes(outcome)?<option value={outcome} disabled>{AFTER_COLLEGE_LABELS[outcome]} · Automatic</option>:null}
           {afterCollegeOptions().map(option => <option key={option.value} value={option.value}>
             {option.label}</option>)}
@@ -121,11 +121,11 @@ export function TpoAfterCollegeBulkEditor({
       </label>
       <Button variant="primary" type="button" disabled={!available || busy || !ids.length}
         onClick={() => setConfirmation("SAVE")}
-        className="min-h-11 min-[768px]:min-h-9">
+        className="min-h-11 md:min-h-9">
         Update {ids.length} student(s)
       </Button>
       {undo?.length ? <Button variant="secondary" type="button" disabled={busy} onClick={() => setConfirmation("UNDO")}
-        className="min-h-11 min-[768px]:min-h-9">Undo last bulk update</Button> : null}
+        className="min-h-11 md:min-h-9">Undo last bulk update</Button> : null}
     </div>
     <Dialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setConfirmation(null);}}
       title={confirmation==="SAVE"?"Update after-college outcomes":"Undo bulk after-college update"}
