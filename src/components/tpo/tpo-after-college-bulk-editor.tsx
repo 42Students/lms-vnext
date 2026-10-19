@@ -113,7 +113,7 @@ export function TpoAfterCollegeBulkEditor({
     <div className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">After college
         <Select value={outcome} onChange={event => setOutcome(event.target.value as AfterCollegeOutcome)}
-          disabled={!available || busy} className="min-h-11 sm:min-h-9">
+          disabled={!available || busy} className="min-h-11 min-[768px]:min-h-9">
           {!MANUAL_AFTER_COLLEGE_OUTCOMES.includes(outcome)?<option value={outcome} disabled>{AFTER_COLLEGE_LABELS[outcome]} · Automatic</option>:null}
           {afterCollegeOptions().map(option => <option key={option.value} value={option.value}>
             {option.label}</option>)}
@@ -121,11 +121,11 @@ export function TpoAfterCollegeBulkEditor({
       </label>
       <Button variant="primary" type="button" disabled={!available || busy || !ids.length}
         onClick={() => setConfirmation("SAVE")}
-        className="min-h-11 sm:min-h-9">
+        className="min-h-11 min-[768px]:min-h-9">
         Update {ids.length} student(s)
       </Button>
       {undo?.length ? <Button variant="secondary" type="button" disabled={busy} onClick={() => setConfirmation("UNDO")}
-        className="min-h-11 sm:min-h-9">Undo last bulk update</Button> : null}
+        className="min-h-11 min-[768px]:min-h-9">Undo last bulk update</Button> : null}
     </div>
     <Dialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setConfirmation(null);}}
       title={confirmation==="SAVE"?"Update after-college outcomes":"Undo bulk after-college update"}
