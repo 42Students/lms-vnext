@@ -183,7 +183,9 @@ body {
 /* Motion tokens and a consistent default transition for every interactive control (150ms). */
 :root {
   --lms-motion-fast: 150ms;
-  --lms-motion-base: 200ms;
+  --lms-motion-base: 250ms;
+  --lms-motion-slow: 350ms;
+  --lms-motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --lms-motion-ease: cubic-bezier(0.2, 0, 0, 1);
 }
 a,
@@ -794,6 +796,10 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   --lms-radius-pill: 999px;
   --lms-radius-shell-control: 9px;
   --lms-touch-target: 44px;
+  --lms-z-base: 0;
+  --lms-z-raised: 10;
+  --lms-z-dropdown: 100;
+  --lms-z-sticky: 200;
   --lms-leading-tight: 1.25;
   --lms-leading-snug: 1.4;
   --lms-leading-normal: 1.6;
