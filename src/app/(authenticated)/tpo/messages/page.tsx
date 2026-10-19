@@ -81,7 +81,6 @@ export default async function TpoMessagesPage({
     return (
       <div className="space-y-6">
         <PageHeader
-          eyebrow="TPO · Communication"
           title="Messages"
           description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         />
@@ -91,7 +90,7 @@ export default async function TpoMessagesPage({
           action={
             <Link
               href="/tpo/messages"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
             >
               Clear filters
             </Link>
@@ -128,12 +127,12 @@ export default async function TpoMessagesPage({
   // TPO-inbox-team-11: do not disguise notification deliveries as messages
   // when the recruiter-thread tables are not available.
   if(!isRecruiterInbox)return <div className="space-y-6">
-   <PageHeader eyebrow="TPO · Communication" title="Messages"
+   <PageHeader title="Messages"
     description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
    <ErrorState title="Recruiter conversations are temporarily unavailable"
     description="Your placement notifications remain available separately. No recruiter messages were loaded."
     action={<Link href="/tpo/notifications"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-primary-text">
       Open notifications
      </Link>}/>
   </div>;
@@ -161,7 +160,6 @@ export default async function TpoMessagesPage({
     <div className="space-y-6">
       <TpoLiveRefresh intervalMs={4000}/>
       <PageHeader
-        eyebrow="TPO · Communication"
         title="Messages"
         description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         actions={
@@ -175,7 +173,7 @@ export default async function TpoMessagesPage({
             </Link>
             <Link
               href="/tpo/more"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
             >
               More TPO tools
             </Link>
@@ -352,7 +350,7 @@ export default async function TpoMessagesPage({
 
             <Link
               href="/tpo/messages"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
             >
               Clear filters
             </Link>
@@ -409,7 +407,7 @@ export default async function TpoMessagesPage({
                </div>},
               {key:"subject",header:"Subject",mobileLabel:"Subject",mobilePriority:"action",
                cell:item=><div className="min-w-0">
-                {isRecruiterInbox?<Link className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline"
+                {isRecruiterInbox?<Link className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline"
                   href={"/tpo/messages/"+encodeURIComponent(item.id)}>{item.subject} →</Link>:
                  <span className="break-words text-body">{item.subject}</span>}
                 {(query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview)?
@@ -424,7 +422,7 @@ export default async function TpoMessagesPage({
                cell:item=><time dateTime={item.occurredAt.toISOString()}>{formatTpoInboxTime(item.occurredAt,now)}</time>},
               {key:"context",header:"Context",mobileLabel:"Context",mobilePriority:"action",
                cell:item=>item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
-                className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Open related job →</Link>:
+                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open related job →</Link>:
                 <span className="text-muted-foreground">{isRecruiterInbox?"General conversation":"Recipient notification"}</span>},
             ]}
           />
@@ -445,7 +443,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Previous
               </Link>
@@ -457,7 +455,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Next
               </Link>
