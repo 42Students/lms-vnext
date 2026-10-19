@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {apiFetch} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { PopoverListbox } from "@/components/ui/popover";
 import {LearnerNotificationBell} from "./learner-notification-bell";
 import { LEARNER_COURSE_SEARCH_PLACEHOLDER } from "@/modules/courses/learner-course-copy-model";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -78,9 +79,7 @@ export function LearnerTopbarTools() {
           autoComplete="off"
         />
         {open ? (
-          <div
-            role="listbox"
-            aria-label="Course search results"
+          <PopoverListbox label="Course search results"
             className="absolute left-0 top-[calc(100%+0.5rem)] z-50 max-h-96 w-[min(26rem,80vw)] overflow-y-auto rounded-xl border border-border bg-surface p-2 shadow-xl"
           >
             {loadFailed?<div className="p-2"><InlineNotice tone="error" message="Could not load courses. Please try again." onDismiss={()=>setLoadFailed(false)}/></div>:null}
@@ -108,7 +107,7 @@ export function LearnerTopbarTools() {
                 No courses found. Try a different search.
               </p>
             )}
-          </div>
+          </PopoverListbox>
         ) : null}
       </div>
 
