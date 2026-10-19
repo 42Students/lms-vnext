@@ -132,12 +132,12 @@ export function LearnerNotificationBell(){
     {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-notification-unread,#ff7576)] px-1 text-[10px] font-bold leading-none text-white">
      {count>99?"99+":count}</span>:null}
   </Button>
-  {open ? (mobile
+  {mobile
    ? <Drawer id="lms-learner-notifications" open={open} onOpenChange={setOpen} title="Notifications">
        {panelContent}
      </Drawer>
-   : <PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}>
+   : open ? <PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}>
        {panelContent}
-     </PopoverPanel>) : null}
+     </PopoverPanel> : null}
  </div>;
 }
