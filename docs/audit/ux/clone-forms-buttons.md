@@ -593,3 +593,24 @@ All changed JSX opening/closing names were read from each fetched file and kept 
 **STRICT ledger stays 0 ticked / 12 unticked:** A1–A4, C1–C7, D. Do not mark these complete until the global grep and browser responsive/interaction evidence is collected, and AntD native popup (C2/C3), image crop (C5), and rich editor (C7) differences are resolved.
 
 **Next exact file:** \`src/components/ui/multi-select.tsx\` — complete selected-value tags, readonly/error, dropdown keyboard and AntD popup parity; then \`src/components/ui/searchable-select.tsx\`.
+
+
+
+### Follow-on C2 source pass — multi-select tags and searchable selection
+
+- [x] \`src/components/ui/multi-select.tsx\` — added optional \`readOnly\` with native multiple selection restoration, suppressed Space/arrow mutations when readonly, kept form \`value/defaultValue/name\` and \`onChange/onValuesChange\` contracts; disabled option/readonly tag removal prohibited; removable tags announce visible labels. Native \`Select\` and shared \`Button\` remain the only controls.
+- [x] \`src/components/ui/searchable-select.tsx\` — controlled valid value or options refresh clears a stale native \`setCustomValidity\`/ARIA error, while free-form and invalid values keep existing keyboard/validation behavior; shared Input/PopoverListbox/Button unchanged.
+
+| C2 property / state | Legacy reference, exact value | vNext source | Result |
+| --- | --- | --- | --- |
+| Selected option background/text | \`legacy-styles/components___antddesign.scss:134-140\`, brand #26bac7 with white text and wrapped labels | \`src/components/ui/multi-select.tsx:81-89\`, shared Select; \`globals.css:1165-1169\` checked native option teal/white | Same declared colors; system popup varies |
+| Search option row min-height | \`legacy-styles/components___form.scss:85-93\`, 44px row with 5px/10px padding | \`src/components/ui/searchable-select.tsx:152-161\`, shared listbox option min-height 44px, 5px/10px | Source match |
+| Dropdown scroll max-height | \`components___form.scss:64-78\`, 200px, radius 12px, shadow 0 14px 16px rgba(0,0,0,.04) | \`searchable-select.tsx:152-154\` max-height 200px, \`PopoverListbox\` radius 12px, shadow token | Height/radius match; shadow token needs computed verification |
+| Form field border/focus | \`components___antddesign.scss:511-524\` native AntD selector 10px radius and 14px text | \`multi-select.tsx:81-83\`, \`searchable-select.tsx:139-146\`, shared Select/Input 10px/14px | Static shared role match |
+| Selected tag and remove | \`components___antddesign.scss:134-140\` selected content wraps | \`multi-select.tsx:90-110\` wrapping tags, disabled/readOnly-aware shared Button, 44px phone remove | Functionality/source geometry present, exact AntD tag visual unverified |
+| Keyboard and disabled state | \`components___antddesign.scss:134-140\` selected/disabled option distinction | \`multi-select.tsx:44-79\` native multiple semantics; \`searchable-select.tsx:117-145\` active-descendant + validation | Browser key traversal and OS select popup parity pending |
+| Responsive | \`components___variables.scss:139,148-156\` 44px target at <=767px, tablet >=768px | \`multi-select.tsx:98-106\`, \`searchable-select.tsx:148-160\`, shared Select/Input/Button phone target | Source-only responsive proof |
+
+**Exact fetched-file grep counts:** \`multi-select.tsx\` and \`searchable-select.tsx\` each have raw \`<button>\` **0**, \`<input>\` **0**, \`<select>\` **0**, \`<textarea>\` **0**, based on the same complete-file pattern \`/<(button|input|select|textarea)(?=[\\s>])/g\`. Both use matched shared opening/closing JSX tags and no new hard-coded hex color paint. The global all-caller scan and actual mobile/keyboard/browser checks have not been run; **C2 stays unticked**, as do the other eleven strict categories.
+
+**Next exact file for the replacement lane:** \`src/components/ui/date-input.tsx\` (week/datetime-local/seconds/any-step native fallback vs legacy picker popup; do not tick C3 without value and viewport proof).
