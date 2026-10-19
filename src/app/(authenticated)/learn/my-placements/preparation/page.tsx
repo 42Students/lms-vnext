@@ -32,7 +32,7 @@ export default async function LearnerPlacementPreparationPage({
     <PageHeader eyebrow="Learner · My Placements" title="Placement preparation"
       description="A checklist of information and activity actually recorded for your account."
       actions={<Link href="/learn/my-placements"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
         My Placements
       </Link>} />
     {(await placementTableExists("placement_tpo_prep_assignments"))?<LearnerPrepAssignmentCards/>:null}
@@ -56,8 +56,8 @@ export default async function LearnerPlacementPreparationPage({
         <Link key={view} href={learnerPreparationHref({view})}
           aria-current={data.query.view===view?"page":undefined}
           className={data.query.view===view
-            ? "inline-flex min-h-11 items-center rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
-            : "inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-body"}>
+            ? "inline-flex min-h-9 items-center rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
+            : "inline-flex min-h-9 items-center rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-body"}>
           {label}
         </Link>)}
     </nav>
@@ -76,7 +76,7 @@ export default async function LearnerPlacementPreparationPage({
             </div>
             <p className="mt-2 text-sm leading-6 text-body">{item.description}</p>
             <Link href={item.href}
-              className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-4 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               {item.recorded?"Review recorded information":"Review this section"} →
             </Link>
           </li>)}
