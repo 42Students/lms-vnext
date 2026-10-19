@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-service";
 import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
@@ -168,10 +169,10 @@ export default async function TpoTeamPage({searchParams}:{
        <li key={row.id} className="border-b border-border py-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
          <Link className="min-w-0 break-words font-semibold text-link" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
-         {row.unreadCount>0 ? <span aria-label={row.unreadCount+" unread updates"}
-          className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-link">
+         {row.unreadCount>0 ? <Badge aria-label={row.unreadCount+" unread updates"}
+           tone="neutral">
           {row.unreadCount} unread
-         </span>:null}
+         </Badge>:null}
         </div>
         <p className="mt-1 truncate text-xs text-body">With {row.counterpartName??"Team member"} · Private conversation</p>
         {row.searchSnippet??row.lastPreview?<p className="mt-1 truncate text-xs text-muted-foreground">{row.searchSnippet??row.lastPreview}</p>:null}
