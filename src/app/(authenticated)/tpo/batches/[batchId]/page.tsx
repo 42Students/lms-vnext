@@ -110,7 +110,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="text-sm">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
     eligibility.nextAction==="DECIDE"?"Decide undecided learners":
     eligibility.nextAction==="INVITE"?"Review batch invitation readiness":"Review finished batch"}</p>
-  <Link href={"/tpo/batches/"+batchId+"/students"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Open Students</Link>
+  <Link href={"/tpo/batches/"+batchId+"/students"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open Students</Link>
  </section>
 
  <section id="batch-next-step" aria-label="Next step" tabIndex={-1}
