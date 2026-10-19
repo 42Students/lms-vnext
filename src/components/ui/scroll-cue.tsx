@@ -68,7 +68,7 @@ export function ScrollCue({ children, axis, label, className, viewportClassName 
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7]",
         viewportClassName)}>{children}</div>
     {edges.start ? <span aria-hidden="true" data-scroll-fade="start" className={cx(
-      "pointer-events-none absolute z-20 from-white to-transparent motion-reduce:transition-none",
+      "pointer-events-none absolute z-20 from-surface to-transparent motion-reduce:transition-none",
       axis === "x" ? "inset-y-0 left-0 w-5 bg-gradient-to-r" : "inset-x-0 top-0 h-5 bg-gradient-to-b"
     )}/> : null}
     {edges.end ? <span aria-hidden="true" data-scroll-fade="end" className={cx(
