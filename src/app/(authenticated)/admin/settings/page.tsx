@@ -7,6 +7,7 @@ import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platfo
 import {ErrorState} from "@/components/ui/error-state";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -78,6 +79,8 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         eyebrow="Super Admin · Platform"
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
+        actions={<Link href="/admin/settings/auth"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Authentication and privileged access checklist →</Link>}
       />
 
       <section aria-label="Tenant Settings overview" className="border-b border-border pb-5">
@@ -109,31 +112,27 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       {editorData?<TenantSettingsEditor key={editorScope+":"+(context.adminScope?.collegeId??"GLOBAL")} scopeType={editorScope}
        collegeId={context.adminScope?.collegeId??undefined}
        ready={editorData.ready} entries={editorData.entries}/>:(
-       <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
+       <Banner tone="warning">
         {editorResult&&!editorResult.ok
           ?"Tenant settings editor is temporarily unavailable. Existing settings were not changed."
           :"Clear the Super Admin safety scope to access global setting overrides, or select an individual college to edit its scoped settings."}
-       </p>)}
+       </Banner>)}
       {attendanceResult&&!attendanceResult.ok?
-        <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
+        <Banner tone="warning">
           Attendance policy is temporarily unavailable. Existing settings were not changed.
-        </p>:null}
+        </Banner>:null}
       {attendancePolicy?<SuperAdminAttendanceSettingsEditor
         collegeId={attendancePolicy.college.id}
         eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
-      <Link href="/admin/settings/auth"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">
-        Authentication and privileged access checklist →
-      </Link>
 
       <form className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
-          <Input name="q" defaultValue={parsed.q} maxLength={100} className="w-full"/>
+          <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 sm:min-h-9"/>
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section
-          <Select name="section" defaultValue={parsed.section} className="w-full">
+          <Select name="section" defaultValue={parsed.section} className="min-h-11 sm:min-h-9">
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
           </Select>
         </label>

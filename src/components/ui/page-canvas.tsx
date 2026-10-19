@@ -14,12 +14,12 @@ export function PageCanvas({ children, className, style, ...props }: PageCanvasP
       {...props}
       data-slot="page-canvas"
       className={cx(
-        "relative min-w-0 w-full rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-space-4)] text-[var(--lms-foreground)] shadow-none sm:p-[var(--lms-canvas-padding)]",
+        "relative min-w-0 w-full rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)] text-foreground shadow-none",
         className,
       )}
       // The legacy canvas stays at 24px even where older global mobile rules
       // otherwise reset [data-slot="page-canvas"] to 16px.
-      style={{ padding: "var(--lms-canvas-padding)", ...style }}
+      style={{ ...style, padding: "var(--lms-canvas-padding)" }}
     >
       {children}
     </div>
