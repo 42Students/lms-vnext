@@ -272,7 +272,7 @@ export function AdminCourseCreatePanel({
        <a href="#setup-delivery" className="font-semibold text-primary-text underline">3. Section Delivery</a>
        <a href="#setup-faculty" className="font-semibold text-primary-text underline">4. Assign Course Faculty</a>
       </nav>
-      <p role="status" className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body xl:col-span-2">
+      <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body xl:col-span-2">
        {nextSetupStep==="COURSE"?"Start by creating or choosing a Course.":
         nextSetupStep==="OFFERING"?"Course created. Choose a Cohort and Academic Period for its Offering.":
         nextSetupStep==="DELIVERY"?"Offering created. Choose the compatible Section for the Delivery.":
@@ -285,7 +285,7 @@ export function AdminCourseCreatePanel({
           No departments in this college yet. Create a department before adding a course.{" "}
           <Link className="font-semibold text-primary-text underline" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
         </p>:null}
-        {copy?<div className="mt-3 flex flex-wrap items-center gap-3 border-y border-border bg-surface-subtle px-3 py-3">
+        {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}”</strong>
           <button type="button" className="font-semibold text-primary-text underline" onClick={()=>router.replace(courseBasePath)}>Cancel copy</button>
           <p className="w-full text-xs text-muted-foreground">Only catalog name, code, description and department are copied. Existing course content, offerings and assignments are not copied.</p>
