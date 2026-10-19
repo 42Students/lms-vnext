@@ -683,3 +683,43 @@ fixed 64px + safe-area, #fff surface, #f1f4f9 border and upward
 at 768/1024/1280px. The `ShellMobileFooter` import path is an
 explicit re-export, not independent nav markup. This is source
 breakpoint proof, not a rendered comparison.
+
+### Final source regression sweep: TPO More sheet and legacy guard suites
+
+The five-label TPO footer remains the single implementation in
+`src/components/tpo/tpo-mobile-footer.tsx`, re-exported by the shell.
+On the old phone layout (≤767px) the bottom bar stays fixed with the
+five original labelled SVGs and safe-area height, while vNext retains
+its owner-approved More `BottomSheet` destinations. A responsive
+state bug is corrected: opening More and then using browser Back,
+programmatic navigation, or resizing to tablet could previously leave
+the open modal over unrelated content.
+
+| State/property | Original production source | vNext source | Result |
+|---|---|---|---|
+| Five icons, ordering | `lms2-fe/prod-2026/MobileFooter.jsx:175-191`: Home/Engage/Drives/Students/More | `tpo-mobile-footer.tsx:11-17`: same names/artwork | Source match; vNext hrefs intentionally renamed |
+| TPO footer fixed height | `components___antddesign.scss:912-936`: 64px + safe inset | `legacy-mobile-footer.css:27-34`, `tpo-mobile-footer.tsx` fixed nav | Source match |
+| Touch icon 24px, labels 10px | `MobileFooter.jsx:179-191`, `mobileFooter.scss:23-40` | `tpo-mobile-footer.tsx` 24px SVGs; `legacy-mobile-footer.css:36-45` | Source match |
+| Phone only | Original `d-md-none`: visible through 767px | `tpo-mobile-footer.tsx`: `md:hidden` | Source match |
+| More sheet, client content | Original More is a link to `/tpo/more` | vNext `BottomSheet`, preserved approved TPO destinations | **Intentional behavior difference**, B4 not fully equivalent |
+| Route change while More open | Original link navigated away | `tpo-mobile-footer.tsx`: `useEffect` observes pathname, closes More on commit; click closes too | Corrected modern modal state |
+| Phone → tablet/desktop | Original `d-md-none` hides footer at 768px | `tpo-mobile-footer.tsx`: viewport change closes its More sheet; `md:hidden` hides bar | Corrected responsive behavior |
+| Footer bottom clearance | Legacy route reserves 64px+safe area | `app-shell.tsx:124` applies `pb-24 md:pb-6` when TPO workspace available | Existing clearance preserved |
+
+**Stale source-guard repairs:** `tests/unit/chat19-clone-sidebar-checkpoint.test.ts`
+and `tests/unit/chat19-sidebar-hr-value-parity.test.ts` had retained
+obsolete claims that the desktop page moves via hardcoded
+`padding-left:96px/256px` and that mobile Drawer manually implements
+`aria-modal`, Escape and Tab. The production implementation actually
+uses a **relative flex sibling push** (`sidebar-legacy.css:6-25`)
+and shared native `<dialog>` (`src/components/ui/drawer.tsx:32-44`).
+Both source suites now check the real contract; no business or visual
+runtime behavior was changed. `tests/unit/chat19-tpo-mobile-footer.test.ts`
+adds source assertions for pathname and breakpoint sheet dismissal.
+All tests are written but **not executed**.
+
+**Responsive proof limits:** the legacy footer and drawer breakpoints
+are compared for 320/360/390px phone versus 768/1024/1280px tablet/desktop.
+The remote-source subtree scan covered 41 shell files and 127 TPO files,
+but final checkout-wide `git grep` and rendered browser comparisons
+remain open. **B3 [ ], B4 [ ]** remain unchanged.
