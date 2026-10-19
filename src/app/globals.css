@@ -1037,3 +1037,30 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 @media (min-width: 1024px) {
   [data-slot="page-canvas"][data-authenticated-canvas="true"] { min-height: calc(100dvh - 132px); }
 }
+
+/* Chat-17 global form and notice aliases from legacy SCSS. */
+:root {
+  --lms-form-ink: #0a0517;
+  --lms-field-hover-border: #bfc9da;
+  --lms-info-border: #bde9ec;
+  --lms-warning-border: #f0d9ad;
+  --lms-warning-surface: #fef6e7;
+}
+body {
+  font-synthesis-weight: none;
+  font-synthesis-style: none;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+:root[data-tracker-theme="dark"] {
+  --lms-heading: #f8fafc;
+  --lms-canvas-border: var(--lms-border);
+  --lms-form-ink: #f8fafc;
+  --lms-form-bg: #172337;
+  --lms-field-hover-border: #64748b;
+  --lms-info-border: #25636c;
+  --lms-warning-border: #92400e;
+  --lms-warning-surface: #422f1c;
+}
