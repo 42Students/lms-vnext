@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {MentorProjectsUnavailable} from "@/components/projects/mentor-projects-unavailable";
@@ -25,7 +26,7 @@ export default async function MentorCalendarPage({searchParams}:{
     projectState:raw.projectState,search:raw.search,period:raw.period,
   }));
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <PageHeader title="Invalid meeting filters" />
+    <PageHeader title={"Invalid meeting filters"} />
     <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
