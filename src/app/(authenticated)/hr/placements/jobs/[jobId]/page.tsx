@@ -668,7 +668,7 @@ export default async function HrPlacementJobPage({
                   { key: "ctc", header: "CTC (LPA)", mobilePriority: "secondary", cell: item => item.annualCtcInr == null ? "—" :
                     (item.annualCtcInr / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) },
                   { key: "status", header: "Status", mobilePriority: "secondary", cell: item =>
-                    <StatusBadge>{item.status === "SELECTED" ? "With the placement cell" :
+                    <StatusBadge tone={item.status==="VERIFIED"?"success":item.status==="REVOKED"?"error":"warning"}>{item.status === "SELECTED" ? "With the placement cell" :
                       item.status === "VERIFIED" ? "Verified, awaiting release" : "Selection cancelled"}</StatusBadge> },
                 ]}
               />
