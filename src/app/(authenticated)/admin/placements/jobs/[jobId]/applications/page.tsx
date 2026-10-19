@@ -2,6 +2,7 @@ import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tab
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { ErrorState } from "@/components/ui/error-state";
@@ -113,7 +114,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle},
         {key:"application",header:"Application",mobilePriority:"secondary",cell:row=>row.status},
         {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening??"Not recorded"},
-       ]} empty={<p role="status" className="text-sm text-body">No applications match these filters.</p>}/>
+       ]} empty={<EmptyState title="No matching applications" description="No applications match these filters."/>}/>
      </section>:
      <CollegeApplicationPipelineControls jobId={jobId} rows={data.items} total={data.total} query={query} basePath="/admin/placements"/>}
     <p role="status" className="text-sm text-muted-foreground">Page {query.page} of {data.totalPages}</p>
