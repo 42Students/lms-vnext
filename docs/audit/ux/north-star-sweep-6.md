@@ -361,3 +361,32 @@ src/app/(authenticated)/admin/people/unassigned/loading.tsx
 - Static re-fetch found paired `Button`/`Select` tags in all three, no remaining native checkbox tags, and no tests/TypeScript/CI/runtime invoked. This continuation totals **20 source file commits plus two ledger updates**, on the lane branch only.
 
 - Follow-up syntax fix: restored the leading `"use client";` directive before the new Checkbox import in `super-admin-interview-operations.tsx` (commit `c91b1c6`), then re-read the edited source. Updated continuation count: **21 source commits across 20 source files**, plus ledger updates. Multiline `import {` statements in the membership/onboard dialogs are distinct imports, not duplicates.
+
+## 2026-10-19 continuation — auth, branding and delegated placement forms
+
+- Reconciled upstream `main` snapshot `0a542bfcf587fd23955883a7a98a33dc011d7023` into `chatgpt/chat-6-b` in two-parent merge `f07e4e2fe0c340b3cf25b75c88f1b5cc11e5245b`. The one overlapping `placement-operations-overview.tsx` used newer main markup, which already uses shared Select/Button. All previous lane source changes were retained; no force push or main write.
+- **17 further [chat-6] source commits across 15 distinct sources**: converted auth membership selection, login method tabs and OTP recovery actions, HR relationship choice, faculty CSV input, college branding colour/file/crop inputs, employer trust choice, report filters/download buttons, placement draft edit, job creation and drive controls, lesson visibility selections and content directory semantic alerts. Retained original form methods, names, disabled/busy conditions, state transitions, authorisation and user-facing copy.
+- Replaced long-class native `<button>`, `<input>`, `<select>`, `<textarea>` with shared Button/Input/Select/Textarea, and radio/checkbox with shared Radio/Checkbox when appropriate. Hidden inputs in report/calendars were deliberately not touched as nonvisual form propagation controls. Removed an unnecessary nested white attendance error card; standardized directory loading skeletons to neutral shared page canvas.
+- Kept semantic warning banners, dialog surfaces and deliberate calendar/overlay boundaries. The logo crop ranges still use native `type="range"` semantics, but render via shared Input with explicit neutralized border/padding styles and the LMS accent token.
+- Source re-fetches verified matching Button/Select JSX tag counts, valid leading `"use client"` directives, no truncated closing tags, no invalid shared checkbox `type` props, and zero native form-control tags in the newly swept form files. No build, TypeScript compiler, tests, CI, app execution, deployment, screenshots or runtime pixel comparison per owner directive.
+- Branch comparison at end of source batch: **42 commits ahead, 0 behind main**; 35 changed files compared to main including previous lane work and this tracking ledger. This is source-level visual parity only, not verified runtime/compile parity.
+
+### Newly swept files
+
+```text
+src/components/auth/membership-chooser.tsx
+src/components/auth/login-form.tsx
+src/components/admin/super-admin-hr-account-dialog.tsx
+src/components/admin/super-admin-faculty-bulk-import.tsx
+src/components/admin/college-branding-form.tsx
+src/components/admin/college-logo-uploader.tsx
+src/app/(authenticated)/admin/attendance/error.tsx
+src/app/(authenticated)/admin/people/directory/loading.tsx
+src/components/placements/placement-employer-relationships.tsx
+src/components/placements/report-interactive-table.tsx
+src/components/placements/placement-draft-edit-form.tsx
+src/components/placements/placement-job-create-form.tsx
+src/components/placements/placement-drive-controls.tsx
+src/components/courses/super-admin-lesson-bulk-visibility.tsx
+src/components/courses/super-admin-content-directory-page.tsx
+```
