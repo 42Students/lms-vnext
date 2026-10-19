@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState} from "react";
 export function TrackerIssueCopyActions({publicId,description,page}:{publicId:string;description:string;page:string}){
  const [notice,setNotice]=useState("");
@@ -12,6 +13,6 @@ export function TrackerIssueCopyActions({publicId,description,page}:{publicId:st
    <Button variant="secondary" type="button" onClick={()=>void copy(
      ["# "+publicId,"","Page: "+page,"",description].join("\n")
    )}>Copy as markdown</Button>
-   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
+   {notice?<InlineNotice tone={notice.startsWith("Copied")?"success":"error"} message={notice}/>:null}
  </div>;
 }
