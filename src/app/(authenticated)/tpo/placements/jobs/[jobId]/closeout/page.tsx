@@ -53,7 +53,7 @@ export default async function TpoDriveCloseoutPage({
       </div>)}
     </section>
     {counts.applied === 0 ? <p role="status"
-      className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      className="text-sm text-body rounded-[9px] border border-border bg-muted p-3">
       No applications are persisted for this drive. Other zero counts reflect that
       source, not an assumption about off-platform recruiting.
     </p> : null}
