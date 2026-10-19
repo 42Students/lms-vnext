@@ -168,7 +168,7 @@ export default async function TpoMessagesPage({
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
             <Link
               href="/tpo/messages/notifications"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary hover:bg-primary-hover px-4 text-sm font-[650] text-on-primary"
             >
               My placement notifications
             </Link>
