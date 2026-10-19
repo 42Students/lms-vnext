@@ -59,7 +59,9 @@ export function LegacyTopbar({
       </ShellWidgetBoundary>
     </div>
     <div className={style.accountArea}>
-      <p className={style.orgName} title={organizationName}>{organizationName}</p>
+      <TopbarOrganizationSwitcher organizationName={organizationName}
+        memberships={memberships} activeMembershipId={activeMembershipId}
+        choices={adminScopeChoices} scope={adminScope}/>
       <ShellWidgetBoundary name="Account actions" fallbackHref="/account/security">
         <TopbarAccountMenu identityUid={identityUid} roleLabel={roleLabel}
           organizationName={organizationName} variant={accountVariant}
