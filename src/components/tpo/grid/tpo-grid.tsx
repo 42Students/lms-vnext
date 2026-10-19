@@ -29,13 +29,13 @@ import {gridClipboardTsv} from "./grid-export";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const quartz=themeQuartz.withParams({
- accentColor:"#0a7c88",
- backgroundColor:"#ffffff",
- foregroundColor:"#54505d",
- borderColor:"#e5e9f0",
- headerBackgroundColor:"#ffffff",
- headerTextColor:"#a9a7ae",
- rowHoverColor:"#ffffff",
+ accentColor:"var(--lms-button-primary)",
+ backgroundColor:"var(--lms-white)",
+ foregroundColor:"var(--lms-neutral-700)",
+ borderColor:"var(--lms-canvas-border)",
+ headerBackgroundColor:"var(--lms-white)",
+ headerTextColor:"var(--lms-neutral-400)",
+ rowHoverColor:"var(--lms-white)",
  fontFamily:"Inter, system-ui, sans-serif",
  fontSize:13,
  rowHeight:44,
