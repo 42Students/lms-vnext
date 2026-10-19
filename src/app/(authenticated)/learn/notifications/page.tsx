@@ -60,9 +60,7 @@ export default async function NotificationsPage({searchParams}:{
 
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader
-        title="Notifications"
-      />
+      <PageHeader title="Notifications" description="Your personal updates and college announcements."/>
       <LearnerNotificationsInbox
         key={query.data.category+":"+query.data.unread+":"+query.data.q}
         personal={items}

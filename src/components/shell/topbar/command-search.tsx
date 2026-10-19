@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import { PopoverListbox } from "@/components/ui/popover";
+import {PopoverListbox} from "@/components/ui/popover";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ShellNavItem } from "../shell-model";
@@ -141,7 +141,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         <kbd id="lms-topbar-command-key-help" className={style.searchHint}>Ctrl K</kbd>
       </div>
       {open ? <PopoverListbox id="lms-topbar-command-results" label="Workspace commands" className={style.dropdown}
-        onDismiss={() => { setOpen(false); setMobileOpen(false); input.current?.focus(); }}
+        onDismiss={() => {setOpen(false);setMobileOpen(false);input.current?.focus();}}
         onKeyDown={event => {
           if (event.key === "Escape") {
             event.preventDefault();

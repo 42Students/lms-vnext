@@ -22,7 +22,7 @@ export default async function SuperAdminProjectAuditPage({
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) {
     return <div className="min-w-0 space-y-6">
-      <PageHeader eyebrow="Super Admin Projects" title="Project audit" />
+      <PageHeader title="Project audit" />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
         action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}
@@ -40,7 +40,6 @@ export default async function SuperAdminProjectAuditPage({
           active="audit"
         />
         <PageHeader
-          eyebrow="Super Admin Projects"
           title="Project audit"
           description="Project audit requires an exact college safety scope."
         />

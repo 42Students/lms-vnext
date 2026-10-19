@@ -128,7 +128,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     description={(missingPolicy==="MARK_NOT_CLEARED"?"Applicants not in the file will be marked Not cleared. ":"")+"Results are not published until the separate Apply step."}
     confirmLabel="Confirm and stage results"
     onConfirm={()=>{setConfirmOpen(false);void send("STAGE_IMPORT");}}/>
-  {report?<div role="status" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">
+  {report?<div role="status" className="space-y-2 border-t border-border pt-4 text-sm">
    <p className="font-semibold">{report.staged} results staged · {report.skipped} skipped · {report.unmatched} unmatched.</p>
    <div className="max-h-40 min-w-0 overflow-auto">
     <DataTable<Report["results"][number]> caption="Round import outcomes" rows={report.results}

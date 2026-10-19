@@ -152,7 +152,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  return <section className="space-y-3 rounded border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center gap-3">
    <h2 className="font-semibold">{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
-   <Button type="button" className="min-h-10 rounded border px-3 text-sm" disabled={!lessons.length}
+   <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}
     onClick={fresh}>{text}</Button>
   </div>
   {!lessons.length&&<p className="text-sm">Create a course offering, learning path and lesson before adding content.</p>}
@@ -214,9 +214,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     Remove existing resource link
    </label>:null}
    <div className="flex gap-2 md:col-span-2">
-    <Button type="button" className="rounded bg-primary px-3 py-2 text-on-primary" disabled={busy} onClick={()=>void save()}>
+    <Button type="button" variant="primary" disabled={busy} onClick={()=>void save()}>
      {busy?"Saving…":"Save"}</Button>
-    <Button type="button" className="rounded border px-3 py-2" onClick={()=>setOpen(false)}>Cancel</Button>
+    <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Cancel</Button>
    </div>
   </div>}
   {existing.length>0&&<div className="space-y-2">
@@ -267,14 +267,14 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        onChange={e=>setOrderDraft(old=>({...old,[item.id]:e.target.value}))}
        className="w-16 rounded border border-border bg-background p-1"/>
      </label>
-     <Button type="button" className="underline" disabled={busy} onClick={()=>void saveOrder(item)}>Save order</Button>
+     <Button type="button" variant="link" disabled={busy} onClick={()=>void saveOrder(item)}>Save order</Button>
      {kind==="RESOURCE"&&materialsEnabled?<Button type="button" className="underline"
       aria-expanded={openMaterialsId===item.id} disabled={busy}
       onClick={()=>setOpenMaterialsId(openMaterialsId===item.id?null:item.id)}>Materials</Button>:null}
      <Button type="button" className="underline" disabled={busy} onClick={()=>select(item)}>Edit</Button>
      {item.status==="DRAFT"&&<Button type="button" className="underline" disabled={busy}
        onClick={()=>void transition(item,"PUBLISH")}>Publish</Button>}
-     <Button type="button" className="underline text-error" disabled={busy}
+     <Button type="button" variant="danger" disabled={busy}
        onClick={()=>void transition(item,"ARCHIVE")}>Delete</Button>
     </div>
     {kind==="RESOURCE"&&materialsEnabled&&openMaterialsId===item.id?
