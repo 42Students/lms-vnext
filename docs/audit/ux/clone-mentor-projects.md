@@ -16,7 +16,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [x] `src/app/(authenticated)/mentor/courses/page.tsx` (redirect-only; source scan: 0 JSX/HTML, 0 controls, 0 visual properties; 0 applicable pixel values; viewport-independent redirect; evidence below)
 - [x] `src/app/(authenticated)/mentor/fileExplorer/page.tsx` (redirect-only; source scan: 0 JSX/HTML, 0 controls, 0 visual properties; 0 applicable pixel values; viewport-independent redirect; evidence below)
 - [ ] `src/app/(authenticated)/mentor/notifications/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/mentor/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/page.tsx` (greps: complete-page raw/hex/hand-tab/overlay source scan => 0; values: 12 legacy/shared rows match; responsive: 44px phone, 36px tablet+, details below)
 - [x] `src/app/(authenticated)/mentor/profile/page.tsx` (redirect-only; source scan: 0 JSX/HTML, 0 controls, 0 visual properties; 0 applicable pixel values; viewport-independent redirect; evidence below)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -548,3 +548,36 @@ All three actions inherit 44px at <=767px and default 36px at >=768px; the singl
 No new data/download behavior: the existing POST download grant and isSafeSignedUrl allowlist remain untouched; the component has no modal or fixed-width surface. The source has no raw control, hardcoded hex or hand-rolled overlay.
 
 These four files are ticked against source-level legacy/shared values. Runtime and screenshot confirmation are separately owned by the orchestrator (checklist section J) and are not claimed here.
+
+## chat-8: Mentor landing page finished — three access states
+
+Source: src/app/(authenticated)/mentor/page.tsx, 37 lines. This page redirects to Projects for authorized and enabled Mentors, redirects to dashboard for inactive/unauthorized membership, and renders a single shared PageHeader with access guidance in either projects-disabled or feature-read-failure state. Both rendered states remain in the one parent canvas and have identical visual primitives. No page content or authorization was changed.
+
+| Property/state (12 checked) | Legacy file:line and exact value | vNext file:line and exact value | Match |
+|---|---|---|---|
+| Primary heading desktop | old-lms-shell-spec.md:26-27 — 30px, 600, #172033 | page.tsx:23-24, PageHeader.tsx:27-35, globals.css:327 | yes |
+| Heading mobile | listing-page-header.scss:130-140 — 20px, stacked | PageHeader.tsx:27-35 md breakpoint 768 | yes |
+| Inline subtitle | old-lms-pages.md:7 — beside title desktop | PageHeader.tsx:39-45 | yes |
+| Canvas | old-lms-pages.md:6 — one white surface, 12px radius | page.tsx:22 and authenticated PageCanvas/global skin | yes |
+| Body font | variables.scss:24-27; old-lms-shell-spec.md:26-27 — compact readable 14px | page.tsx:26-28, globals.css:359-362 | yes |
+| CTA default background | old-lms-shell-spec.md:23 — #0a7c88 | page.tsx:31 — lms-button-primary; globals.css:24 | yes |
+| CTA hover | old-lms-shell-spec.md:23, shared deep-hover token — #086873 | page.tsx:31 hover:bg-[var(--lms-button-primary-hover)], globals.css:25 | yes |
+| CTA text | old-lms-shell-spec.md:23 — #ffffff | page.tsx:31 text-on-primary, globals.css:26 | yes |
+| CTA radius | old-lms-shell-spec.md:23 — 9px | page.tsx:31 control radius, globals.css:343 | yes |
+| CTA desktop/phone minimum height | old-lms-shell-spec.md:23 — 36px; variables.scss:139,148 — 44px <=767px | page.tsx:31 min-h-11 md:min-h-9 | yes |
+| Retry link/focus | common.scss:68-75; accessibility.scss:18-23 — teal underline and visible keyboard ring | page.tsx:29 — min-h-11, text-link, underline and focus outline | yes |
+| No blank/false failure | old-lms-pages.md:6,12 — useful inline error guidance | page.tsx:18-33 — distinct disabled and access-check-failure messages; notifications remain reachable | yes |
+
+Static coverage proof on this complete file (after edit): 0 raw button/input/select/textarea, 0 hardcoded hex, 0 hand-built modal/overlay, 0 manual tabs/pressed controls, exactly 1 shared PageHeader render branch; one primary Link and one conditional retry Link. Repeat:
+
+~~~sh
+rg -n '<(button|input|select|textarea)\b|#[a-fA-F0-9]{3,8}|window.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed|border-b-2' \
+  'src/app/(authenticated)/mentor/page.tsx'
+# GitHub full-file source scan: zero matches
+~~~
+
+Phone <=767px: PageHeader stacks and the primary action remains 44px high; tablet >=768px and desktop: header inline and primary action 36px. The route emits no appearance at all in the two redirect cases, with identical behavior at all viewport widths. This source-level parity is complete; browser pixel-screenshot verification is assigned to the orchestrator under checklist section J.
+
+### Control-source refinement after task/evidence ticks
+
+scripts/codemods/chat8-project-control-font-size.cjs was committed and applied to three completed task/evidence components: mentor-task-status-transition.tsx (1 Button), project-task-assignee-control.tsx (3 Buttons), and project-delivery-evidence-download.tsx (1 Button). Removed only explicit size="sm" opt-ins so the existing global Button source reliably chooses 14px/650 default rather than a 13px local utility. Callback, disabled, variant, children and DOM stay unchanged; the previous ten-state value tables remain accurate. No code execution, typecheck or screenshots were performed.
