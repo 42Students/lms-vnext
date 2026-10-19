@@ -27,10 +27,10 @@ export default async function TenantDirectory({searchParams}:{
   </div>;
  const raw=await searchParams;
  const parsed=parseTenantLifecycleSearchParams(raw);
- if(!parsed) return <div className="space-y-4">
+ if(!parsed) return <div className="min-w-0 space-y-4">
   <PageHeader title="Tenant Setup" />
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
-   action={<Link href="/admin/tenants" className="font-semibold text-primary-text">Clear filters</Link>}/>
+   action={<Link href="/admin/tenants" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
  </div>;
  let data:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDirectory>>;
  try{
