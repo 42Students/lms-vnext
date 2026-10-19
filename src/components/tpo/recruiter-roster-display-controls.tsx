@@ -3,10 +3,10 @@ import { Dropdown } from "@/components/ui/dropdown";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import {ENGAGE_COLUMNS,type EngageColumn,type EngageSort} from "@/modules/placements/tpo-recruiter-table-view-model";
-export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,ascending,onAscending}:{
+export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,ascending,onAscending,showColumns=true}:{
  columns:readonly EngageColumn[];onColumns:(value:EngageColumn[])=>void;
  sort:EngageSort;onSort:(value:EngageSort)=>void;
- ascending:boolean;onAscending:(value:boolean)=>void;
+ ascending:boolean;onAscending:(value:boolean)=>void;showColumns?:boolean;
 }){
  return <section className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3"
   aria-label="Recruiter table display">
@@ -24,7 +24,7 @@ export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,as
    <Checkbox checked={ascending} onChange={e=>onAscending(e.target.checked)}/>
    Ascending
   </label>
-  <Dropdown align="end" label="Roster columns" trigger="Columns">
+  {showColumns?<Dropdown align="end" label="Roster columns" trigger="Columns">
    <div className="max-h-72 min-w-52 space-y-2 overflow-auto">
     {ENGAGE_COLUMNS.map(column=><label key={column} className="flex items-center gap-2 text-sm">
       <Checkbox checked={columns.includes(column)} disabled={column==="Contact"}
@@ -32,6 +32,6 @@ export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,as
       {column}
     </label>)}
    </div>
-  </Dropdown>
+  </Dropdown>:null}
  </section>;
 }
