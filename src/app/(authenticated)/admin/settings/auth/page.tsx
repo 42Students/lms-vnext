@@ -27,7 +27,7 @@ export default async function SuperAdminAuthSettings(){
   <Banner tone="info">
    Configuration runtime status is not attested by this page. Privileged second-factor readiness must be verified separately before production.
   </Banner>
-  <ul className="grid min-w-0 gap-3 sm:grid-cols-2">
+  <ul className="grid min-w-0 gap-3 min-[768px]:grid-cols-2">
    {platformAuthPostureItems().map(item=><li key={item.id} className="min-w-0 border-b border-border py-4">
     <h2 className="break-words font-semibold text-foreground">{item.title}</h2>
     <p className="mt-2 text-sm text-body">{item.description}</p>

@@ -118,7 +118,7 @@ export default async function TpoMyNotificationsPage({
 
       <section
         aria-label="My notification summary"
-        className="grid gap-3 sm:grid-cols-3"
+        className="grid gap-3 min-[768px]:grid-cols-3"
       >
         {[
           {
