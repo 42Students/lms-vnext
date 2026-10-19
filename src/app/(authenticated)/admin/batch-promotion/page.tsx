@@ -1,3 +1,4 @@
+import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
@@ -69,7 +70,7 @@ export default async function SuperAdminBatchPromotionPage({
           defaultValue={input.data.yearStart ?? ""} className="min-h-11 sm:min-h-9" />
       </label>
       <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
-        <input name="showCompleted" type="checkbox" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
+        <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
       <Button type="submit" className="min-h-11 sm:min-h-9 self-end">Preview</Button>
     </form>
