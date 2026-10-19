@@ -15,10 +15,10 @@ export default async function CollegeActivityDetailPage({
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Activity Log" title="Activity detail"
       description={event.summary}
-      actions={<Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+      actions={<Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-link">
         Back to Activity Log
       </Link>} />
-    <dl className="grid gap-4 rounded-xl border border-border bg-surface p-5 text-sm sm:grid-cols-2">
+    <dl className="grid gap-4 rounded-[8px] border border-border bg-surface p-5 text-sm sm:grid-cols-2">
       <div><dt className="font-semibold text-muted-foreground">Occurred (IST)</dt>
         <dd className="mt-1 text-body">{date}</dd></div>
       <div><dt className="font-semibold text-muted-foreground">Actor</dt>

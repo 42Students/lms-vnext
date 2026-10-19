@@ -44,9 +44,9 @@ export default async function TpoPerformanceIntelligencePage({
       <div className="space-y-4">
         <PageHeader eyebrow="TPO · Reports" title="Company funnel and compensation"
           description="The selected reporting filters were invalid." />
-        <p role="alert" className="rounded-lg border border-border bg-surface p-5 text-sm text-body">
+        <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 text-sm text-body">
           No reports were loaded. <Link href="/tpo/reports/intelligence"
-            className="font-semibold text-[var(--lms-link-text)] hover:underline">Clear filters</Link>
+            className="font-semibold text-link hover:underline">Clear filters</Link>
         </p>
       </div>
     );
@@ -69,7 +69,7 @@ export default async function TpoPerformanceIntelligencePage({
         description="Observed applications and offer decisions by employer, plus explicitly defined annual CTC measures."
         actions={
           <a href={csvHref}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
             Export intelligence CSV
           </a>
         }
@@ -78,7 +78,7 @@ export default async function TpoPerformanceIntelligencePage({
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/intelligence" />
       <ReportScopeNote note={workspace.registrationScopeNote} />
       {workspace.noSeason ? (
-        <p role="status" className="rounded-lg border border-border bg-surface p-5 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 text-sm text-body">
           No placement season exists. No company funnel or package performance is inferred.
         </p>
       ) : null}
@@ -129,7 +129,7 @@ export default async function TpoPerformanceIntelligencePage({
             ["Best-per-learner median annual CTC", reportCurrency(compensation.uniqueLearnerBestMedianInr)],
             ["Best-per-learner highest annual CTC", reportCurrency(compensation.uniqueLearnerBestHighestInr)],
           ] as const).map(([name, value]) => (
-            <article key={name} className="rounded-xl border border-border bg-surface p-4">
+            <article key={name} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
               <h3 className="text-xs font-semibold text-body">{name}</h3>
               <p className="mt-2 text-xl font-bold tabular-nums text-foreground">{value}</p>
             </article>

@@ -42,7 +42,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
       actions={<Link href="/college/lecture-halls"
         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Back to lecture halls</Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-5">
+    <form method="get" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border bg-surface p-5">
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">From (IST)
         <input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
           className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
@@ -55,7 +55,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
     </form>
     {!parsed.success && hasRange ? <ErrorState title="Invalid date range"
       description="Choose valid from/to dates in IST, up to 31 consecutive calendar days. No schedule was loaded." />
-      : !result ? <p className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
+      : !result ? <p className="rounded-[8px] border border-border bg-surface p-6 text-sm text-body">
         Select an IST date range to inspect persisted sessions and configured capacity.
       </p> : <>
         <section className="grid gap-3 - sm:grid-cols-3 border-t border-border pt-5">
@@ -69,10 +69,10 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
         <section aria-label="Hall scheduled sessions" className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">{result.conflictCount} flagged booking{result.conflictCount === 1 ? "" : "s"} in selected range</h2>
           {result.truncated ? <p role="status" className="text-sm text-warning">More than 500 sessions match. This is a truncated read; conflict counts may be incomplete. Select a shorter range.</p> : null}
-          {result.sessions.length === 0 ? <p className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
+          {result.sessions.length === 0 ? <p className="rounded-[8px] border border-border bg-surface p-6 text-sm text-body">
             No persisted scheduled sessions overlap this date range. This is not confirmation that the hall is free for booking.
           </p> : <ul className="space-y-3">{result.sessions.map(item =>
-            <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+            <li key={item.id} className="rounded-[8px] border border-border bg-surface p-4">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <h3 className="font-semibold text-foreground">{item.title}</h3>
                 {item.hasConflict ? <strong className="text-sm text-error">Potential conflict</strong> :

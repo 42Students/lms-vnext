@@ -112,7 +112,7 @@ export default async function CollegeFacultyAssignmentPage({
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
         </form>
       </section>
-      <section className="min-w-0 rounded-xl border border-border bg-surface" aria-label="Teaching assignment roster">
+      <section className="min-w-0 rounded-[8px] border border-border bg-surface" aria-label="Teaching assignment roster">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {total} matching teaching assignment{total === 1 ? "" : "s"}
         </p>

@@ -115,7 +115,7 @@ export default async function ElectiveRoster({
       description="Student state, source, joining date and confirmed movement between offerings."
       actions={<Link href="/college/electives" className="font-semibold text-[var(--lms-teal-deep)]">
         Back to Electives</Link>} />
-    <div className="flex flex-wrap gap-4 rounded-xl border border-border bg-surface p-4 text-sm">
+    <div className="flex flex-wrap gap-4 rounded-[8px] border border-border bg-surface p-4 text-sm">
       <span>Seats: {offering.capacity ?? "Unlimited"}</span>
       <span>Enrolled: {detail.counts.active}</span>
       <span>Waitlisted: {detail.counts.waitlisted}</span>

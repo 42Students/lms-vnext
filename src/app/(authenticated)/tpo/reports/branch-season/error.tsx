@@ -5,7 +5,7 @@ export default function TpoBranchSeasonError({ reset }: {
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-xl border border-border bg-surface p-6">
+    <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
       <h1 className="text-lg font-semibold">Couldn&apos;t load branch evidence</h1>
       <p className="mt-2 text-sm text-body">
         Persisted season, offer or application evidence could not be read.

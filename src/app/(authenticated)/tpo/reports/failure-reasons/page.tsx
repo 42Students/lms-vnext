@@ -91,7 +91,7 @@ export default async function TpoFailureReasonsPage({
 
       <section
         aria-label="Recorded adverse outcomes"
-        className="rounded-xl border border-border bg-surface p-4"
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
       >
         <p className="text-sm font-semibold text-body">
           Recorded adverse events and current decisions
@@ -103,7 +103,7 @@ export default async function TpoFailureReasonsPage({
 
       <section
         aria-label="Report methodology"
-        className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
       >
         <p className="font-semibold text-foreground">
           Reporting methodology
@@ -129,7 +129,7 @@ export default async function TpoFailureReasonsPage({
       <a href={"/api/placements/tpo/reports/round-failures?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{})
-       }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+       }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
        Download round-and-branch failures CSV
       </a>
       <ReportTable

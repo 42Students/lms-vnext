@@ -14,7 +14,7 @@ export function PageCanvas({ children, className, ...props }: PageCanvasProps) {
       {...props}
       data-slot="page-canvas"
       className={cx(
-        "relative min-w-0 w-full rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 text-foreground shadow-none sm:p-6",
+        "relative min-w-0 w-full rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 text-foreground shadow-none sm:p-[var(--lms-canvas-padding)]",
         className,
       )}
     >
