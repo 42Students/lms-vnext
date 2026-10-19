@@ -130,20 +130,20 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
           Frontend commit SHA
           <Input className="mt-1" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
           {/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim())?<a href={"https://github.com/42Students/lms2-fe/commit/"+frontendCommitSha.trim()}
-            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">View on GitHub ↗</a>:null}
+            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">View on GitHub ↗</a>:null}
         </label>
         <label className="text-sm font-semibold text-body">
           Backend commit SHA
           <Input className="mt-1" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
           {/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim())?<a href={"https://github.com/42Students/lms/commit/"+backendCommitSha.trim()}
-            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">View on GitHub ↗</a>:null}
+            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">View on GitHub ↗</a>:null}
         </label>
-        <label className="flex min-h-9 items-center gap-3 text-sm font-semibold text-body">
+        <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body md:min-h-9">
           <Checkbox checked={productionVerified} onChange={(e) => setProductionVerified(e.target.checked)} />
           Production verified
         </label>
       </div>
-      <Button disabled={pending} loading={pending} onClick={save}>
+      <Button disabled={pending} loading={pending} onClick={save} className="min-h-11 md:min-h-9">
         {pending ? "Saving…" : "Save workflow"}
       </Button>
 
@@ -154,8 +154,8 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
           <p className="text-sm text-body">Check the same flow once more. One click sends it back to engineering or closes it.</p>
           <Textarea value={retestNote} maxLength={1000} placeholder="Optional retest note" onChange={(e) => setRetestNote(e.target.value)} />
           <div className="flex gap-2">
-            <Button disabled={pending} loading={pending} onClick={() => retest("PASS")}>Works now</Button>
-            <Button variant="danger" disabled={pending} loading={pending} onClick={() => retest("FAIL")}>Still broken</Button>
+            <Button disabled={pending} loading={pending} onClick={() => retest("PASS")} className="min-h-11 md:min-h-9">Works now</Button>
+            <Button variant="danger" disabled={pending} loading={pending} onClick={() => retest("FAIL")} className="min-h-11 md:min-h-9">Still broken</Button>
           </div>
         </div>
       ) : null}
