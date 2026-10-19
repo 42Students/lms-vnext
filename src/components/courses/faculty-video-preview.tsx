@@ -1,6 +1,7 @@
+"use client";
 import { Alert } from "@/components/ui/alert";
 import { PageLoading } from "@/components/ui/page-loading";
-"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { parseLearnerPlaybackGrant, storageApiError } from "@/modules/courses/learner-storage-ui-model";
 
