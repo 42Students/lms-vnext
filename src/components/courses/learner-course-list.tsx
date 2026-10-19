@@ -512,7 +512,7 @@ export function LearnerCourseList({
               <button
                 type="button"
                 onClick={() => setVisibleLimit((value) => value + PAGE_SIZE)}
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-on-primary transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
               >
                 Show more courses ({visibleRows.length - visibleLimit} remaining)
               </button>
