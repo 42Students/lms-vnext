@@ -116,6 +116,11 @@
   border-radius: 6px;
   border-color: var(--lms-canvas-border);
 }
+@media (max-width: 639px) {
+  [data-slot="dropdown-root"][data-mobile-sheet="true"] > [data-slot="dropdown"] {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
+}
 [data-slot="menu"] [role="menuitem"][aria-disabled="true"] {
   cursor: not-allowed;
   pointer-events: none;
