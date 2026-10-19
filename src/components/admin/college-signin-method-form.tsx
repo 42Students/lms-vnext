@@ -2,6 +2,7 @@
 import {Button} from "@/components/ui/button";
 import {Radio} from "@/components/ui/radio";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Alert} from "@/components/ui/alert";
 
 import {useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -22,6 +23,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
  const [currentVersion,setCurrentVersion]=useState(version);
  const {pending:saving,run:guardedRun}=useGuardedAction({busyLabel:"Saving..."});
  const [message,setMessage]=useState("");
+ const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [confirmOpen,setConfirmOpen]=useState(false);
  async function save(){
   if(!ready||saving||selection===savedMethod)return;
@@ -41,8 +43,9 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
        throw new Error("INVALID_POLICY_RESPONSE");
       setSavedMethod(committed.method);
       setCurrentVersion(committed.version);
-      setConfirmOpen(false);setMessage("Sign-in settings saved");router.refresh();
+      setConfirmOpen(false);setMessageTone("success");setMessage("Sign-in settings saved");router.refresh();
     }catch(error){
+      setMessageTone("error");
       setMessage(error instanceof FriendlyFetchError && error.status===409
         ?"Settings changed elsewhere. Refresh before retrying."
         :error instanceof FriendlyFetchError?error.message:"Could not save sign-in settings.");
@@ -50,7 +53,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
   });
  }
  return <section aria-label="College sign-in methods" className="space-y-4 border-t border-border pt-5">
-  <h2 className="font-semibold">Sign-in method</h2>
+  <h2 className="font-semibold text-foreground">Sign-in method</h2>
   <fieldset disabled={!ready||saving} className="grid gap-3">
    <legend className="sr-only">Sign-in method</legend>
    {choices.map(choice=><label key={choice.value} className={"flex min-h-14 items-center gap-3 rounded-[var(--lms-control-radius)] border p-3 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(!ready||saving?"cursor-not-allowed opacity-60 ":"cursor-pointer ")+(selection===choice.value?"border-primary bg-primary-subtle":!ready||saving?"border-border bg-surface":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
@@ -60,11 +63,11 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
    </label>)}
   </fieldset>
   <Button type="button" disabled={!ready||saving||selection===savedMethod} onClick={()=>setConfirmOpen(true)}
-   className="min-h-11 min-[768px]:min-h-9">
+   className="min-h-11 md:min-h-9" loading={saving}>
    {saving?"Saving…":"Save sign-in settings"}
   </Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Change allowed sign-in methods for this college?" description="Current sessions stay signed in." confirmLabel="Save sign-in settings" pending={saving} onConfirm={()=>void save()}/>
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
-  {!ready?<p role="status" className="text-sm text-warning-text">Sign-in method storage is unavailable; changes are disabled.</p>:null}
+  {message?<Alert tone={messageTone}>{message}</Alert>:null}
+  {!ready?<Alert tone="warning">Sign-in method storage is unavailable; changes are disabled.</Alert>:null}
  </section>;
 }

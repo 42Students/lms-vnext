@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
+import monthStyles from "@/components/academics/legacy-class-month-grid.module.css";
 import { LearnerClassSchedule,type LearnerScheduleEvent }
   from "@/components/academics/learner-class-schedule";
 import {
@@ -52,22 +53,22 @@ export default async function FacultyCalendarPage({
         View live classes
       </Link>
     </div>
-    <section className="border-b border-border pb-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-foreground">
+    <section className={monthStyles.calendarCard}>
+      <div className={monthStyles.toolbar}>
+        <h2 className={monthStyles.period}>
           {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",month:"long",year:"numeric"})
             .format(new Date(grid.query.month+"-01T12:00:00.000Z"))} · IST
         </h2>
-        <div className="flex flex-wrap gap-3 text-sm font-semibold">
+        <div className={monthStyles.nav}>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous month</Link>
+            className={monthStyles.navLink}>Previous month</Link>
           <Link href={facultyMonthHref({...grid.query,month:currentIstMonth(new Date())})}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Current month</Link>
+            className={monthStyles.navLink}>Current month</Link>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,1)})}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next month</Link>
+            className={monthStyles.navLink}>Next month</Link>
         </div>
       </div>
-      <form method="get" action="/teacher/calendar" className="mt-4 flex flex-wrap items-end gap-3">
+      <form method="get" action="/teacher/calendar" className={monthStyles.toolbarForm}>
         <label className="grid gap-1 text-sm font-semibold text-body">Month (IST)
           <Input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
@@ -90,17 +91,17 @@ export default async function FacultyCalendarPage({
       </p>:grid.days.every(day=>day.events.length===0)?<p className="mt-5 text-sm text-body">
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </p>:null}
-      <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className="mt-4 rounded-[var(--lms-control-radius)]">
-        <CalendarGrid variant="hairline" className={"min-w-[44rem] "+calendarStyles.calendarHairline}>
-          {names.map((name,index)=><div key={name} className={"bg-surface-subtle p-2 text-center text-xs font-semibold "+(index===0?calendarStyles.calendarSunday:"")}>{name}</div>)}
+      <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className={monthStyles.scroll}>
+        <CalendarGrid variant="hairline" className={monthStyles.grid}>
+          {names.map((name,index)=><div key={name} className={monthStyles.weekday+" "+(index===0?calendarStyles.calendarSunday:"")}>{name}</div>)}
           {grid.days.map(day=><section key={day.key}
-            aria-label={day.key+" IST"} className={"min-h-28 p-2 "+(day.inMonth?"bg-surface":"bg-surface-subtle")}>
-            <time dateTime={day.key} className={"text-xs font-semibold text-foreground "+(new Date(day.key+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:"")}>
+            aria-label={day.key+" IST"} data-outside={!day.inMonth} className={monthStyles.day}>
+            <time dateTime={day.key} className={monthStyles.dayNumber+" "+(new Date(day.key+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:"")}>
               {Number(day.key.slice(8))}
             </time>
             <div className="mt-2 space-y-2">
               {day.events.map(event=><article key={event.id}
-                className="rounded-[var(--lms-control-radius)] border border-border bg-background px-2 py-1">
+                className={monthStyles.dayEvent}>
                 <p className="text-xs font-semibold text-foreground">{event.title}</p>
                 <p className="text-xs text-body">
                   {new Intl.DateTimeFormat("en-IN",{

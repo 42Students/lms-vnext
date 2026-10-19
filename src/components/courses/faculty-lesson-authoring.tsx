@@ -1,8 +1,5 @@
 "use client";
-import {CourseChoiceControl} from "./course-choice-control";
-import {Checkbox} from "@/components/ui/checkbox";
-import {Radio} from "@/components/ui/radio";
-
+import { CourseChoiceControl } from "./course-choice-control";
 import { Radio } from "@/components/ui/radio";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -13,6 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import { Input } from "@/components/ui/input";
@@ -64,7 +62,7 @@ function FieldLabel({
   children: React.ReactNode;
 }) {
   return (
-    <span className="mb-1.5 block text-xs font-semibold text-body">
+    <span className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
       {children}
     </span>
   );
@@ -599,7 +597,7 @@ export function FacultyLessonAuthoring({
   }
 
   return (
-    <div className="mt-4 rounded-[var(--lms-control-radius)] border border-dashed border-border bg-surface p-4">
+    <div className="mt-4 rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface p-4 max-[767px]:[&_button]:min-h-11">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="m-0 text-sm font-semibold text-foreground">
@@ -615,7 +613,7 @@ export function FacultyLessonAuthoring({
         </div>
         {mode ? (
           <Button
-            size="sm"
+            size="md"
             variant="ghost"
             onClick={close}
             disabled={submitting}
@@ -629,7 +627,7 @@ export function FacultyLessonAuthoring({
         <div className="mt-3 flex flex-wrap gap-2">
           {(!availableModes || availableModes.includes("RESOURCE")) ? (
           <Button
-            size="sm"
+            size="md"
             variant="secondary"
             onClick={() =>
               setMode("RESOURCE")
@@ -640,7 +638,7 @@ export function FacultyLessonAuthoring({
           ) : null}
           {(!availableModes || availableModes.includes("YOUTUBE")) ? (
           <Button
-            size="sm"
+            size="md"
             variant="secondary"
             onClick={() =>
               setMode("YOUTUBE")
@@ -651,7 +649,7 @@ export function FacultyLessonAuthoring({
           ) : null}
           {(!availableModes || availableModes.includes("LIVE_CLASS")) ? (
           <Button
-            size="sm"
+            size="md"
             variant="secondary"
             onClick={() =>
               setMode("LIVE_CLASS")
@@ -663,18 +661,18 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("ASSIGNMENT")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-            className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
             + Assignment · Full builder
-          </Link>:<Button size="sm" variant="secondary" onClick={()=>setMode("ASSIGNMENT")}>
+          </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("ASSIGNMENT")}>
             + Assignment
           </Button>
           ) : null}
           {(!availableModes || availableModes.includes("QUIZ")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-            className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
             + Quiz · Full builder
-          </Link>:<Button size="sm" variant="secondary" onClick={()=>setMode("QUIZ")}>
+          </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("QUIZ")}>
             + Quiz
           </Button>
           ) : null}
@@ -871,7 +869,7 @@ export function FacultyLessonAuthoring({
                   ) => (
                     <section
                       key={question.id}
-                      className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-neutral-50)] p-4"
+                      className="rounded-[var(--lms-canvas-radius)] border border-border bg-[var(--lms-neutral-50)] p-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <p className="m-0 text-sm font-semibold text-foreground">
@@ -882,7 +880,7 @@ export function FacultyLessonAuthoring({
                         1 ? (
                           <Button
                             type="button"
-                            size="sm"
+                            size="md"
                             variant="ghost"
                             onClick={() =>
                               setQuestions(
@@ -930,7 +928,7 @@ export function FacultyLessonAuthoring({
                         />
                       </label>
 
-                      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      <div className="mt-3 grid gap-3 md:grid-cols-2">
                         <label className="block">
                           <FieldLabel>
                             Answer type
@@ -1017,7 +1015,7 @@ export function FacultyLessonAuthoring({
                               key={
                                 option.id
                               }
-                              className="grid gap-2 sm:grid-cols-[auto_1fr_auto] sm:items-center"
+                              className="grid gap-2 md:grid-cols-[auto_1fr_auto] md:items-center"
                             >
                               {question.type === "SINGLE_CHOICE" ? <Radio
                                 aria-label={`Correct answer for option ${optionIndex + 1}`}
@@ -1090,7 +1088,7 @@ export function FacultyLessonAuthoring({
                               2 ? (
                                 <Button
                                   type="button"
-                                  size="sm"
+                                  size="md"
                                   variant="ghost"
                                   onClick={() =>
                                     removeOption(
@@ -1112,7 +1110,7 @@ export function FacultyLessonAuthoring({
                         <Button
                           type="button"
                           className="mt-3"
-                          size="sm"
+                          size="md"
                           variant="secondary"
                           onClick={() =>
                             addOption(
@@ -1130,7 +1128,7 @@ export function FacultyLessonAuthoring({
                 {questions.length < 100 ? (
                   <Button
                     type="button"
-                    size="sm"
+                    size="md"
                     variant="secondary"
                     onClick={addQuestion}
                   >
@@ -1140,22 +1138,8 @@ export function FacultyLessonAuthoring({
               </div>
             ) : null}
 
-            {error ? (
-              <p
-                role="alert"
-                className="mt-4 text-sm font-semibold text-error"
-              >
-                {error}
-              </p>
-            ) : null}
-            {success ? (
-              <p
-                role="status"
-                className="mt-4 text-sm font-semibold text-success"
-              >
-                {success}
-              </p>
-            ) : null}
+            {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
+            {success ? <Alert tone="success" className="mt-4">{success}</Alert> : null}
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Button type="submit">

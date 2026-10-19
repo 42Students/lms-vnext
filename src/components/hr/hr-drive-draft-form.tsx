@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -483,14 +484,13 @@ export function HrDriveDraftForm({
             }}>Start over</Button>
         </div>
         {showPreview && !result.success ? (
-          <div role="alert" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
-            <strong>Review the draft:</strong>
+          <Alert tone="error" title="Review the draft:" className="mt-4">
             <ul className="mt-2 list-disc pl-5">
               {result.error.issues.map((issue, index) => (
                 <li key={index}>{issue.path.join(".")}: {issue.message}</li>
               ))}
             </ul>
-          </div>
+          </Alert>
         ) : null}
         {/* Live locally held student-facing draft preview; never imply publication. */}
           <div className="mt-4 space-y-2 rounded-[var(--lms-control-radius)] bg-surface-secondary p-4 text-sm text-body">

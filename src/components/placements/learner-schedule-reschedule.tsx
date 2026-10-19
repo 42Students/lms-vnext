@@ -30,8 +30,8 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
   finally{setBusy(false);}
  }
  return <div className="mt-3 space-y-2">
-  <button type="button" aria-expanded={open} onClick={()=>setOpen(x=>!x)}
-    className="min-h-11 font-semibold text-primary-text underline">{open?"Cancel":"Can't make it? Ask to reschedule"}</button>
+  <Button variant="link" type="button" aria-expanded={open} onClick={()=>setOpen(x=>!x)}
+    className="max-md:min-h-11 font-semibold text-primary-text underline">{open?"Cancel":"Can't make it? Ask to reschedule"}</Button>
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}
   {open?<div className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
    <h4 className="font-semibold">Ask to reschedule</h4>
@@ -41,20 +41,20 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
       className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"/></label>
    <label className="text-sm">Preferred date and time
     <DateInput required mode="datetime-local" value={date} onChange={e=>setDate(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/></label>
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9"/></label>
    <label className="text-sm">Mode
     <Select value={nextMode} onChange={e=>setNextMode(e.target.value as typeof mode)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9">
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Online</option>
     </Select></label>
    {nextMode==="ON_CAMPUS"?<label className="text-sm">Suggested venue
     <Input required value={nextVenue} maxLength={500} onChange={e=>setNextVenue(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/></label>:
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9"/></label>:
     <label className="text-sm">Suggested meeting URL
      <Input required type="url" value={nextUrl} maxLength={2000} onChange={e=>setNextUrl(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/></label>}
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9"/></label>}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-   <Button type="button" disabled={busy||reason.trim().length<3||!date||
+   <Button className="max-md:min-h-11" type="button" disabled={busy||reason.trim().length<3||!date||
      (nextMode==="ON_CAMPUS"?!nextVenue.trim():!/^https:\/\//i.test(nextUrl))}
      onClick={()=>void save()} >
     {busy?"Sending…":"Send request"}</Button>

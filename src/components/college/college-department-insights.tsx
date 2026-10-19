@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import {
   attendanceEvidenceLabel,
   departmentInsightsHref,
@@ -42,7 +44,6 @@ export function CollegeDepartmentInsights({
   ];
   return <div className="space-y-6">
     <PageHeader
-      eyebrow="College Admin · Department Insights"
       title={title}
       description={attendance
         ? "College-scoped marked attendance sessions and explicit learner-status records, not attendance rates."
@@ -50,18 +51,17 @@ export function CollegeDepartmentInsights({
       actions={<>
         {attendance ? <a href={"/api/attendance/admin/departments/export" +
           (data.query.q ? "?q=" + encodeURIComponent(data.query.q) : "")}
-          className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
           Export CSV
         </a> : null}
         <Link href={attendance ? "/college/attendance" : "/college/placements"}
-          className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
           {attendance ? "Attendance workspace" : "Placements workspace"}
         </Link>
       </>}
     />
     {attendance && correctionPolicy ? (
-      <section aria-label="College attendance correction policy"
-        className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm text-body">
+      <Alert tone="info" aria-label="College attendance correction policy">
         <p className="font-semibold text-foreground">Attendance policy — read-only</p>
         <p className="mt-1">Faculty marking/correction window: {correctionPolicy.correctionWindowHours} hours after class end.</p>
         <p>Exam eligibility threshold: {correctionPolicy.eligibilityThresholdPercent}%.</p>
@@ -71,7 +71,7 @@ export function CollegeDepartmentInsights({
         </p>
         <Link href="/college/attendance/settings"
           className="mt-2 inline-block font-semibold text-link">Attendance policy settings</Link>
-      </section>
+      </Alert>
     ) : null}
     <section aria-label="Department filters" className="border-t border-border pt-4">
       <form method="get" action={path} className="flex flex-wrap items-end gap-3">
@@ -79,31 +79,30 @@ export function CollegeDepartmentInsights({
           Department name
           <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
             placeholder="Search your college"
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+            />
         </label>
-        <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">Search</Button>
-        <Link href={path} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Clear</Link>
+        <Button variant="primary" type="submit" className="min-h-11 md:min-h-9">Search</Button>
+        <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear</Link>
       </form>
     </section>
-    <section aria-label="Department evidence results" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface">
+    <section aria-label="Department evidence results" className="min-w-0">
       <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
         {data.total} matching department{data.total === 1 ? "" : "s"}
       </p>
       <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
         caption={title}
-        empty={<p className="text-sm text-body">{data.total === 0
-          ? "No departments match these filters. No attendance or placement evidence is inferred."
-          : "No departments exist on this page. Choose an earlier page."}</p>}
+        empty={<EmptyState title={data.total===0?"No matching departments":"No departments on this page"}
+          description={data.total===0?"No departments match these filters. No attendance or placement evidence is inferred.":"No departments exist on this page. Choose an earlier page."}/>}
       />
     </section>
     <nav aria-label="Department pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link
-          className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link"
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9"
           href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page - 1 })}>Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link
-          className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link"
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9"
           href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page + 1 })}>Next</Link> : null}
       </div>
     </nav>

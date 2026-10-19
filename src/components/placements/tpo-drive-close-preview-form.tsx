@@ -7,6 +7,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 type Preview={id:string;expectedUpdatedAt:string;counts:{applications:number;rounds:number;offers:number}};
 export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  const router=useRouter(),[pending,setPending]=useState(false),[error,setError]=useState<string|null>(null);
@@ -65,7 +66,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
    <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
     className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/></label>
   <p className="text-xs text-body">If the drive version or these counts change, closing is rejected and you must review the consequences again.</p>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
   <Button type="submit" disabled={pending} >
    {pending?"Closing…":"Review and close drive"}</Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}

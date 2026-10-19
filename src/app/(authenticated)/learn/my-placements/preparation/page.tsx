@@ -33,7 +33,7 @@ export default async function LearnerPlacementPreparationPage({
     <PageHeader title="Placement preparation"
       description="A checklist of information and activity actually recorded for your account."
       actions={<Link href="/learn/my-placements"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
         My Placements
       </Link>} />
     {(await placementTableExists("placement_tpo_prep_assignments"))?<LearnerPrepAssignmentCards/>:null}
@@ -53,7 +53,7 @@ export default async function LearnerPlacementPreparationPage({
       description={data.query.view==="MISSING"
         ? "Each tracked category has some recorded information. This does not certify placement readiness."
         : "No categories match this filter. Try All categories."}/>
-      : <ol className="grid gap-3 sm:grid-cols-2">
+      : <ol className="grid min-w-0 gap-3 md:grid-cols-2">
         {data.items.map(item=>
           <li key={item.id} className="border-b border-border pb-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -64,7 +64,7 @@ export default async function LearnerPlacementPreparationPage({
             </div>
             <p className="mt-2 text-sm leading-6 text-body">{item.description}</p>
             <Link href={item.href}
-              className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-4 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               {item.recorded?"Review recorded information":"Review this section"} →
             </Link>
           </li>)}

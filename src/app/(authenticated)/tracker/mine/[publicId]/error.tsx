@@ -6,5 +6,5 @@ import {GracefulErrorBoundary} from "@/components/public/graceful-error-boundary
 export default function MyTrackerDetailError({error,reset}:{
  error:Error&{digest?:string};reset:()=>void;
 }){
- return <GracefulErrorBoundary error={error} reset={reset}/>;
+ return <GracefulErrorBoundary error={error} reset={reset} insideShell />;
 }

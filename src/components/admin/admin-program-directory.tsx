@@ -134,7 +134,7 @@ export function AdminProgramDirectory({
 
   return (
     <div className="space-y-5">
-      <form onSubmit={create} className="border-b border-border pb-5">
+      <form onSubmit={create} className="border-b border-border pb-5 print:hidden">
         <h2 className="text-base font-semibold text-foreground">Create New Program</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Programs belong to a department. Choose the usual academic years; two terms are stored per year.
@@ -144,11 +144,11 @@ export function AdminProgramDirectory({
             No departments in this college yet. <Link href="/admin/departments" className="font-semibold text-primary-text underline">Go to Departments</Link>
           </p>
         ) : null}
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-4">
           <div>
-            <label htmlFor="admin-program-department" className="mb-1 block text-xs font-semibold text-body">Department</label>
+            <label htmlFor="admin-program-department" className="mb-1 block text-[13px] font-semibold text-body">Department</label>
             <Select
-              id="admin-program-department" value={departmentId}
+              className="min-h-11 md:min-h-9" id="admin-program-department" value={departmentId}
               onChange={(event) => setDepartmentId(event.target.value)}
               required
             >
@@ -160,33 +160,33 @@ export function AdminProgramDirectory({
           </div>
           <div>
             <label htmlFor="admin-program-name" className="mb-1 block text-xs font-semibold text-body">Program Name</label>
-            <Input id="admin-program-name" value={name} maxLength={255} required
+            <Input className="min-h-11 md:min-h-9" id="admin-program-name" value={name} maxLength={255} required
               onChange={(event) => setName(event.target.value)}
               placeholder="e.g. Computer Science Engineering" />
           </div>
           <div>
             <label htmlFor="admin-program-code" className="mb-1 block text-xs font-semibold text-body">Program code (optional)</label>
-            <Input id="admin-program-code" value={code} maxLength={64}
+            <Input className="min-h-11 md:min-h-9" id="admin-program-code" value={code} maxLength={64}
               onChange={(event) => setCode(event.target.value)} placeholder="CSE" />
           </div>
           <div>
             <label htmlFor="admin-program-duration" className="mb-1 block text-xs font-semibold text-body">Duration (Years)</label>
-            <Input id="admin-program-duration" type="number" value={durationYears}
+            <Input className="min-h-11 md:min-h-9" id="admin-program-duration" type="number" value={durationYears}
               onChange={(event) => setDurationYears(event.target.value)}
               min={1} max={10} step={1} required />
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 sm:min-h-[var(--lms-control-height)]" disabled={pending || departments.length === 0}>
+          <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending || departments.length === 0}>
             {pending ? "Creating…" : "Create Program"}
           </Button>
         </div>
       </form>
       <section className="space-y-3" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
-        <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-wrap items-end justify-between gap-3 print:hidden">
           <div className="w-full min-w-0 flex-1 sm:min-w-56">
             <label htmlFor="admin-program-search" className="mb-1 block text-xs font-semibold text-body">Search programs or departments</label>
-            <Input id="admin-program-search" value={search}
+            <Input className="min-h-11 md:min-h-9" id="admin-program-search" value={search}
               onChange={(event) => { setSearch(event.target.value); setPage(1); }}
               placeholder="Search program, code or department" />
           </div>
@@ -198,10 +198,10 @@ export function AdminProgramDirectory({
             {filtered.length ? (
               <a
                 href={csvHref} download="programs.csv"
-                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-[650] text-foreground hover:border-primary hover:bg-primary-subtle"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >Export CSV</a>
             ) : <Button variant="secondary" disabled>Export CSV</Button>}
-            <Button variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]" onClick={() => router.refresh()}>Refresh</Button>
+            <Button variant="secondary" className="min-h-11 md:min-h-9" onClick={() => router.refresh()}>Refresh</Button>
           </div>
         </div>
         <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
@@ -217,13 +217,13 @@ export function AdminProgramDirectory({
                 : "No programs yet. Create the first program using the form above."}
           </p>} />
         {result.total > 0 ? (
-          <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground print:hidden">
             <span>Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}</span>
             <div className="flex items-center gap-3">
-              <Button size="sm" variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]" disabled={result.page === 1}
+              <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={result.page === 1}
                 onClick={() => setPage(result.page - 1)}>Previous</Button>
               <span aria-live="polite">Page {result.page} of {result.pages}</span>
-              <Button size="sm" variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]" disabled={result.page === result.pages}
+              <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={result.page === result.pages}
                 onClick={() => setPage(result.page + 1)}>Next</Button>
             </div>
           </div>

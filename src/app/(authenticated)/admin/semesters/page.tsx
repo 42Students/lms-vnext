@@ -77,7 +77,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <AcademicSetupSteps step={3} />
     <PageHeader title="Semesters"
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —."
-      actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Semester–Course Mapping</Link>} />
+      actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Semester–Course Mapping</Link>} />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="border-b border-border pb-4" aria-label="Semester filters">
       <form method="get" action="/admin/semesters" className="flex flex-wrap items-end gap-3">
@@ -106,7 +106,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
           </Select>
         </label>
         <Button type="submit">Filter</Button>
-        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
     </section>
     <form method="get" action="/admin/semesters" aria-label="Refresh semester directory">
@@ -121,7 +121,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       ...(data.query.q?{q:data.query.q}:{}),
       ...(data.query.programId?{programId:data.query.programId}:{}),
       ...(data.query.status!=="ALL"?{status:data.query.status}:{})
-    }).toString()} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+    }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
       Export semesters.csv
     </a>
     <section aria-label="Semesters" className="min-w-0 space-y-3">

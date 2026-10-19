@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 export function TenantDirectoryCsvControl({ href }: { href: string }) {
   const [pending, setPending] = useState(false), [error, setError] = useState<string | null>(null);
   async function download() {
@@ -17,8 +18,8 @@ export function TenantDirectoryCsvControl({ href }: { href: string }) {
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not export tenants."); }
     finally { setPending(false); }
   }
-  return <div className="space-y-2"><Button size="sm" variant="secondary" className="min-h-11 min-[768px]:min-h-9" disabled={pending} onClick={() => void download()}>
+  return <div className="space-y-2"><Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" loading={pending} disabled={pending} onClick={() => void download()}>
     {pending ? "Preparing CSV…" : "Export filtered CSV (max 1,000)"}</Button>
-    {error ? <p role="alert" className="max-w-sm text-sm text-error">{error}</p> : null}
+    {error ? <Alert tone="error" className="max-w-sm">{error}</Alert> : null}
   </div>;
 }

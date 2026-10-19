@@ -48,7 +48,7 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(shell.indexOf("<RouteTransition>")).toBeGreaterThan(shell.indexOf("<LegacyTopbar"));
 });
  it("skips external links and keyboard-modified route clicks",()=>{
- expect(route()).toContain('link.target==="_blank"');
+ expect(route()).toContain('link.target&&link.target!=="_self"');
  expect(route()).toContain('link.hasAttribute("download")');
  expect(route()).toContain("event.ctrlKey");
  expect(route()).toContain("destination.origin!==window.location.origin");
@@ -64,6 +64,14 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(route()).toContain('document.addEventListener("click",onNavigate,true)');
  expect(route()).toContain('document.removeEventListener("click",onNavigate,true)');
 });
+ it("starts the same legacy exit for browser history without fading query-only changes",()=>{
+ expect(route()).toContain('window.addEventListener("popstate",onPopState)');
+ expect(route()).toContain('window.removeEventListener("popstate",onPopState)');
+ expect(route()).toContain("if(window.location.pathname!==pathname)beginLeaving()");
+ expect(route()).toContain("destination.pathname===pathname");
+ expect(route()).toContain("try{destination=new URL(link.href,window.location.href);}");
+ expect(route()).toContain('link.getAttribute("aria-disabled")==="true"');
+ });
  it("cleans up recovery timer when the route changes",()=>{
  expect(route()).toContain("recoveryTimer.current=window.setTimeout(()=>setLeaving(false),3000)");
  expect(route()).toContain("window.clearTimeout(recoveryTimer.current)");
