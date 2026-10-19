@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -228,7 +229,7 @@ export function TpoRoundResultRecorder({
           {busy ? "Applying..." : "Confirm and apply staged result"}
         </Button>
       ) : null}
-      {error ? <p role="alert" className="text-error">{error}</p> : null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
     </div>
   );
 }

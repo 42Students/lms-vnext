@@ -5,6 +5,8 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {tpoRequestFailedRowsTsv} from "@/modules/placements/tpo-request-failed-rows-model";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
@@ -163,17 +165,17 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
     <strong>{row.name}</strong>: {row.message}
    </li>)}</ul>
    {outcomes.some(row=>row.status==="failed")?<div className="space-y-2">
-    <p role="alert">Some requests were not decided. Recheck them before retrying.</p>
+    <InlineNotice tone="error" message="Some requests were not decided. Recheck them before retrying."/>
     <Button variant="secondary" type="button" onClick={()=>void copyFailed()} >Copy failed</Button>
    </div>:null}
   </div>:null}
-  {auditRetry?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+  {auditRetry?<Alert tone="error">
    <p>Request decisions are saved, but their batch audit has not been confirmed. Retrying will only check the audit, not decide the requests again.</p>
    <Button variant="secondary" type="button" disabled={pending} onClick={()=>void retryAudit()}
     >
     {pending?"Checking batch audit…":"Retry batch audit only"}
    </Button>
-  </div>:null}
-  {error?<p role="alert" className="text-error">{error}</p>:null}
+  </Alert>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
