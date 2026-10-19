@@ -227,7 +227,15 @@
 @media (prefers-reduced-motion: reduce) {
   [data-slot="popover-listbox"] { animation: none !important; transition: none !important; }
 }
-[data-slot="toast-stack"] { max-width: min(420px, calc(100vw - 32px)); }
+/* Closest old-LMS notification surface (no canonical toast SCSS):
+   docs/design/legacy-styles/components___notification-drawer.scss:113-121. */
+[data-slot="toast-stack"] {
+  max-width: min(420px, calc(100vw - 32px));
+  --lms-toast-shadow: 0 4px 24px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .04);
+}
+[data-slot="toast-action"] {
+  --lms-toast-shadow: 0 4px 24px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .04);
+}
 [data-slot="toast-stack"] > section { border-radius: 12px; background: #fff; }
 [data-slot="toast-stack"] > section { overflow-wrap: anywhere; }
 [data-slot="toast-stack"] button[aria-label^="Dismiss"]:hover { background: rgba(0,0,0,.035); }
