@@ -345,3 +345,21 @@ These are **source grep-equivalent counts** performed on fetched files; do not m
 All other files in the source-scan table stay **[ ]** because responsive screenshots and complete computed legacy property/state matching have not been done. Converted markup is **not** evidence of exact pixel parity. No CI, typecheck, dev server, browser render, or user-session walkthrough was performed.
 
 **Next unticked HR file:** `src/app/(authenticated)/hr/company/page.tsx` after reviewing the current `hr/drives/page.tsx` partial parity notes, then all remaining HR pages/components and full recruiter aliases.
+
+### Follow-on HR page pass: source-level proof after full-file reread
+
+| Page | Exact post-edit source scan: native elements / hex / hand-built h1-tab-pill-toggle | Shared component contracts | Mobile/tablet comparison and remaining blockers |
+| --- | --- | --- | --- |
+| `hr/company/page.tsx` | 0 / 0 / 1 avatar-only `rounded-full` | 4 PageHeader sites; Badge (2), StatusBadge (1), Tabs, NeedsDoingChips, Input, Button and EmptyState | `md:grid-cols-2` company facts and `md:grid-cols-3` report tiles start at 768px (SCSS listing header max 767px); avatar circle is intentionally exempt; pixel values pending |
+| `hr/company/reports/page.tsx` | 0 / 0 / 0 | 3 PageHeader sites, Chips/Tabs/Select/Input/Button, HrCompanyReportsGrid, EmptyState | `md:grid-cols-2` college chooser, `md:grid-cols-4` report metrics, `md:pb-5` separators; server CSV unchanged; Quartz runtime pending |
+| `hr/profile/page.tsx` | 0 / 0 / 0 | 1 PageHeader, shared DataTable and StatusBadge (3), EmptyState, profile editor | Account details `md:grid-cols-2` only from 768px; mobile grid fallback belongs to DataTable owner; validation pending |
+| `hr/home/page.tsx` | 0 / 0 / 0 | 3 PageHeader sites, Alert (2), Badge (3), NeedsDoingChips, EmptyState/ErrorState | Task tiles and week-event cards `md:grid-cols-2` at 768px; warnings no longer custom banners; mobile proof is source only |
+| `hr/round-results/page.tsx` | 0 / 0 / 0 | 3 PageHeader sites, Tabs, HrRoundResultsGrid, EmptyState/ErrorState, StatusBadge | Drive chooser `md:grid-cols-2` at 768px; authorized round table uses current native `TpoGrid` entrypoint; runtime blocked until AG Grid dependencies are declared |
+
+The native/hex/UI count expression remains that of the previous subsection, applied after re-reading the complete updated source files on this branch. `<Input>`, `<Button>`, `<Select>`, `<Badge>`, and `<Tabs>` are excluded from native-tag counts. The only `rounded-full` in the company page is a decorative recruiter **avatar** (not a custom status chip); retain its circle. Named paired `Alert`, `Badge`, `StatusBadge`, `Button` and `Select` tags were re-read with balanced opening and closing names; shared self-closing wrappers remain self-closing.
+
+Legacy sources checked: `docs/design/old-lms-pages.md:6-12`, `docs/design/legacy-styles/components___listing-page-header.scss:53-58,131-158`, `components___form.scss:23-33,130-143`, `components___antddesign.scss:148-184`. Source contrast: `src/components/ui/page-header.tsx:19-44`, `tabs.tsx:70-94`, `needs-doing-chips.tsx:31-54`, `src/styles/legacy-skin.css:102-162`. The all-state computed style table and phone/tablet screenshots are still missing, so **these five pages remain unticked** under the strict rule.
+
+**HR sheets:** Native `AgGridReact` + Quartz are now in `src/components/tpo/grid/tpo-grid.tsx` on main. `HrCompanyReportsGrid` and `HrRoundResultsGrid` are passed only authorized server rows; no unauthorized client fetch or broadened CSV endpoint was added. The required packages were absent from the inspected `package.json`, and no app was run. Mark integration **source-wired, unverified**, never runtime-complete E8.
+
+**Next high-priority files:** `src/app/(authenticated)/hr/calendar/page.tsx`, `src/app/(authenticated)/hr/conversations/page.tsx`, `src/app/(authenticated)/hr/notifications/page.tsx`, then `src/components/hr/hr-drive-draft-form.tsx`.
