@@ -95,44 +95,44 @@ export function CollegeCohortCreateForm({ programs, periods }: {
       : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <label className="grid gap-1 text-sm font-medium text-body">Program
           <select required value={programId} onChange={e => setProgramId(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
             <option value="">Choose program</option>
             {programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Start academic period
           <select required value={startPeriodId} onChange={e => setStartPeriodId(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
             <option value="">Choose period</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch name
           <input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch code
           <input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Expected end period (optional)
           <select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
             <option value="">Not specified</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Academic Year
           <input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)}
-            placeholder="2026–2027" className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            placeholder="2026–2027" className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground"/>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Start Date
           <input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground"/>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">End Date
           <input type="date" value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground"/>
         </label>
         <div className="sm:col-span-2 lg:col-span-5 text-sm text-body">
           <p>Start Date: {start?.startDate??"Choose start period"} · End Date: {end?.endDate??"Not specified"}</p>
@@ -237,7 +237,7 @@ export function CollegeCohortRowActions({ row, periods }: {
     <div className="flex flex-wrap gap-2">
     <button type="button" disabled={pending || blocked}
       onClick={() => { setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);setNotice(""); }}
-      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
       Edit
     </button>
     {row.status === "ACTIVE" && <button type="button"
@@ -251,7 +251,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       title={row.activeSections>0 || row.activeEnrolledLearners>0
         ? `Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.`
         : row.status!=="PLANNED" ? "Only planned batches can be removed." : "Remove this unlinked planned batch"}
-      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
       Remove
     </button>
     </div>
@@ -273,15 +273,15 @@ export function CollegeCohortRowActions({ row, periods }: {
         <p className="text-sm text-muted-foreground">Program and starting period cannot change after creation.</p>
         <label className="grid gap-1 text-sm font-medium text-body">Batch name
           <input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch code
           <input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Expected end period
           <select value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
             <option value="">Not specified</option>
             {row.expectedEndPeriodId && !periods.some(p => p.id === row.expectedEndPeriodId) ?
               <option value={row.expectedEndPeriodId}>Previously recorded period (unavailable)</option> : null}

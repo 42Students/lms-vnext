@@ -28,7 +28,7 @@ export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}
   return <div className="mt-3 flex flex-wrap items-end gap-2">
     <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold text-body">Cancellation reason
       <input value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
-        className="min-h-10 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground"/>
     </label>
     <button type="button" disabled={pending||reason.trim().length<3} onClick={cancel}
       className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
