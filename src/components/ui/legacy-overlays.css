@@ -250,16 +250,16 @@
   to { opacity: 0; translate: -20px 0; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  [data-slot="dialog"][data-closing="true"],
-  [data-slot="bottom-sheet"][data-closing="true"] {
+  [data-slot="dialog"][open][data-closing="true"],
+  [data-slot="bottom-sheet"][open][data-closing="true"] {
     animation: lms-legacy-dialog-exit 180ms ease-in both;
   }
 }
 @media (prefers-reduced-motion: no-preference) {
-  [data-slot="drawer"][data-closing="true"] {
+  [data-slot="drawer"][open][data-closing="true"] {
     animation: lms-legacy-drawer-exit 200ms ease-in both;
   }
-  [data-slot="drawer"][data-side="left"][data-closing="true"] {
+  [data-slot="drawer"][data-side="left"][open][data-closing="true"] {
     animation: lms-legacy-drawer-left-exit 200ms ease-in both;
   }
 }
