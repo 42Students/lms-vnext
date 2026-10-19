@@ -1,5 +1,5 @@
-import { PageHeader } from "@/components/ui/page-header";
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import {LEARNER_EDUCATION_TYPES,learnerQualifyingExamSuggestions,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
 import {LearnerSkillCatalogInput} from "@/components/profile/learner-skill-catalog-input";
