@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -68,8 +69,8 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  }
  return <div className="mt-2 space-y-2">
   <div className="flex flex-wrap gap-2">
-   {assignment.status!=="ARCHIVED"?<button type="button" disabled={busy}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text"
+   {assignment.status!=="ARCHIVED"?<Button variant="secondary" type="button" disabled={busy}
+    className="text-primary-text"
     onClick={()=>void (async()=>{
       if(editing){setEditing(false);return;}
       setError("");setNotice("");setMethodsLoaded(false);setExpectedUpdatedAt(null);
@@ -89,13 +90,13 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
        setMethods(normalizeAssignmentMethods(data.assignment.allowedMethods));setMethodsDirty(false);
        setMethodsLoaded(true);setEditing(true);
       }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load assignment settings.");}
-    })()}>Edit</button>:null}
-   {assignment.status==="DRAFT"?<button type="button" disabled={busy}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text"
-    onClick={()=>void command("PUBLISH")}>Publish</button>:null}
-   {assignment.status!=="ARCHIVED"?<button type="button" disabled={busy}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error"
-    onClick={()=>void command("ARCHIVE")}>Delete</button>:null}
+    })()}>Edit</Button>:null}
+   {assignment.status==="DRAFT"?<Button variant="secondary" type="button" disabled={busy}
+    className="text-primary-text"
+    onClick={()=>void command("PUBLISH")}>Publish</Button>:null}
+   {assignment.status!=="ARCHIVED"?<Button variant="secondary" type="button" disabled={busy}
+    className="text-error"
+    onClick={()=>void command("ARCHIVE")}>Delete</Button>:null}
   </div>
   {editing?<div className="grid gap-2 rounded border border-border p-3">
    <label className="grid gap-1 text-xs font-semibold">Title
@@ -111,8 +112,8 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     <textarea value={description} disabled={busy} maxLength={10000} rows={3}
      onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/></label>
    <FacultyAssignmentMethodPicker methods={methods} onChange={next=>{setMethods(next);setMethodsDirty(true);}} disabled={busy}/>
-   <button disabled={busy} className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary"
-    type="button" onClick={()=>void command("SAVE")}>{busy?"Saving…":"Save changes"}</button>
+   <Button variant="primary" disabled={busy} 
+    type="button" onClick={()=>void command("SAVE")}>{busy?"Saving…":"Save changes"}</Button>
   </div>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-success">{notice}</p>:null}
