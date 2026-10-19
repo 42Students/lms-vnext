@@ -43,8 +43,8 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
       className="w-full"/>
     </label>
     <p className="text-xs text-muted-foreground">Suspends only this college membership. Other college access is unaffected.</p>
-    <Button variant="secondary" type="button" disabled={busy||reason.trim().length<3} onClick={()=>void change("SUSPEND")}
-     variant="primary" className="">Confirm suspension</Button>
+    <Button variant="primary" type="button" disabled={busy||reason.trim().length<3} onClick={()=>void change("SUSPEND")}
+     className="">Confirm suspension</Button>
    </div>:null}
   </>:status==="SUSPENDED"?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void change("REACTIVATE")}
    className="">Reactivate</Button>:
