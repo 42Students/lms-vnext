@@ -137,7 +137,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
    <p className="mt-1 text-sm text-body">Booking, changing or cancelling a student slot sends a placement notification and records an audit event.</p>
    <div className="mt-3 space-y-3">{slots.map(slot=>{
     const student=roster.find(r=>r.applicationId===slot.applicationId);
-    return <article key={slot.id} className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
+    return <article key={slot.id} className="space-y-2 border-b border-border py-3">
      <div className="flex flex-wrap items-center justify-between gap-3">
       <div><p className="font-semibold text-foreground">{format(slot.startsAt)} · {slot.room}</p>
        <p className="text-sm text-body">{slot.status==="BOOKED"?(student?.name??"Assigned learner"):"Available"} · Until {format(slot.endsAt)}</p></div>
