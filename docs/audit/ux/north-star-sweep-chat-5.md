@@ -166,3 +166,17 @@ Status: `Adjusted — pushed` means a route/component's styling was changed on t
 - Corrected primary button text to the canonical white-on-teal foreground in offer withdrawal, recorded-outside forms, company life-cycle and contact editing, round result actions and publication controls. Matched 44px mobile / 36px desktop targets for check-in, saved views, result recording, presentation ordering and recorded-outside controls.
 - Preserved section headings, rendered copy, state logic, routes, handlers, input validation, role constraints and confirmation behavior. All changes were confined to JSX class strings.
 - Re-read updated source and JSX control closings, including `</Select>`, `</Button>`, `</Input>`, `</Radio>` and `</Checkbox>` where present; no incomplete closing tags were detected in the inspected changed files. **No application execution, typecheck, unit tests, lint, CI or screenshot/browser parity run.** Final integration must resolve PR #181 conflicts rather than discarding either lane's edits or the upstream component syntax fixes.
+
+## Sixth pass — upstream resolution and continued style-only parity (2026-10-19)
+
+- Pulled upstream `main` at `f7dd3e81786adf00538daebf63a075046d159b4c` into `chatgpt/chat-5-b` with two-parent merge `b1f950c9464afd30e34c1ea6992bd847d68431c7`. Both branch histories are retained, and **origin/main was preferred on every conflicted JSX file**. No direct commits to `main`.
+- Reapplied only the lane's styling deltas over the latest upstream JSX across **39 files**. In particular, `rounds/[roundId]/results/page.tsx` keeps upstream `Input`, `Select` and `Button` elements with complete closing tags; `tpo-interview-slot-planner.tsx` keeps upstream `Input`, `Select`, `Button` elements and hooks, with only the round-request row's hairline class restored. Did not resurrect older native `input`, `select`, `button` tags.
+- Reapplied styling in drive/status and offer tabs, applicant/joining/offer/closeout metric strips, form control radii, primary white-on-teal contrast, white secondary CSV controls, mobile target heights, plain canvas spacing, and per-row dividers. Where upstream classes had already changed, made targeted class-only adjustments rather than replacing upstream lines/components.
+- Visually sensitive JSX control closing tags were re-read during each source update, with no incomplete `</Select`, `</Button`, `</Input`, `</Radio`, or `</Checkbox` occurrences detected. This was a **source-only** pass; the application, typecheck, tests, lint, CI and browser screenshots were not run.
+- The earlier #181 PR merge attempt failed automatically, but the subsequent explicit two-parent lane merge resolved it manually. The lane is fully up-to-date with the `main` revision listed above. Future main commits still require reconciliation.
+
+### Additional source-only pass after upstream reconciliation
+
+- Finished four newly inspected TPO elements: interview reschedule primary-button foreground, weekly-calendar follow-up primary-button foreground, sequential-review row divider and bulk round-results outcome list hairline. Retained upstream JSX tags and all event/state logic.
+- An older 40-file sweep from pre-merge history was compared against the latest tree. Where upstream already had more recent styling or shared-control JSX, it remained authoritative; no older HTML/native control tags were restored. Only clear styling deltas were reapplied.
+- No CI, typecheck, app execution or automated code validation was run. Complete component-tag closings were re-read in the touched files.

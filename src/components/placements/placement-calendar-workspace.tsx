@@ -351,7 +351,7 @@ function CalendarEventCard({
   const href = eventHref(event, audience);
 
   return (
-    <article className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <article className="border-b border-border py-4 sm:py-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="m-0 text-xs font-bold uppercase tracking-wide text-[var(--lms-link-text)]">
@@ -585,7 +585,7 @@ export async function PlacementCalendarWorkspace({
                   ? "/admin/placements"
                   : "/college/placements"
             }
-            className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             Placement operations →
           </Link>
@@ -594,11 +594,11 @@ export async function PlacementCalendarWorkspace({
 
       {partialCalendar?<section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warning-border bg-warning-subtle p-4 text-sm">
         <p className="font-semibold text-warning-text">Calendar summary is partially unavailable. The events shown are from the successful calendar read; unavailable counts are not shown as zero.</p>
-        <Link href={calendarHref(basePath,audience,state,{})} className="min-h-9 rounded-[9px] border border-border bg-surface px-4 py-2 font-semibold text-[var(--lms-link-text)]">Retry</Link>
+        <Link href={calendarHref(basePath,audience,state,{})} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-[var(--lms-link-text)]">Retry</Link>
       </section>:null}
 
       {calendarFollowupsWritable ? (
-        <div className="inline-flex rounded-lg border border-border bg-surface p-2">
+        <div className="inline-flex border-b border-border pb-2">
          <TpoNewFollowupModal collegeId={collegeId}/>
         </div>
       ) : isTpo ? (
@@ -608,7 +608,7 @@ export async function PlacementCalendarWorkspace({
         </p>
       ) : null}
 
-      {isTpo?<section aria-label="Today and next 7 days" className="rounded-xl border border-border bg-surface p-4">
+      {isTpo?<section aria-label="Today and next 7 days" className="border-b border-border pb-5">
        <h2 className="text-base font-semibold">Today</h2>
        {needsWindow?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
          <span className="font-semibold">{eventTime(event.startsAt)}</span>{" · "}{event.title}
@@ -617,19 +617,19 @@ export async function PlacementCalendarWorkspace({
          <p role="status" className="mt-2 text-sm text-warning-text">Today&apos;s schedule is unavailable.</p>}
        {needsWindow?<p className="mt-3 text-sm text-body">Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}</p>:null}
       </section>:null}
-      {isTpo?<section aria-label="Needs doing" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+      {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-5">
        <h2 className="text-base font-semibold">Needs doing</h2>
        <div className="grid gap-3 sm:grid-cols-3">
         <Link href={overdue.length?basePath+"?view=week&date="+placementCalendarDayKey(overdue[0].startsAt)+"&kind=FOLLOW_UP":basePath}
-         className="rounded-[9px] border border-border p-3 text-sm text-[var(--lms-link-text)]">
+         className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-link-text)]">
          <strong className="block text-lg">{needsWindow?overdue.length:"Unavailable"}</strong>Follow-ups overdue (last 90 days)
         </Link>
         <Link href={blockedRounds.length?basePath+"?view=week&date="+placementCalendarDayKey(blockedRounds[0].startsAt):basePath}
-         className="rounded-[9px] border border-border p-3 text-sm text-[var(--lms-link-text)]">
+         className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-link-text)]">
          <strong className="block text-lg">{needsWindow&&blockedDays?.ready?blockedRounds.length:"Unavailable"}</strong>Rounds on a blocked date
         </Link>
         <Link href={busyDays.length?basePath+"?view=week&date="+busyDays[0][0]:basePath}
-         className="rounded-[9px] border border-border p-3 text-sm text-[var(--lms-link-text)]">
+         className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-link-text)]">
          <strong className="block text-lg">{needsWindow?busyDays.length:"Unavailable"}</strong>Busy days (3 or more)
         </Link>
        </div>
@@ -699,8 +699,8 @@ export async function PlacementCalendarWorkspace({
                 }
                 className={
                   state.view === view
-                    ? "inline-flex min-h-9 items-center rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold capitalize text-[var(--lms-on-primary)]"
-                    : "inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)]"
+                    ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold capitalize text-[var(--lms-on-primary)]"
+                    : "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)]"
                 }
               >
                 {view}
@@ -718,7 +718,7 @@ export async function PlacementCalendarWorkspace({
               { anchor: previous },
             )}
             aria-label="Previous calendar period"
-            className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             ←
           </Link>
@@ -729,7 +729,7 @@ export async function PlacementCalendarWorkspace({
               state,
               { anchor: today },
             )}
-            className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             Today
           </Link>
@@ -741,7 +741,7 @@ export async function PlacementCalendarWorkspace({
               { anchor: next },
             )}
             aria-label="Next calendar period"
-            className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             →
           </Link>
@@ -942,7 +942,7 @@ export async function PlacementCalendarWorkspace({
         aria-label="All-day blocked dates" className="rounded-xl border border-border bg-surface-subtle p-4">
         <h2 className="text-sm font-semibold text-foreground">Blocked (exam) dates · All day</h2>
         <ul className="mt-2 flex flex-wrap gap-2">{blockedEvents.map(event=>
-         <li key={event.id} className="rounded-[9px] border border-border bg-muted px-3 py-2 text-sm text-body">
+         <li key={event.id} className="rounded-[var(--lms-control-radius)] border border-border bg-muted px-3 py-2 text-sm text-body">
           <strong>{dateLabel(placementCalendarDayKey(event.startsAt))} · Blocked</strong>
           {event.note?<p className="text-xs">{event.note}</p>:null}
          </li>)}</ul>
@@ -1026,7 +1026,7 @@ export async function PlacementCalendarWorkspace({
                           key={event.id}
                           href={href}
                           title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                          className="block min-h-9 rounded-[9px] bg-primary-subtle px-2 py-1 text-xs font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                          className="block min-h-9 rounded-[var(--lms-control-radius)] bg-primary-subtle px-2 py-1 text-xs font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                         >
                           <span className="block truncate">
                             {eventTime(
@@ -1040,7 +1040,7 @@ export async function PlacementCalendarWorkspace({
                       ) : (
                         <div
                           key={event.id}
-                          className="rounded-[9px] bg-muted px-2 py-1 text-xs text-body"
+                          className="rounded-[var(--lms-control-radius)] bg-muted px-2 py-1 text-xs text-body"
                         >
                           {event.title}
                         </div>
@@ -1070,7 +1070,7 @@ export async function PlacementCalendarWorkspace({
         {bookings?.failed ? <section role="alert" className="rounded-xl border border-border bg-surface p-5">
           <p>Could not load candidate interviews right now. The calendar is still available.</p>
           <Link href={calendarHref(basePath,audience,state,{})}
-           className="mt-3 inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 font-semibold text-[var(--lms-link-text)] focus-visible:ring-2 focus-visible:ring-primary">Retry interviews</Link>
+           className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-link-text)] focus-visible:ring-2 focus-visible:ring-primary">Retry interviews</Link>
         </section> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
        </PlacementPanelErrorBoundary> : null}
       <section

@@ -221,11 +221,11 @@ export function PlacementCandidateEvidenceEditor({
   }
 
   return (
-    <details className="mt-3 rounded-lg border border-border bg-surface">
-      <summary className="cursor-pointer px-3 py-2 text-xs font-semibold text-foreground">
+    <details className="mt-3 border-y border-border">
+      <summary className="cursor-pointer py-3 text-xs font-semibold text-foreground">
         Academic evidence
       </summary>
-      <div className="border-t border-border p-3">
+      <div className="border-t border-border py-3">
         {!loaded ? (
           <Button
             size="sm"

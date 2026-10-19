@@ -33,7 +33,7 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
    setSequence(requests.map(item=>item.id));setPosition(0);setDecided(0);setMessage("");
   }} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
    Start with the first of {requests.length}
-  </button>:current?<div className="space-y-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+  </button>:current?<div className="space-y-3 border-t border-border pt-4">
    <p role="status" className="text-sm font-semibold">{position+1} of {sequence.length} · {decided} decided</p>
    <p className="font-semibold">{current.studentName} · {current.requestType.replaceAll("_"," ")}</p>
    <p className="text-sm text-body">{current.companyName} · {current.jobTitle}</p>
