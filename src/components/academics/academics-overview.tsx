@@ -320,7 +320,7 @@ export function AcademicsOverview({
 
       <section className="space-y-3">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Academic periods
           </h2>
           <p className="mt-1 text-sm text-body">
@@ -336,7 +336,7 @@ export function AcademicsOverview({
 
       <section className="space-y-3">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Programs
           </h2>
           <p className="mt-1 text-sm text-body">
@@ -352,7 +352,7 @@ export function AcademicsOverview({
 
       <section className="space-y-3">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Cohorts / batches
           </h2>
           <p className="mt-1 text-sm text-body">
@@ -368,7 +368,7 @@ export function AcademicsOverview({
 
       <section className="space-y-3">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Sections
           </h2>
           <p className="mt-1 text-sm text-body">
