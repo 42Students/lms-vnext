@@ -153,17 +153,17 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,
       unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:item.value,page:1})}
      aria-current={parsed.data.scope===item.value?"page":undefined}
-     className={parsed.data.scope===item.value ? "inline-flex min-h-9 items-center border-b-[3px] border-[#26bac7] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
+     className={parsed.data.scope===item.value ? "inline-flex min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
       {item.label}
     </Link>)}
    </nav>
    <nav aria-label="Conversation status" className="flex flex-wrap gap-3 border-b border-border">
     <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"false",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}
      aria-current={parsed.data.unreadOnly==="false"?"page":undefined}
-     className={parsed.data.unreadOnly==="false" ? "inline-flex min-h-9 items-center border-b-[3px] border-[#26bac7] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>All</Link>
+     className={parsed.data.unreadOnly==="false" ? "inline-flex min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>All</Link>
     <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"true",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}
      aria-current={parsed.data.unreadOnly==="true"?"page":undefined}
-     className={parsed.data.unreadOnly==="true" ? "inline-flex min-h-9 items-center border-b-[3px] border-[#26bac7] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>Unread</Link>
+     className={parsed.data.unreadOnly==="true" ? "inline-flex min-h-9 items-center border-b-[3px] border-[var(--lms-primary)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-primary-text)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>Unread</Link>
    </nav>
    <p role="status" className="text-sm text-body">
     {result.unreadInView} unread placement cell messages in these conversations
