@@ -99,7 +99,7 @@ export function HrRecruiterBell(){
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-80"><ul className="divide-y divide-[var(--lms-canvas-border)]">{state.items.map(item=><li key={item.id}>
      <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-9 max-sm:min-h-11 items-start gap-2 rounded-[var(--lms-control-radius)] px-3 py-3 text-sm text-body hover:bg-[var(--lms-neutral-50)] hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary":"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted"}/>
-      <span className="flex-1 text-sm font-semibold leading-[1.4]">{item.label}</span><span className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</span>
+      <span className="flex-1 text-sm font-semibold leading-[1.4]">{item.label}</span><time dateTime={item.at} className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</time>
      </Link></li>)}</ul></ScrollCue>}
 
 </>;
