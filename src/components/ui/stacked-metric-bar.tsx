@@ -3,7 +3,7 @@ import { cx } from "@/lib/class-names";
 export type StackedMetricSegment = {
   label: string;
   value: number;
-  tone: "success" | "warning" | "primary";
+  tone: "success" | "warning" | "primary" | "error" | "muted";
 };
 
 export type StackedMetricBarProps = {
@@ -30,6 +30,8 @@ export function StackedMetricBar({
     success: "bg-success",
     warning: "bg-warning",
     primary: "bg-[var(--lms-primary)]",
+    error: "bg-error",
+    muted: "bg-[var(--lms-neutral-500)]",
   } as const;
   return (
     <div
