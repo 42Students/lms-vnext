@@ -87,7 +87,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
   requirePermission(context, "admin-scope.select");
   const filters=parseAdminDirectorySearchParams(await searchParams);
   if (!filters) return <div className="min-w-0 space-y-6">
-    <PageHeader eyebrow="Super Admin" title="Colleges"/>
+    <PageHeader title="Colleges"/>
     <ErrorState title="Invalid college directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
       action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold underline">Clear filters</Link>}/>
@@ -123,7 +123,6 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin"
         title="Colleges"
         description="Active colleges are constrained by the selected Super Admin safety scope."
       />
