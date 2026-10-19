@@ -58,7 +58,7 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
     placeholder="Search course name or code" className="mt-1 min-h-11 sm:min-h-9 w-full"/>
   </label>
   <p className="text-xs text-muted-foreground">With none picked, nobody is marked as needing prep.</p>
-  {missing.length>0?<p role="alert" className="rounded border border-warning-border bg-warning-subtle p-3 text-sm">
+  {missing.length>0?<p role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-warning-border bg-warning-subtle p-3 text-sm">
    {missing.length} previously selected preparation course(s) are no longer active or available in this college.
    Remove the unavailable selections before saving; the existing policy has not been changed.
    <Button type="button" variant="secondary" disabled={busy} onClick={()=>setSelected(current=>current.filter(id=>available.has(id)))}

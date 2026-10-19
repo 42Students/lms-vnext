@@ -85,7 +85,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
       ?["Marksheet is missing or unreadable","Submitted details do not match the document"]
       :["Submitted details do not match the document"]).map(item=>
       <button type="button" key={item} disabled={busy} onClick={()=>{setReason(item);invalidate();}}
-       className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs">{item}</button>)}
+       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs">{item}</button>)}
    </div>
    <label className="grid gap-1 text-sm">Correction reason (shown to students)
     <textarea className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" rows={3} minLength={3} maxLength={500}
@@ -107,7 +107,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    </button>
    <button type="button" disabled={busy} className="ml-2 min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3" onClick={()=>setPreview(false)}>Cancel preview</button>
   </div>:null}
-  {outcomes.length>0?<div role="status" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+  {outcomes.length>0?<div role="status" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
    <h3 className="font-semibold">Bulk review results</h3>
    <p>{outcomes.filter(item=>item.result==="VERIFIED"||item.result==="SENT_BACK").length} saved; {outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK").length} need review.</p>
    <ul className="space-y-1 text-sm">{described.map(item=><li key={item.key}>{item.label} · {item.section}: {item.message}</li>)}</ul>
