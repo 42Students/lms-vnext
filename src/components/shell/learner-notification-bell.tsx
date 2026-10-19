@@ -96,7 +96,7 @@ export function LearnerNotificationBell(){
      Live Course deadlines, not emailed or marked as read.
     </p>
    </section>:null}
-   <ScrollCue axis="y" label="Learner notifications" className="mt-3" viewportClassName="max-h-[55vh]"><ul className="space-y-2">
+   <ScrollCue axis="y" label="Learner notifications" className="mt-3" viewportClassName="max-h-[55vh]"><ul role="list" aria-label="Recent learner notifications" className="space-y-1.5">
     {items.slice(0,8).map(row=>{
      const target=learnerNotificationTarget(row.notification.actionHref)??"/learn/notifications";
      return <li key={row.notification.id}>
