@@ -412,21 +412,21 @@ export function RecruiterResultControls({
                   ] as const).map(([outcome,label])=><button key={outcome} type="button"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
                     disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
-                    className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
+                    className="rounded-[9px] border border-border px-2 py-1 text-primary-text disabled:opacity-40">
                     {label}
                   </button>)}
                   <button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
-                    onClick={undoDraftOutcome} className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
+                    onClick={undoDraftOutcome} className="rounded-[9px] border border-border px-2 py-1 text-primary-text disabled:opacity-40">
                     Undo draft
                   </button>
                   <button type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
-                    className="rounded-md bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50"
+                    className="rounded-[9px] bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50"
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":
                       "Send "+(selected[round.id]??[]).length+" results"}
                   </button>
                   <button type="button" disabled={bulkPending!==null||pendingKey!==null}
-                    className="rounded-md border border-border px-3 py-2 text-primary-text disabled:opacity-50"
+                    className="rounded-[9px] border border-border px-3 py-2 text-primary-text disabled:opacity-50"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
                         []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}));}}>
@@ -727,7 +727,7 @@ export function RecruiterResultControls({
                                 </span>
                                 <textarea
                                   aria-label="Candidate message"
-                                  className="min-h-20 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+                                  className="min-h-20 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
                                   value={
                                     draft.candidateMessage
                                   }
