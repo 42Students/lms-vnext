@@ -22,6 +22,8 @@
     margin:0 !important; padding:0 !important; border:0 !important;
     border-radius:0 !important; box-shadow:none !important; background:white !important;
   }
+  .lms-shell-frame [data-slot="scroll-cue"],
+  .lms-shell-frame [data-slot="scroll-cue"] > div,
   .lms-shell-frame [data-slot="data-table"],
   .lms-shell-frame [data-slot="data-table"] table { overflow:visible !important; max-height:none !important; }
   .lms-shell-frame [data-slot="data-table"] table { display:table !important; }
