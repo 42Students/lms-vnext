@@ -83,13 +83,13 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
        style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
     </div>
     <label className="block text-sm">Horizontal crop position ({positionX}%)
-     <input aria-label="Horizontal crop position" className="block w-52" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
+     <input aria-label="Horizontal crop position" className="block w-52 accent-[var(--lms-button-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
     </label>
     <label className="block text-sm">Vertical crop position ({positionY}%)
-     <input aria-label="Vertical crop position" className="block w-52" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
+     <input aria-label="Vertical crop position" className="block w-52 accent-[var(--lms-button-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
     </label>
     <label className="block text-sm">Zoom ({Math.round(zoom*100)}%)
-     <input aria-label="Crop zoom" className="block w-52" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
+     <input aria-label="Crop zoom" className="block w-52 accent-[var(--lms-button-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
     </label>
     <Button type="button" disabled={busy} onClick={()=>void upload()}
      className="disabled:opacity-50">
