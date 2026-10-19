@@ -313,3 +313,21 @@ Direct-to-main implementation commits use the required `[chat-6]` prefix. No tes
 - G5: Print-only table/mobile row and toolbar rules plus faculty PDF accessibility and Faculty/college CSV download affordances. Source reread checked all 12 edited source files for malformed JSX labels, stray quotes/dashes and paired shared JSX tags (self-closing Tabs excluded).
 - **STRICT TICK RULE:** G4/G5 remain OPEN. Legacy AG Grid `docs/design/legacy-grid/gridExport.js.txt` not in current tree; old PDF/letter/receipt/certificate and provider-hosted ZeptoMail HTML absent. No runtime responsive, pixel-level print or email-client comparison was possible. See `docs/audit/ux/clone-import-print-email.md`.
 - **Exact next file:** `src/modules/courses/faculty-report-pdf.ts` (PDF source/margin/font inventory versus actual legacy printed artifact), then hosted ZeptoMail templates and remaining checklist proof. Re-sync latest main before modifying; do not guess values.
+
+## G4/G5 next-file batch — scoped source completion, 2026-10-19 [chat-6]
+
+Pulled latest main via a real two-parent merge commit while retaining nine outstanding lane changes. No CI, build, code execution, or browser testing. Evidence with per-property source lines, scoped grep counts and the legacy phone breakpoint comparison: `docs/audit/ux/clone-import-print-email.md`, section **Scoped PDF/export file audit**.
+
+### Files finished at source level
+- [x] `src/modules/courses/faculty-report-pdf.ts` — guard PDF section-heading/first-result widow without changing the 595 × 842 / Courier 9pt / footer values; existing ASCII/PDF object contract preserved
+- [x] `src/components/courses/faculty-report-download.tsx` — PDF link/URL cleanup on failed handoff, 44px touch target through 767px, secondary shared Button, print hidden
+- [x] `src/components/courses/faculty-report-csv-download.tsx` — exact legacy light-theme focus teal `#1a95a1`, 2px ring/3px offset, 44px phone / 36px desktop link, print hidden
+- [x] `src/components/courses/college-content-csv-export.tsx` — detached-anchor issue fixed, URL cleanup even when click fails, caller filename intact, breakpoint-controlled action, print hidden
+- [x] `tests/unit/faculty-report-pdf.test.ts` — added unexecuted boundary regression for a heading plus first row
+
+### Proof and limitations
+- Five completed files were re-fetched in full: literal native `<button`, `<input`, `<select`, `<textarea`, `<table`, hard-coded CSS hex, `rounded-full`, `border-b-2` counts were **0** within this exact scope; paired JSX `Button` and `Link` tags matched; `ConfirmDialog` is intentionally self-closing. Source-level focus and breakpoint pairs are in the audit.
+- Original `docs/design/legacy-styles/pages___admin-list-pages.scss:193-214` mobile rule is 44px through 767px; current `min-h-11 md:min-h-9` represents 44px below 768 and 36px thereafter. Source comparison only; no rendered proof.
+- All 24 checked-in legacy SCSS sources returned 0 `@media print`/`@page` declarations; legacy backend/frontend repository filename inventories likewise did not locate a comparable report/letter/email template. **G4 and G5 STRICT TICKS REMAIN OPEN.** No claim that the exported PDF exactly matches legacy paper output.
+
+**Exact next file:** `src/modules/notifications/zeptomail-email.ts` — inventory the OTP provider merge field and identify a real hosted template HTML reference before any G5 visual changes; then `src/modules/placements/recruiter-message-email-provider.ts`. Without those external HTML/PDF samples, document G5 as blocked rather than inventing visuals.
