@@ -105,11 +105,14 @@ export function scopedShellNavigation(items: readonly ShellNavItem[], pathname: 
  }
  const substantial = ["learn", "teacher", "mentor", "tpo", "hr", "college"]
   .filter(portal => (counts.get(portal) ?? 0) > 1);
- const teacherAndTpo = counts.has("teacher") && counts.has("tpo");
- if (substantial.length < 2 && !teacherAndTpo) return [...items];
+ const rolePortals = ["learn", "teacher", "mentor", "tpo", "hr"]
+  .filter(portal => counts.has(portal));
+ // One navigation item can still represent a separate role. Do not assume
+ // every role has multiple rows before isolating its workspace.
+ if (substantial.length < 2 && rolePortals.length < 2) return [...items];
  const pathPortal = navPortal(pathname);
  const selected = pathPortal && counts.has(pathPortal) ? pathPortal :
-  substantial[0] ?? (counts.has("teacher") ? "teacher" : "tpo");
+  substantial[0] ?? rolePortals[0] ?? "college";
  return items.filter(item => {
   const portal = navPortal(item.href);
   return !portal || portal === selected ||
