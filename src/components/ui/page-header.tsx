@@ -23,19 +23,19 @@ export function PageHeader({ eyebrow, title, description, actions, needsDoingIte
   const heading = (
     <header
       data-slot="page-header"
-      className="flex min-w-0 items-start justify-between gap-4 pb-[var(--lms-space-4)]"
+      className="flex min-w-0 flex-col items-stretch gap-2 pb-[var(--lms-space-4)] md:flex-row md:items-start md:justify-between md:gap-6"
     >
-      <div className="flex min-w-0 flex-1 items-baseline gap-3 overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 md:flex-row md:items-baseline md:gap-4">
         <h1
-          className="m-0 min-w-0 shrink truncate font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]"
-          style={{ fontSize: "30px", fontWeight: 600 }}
+          className="m-0 min-w-0 max-w-full shrink break-words text-[20px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)] md:truncate md:text-[30px]"
+          style={{ fontWeight: 600 }}
           title={title}
         >
           {title}
         </h1>
         {subtitle ? (
           <span
-            className="min-w-0 flex-1 truncate text-[13px] leading-5 text-[var(--lms-muted-text)]"
+            className="min-w-0 max-w-full text-[13px] leading-5 text-[var(--lms-muted-text)] md:flex-1 md:truncate"
             title={subtitle}
           >
             {subtitle}
@@ -43,7 +43,7 @@ export function PageHeader({ eyebrow, title, description, actions, needsDoingIte
         ) : null}
       </div>
       {actions ? (
-        <div className="ml-auto flex min-w-0 max-w-[60%] shrink-0 flex-wrap items-center justify-end gap-2">
+        <div className="flex w-full min-w-0 flex-wrap items-center justify-start gap-2 md:ml-auto md:w-auto md:max-w-[60%] md:shrink-0 md:justify-end">
           {actions}
         </div>
       ) : null}
