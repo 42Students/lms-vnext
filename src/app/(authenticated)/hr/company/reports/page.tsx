@@ -1,6 +1,7 @@
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { DataTable } from "@/components/ui/data-table";
+import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -206,16 +207,45 @@ export default async function RecruiterCompanyReportsPage({
         </nav>
       ) : null}
 
-      <Tabs renderPanel={false} ariaLabel="Company sections" value="reports"
-        items={[{value:"company",label:"Company",href:`${companyBase}&tab=company`},
-          {value:"team",label:"Team",href:`${companyBase}&tab=team`},
-          {value:"reports",label:"Reports",href:recruiterCompanyReportsHref({collegeId})}]}/>
+      <Tabs ariaLabel="Company sections" renderPanel={false} value="reports"
+        items={[
+          {value:"company",label:"Company",href:companyBase+"&tab=company"},
+          {value:"team",label:"Team",href:companyBase+"&tab=team"},
+          {value:"reports",label:"Reports",href:recruiterCompanyReportsHref({collegeId})},
+        ]} />
 
-      <SummaryStrip label="Hiring portfolio summary" steps={[
-        {label:"Visible hiring drives",value:summary.total},
-        {label:"Published drives",value:summary.published},
-        {label:"Closed drives",value:summary.closed},
-      ]} />
+      <section
+        aria-label="Hiring portfolio summary"
+        className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-3"
+      >
+        {[
+          {
+            label: "Visible hiring drives",
+            value: summary.total,
+          },
+          {
+            label: "Published drives",
+            value: summary.published,
+          },
+          {
+            label: "Closed drives",
+            value: summary.closed,
+          },
+        ].map((metric) => (
+          <article
+            key={metric.label}
+            className="border-b border-border p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
+          >
+            <p className="text-xs font-semibold text-muted-foreground">
+              {metric.label}
+            </p>
+
+            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
+              {metric.value}
+            </p>
+          </article>
+        ))}
+      </section>
 
       <section aria-label="All your drives at this college" className="border-b border-border pb-4 sm:pb-5">
         <h2 className="font-semibold text-foreground">All your drives at this college</h2>
