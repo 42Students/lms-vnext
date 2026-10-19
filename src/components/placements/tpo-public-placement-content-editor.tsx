@@ -56,7 +56,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
    <Textarea rows={5} maxLength={4000} value={about} disabled={!initial.ready||busy}
     onChange={e=>setAbout(e.target.value)}
     placeholder="Tell recruiters about your placement cell and your students."
-    className="min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
+    className="min-h-28 w-full"/>
   </label>
   <p className="text-xs">{about.length}/4000 characters</p>
   <fieldset className="space-y-3">
@@ -68,18 +68,18 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
    </label>)}
   </fieldset>
   <ol aria-label="Public number order" className="space-y-2">
-   {metricKeys.map((key,index)=><li key={key} className="flex items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
+   {metricKeys.map((key,index)=><li key={key} className="flex items-center justify-between gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-2 text-sm">
     <span>{index+1}. {PUBLIC_METRIC_LABELS[key]}</span>
     <span className="flex gap-2"><button type="button" disabled={busy||index===0}
-     onClick={()=>move(index,-1)} className="rounded-[var(--lms-control-radius)] border px-2 py-1">Move up</button>
+     onClick={()=>move(index,-1)} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-sm">Move up</button>
      <button type="button" disabled={busy||index===metricKeys.length-1}
-      onClick={()=>move(index,1)} className="rounded-[var(--lms-control-radius)] border px-2 py-1">Move down</button></span>
+      onClick={()=>move(index,1)} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-sm">Move down</button></span>
    </li>)}
   </ol>
   {dirty?<p role="status">Unsaved changes</p>:null}
   {!initial.ready?<p role="status">Page content editing is temporarily unavailable until storage is ready.</p>:null}
   <Button variant="primary" type="button" disabled={busy||!initial.ready||!dirty}
-   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50"
+   className="min-h-11 md:min-h-9"
    onClick={()=>void save()}>{busy?"Saving…":"Save"}</Button>
   {message?<p role="status" className="text-sm">{message}</p>:null}
  </section>;
