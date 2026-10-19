@@ -110,6 +110,7 @@ export async function AppShell({
           activeMembershipId={context.membership?.id ?? null}
           adminScopeChoices={superAdmin ? adminScopeChoices : null}
           adminScope={context.adminScope}
+          tpoCollegeId={hasMembershipRole(context, "TPO") ? context.membership?.collegeId ?? null : null}
         />
 
         <Suspense fallback={null}><RouteAnnouncer /></Suspense>
