@@ -294,3 +294,35 @@ Files edited in this fifth batch:
 - `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
 
 **Scope preserved:** no user-visible copy or page-body section order changed; no API, request, state, auth, validation or routing logic changed. The shared UI kit and shell remain under their own lanes. Only source edits were performed. As instructed, no local code execution, tests, typecheck, lint, CI, runtime or screenshots were performed; exact old-LMS parity remains unverified. At ledger time, the lane was **30 commits ahead / 0 behind `main`**, with 25 changed files in the diff; merged upstream commits may include many earlier changes.
+
+
+## Page head and canvas ownership correction — 2026-10-19 (latest owner request)
+
+This owner instruction supersedes the earlier shared-component exclusion **only** for
+`src/components/ui/page-header.tsx`, `src/components/ui/page-canvas.tsx`, and the
+authenticated layout/app-shell wiring. Other `src/components/ui/**` files remain with
+the shared UI owner; sidebar and topbar implementation remains with their lanes.
+
+- Before changes, `chatgpt/chat-9-b` had no unique commits and was 1,254 commits
+  behind `main`. It was non-force fast-forwarded to `10ac677d5ab403f3c037d559c3321ac55c6cffa6`.
+- `page-header.tsx`: one horizontal row, h1 30px/600 using the heading token,
+  a single truncated grey subtitle inline with the title, actions aligned right.
+  Legacy eyebrow and description props are combined in the inline subtitle; the
+  separate eyebrow line and description paragraph are gone.
+- `page-canvas.tsx`: retain the existing white, no-shadow 12px radius, 1px
+  `#e5e9f0` border and use the canonical 24px padding at *all* breakpoints.
+- `src/app/(authenticated)/layout.tsx` already wraps every authenticated page
+  and notice in one `PageCanvas` inside `AppShell`, so no redundant wrapper was added.
+  The app-shell main-content left/right gutter was aligned to the legacy
+  expanded sidebar's 24px left and 16px right placement.
+- Super Admin / College Projects view selectors, Super Admin template section tabs,
+  Super Admin grouped tabs, Tenant Setup step tabs, and Project Admin navigation
+  now use a 3px active teal underline on the white canvas rather than filled
+  active pills; the College Projects archive view gets the correct active state.
+
+Commits on `chatgpt/chat-9-b` carry the `[chat-9]` prefix. Read the legacy
+`components___variables.scss`, `components___button.scss`,
+`components___form.scss`, and `components___common.scss` reference values.
+No code, CI, typecheck, lint or visual browser execution was run. Source-level
+checks were limited to complete JSX closing tags and inspected replacements;
+pixel-perfect visual acceptance and strict TypeScript compilation remain unverified.
