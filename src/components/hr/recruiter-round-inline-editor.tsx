@@ -82,13 +82,13 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
  const canEdit=(row:Row)=>row.createdByYou&&row.status==="PENDING";
  return <div className="space-y-3">
   {!readOnly?<button type="button" onClick={()=>edit(null)}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
    Add a round</button>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
   {error&&!open?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {!readOnly?<div className="flex flex-wrap gap-2">{rows.filter(canEdit).map(row=>
    <button key={row.id} type="button" onClick={()=>edit(row)}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Change / Remove: {row.name}
    </button>)}</div>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
