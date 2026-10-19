@@ -92,7 +92,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <section
         role="status"
         aria-label="Settings scope"
-        className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+        className="- -subtle text-sm leading-6 text-body border-t border-border pt-5"
       >
         <p className="font-semibold text-foreground">
           {selectedCollegeName
@@ -124,7 +124,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
       <Link href="/admin/settings/auth"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Authentication and privileged access checklist →
       </Link>
 
@@ -138,7 +138,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           </Select>
         </label>
         <Button type="submit">Filter</Button>
-        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
       </form>
       {sections.length===0 ? <p role="status" className="rounded-lg border border-border p-4 text-sm text-body">No visible settings match the selected filters.</p> : null}
       <nav
@@ -149,7 +149,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
           >
             {section.title}
           </a>
