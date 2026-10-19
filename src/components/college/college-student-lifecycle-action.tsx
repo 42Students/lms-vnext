@@ -1,6 +1,8 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 
@@ -38,23 +40,24 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
     });
   }
   return <div className="mt-2 space-y-2">
-    <Button variant="secondary" type="button" disabled={pending} onClick={() => setOpen(value => !value)}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text">
+    <Button variant="secondary" type="button" disabled={pending} loading={pending}
+      onClick={() => setOpen(true)} className="min-h-11 md:min-h-9">
       {suspend ? "Suspend" : "Reactivate"}
     </Button>
-    {open && <div className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
-      <p className="text-xs font-semibold">{suspend?"Suspend ":"Reactivate "}{name}?</p>
-      {suspend && <label className="grid gap-1 text-xs">Reason
-        <Input maxLength={500} value={reason} onChange={event => setReason(event.target.value)}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2" />
-      </label>}
-      {error && <p role="alert" className="text-xs text-error">{error}</p>}
-      <Button variant="primary" type="button" disabled={pending} onClick={confirm}
-        className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-3 text-xs font-semibold text-on-primary">
-        Confirm {suspend ? "suspension" : "reactivation"}
-      </Button>
-      <Button variant="secondary" type="button" disabled={pending} onClick={() => setOpen(false)}
-        className="ml-2 min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-xs">Cancel</Button>
-    </div>}
+    {!open&&error?<Alert tone="error">{error}</Alert>:null}
+    <ConfirmDialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}}
+      title={(suspend?"Suspend ":"Reactivate ")+name+"?"}
+      description={suspend?"Provide a reason for restricting the student's college access.":"Restore this student's college access?"}
+      confirmLabel={suspend?"Confirm suspension":"Confirm reactivation"}
+      confirmVariant={suspend?"danger":"primary"} pending={pending}
+      confirmDisabled={suspend&&reason.trim().length<3}
+      onConfirm={confirm}>
+      <div className="space-y-3">
+        {suspend?<label className="grid gap-1 text-sm font-semibold text-body">Reason
+          <Input maxLength={500} value={reason} disabled={pending} onChange={event=>setReason(event.target.value)}/>
+        </label>:<p className="text-sm text-body">Restore access for this student membership?</p>}
+        {error?<Alert tone="error">{error}</Alert>:null}
+      </div>
+    </ConfirmDialog>
   </div>;
 }

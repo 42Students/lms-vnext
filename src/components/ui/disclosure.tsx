@@ -5,7 +5,7 @@ import { cx } from "@/lib/class-names";
  * reduces motion to the shared opacity-only fade in globals.css. */
 export function Disclosure({
   title, children, className, defaultOpen = false,
-  id, summaryAriaLabel, summaryClassName, contentClassName, preserveSummary = false,
+  id, summaryAriaLabel, summaryTitle, ariaLabel, summaryClassName, contentClassName, preserveSummary = false,
 }: {
   /** Rich summaries retain count/metadata without hand-rolled details. */
   title: ReactNode;
@@ -14,14 +14,16 @@ export function Disclosure({
   defaultOpen?: boolean;
   id?: string;
   summaryAriaLabel?: string;
+  summaryTitle?: string;
+  ariaLabel?: string;
   summaryClassName?: string;
   contentClassName?: string;
   /** Keep page-specific rich lesson summaries without adding a second chevron. */
   preserveSummary?: boolean;
 }) {
-  return <details id={id} data-slot="disclosure" open={defaultOpen || undefined}
+  return <details id={id} aria-label={ariaLabel} data-slot="disclosure" open={defaultOpen || undefined}
     className={cx("group min-w-0 border-t border-[var(--lms-canvas-border)]", className)}>
-    <summary aria-label={summaryAriaLabel}
+    <summary aria-label={summaryAriaLabel} title={summaryTitle}
       className={cx(
         preserveSummary
           ? "cursor-pointer list-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"

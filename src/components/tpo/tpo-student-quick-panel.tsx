@@ -114,7 +114,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
    <div className="mt-5 space-y-4 text-sm">
     {tab==="Profile"?<>
       <h3 className="font-semibold">Recorded learner facts</h3>
-      <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <dl className="grid grid-cols-1 gap-3 md:grid-cols-2">
        {[
         ["Program",student.programName],["Branch",student.branchName],
         ["Batch",student.cohortName],["Roll number",student.rollNumber??"Not recorded"],
@@ -132,7 +132,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         ["Offers waiting on their answer",student.offersAwaitingAnswer],
         ["Prep %","Not recorded"],
         ["Registration",student.registrationChoice??"Not recorded"],
-       ].map(([label,value])=><div key={String(label)} className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
+       ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
        </div>)}
       </dl>
@@ -141,35 +141,35 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
        :<p>No attention flags derived from the current roster evidence.</p>}
       {detail?.requests.filter(row=>row.status==="PENDING").length?
        <p role="status" className="text-sm font-semibold">{detail.requests.filter(row=>row.status==="PENDING").length} student request(s) waiting for a decision.</p>:null}
-      {student.participationReason?<div className="space-y-1 rounded-[var(--lms-control-radius)] border border-border p-3">
+      {student.participationReason?<div className="space-y-1 border-l-2 border-warning bg-warning-subtle px-3 py-3">
        <p className="font-semibold">Placement eligibility decision</p>
        <p>{student.participationReason}</p>
        <p className="text-xs text-muted-foreground">Set at {student.participationLevel??"placement"} level
         {student.participationDecidedAt?" · "+when(student.participationDecidedAt.toString()):""}</p>
       </div>:null}
-      <Link href={participation} className="inline-flex min-h-9 items-center text-primary-text underline">Placement eligibility</Link>
+      <Link href={participation} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Placement eligibility</Link>
       <Link href={"/tpo/team?about="+encodeURIComponent("STUDENT:"+student.membershipId)}
-        className="ml-3 inline-flex min-h-9 items-center text-primary-text underline">Discuss with team</Link>
+        className="lms-inline-link ml-3 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Discuss with team</Link>
     </>:null}
     {tab==="Placement"?<>
       <h3 className="font-semibold">Placement journey</h3>
-      <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <dl className="grid grid-cols-1 gap-3 md:grid-cols-2">
        {[
         ["Participation",tpoStudentDisplayLabel(student.participationStatus)],["Applications",student.applicationCount],
         ["Active applications",student.activeApplicationCount],["Offers",student.offerCount],
         ["Accepted offers",student.acceptedOfferCount],["Best so far",student.bestCompany?
          student.bestCompany+": "+tpoStudentDisplayLabel(student.bestSoFar):tpoStudentDisplayLabel(student.bestSoFar)],
-       ].map(([label,value])=><div key={String(label)} className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
+       ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
        </div>)}
       </dl>
       <h3 className="font-semibold">Applications</h3>
       {detail&&!detail.applications?.length?<p>No recorded placement applications.</p>:null}
-      {detail?.applications?.map(row=><div key={row.id} className="flex flex-wrap items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+      {detail?.applications?.map(row=><div key={row.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-3">
         <span>{row.title} · {row.status.replaceAll("_"," ")}</span>
-        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)} className="min-h-9 text-primary-text underline">Open drive</Link>
+        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open drive</Link>
       </div>)}
-      <Link href={participation} className="inline-flex min-h-9 items-center text-primary-text underline">Manage placement participation</Link>
+      <Link href={participation} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Manage placement participation</Link>
       <TpoStudentNudgePanel rows={[{id:student.membershipId,label:student.displayName,
        registered:student.registeredForPlacements}]}/>
     </>:null}
@@ -179,7 +179,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
       {detail&&!detail.requests.length?<p>No placement requests recorded for this student.</p>:null}
-      {detail?.requests.map(row=><article key={row.id} className="space-y-1 rounded-[var(--lms-control-radius)] border border-border p-3">
+      {detail?.requests.map(row=><article key={row.id} className="space-y-1 border-l-2 border-warning bg-warning-subtle px-3 py-3">
         <p className="font-semibold">{row.type.replaceAll("_"," ")} · {row.status}</p>
         <p className="text-xs text-muted-foreground">{row.job} · {when(row.requestedAt)}</p>
         <p>{row.reason}</p>{row.note?<p>Decision: {row.note}</p>:null}
@@ -188,20 +188,20 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
           onSuccess={()=>void fetchDetail()}/>:null}
       </article>)}
       <Link href={"/tpo/students/requests?search="+encodeURIComponent(student.displayName)}
-       className="inline-flex min-h-9 items-center text-primary-text underline">Review student&apos;s requests</Link>
+       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review student&apos;s requests</Link>
     </>:null}
     {tab==="Notes"?<>
       <h3 className="font-semibold">Internal Notes</h3>
       <TpoStudentNoteEditor membershipIds={[student.membershipId]} afterSave={()=>void fetchDetail()}/>
-      {detail?.studentNotes?.map(row=><article key={row.id} className="space-y-1 rounded-[var(--lms-control-radius)] border border-border p-3">
+      {detail?.studentNotes?.map(row=><article key={row.id} className="space-y-1 border-l-2 border-warning bg-warning-subtle px-3 py-3">
        <p>{row.note}</p><p className="text-xs text-muted-foreground">{when(row.createdAt)} · Author {row.authorUserId}</p>
       </article>)}
       {detail&&!detail.notes.length?<p>No private application notes recorded for this student.</p>:null}
-      {detail?.notes.map(row=><article key={row.id} className="space-y-1 rounded-[var(--lms-control-radius)] border border-border p-3">
+      {detail?.notes.map(row=><article key={row.id} className="space-y-1 border-l-2 border-warning bg-warning-subtle px-3 py-3">
         <p>{row.body}</p>
         <p className="text-xs text-muted-foreground">{row.job} · {when(row.createdAt)}</p>
       </article>)}
-      <Link href={history} className="inline-flex min-h-9 items-center text-primary-text underline">Open placement history</Link>
+      <Link href={history} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open placement history</Link>
     </>:null}
     {detail?.truncated&&(tab==="Requests"||tab==="Notes"||tab==="History")?<p className="text-xs text-warning-text">
       Most recent records shown; open the full Requests or History page for older entries.
@@ -209,12 +209,12 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     {tab==="History"?<>
       <h3 className="font-semibold">Team and student activity</h3>
       {detail&&!detail.teamHistory?.length?<p>No recorded team actions for this student.</p>:null}
-      <ol className="space-y-2">{detail?.teamHistory?.map(row=><li key={row.id} className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
+      <ol className="space-y-2">{detail?.teamHistory?.map(row=><li key={row.id} className="min-w-0 border-b border-border py-3">
        <p className="font-semibold">{row.summary}</p>
        <p className="mt-1 text-xs text-muted-foreground">{when(row.occurredAt)} · {row.eventType}</p>
       </li>)}</ol>
       <p>Open the tenant-authorized historical application, round result, offer and joining timeline.</p>
-      <Link href={history} className="inline-flex min-h-9 items-center text-primary-text underline">View full placement history</Link>
+      <Link href={history} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View full placement history</Link>
     </>:null}
    </div>
 

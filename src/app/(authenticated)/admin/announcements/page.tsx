@@ -131,7 +131,7 @@ export default async function AnnouncementsPage({
         actions={
           <Link
             href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground sm:min-h-9"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground md:min-h-9"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
@@ -164,11 +164,11 @@ export default async function AnnouncementsPage({
             {(["COLLEGE","PROGRAM","DEPARTMENT","CLASS","LEARNER","FACULTY"] as const).map(type => <option key={type} value={type}>{type}</option>)}
           </Select>
         </label>
-        <label className="min-w-[14rem] flex-1 text-sm font-semibold text-body">Search announcement title or message
+        <label className="min-w-0 w-full flex-1 text-sm font-semibold text-body md:min-w-[14rem]">Search announcement title or message
           <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 w-full"/>
         </label>
         <Button type="submit">Search</Button>
-        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:bg-primary-subtle sm:min-h-9">Clear</Link>
+        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:bg-primary-subtle md:min-h-9">Clear</Link>
       </form>
       <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
         ...(includeDeleted ? {deleted:"1"} : {}),
@@ -179,14 +179,14 @@ export default async function AnnouncementsPage({
         ...(params.senderType ? {senderType:params.senderType} : {}),
         ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
-      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">Export this filtered page (CSV)</Link>
+      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
       {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-5">
        <h2 className="text-lg font-semibold">Placement-cell read receipts</h2>
        <p className="text-sm text-muted-foreground">Durable first-read receipts for each selected college notice. Each notice is addressed to one placement cell; notification delivery is shown separately, and only an explicit acknowledgement counts as a placement-cell read.</p>
        <ul className="min-w-0 space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{
         const receipt=receipts.get(row.id)!;
-        return <li key={row.id} className="rounded-lg border border-border p-3 text-sm">
+        return <li key={row.id} className="border-b border-border py-3 text-sm">
          <p className="font-semibold">{row.title}</p><p className="text-muted-foreground">{receipt.cellRead} of 1 placement cell read · {receipt.read}/{receipt.delivered} bell recipients read</p>
          <progress aria-label={row.title+" notification reads"} className="mt-2 h-2 w-full"
           value={receipt.cellRead} max={1}/>
