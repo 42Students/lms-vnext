@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {useToast} from "@/components/ui/toast";
@@ -49,10 +50,10 @@ export function CollegeLessonDragOrder({learningPathId,lessons}:{
       className="flex flex-wrap items-center gap-3 rounded border border-border p-3">
       <span aria-hidden="true" className="cursor-grab text-muted-foreground">⠿</span>
       <span className="min-w-0 flex-1 break-words text-sm">{index+1}. {names.get(id)??"Lesson"}</span>
-      <button type="button" disabled={busy||index===0} onClick={()=>void move(id,order[index-1]!)}
-        className="min-h-10 rounded border px-3 text-sm disabled:opacity-50">Move up</button>
-      <button type="button" disabled={busy||index===order.length-1} onClick={()=>void move(id,order[index+1]!)}
-        className="min-h-10 rounded border px-3 text-sm disabled:opacity-50">Move down</button>
+      <Button variant="secondary" type="button" disabled={busy||index===0} onClick={()=>void move(id,order[index-1]!)}
+        >Move up</Button>
+      <Button variant="secondary" type="button" disabled={busy||index===order.length-1} onClick={()=>void move(id,order[index+1]!)}
+        >Move down</Button>
    </li>)}
   </ol>
   {busy?<p role="status" className="mt-2 text-sm">Saving lesson order…</p>:null}
