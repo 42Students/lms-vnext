@@ -66,3 +66,22 @@ Synced the lane to newer `origin/main` and continued through previously unpolish
 - **Recruiter notifications and messaging:** converted popup notification actions to shared Button (primary/secondary/ghost as appropriate), flattened per-row decorative cards to hairline dividers, and replaced hard-coded legacy colors in the HR notification/conversation pages with corresponding CSS tokens. API requests, paging, unread counts, link destinations and read receipts are unchanged.
 
 **Verification scope:** JSX opening and closing tag names were statically re-read on edited components; no application execution, tests, typecheck, lint, browser screenshot comparison or CI. Runtime/pixel-perfect parity still needs the owner’s final visual pass.
+
+## Overlay and HR messaging continuation — second source pass
+
+The lane was already descended from the current `main` (GitHub comparison: 0 behind), so no unnecessary merge was made. Changes were written as small `[chat-16]` commits on `chatgpt/chat-16-b` only.
+
+| Area | Changes |
+| --- | --- |
+| Tooltip | Repaired an accidental literal `undefined` utility class and restored the legacy charcoal background and 6px × 16px padding, preserving the disclosure API |
+| Menus and dropdowns | Arrow-key entry now skips disabled menu links; action links participate in menu traversal; initial ArrowUp focuses the final available item |
+| Dialog, drawer and mobile sheet | Aligned neutral backdrops, footer surfaces and horizontal spacing with the legacy modal/notification-drawer reference, without changing dismissal or focus restoration |
+| Focus and scrolling | Added the system Highlight focus outline for overlay controls in forced-colors mode while keeping the standard brand focus ring and invisible overlay scrollbars |
+| Toast | Existing shared Button dismissal and bounded live viewport stack were rechecked; no changes to error persistence or dismissal timing |
+| HR conversation list | Converted unread count pills to shared Badge, used token-based thin row dividers, and replaced a large loading card with individual loading rows |
+| HR notification list | Converted unread labels to shared StatusBadge; page navigation now meets 44px mobile targets |
+| HR conversation detail | Conversation-history pagination now uses 44px mobile targets; the thread loading view uses shared hairlines |
+| HR notification bells | Used the existing SVG bell glyph rather than a platform-dependent emoji; capped large badge displays at 99+ while keeping full unread values in accessible labels |
+| Live refresh | Conversation polling skips non-modal notification popups, avoiding unwanted refresh while recruiters are using them |
+
+**Verification:** Source-level JSX open/close-tag and truncation checks were performed on modified TSX files. The runtime app, tests, typecheck, lint, screenshots and CI were intentionally **not** run. Visual parity requires a later browser pass.
