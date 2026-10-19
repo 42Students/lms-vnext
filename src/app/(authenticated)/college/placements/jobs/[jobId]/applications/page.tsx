@@ -100,7 +100,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         className="font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
-      <p role="status" className="rounded border border-border bg-surface p-5 text-sm">
+      <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-5 text-sm">
         Application stage actions are awaiting migration registration. You can still review the scoped applicant register.
       </p>
       <DataTable caption="College drive applicant register" columns={columns}
