@@ -5,6 +5,7 @@ import { Alert } from "@/components/ui/alert";
 import {useMemo,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Drawer} from "@/components/ui/drawer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {Select} from "@/components/ui/select";
 import {FacultyLessonAuthoring} from "./faculty-lesson-authoring";
 import type {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
@@ -18,6 +19,7 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
  const [lessonKey,setLessonKey]=useState(""),[continued,setContinued]=useState(false);
  const [error,setError]=useState<string|null>(null);
  const [draftDirty,setDraftDirty]=useState(false);
+ const [discardConfirm,setDiscardConfirm]=useState(false);
  const name=kind==="QUIZ"?"Quiz":"Assignment";
  const courses=useMemo(()=>[...new Map(lessons.map(item=>[item.deliveryId,{
   deliveryId:item.deliveryId,name:item.courseCode+" · "+item.courseName+" · "+item.sectionName,
@@ -28,9 +30,12 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
  function selectCourse(value:string){setCourseKey(value);setLessonKey("");setContinued(false);setError(null);}
  function selectLesson(value:string){setLessonKey(value);setContinued(false);setError(null);}
  function closeDrawer(next:boolean){
-   if(!next && draftDirty && !window.confirm(kind==="QUIZ"?"Discard this quiz draft?":"Discard this assignment draft?"))return;
+   if(!next && draftDirty){setDiscardConfirm(true);return;}
    setOpen(next);
    if(!next){setContinued(false);setError(null);setDraftDirty(false);}
+ }
+ function discardDraft(){
+   setDiscardConfirm(false);setDraftDirty(false);setOpen(false);setContinued(false);setError(null);
  }
  function start(){if(!course||!lesson){setError("Select a course and lesson first.");return;}setContinued(true);setError(null);}
  return <>
@@ -38,7 +43,7 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
    <div><h2 className="font-semibold text-foreground">Create {name}</h2>
     <p className="mt-1 text-sm text-body">Quizzes and assignments are attached to lessons in your assigned courses.</p>
    </div>
-   <Button onClick={()=>setOpen(true)} disabled={!lessons.length}>Create {name}</Button>
+   <Button className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setOpen(true)} disabled={!lessons.length}>Create {name}</Button>
   </div>
   {!courses.length?<p role="status" className="text-sm text-muted-foreground">
    No assigned courses found. Assign yourself to a course before creating a {name.toLowerCase()}.
@@ -47,13 +52,13 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
    title={kind==="QUIZ"?"Create quiz":"Create Assignment"}
    description="Choose your assigned course and lesson before opening the assessment builder.">
    <div className="space-y-4">
-    <label className="grid gap-1 text-sm font-semibold text-body">Select course and class
+    <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Select course and class
      <Select value={course?.deliveryId??""} aria-label="Select course and class" onChange={e=>selectCourse(e.target.value)}>
       <option value="">Select course and class</option>
       {courses.map(item=><option key={item.deliveryId} value={item.deliveryId}>{item.name}</option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Select lesson
+    <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Select lesson
      <Select value={lesson?.lessonId??""} aria-label="Select lesson" onChange={e=>selectLesson(e.target.value)}
       disabled={!course}>
       <option value="">Select lesson</option>
@@ -63,12 +68,12 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
     {!lessonChoices.length?<p role="status" className="text-sm text-muted-foreground">
      No lessons in this course yet. Create a lesson before attaching a {name.toLowerCase()} to this course.
     </p>:null}
-    <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm">
+    <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-3 text-sm">
       <strong>Quizzes are attached to lessons</strong>
       <p>This keeps faculty creation and learner attempts under the same course structure.</p>
     </div>
     {error?<Alert tone="error">{error}</Alert>:null}
-    {!continued?<Button onClick={start} disabled={!course||!lesson}>Continue</Button>:null}
+    {!continued?<Button className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={start} disabled={!course||!lesson}>Continue</Button>:null}
     {continued&&lesson&&course?<div onInputCapture={()=>setDraftDirty(true)} onChangeCapture={()=>setDraftDirty(true)}><FacultyLessonAuthoring
       key={course.deliveryId+":"+lesson.lessonId+":"+kind}
       lessonId={lesson.lessonId} deliveryId={course.deliveryId}
@@ -80,5 +85,8 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
     /></div>:null}
    </div>
   </Drawer>
+  <ConfirmDialog open={discardConfirm} onOpenChange={setDiscardConfirm}
+    title={kind==="QUIZ"?"Discard this quiz draft?":"Discard this assignment draft?"}
+    confirmLabel="Discard draft" confirmVariant="danger" onConfirm={discardDraft} />
  </>;
 }

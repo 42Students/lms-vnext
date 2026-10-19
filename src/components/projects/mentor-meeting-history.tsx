@@ -27,7 +27,7 @@ export function MentorMeetingHistory({meetings}:{meetings:readonly MentorMeeting
     </ul>}
   {meetings.length>PREVIEW?<Button variant="secondary" type="button"
     aria-expanded={expanded} onClick={()=>setExpanded(value=>!value)}
-    className="min-h-9 px-3">
+    className="min-h-11 px-3 md:min-h-9">
     {expanded?"Show fewer":"View all "+meetings.length}
   </Button>:null}
  </section>;

@@ -128,7 +128,7 @@ export default async function SuperAdminFeaturesPage({
       <section aria-label="Feature Controls overview" className="border-t border-border pt-5">
         <p className="text-sm font-semibold">Module availability · {scopeLabel}</p>
         <h2 className="mt-1 text-base font-semibold">Optional modules by college</h2>
-        <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
+        <dl className="mt-3 grid gap-3 text-sm md:grid-cols-3">
           <div><dt>Colleges in scope</dt><dd className="font-semibold">{result.total} matching current filters</dd></div>
           <div><dt>Projects on</dt><dd className="font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} on this page</dd></div>
           <div><dt>Placements on</dt><dd className="font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
@@ -140,7 +140,7 @@ export default async function SuperAdminFeaturesPage({
           method="get"
           className="flex flex-wrap items-end gap-3"
         >
-          <label className="grid min-w-60 flex-1 gap-2 text-sm font-semibold text-body">
+          <label className="grid min-w-0 w-full flex-1 md:min-w-60 gap-2 text-sm font-semibold text-body">
             Find college
             <Input
               name="q"
@@ -152,43 +152,43 @@ export default async function SuperAdminFeaturesPage({
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Sort colleges
-            <Select name="sort" defaultValue={result.sort} className="min-h-11 sm:min-h-9">
+            <Select name="sort" defaultValue={result.sort} className="min-h-11 md:min-h-9">
               <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="CODE">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Explicit college rule for
-            <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 sm:min-h-9">
+            <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 md:min-h-9">
               <option value="">Any college</option><option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored college value
-            <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 sm:min-h-9">
+            <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 md:min-h-9">
               <option value="ALL">Any value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">College rule lock
-            <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 sm:min-h-9">
+            <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 md:min-h-9">
               <option value="ALL">Any lock</option><option value="LOCKED">Stored locked only</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">College rule presence
-            <Select name="presence" defaultValue={result.presenceFilter} className="min-h-11 sm:min-h-9">
+            <Select name="presence" defaultValue={result.presenceFilter} className="min-h-11 md:min-h-9">
               <option value="ANY">Any college</option><option value="HAS_RULE">Has stored rule</option><option value="NO_RULE">No stored rule</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored rule last updated
-            <Select name="recent" defaultValue={result.recentFilter} className="min-h-11 sm:min-h-9">
+            <Select name="recent" defaultValue={result.recentFilter} className="min-h-11 md:min-h-9">
               <option value="ALL">Any date</option><option value="7D">Last 7 days</option><option value="30D">Last 30 days</option><option value="90D">Last 90 days</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Search in
-            <Select name="searchField" defaultValue={result.searchField} className="min-h-11 sm:min-h-9">
+            <Select name="searchField" defaultValue={result.searchField} className="min-h-11 md:min-h-9">
               <option value="ALL">Name and code</option><option value="NAME">College name</option><option value="CODE">College code</option>
             </Select>
           </label>
           <Button
             type="submit"
-            className="min-h-11 sm:min-h-9"
+            className="min-h-11 md:min-h-9"
           >
             Search
           </Button>
