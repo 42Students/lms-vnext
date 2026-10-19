@@ -29,7 +29,7 @@ export default async function CollegeActivityPage({
     <PageHeader eyebrow="College Admin" title="Activity Log" />
     <ErrorState title="Invalid activity filters"
       description="The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."
-      action={<Link href="/college/activity" className="font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">Clear filters</Link>} />
+      action={<Link href="/college/activity" className="font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Clear filters</Link>} />
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
   const exportParams = new URLSearchParams();
@@ -40,7 +40,7 @@ export default async function CollegeActivityPage({
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Operations" title="Activity Log"
       description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
-      actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">View project activity</Link><a href={"/api/activity/college-export" +
+      actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">View project activity</Link><a href={"/api/activity/college-export" +
         (exportParams.size ? "?" + exportParams.toString() : "")}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Export filtered CSV (max 1,000)
@@ -164,7 +164,7 @@ export default async function CollegeActivityPage({
           <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">
             Apply filters
           </button>
-          <Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          <Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">
             Clear
           </Link>
         </div>
