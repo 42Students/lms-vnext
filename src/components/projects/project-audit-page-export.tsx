@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { projectAdminCsv } from "@/modules/projects/project-admin-csv-model";
 type Row={id:string;action:string;summary:string;entity:string;importance:string;occurredAt:string};
 export function ProjectAuditPageExport({rows}:{rows:Row[]}){
@@ -10,8 +11,8 @@ export function ProjectAuditPageExport({rows}:{rows:Row[]}){
   const link=document.createElement("a"),url=URL.createObjectURL(file);
   link.href=url;link.download="project-audit-log.csv";link.click();URL.revokeObjectURL(url);
  }
- return <button type="button" disabled={!rows.length} onClick={save}
-   className="min-h-10 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50">
+ return <Button variant="secondary" type="button" disabled={!rows.length} onClick={save}
+   className="">
    Export shown audit groups · CSV
- </button>;
+ </Button>;
 }
