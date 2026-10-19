@@ -303,3 +303,77 @@ incorrectly failed the current legacy-matched implementation:
 No page, route, or UI shell contract was weakened; the assertions now inspect
 where the behaviour actually lives. Neither suite was run, and **neither B3
 nor B4 is ticked** without the pending coverage/output and browser proof.
+
+## Follow-up batch — legacy footer badge and entire shell-subtree source scan
+
+**Scan basis:** branch `chatgpt/chat-19-b` after
+`639ffda6a43b4056547bc1b5bf360672675cf390`, Git tree
+`8eea8081dc04005635710841e94b27ccf6677548`.
+A recursive GitHub Git-tree listing was **not truncated** (15,723 entries).
+All **41** `src/components/shell/**` `.ts`, `.tsx` and `.css` blobs
+were read, including the 16 `topbar/` files owned by chat-13 for
+**read-only coverage**. The following counts come from searching the
+actual fetched file content, not indexed GitHub search results:
+
+| Full shell-subtree search expression | Matching lines/occurrences | Files affected | Result |
+|---|---:|---|---|
+| `<(button\|input\|select\|textarea)(?=[[:space:]>])` (tag-start equivalent) | **0** | none of 41 | No raw controls in shell subtree |
+| `lms-desktop-sidebar\|fl-d-panel-l\|lms-sidebar-item` | **50** | `app-shell.tsx` 1, `sidebar-nav.tsx` 2, `sidebar-legacy.css` 47 | All confined to owned shell classes; `fl-d-panel-l` is a historical CSS comment |
+| `legacyAntPaths` in icon component and shape source | **3** | `shell-nav-icons.tsx` 2, `legacy-ant-paths.ts` 1 | Explicit import/export checked at `shell-nav-icons.tsx:3` |
+
+**Exact checkout commands for re-verification** (not executed in this
+connector-only session):
+`git grep -n -I -E 'lms-desktop-sidebar|fl-d-panel-l|lms-sidebar-item' -- src/components/shell`;
+`git grep -n -I -E '<(button|select|input|textarea)([[:space:]>])' -- src/components/shell`.
+The committed `scripts/audit/chat19-shell-grep.cjs` expands the scan
+to other relevant `src/` and `src/components/tpo/` files and will
+print full file+line output when run in a checkout. Do not claim these
+remote-source counts as an executed `git grep`; the broader required
+checkout ledger remains **open**.
+
+### Newly corrected mobile notification-badge values
+
+| State/property | Legacy source and exact value | Current vNext source and value | Result |
+|---|---|---|---|
+| Icon wrapper | `lms2-fe/prod-2026/src/components/MobileFooter/MobileFooter.jsx:104-110`: AntD Badge wraps 24×24 notification image | `learner-faculty-mobile-footer.tsx:97-103`: relative icon wrapper wraps Image and count | Source match |
+| Small indicator height/min-width | AntD v5 small Badge token `indicatorHeightSM=14` (old app `package.json` uses `antd:^5.1.7`) | `legacy-mobile-footer.css:89-90`: min-width14, height14 | Match |
+| Small indicator font/line height | AntD v5 small Badge `textFontSizeSM=12`, line-height14 | `legacy-mobile-footer.css:96-98`: font12, line-height14 | Match |
+| Badge background | Original uses uncustomized AntD count; v5 `colorError=#ff4d4f` | `legacy-mobile-footer.css:93`: #ff4d4f | Default-match; computed theme remains unverified |
+| Badge location | AntD badge is attached to the 24px icon (not the full 44px link) | `legacy-mobile-footer.css:75-88`: relative 24px wrapper; count top0/right0, translate(50%,-50%) | Structural match; rendered pixel position open |
+| Empty, 1–99, 99+ | Legacy `MobileFooter.jsx:104-110`: hides zero, overflowCount99 | `learner-faculty-mobile-footer.tsx:100-102`: hidden at zero, original string through 99, 99+ above 99 | Visual states matched |
+| Disabled/unavailable item | Original footer renders permitted role's links only | `learner-faculty-mobile-footer.tsx:82-87`: only `items`-authorized routes are shown | Preserves vNext permission behavior |
+| Pressed/active/focus | Legacy `mobileFooter.scss:1-40`: .5 icon opacity, active 1, 44px target, pressed .93 | `legacy-mobile-footer.css:36-45,68-73`: same | Source match |
+| Phone and safe area | Old `components___antddesign.scss:912-936`: 64px + safe-bottom footer, fixed | `legacy-mobile-footer.css:6-25`: fixed 64px+safe inset | Match |
+| Tablet/desktop | Old `MobileFooter.jsx:35`: Bootstrap `d-md-none` at 768px | `legacy-mobile-footer.css:5-6`: desktop hidden, phone ≤767px shown | Match |
+| Reduced motion | Old mobile footer only specifies opacity .15s / press .05s | `legacy-mobile-footer.css:46-49` stops transitions for reduced motion | Accessibility addition; not identical source |
+| Accessibility | Original `MobileFooter.jsx:104-110`: badge visible as child image count | `learner-faculty-mobile-footer.tsx:95-103`: decorative indicator aria-hidden, count in Link accessible label | Accessibility enhancement; not visual change |
+
+**Responsive proof from source rules:** at 320/360/390px the six-item
+learner footer uses six 44px minimum touch targets and 24px side padding
+(`legacy-mobile-footer.css:50-73`), fitting 312px total minimum width
+at 320px. Badge positioning is within the 24px icon wrapper. Below
+768px the footer is fixed above the safe-area inset; at 768/1024/1280px
+it is hidden and the desktop sidebar is visible. These are **static CSS
+derivations**, not screenshots or a responsive browser run.
+
+**JSX and imports:** all opening/closing link, span, list-item, nav,
+and footer tags in `learner-faculty-mobile-footer.tsx:88-112`
+were re-read after the wrapper edit; `Image`, `Link`, hooks and
+`./legacy-mobile-footer.css` remain imported.
+`tests/unit/chat19-legacy-mobile-footer.test.ts` now asserts the
+real active selector and all small badge dimensions/positioning.
+The suite was not executed.
+
+**Work queue status:**
+- Source-complete this batch: `learner-faculty-mobile-footer.tsx`,
+  `legacy-mobile-footer.css`, and their dedicated source regression suite;
+  historical notes in `north-star-sweep-chat-19.md` were corrected.
+- Still open B3: actual checkout-wide command output, glyph artwork
+  screenshots, desktop hover and tablet measurements.
+- Still open B4: executing the complete checkout ledger, full pixel
+  verification of AntD spinner and footer, and an explicit owner
+  decision whether the new thin route-intent bar remains as an intentional
+  non-legacy enhancement.
+
+No topbar, HR-owned pages or data behavior were changed in this scan.
+B3 and B4 both remain **[ ]** under the strict tick rule.

@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import type { ProjectParticipantListQuery } from "./project-participant-list-controls";
 import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
@@ -19,13 +20,14 @@ export function LearnerProjectMobileFilters({
   const active=learnerProjectMobileFilterSummary(query);
   return (
     <section className="space-y-2 sm:hidden" aria-label="Mobile project filters">
-      <details className="border-b border-border pb-4">
-        <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-foreground">
+      <Disclosure
+        className="border-b border-border pb-4 [&>summary]:min-h-12 [&>summary]:px-4 [&>summary]:py-3"
+        title={<span className="flex min-w-0 flex-1 items-center justify-between gap-3 text-foreground">
           <span>Search &amp; filters</span>
           <span className="text-muted-foreground">
             {active.count ? String(active.count)+" active" : "All projects"}
           </span>
-        </summary>
+        </span>}>
         <form method="get" action="/learn/projects" className="grid gap-3 border-t border-border px-4 py-4">
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Search Projects
@@ -88,7 +90,7 @@ export function LearnerProjectMobileFilters({
             </Link>
           </div>
         </form>
-      </details>
+      </Disclosure>
       {active.count > 0 ? (
         <p className="m-0 text-xs leading-5 text-muted-foreground" role="status">
           Active: {active.labels.join(" · ")}

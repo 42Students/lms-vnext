@@ -25,8 +25,8 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   }catch(cause){setError(cause instanceof Error?cause.message:"Template rollback failed.");}
   finally{setBusy(false);}
  }
- return <div className="space-y-2 border-b border-border pb-5">
-  <h2 className="text-sm font-semibold">Restore this snapshot</h2>
+ return <div className="space-y-2 border-b border-border pb-5 text-body">
+  <h2 className="text-sm font-semibold text-foreground">Restore this snapshot</h2>
   <p className="text-xs text-body">Review the compared changes above. Rollback creates a new editable version;
    assigned colleges and existing workspaces keep their current pinned versions.</p>
   <Button variant="secondary" type="button" disabled={!enabled||busy} onClick={()=>void rollback()}

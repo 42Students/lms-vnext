@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ListRow } from "@/components/ui/list-row";
 import { Disclosure } from "@/components/ui/disclosure";
+import { EmptyState } from "@/components/ui/empty-state";
 import { COLLEGE_SETUP_GUIDE_COPY } from "@/modules/admin-ui/admin-dashboard-navigation";
 import type { collegeChecklistProjection } from "@/modules/admin-ui/college-setup-checklist-model";
 
@@ -20,6 +21,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
         {recorded} of {steps.length} steps contain records
       </p>
     </div>
+    {phases.length===0?<EmptyState title="No setup steps available" description="No setup steps are available in the current college scope."/>:
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
       {phases.map(phase => <section key={phase.title}
         className="border-t border-border pt-4">
@@ -30,12 +32,12 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
               ? `${step.count} qualifying record${step.count === 1 ? "" : "s"}`
               : "No qualifying records"}
             action={step.href ? <Link href={step.href}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link hover:underline sm:min-h-9">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link hover:underline md:min-h-9">
               Open
             </Link> : <span className="text-xs text-muted-foreground">Page unavailable</span>} />)}
         </ul>
       </section>)}
-    </div>
+    </div>}
     </div>
   </Disclosure>;
 }
