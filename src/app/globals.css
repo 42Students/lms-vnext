@@ -638,9 +638,9 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   border-color: #bfc9da;
 }
 [data-slot="button"][data-variant="secondary"]:hover:not(:disabled) {
-  color: var(--lms-on-primary);
-  background: var(--lms-button-primary);
-  border-color: var(--lms-button-primary);
+  color: #ffffff;
+  background: var(--lms-primary);
+  border-color: var(--lms-primary);
 }
 [data-slot="button"][data-variant="ghost"]:hover:not(:disabled) {
   color: #1a95a1;
