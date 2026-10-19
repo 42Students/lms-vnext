@@ -11,7 +11,6 @@ import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default async function MentorProjectPage({
@@ -65,60 +64,60 @@ export default async function MentorProjectPage({
       {(selectedTab==="board"||selectedTab==="performance") ?
         <PageHeader title={workspace.project.title} /> : null}
       <MentorProjectTabs projectId={projectId}/>
-      {access.access === "MENTOR" ? <Card><details className="min-w-0"><summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Additional project tools</summary><div className="mt-3 flex flex-wrap gap-3">
+      {access.access === "MENTOR" ? <section className="min-w-0 border-b border-border pb-4"><details className="min-w-0"><summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Additional project tools</summary><div className="mt-3 flex flex-wrap gap-3">
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Task board status
         </Link>
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/risk-readiness"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           At-risk &amp; readiness
         </Link>
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Delivery review summary
         </Link>
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Resource link directory
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/timeline"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Release &amp; Sprint timeline
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-meetings"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Team &amp; meeting log
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-history"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Team membership history
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/closeout"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Project closeout checklist
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/review-completeness"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Delivery review completeness
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/activity-history"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Recorded project activity →
         </Link>
-      </div></details></Card> : null}
+      </div></details></section> : null}
       {selectedTab==="board"?<div className="space-y-5">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
           sprints={workspace.sprints}
