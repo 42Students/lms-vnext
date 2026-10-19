@@ -60,7 +60,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
         {dismissible ? <Button className="min-h-11 min-w-11 shrink-0 rounded-full bg-white p-0 text-[var(--lms-muted-text)] shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:bg-[var(--lms-neutral-50)] sm:min-h-10 sm:min-w-10" variant="ghost" aria-label="Close dialog" onClick={() => onOpenChange(false)}><OverlayCloseIcon /></Button> : null}
       </div>
       <ScrollCue axis="y" label={`${title} dialog content`} className="min-h-0 flex-1" viewportClassName={cx("h-full min-h-0 overscroll-contain p-4 sm:p-[var(--lms-canvas-padding)]", bodyClassName)}>{children}</ScrollCue>
-      {footer ? <div className="flex shrink-0 flex-wrap items-center justify-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">{footer}</div> : null}
+      {footer ? <div data-slot="dialog-footer" className="flex shrink-0 flex-wrap items-center justify-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">{footer}</div> : null}
     </div>
   </dialog>;
 }
