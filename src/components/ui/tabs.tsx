@@ -14,6 +14,8 @@ export type TabsProps = {
   ariaLabel: string;
   className?: string;
   renderPanel?: boolean;
+  /** Controlled tab strip without an inline panel; the parent renders its own content. */
+  controlledOnly?: boolean;
 };
 
 /** Counts remain part of the tab name for assistive technology, not a separate control. */
@@ -41,10 +43,10 @@ export function tabNextEnabled(items: readonly Pick<TabItem, "disabled">[], curr
   return -1;
 }
 
-export function Tabs({ items, value, onValueChange, ariaLabel, className, renderPanel = true }: TabsProps) {
+export function Tabs({ items, value, onValueChange, ariaLabel, className, renderPanel = true, controlledOnly = false }: TabsProps) {
   const id = useId();
   const buttons = useRef<Array<HTMLButtonElement | null>>([]);
-  const interactive = renderPanel && typeof onValueChange === "function";
+  const interactive = (renderPanel || controlledOnly) && typeof onValueChange === "function";
   // A bookmarked tab can disappear or become disabled when permissions
   // change. Present the first still-enabled panel with ONE valid tab stop.
   const preferredIndex = items.findIndex(item => item.value === value && !item.disabled);
@@ -66,7 +68,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
   }
   return (
     <div className={cx("min-w-0", className)} data-slot="tabs">
-      {renderPanel ? <ScrollCue axis="x" label={`${ariaLabel} tabs`}><div role="tablist" aria-orientation="horizontal" aria-label={ariaLabel} className="flex min-w-max gap-[var(--lms-tab-gap)] border-b border-[var(--lms-canvas-border)] pb-0">
+      {(renderPanel || controlledOnly) ? <ScrollCue axis="x" label={`${ariaLabel} tabs`}><div role="tablist" aria-orientation="horizontal" aria-label={ariaLabel} className="flex min-w-max gap-[var(--lms-tab-gap)] border-b border-[var(--lms-canvas-border)] pb-0">
         {items.map((item, index) => (
           <button key={item.value} ref={node => { buttons.current[index] = node; }}
             id={`${id}-tab-${index}`} type="button" role="tab"
