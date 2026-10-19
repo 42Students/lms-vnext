@@ -2,6 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { DateInput } from "@/components/ui/date-input";
@@ -81,28 +82,28 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  return <div className="mt-2 space-y-2">
   <div className="flex flex-wrap gap-2">
    <Button type="button" disabled={busy||loading} onClick={()=>void beginEdit()}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
+    variant="secondary" size="sm">
     {loading?"Loading…":"Edit metadata"}</Button>
    <Button type="button" disabled={busy} onClick={()=>void act("ARCHIVE")}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error">
+    variant="danger" size="sm">
     Delete</Button>
   </div>
   {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
   {editing?<div className="grid gap-2 rounded border border-border p-3">
    <label className="grid gap-1 text-xs font-semibold">Quiz title
     <Input required maxLength={255} value={title} disabled={busy}
-     onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
+     onChange={e=>setTitle(e.target.value)} className="min-h-11"/></label>
    <label className="grid gap-1 text-xs font-semibold">Description
     <Textarea maxLength={10000} rows={3} value={description} disabled={busy}
-     onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/>
+     onChange={e=>setDescription(e.target.value)} className="min-h-11"/>
    </label>
    {quiz.status==="DRAFT"?<label className="grid gap-1 text-xs font-semibold">Maximum attempts
     <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
-     onChange={e=>setMaxAttempts(Number(e.target.value))} className="min-h-10 rounded border border-border px-2"/>
+     onChange={e=>setMaxAttempts(Number(e.target.value))} className="min-h-11"/>
    </label>:null}
    <label className="grid gap-1 text-xs font-semibold">Deadline (IST)
     <DateInput mode="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
-     className="min-h-10 rounded border border-border px-2"/></label>
+     className="min-h-11"/></label>
    {quiz.status==="DRAFT"?<div className="grid gap-2 text-xs font-semibold">
     <label className="flex items-center gap-2"><Checkbox checked={shuffleQuestions}
      disabled={busy} onChange={e=>setShuffleQuestions(e.target.checked)}/>
@@ -116,10 +117,10 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     Other immutable quiz fields stay unchanged.
    </p>:null}
    <Button type="button" disabled={busy} onClick={()=>void act("EDIT")}
-    className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
+    variant="primary" size="sm">
     {busy?"Saving…":"Save quiz"}</Button>
   </div>:null}
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-xs text-success">{notice}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {notice?<Alert tone="success">{notice}</Alert>:null}
  </div>;
 }

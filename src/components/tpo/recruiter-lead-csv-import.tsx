@@ -2,6 +2,7 @@
 import {Dialog} from "@/components/ui/dialog";
 import {DataTable} from "@/components/ui/data-table";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {safeReportCsvCell} from "@/components/placements/report-interactive-table-export-model";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
@@ -247,7 +248,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
               <div className="space-y-3" aria-live="polite">
                 <Button type="button" variant="secondary" onClick={()=>{
                   const header="Row,Status,Reason";
-                  const cell=(value:string)=>'"'+(/^[\t\r\n]*[=+@-]/.test(value)?"'"+value:value).replaceAll('"','""')+'"';
+                  const cell=safeReportCsvCell;
                   const lines=result.results.map(item=>[String(item.row),item.status,item.reason??""].map(cell).join(","));
                   const blob=new Blob(["\uFEFF"+[header,...lines].join("\r\n")+"\r\n"],{type:"text/csv;charset=utf-8"});
                   const url=URL.createObjectURL(blob);const link=document.createElement("a");

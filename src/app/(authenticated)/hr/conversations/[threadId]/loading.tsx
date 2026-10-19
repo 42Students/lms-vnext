@@ -1,5 +1,5 @@
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 export default function Loading() {
-  return <GracefulPageLoading label="Loading conversation history" shape="directory" />;
+  return <GracefulPageLoading label="Loading conversation history…" shape="directory" />;
 }

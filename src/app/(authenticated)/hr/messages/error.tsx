@@ -1,15 +1,19 @@
 "use client";
+
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import {Button} from "@/components/ui/button";
-export default function HrMessagesError({reset}:{
- error:Error & {digest?:string};reset:()=>void;
+
+export default function RouteError({ reset }: {
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
- return <section role="alert" className="border-b border-border pb-6 text-left">
-  <PageHeader title={"Messages are temporarily unavailable"} />
-  <p className="mt-2 max-w-xl text-sm text-body">
-   We could not retrieve your employer-college conversations.
-   This does not mean your messages are missing or have been marked read.
-  </p>
-  <Button className="mt-5" onClick={reset}>Retry messages</Button>
- </section>;
+  return <div className="min-w-0 space-y-4">
+    <PageHeader title="Messages" />
+    <ErrorState
+      title="Messages are temporarily unavailable"
+      description="We could not retrieve your employer-college conversations. This does not mean your messages are missing or have been marked read."
+      action={<Button type="button" variant="secondary" onClick={reset}>Retry messages</Button>}
+    />
+  </div>;
 }
