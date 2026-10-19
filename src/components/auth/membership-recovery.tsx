@@ -39,11 +39,11 @@ export function MembershipRecovery({
 
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl items-center px-6 py-16">
-      <section className="w-full rounded-2xl border border-border bg-surface p-8 shadow-sm">
+      <section className="w-full rounded-[12px] border border-border bg-surface p-6 sm:p-8">
         <p className="m-0 text-sm font-semibold text-primary-text">
           College access changed
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+        <h1 className="mt-2 text-[30px] font-semibold leading-10 tracking-tight text-[var(--lms-heading)]">
           Choose another active college
         </h1>
         <p className="mt-4 text-base leading-7 text-body">
