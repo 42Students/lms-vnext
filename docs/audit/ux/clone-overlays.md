@@ -534,3 +534,14 @@ GitHub default-branch index searches made this turn: `"ToastAction"` yielded **2
 **STRICT CHECKPOINT: F1 [ ], F2 [ ].** Complete numerical overlap on selected rows is not full parity. Legacy toast-specific lifetime and exit policy, exhaustive checkout grep, all consumer states and physical responsive/focus results remain unavailable.
 
 **Next:** `src/components/ui/menu.tsx` and `src/components/ui/popover.tsx` — remaining contextual menu divider/icon states and popover exit-path verification; then client-side browser proof by orchestrator.
+
+
+### Nested contextual Escape proof (same continuation)
+
+| Path / state | Old LMS reference | Current source behavior | Review |
+| --- | --- | --- | --- |
+| Escape from menu search input | Legacy dropdown SCSS `components___dropdown.scss:96-105` defines surface, not key handlers | `src/components/ui/menu.tsx:10-30`: preserves input Arrow/Home/End caret, but Escape can close enclosing `<details>` and restore `<summary>` focus | Source keyboard behavior complete; browser comparison outstanding |
+| Escape from listbox inside dialog | No equivalent interaction contract in bundled old modal SCSS | `src/components/ui/popover.tsx:34-64`: handled Escape prevents default **and stops propagation** to avoid closing underlying modal/parent menu; existing caller onDismiss + focus restored | Source behavior reviewed; nested integration needs manual verification |
+| Escape from nonmodal PopoverPanel | Old menu stylesheet gives no bubbling contract | `src/components/ui/popover.tsx:18-28`: where a panel has an onDismiss callback, own Escape handles and stops event propagation | Source behavior reviewed; caller-specific global Escape also remains |
+
+**File-level source checkpoint:** `src/components/ui/menu.tsx` and `src/components/ui/popover.tsx` reviewed/updated, JSX pairing unchanged. F1/F2 remain unticked until local grep, complete old states and responsive actual device proof.
