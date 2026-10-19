@@ -589,3 +589,189 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   [data-slot="button"], [data-slot="input"], [data-slot="select"],
   [data-slot="textarea"], [data-slot="tabs"] [role="tab"] { transition: none; }
 }
+
+/* Final measured control interactions and authenticated canvas placement. */
+[data-slot="button"][data-variant="primary"] {
+  color: #fff;
+  background: #0a7c88;
+  border-color: #0a7c88;
+  box-shadow: none;
+}
+[data-slot="button"][data-variant="primary"]:hover:not(:disabled) {
+  color: #fff;
+  background: #086873;
+  border-color: #086873;
+}
+[data-slot="button"][data-variant="primary"]:active:not(:disabled) {
+  transform: translateY(1px);
+}
+[data-slot="button"][data-variant="primary"]:disabled {
+  color: #6b7280;
+  background: #e5e9f0;
+  border-color: #e5e9f0;
+  opacity: 1;
+}
+[data-slot="button"][data-variant="secondary"] {
+  color: #54505d;
+  background: #fff;
+  border-color: #bfc9da;
+}
+[data-slot="button"][data-variant="secondary"]:hover:not(:disabled) {
+  color: #1a95a1;
+  background: #eff8fa;
+  border-color: #26bac7;
+}
+[data-slot="button"][data-variant="ghost"]:hover:not(:disabled) {
+  color: #1a95a1;
+  background: #eff8fa;
+}
+[data-slot="button"][data-variant="danger"] {
+  color: #fff;
+  background: #ef4444;
+  border-color: #ef4444;
+}
+[data-slot="button"][data-variant="danger"]:hover:not(:disabled) {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+[data-slot="banner"], [data-slot="alert"] {
+  border-radius: 9px;
+  font-size: 13px;
+  line-height: 20px;
+  box-shadow: none;
+}
+[data-slot="dropdown-root"] > summary {
+  min-height: 36px;
+  border-radius: 9px;
+}
+[data-slot="dropdown-root"][open] > summary {
+  color: #1a95a1;
+  border-color: #26bac7;
+  background: #eff8fa;
+}
+[data-slot="dropdown"], [data-slot="menu"] {
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: var(--lms-overlay-shadow);
+}
+[data-slot="menu"] [role="menuitem"]:focus-visible {
+  background: #eff8fa;
+  color: #1a95a1;
+}
+[data-slot="table"] { border-radius: 10px; border-color: #e5e9f0; }
+[data-slot="table"] table { font-size: 13px; line-height: 20px; }
+[data-slot="table"] tbody tr:hover { background: rgba(38,186,199,.045); }
+[data-slot="avatar"] { border-color: #e5e9f0; }
+[data-slot="stat-tile"] {
+  border: 1px solid #e5e9f0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+}
+[data-slot="stat-tile"]:is(:hover, :focus-visible) { border-color: #26bac7; }
+[data-slot="breadcrumbs"] { font-size: 13px; line-height: 20px; }
+[data-slot="disclosure"] { border-color: #e5e9f0; }
+[data-slot="file-upload"] input[type="file"] {
+  border: 1px solid #e5e9f0;
+  border-radius: 9px;
+  font-size: 14px;
+}
+[data-slot="filter-bar"] > div[role="dialog"] {
+  background: #fff;
+  box-shadow: var(--lms-overlay-shadow);
+}
+@media (min-width: 1024px) {
+  main#lms-main-content {
+    max-width: none;
+    padding: 32px 24px 24px;
+  }
+}
+@media (min-width: 640px) {
+  [data-slot="data-table"] td { padding: 10px 16px; }
+}
+@media (max-width: 639px) {
+  [data-slot="data-table"] td { padding: 4px 0; }
+  [data-slot="dropdown-root"] > summary,
+  [data-slot="menu"] [role="menuitem"],
+  [data-slot="pagination"] [aria-disabled="true"] { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="button"][data-variant="primary"]:active:not(:disabled) { transform: none; }
+}
+
+/* Tracker-only opt-in dark mode stays legible without changing the legacy
+ * light skin used by every other account and portal. */
+:root[data-tracker-theme="dark"] [data-slot="page-canvas"],
+:root[data-tracker-theme="dark"] [data-slot="card"],
+:root[data-tracker-theme="dark"] [data-slot="stat-tile"],
+:root[data-tracker-theme="dark"] [data-slot="empty-state"],
+:root[data-tracker-theme="dark"] [data-slot="dialog"],
+:root[data-tracker-theme="dark"] [data-slot="drawer"],
+:root[data-tracker-theme="dark"] [data-slot="dropdown"],
+:root[data-tracker-theme="dark"] [data-slot="menu"],
+:root[data-tracker-theme="dark"] [data-slot="table"],
+:root[data-tracker-theme="dark"] [data-slot="toast-stack"] > section {
+  background: var(--lms-surface);
+  color: var(--lms-foreground);
+  border-color: var(--lms-border);
+}
+:root[data-tracker-theme="dark"] [data-slot="page-canvas"] h1,
+:root[data-tracker-theme="dark"] [data-slot="page-canvas"] h2,
+:root[data-tracker-theme="dark"] [data-slot="page-header"] h1,
+:root[data-tracker-theme="dark"] [data-slot="stat-tile"] p,
+:root[data-tracker-theme="dark"] [data-slot="dialog"] h2,
+:root[data-tracker-theme="dark"] [data-slot="drawer"] h2,
+:root[data-tracker-theme="dark"] [data-slot="empty-state"] h2,
+:root[data-tracker-theme="dark"] [data-slot="error-state"] h2 {
+  color: var(--lms-foreground);
+}
+:root[data-tracker-theme="dark"] [data-slot="input"],
+:root[data-tracker-theme="dark"] [data-slot="select"],
+:root[data-tracker-theme="dark"] [data-slot="textarea"],
+:root[data-tracker-theme="dark"] [data-slot="dropdown-root"] > summary,
+:root[data-tracker-theme="dark"] [data-slot="button"][data-variant="secondary"] {
+  background: var(--lms-surface);
+  color: var(--lms-foreground);
+  border-color: var(--lms-border);
+}
+:root[data-tracker-theme="dark"] [data-slot="data-table"] th,
+:root[data-tracker-theme="dark"] [data-slot="table"] thead,
+:root[data-tracker-theme="dark"] [data-slot="table"] th {
+  background: var(--lms-neutral-100);
+  color: var(--lms-body-text);
+}
+:root[data-tracker-theme="dark"] [data-slot="tabs"] nav,
+:root[data-tracker-theme="dark"] [data-slot="tabs"] [role="tablist"] {
+  background: var(--lms-surface);
+}
+
+:root[data-tracker-theme="dark"] [data-slot="error-state"] {
+  color: var(--lms-foreground);
+  background: var(--lms-surface);
+  border-color: var(--lms-error);
+}
+:root[data-tracker-theme="dark"] [data-slot="info-popover"] > div {
+  color: var(--lms-body-text);
+  background: var(--lms-surface);
+  border-color: var(--lms-border);
+}
+
+/* Exact legacy Ant tooltip skin from components___antddesign.scss. */
+[data-slot="info-popover"] > div {
+  background: #1a1d21;
+  color: #fff;
+  border-color: #1a1d21;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 12px;
+  line-height: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+[data-slot="data-table"] th,
+[data-slot="table"] th { color: #a9a7ae; }
+@media (max-width: 767px) {
+  [data-slot="pagination"] a,
+  [data-slot="pagination"] [aria-disabled="true"],
+  [data-slot="dropdown-root"] > summary,
+  [data-slot="menu"] [role="menuitem"] { min-height: 44px; }
+}

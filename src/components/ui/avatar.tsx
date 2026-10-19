@@ -15,7 +15,7 @@ export function avatarInitials(name: string) {
 export function Avatar({ name, src, size = "md", className }: AvatarProps) {
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
   const showImage = Boolean(src && src !== failedUrl);
-  const classes = cx("inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-primary-subtle font-semibold text-foreground", size === "sm" ? "h-8 w-8 text-xs" : "h-11 w-11 text-sm", className);
+  const classes = cx("inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#e5e9f0] bg-[#c4c4c4] font-semibold text-[#172033]", size === "sm" ? "h-8 w-8 text-xs" : "h-11 w-11 text-sm", className);
   return <span data-slot="avatar" className={classes} aria-label={name}>
     {showImage ? (
       // eslint-disable-next-line @next/next/no-img-element
