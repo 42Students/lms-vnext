@@ -7,6 +7,6 @@ export function PasswordInput({error=false,...props}:PasswordInputProps) {
   const [visible,setVisible]=useState(false);
   return <div data-slot="password-input" className="flex min-w-0 items-stretch gap-2">
     <Input {...props} type={visible?"text":"password"} error={error} />
-    <Button type="button" variant="secondary" aria-label={visible?"Hide password":"Show password"} aria-pressed={visible} onClick={()=>setVisible(value=>!value)}>{visible?"Hide":"Show"}</Button>
+    <Button type="button" variant="secondary" disabled={props.disabled} aria-label={visible?"Hide password":"Show password"} aria-pressed={visible} onClick={()=>setVisible(value=>!value)}>{visible?"Hide":"Show"}</Button>
   </div>;
 }

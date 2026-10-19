@@ -12,6 +12,10 @@ export type FileUploadProps = Omit<ComponentPropsWithRef<"input">, "type" | "onC
   /** Parent-owned external URL field or safe alternative for unsupported WebView pickers. */
   fallback?: ReactNode;
   pickerUnavailable?: boolean;
+  /** Actual completed upload percentage, supplied by the caller when known. */
+  progress?: number;
+  /** Opt in to a compact selection list; does not alter the upload request. */
+  showSelectedFiles?: boolean;
 };
 
 export function fileSizeIsValid(size: number, maxBytes?: number) {
@@ -32,10 +36,13 @@ export function mustClearFileSelection(selected: boolean, pickerUnavailable: boo
 }
 
 export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerUnavailable = false,
+  progress, showSelectedFiles = false,
   id: suppliedId, className, disabled, accept, ref: forwardedRef, ...props }: FileUploadProps) {
   const autoId = useId();
   const id = suppliedId ?? autoId;
   const [error, setError] = useState<string | null>(null);
+  const [selectedNames, setSelectedNames] = useState<string[]>([]);
+  const percentage = typeof progress === "number" && Number.isFinite(progress) ? Math.max(0, Math.min(100, progress)) : null;
   // Preserve every applicable assistive description when a picker is disabled
   // or rejects a file; an error must not make the size/type guidance vanish.
   const describedBy = [...new Set([
@@ -51,7 +58,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
   // Clearing after a picker is disabled is necessary even if the DOM input
   // unmounts: the form's parent must never retain a previously approved file.
   useEffect(() => {
-    if (pickerUnavailable || disabled) setError(null);
+    if (pickerUnavailable || disabled) { setError(null); setSelectedNames([]); }
     if (!mustClearFileSelection(selectedRef.current, pickerUnavailable, Boolean(disabled))) return;
     selectedRef.current = false;
     if (inputRef.current) inputRef.current.value = "";
@@ -71,11 +78,13 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
     if (oversized || wrongType) {
       setError(oversized ? "This file is larger than the allowed limit." : "This file type is not allowed.");
       selectedRef.current = false;
+      setSelectedNames([]);
       onFiles(null);
       event.currentTarget.value = "";
       return;
     }
     selectedRef.current = Boolean(files?.length);
+    setSelectedNames(Array.from(files ?? [], file => file.name));
     setError(null);
     onFiles(files);
   }
@@ -87,6 +96,15 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
         aria-describedby={describedBy}
         className="block min-h-9 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3 py-2 text-[14px] text-foreground file:mr-3 file:rounded-[var(--lms-radius-control)] file:border-0 file:bg-[var(--lms-primary-subtle)] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[var(--lms-primary-text)] aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[var(--lms-error-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-invalid:focus-visible:outline-[var(--lms-error)] disabled:opacity-50 motion-reduce:transition-none" />}
     {helper ? <p id={`${id}-help`} className="text-[13px] leading-5 text-[var(--lms-body-text)]">{helper}</p> : null}
+    {showSelectedFiles && selectedNames.length > 0 && !pickerUnavailable && !disabled
+      ? <ul aria-label="Selected files" className="space-y-1 text-[13px] leading-5 text-[var(--lms-body-text)]">
+          {selectedNames.map((name, index) => <li key={`${index}-${name}`} className="min-w-0 break-all">{name}</li>)}
+        </ul> : null}
+    {percentage !== null && selectedNames.length > 0 && !pickerUnavailable && !disabled
+      ? <div role="progressbar" aria-label={`${label} upload progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percentage}
+          className="h-2 w-full overflow-hidden rounded-full bg-[var(--lms-primary-light)]">
+          <div className="h-full rounded-full bg-[var(--lms-primary)] transition-[width] duration-150 motion-reduce:transition-none" style={{ width: `${percentage}%` }} />
+        </div> : null}
     {error ? <p id={`${id}-error`} role="alert" className="text-[12px] leading-5 text-[var(--lms-error-text)]">{error}</p> : null}
     {fallback ? <div className="min-w-0 space-y-2">{fallback}</div> : null}
     {(pickerUnavailable || disabled) ? <p id={`${id}-unavailable`} role="alert" className="text-[13px] leading-5 text-[var(--lms-body-text)]">This upload cannot continue with the file picker disabled. {fallback ? "Use the alternative provided." : "Enable file selection before continuing."}</p> : null}

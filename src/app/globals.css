@@ -322,6 +322,7 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
   --lms-canvas-border: #e5e9f0;
   --lms-table-header: #fafbfc;
   --lms-control-height: 36px;
+  --lms-field-radius: 10px; /* legacy components___form.scss:120 */
   --lms-tab-gap: 20px;
   --lms-control-radius: 9px;
   --lms-canvas-radius: 12px;
@@ -335,8 +336,8 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
   --lms-space-4: 16px;
   --lms-space-5: 24px;
   --lms-space-6: 32px;
-  --lms-space-7: 40px;
-  --lms-space-8: 48px;
+  --lms-space-7: 48px;
+  --lms-space-8: 64px;
 }
 body {
   font-size: 14px;
@@ -596,7 +597,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="skeleton"] .lms-skeleton-shimmer { border-radius: var(--lms-skeleton-radius); background: var(--lms-neutral-100); }
 [data-slot="page-header"] { border-color: var(--lms-canvas-border); }
 [data-slot="page-header"] p { font-size: 13px; line-height: 1.5; }
-[data-slot="form-field"] > label { font-size: 13px; line-height: 20px; font-weight: 600; }
+[data-slot="form-field"] > label { font-size: 13px; line-height: 16px; font-weight: 600; }
 [data-slot="form-field"] [role="alert"] { color: #b91c1c; font-size: 12px; }
 @media (max-width: 639px) {
   [data-slot="page-canvas"] { padding: 16px; }
@@ -1000,10 +1001,10 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   scrollbar-width: thin;
   scrollbar-color: var(--lms-scrollbar-thumb) var(--lms-scrollbar-track);
 }
-.lms-scrollbar-thin::-webkit-scrollbar { display: block; width: 4px; height: 4px; }
+.lms-scrollbar-thin::-webkit-scrollbar { display: block; width: 8px; height: 8px; }
 .lms-scrollbar-thin::-webkit-scrollbar-thumb {
   background: var(--lms-scrollbar-thumb);
-  border-radius: 999px;
+  border-radius: 1px; /* legacy components___common.scss:294-300 */
 }
 @media (max-width: 767px) {
   [data-slot="dropdown-root"] > summary,
@@ -1121,3 +1122,98 @@ body {
 /* Keep browser selection affordances with native inputs and range slider. */
 [data-slot="range-slider"] input[type="range"] { accent-color: var(--lms-primary); }
 [data-slot="file-dropzone"]:focus-within { border-color: var(--lms-primary); }
+
+/* Adjacent button group: keep native focus and per-button behaviour, remove
+   doubled hairlines and share the measured 9px shell-control corners. */
+[data-slot="button-group"] > [data-slot="button"] {
+  border-radius: 0;
+  min-width: 0;
+}
+[data-slot="button-group"] > [data-slot="button"] + [data-slot="button"] {
+  margin-left: -1px;
+}
+[data-slot="button-group"] > [data-slot="button"]:first-child {
+  border-radius: var(--lms-control-radius) 0 0 var(--lms-control-radius);
+}
+[data-slot="button-group"] > [data-slot="button"]:last-child {
+  border-radius: 0 var(--lms-control-radius) var(--lms-control-radius) 0;
+}
+[data-slot="button-group"] > [data-slot="button"]:only-child {
+  border-radius: var(--lms-control-radius);
+}
+[data-slot="button-group"] > [data-slot="button"]:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
+/* Native select popup options inherit the selected-option teal/white of
+   legacy components___antddesign.scss:134-137 where the UA permits styling. */
+[data-slot="multi-select"] option:checked {
+  background-color: var(--lms-primary);
+  color: var(--lms-white);
+}
+
+/* Split actions reuse the shared Dropdown (chat-16 owns menu/overlay styling).
+   Keep the 36px desktop and 44px touch targets and the legacy border seam. */
+[data-slot="split-button"] > [data-slot="button"]:first-child {
+  border-radius: var(--lms-control-radius) 0 0 var(--lms-control-radius);
+}
+[data-slot="split-button"] > [data-slot="button"] + [data-slot="button"] {
+  margin-left: -1px;
+  border-radius: 0 var(--lms-control-radius) var(--lms-control-radius) 0;
+}
+[data-slot="split-button"] > [data-slot="dropdown-root"] { margin-left: -1px; }
+[data-slot="split-button"] > [data-slot="dropdown-root"] > summary {
+  border-radius: 0 var(--lms-control-radius) var(--lms-control-radius) 0;
+  min-width: var(--lms-control-height);
+  justify-content: center;
+  padding-inline: var(--lms-space-2);
+}
+@media (max-width: 767px) {
+  [data-slot="split-button"] > [data-slot="dropdown-root"] > summary {
+    min-height: var(--lms-touch-target);
+    min-width: var(--lms-touch-target);
+  }
+}
+
+/* Form-grid layout uses the old $ssm:767px and $smd:991px cutoffs.
+   Avoid Tailwind lg=1024px, which misses the legacy 992px tablet transition. */
+[data-slot="form-grid"][data-gap="sm"] { gap: var(--lms-space-2); }
+[data-slot="form-grid"][data-gap="md"] { gap: var(--lms-space-4); }
+[data-slot="form-grid"][data-gap="lg"] { gap: var(--lms-space-5); }
+@media (min-width: 768px) {
+  [data-slot="form-grid"][data-columns="2"],
+  [data-slot="form-grid"][data-columns="3"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 992px) {
+  [data-slot="form-grid"][data-columns="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+[data-slot="form-grid"] > * { min-width: 0; }
+
+/* Legacy .ln-btn:disabled dims non-primary actions by 50%.
+   AntD's loading control remains branded but never accepts double submits. */
+[data-slot="button"]:disabled:not([data-variant="primary"]):not([data-loading="true"]) {
+  opacity: .5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+[data-slot="button"][data-variant="primary"][data-loading="true"] {
+  color: var(--lms-on-primary);
+  background: var(--lms-button-primary);
+  border-color: var(--lms-button-primary);
+  opacity: 1;
+}
+[data-slot="button"][data-variant="danger"][data-loading="true"] {
+  color: var(--lms-on-primary);
+  background: var(--lms-error);
+  border-color: var(--lms-error);
+  opacity: 1;
+}
+[data-slot="button"][data-loading="true"] {
+  cursor: progress;
+  pointer-events: none;
+}
