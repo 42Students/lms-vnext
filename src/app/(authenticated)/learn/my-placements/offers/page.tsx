@@ -270,7 +270,7 @@ export default async function LearnerOffersPage({
         <span aria-current="page">Page {paginated.page} of {paginated.pages}</span>
         {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Next</Link> : null}
       </nav> : null}
-      <section aria-label="How offers work at your college" className="rounded-xl border border-border bg-surface p-5">
+      <section aria-label="How offers work at your college" className="border-b border-border py-5">
         <h2 className="font-semibold text-foreground">How offers work at your college</h2>
         <p className="mt-2 text-sm text-body">Check the offer response deadline and official terms before replying. Accepting a letter of intent is not the same as confirmed joining. College rules may affect how many offers you can hold.</p>
         <div className="mt-3 flex flex-wrap gap-4">
