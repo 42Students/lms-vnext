@@ -10,6 +10,7 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
+import { Pagination } from "@/components/ui/pagination";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
@@ -159,13 +160,9 @@ export async function ProjectAdminSubmissionsPage({
           ]}
           empty={<EmptyState title="All workspaces submitted" description="All matching workspaces have a submission."/>}
         />
-        <div className="flex flex-wrap gap-3 text-sm">
-          {unsubmitted.page>1?<Link href={projectAdminUnsubmittedHref(queuePath,query,unsubmitted.page-1)}
-           className="text-primary-text underline">Previous</Link>:null}
-          <span>Page {unsubmitted.page} of {unsubmitted.totalPages}</span>
-          {unsubmitted.page<unsubmitted.totalPages?<Link href={projectAdminUnsubmittedHref(queuePath,query,unsubmitted.page+1)}
-           className="text-primary-text underline">Next</Link>:null}
-        </div>
+        <Pagination page={unsubmitted.page} pageCount={unsubmitted.totalPages}
+          hrefForPage={page=>projectAdminUnsubmittedHref(queuePath,query,page)}
+          label="Unsubmitted workspace pages"/>
       </section>:null}
       {view==="ALL" && result ? <>
       {summary?<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
