@@ -306,3 +306,15 @@
 @media (prefers-reduced-motion:reduce) {
   .dropdown,.menu,.createOptions { animation:none; transition:none; }
 }
+
+/* TPO's existing compact bell keeps the same 16px warm-red count as legacy badges. */
+.actions > div > button > span[aria-hidden="true"] {
+  background:#ff7576; color:#fff; border:2px solid #fff;
+  top:-6px; right:-6px; min-width:16px; min-height:16px;
+  font-size:10px; line-height:1.2;
+}
+.recruiterBell > div > section > div:first-child,
+.learnerBell > div > section > div:first-child {
+  padding-bottom:16px;
+  border-bottom:1px solid var(--lms-canvas-border);
+}
