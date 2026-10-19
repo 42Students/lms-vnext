@@ -1,5 +1,7 @@
 "use client";
 import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
@@ -150,7 +152,7 @@ export function CollegeFacultyAssignmentCreate({
             Select a program, batch and class to view eligible courses.
           </p>}
           {choices.map(item => <label key={item.id} className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={selected.includes(item.id)}
+            <Checkbox checked={selected.includes(item.id)}
               onChange={event => setSelected(previous => event.target.checked
                 ? [...previous, item.id] : previous.filter(id => id !== item.id))} />
             {item.courseName} ({item.courseCode}) · {item.academicYear}
@@ -159,7 +161,7 @@ export function CollegeFacultyAssignmentCreate({
       </fieldset>
       <div className="sm:col-span-2 lg:col-span-4">
         <Button variant="primary" type="submit" disabled={saving || !selected.length || !membershipId}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+          >
           {saving ? "Assigning…" : `Assign to ${selected.length} course(s)`}
         </Button>
       </div>

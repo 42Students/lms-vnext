@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { CollegeHallBookingAction } from "@/components/academics/college-hall-booking-action";
 import { CollegeHallCancellationAction } from "@/components/academics/college-hall-cancellation-action";
@@ -44,21 +46,21 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
         className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link">Back to lecture halls</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-5">
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">From (IST)
-        <input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+        <Input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
+           />
       </label>
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">To (IST)
-        <input name="to" type="date" required defaultValue={typeof to === "string" ? to : ""}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+        <Input name="to" type="date" required defaultValue={typeof to === "string" ? to : ""}
+           />
       </label>
-      <button type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary">View schedule</button>
+      <Button variant="primary" type="submit">View schedule</Button>
     </form>
     {!parsed.success && hasRange ? <ErrorState title="Invalid date range"
       description="Choose valid from/to dates in IST, up to 31 consecutive calendar days. No schedule was loaded." />
       : !result ? <p className="border-b border-border pb-5 text-sm text-body">
         Select an IST date range to inspect persisted sessions and configured capacity.
       </p> : <>
-        <section className="grid gap-3 - sm:grid-cols-3 border-t border-border pt-5">
+        <section className="grid gap-3 sm:grid-cols-3 border-t border-border pt-5">
           <p className="text-sm text-body"><span className="font-semibold">Capacity:</span> {result.hall.capacity} seats</p>
           <p className="text-sm text-body"><span className="font-semibold">Status:</span> {result.hall.status}</p>
           <p className="text-sm text-body"><span className="font-semibold">Scheduled:</span> {result.sessions.length}{result.truncated ? "+" : ""} sessions</p>

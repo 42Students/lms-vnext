@@ -1,7 +1,6 @@
 "use client";
-import { Button } from "@/components/ui/button";
-
 import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState, useTransition, type FormEvent } from "react";
@@ -197,7 +196,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
           <p className="text-xs text-body">Credits come from mapped courses and cannot be edited here.</p>
           <label className="flex items-center gap-2 text-xs text-body">
             {SEMESTER_COPY.statusLabel}
-            <input type="checkbox" role="switch" checked={isActive} onChange={e => setIsActive(e.target.checked)} />
+            <Checkbox role="switch" checked={isActive} onChange={e => setIsActive(e.target.checked)} />
             {isActive ? SEMESTER_COPY.statusActive : SEMESTER_COPY.statusInactive}
           </label>
           <div className="flex flex-wrap gap-2">
