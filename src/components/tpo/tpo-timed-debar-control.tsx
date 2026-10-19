@@ -1,4 +1,7 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import {useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
@@ -43,23 +46,23 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
   {active.length>0?<p role="status" className="text-sm font-semibold">Debarred · {active.length} active restriction(s)</p>:null}
   <div className="space-y-3">
    <label className="grid gap-1 text-sm">Reason for Debar
-    <textarea value={reason} rows={2} maxLength={500} onChange={e=>setReason(e.target.value)}
-     className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
+    <Textarea value={reason} rows={2} maxLength={500} onChange={e=>setReason(e.target.value)}
+     /></label>
    <label className="grid gap-1 text-sm">How long
-    <select value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+    <Select value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")}
+     >
      <option value="DATE">Until a date</option><option value="DRIVES">For N drives</option><option value="MANUAL">Until lifted</option>
-    </select></label>
+    </Select></label>
    {duration==="DATE"?<label className="grid gap-1 text-sm">Until date (IST)
-    <input type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2"/></label>:null}
+    <Input type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)}
+     /></label>:null}
    {duration==="DRIVES"?<label className="grid gap-1 text-sm">Number of drives
-    <input type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2"/></label>:null}
-   <button type="button" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold disabled:opacity-50"
+    <Input type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)}
+     /></label>:null}
+   <Button variant="secondary" type="button" 
     disabled={pending||active.length>0||reason.trim().length===0||duration==="DATE"&&!untilDate||
       duration==="DRIVES"&&(!Number.isInteger(Number(untilDrives))||Number(untilDrives)<1||Number(untilDrives)>10000)}
-    onClick={()=>{setError("");setConfirm({action:"DEBAR"});}}>Review debarment</button>
+    onClick={()=>{setError("");setConfirm({action:"DEBAR"});}}>Review debarment</Button>
    {active.length>0?<p className="text-xs text-muted-foreground">Lift the current debarment before creating another.</p>:null}
   </div>
   <div className="space-y-3">
@@ -72,11 +75,11 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
     {row.liftedAt?<p className="text-sm">Lifted · {row.liftedReason??"No reason recorded"}</p>:null}
     {row.active?<div className="space-y-2">
      <label className="grid gap-1 text-sm">Reason for lifting
-      <textarea value={liftReason} maxLength={500} onChange={e=>setLiftReason(e.target.value)}
-       className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
-     <button type="button" disabled={pending||!liftReason.trim()}
+      <Textarea value={liftReason} maxLength={500} onChange={e=>setLiftReason(e.target.value)}
+       /></label>
+     <Button variant="secondary" type="button" disabled={pending||!liftReason.trim()}
       onClick={()=>{setError("");setConfirm({action:"LIFT",id:row.id});}}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold disabled:opacity-50">Review lift</button>
+      >Review lift</Button>
     </div>:null}
    </article>)}
   </div>
