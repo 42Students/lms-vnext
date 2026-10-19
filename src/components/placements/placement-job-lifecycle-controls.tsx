@@ -156,7 +156,7 @@ export function PlacementJobLifecycleControls({
   }
 
   return (
-    <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
+    <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
       <div>
         <div className="flex flex-wrap items-center gap-2">
           <p className="m-0 text-sm font-semibold text-foreground">
