@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {ActionPagination} from "@/components/ui/action-pagination";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
@@ -212,7 +213,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    <Button variant="secondary" type="button"  onClick={()=>router.refresh()}>Refresh queue</Button>
   </section>}
   {bulkError&&<p role="alert" className="rounded-md border p-3 text-sm">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</p>}
-  <nav aria-label="Verification pagination" className="flex flex-wrap items-center gap-4 text-sm">
+  <section aria-label="Verification queue controls" className="flex min-w-0 flex-wrap items-center gap-4 text-sm">
    <label>Sort by <Select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="ml-2 w-auto">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option><option value="NAME">Learner name A–Z</option>
    </Select></label>
@@ -220,9 +221,10 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     <option value="10">10</option><option value="25">25</option><option value="50">50</option>
    </Select></label>
    <span>Showing {rows.length} of {total} requests in the selected view</span>
-   {page>1&&<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page-1)})} className="underline">Previous page</Button>}
-   {hasMore&&<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page+1)})} className="underline">Next page</Button>}
-  </nav>
+   <ActionPagination label="Verification pagination" page={page}
+    pageCount={Math.max(1,page+(hasMore?1:0))} hasMore={hasMore} disabled={bulkBusy}
+    onPageChange={target=>navigate({page:String(target)})}/>
+  </section>
   {selected&&<VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
     row={selected}
     sequenceProgress={sequential?sequenceLabel:undefined}
