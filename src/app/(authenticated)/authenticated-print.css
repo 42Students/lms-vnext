@@ -1,0 +1,38 @@
+/*
+ * Authenticated report print baseline. Legacy SCSS contains no @media print or
+ * paper-template values. Keep G5 open until actual legacy output is compared.
+ */
+@media print {
+  .lms-shell-frame { display:block !important; min-height:0 !important; background:white !important; }
+  .lms-shell-frame [data-slot="legacy-sidebar"],
+  .lms-shell-frame [aria-label="Application top bar"],
+  .lms-shell-frame [data-slot="toast-stack"],
+  .lms-shell-frame [data-slot="dialog"],
+  .lms-shell-frame [data-slot="drawer"],
+  .lms-shell-frame [data-slot="button"],
+  .lms-shell-frame [aria-label="Reports navigation"],
+  .lms-shell-frame [aria-label="Report filters"],
+  .lms-shell-frame [aria-label="Placement journey"],
+  .lms-shell-frame [data-slot="pagination"] { display:none !important; }
+  .lms-shell-frame .lms-shell-page,
+  .lms-shell-frame #lms-main-content,
+  .lms-shell-frame .lms-authenticated-canvas {
+    display:block !important; width:100% !important; max-width:none !important;
+    min-height:0 !important; overflow:visible !important;
+    margin:0 !important; padding:0 !important; border:0 !important;
+    border-radius:0 !important; box-shadow:none !important; background:white !important;
+  }
+  .lms-shell-frame [data-slot="data-table"],
+  .lms-shell-frame [data-slot="data-table"] table { overflow:visible !important; max-height:none !important; }
+  .lms-shell-frame [data-slot="data-table"] thead { display:table-header-group; }
+  .lms-shell-frame [data-slot="data-table"] tr,
+  .lms-shell-frame article { break-inside:avoid; }
+  .lms-shell-frame [data-slot="data-table"] td,
+  .lms-shell-frame [data-slot="data-table"] th {
+    white-space:normal !important; overflow-wrap:anywhere;
+  }
+  .lms-shell-frame a[href] { text-decoration:underline; }
+  .lms-shell-frame *, .lms-shell-frame *::before, .lms-shell-frame *::after {
+    animation:none !important; transition:none !important;
+  }
+}
