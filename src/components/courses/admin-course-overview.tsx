@@ -493,7 +493,7 @@ export function AdminCourseOverview({
          className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
          <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-sm font-semibold">Search courses
           <input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
-           placeholder="Name, code or department" className="min-h-11 sm:min-h-9 min-w-0 w-full rounded border border-border bg-surface p-2"/>
+           placeholder="Name, code or department" className="min-h-11 min-w-0 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/>
          </label>
          <label className="grid gap-1 text-sm font-semibold">Sort
           <select name="sort" defaultValue={catalogueQuery.sort}
@@ -510,12 +510,12 @@ export function AdminCourseOverview({
          </label>:null}
          <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] sm:min-h-9">Filter</button>
          <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
           Export CSV
          </a>
-         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded border border-border px-3 text-sm"
+         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle sm:min-h-9"
           href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses",courseBasePath)}>Refresh</Link>:null}
-         <Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded border border-border px-3 text-sm" href={courseBasePath}>Clear</Link>
+         <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle sm:min-h-9" href={courseBasePath}>Clear</Link>
         </form>:null}
         {catalogue&&catalogue.total>1000?<p className="text-xs text-muted-foreground">
          Export CSV includes up to the first 1,000 matching courses. Narrow filters to export a smaller set.
