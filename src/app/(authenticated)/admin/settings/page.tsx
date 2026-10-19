@@ -5,6 +5,7 @@ import {TenantSettingsEditor} from "@/components/admin/tenant-settings-editor";
 import {listAdminTenantSettings} from "@/modules/platform-settings/admin-editor-service";
 import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platform-settings/admin-inventory-filter";
 import {ErrorState} from "@/components/ui/error-state";
+import {EmptyState} from "@/components/ui/empty-state";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
@@ -142,7 +143,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         <Button type="submit">Filter</Button>
         <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
       </form>
-      {sections.length===0 ? <p role="status" className="border-l-2 border-border bg-muted px-3 py-2 text-sm text-body">No visible settings match the selected filters.</p> : null}
+      {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."/> : null}
       <nav
         aria-label="Settings sections"
         className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-1"
@@ -190,7 +191,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
               {key:"source",header:"Source file or table",mobilePriority:"secondary",cell:setting=>
                 <span className="break-all font-mono text-xs">{setting.source}</span>},
             ]}
-            empty={<p role="status" className="text-sm text-body">No visible settings match the selected filters.</p>}
+            empty={<EmptyState title="No visible settings" description="No visible settings match the selected filters."/>}
           />
 
           {section.smsTemplates ? (
@@ -209,7 +210,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
                 {key:"source",header:"Source file",mobilePriority:"secondary",cell:template=>
                   <span className="break-all font-mono text-xs">{template.source}</span>},
               ]}
-              empty={<p role="status" className="text-sm text-body">No source templates match the selected filters.</p>}
+              empty={<EmptyState title="No matching source templates" description="No source templates match the selected filters."/>}
             />
             </>
           ) : null}
