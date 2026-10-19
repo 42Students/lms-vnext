@@ -292,7 +292,9 @@ export function TpoCompanyMemoryWorkspace({
               <div className="mt-3 divide-y divide-border">
                 {company.people.map(person => (
                   <div key={person.id} className="flex items-center justify-between gap-3 py-3">
-                    <div>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <Avatar name={person.name} size="sm" className="!h-[38px] !w-[38px] !rounded-[10px] [&_img]:!rounded-[10px]"/>
+                      <div className="min-w-0">
                       <Link className="font-medium text-link hover:underline lms-inline-link"
                         href={"/tpo/recruiters/" + encodeURIComponent(person.id)}>
                         {person.name}
