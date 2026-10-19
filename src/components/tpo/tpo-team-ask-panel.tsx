@@ -37,9 +37,8 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
   {canCancel?<Button variant="secondary" type="button" disabled={busy}
    
    onClick={()=>setConfirmation("CANCEL")}>Cancel ask</Button>:null}
-  {confirmation?<div role="alertdialog" aria-label={confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"}
-   className="w-full space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
-   <p>{confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"}</p>
+  {<Dialog open={Boolean(confirmation)} onOpenChange={next=>{if(!next&&!busy)setConfirmation(null);}} dismissible={!busy} role="alertdialog"
+   title={confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"} className="max-w-md">
    {confirmation==="DONE"?<label className="grid gap-1 text-xs">A note goes into the conversation as your reply (optional)
     <Textarea rows={2} maxLength={2000} disabled={busy} value={note}
      onChange={event=>setNote(event.target.value)} className="w-full"/>
@@ -50,7 +49,7 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
     {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}</Button>
    <Button variant="ghost" className="underline" type="button" disabled={busy} onClick={()=>setConfirmation(null)}
     >{confirmation==="CANCEL"?"Keep it":"Not now"}</Button>
-  </div>:null}
+  </Dialog>}
  </div>;
 }
 export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,recipientAwayLabel,items,serverNowMs,highlightAskId}:{
