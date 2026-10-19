@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {tpoStudentMarksVerificationLabel} from "@/modules/placements/tpo-student-marks-label";
@@ -187,12 +188,12 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <details className="rounded-[var(--lms-canvas-radius)] border border-border p-4">
    <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
-   <label className="mt-3 flex min-h-11 items-center gap-2 text-sm"><input type="checkbox"
+   <label className="mt-3 flex min-h-11 items-center gap-2 text-sm"><Checkbox 
      checked={rows.length>0&&rows.every(r=>noteSelection.includes(r.membershipId))}
      onChange={e=>setNoteSelection(e.target.checked?rows.slice(0,100).map(r=>r.membershipId):[])} />Select visible page</label>
    <div className="my-3 grid max-h-44 grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
     {rows.map(row=><label className="flex gap-2 text-sm" key={row.membershipId}>
-     <input type="checkbox" checked={noteSelection.includes(row.membershipId)}
+     <Checkbox  checked={noteSelection.includes(row.membershipId)}
        disabled={!noteSelection.includes(row.membershipId)&&noteSelection.length>=100}
        onChange={e=>setNoteSelection(ids=>e.target.checked?[...ids,row.membershipId]:ids.filter(id=>id!==row.membershipId))}/>
      {row.displayName}</label>)}

@@ -75,8 +75,9 @@ export async function ProjectAdminReassignMentorPage({
         eyebrow={eyebrow}
         title="Bulk mentor reassignment"
         description="Move selected non-archived project workspaces to a new primary mentor."
+        actions={<Link href={basePath}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Back to workspaces</Link>}
       />
-      <Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle" href={basePath}>Back to workspaces</Link>
       <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold">Mentor workload</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState,type KeyboardEvent} from "react";
@@ -72,11 +73,11 @@ export function TpoFindShortcut(){
   if(event.key==="Escape"){event.preventDefault();setOpen(false);}
  }
  return <>
-  <button type="button" onClick={()=>setOpen(true)}
-   className="inline-flex min-h-9 items-center gap-2 text-sm text-primary-text underline">
+  <Button variant="ghost" type="button" onClick={()=>setOpen(true)}
+   className="min-h-9 gap-2">
    Find a student, recruiter or company
    <kbd className="rounded border border-border px-1.5 py-0.5 text-xs no-underline">Ctrl K</kbd>
-  </button>
+  </Button>
   <Dialog open={open} onOpenChange={value=>{setOpen(value);if(value)requestAnimationFrame(()=>inputRef.current?.focus());}}
     title="Find a student, recruiter or company" description="Search records in your college. Use arrow keys to navigate, Enter to open and Esc to close.">
    <label className="block text-sm font-semibold">Search records

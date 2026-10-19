@@ -6,6 +6,10 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
@@ -74,8 +78,8 @@ export type PlacementDraftEditValue = {
   };
 };
 
-const inputClass = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9";
-const textareaClass = "min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
+const inputClass = "w-full";
+const textareaClass = "min-h-28 w-full";
 
 function splitList(value: string) {
   return value
@@ -366,7 +370,7 @@ export function PlacementDraftEditForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Job title
             </span>
-            <input
+            <Input
               className={inputClass}
               name="title"
               required
@@ -378,7 +382,7 @@ export function PlacementDraftEditForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Description
             </span>
-            <textarea
+            <Textarea
               className={textareaClass}
               name="description"
               required
@@ -392,7 +396,7 @@ export function PlacementDraftEditForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Employment type
             </span>
-            <select
+            <Select
               className={inputClass}
               name="employmentType"
               defaultValue={
@@ -402,13 +406,13 @@ export function PlacementDraftEditForm({
               <option value="FULL_TIME">Full time</option>
               <option value="INTERNSHIP">Internship</option>
               <option value="CONTRACT">Contract</option>
-            </select>
+            </Select>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Work mode
             </span>
-            <select
+            <Select
               className={inputClass}
               name="workMode"
               defaultValue={value.job.workMode}
@@ -416,13 +420,13 @@ export function PlacementDraftEditForm({
               <option value="ONSITE">Onsite</option>
               <option value="HYBRID">Hybrid</option>
               <option value="REMOTE">Remote</option>
-            </select>
+            </Select>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Locations
             </span>
-            <input
+            <Input
               className={inputClass}
               name="locations"
               defaultValue={
@@ -435,7 +439,7 @@ export function PlacementDraftEditForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Openings
             </span>
-            <input
+            <Input
               className={inputClass}
               name="openings"
               type="number"
@@ -449,7 +453,7 @@ export function PlacementDraftEditForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Minimum CTC (LPA)
             </span>
-            <input
+            <Input
               className={inputClass}
               name="minimumLpa"
               type="number"
@@ -466,7 +470,7 @@ export function PlacementDraftEditForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Maximum CTC (LPA)
             </span>
-            <input
+            <Input
               className={inputClass}
               name="maximumLpa"
               type="number"
@@ -483,7 +487,7 @@ export function PlacementDraftEditForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Application mode
             </span>
-            <select
+            <Select
               className={inputClass}
               value={applicationMode}
               onChange={(event) =>
@@ -495,13 +499,13 @@ export function PlacementDraftEditForm({
               <option value="INTERNAL">LMS application</option>
               <option value="HYBRID">LMS or employer form</option>
               <option value="EXTERNAL_ONLY">Employer form only</option>
-            </select>
+            </Select>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Employer application URL
             </span>
-            <input
+            <Input
               className={inputClass}
               name="externalApplicationUrl"
               type="url"
@@ -517,7 +521,7 @@ export function PlacementDraftEditForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Application deadline
             </span>
-            <input
+            <Input
               className={inputClass}
               name="applicationDeadline"
               type="datetime-local"
@@ -553,8 +557,7 @@ export function PlacementDraftEditForm({
                         key={program.id}
                         className="flex items-start gap-2 text-sm text-body"
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={selectedProgramIds.includes(
                             program.id,
                           )}
@@ -601,8 +604,7 @@ export function PlacementDraftEditForm({
                         key={cohort.id}
                         className="flex items-start gap-2 text-sm text-body"
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={selectedCohortIds.includes(
                             cohort.id,
                           )}
@@ -647,7 +649,7 @@ export function PlacementDraftEditForm({
                 <span className="mb-1.5 block text-xs font-semibold text-body">
                   {label}
                 </span>
-                <input
+                <Input
                   className={inputClass}
                   name={String(name)}
                   type="number"
@@ -665,7 +667,7 @@ export function PlacementDraftEditForm({
               <span className="mb-1.5 block text-xs font-semibold text-body">
                 Passing years
               </span>
-              <input
+              <Input
                 className={inputClass}
                 name="passingYears"
                 defaultValue={value.policy.allowedPassingYears.join(", ")}
@@ -676,7 +678,7 @@ export function PlacementDraftEditForm({
               <span className="mb-1.5 block text-xs font-semibold text-body">
                 Missing evidence
               </span>
-              <select
+              <Select
                 className={inputClass}
                 name="missingEvidencePolicy"
                 defaultValue={
@@ -689,7 +691,7 @@ export function PlacementDraftEditForm({
                 <option value="REQUIRE_COMPLETE">
                   Require complete evidence
                 </option>
-              </select>
+              </Select>
             </label>
           </div>
         </div>

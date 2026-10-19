@@ -1,4 +1,6 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Radio} from "@/components/ui/radio";
 import {Input} from "@/components/ui/input";
 import {apiFetch} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
@@ -81,7 +83,7 @@ export function TpoStudentSavedViews(){
     <Input value={name} maxLength={100} onChange={e=>setName(e.target.value)}
      />
    </label>
-   <label className="flex gap-2 text-sm"><input type="checkbox" checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view (up to 5)</label>
+   <label className="flex gap-2 text-sm"><Checkbox checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view (up to 5)</label>
    <div className="flex flex-wrap gap-2">
     <Button variant="primary" type="button" disabled={busy||!name.trim()} onClick={()=>void send({
      action:"CREATE",name:name.trim(),filters:filterQuery(new URLSearchParams(params.toString())),pinned,
@@ -92,7 +94,7 @@ export function TpoStudentSavedViews(){
    </div>
    <div className="max-h-64 space-y-2 overflow-auto">
     {rows.map(view=><div key={view.id} className="flex flex-wrap items-center gap-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
-     <input type="radio" aria-label={"Select "+view.name} name="selected-view" checked={selected===view.id}
+     <Radio aria-label={"Select "+view.name} name="selected-view" checked={selected===view.id}
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
      <strong className="min-w-28 text-sm">{view.name}</strong>
      {view.pinned?<span className="text-xs">Pinned</span>:null}

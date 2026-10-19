@@ -93,12 +93,12 @@ export function RecruiterPlacementPortfolio({
               <nav aria-label={"Drive metrics for "+item.job.title}
                 className="mt-2 flex flex-wrap gap-3 text-sm">
                 <Link
-                  className="font-semibold text-primary-text underline"
+                  className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                   href={"/recruiter/drives/"+item.job.id+"?tab=applicants"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
                   {counts?.[item.job.id]?.sharedApplicants??0} shared applicants
                 </Link>
                 <Link
-                  className="font-semibold text-primary-text underline"
+                  className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                   href={"/recruiter/drives/"+item.job.id+"?tab=offers"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
                   {counts?.[item.job.id]?.offers??0} offers
                 </Link>
