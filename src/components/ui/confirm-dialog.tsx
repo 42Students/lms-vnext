@@ -12,7 +12,8 @@ export function ConfirmDialog({
   confirmLabel?: string; cancelLabel?: string; confirmVariant?: "primary" | "danger";
   pending?: boolean; confirmDisabled?: boolean; onConfirm: () => void; children?: ReactNode;
 }) {
-  return <Dialog open={open} onOpenChange={onOpenChange} title={title} description={description} dismissible={!pending}
+  return <Dialog open={open} onOpenChange={onOpenChange} title={title} description={description} role="alertdialog" dismissible={!pending}
+    className="lms-legacy-confirm-dialog" bodyClassName="!p-0"
     footer={<><Button variant="secondary" autoFocus disabled={pending} onClick={() => onOpenChange(false)}>{cancelLabel}</Button>
       <Button variant={confirmVariant} loading={pending} disabled={pending || confirmDisabled} onClick={onConfirm}>{pending ? "Working…" : confirmLabel}</Button></>}>
     {children ?? <p className="m-0 max-w-prose break-words text-[13px] leading-5 text-[var(--lms-body-text)]">This action will be applied immediately.</p>}

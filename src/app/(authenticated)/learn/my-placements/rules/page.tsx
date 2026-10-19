@@ -20,13 +20,13 @@ export default async function LearnerPlacementRulesPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={back.href}
-        className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← {back.label}
       </Link>
       <PageHeader eyebrow="My Placements" title="Placement rules"
         description="Your placement cell sets these rules. If they change, the new rules apply to applications made after the change." />
       <section aria-labelledby="placement-preparation-heading"
-        className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+        className="rounded-xl border border-border bg-surface p-4 md:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 id="placement-preparation-heading" className="text-base font-semibold text-foreground">
@@ -53,7 +53,7 @@ export default async function LearnerPlacementRulesPage({
             A self-entered value must not be described as verified by your college.
           </p>
         )}
-        <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        <ul className="mt-4 grid gap-3 md:grid-cols-2">
           {preparation.criteria.map((criterion) => (
             <li key={criterion.key} className="rounded-xl border border-border p-3">
               <p className="text-sm font-semibold text-foreground">
@@ -66,15 +66,15 @@ export default async function LearnerPlacementRulesPage({
         </ul>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link href="/learn/my-placements#placement-academic-evidence"
-            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             Review academic evidence →
           </Link>
           <Link href="/learn/my-placements/jobs"
-            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             Check published drive eligibility →
           </Link>
           <Link href="/learn/profile/verification"
-            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             View my college verification status →
           </Link>
         </div>
@@ -85,7 +85,7 @@ export default async function LearnerPlacementRulesPage({
         <Link href="/learn/my-placements/jobs" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Check current drives →</Link>
       </section>
       <section aria-labelledby="rule-applicability-heading"
-        className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+        className="rounded-xl border border-border bg-surface p-4 md:p-5">
         <h2 id="rule-applicability-heading" className="text-base font-semibold text-foreground">
           {ruleApplicability.heading}
         </h2>
@@ -95,7 +95,7 @@ export default async function LearnerPlacementRulesPage({
           No retroactive eligibility decision is inferred.
         </p>
         <Link href="/learn/my-placements/applications"
-          className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
           Review my saved applications →
         </Link>
       </section>

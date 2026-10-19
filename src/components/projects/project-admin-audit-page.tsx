@@ -179,8 +179,8 @@ export async function ProjectAdminAuditPage({
         title="Project audit"
         description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
         actions={<div className="flex flex-wrap items-center justify-end gap-2">
-          <a href={basePath + "/audit"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Refresh</a>
-          {basePath === "/admin/projects" ? <a href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">View activity log</a> : null}
+          <a href={basePath + "/audit"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Refresh</a>
+          {basePath === "/admin/projects" ? <a href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">View activity log</a> : null}
         </div>}
       />
 
@@ -279,7 +279,7 @@ export async function ProjectAdminAuditPage({
           </Button>
           <a
             href={basePath + "/audit"}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
           >
             Reset
           </a>
