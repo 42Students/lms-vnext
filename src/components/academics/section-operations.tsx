@@ -266,7 +266,7 @@ export function SectionOperations({
       className: "text-right",
       cell: (row: ProgramEnrollment) =>
         row.status === "ACTIVE" ? (
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
             <Button
               size="sm"
               variant="secondary"
@@ -342,7 +342,7 @@ export function SectionOperations({
       className: "text-right",
       cell: (row: RosterRow) =>
         row.status === "ACTIVE" ? (
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
             <Button
               size="sm"
               variant="secondary"
