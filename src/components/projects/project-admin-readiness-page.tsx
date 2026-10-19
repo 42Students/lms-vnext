@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import {AdminReadinessWorkspacePicker} from "./admin-readiness-workspace-picker";
 import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
@@ -118,7 +119,7 @@ export async function ProjectAdminReadinessPage({
               className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
               href={basePath+"/"+row.projectId+"/readiness"}>Manage</Link>},
           ]}
-          empty={<p role="status" className="text-sm text-body">No workspace overrides match these filters.</p>}
+          empty={<EmptyState title="No matching overrides" description="No workspace overrides match these filters." />}
         />}
       </section>
       <section className="space-y-3 border-b border-border pb-5">
@@ -142,7 +143,7 @@ export async function ProjectAdminReadinessPage({
                 {key:"points",header:"Points",mobilePriority:"secondary",cell:release=>release.points},
                 {key:"target",header:"Target date",mobilePriority:"secondary",cell:release=>release.targetDate??"—"},
               ]}
-              empty={<p role="status" className="text-sm text-body">No releases recorded.</p>}
+              empty={<EmptyState title="No releases recorded" description="This workspace has no recorded releases." />}
             />}
         </> : null}
       </section>
