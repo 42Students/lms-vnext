@@ -107,6 +107,15 @@
   background: #1a1d21;
 }
 @media (max-width: 639px) {
+  [data-slot="dropdown-root"][data-mobile-sheet="true"][open]::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 39;
+    background: rgba(30, 54, 63, .1);
+  }
+}
+@media (max-width: 639px) {
   [data-slot="dropdown-root"][data-mobile-sheet="true"] > [data-slot="dropdown"] {
     inset: auto 0 0;
     width: 100%;
