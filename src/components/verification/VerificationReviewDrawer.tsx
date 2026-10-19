@@ -1,6 +1,6 @@
 "use client";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
-import {useEffect,useRef,useState} from "react";
+import {useEffect,useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
@@ -12,8 +12,6 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
 import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
-import {canDismissVerificationDialog} from "@/modules/verification/review-dialog-keyboard";
-import {verificationFocusWrap} from "@/modules/verification/review-focus-loop";
 import {verificationDecisionHistory} from "@/modules/verification/review-decision-history";
 import {verificationDecisionConfirmation} from "@/modules/verification/review-confirmation";
 import {canEditVerificationDecision} from "@/modules/verification/review-edit-guard";
@@ -27,8 +25,6 @@ type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapsho
 export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/college/verification",collegeId,sequenceProgress,onNext,onFinish}:{
  row:VerificationQueueCard;onClose:()=>void;onSaved:(action?:"VERIFY"|"SEND_BACK")=>void;apiBase?:string;collegeId?:string;sequenceProgress?:string;onNext?:()=>void;onFinish?:()=>void;
 }){
- const closeButton=useRef<HTMLButtonElement>(null);
- const drawer=useRef<HTMLElement>(null);
  const [detail,setDetail]=useState<Detail|null>(null);
  const [error,setError]=useState("");
  const [loading,setLoading]=useState(true);
@@ -41,29 +37,6 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  const [reason,setReason]=useState<string>(reasonChoices[0]??"");
  const [additional,setAdditional]=useState("");
  const url=`${apiBase}/${encodeURIComponent(row.learnerMembershipId)}/${row.section}${collegeId?`?collegeId=${encodeURIComponent(collegeId)}`:""}`;
- useEffect(()=>{
-  const previouslyFocused=document.activeElement instanceof HTMLElement?document.activeElement:null;
-  closeButton.current?.focus();
-  return ()=>previouslyFocused?.focus();
- },[]);
- useEffect(()=>{
-  function onKeyboard(event:KeyboardEvent){
-   if(event.key==="Tab"&&drawer.current){
-    const focusable=[...drawer.current.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')]
-     .filter(element=>element.getClientRects().length>0);
-    if(focusable.length){
-     const direction=verificationFocusWrap(document.activeElement===focusable[0],document.activeElement===focusable[focusable.length-1],event.shiftKey);
-     if(direction){event.preventDefault();focusable[direction==="FIRST"?0:focusable.length-1]?.focus();}
-     else if(!drawer.current.contains(document.activeElement)){event.preventDefault();focusable[0]?.focus();}
-    }
-   }
-   if(canDismissVerificationDialog(event.key,saving)){
-    event.preventDefault();event.stopPropagation();onClose();
-   }
-  }
-  window.addEventListener("keydown",onKeyboard);
-  return ()=>window.removeEventListener("keydown",onKeyboard);
- },[onClose,saving]);
  useEffect(()=>{
   let active=true;
   apiFetch<Detail>(url,{cache:"no-store"}).then(data=>{if(active)setDetail(data);})
@@ -97,14 +70,9 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   }
   finally{setSaving(false);}
  }
- return <div className="fixed inset-0 z-50 flex justify-end bg-black/50">
-  <aside ref={drawer} role="dialog" aria-modal="true" aria-label={`Review ${row.learnerName}`} className="h-full w-full max-w-xl overflow-y-auto overscroll-contain bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl [mask-image:linear-gradient(to_bottom,transparent,black_12px,black_95%,transparent)] sm:p-6">
-   <header className="flex items-start justify-between gap-3 border-b pb-3">
-    <div className="min-w-0"><h2 className="break-words text-lg font-semibold">{row.learnerName}</h2>
-     {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
-     <p className="text-sm">{row.section==="EDUCATION"?"Education":"Identity"} · {row.status.replaceAll("_"," ")}</p></div>
-    <Button variant="secondary" type="button" ref={closeButton} disabled={saving} onClick={onClose} className="min-h-11">Close</Button>
-   </header>
+ return <Drawer open={true} onOpenChange={next=>{if(!next&&!saving)onClose();}} dismissible={!saving}
+  title={row.learnerName} description={(row.rollNumber?"Roll no.: "+row.rollNumber+" · ":"")+(row.section==="EDUCATION"?"Education":"Identity")+" · "+row.status.replaceAll("_"," ")}
+  className="sm:w-[min(600px,100vw)]" bodyClassName="pb-[max(1rem,env(safe-area-inset-bottom))]">
    {sequenceProgress&&<nav aria-label="Sequential verification progress" className="flex flex-wrap items-center gap-3 border-b py-3 text-sm">
      <span role="status">{sequenceProgress}</span>
      <Button variant="secondary" type="button" disabled={saving} onClick={onNext} className="min-h-11">Next</Button>
@@ -202,6 +170,5 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      {saving&&<p role="status">Saving decision…</p>}
     </>:<p className="text-sm">This request is already decided. No actions are available.</p>}
    </div>:null}
-  </aside>
- </div>;
+ </Drawer>;
 }
