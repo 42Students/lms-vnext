@@ -2,6 +2,7 @@
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import { Table } from "@/components/ui/table";
+import { Disclosure } from "@/components/ui/disclosure";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {useEffect,useRef,useState,type CSSProperties,type ReactNode} from "react";
 import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
@@ -185,9 +186,9 @@ export function TpoSpreadsheetGrid<Row>({
    <ul aria-label="Current page TPO spreadsheet records" className="space-y-2 md:hidden">{orderedRows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
     {selection?<label className="flex min-h-11 items-center gap-2 text-sm"><Checkbox checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/>Select student row</label>:null}
     {(mobileActionsCollapsible?mobilePrimary:display).map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2 text-sm" title={col.tooltip?.(row)}><strong>{col.label}</strong><span className="min-w-0 break-words [overflow-wrap:anywhere]">{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</span></div>)}
-    {mobileActionsCollapsible&&mobileExtra.length>0?<details className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"><summary className="min-h-11 cursor-pointer font-semibold">More student details</summary>
+    {mobileActionsCollapsible&&mobileExtra.length>0?<Disclosure title="More student details" className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
       <dl className="mt-2 space-y-2">{mobileExtra.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2"><dt className="font-semibold">{col.label}</dt><dd className="min-w-0 break-words [overflow-wrap:anywhere]" title={col.tooltip?.(row)}>{displayTpoGridCell(col.read(row))}</dd></div>)}</dl>
-    </details>:null}
+    </Disclosure>:null}
     {rowActions ? mobileActionsCollapsible ?
       <details className="group rounded-[var(--lms-control-radius)] border border-border p-2 md:contents" aria-label="Row actions">
        <summary className="min-h-11 cursor-pointer font-semibold md:hidden">Actions</summary>
