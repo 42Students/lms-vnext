@@ -50,7 +50,7 @@ export function TopbarOrganizationSwitcher({
     }}>
     <button ref={trigger} type="button" className={style.orgTrigger}
       title={organizationName} aria-label={"Switch workspace, current "+organizationName}
-      aria-haspopup="dialog" aria-expanded={open}
+      aria-haspopup="dialog" aria-expanded={open} aria-keyshortcuts="ArrowDown"
       aria-controls={open?"lms-topbar-org-switcher":undefined}
       onClick={()=>setOpen(value=>!value)}>
       <span className={style.orgName}>{organizationName}</span>
