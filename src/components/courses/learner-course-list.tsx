@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 import Link from "next/link";
 import { LearnerCourseCardImage } from "./learner-course-card-image";
@@ -210,29 +211,20 @@ export function LearnerCourseList({
           </div>
 
           {electiveCount > 0 ? (
-            <div
-              className="grid min-h-9 w-full grid-cols-3 gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-1 sm:inline-flex sm:w-auto"
-              aria-label="Filter by course type"
-            >
-              {[
-                ["all", `All ${periodRows.length}`],
-                ["core", `Regular ${coreCount}`],
-                ["elective", `Electives ${electiveCount}`],
-              ].map(([value, label]) => (
-                <Button
-                  key={value}
-                  type="button"
-                  aria-pressed={effectiveTypeFilter === value}
-                  onClick={() => {
-                    setTypeFilter(value as "all" | "core" | "elective");
-                    setVisibleLimit(PAGE_SIZE);
-                  }}
-                  variant="secondary" className="min-h-11 min-w-0 px-2 text-xs aria-pressed:!border-[var(--lms-primary)] aria-pressed:!bg-[var(--lms-primary-subtle)] aria-pressed:!text-[var(--lms-primary-text)] sm:px-3"
-                >
-                  {label}
-                </Button>
-              ))}
-            </div>
+            <SegmentedControl
+              label="Filter by course type"
+              value={effectiveTypeFilter}
+              onChange={(value) => {
+                setTypeFilter(value as "all" | "core" | "elective");
+                setVisibleLimit(PAGE_SIZE);
+              }}
+              options={[
+                { value: "all", label: `All ${periodRows.length}` },
+                { value: "core", label: `Regular ${coreCount}` },
+                { value: "elective", label: `Electives ${electiveCount}` },
+              ]}
+              className="w-full sm:w-auto [&>label]:flex-1 sm:[&>label]:flex-none [&>label>span]:min-h-11 sm:[&>label>span]:min-h-9"
+            />
           ) : null}
         </div>
 
