@@ -10,6 +10,8 @@ import {copyCompanyShareUrl} from "@/modules/placements/company-share/copy-model
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
 const SHARE_COLUMNS=[
  ["APPLICATION_ID","Applicant ID"],["NAME","Name"],["ROLL_NUMBER","Roll number"],
@@ -106,9 +108,9 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
   <h2 className="text-lg font-semibold text-foreground">Share shortlisted applicants with a company</h2>
   <p className="text-sm text-body">At most 10 live links may exist per drive. Links disclose only the same three fields shown above,
    have a maximum 90-day lifetime, use a separate six-digit code, and may be revoked immediately. Private notes stay excluded.</p>
-  {!ready?<p role="status" className="text-sm text-body">
+  {!ready?<Alert tone="warning">
    External sharing is unavailable until its audited database migration is registered.
-  </p>:<>
+  </Alert>:<>
    <div className="flex flex-wrap items-end gap-3">
     <label className="text-sm text-body">Expires in days
      <Select value={days} onChange={event=>changeExpiry(event.target.value)}
@@ -136,18 +138,18 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
      Create expiring link
     </Button>
    </div>
-   {newCode?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+   {newCode?<Alert tone="info">
     Share code: <strong className="font-mono text-lg">{newCode}</strong>.
     Give this six-digit code to the company separately. It cannot be recovered later.
-   </p>:null}
+   </Alert>:null}
    {newUrl?<div className="rounded-[var(--lms-control-radius)] border border-border p-3">
     <p className="text-xs font-semibold text-body">Copy this URL now. The secret cannot be recovered later.</p>
     <Input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
      className="mt-2 w-full"/>
-    <button type="button" onClick={()=>void copyLink()}
-     className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Copy URL</button>
-    {copyState==="COPIED"?<p role="status" className="mt-2 text-sm text-body">Copied to clipboard.</p>:null}
-    {copyState==="MANUAL_COPY"?<p role="status" className="mt-2 text-sm text-body">Clipboard unavailable. Select the URL field above and copy it manually.</p>:null}
+    <Button type="button" variant="link" onClick={()=>void copyLink()}
+     className="mt-2 min-h-11 md:min-h-9">Copy URL</Button>
+    {copyState==="COPIED"?<InlineNotice tone="success" message="Copied to clipboard."/>:null}
+    {copyState==="MANUAL_COPY"?<InlineNotice tone="info" message="Clipboard unavailable. Select the URL field above and copy it manually."/>:null}
    </div>:null}
    {links.length>0?<ul className="space-y-2">{links.map(link=><li key={link.id}
     className="flex flex-wrap items-center justify-between gap-2 border-t border-border py-2 text-sm">
@@ -156,14 +158,13 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
     <span className="text-xs text-muted-foreground">
      {link.audit.views} views · {link.audit.exports} CSV downloads
     </span>
-    {!link.revokedAt?<button type="button" disabled={pending}
-     onClick={()=>setRevokeTarget(link.id)}
-     className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Revoke</button>:null}
+    {!link.revokedAt?<Button type="button" variant="link" disabled={pending}
+     onClick={()=>setRevokeTarget(link.id)} className="min-h-11 md:min-h-9">Revoke</Button>:null}
    </li>)}</ul>:<p className="text-sm text-body">{companyShareEmptyMessage(status)}</p>}
   </>}
   <ConfirmDialog open={revokeTarget!==null} onOpenChange={open=>{if(!open)setRevokeTarget(null);}} pending={pending}
     title="Revoke this company applicant link?" description="Anyone using it will immediately lose access."
     confirmLabel="Revoke" onConfirm={()=>{if(revokeTarget)void revokeLink(revokeTarget);}}/>
-  {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }

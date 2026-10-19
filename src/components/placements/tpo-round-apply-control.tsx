@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {roundApplyPreviewCsv,roundApplyReportCsv} from "@/modules/placements/tpo-round-apply-csv-model";
@@ -63,7 +65,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     >
     Export consequence preview (CSV)
    </Button>
-   {!preview.ready?<p role="alert" className="text-sm text-foreground">Complete this evaluation round before applying results.</p>:null}
+   {!preview.ready?<Alert tone="warning">Complete this evaluation round before applying results.</Alert>:null}
    <div className="flex flex-wrap gap-3">
     <Button variant="primary" type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
@@ -85,6 +87,6 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     ["Learner\tResult state\tOutcome\tReason",...report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].map(value=>value.replaceAll("\t"," ").replaceAll("\n"," ")).join("\t"))].join("\n")
    ).catch(()=>setError("Copy failed. Use Export results (CSV)."));}}>Copy results</Button>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-foreground">{error} Refresh the preview before retrying.</p>:null}
+  {error?<InlineNotice tone="error" message={error+" Refresh the preview before retrying."}/>:null}
  </section>;
 }
