@@ -85,7 +85,7 @@ export function TpoAfterCollegeBulkEditor({
   }
 
   return <section aria-label="After college bulk actions"
-    className="space-y-3 rounded-xl border border-border bg-surface p-4">
+    className="space-y-3 - border-t border-border pt-5">
     <h2 className="font-semibold">After college · Bulk update</h2>
     <p className="text-sm text-muted-foreground">
       Select students on this page, choose their outcome, preview the count and confirm.
