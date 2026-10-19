@@ -73,7 +73,7 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
       <div className="flex items-start gap-[var(--lms-space-3)]">
         <span aria-hidden="true" className={cx("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[toast.tone])} />
         <div className="min-w-0 flex-1">
-          <p className="m-0 break-words text-[13px] leading-5 font-semibold text-[var(--lms-heading)]">{toast.title}</p>
+          <p className="m-0 break-words text-[13px] font-semibold leading-5 text-[var(--lms-heading)]">{toast.title}</p>
           {toast.description ? <p className="mt-1 break-words text-[13px] leading-5 text-[var(--lms-body-text)]">{toast.description}</p> : null}
         </div>
         <Button variant="ghost" type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
