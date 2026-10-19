@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 
 export default function ErrorView({ reset }: {
@@ -6,10 +7,8 @@ export default function ErrorView({ reset }: {
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
-      <h1 className="text-lg font-semibold text-foreground">
-        Couldn&apos;t load student placement history
-      </h1>
+    <section role="alert" className="border-b border-border py-6">
+      <PageHeader title={"Couldn't load student placement history"} />
       <p className="mt-2 text-sm text-body">
         The records could not be retrieved. No missing record or zero count is inferred.
       </p>
