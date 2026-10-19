@@ -60,7 +60,7 @@ export default async function HrProfilePage() {
 
       <section
         aria-labelledby="recruiter-account-status"
-        className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5"
+        className="border-b border-border pb-5"
       >
         <h2
           id="recruiter-account-status"
