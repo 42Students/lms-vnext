@@ -55,7 +55,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    <label className="grid gap-1 text-sm">CSV (name, code, city, state, country)
     <Textarea rows={5} maxLength={150000} value={csv} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
-     className="font-mono"
+     className="font-mono" aria-invalid={Boolean(validation)}
      placeholder="name,code,city,state,country"/>
    </label>
    <p className="text-sm text-muted-foreground">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
