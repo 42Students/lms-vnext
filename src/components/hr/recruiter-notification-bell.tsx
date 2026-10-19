@@ -66,7 +66,7 @@ export function RecruiterNotificationBell(){
   <Button variant="primary" className="relative" ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
     aria-expanded={isOpen} aria-haspopup="dialog"
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
-    className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-border bg-surface hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     <span aria-hidden="true">🔔</span>
     {data?.unread&&data.unread>0?<span aria-hidden="true"
       className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#ff7576] px-1 text-[10px] leading-3 text-white">
