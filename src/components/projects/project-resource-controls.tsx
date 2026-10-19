@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
@@ -108,36 +109,36 @@ function ResourceForm({
       </label>
       {!isLearner ? <>
         <label className="grid gap-1 text-sm font-semibold text-body">Type
-          <select value={metadata.resourceType}
+          <Select value={metadata.resourceType}
             onChange={event=>onMetadata({...metadata,resourceType:event.target.value as ResourceMetadata["resourceType"]})}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="w-full">
             {(["FILE","LINK","DOCUMENT","CODE","NOTE","ENVIRONMENT"] as const).map(value=>
               <option key={value} value={value}>{value[0]+value.slice(1).toLowerCase()}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Status
-          <select value={metadata.status}
+          <Select value={metadata.status}
             onChange={event=>onMetadata({...metadata,status:event.target.value as ResourceMetadata["status"]})}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="w-full">
             <option value="ACTIVE">Active</option><option value="DRAFT">Draft</option>
             <option value="ARCHIVED">Archived</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Related sprint
-          <select value={metadata.sprintId}
+          <Select value={metadata.sprintId}
             onChange={event=>onMetadata({...metadata,sprintId:event.target.value,taskId:""})}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="w-full">
             <option value="">No sprint</option>
             {sprints.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Related task
-          <select value={metadata.taskId}
+          <Select value={metadata.taskId}
             onChange={event=>onMetadata({...metadata,taskId:event.target.value})}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="w-full">
             <option value="">No task</option>
             {tasks.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="flex items-center gap-2 text-sm font-semibold text-body">
           <input type="checkbox" checked={metadata.pinned}
@@ -150,11 +151,11 @@ function ResourceForm({
       </> : null}
       {!isLearner ? <label className="grid gap-1 text-sm font-semibold text-body">
         Visible to
-        <select value={visibility} onChange={event => onVisibility(event.target.value as "TEAM" | "MENTOR_ONLY")}
-          className="min-h-10 rounded-md border border-border bg-surface px-3 py-2">
+        <Select value={visibility} onChange={event => onVisibility(event.target.value as "TEAM" | "MENTOR_ONLY")}
+          className="w-full">
           <option value="TEAM">Everyone</option>
           <option value="MENTOR_ONLY">Mentors only</option>
-        </select>
+        </Select>
       </label> : null}
       {!isLearner ? <label className="flex items-center gap-2 text-sm font-semibold text-body">
         <input
