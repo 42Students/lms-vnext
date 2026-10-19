@@ -23,7 +23,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
   <PageHeader eyebrow="Recruiter · Drive" title="Messages"
    description={result.workspace.job.title+" · "+result.workspace.college.name+". Private recruiter and placement cell discussion."}/>
   <Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive overview</Link>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-b border-border pb-5">
    <h2 className="font-semibold text-foreground">Drive conversation</h2>
    <p className="mt-2 text-sm text-body">Open or resume the conversation tied to this authorized employer drive.</p>
    <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
@@ -32,8 +32,8 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
     <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open drive discussion</button>
    </form>
   </section>
-  {result.threads.length?<ol className="space-y-3">
-   {result.threads.map(thread=><li key={thread.id} className="rounded-xl border border-border p-4">
+  {result.threads.length?<ol className="divide-y divide-border border-y border-border">
+   {result.threads.map(thread=><li key={thread.id} className="py-4">
     <Link href={"/hr/conversations/"+thread.id} className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Continue discussion</Link>
    </li>)}
   </ol>:<p role="status" className="text-sm text-body">No conversation has been started for this drive.</p>}

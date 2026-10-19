@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { ErrorState } from "@/components/ui/error-state";
 
@@ -8,6 +9,5 @@ export default function CollegeAnnouncementsError({ reset }: {
 }) {
   return <ErrorState title="College communications unavailable"
     description="Persisted notifications could not be loaded. An empty inbox cannot be assumed."
-    action={<button type="button" onClick={reset}
-      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Retry</button>} />;
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>} />;
 }

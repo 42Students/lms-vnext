@@ -105,7 +105,7 @@ export function RecruiterPlacementPortfolio({
               </nav>
               {(unansweredRequests[item.job.id]??0)>0?<Link
                 href={"/recruiter/drives/"+item.job.id+"?tab=requests"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}
-                className="mt-2 inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-warning px-3 text-sm font-semibold text-primary-text">
+                className="mt-2 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-warning px-3 text-sm font-semibold text-primary-text">
                 Answer {unansweredRequests[item.job.id]} open {unansweredRequests[item.job.id]===1?"request":"requests"} →
               </Link>:null}
               <p className="mt-2 text-sm text-body">
@@ -130,11 +130,11 @@ export function RecruiterPlacementPortfolio({
           <nav aria-label={"Actions for "+item.job.title}
             className="mt-4 flex flex-wrap gap-3 border-t border-border pt-3">
             <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
-              className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
               {item.job.status==="CLOSED"?"Hire again":"Hire again with changes"}
             </Link>
             <Link href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"/messages"}
-              className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
               Answer
             </Link>
           </nav>
