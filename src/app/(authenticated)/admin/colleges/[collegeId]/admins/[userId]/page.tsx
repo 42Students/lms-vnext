@@ -19,7 +19,7 @@ export default async function AdminDeviceSessionsPage({params}:{
  }).format(new Date(value));
  return <div className="space-y-5">
   <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">← Admins</Link>
-  <PageHeader eyebrow="Super Admin · Tenant" title={data.target.name+" · Active sessions"}
+  <PageHeader title={data.target.name+" · Active sessions"}
    description="Current device sessions for the selected administrator. Times are in IST. An unknown or out-of-scope person cannot be inspected."/>
   <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Administrator activity history →</Link>
