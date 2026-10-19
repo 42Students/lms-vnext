@@ -3,6 +3,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {DataTable} from "@/components/ui/data-table";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {Button} from "@/components/ui/button";
+import {Tabs} from "@/components/ui/tabs";
 import {FileUpload} from "@/components/ui/file-upload";
 import {Checkbox} from "@/components/ui/checkbox";
 
@@ -202,13 +203,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                     Include all new rows
                   </Button>
                 </div>
-                <nav aria-label="Import preview groups" className="flex flex-wrap gap-2">
-                  {([["ALL","All"],["NEW","New"],["EXISTING","Already recruiters"],
-                    ["INVALID","To fix"],["SKIPPED","Skipped"]] as const).map(([value,label])=>
-                    <Button key={value} type="button" aria-pressed={rowGroup===value}
-                      variant={rowGroup===value?"primary":"secondary"}
-                      onClick={()=>setRowGroup(value)}>{label}</Button>)}
-                </nav>
+                <Tabs ariaLabel="Import preview groups" renderPanel={false} controlledOnly value={rowGroup}
+                   onValueChange={next=>setRowGroup(next as typeof rowGroup)}
+                   items={[{value:"ALL",label:"All",count:preview.rows.length},
+                    {value:"NEW",label:"New",count:newRows},
+                    {value:"EXISTING",label:"Already recruiters",count:existingNumbers.size},
+                    {value:"INVALID",label:"To fix",count:preview.invalid},
+                    {value:"SKIPPED",label:"Skipped",count:skipRows.length}]}/>
                 <ScrollCue axis="y" label="Recruiter import preview rows" viewportClassName="max-h-56">
                   <DataTable rows={previewRows} getRowKey={item=>String(item.row)} caption="Recruiter import preview"
                     empty={<p>No rows in this group.</p>}
