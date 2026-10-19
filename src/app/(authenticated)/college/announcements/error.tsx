@@ -9,5 +9,5 @@ export default function CollegeAnnouncementsError({ reset }: {
   return <ErrorState title="College communications unavailable"
     description="Persisted notifications could not be loaded. An empty inbox cannot be assumed."
     action={<button type="button" onClick={reset}
-      className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Retry</button>} />;
+      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Retry</button>} />;
 }
