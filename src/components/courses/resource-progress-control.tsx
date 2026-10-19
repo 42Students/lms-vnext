@@ -1,5 +1,6 @@
-import { Badge } from "@/components/ui/badge";
 "use client";
+import { Badge } from "@/components/ui/badge";
+
 
 import { useState, useSyncExternalStore } from "react";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
