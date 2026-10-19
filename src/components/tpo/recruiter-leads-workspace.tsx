@@ -973,7 +973,7 @@ export function RecruiterLeadsWorkspace({
                       </Select>},
                     {key:"People",header:"People",mobilePriority:"secondary",cell:company=><div className="flex flex-wrap gap-2">
                       {company.people?.length?company.people.map(person=>
-                        <Link key={person.id} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline"
+                        <Link key={person.id} className="inline-flex min-h-11 items-center text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                           href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>):
                         <button type="button" className="min-h-11 text-[var(--lms-teal-deep)] underline"
                           onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</button>}
