@@ -66,35 +66,35 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
  return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid gap-3 sm:grid-cols-2">
   <input type="hidden" name="action" value="CREATE"/>
   <label className="grid gap-1 text-sm text-body">Interview round
-   <Select name="roundId" required defaultValue="" className="text-base">
+   <Select name="roundId" required defaultValue="" className="text-sm">
     <option value="" disabled>Select an interview round</option>
     {rounds.map(row=><option key={row.id} value={row.id}>{row.sequence}. {row.name}</option>)}
    </Select>
   </label>
   <label className="grid gap-1 text-sm text-body">Mode
-   <Select name="mode" required defaultValue="VIRTUAL" className="text-base">
+   <Select name="mode" required defaultValue="VIRTUAL" className="text-sm">
     <option value="VIRTUAL">Virtual</option><option value="ON_CAMPUS">On campus</option>
    </Select>
   </label>
   <label className="grid gap-1 text-sm text-body">Start (IST)
    <Input name="startAt" type="datetime-local" min={today} required value={start}
     onChange={event=>{const next=event.target.value;setStart(next);if(end&&end<=next)setEnd("");setError(null);}}
-    className="text-base"/>
+    className="text-sm"/>
   </label>
   <label className="grid gap-1 text-sm text-body">End (IST)
    <Input name="endAt" type="datetime-local" min={start||today} required value={end}
     onChange={event=>{setEnd(event.target.value);setError(null);}}
-    className="text-base"/>
+    className="text-sm"/>
   </label>
   <label className="grid gap-1 text-sm text-body">Capacity
    <Input name="capacity" type="number" min={1} max={100} defaultValue={1}
-    required className="text-base"/>
+    required className="text-sm"/>
   </label>
   <label className="grid gap-1 text-sm text-body">Panel label (not a learner name)
-   <Input name="panelLabel" maxLength={160} className="text-base"/>
+   <Input name="panelLabel" maxLength={160} className="text-sm"/>
   </label>
   <label className="grid gap-1 text-sm text-body sm:col-span-2">Meeting location
-   <Input name="meetingLocation" maxLength={500} className="text-base"/>
+   <Input name="meetingLocation" maxLength={500} className="text-sm"/>
   </label>
   {error?<p role="alert" className="sm:col-span-2 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="sm:col-span-2 text-sm text-body">{notice}</p>:null}
