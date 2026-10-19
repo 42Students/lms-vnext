@@ -65,7 +65,7 @@ export function RecruiterNotificationBell(){
   <button ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
     aria-expanded={isOpen} aria-haspopup="dialog"
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
-    className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--radius)] border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    className="relative inline-flex min-h-9 min-w-11 items-center justify-center rounded-[var(--radius)] border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
     <span aria-hidden="true">🔔</span>
     {data?.unread&&data.unread>0?<span aria-hidden="true"
       className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
@@ -76,17 +76,17 @@ export function RecruiterNotificationBell(){
    <div className="flex items-center justify-between gap-3">
     <h2 className="font-semibold text-foreground">Notifications</h2>
     <button type="button" onClick={()=>setIsOpen(false)}
-     aria-label="Close notifications" className="min-h-11 px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Close</button>
+     aria-label="Close notifications" className="min-h-9 px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Close</button>
    </div>
    {error?<div role="alert" className="mt-3 text-sm text-error">{error}
-    <button type="button" onClick={()=>void load()} className="ml-2 inline-flex min-h-11 items-center underline">Retry</button>
+    <button type="button" onClick={()=>void load()} className="ml-2 inline-flex min-h-9 items-center underline">Retry</button>
    </div>:null}
    {data?.status==="CHOOSE_COLLEGE"?
     <div className="mt-3 space-y-2 text-sm">{data.choices?.map(item=>
      <button type="button" key={item.collegeId} onClick={()=>{
        requestGate.current.invalidate();setData(null);setError("");setCollegeId(item.collegeId);
       }}
-      className="block min-h-11 w-full rounded-lg border border-border p-3 text-left text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      className="block min-h-9 w-full rounded-lg border border-border p-3 text-left text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       {item.collegeName}</button>)}</div>:null}
    {data?.status==="READY"&&data.rows?.length===0?
      <p role="status" className="mt-4 text-sm text-muted-foreground">No notifications yet</p>:null}
@@ -95,12 +95,12 @@ export function RecruiterNotificationBell(){
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-11 rounded-lg border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+       className="block min-h-9 rounded-lg border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}
    <Link href={href} onClick={()=>setIsOpen(false)}
-    className="mt-4 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">See all notifications</Link>
+    className="mt-4 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">See all notifications</Link>
   </section>:null}
  </div>;
 }

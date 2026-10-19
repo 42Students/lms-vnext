@@ -96,7 +96,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   <label className="grid gap-1 text-sm text-body sm:col-span-2">Meeting location
    <Input name="meetingLocation" maxLength={500} className="text-base"/>
   </label>
-  {error?<p role="alert" className="sm:col-span-2 rounded-md border border-error p-3 text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" className="sm:col-span-2 rounded-[9px] border border-error p-3 text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="sm:col-span-2 text-sm text-body">{notice}</p>:null}
   <Button type="submit" disabled={!rounds.length||submitting} aria-busy={submitting}
     variant="primary" className="sm:col-span-2">
