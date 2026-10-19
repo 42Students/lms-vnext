@@ -30,18 +30,6 @@ type Workspace = Awaited<
   ReturnType<typeof getAdminCourseWorkspace>
 >;
 
-function Metric({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: number;
-  detail: string;
-}) {
-  return <StatTile label={label} value={value} detail={detail} />;
-}
-
 export function AdminCourseOverview({
   workspace,
   offeringBasePath,
@@ -435,22 +423,22 @@ export function AdminCourseOverview({
   return (
     <div className="min-w-0 space-y-8">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric
+        <StatTile
           label="Courses"
           value={workspace.summary.courses}
           detail=""
         />
-        <Metric
+        <StatTile
           label="Offerings"
           value={workspace.summary.offerings}
           detail=""
         />
-        <Metric
+        <StatTile
           label="Deliveries"
           value={workspace.summary.deliveries}
           detail=""
         />
-        <Metric
+        <StatTile
           label="Teaching assignments"
           value={
             workspace.summary
