@@ -1,4 +1,6 @@
 "use client";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {useEffect,useRef,useState,type CSSProperties,type ReactNode} from "react";
@@ -113,7 +115,7 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
    <ScrollCue axis="x" label="TPO spreadsheet columns" className="hidden rounded-[var(--lms-canvas-radius)] border border-border md:block"><table className="w-full text-left text-sm"><caption className="sr-only">Current page TPO spreadsheet records</caption>
     <thead className="bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-700)]"><tr>{selection?<th scope="col" className="px-3 py-2"><input type="checkbox" aria-label="Select all filtered students" checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)}>
      <span>{col.label}</span>
-     {col.filter?<select aria-label={"Filter "+col.label} className="mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-1 text-xs font-normal"
+     {col.filter?<Select aria-label={"Filter "+col.label} className="mt-1 text-xs font-normal"
        value={params.get(col.filter.urlKey)??""}
        onChange={event=>{
         const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{[col.filter!.urlKey]:event.target.value});
@@ -121,23 +123,23 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
        }}>
        <option value="">All</option>
        {col.filter.options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
-      </select>:null}
+      </Select>:null}
      {viewKey?<div className="mt-1 flex flex-wrap gap-2 text-xs font-normal">
-      <button type="button" onClick={()=>updateLayout(col.key,{width:Math.max(100,colWidth(col.key)-40)})}
-       disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="inline-flex min-h-9 min-w-11 items-center justify-center rounded-[var(--lms-control-radius)] border px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">−</button>
-      <button type="button" onClick={()=>updateLayout(col.key,{width:Math.min(500,colWidth(col.key)+40)})}
-       disabled={colWidth(col.key)>=500} aria-label={"Widen "+col.label} className="inline-flex min-h-9 min-w-11 items-center justify-center rounded-[var(--lms-control-radius)] border px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">+</button>
-      <button type="button" onClick={()=>updateLayout(col.key,{pinned:!columnView[col.key]?.pinned})}
+      <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.max(100,colWidth(col.key)-40)})}
+       disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="min-h-11 min-w-11">−</Button>
+      <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.min(500,colWidth(col.key)+40)})}
+       disabled={colWidth(col.key)>=500} aria-label={"Widen "+col.label} className="min-w-11">+</Button>
+      <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{pinned:!columnView[col.key]?.pinned})}
        aria-pressed={Boolean(columnView[col.key]?.pinned)}
-       className="inline-flex min-h-9 min-w-11 items-center justify-center rounded-[var(--lms-control-radius)] border px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{columnView[col.key]?.pinned?"Unpin":"Pin"}</button>
+       className="min-w-11">{columnView[col.key]?.pinned?"Unpin":"Pin"}</Button>
      </div>:null}
     </th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
-    <tbody>{rows.map(row=><tr key={rowKey(row)} className="border-t border-border align-top">{selection?<td className="px-3 py-2"><input type="checkbox" checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<button type="button" className="min-h-9 text-left font-semibold text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
+    <tbody>{rows.map(row=><tr key={rowKey(row)} className="border-t border-border align-top">{selection?<td className="px-3 py-2"><input type="checkbox" checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
    </table></ScrollCue>
    {selection?<label className="flex min-h-11 items-center gap-2 text-sm md:hidden"><input type="checkbox" checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/>Select all filtered students</label>:null}
    <ul aria-label="Current page TPO spreadsheet records" className="space-y-2 md:hidden">{rows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
     {selection?<label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/>Select student row</label>:null}
-    {(mobileActionsCollapsible?mobilePrimary:display).map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2 text-sm" title={col.tooltip?.(row)}><strong>{col.label}</strong><span className="min-w-0 break-words [overflow-wrap:anywhere]">{openPrimary?.columnKey===col.key?<button type="button" className="min-h-9 text-left font-semibold text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</button>:displayTpoGridCell(col.read(row))}</span></div>)}
+    {(mobileActionsCollapsible?mobilePrimary:display).map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2 text-sm" title={col.tooltip?.(row)}><strong>{col.label}</strong><span className="min-w-0 break-words [overflow-wrap:anywhere]">{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</span></div>)}
     {mobileActionsCollapsible&&mobileExtra.length>0?<details className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"><summary className="min-h-11 cursor-pointer font-semibold">More student details</summary>
       <dl className="mt-2 space-y-2">{mobileExtra.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2"><dt className="font-semibold">{col.label}</dt><dd className="min-w-0 break-words [overflow-wrap:anywhere]" title={col.tooltip?.(row)}>{displayTpoGridCell(col.read(row))}</dd></div>)}</dl>
     </details>:null}
