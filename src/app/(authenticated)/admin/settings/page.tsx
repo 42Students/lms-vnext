@@ -131,11 +131,6 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
-      <Link href="/admin/settings/auth"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9">
-        Authentication and privileged access checklist →
-      </Link>
-
       <form className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
           <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 md:min-h-9"/>
