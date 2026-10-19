@@ -49,7 +49,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
    candidates={candidates.items.filter(item=>item.id!==finding.id).map(item=>({id:item.id,externalId:item.externalId,title:item.title}))}/>
   <section className="border-b border-border pb-4">
    <h2 className="font-semibold">Audit event history</h2>
-   <ol className="mt-3 space-y-2 text-sm">{events.map(event=><li key={event.id} className="border-b border-border pb-2">
+   <ol className="mt-3 divide-y divide-border border-y border-border text-sm">{events.map(event=><li key={event.id} className="py-3">
     {event.action} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(event.createdAt)}
     {event.note?<p className="mt-1 whitespace-pre-wrap break-words">{event.note}</p>:null}
    </li>)}</ol>
