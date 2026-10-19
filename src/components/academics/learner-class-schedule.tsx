@@ -1,5 +1,6 @@
 "use client";
 
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
 import { filterLearnerScheduleSections } from "@/modules/academics/learner-schedule-section-filter-model";
@@ -129,10 +130,9 @@ function EventNotes({description}: {description:string|null}) {
   const notes=learnerClassSessionNotes(description);
   if(!notes)return null;
   return (
-    <details className="border-t border-border px-3 py-2 text-sm text-body">
-      <summary className="min-h-10 cursor-pointer py-2 font-semibold text-primary-text">Session details</summary>
+    <Disclosure title="Session details" className="border-t border-border px-3 py-2 text-sm text-body">
       <p className="mt-2 whitespace-pre-wrap break-words leading-6">{notes}</p>
-    </details>
+    </Disclosure>
   );
 }
 
