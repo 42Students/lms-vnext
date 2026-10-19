@@ -66,11 +66,11 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
   <div className="flex flex-wrap gap-2">
    <Button type="button" variant="secondary" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(true)}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
+    className="min-h-11 sm:min-h-9">
     {pending?"Updating…":"Show to students"}</Button>
    <Button variant="primary" type="button" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(false)}
-    className="text-primary-text">
+    className="min-h-11 sm:min-h-9">
     Hide from students</Button>
   </div>
   {error?<Alert tone="error">{error}</Alert>:null}
@@ -78,7 +78,7 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
    <p>{report.changed} updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
    {report.failures.length?<Button type="button" variant="secondary" disabled={pending||lastAction===null||!report.failedCourseIds.some(id=>currentIds.has(id))}
     onClick={()=>lastAction!==null?void apply(lastAction,report.failedCourseIds):undefined}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+    className="min-h-11 sm:min-h-9">
     Retry failed
    </Button>:null}
    {report.matchedLessons===0?<p>No published lesson content is available for the selected courses.</p>:null}
