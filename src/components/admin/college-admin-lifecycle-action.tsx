@@ -35,10 +35,10 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole}:
  return <div className="min-w-44 space-y-2">
   {action==="SUSPEND"?<label className="grid gap-1 text-xs font-medium text-body">Suspension reason
    <Input value={reason} maxLength={1000} onChange={event=>setReason(event.target.value)}
-    className="min-h-11 rounded-md border border-border px-2 text-foreground" placeholder="Reason for suspension"/>
+    className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-foreground" placeholder="Reason for suspension"/>
   </label>:null}
   <Button type="button" variant="secondary" disabled={busy||(action==="SUSPEND"&&reason.trim().length<3)}
-   onClick={()=>setConfirmOpen(true)} className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+   onClick={()=>setConfirmOpen(true)} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
     {busy?"Saving…":action==="SUSPEND"?"Suspend":"Reactivate"}
   </Button>
   {error?<p role="alert" className="text-xs text-foreground">{error}</p>:null}
