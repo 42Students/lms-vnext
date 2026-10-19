@@ -1,0 +1,13 @@
+/* Project-only 767px mobile breakpoint for shared action Buttons, including
+ * ConfirmDialog footer controls. No global shared-Button mutation.
+ * Legacy: components___variables.scss:138-149 (44px touch),
+ * old-lms-shell-spec.md:22-24 (36px desktop controls).
+ */
+.legacy {
+  display: contents;
+}
+@media (max-width: 767px) {
+  .legacy :global([data-slot="button"]) {
+    min-height: 44px;
+  }
+}
