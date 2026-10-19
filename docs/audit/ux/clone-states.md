@@ -529,9 +529,9 @@ After the 12-file TPO component batch above, the following 13 entire page TSX fi
 | `announcements/page.tsx` | 7/7 | 0 | 2 | 1 | 2 | 0 | 40 | md:grid-cols-2; scheduled/ended metadata unstyled |
 | `batches/page.tsx` | 12/12 | 1 | 6 | 1 | 2 | 0 | 46 | sm:grid-cols-2/4, xl:grid-cols-3; mobile reset action |
 | `find/page.tsx` | 1/1 | 0 | 0 | 2 | 0 | 0 | 45 | min-w-0 finder form and per-section counts unchanged |
-| **13-file scoped total** | **41/41** | **1** | **8** | **10** | **8** | **0** | — | Source-only bounded scan |
+| **13-file scoped total** | **41/41** | **1** | **8** | **10** | **9** | **0** | — | Source-only bounded scan |
 
-**Source grep equivalent:** `<Alert\b`=41, `</Alert>`=41, `<Banner\b`=1, `</Banner>`=1, `<InlineNotice\b`=8, `<EmptyState\b`=10; raw `role=status/alert`=8, all exempt: live counts, scheduled/ended announcement metadata, and batch eligibility details. Styled bespoke role=status/alert wrappers=**0** in these 13 page sources. These are bounded files, NOT repository-wide zero claims.
+**Source grep equivalent:** `<Alert\b`=41, `</Alert>`=41, `<Banner\b`=1, `</Banner>`=1, `<InlineNotice\b`=8, `<EmptyState\b`=10; raw `role=status/alert`=9, all exempt: live counts, scheduled/ended announcement metadata, and batch eligibility details. Styled bespoke role=status/alert wrappers=**0** in these 13 page sources. These are bounded files, NOT repository-wide zero claims.
 
 Reproduce locally, commands **not executed in this turn**:
 ```sh
