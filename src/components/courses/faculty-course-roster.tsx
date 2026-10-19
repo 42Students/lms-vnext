@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Button } from "@/components/ui/button";
+import {ActionPagination} from "@/components/ui/action-pagination";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -230,45 +231,8 @@ export function FacultyCourseRoster({
           />
 
           {totalPages > 1 ? (
-            <nav
-              aria-label="Student roster pages"
-              className="flex items-center justify-between gap-3 print:hidden"
-            >
-              <Button
-                variant="secondary"
-                size="sm"
-                className="min-h-11 md:min-h-9"
-                disabled={currentPage === 1}
-                onClick={() =>
-                  setPage((value) =>
-                    Math.max(1, value - 1),
-                  )
-                }
-              >
-                Previous
-              </Button>
-              <span className="text-sm text-muted-foreground">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="min-h-11 md:min-h-9"
-                disabled={
-                  currentPage === totalPages
-                }
-                onClick={() =>
-                  setPage((value) =>
-                    Math.min(
-                      totalPages,
-                      value + 1,
-                    ),
-                  )
-                }
-              >
-                Next
-              </Button>
-            </nav>
+            <ActionPagination label="Student roster pages" page={currentPage}
+              pageCount={totalPages} onPageChange={setPage} className="print:hidden" />
           ) : null}
         </>
       )}
