@@ -91,14 +91,14 @@ export function CourseActions({
     useState(course.description ?? "");
   const [shortTitle,setShortTitle]=useState(course.shortTitle??course.name.slice(0,120));
   const [officialCode,setOfficialCode]=useState(course.officialCode??"");
-  const [cardColor,setCardColor]=useState(course.cardColor??"#1677FF");
+  const [cardColor,setCardColor]=useState(course.cardColor??"");
   const [takeaways,setTakeaways]=useState(course.takeaways??"");
   const { pending, run } =
     useCourseMutation();
   const dirty = name!==course.name || code!==course.code ||
     description!==(course.description??"")||(allowMetadata&&(
       shortTitle!==(course.shortTitle??course.name.slice(0,120))||
-      officialCode!==(course.officialCode??"")||cardColor!==(course.cardColor??"#1677FF")||takeaways!==(course.takeaways??"")));
+      officialCode!==(course.officialCode??"")||cardColor!==(course.cardColor??"")||takeaways!==(course.takeaways??"")));
   function closeEdit(next:boolean) {
     if(!next && pending)return;
     if(!next && dirty && !window.confirm("Discard unsaved course changes?"))return;
@@ -110,7 +110,7 @@ export function CourseActions({
     setCode(course.code);
     setShortTitle(course.shortTitle??course.name.slice(0,120));
     setOfficialCode(course.officialCode??"");
-    setCardColor(course.cardColor??"#1677FF");
+    setCardColor(course.cardColor??"");
     setTakeaways(course.takeaways??"");
     setDescription(
       course.description ?? "",
@@ -171,7 +171,7 @@ export function CourseActions({
                         name,
                         code,
                         ...(allowMetadata?{shortTitle:shortTitle.trim(),
-                          officialCode:officialCode.trim()||null,cardColor,takeaways:takeaways.trim()||null}:{}),
+                          officialCode:officialCode.trim()||null,cardColor:cardColor.trim()||null,takeaways:takeaways.trim()||null}:{}),
                         description:
                           description.trim() ||
                           null,

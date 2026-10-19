@@ -1,4 +1,5 @@
 "use client";
+import { ErrorState } from "@/components/ui/error-state";
 import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 
 import Link from "next/link";
@@ -11,17 +12,9 @@ export default function LearnerAssessmentsError({
   reset: () => void;
 }) {
   return (
-    <div className="py-8 text-center">
-      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Assignments could not be loaded</h1>
-      <p className="mt-2 text-sm text-body">
-        This is a loading problem, not an empty list. Check your connection and try again.
-      </p>
-      <div className="mt-5 flex flex-wrap justify-center gap-3">
-        <Button onClick={reset}>Retry</Button>
-        <Link href="/learn/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text sm:min-h-9">
+    <ErrorState title={"Assignments could not be loaded"} description={"This is a loading problem, not an empty list. Check your connection and try again."}
+      action={<div className="flex flex-wrap items-center gap-3"><Button onClick={reset}>Retry</Button><Link href="/learn/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text sm:min-h-9">
           {LEARNER_BACK_TO_COURSES}
-        </Link>
-      </div>
-    </div>
+        </Link></div>} />
   );
 }
