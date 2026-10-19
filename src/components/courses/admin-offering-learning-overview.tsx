@@ -297,7 +297,7 @@ export function AdminOfferingLearningOverview({
   if (!learningPath) {
     return (
       <div className="space-y-5">
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <section className="border-b border-border pb-5">
           <div className="flex flex-wrap gap-2">
             <StatusBadge tone="info">
               {offering.type}
@@ -342,7 +342,7 @@ export function AdminOfferingLearningOverview({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex flex-wrap gap-2">
@@ -390,7 +390,7 @@ export function AdminOfferingLearningOverview({
         </div>
       </section>
 
-      <section aria-label="In this course" className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label="In this course" className="min-w-0 border-b border-border pb-5">
         <h2 className="text-lg font-semibold text-foreground">In this course</h2>
         <p className="mt-1 text-sm text-muted-foreground">Recorded shared learning items only. Visibility and publication are separate controls.</p>
         <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">

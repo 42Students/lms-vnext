@@ -28,12 +28,36 @@ describe("chat-13 old LMS topbar keyboard, signed-out, and notification interact
  });
  it("TOPBAR-08 retains existing authenticated notification sources without substituting fabricated unread values",()=>{
   const s=read("notification-actions.tsx");
-  expect(s).toContain('"/api/tpo/shell-counts"');
-  expect(s).toContain("safeTpoShellCounters(");
+  const tpo=read("tpo-notification-cluster.tsx");
+  const bell=readFileSync("src/components/tpo/tpo-bell-panel.tsx","utf8");
+  expect(s).toContain("<TpoNotificationCluster/>");
+  expect(tpo).toContain('"/api/tpo/header-snapshot"');
+  expect(tpo).toContain("tpoHeaderSnapshotSchema.safeParse");
+  expect(tpo).toContain("<TpoBellPanel compact");
+  expect(tpo).toContain("count !== null && count > 0");
+  expect(bell).toContain('"/api/tpo/notifications/read-all"');
+  expect(bell).toContain('"/api/tpo/header-snapshot"');
+  expect(bell).toContain('"/read"');
+  expect(tpo).toContain('"/tpo/notifications"');
   expect(s).toContain("<LearnerNotificationBell />");
   expect(s).toContain("<HrRecruiterBell />");
   expect(s).toContain("shellUnreadBadge(count)");
   expect(s).toContain("count !== null");
   expect(s).toContain('"/api/notifications?limit=40"');
+ });
+ it("TOPBAR-09 removes the duplicate TPO strip without losing the keyboard handler and contextual create choices",()=>{
+  const layout=readFileSync("src/app/(authenticated)/tpo/layout.tsx","utf8");
+  const create=read("tpo-quick-create.tsx");
+  const find=read("tpo-find-suggestions.tsx");
+  const shortcuts=readFileSync("src/components/tpo/tpo-keyboard-shortcuts.tsx","utf8");
+  expect(layout).not.toContain("<TpoHeaderIndicators");
+  expect(layout).not.toContain("<TpoFindShortcut");
+  expect(layout).not.toContain("<TpoTopbarNewMenu");
+  expect(layout).toContain('<TpoKeyboardShortcuts showTrigger={false}');
+  expect(create).toContain("<TpoNewFollowupModal");
+  expect(create).toContain("TPO_TOPBAR_QUICK_LINKS");
+  expect(find).toContain('"/api/tpo/find-suggestions?q="');
+  expect(find).toContain("safeTpoFindResult");
+  expect(shortcuts).toContain('event.key==="?"');
  });
 });

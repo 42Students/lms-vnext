@@ -85,7 +85,7 @@ export default async function LearnerPlacementCellPage({
           initialOfferId={prefillAcceptance?validUuid(query.offerId):""}
         />
       </section>
-      <section id="rules" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
+      <section id="rules" className="scroll-mt-24 border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Placement rules</h2>
         <Link href="/learn/my-placements/rules?from=cell" className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Read placement rules</Link>
       </section>

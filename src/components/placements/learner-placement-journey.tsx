@@ -153,7 +153,7 @@ export function LearnerPlacementJourney({
           One view of your applications, screening state and confirmed round outcomes.
         </p>
       </div>
-      <section aria-label="Where your applications stand" className="space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label="Where your applications stand" className="space-y-3 border-b border-border pb-5">
         <h3 className="text-base font-semibold text-foreground">Where your applications stand</h3>
         <p className="text-sm text-body">Your recorded application and selection progress. Future rounds only appear after your placement team records them.</p>
         <div className="grid gap-3 sm:grid-cols-2">

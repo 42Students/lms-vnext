@@ -27,36 +27,36 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
         actions={process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
           Export CSV
         </a> : null}
       />
       {process.env.DB09_TPO_API_READY !== "DB09_VERIFIED" ? (
-        <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
           CSV export is unavailable until the DB09 verification gate is enabled.
         </p>
       ) : null}
-      <Link href="/tpo/reports" className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
+      <Link href="/tpo/reports" className="text-sm font-semibold text-link hover:underline">
         ← Reports
       </Link>
       <form action="/tpo/reports/offers-expiry" method="get"
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="text-sm font-semibold text-body">Expiring in the next N calendar days
           <select name="days" defaultValue={String(data.days)}
-            className="mt-2 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             {[1, 3, 7, 14, 30, 60, 90].map((value) =>
               <option key={value} value={value}>{value} days</option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-[650] text-on-primary">
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary">
           Apply window
         </button>
       </form>
-      <p className="rounded-xl border border-border bg-surface-subtle p-4 text-sm text-body">
+      <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
         {data.scopeNote} Window: {data.asOfIst} through {data.throughIst} (IST, inclusive).
       </p>
       {data.truncated ? (
-        <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm font-semibold text-body">
+        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm font-semibold text-body">
           More than 200 offers match this date window; only the earliest 200 are shown and exported.
         </p>
       ) : null}
@@ -66,7 +66,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
       ) : (
         <section aria-label="Expiring offer records" className="grid gap-3">
           {data.rows.map((row) => (
-            <article key={row.offerId} className="rounded-xl border border-border bg-surface p-4">
+            <article key={row.offerId} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <h2 className="font-semibold text-foreground">
@@ -75,12 +75,12 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
                   <p className="mt-1 text-sm text-body">
                     {row.jobTitle} · {row.candidateName ?? "Student name not recorded"}
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-[var(--lms-link-text)]">
+                  <p className="mt-1 text-sm font-semibold text-link">
                     Expires on {row.expiryDayIst} IST
                   </p>
                 </div>
                 <Link href={"/tpo/placements/jobs/" + row.jobId}
-                  className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
+                  className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:underline">
                   Open drive
                 </Link>
               </div>

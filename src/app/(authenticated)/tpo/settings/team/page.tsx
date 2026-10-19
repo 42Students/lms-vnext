@@ -49,7 +49,7 @@ export default async function TpoPlacementTeamPage() {
         actions={
           <Link
             href="/tpo/settings/trusted"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Trusted Companies
           </Link>
@@ -111,7 +111,7 @@ export default async function TpoPlacementTeamPage() {
         ].map(([label, value]) => (
           <div
             key={label}
-            className="rounded-xl border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {label}
@@ -166,7 +166,7 @@ export default async function TpoPlacementTeamPage() {
                   </p>
                   {member.studentDuties.map(duty=><p key={duty.jobId+":"+duty.onDate} className="text-xs text-body">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(duty.jobId)}
-                      className="font-semibold text-[var(--lms-link-text)] underline">
+                      className="font-semibold text-link underline">
                       {duty.jobTitle}
                     </Link>
                     {" · "}{dutyDate(duty.onDate)}

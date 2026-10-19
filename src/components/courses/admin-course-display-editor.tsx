@@ -101,7 +101,7 @@ export function AdminCourseDisplayEditor({
 
   if (!enabled) {
     return (
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Course Home content
@@ -120,7 +120,7 @@ export function AdminCourseDisplayEditor({
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="border-b border-border pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="m-0 text-base font-semibold text-foreground">

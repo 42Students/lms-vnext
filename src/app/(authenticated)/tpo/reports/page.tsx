@@ -40,10 +40,10 @@ export default async function TpoReportsPage({
   const parsedSearch=tpoReportGallerySearchSchema.safeParse(first(query.q)??"");
   const parsedGroup=tpoReportGalleryGroupSchema.safeParse(first(query.group)??"ALL");
   if(!parsedSearch.success||!parsedGroup.success)return <section role="alert"
-    className="rounded-xl border border-border bg-surface p-6">
-    <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Invalid report search</h1>
+    className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+    <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Invalid report search</h1>
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
-    <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">
+    <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-link underline">
       Clear search
     </Link>
   </section>;
@@ -59,10 +59,10 @@ export default async function TpoReportsPage({
     return <div className="min-w-0 space-y-6">
       <PageHeader eyebrow="TPO · Reports" title="Reports"
         description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} />
-      <section role="alert" className="rounded-xl border border-warning-border bg-warning-subtle p-6">
+      <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-warning-border bg-warning-subtle p-6">
         <h2 className="text-base font-semibold text-foreground">The headline numbers could not be loaded.</h2>
         <p className="mt-2 text-sm text-body">The report is temporarily unavailable. No placement totals are being inferred from missing data.</p>
-        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">Retry</Link>
+        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">Retry</Link>
       </section>
     </div>;
   }
@@ -186,7 +186,7 @@ export default async function TpoReportsPage({
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-white"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-white"
           >
             Open management view
           </Link>
@@ -196,19 +196,19 @@ export default async function TpoReportsPage({
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports" />
       <ReportMetrics metrics={workspace.report.metrics} />
       <ReportScopeNote note={workspace.registrationScopeNote} />
-      <nav aria-label="Placement journey" className="space-y-2 rounded-xl border border-border bg-surface p-5">
+      <nav aria-label="Placement journey" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
        <h2 className="font-semibold">Placement journey</h2>
        <p className="text-sm text-body">{workspace.report.metrics.offers} offers made across the selected season and drive scope.</p>
        <div className="grid gap-3 sm:grid-cols-3">
-        <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="rounded-md border border-border p-3">
+        <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="rounded-[var(--lms-control-radius)] border border-border p-3">
          <strong className="block">Looking for a job</strong>
          <span className="text-sm">{workspace.report.metrics.registered} registered · {Math.max(0,workspace.report.metrics.registered-workspace.report.metrics.studentsPlaced)} not placed</span>
         </Link>
-        <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="rounded-md border border-border p-3">
+        <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="rounded-[var(--lms-control-radius)] border border-border p-3">
          <strong className="block">Placed</strong>
          <span className="text-sm">{workspace.report.metrics.studentsPlaced} students under the college&apos;s placement rule</span>
         </Link>
-        <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="rounded-md border border-border p-3">
+        <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="rounded-[var(--lms-control-radius)] border border-border p-3">
          <strong className="block">Accepted</strong>
          <span className="text-sm">{workspace.report.metrics.acceptedOffers} accepted offers · {Math.max(0,workspace.report.metrics.offers-workspace.report.metrics.acceptedOffers)} not yet accepted</span>
         </Link>
@@ -232,19 +232,19 @@ export default async function TpoReportsPage({
           Find a report
           <input type="search" name="q" maxLength={80} defaultValue={parsedSearch.data}
             placeholder="Report name or purpose"
-            className="min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3"/>
+            className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-2 text-sm font-semibold text-body">Report category
           <select name="group" defaultValue={parsedGroup.data}
-            className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             {TPO_REPORT_GALLERY_GROUPS.map(group=><option key={group} value={group}>
               {group==="ALL"?"All report categories":group}
             </option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 font-[650] text-white">Search</button>
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-white">Search</button>
         <Link href={reportHref("/tpo/reports",workspace)}
-          className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
+          className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">
           Clear
         </Link>
       </form>
@@ -268,23 +268,23 @@ export default async function TpoReportsPage({
                 <Link
                   key={card.path}
                   href={reportHref(card.path, workspace)}
-                  className="block rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle"
+                  className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle"
                 >
-                  <h3 className="font-semibold text-[var(--lms-link-text)]">
+                  <h3 className="font-semibold text-link">
                     {card.title}
                   </h3>
-                  {card.path==="/tpo/reports/placement-summary"?<p className="mt-1 text-xs font-semibold text-[var(--lms-link-text)]">Start here</p>:null}
+                  {card.path==="/tpo/reports/placement-summary"?<p className="mt-1 text-xs font-semibold text-link">Start here</p>:null}
                   <p className="mt-2 text-sm leading-6 text-body">
                     {card.description}
                   </p>
-                  <p className="mt-3 text-sm font-semibold text-[var(--lms-link-text)]">
+                  <p className="mt-3 text-sm font-semibold text-link">
                     Open report →
                   </p>
                 </Link>
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-border bg-surface-subtle p-4 text-sm text-body">
+            <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
               These additional report types are not yet implemented. No
               unavailable reports are presented as working links.
             </div>

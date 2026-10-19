@@ -126,7 +126,7 @@ export function LearnerCareerCalendar({
 
   return (
     <div className="space-y-5" aria-label="Learner Career Calendar">
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="border-b border-border pb-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">Career calendar</h2>
@@ -152,8 +152,8 @@ export function LearnerCareerCalendar({
               aria-pressed={view === option}
               onClick={() => changeCalendar({view:option})}
               className={view === option
-                ? "min-h-11 rounded-md bg-primary px-3 text-sm font-semibold capitalize text-on-primary"
-                : "min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-semibold capitalize text-body hover:text-primary-text"}
+                ? "min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-3 text-[14px] font-[650] capitalize text-on-primary sm:min-h-9"
+                : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold capitalize text-body sm:min-h-9 hover:text-primary-text"}
             >
               {option}
             </button>
@@ -235,7 +235,7 @@ export function LearnerCareerCalendar({
                   key={day}
                   aria-label={`${prettyDay(day)}: ${dayEvents.length} events`}
                   onClick={() => { changeCalendar({date:day,view:"day"}); }}
-                  className={`min-h-24 rounded-md border border-border p-2 text-left transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] ${outside ? "opacity-50" : ""}`}
+                  className={`min-h-24 rounded-[var(--lms-control-radius)] border border-border p-2 text-left transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] ${outside ? "opacity-50" : ""}`}
                 >
                   <span className="block text-xs font-semibold text-foreground">{day.slice(-2)}</span>
                   <span className="mt-2 block text-xs text-body">
