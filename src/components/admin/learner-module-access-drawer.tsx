@@ -50,18 +50,18 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    timeout.current=setTimeout(()=>{void lookup(value.trim());},260);
  }
  function close(){seq.current++;setDetail(null);setMessage("");}
- return <section aria-label="Why a learner sees a module" className="rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Why a learner sees a module" className="border-b border-border pb-5">
   <h2 className="font-semibold">Why can&apos;t a student see a module?</h2>
   <label className="mt-3 grid gap-1 text-sm font-semibold text-body">
    Why can&apos;t a student see a module? Search…
    <Input type="search" maxLength={100} value={search} onChange={event=>change(event.target.value)}
     placeholder="Name or roll number" autoComplete="off"
-    className="min-h-11 w-full rounded-md border border-border bg-background px-3"/>
+    className="min-h-11 w-full sm:min-h-9"/>
   </label>
   {loading?<p role="status" className="mt-2 text-sm text-body">Searching learners…</p>:null}
   {search.trim().length>1&&!loading&&!suggestions.length&&!message?
    <p className="mt-2 text-xs text-body">No matching learners in this college.</p>:null}
-  {suggestions.length>0?<ul aria-label="Matching learners" className="mt-2 max-h-60 overflow-auto rounded-md border border-border">
+  {suggestions.length>0?<ul aria-label="Matching learners" className="mt-2 max-h-60 overflow-auto rounded-[var(--lms-control-radius)] border border-border">
    {suggestions.map(student=><li key={student.membershipId} className="border-b border-border last:border-0">
     <Button type="button" variant="ghost" onClick={()=>void lookup(search,student.membershipId)}
      className="min-h-11 w-full px-3 py-2 text-left text-sm hover:bg-primary-subtle">
@@ -102,7 +102,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
      Recheck access after a change
     </Button>
     <p className="text-xs text-body">This reads persisted learner access. It does not sign in as the student.</p>
-    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline"
+    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
      href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(detail.membershipId)}>
      Open full access trace →
     </Link>

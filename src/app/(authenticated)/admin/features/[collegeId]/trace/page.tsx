@@ -198,7 +198,7 @@ export default async function SuperAdminLearnerAccessTracePage({
               maxLength={100}
               defaultValue={query.q}
               placeholder="Find learner"
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base text-foreground"
+              className="w-full"
             />
           </label>
 
@@ -221,7 +221,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           </label>
           <Button
             type="submit"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="min-h-11 sm:min-h-9"
           >
             Search
           </Button>
@@ -316,7 +316,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           className="min-w-0 space-y-6"
           aria-label="Selected learner module access"
         >
-          <div className="rounded-xl border border-border bg-surface p-5">
+          <div className="border-b border-border pb-5">
             <h2 className="m-0 text-xl font-semibold text-foreground">
               Why this learner sees these modules
             </h2>
