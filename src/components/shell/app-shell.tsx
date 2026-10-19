@@ -101,8 +101,8 @@ export async function AppShell({
         <LegacyTopbar
           navigation={navigation}
           roleLabel={getShellRoleLabel(context)}
-          organizationName={currentMembership?.collegeName ??
-            selectedScopeLabel ?? context.recruiter?.companyName ??
+          organizationName={selectedScopeLabel ??
+            currentMembership?.collegeName ?? context.recruiter?.companyName ??
             "Platform administration"}
           identityUid={context.user.identityUid}
           accountVariant={accountVariant}
