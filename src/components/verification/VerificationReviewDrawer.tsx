@@ -102,17 +102,17 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     <div className="min-w-0"><h2 className="break-words text-lg font-semibold">{row.learnerName}</h2>
      {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
      <p className="text-sm">{row.section==="EDUCATION"?"Education":"Identity"} · {row.status.replaceAll("_"," ")}</p></div>
-    <Button variant="secondary" type="button" ref={closeButton} disabled={saving} onClick={onClose} className="min-h-11">Close</Button>
+    <Button variant="secondary" type="button" ref={closeButton} disabled={saving} onClick={onClose} className="min-h-[var(--lms-control-height)]">Close</Button>
    </header>
    {sequenceProgress&&<nav aria-label="Sequential verification progress" className="flex flex-wrap items-center gap-3 border-b py-3 text-sm">
      <span role="status">{sequenceProgress}</span>
-     <Button variant="secondary" type="button" disabled={saving} onClick={onNext} className="min-h-11">Next</Button>
-     <Button variant="secondary" type="button" disabled={saving} onClick={onFinish} className="min-h-11">Finish</Button>
+     <Button variant="secondary" type="button" disabled={saving} onClick={onNext} className="min-h-[var(--lms-control-height)]">Next</Button>
+     <Button variant="secondary" type="button" disabled={saving} onClick={onFinish} className="min-h-[var(--lms-control-height)]">Finish</Button>
    </nav>}
    {loading?<p role="status" className="py-4">Loading submitted details…</p>:null}
    {error?<div role="alert" className="my-3 space-y-2 rounded-md border p-3"><p>{error}</p>
     {canRetryVerificationReview(error,loading)&&<Button variant="secondary" type="button" onClick={retryReview}
-     className="min-h-11">Retry loading review</Button>}</div>:null}
+     className="min-h-[var(--lms-control-height)]">Retry loading review</Button>}</div>:null}
    {detail?<div className="space-y-5 py-4">
     <section className="rounded-md border p-3" aria-label="Previous verification decision">
      <h3 className="font-semibold">Recorded decision history</h3>
@@ -187,15 +187,15 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
        <Textarea disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 w-full" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
      </section>
      <div className="flex flex-wrap gap-2">
-      <Button variant="secondary" type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("VERIFY")} className="min-h-11">Verify</Button>
-      <Button variant="secondary" type="button" disabled={!canEditVerificationDecision(saving,pendingAction)||[reason,additional.trim()].filter(Boolean).join(": ").trim().length<3} onClick={()=>setPendingAction("SEND_BACK")} className="min-h-11">Send back</Button>
+      <Button variant="secondary" type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("VERIFY")} className="min-h-[var(--lms-control-height)]">Verify</Button>
+      <Button variant="secondary" type="button" disabled={!canEditVerificationDecision(saving,pendingAction)||[reason,additional.trim()].filter(Boolean).join(": ").trim().length<3} onClick={()=>setPendingAction("SEND_BACK")} className="min-h-[var(--lms-control-height)]">Send back</Button>
      </div>
      {pendingAction&&<section aria-label="Confirm verification decision" className="w-full space-y-2 rounded-md border p-3">
       <h3 className="font-semibold">{(isTpo||apiBase==="/api/admin/verification")&&pendingAction==="SEND_BACK"?"Send "+(row.section==="EDUCATION"?"Education":"Identity")+" back":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
       <p className="break-words text-sm">{pendingAction==="SEND_BACK"?"The student sees your reason and fixes it on their profile.":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
       <div className="flex flex-wrap gap-2">
-       <Button variant="primary" type="button" disabled={saving||guardedPending} onClick={()=>void runGuarded(()=>decide(pendingAction))} className="min-h-11">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</Button>
-       <Button variant="secondary" type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="min-h-11">Cancel</Button>
+       <Button variant="primary" type="button" disabled={saving||guardedPending} onClick={()=>void runGuarded(()=>decide(pendingAction))} className="min-h-[var(--lms-control-height)]">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</Button>
+       <Button variant="secondary" type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="min-h-[var(--lms-control-height)]">Cancel</Button>
       </div>
      </section>}
      {saving&&<p role="status">Saving decision…</p>}
