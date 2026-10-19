@@ -551,7 +551,7 @@ export function SectionOperations({
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <div className="rounded-xl border border-border bg-surface p-5">
+          <div className="border-b border-border pb-5">
             <p className="m-0 text-sm font-semibold text-foreground">
               Admit learner to Program
             </p>
@@ -612,7 +612,7 @@ export function SectionOperations({
             </div>
           </div>
 
-          <div className="rounded-xl border border-border bg-surface p-5">
+          <div className="border-b border-border pb-5">
             <p className="m-0 text-sm font-semibold text-foreground">
               Place learner in this Section
             </p>
@@ -708,7 +708,7 @@ export function SectionOperations({
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5 md:flex-row">
+        <div className="flex flex-col gap-3 border-b border-border pb-5 md:flex-row">
           <Select
             value={facultyMembershipId}
             onChange={(event) =>
@@ -788,7 +788,7 @@ export function SectionOperations({
           </p>
         </div>
 
-        <div className="grid gap-3 rounded-xl border border-border bg-surface p-5 md:grid-cols-2 xl:grid-cols-6">
+        <div className="grid gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-6">
           <div>
             <label
               htmlFor="schedule-title"

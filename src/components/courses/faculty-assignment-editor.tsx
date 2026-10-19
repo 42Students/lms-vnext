@@ -150,7 +150,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{mutationLock.current=false;setPending(false);}
  }
- return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <section className="space-y-4">
   <h2 className="text-lg font-semibold">Assignment authoring</h2>
   <label className="grid gap-1 text-sm">Choose draft or create new
    <Select value={selected} disabled={pending} onChange={e=>choose(e.target.value)}

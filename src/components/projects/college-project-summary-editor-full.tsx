@@ -62,7 +62,7 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
   {label}<Input className={style} maxLength={max} value={form[key]} onChange={e=>change(key,e.target.value)}/>
  </label>;
  return <section className="border-b border-border pb-5">
-  <Button variant="secondary" type="button" onClick={()=>setOpen(v=>!v)} className="rounded-md border border-border px-3 py-2 text-sm font-semibold">
+  <Button variant="secondary" type="button" onClick={()=>setOpen(v=>!v)} >
    Edit workspace summary</Button>
   {open?<div className="mt-4 space-y-4">
    <div className="grid gap-3 sm:grid-cols-2">
@@ -99,9 +99,9 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
    </label>)}
    <p className="text-xs text-muted-foreground">Activating requires a Mentor; completing requires an approved final submission.</p>
    <Button type="button" disabled={busy||!form.title.trim()} onClick={()=>void save()}
-    className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary">{busy?"Saving…":"Save changes"}</Button>
+    >{busy?"Saving…":"Save changes"}</Button>
    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
-    className="ml-2 rounded-md border border-border px-4 py-2 text-sm">Cancel</Button>
+    className="ml-2">Cancel</Button>
   </div>:null}
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
  </section>;

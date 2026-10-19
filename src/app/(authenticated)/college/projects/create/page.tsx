@@ -11,7 +11,7 @@ export default async function CollegeCreateProjectPage() {
   const collegeId=getProjectAdminCollegeId(context);
   if(!collegeId)return <div className="space-y-4">
     <PageHeader title="Create workspace" description="Select a college to continue."/>
-    <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm">
+    <p role="alert" className="rounded-[8px] border border-border bg-surface p-4 text-sm">
       Choose a college from the account switcher before creating a workspace.
     </p>
     <Link href="/college/projects" className="text-primary-text underline">Back to workspaces</Link>

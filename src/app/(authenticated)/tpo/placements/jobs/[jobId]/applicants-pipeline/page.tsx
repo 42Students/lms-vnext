@@ -24,7 +24,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  if(urlError)return <div className="space-y-4">
   <PageHeader eyebrow="TPO · Drive applicants" title="Invalid applicant filters"
    description="No private application records were loaded."/>
-  <p role="alert" className="rounded-md border border-border p-4 text-sm">{urlError}</p>
+  <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">{urlError}</p>
   <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="font-semibold text-[var(--lms-teal-deep)] underline">Clear applicant filters</Link>
  </div>;
  const columns=first(query.columns)?.slice(0,800);
@@ -49,12 +49,12 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    description="Current application and screening states from persisted records. Withdrawal is distinct from rejection."/>
   <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive</Link>
   <Link href={{pathname:"/tpo/placements/jobs/"+jobId+"/applications-export",query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin}}}
-   className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
    Review and export all matching applicants
   </Link>
   <section className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Applicant pipeline counts">
    {Object.entries(data.counts).map(([label,count])=>
-    <div className="rounded-xl border border-border bg-surface p-3" key={label}>
+    <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3" key={label}>
       <p className="text-xs capitalize text-body">{label}</p>
       <p className="text-xl font-semibold tabular-nums text-foreground">{count}</p>
     </div>)}
@@ -63,23 +63,23 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    {columns&&<input type="hidden" name="columns" value={columns}/>}
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Stage
-    <Select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      {stages.map(s=><option key={s} value={s}>{s}</option>)}
     </Select></label>
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Name, roll, branch, batch, email, phone or role
     <Input name="search" defaultValue={data.search} maxLength={100}
-     className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/></label>
+     className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/></label>
    <label className="min-w-32 flex-1 text-sm font-semibold text-body">Application channel
-    <Select name="channel" defaultValue={data.channel} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="channel" defaultValue={data.channel} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      <option value="ALL">All channels</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
     </Select></label>
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Eligibility evidence
-    <Select name="eligibility" defaultValue={data.eligibility} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="eligibility" defaultValue={data.eligibility} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      <option value="ALL">All evidence states</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · evidence missing</option>
     </Select></label>
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Applicant flags
-    <Select name="flag" defaultValue={data.flag} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="flag" defaultValue={data.flag} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      <option value="ALL">Any flag</option>
      <option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
      <option value="NO_SHOW">No-show</option>
@@ -87,16 +87,16 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
      <option value="ADDED_BY_COLLEGE">Added by college</option>
     </Select></label>
    <label className="min-w-32 flex-1 text-sm font-semibold text-body">Order by
-    <Select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner name</option>
     </Select></label>
    <label className="min-w-36 flex-1 text-sm font-semibold text-body">Submitted window
-    <Select name="submittedWithin" defaultValue={data.submittedWithin} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="submittedWithin" defaultValue={data.submittedWithin} className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      <option value="ALL">Any submission date</option><option value="LAST_7_DAYS">Last 7 × 24 hours</option>
      <option value="LAST_30_DAYS">Last 30 × 24 hours</option>
     </Select></label>
-   <Button type="submit" className="min-h-11 rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Apply</Button>
+   <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Apply</Button>
   </form>
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
@@ -122,8 +122,8 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
    </Suspense>}
   <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3">
-   {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Previous</Link>:<span/>}
-   {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Next</Link>:null}
+   {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Previous</Link>:<span/>}
+   {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Next</Link>:null}
   </nav>
   <p className="text-xs text-body">This stage snapshot does not claim independent employer selection or share private screening comments.</p>
  </div>;

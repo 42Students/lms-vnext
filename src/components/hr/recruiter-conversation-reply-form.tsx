@@ -89,7 +89,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   }else setNotice("Could not send. "+feedback);
   }finally{submitPendingRef.current=false;setSending(false);}
  }
- return <form ref={formRef} onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <form ref={formRef} onSubmit={submit} className="space-y-3 border-t border-border pt-4">
   <h2 className="font-semibold text-foreground">Reply to placement cell</h2>
   <label className="grid gap-2 text-sm text-body">Message
    <Textarea value={body} onChange={event=>setBody(event.target.value)}

@@ -53,7 +53,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
    {data.resultsTruncated?<p role="status" className="text-sm text-body">Only 100 applied result versions examined.</p>:null}
    {data.appliedRoundResults.length===0?<p className="mt-2 text-sm text-body">No applied round outcomes recorded for this application.</p>:
     <div className="mt-3 grid gap-3">{data.appliedRoundResults.map(r=>
-     <article key={r.roundId} className="rounded-lg border border-border p-3">
+     <article key={r.roundId} className="rounded-[var(--lms-control-radius)] border border-border p-3">
       <h3 className="font-semibold text-foreground">{r.roundName}</h3>
       <p className="mt-1 text-sm text-body">{r.kind} · {r.outcome} · Applied: {r.appliedAt?
        new Date(r.appliedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Time not recorded"}</p>
@@ -64,7 +64,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
    {data.offersTruncated?<p role="status" className="text-sm text-body">Only the latest 100 offer versions examined.</p>:null}
    {data.offers.length===0?<p className="mt-2 text-sm text-body">No persisted offer versions for this application.</p>:
     <div className="mt-3 grid gap-3">{data.offers.map(offer=>
-     <article key={offer.offerId} className="rounded-lg border border-border p-3">
+     <article key={offer.offerId} className="rounded-[var(--lms-control-radius)] border border-border p-3">
       <h3 className="font-semibold text-foreground">{offer.roleTitle} · Version {offer.version}</h3>
       <p className="mt-1 text-sm text-body">{offer.status} · Joining: {offer.joiningStatus??"Not confirmed"}
        {" · "}Annual CTC: {offer.annualCtcInr===null?"Not recorded":"₹"+offer.annualCtcInr.toLocaleString("en-IN")}</p>
