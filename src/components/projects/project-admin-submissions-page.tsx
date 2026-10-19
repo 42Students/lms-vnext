@@ -63,7 +63,7 @@ export async function ProjectAdminSubmissionsPage({
       <ErrorState title="Invalid submission filters"
         description="Check the submission view, status, page and rows filters, or clear them to continue."
         action={<Link href={basePath + "/submissions"}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>} />
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>} />
     </div>;
   }
   const { view, ...safeQuery } = parsed.data;
