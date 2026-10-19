@@ -183,7 +183,7 @@ export default async function TpoRecruiterAccessPage({
                   </option>
                 ),
               )}
-            </Select
+            </Select>
           </label>
 
           <label className="grid min-w-44 gap-2 text-sm font-semibold text-body">
