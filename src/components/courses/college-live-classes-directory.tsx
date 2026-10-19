@@ -18,13 +18,13 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
       Session, lesson or course
       <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-        className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        className="min-h-11 min-w-0"/>
     </label>
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
       Course code (exact)
       <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
         placeholder="e.g. CS101"
-        className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        className="min-h-11 min-w-0"/>
     </label>
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
       Publication
@@ -59,11 +59,11 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">From (IST)
       <DateInput mode="date" name="from" defaultValue={data.from??""}
-        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        className="min-h-11"/>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Through (IST)
       <DateInput mode="date" name="to" defaultValue={data.to??""}
-        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        className="min-h-11"/>
     </label>
     <Button type="submit" className="min-h-11">Filter</Button>
     <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
