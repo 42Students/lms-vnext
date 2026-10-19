@@ -14,24 +14,24 @@
 [data-slot="bottom-sheet"]::backdrop {
   background: rgba(30, 54, 63, .1);
 }
-[data-slot="dialog"] > div > div:first-child {
+[data-slot="dialog-header"] {
   border-bottom: 1px solid var(--lms-canvas-border);
   padding: 16px 24px;
   background: #fff;
 }
-[data-slot="dialog"] > div > div:first-child {
+[data-slot="dialog-header"] {
   position: relative;
 }
-[data-slot="dialog"] > div > div:first-child > div:first-child {
+[data-slot="dialog-header"] > div:first-child {
   padding-right: 50px;
 }
-[data-slot="dialog"] > div > div:first-child > button[aria-label="Close dialog"] {
+[data-slot="dialog-header"] > button[aria-label="Close dialog"] {
   position: absolute;
   top: 16px;
   right: 16px;
   z-index: 1;
 }
-[data-slot="dialog"] > div > div:first-child > button[aria-label="Close dialog"]:hover {
+[data-slot="dialog-header"] > button[aria-label="Close dialog"]:hover {
   color: #1a1d21;
 }
 [data-slot="dialog"] > div > div:last-child:not(:first-child) {
