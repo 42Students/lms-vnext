@@ -194,3 +194,71 @@ This follow-up was committed directly to `chatgpt/chat-14-b` after fast-forwardi
 - Inspected a sample of ten edited files, including checkbox components and the large mentor workspace. Confirmed **no native checkbox retains `data-slot="input"`** among the sampled files; no duplicated `data-slot` input attributes; and brace counts matched in this sample.
 - No application code, build, typecheck, lint, tests, CI, or browser session was executed, by request. Static checks are not a TypeScript syntax validation or an assertion of pixel-perfect visual parity.
 - The shared global tokens, UI-kit, sidebar, topbar, and authenticated shell remain owned by their assigned lanes, not chat-14.
+
+## Continuation: mentor final polish, then the next open portal (College Admin)
+
+- Baseline: `main` was found to already contain the prior chat-14 commits. Fast-forwarded the chat-14 branch to `d5798cd5a0d4aba3ae022293b231211cf1dbb04d` before these edits, without force and without rewriting any history.
+- The next explicitly unfinished portal was selected from `docs/audit/ux/north-star-sweep-4.md`, which listed **389 unchecked paths** at that snapshot. The separate chat-4 audit has broader recorded work, so this is a **second pass**, not a claim that the college portal is otherwise untouched or completely audited. The chat-4-owned audit was not overwritten.
+- **50 new per-file styling commits** tagged `[chat-14]`, all directly committed to `chatgpt/chat-14-b`: ten mentor/Projects fixes and four ten-file College Admin batches. No changes to shared CSS, sidebar, top bar, authentication, API, data or tests.
+- Mentor refinements: duplicate heading utility removed in mentor board/task allocation; native closeout checkbox no longer receives text-input skin; backlog/release editor and task details/closeout/meeting-outcome layouts use control tokens and existing-canvas separators. Semantically separate dialogs remain intact.
+- College refinements: linked text uses `text-link` instead of deep-teal literals, 9px radius token via `var(--lms-control-radius)`, solid primary buttons use `text-on-primary` rather than foreground text, extra filter/alert outer white-card layers reduced, and accidentally split Tailwind class fragments (`sm: border-t`, `space-y-3 - border-t`) corrected. Data tables, workflow ordering, responsive touch targets, permissions and action handlers preserved.
+
+### This continuation's mentor files (10)
+
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/mentor-task-allocation.tsx`
+- [x] `src/components/projects/mentor-project-closeout-control.tsx`
+- [x] `src/components/projects/mentor-product-backlog.tsx`
+- [x] `src/components/projects/mentor-release-editor.tsx`
+- [x] `src/components/projects/mentor-board-task-detail-dialog.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
+
+### College Admin spillover files (40; *partial* audit of the larger portal)
+
+- [x] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
+- [x] `src/app/(authenticated)/college/activity/page.tsx`
+- [x] `src/app/(authenticated)/college/announcements/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
+- [x] `src/app/(authenticated)/college/branding/page.tsx`
+- [x] `src/app/(authenticated)/college/academics/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/page.tsx`
+- [x] `src/app/(authenticated)/college/classes/page.tsx`
+- [x] `src/app/(authenticated)/college/college-profile/page.tsx`
+- [x] `src/app/(authenticated)/college/companies/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/page.tsx`
+- [x] `src/app/(authenticated)/college/course-progress/page.tsx`
+- [x] `src/app/(authenticated)/college/departments/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty/import/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/college/lessons/page.tsx`
+- [x] `src/app/(authenticated)/college/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [x] `src/app/(authenticated)/college/profile/page.tsx`
+- [x] `src/app/(authenticated)/college/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/college/resources/page.tsx`
+- [x] `src/app/(authenticated)/college/semester-courses/page.tsx`
+- [x] `src/app/(authenticated)/college/semesters/page.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/students/import/page.tsx`
+- [x] `src/app/(authenticated)/college/students/register/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
+- [x] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
+
+### Verification caveat
+
+Performed source-only checks of sampled modified files for balanced curly braces, invalid split class fragments, duplicate 30px heading font weights, native checkbox wrongly marked as a text input and obvious primary-button foreground mistakes. These are narrow heuristics and **do not replace a TypeScript parse, typecheck, CI or rendered browser comparison**. No tests, build, app, CI or browser were run, as requested. Many College Admin routes remain outside this continuation's touched-file list and may need a later pass.
