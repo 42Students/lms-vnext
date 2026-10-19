@@ -871,8 +871,8 @@ export function RecruiterLeadsWorkspace({
                 {selectedIds.length>0?<button type="button" className={buttonStyle}
                   onClick={()=>setSelectedIds([])}>Clear selection</button>:null}
                 {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
-              </div>
-              <RecruiterSavedViewControls columns={visibleColumns}/>
+              </div>:null}
+              {view==="board"?<RecruiterSavedViewControls columns={visibleColumns}/>:null}
               {visible.some(row=>selectedIds.includes(row.id))?<button type="button" className={buttonStyle}
                 disabled={visible.filter(row=>selectedIds.includes(row.id)).length>100}
                 onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).map(row=>row.id).join(",")))}>
