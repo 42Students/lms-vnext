@@ -82,7 +82,7 @@ export function ReportFilters({
         <Button variant="secondary"
           type="submit"
           disabled={workspace.seasons.length === 0}
-          className="min-h-11 md:min-h-9"
+          
         >
           Apply season
         </Button>
@@ -115,7 +115,7 @@ export function ReportFilters({
         <Button variant="secondary"
           type="submit"
           disabled={workspace.noSeason}
-          className="min-h-11 md:min-h-9"
+          
         >
           Apply drive
         </Button>
