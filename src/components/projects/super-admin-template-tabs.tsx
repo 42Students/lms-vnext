@@ -1,44 +1,25 @@
-import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 import {
   TEMPLATE_SUBVIEW_TABS,
   templateSubviewHref,
   type TemplateSubview,
 } from "@/modules/projects/template-subview-model";
 
+/** Shared legacy underline tabs; counts are displayed only when already loaded. */
 export function SuperAdminTemplateTabs({
   templateId,
   active,
+  counts,
 }: {
   templateId: string;
   active: TemplateSubview;
+  counts?: Partial<Record<TemplateSubview, number>>;
 }) {
-  return (
-    <nav
-      aria-label="Project template sections" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] border-b border-border focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"
-    >
-      <div className="flex min-w-max gap-2">
-        {TEMPLATE_SUBVIEW_TABS.map((tab) => (
-          <Link
-            key={tab.id}
-            href={templateSubviewHref(
-              templateId,
-              tab.id,
-            )}
-            aria-current={
-              active === tab.id
-                ? "page"
-                : undefined
-            }
-            className={
-              active === tab.id
-                ? "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-primary px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-                : "inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] border-transparent px-4 text-sm font-semibold text-body hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-            }
-          >
-            {tab.label}
-          </Link>
-        ))}
-      </div>
-    </nav>
-  );
+  return <Tabs ariaLabel="Project template sections" value={active} renderPanel={false}
+    items={TEMPLATE_SUBVIEW_TABS.map(tab=>({
+      value:tab.id,
+      label:tab.label,
+      href:templateSubviewHref(templateId,tab.id),
+      count:counts?.[tab.id],
+    }))}/>;
 }

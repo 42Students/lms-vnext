@@ -19,7 +19,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
   collegeId?getSuperAdminFacultyAssignmentClasses(context):Promise.resolve([]),
   collegeId?getAdminCourseWorkspace(context,collegeId):Promise.resolve(null),
  ]);
- return <div className="min-w-0 space-y-5"><div className="flex flex-wrap items-center gap-3"><p className="font-semibold">Current teaching assignments</p><Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Create teaching assignment →</Link></div>{workspace?<SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries}
+ return <div className="min-w-0 space-y-5"><div className="flex flex-wrap items-center gap-3"><p className="font-semibold">Current teaching assignments</p><Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Create teaching assignment →</Link></div>{workspace?<SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries}
   faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>:null}
  <AdminScopedReadPage classOptions={classes} title="Faculty Assignments" path="/admin/faculty-assignment" statuses={statuses}
   exportPath="/api/admin/faculty-assignment/export" exportFilename="faculty-assignments.csv"

@@ -1,7 +1,7 @@
 "use client";
 import { Select } from "@/components/ui/select";
-
 import { Button } from "@/components/ui/button";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { shouldPersistPlayback } from "./course-media-model";
@@ -212,7 +212,7 @@ export function LearnerVideoPlayer({
     <label className="flex flex-wrap items-center gap-2 text-xs font-medium text-body">
       Playback speed
       <Select aria-label="Playback speed" defaultValue="1"
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
+        className="min-h-9 w-auto"
         onChange={event=>{
           const rate=Number(event.target.value);
           playbackRateRef.current=rate;
@@ -229,8 +229,8 @@ export function LearnerVideoPlayer({
     </div>
     {mediaError ? <div className="space-y-2">
       <p role="alert" className="text-sm font-semibold text-error">{mediaError}</p>
-      <Button variant="secondary" type="button" onClick={() => { failureRefreshRef.current = 0; void start(); }}
-        className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+      <Button type="button" variant="secondary" onClick={() => { failureRefreshRef.current = 0; void start(); }}
+        className="min-h-9">
         Retry video
       </Button>
     </div> : null}

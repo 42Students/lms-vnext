@@ -1,4 +1,5 @@
 "use client";
+import { Input } from "@/components/ui/input";
 
 import { learnerCourseAttendanceMonthShortcutVisible } from "@/modules/attendance/learner-course-attendance-month-shortcut-model";
 import { learnerCourseAttendanceSameIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
@@ -267,7 +268,7 @@ export function LearnerCourseAttendance({
             </Button>
             <label className="text-xs font-semibold text-body">
               Month
-              <input
+              <Input
                 type="month"
                 aria-label="Jump to month"
                 value={monthKey(month)}
@@ -294,7 +295,7 @@ export function LearnerCourseAttendance({
                     navigateMonth(new Date(year,monthIndex,1));
                   }
                 }}
-                className="mt-1.5 min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
+                className="mt-1.5 min-h-9"
               />
             </label>
             {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),currentMonth) ? (

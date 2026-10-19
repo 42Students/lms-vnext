@@ -1,7 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
-
 import { Button } from "@/components/ui/button";
+
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {useRouter} from "next/navigation";
@@ -281,11 +281,9 @@ export function LearnerAssessmentOverview({
       <nav aria-label={kind === "ASSIGNMENT" ? "Assignment quick views" : "Quiz quick views"}
         className="flex flex-wrap gap-2">
         {quickCounts.map(quick => (
-          <Button variant="secondary" key={quick.value} type="button" aria-pressed={stateFilter === quick.value}
+          <Button key={quick.value} type="button" aria-pressed={stateFilter === quick.value}
             onClick={() => { setStateFilter(value => value === quick.value ? "ALL" : quick.value); setPage(1); }}
-            className={stateFilter === quick.value
-              ? "min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
-              : "min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body"}>
+            variant="secondary" className="min-h-9 aria-pressed:!border-[var(--lms-primary)] aria-pressed:!bg-[var(--lms-primary-subtle)] aria-pressed:!text-[var(--lms-primary-text)]">
             {LEARNER_ASSESSMENT_STATE_OPTIONS.find(option => option.value === quick.value)?.label} ({quick.count})
           </Button>
         ))}
@@ -296,7 +294,7 @@ export function LearnerAssessmentOverview({
           <Input type="search" value={search} maxLength={100}
             onChange={event => {setSearch(event.target.value);setPage(1);}}
             placeholder="Title, lesson or course"
-            className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" />
+            className="min-h-9" />
         </label>
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -348,10 +346,10 @@ export function LearnerAssessmentOverview({
       </div>
 
       {learnerAssessmentFiltersActive({courseId:activeCourseId,search,stateFilter,sort}) ? (
-        <Button variant="secondary" type="button" onClick={() => {
+        <Button type="button" onClick={() => {
           setCourseId("");setSearch("");setStateFilter("ALL");setSort("DUE");setPage(1);
           if(initialCourseId)router.push(learnerAssessmentCourseHref(kind,null));
-        }} className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        }} variant="secondary" className="min-h-9">
           Clear assessment filters
         </Button>
       ) : null}
@@ -491,14 +489,14 @@ export function LearnerAssessmentOverview({
                         : `${item.totalPoints} points · ${item.attemptsUsed}/${item.maxAttempts} attempts`}
                     </span>
                     {item.kind === "ASSIGNMENT" ? (
-                      <Button variant="secondary"
+                      <Button
                         type="button"
                         onClick={() =>
                           setSelectedAssignmentKey(
                             `${item.deliveryId}:${item.id}`,
                           )
                         }
-                        className="inline-flex min-h-9 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
+                        className="min-h-9 w-full sm:w-auto"
                       >
                         {state.action}
                       </Button>
@@ -694,8 +692,8 @@ export function LearnerAssessmentOverview({
                     assignmentId={selectedAssignment.id}
                     deliveryId={selectedAssignment.deliveryId}
                   />
-                ) : <Button variant="secondary" type="button" disabled aria-disabled="true"
-                  className="mt-3 min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-muted-foreground">
+                ) : <Button type="button" disabled aria-disabled="true"
+                  variant="secondary" className="mt-3 min-h-9">
                   {selectedAssignment.dueAt?"Submission closed":"Unavailable"}
                 </Button>}
               </>
@@ -709,22 +707,22 @@ export function LearnerAssessmentOverview({
           aria-label={kind === "ASSIGNMENT" ? "Assignment pages" : "Quiz pages"}
           className="flex flex-wrap items-center justify-center gap-3"
         >
-          <Button variant="secondary"
+          <Button
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            variant="secondary" className="min-h-9"
           >
             Previous
           </Button>
           <span className="text-sm font-semibold text-body">
             Page {currentPage} of {totalPages}
           </span>
-          <Button variant="secondary"
+          <Button
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            variant="secondary" className="min-h-9"
           >
             Next
           </Button>

@@ -39,19 +39,19 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <input type="hidden" name="tab" value="activity" />
       <label className="text-sm font-semibold text-foreground">Activity type
         <Select name="activityCategory" defaultValue={category}
-          className="mt-2 min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal">
+          className="mt-2 min-h-9">
           {learnerProjectActivityCategories.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
         </Select>
       </label>
       <label className="text-sm font-semibold text-foreground">From (IST)
         <Input type="date" name="activityFrom" defaultValue={parsed.success ? parsed.data.from : ""}
-          className="mt-2 min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
+          className="mt-2 min-h-9" />
       </label>
       <label className="text-sm font-semibold text-foreground">Through (IST)
         <Input type="date" name="activityTo" defaultValue={parsed.success ? parsed.data.to : ""}
-          className="mt-2 min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
+          className="mt-2 min-h-9" />
       </label>
-      <Button type="submit" variant="primary" className="self-end">Apply</Button>
+      <Button type="submit" className="min-h-9 self-end">Apply</Button>
       <Link href={route + "?tab=activity"} className="inline-flex min-h-9 sm:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
     </form>
     {parsed.success && pageRows.length > 0 ? (
@@ -60,10 +60,10 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
           <Input type="search" maxLength={100} value={textQuery}
             onChange={event=>setTextQuery(event.target.value)}
             placeholder="Search summary, subject or actor"
-            className="mt-1.5 min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
+            className="mt-1.5 min-h-9" />
         </label>
-        {textQuery ? <Button type="button" variant="secondary" onClick={()=>setTextQuery("")}
-          className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Clear text search</Button> : null}
+        {textQuery ? <Button type="button" onClick={()=>setTextQuery("")}
+          variant="secondary" className="min-h-9">Clear text search</Button> : null}
       </div>
     ) : null}
     {!parsed.success ? <p role="alert" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">Choose valid dates with the start on or before the end, and a listed activity type. If this page link is invalid, use Clear to return to recent activity.</p> : null}
@@ -77,7 +77,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
         </a>
       ) : null}
     </div>
-    {shown.length === 0 ? <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
+    {shown.length === 0 ? <div className="border-b border-border py-4 text-sm text-muted-foreground">
       {learnerProjectActivityEmptyMessage({
         valid:parsed.success,
         fetchedCount:events.length,

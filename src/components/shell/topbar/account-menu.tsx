@@ -36,6 +36,8 @@ export function TopbarAccountMenu({
   const copy = accountActionCopy(variant);
   useEffect(() => {
     if (!open) return;
+    // The legacy dropdown is an operable menu, not merely an avatar hover card.
+    root.current?.querySelector<HTMLElement>('[role="dialog"] a, [role="dialog"] button, [role="dialog"] input, [role="dialog"] select')?.focus();
     const onPointer = (event: PointerEvent) => {
       if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
     };
@@ -83,7 +85,7 @@ export function TopbarAccountMenu({
       aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
-      {topbarInitials(identityUid, roleLabel)}
+      <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
     </button>
     {open ? <div role="dialog" aria-label="Account menu" className={style.menu}>
       <div className="px-2 pb-2 text-left">

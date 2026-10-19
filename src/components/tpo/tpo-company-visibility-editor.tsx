@@ -1,5 +1,4 @@
 "use client";
-import {Button} from "@/components/ui/button";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -42,7 +41,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
    <Checkbox disabled={busy} checked={values[key as keyof Choice]}
     onChange={e=>setValues(current=>({...current,[key]:e.target.checked}))}/>
   </label>)}
-  <details className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-3">
+  <details className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
     <summary className="cursor-pointer text-sm font-semibold">Additional sharing options</summary>
     {Object.entries(labels).slice(3).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
       <span>{label}</span>
