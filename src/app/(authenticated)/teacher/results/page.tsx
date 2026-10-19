@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -31,16 +32,16 @@ export default async function FacultyAssessmentResultsPage({
       description="Section-specific recorded response counts and scores from your current teaching assignments."
       actions={<div className="flex flex-wrap gap-2">
         <Link href="/teacher/response-followups"
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
           Response follow-ups
         </Link>
         <Link href="/teacher/allAssignments"
-          className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
           All Assignments
         </Link>
       </div>} />
     <form method="get" action="/teacher/results"
-      className="flex flex-wrap items-end gap-3">
+      className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
           
@@ -139,15 +140,8 @@ export default async function FacultyAssessmentResultsPage({
             </Link>
           </article>)}
       </div>}
-    <nav aria-label="Assessment result pages" className="flex items-center justify-between gap-3">
-      <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
-      <div className="flex gap-3">
-        {data.page > 1 && <Link href={facultyResultsHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
-        {data.page < data.totalPages && <Link href={facultyResultsHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
-      </div>
-    </nav>
+    <Pagination label="Assessment result pages" page={data.page}
+      pageCount={data.totalPages} hrefForPage={page=>facultyResultsHref({...data.query,page})} />
     <p className="text-xs leading-5 text-muted-foreground">
       At most ten assessments are summarized per page to bound database work.
       Results use existing authorized Section report readers. Missing responses
