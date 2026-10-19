@@ -33,11 +33,11 @@ export default async function HrMessagesPage({searchParams}:{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(d);
  return <div className="min-w-0 max-w-full space-y-6">
-  <PageHeader title="Notifications"
-   description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."/>
-  <Link href="/hr/conversations" className="inline-flex min-h-9 max-sm:min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-   Open recruiter conversations
-  </Link>
+  <PageHeader eyebrow="Recruiter" title="Notifications"
+   description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."
+   actions={<Link href="/hr/conversations" className="inline-flex min-h-9 max-sm:min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     Open recruiter conversations
+   </Link>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
    {result.choices.map(grant=><Link key={grant.id}
