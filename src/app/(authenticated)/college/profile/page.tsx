@@ -16,7 +16,7 @@ export default async function CollegeAdminProfilePage({
   if (query.section === "contacts") redirect("/college/profile#contacts");
   if (query.section === "connect-accounts") redirect("/college/profile#social");
   const context = await getCurrentRequestContext();
-  if (!context.membership) return <main className="min-w-0 space-y-3 px-3 py-5 sm:px-6"><PageHeader eyebrow="College Admin" title="Profile"/><p role="alert" className="rounded-[var(--lms-control-radius,9px)] border border-border p-4">Admin not assigned to a college. Contact a Super Admin to access college staff profile controls.</p></main>;
+  if (!context.membership) return <main className="min-w-0 space-y-3 px-3 py-5 sm:px-6"><PageHeader eyebrow="College Admin" title="Profile"/><p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-4">Admin not assigned to a college. Contact a Super Admin to access college staff profile controls.</p></main>;
   if (context.membership.status !== "ACTIVE" ||
       !hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
   const [accountResult,profileResult]=await Promise.allSettled([
@@ -28,7 +28,7 @@ export default async function CollegeAdminProfilePage({
     <div role="alert" className="space-y-2 border-b border-border pb-5">
       <p className="font-semibold">Failed to load profile.</p>
       <p className="text-sm text-body">Couldn&apos;t refresh profile. Your existing details have not been changed.</p>
-      <Link href="/college/profile" prefetch={false} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Retry</Link>
+      <Link href="/college/profile" prefetch={false} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Retry</Link>
     </div>
   </main>;
   const profile=profileResult.value;
