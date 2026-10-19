@@ -219,7 +219,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
      <button type="button" disabled={saving} onClick={cancelDraft}
       className="min-h-11 md:min-h-9 rounded border border-border px-4 text-sm">Cancel</button>
      <button type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
-      className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">{saving?"Saving…":"Add follow-up"}</button>
+      className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50 text-primary-foreground">{saving?"Saving…":"Add follow-up"}</button>
     </div>
    </div>
   </div>:null}
