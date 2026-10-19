@@ -233,7 +233,7 @@ export function GridWorkspace<Row>({
     onClick={()=>onExportXlsx(selectedPage.length>0)}>
     Export {selectedPage.length?"selected":"visible"} Excel
    </Button>:null}
-   {xlsxHref?<a href={xlsxHref} aria-label="Export selected students to Excel" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link lms-inline-link">Export selected XLSX</a>:null}
+   {xlsxHref?<a href={xlsxHref} aria-label={"Export "+(selectedPage.length?"selected":"visible")+" rows to Excel"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link lms-inline-link">Export selected XLSX</a>:null}
    <span className="text-xs text-muted-foreground">Exports contain only rows on this page{selectedPage.length?" that are selected":""}; server-side Excel uses existing permissions.</span>
   </div>:null}
   {pasteOpen&&selection&&rollOf?<div id={id+"-paste"} className="space-y-2">
