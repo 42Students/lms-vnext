@@ -5,6 +5,7 @@ import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import type { PlacementReportMetrics } from "@/modules/placements/report-model";
 import type { getPlacementReportWorkspace } from "@/modules/placements/report-service";
 
@@ -177,26 +178,7 @@ export function ReportMetrics({
     },
   ];
 
-  return (
-    <section
-      aria-label="Placement headline metrics"
-      className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4"
-    >
-      {cards.map((card) => (
-        <div
-          key={card.label}
-          className="border-b border-border py-4"
-        >
-          <p className="text-xs font-semibold uppercase tracking-wide text-body">
-            {card.label}
-          </p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
-            {card.value}
-          </p>
-        </div>
-      ))}
-    </section>
-  );
+  return <SummaryStrip label="Placement headline metrics" steps={cards} />;
 }
 
 export function ReportNavigation({
