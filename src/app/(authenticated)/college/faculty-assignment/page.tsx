@@ -36,7 +36,7 @@ export default async function CollegeFacultyAssignmentPage({
   );
   if (!parsed.success) return (
     <div className="space-y-5">
-      <PageHeader eyebrow="College Admin · People" title="Faculty Assignment" />
+      <PageHeader title="Faculty Assignment" />
       <ErrorState title="Invalid assignment filters"
         description="The status, page or search is invalid; no assignments were loaded."
         action={<Link href="/college/faculty-assignment"
@@ -55,7 +55,6 @@ export default async function CollegeFacultyAssignmentPage({
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
-        eyebrow="College Admin · People"
         title={FACULTY_ASSIGNMENT_COPY.title}
         description={FACULTY_ASSIGNMENT_COPY.description}
         actions={<Link href="/college/faculty"

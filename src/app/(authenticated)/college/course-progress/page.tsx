@@ -51,7 +51,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
   );
   if (!parsed.success) return (
     <div className="space-y-5">
-      <PageHeader eyebrow="College Admin · Courses & Content" title="Progress" />
+      <PageHeader title="Progress" />
       <ErrorState title="Invalid course progress filters"
         description="The search, offering status or page is invalid. No activity was loaded."
         action={<Link href="/college/course-progress" className="font-semibold text-link lms-inline-link">Clear filters</Link>} />

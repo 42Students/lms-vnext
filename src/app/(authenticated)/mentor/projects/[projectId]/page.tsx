@@ -3,7 +3,7 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { ProjectWorkspace } from "@/components/projects/project-workspace";
+import { ProjectWorkspace, ProjectWorkspaceHeader } from "@/components/projects/project-workspace";
 import {MentorTaskAllocation} from "@/components/projects/mentor-task-allocation";
 import {MentorLaneBoard} from "@/components/projects/mentor-lane-board";
 import {MentorProductBacklog} from "@/components/projects/mentor-product-backlog";
@@ -11,7 +11,7 @@ import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { PageHeader } from "@/components/ui/page-header";
+
 
 export default async function MentorProjectPage({
   params,
@@ -61,8 +61,7 @@ export default async function MentorProjectPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:breadcrumbTab[selectedTab ?? "overview"] ?? "Overview"}]} />
-      {(selectedTab==="board"||selectedTab==="performance") ?
-        <PageHeader title={workspace.project.title} /> : null}
+      <ProjectWorkspaceHeader workspace={workspace} mode="MENTOR" />
       <MentorProjectTabs projectId={projectId}/>
       {access.access === "MENTOR" ? <section className="min-w-0 border-b border-border pb-4"><details className="min-w-0"><summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Additional project tools</summary><div className="mt-3 flex flex-wrap gap-3">
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
@@ -139,6 +138,7 @@ export default async function MentorProjectPage({
 
 
         mode="MENTOR"
+        hidePageHeader
         readOnlyOverride={access.access === "OBSERVER"}
         currentMembershipId={
           context.membership?.id ?? null
