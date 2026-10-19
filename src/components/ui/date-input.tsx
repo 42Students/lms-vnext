@@ -176,6 +176,16 @@ export function DateInput({
   useEffect(() => {
     if (!enabled) setOpen(false);
   }, [enabled]);
+  useEffect(() => {
+    if (!open || !enabled) return;
+    const panel = rootRef.current?.querySelector<HTMLElement>('[role="dialog"][data-slot^="legacy-"]');
+    // Prefer the existing selection; otherwise focus a selectable day rather
+    // than a noninteractive weekday header or disabled boundary.
+    const target = panel?.querySelector<HTMLElement>(
+      '[data-calendar-day][aria-pressed="true"]:not(:disabled), [data-calendar-day]:not(:disabled), [aria-pressed="true"]:not(:disabled), button:not(:disabled)',
+    );
+    target?.focus();
+  }, [open, enabled]);
 
   function bindRef(node: HTMLInputElement | null) {
     inputRef.current = node;
