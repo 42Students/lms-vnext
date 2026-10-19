@@ -71,7 +71,7 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
       {search ? <div className="min-w-0 flex-1 basis-40 sm:basis-[220px] sm:max-w-[380px]">{search}</div> : null}
       <div className="sm:hidden">
         <Button ref={launcher} variant="secondary" aria-expanded={open} aria-controls={panelId}
-          onClick={() => setOpen(true)}>{title} ({count})</Button>
+          onClick={() => setOpen(true)}>{title}{count > 0 ? ` (${count})` : ""}</Button>
       </div>
       {views || columns || exportAction ? <div role="toolbar" aria-label="List actions" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">{views}{columns}{exportAction}</div> : null}
       {action}
