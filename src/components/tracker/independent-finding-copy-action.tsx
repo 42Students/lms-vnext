@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 import {useState} from "react";
 import {independentFindingFixPrompt,type IndependentFindingCopySource}
@@ -22,6 +23,6 @@ export function IndependentFindingCopyAction({finding}:{finding:IndependentFindi
   >
    Copy for Claude
   </Button>
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  {message?<InlineNotice tone={message.startsWith("Finding prompt")?"success":"error"} message={message}/>:null}
  </div>;
 }
