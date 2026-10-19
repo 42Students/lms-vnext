@@ -111,6 +111,9 @@
   letter-spacing: -.02em;
   color: var(--lms-neutral-900);
 }
+[data-slot="notification-popover"] :is(ul, ol) a[href]:hover {
+  background: rgba(0, 0, 0, .035);
+}
 [data-slot="notification-popover"] {
   border: 1px solid var(--lms-neutral-200);
   border-radius: 12px;
