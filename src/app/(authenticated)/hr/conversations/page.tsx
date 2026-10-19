@@ -99,13 +99,13 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    {result.choices.length>1?<nav aria-label="College conversations" className="flex flex-wrap gap-3">
     {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
      aria-current={g.collegeId===result.collegeId?"page":undefined}
-     className={g.collegeId===result.collegeId ? "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle"}>{g.collegeName}</Link>)}
+     className={g.collegeId===result.collegeId ? "inline-flex min-h-9 max-sm:min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 max-sm:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle"}>{g.collegeName}</Link>)}
    </nav>:null}
    <section className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
     {generalThread?<details className="mt-3 border-b border-border py-3">
-      <summary className="min-h-11 cursor-pointer rounded-[var(--lms-control-radius,9px)] py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Message the placement cell · General</summary>
+      <summary className="min-h-9 max-sm:min-h-11 cursor-pointer rounded-[var(--lms-control-radius)] py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Message the placement cell · General</summary>
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
       {generalThread.preview&&!generalHistory&&!generalHistoryResult?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
         {generalThread.preview!.text}
@@ -176,9 +176,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
    {result.items.length?<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
-    {visibleRows.map(row=><li key={row.id} className="rounded-[var(--lms-radius-lg)] px-2 py-4 transition-colors hover:bg-[var(--lms-neutral-50)] first:pt-3 last:pb-3">
+    {visibleRows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] px-2 py-4 transition-colors hover:bg-[var(--lms-neutral-50)] first:pt-3 last:pb-3">
      <Link href={"/hr/conversations/"+row.id}
-      className="block min-h-11 break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
+      className="block min-h-9 max-sm:min-h-11 break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="mt-2">{row.unread} new</Badge>:null}
      {row.preview?<p className="mt-2 break-words text-sm text-body">
       {row.preview.senderType==="RECRUITER"?"You: ":"Placement cell: "}{row.preview.text}
