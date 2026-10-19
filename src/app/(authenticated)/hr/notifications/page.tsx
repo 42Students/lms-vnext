@@ -85,7 +85,7 @@ export default async function HrMessagesPage({searchParams}:{
          <span className="text-xs text-muted-foreground">{group.items.length} on this page · {group.unread} unread</span>
        </div>
        <ol className="mt-3 divide-y divide-border">{group.items.map(row=>
-         <li key={row.id} className="rounded-[8px] px-4 py-3 transition-colors duration-200 hover:bg-[var(--lms-neutral-50)]">
+         <li key={row.id} className="rounded-[var(--lms-control-radius)] px-4 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
            <div className="flex flex-wrap justify-between gap-2">
              <span className="text-sm text-body">{row.label}{row.unread?<StatusBadge tone="info" className="ml-2">Unread</StatusBadge>:null}</span>
              <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
