@@ -25,7 +25,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   <PageHeader title="Students"/>
   <ErrorState title="Student access denied"
    description="Your account cannot access Super Admin student records."
-   action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+   action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
  </div>;
  let peopleFilters:Awaited<ReturnType<typeof getSuperAdminPeopleFilterOptions>>|null=null;
  let choices:Awaited<ReturnType<typeof getSuperAdminStudentRegisterOptions>>|null=null;
@@ -61,8 +61,8 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   <PageHeader title="Students"
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex flex-wrap items-center justify-end gap-2">
-    <a href="#register-student" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">Register New Student ↓</a>
-    <Link href="/admin/people" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+    <a href="#register-student" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover md:min-h-9">Register New Student ↓</a>
+    <Link href="/admin/people" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>

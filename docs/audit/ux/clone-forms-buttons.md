@@ -499,3 +499,31 @@ At the old LMS SCSS `components___variables.scss:148-156` phone boundary 767px a
 **Exact fetched-file grep:** in `date-input.tsx`, raw `<button>`: **0**, raw `<input>`: **0**, raw `<select>`: **0**, raw `<textarea>`: **0**, hex literals in style declarations: **0**. The 24-hour/60-minute popup renders with shared `<Button>...</Button>` and `<PopoverPanel>...</PopoverPanel>` paired tags; untouched React input controls remain native only inside shared `Input`. No code, tests, browser, full-tree grep or CI was run. Strict A1–A4, C1–C7 and D remain **12 open / 0 strict ticks**.
 
 **Next exact file:** `src/components/ui/selection-controls.tsx` (verify native checkbox/radio/switch readonly-like/invalid semantics, touch geometry and focus states), followed by `src/components/ui/file-upload.tsx` and `src/components/ui/file-dropzone.tsx` (selection/drop ownership and accessible progress).
+
+
+ 
+## 2026-10-19 replacement lane — shared selection and dropzone source pass
+
+**Completed/reviewed source files (not strict category ticks):**
+- [x] `src/components/ui/checkbox.tsx`: preserve native ref/indeterminate/checked/disabled/error styles; when a caller explicitly passes `readOnly`, announce `aria-readonly` and prevent click/Space toggles while preserving focusability.
+- [x] `src/components/ui/radio.tsx`: native radio semantics with shared teal/disabled/error; readonly suppresses click, Space and arrow-key changes, keeping the selected radio unchanged.
+- [x] `src/components/ui/segmented-control.tsx`: replaced its last raw radio input with the shared `Radio`; added optional `readOnly`, mapped through to native radio and fieldset without changing existing controlled value/handler contracts.
+- [x] `src/components/ui/file-dropzone.tsx`: drag highlight now persists while moving across nested picker/label children; only exits when leaving the parent region. Existing drop validation, list, previews and actual caller-owned progress are unaffected.
+
+| Element/state | Legacy source:line and value | vNext source:line and value | Proof status |
+| --- | --- | --- | --- |
+| Checkbox checked | `components___antddesign.scss:123-131` checked inner border/background `$clrThird` #26bac7 | `checkbox.tsx:10-14` native checked teal `--lms-primary` | Matched color |
+| Radio checked | `components___variables.scss:10` #26bac7 active accent | `radio.tsx:12-13` checked accent `--lms-primary` | Matched brand color; native glyph shape differs from AntD on some browsers |
+| Switch checked | `components___common.scss:226-229` checked inner background `$clrThird` #26bac7 | `selection-controls.tsx:25-26` checked track `--lms-primary` | Matched color, geometry unproven |
+| Choice labels | `components___antddesign.scss:213-216` checked label #0a0517 | `selection-controls.tsx:13-16,24-27` shared 14px body text role | Paint role aligned; computed color pending |
+| Focus | `components___antddesign.scss:171-174` keyboard focus teal 35%, offset 2px on primary; form focus `components___form.scss:130-133` teal 15% | `checkbox.tsx:12-14`, `radio.tsx:11-13`, `segmented-control.tsx:23-25` token outline offset 2px | Source presence verified; exact computed halo/radius unproven |
+| Disabled | `components___antddesign.scss:176-185` neutral muted; `components___variables.scss:29-32` disabled ink | `checkbox.tsx:12-14`, `radio.tsx:12-13`, `selection-controls.tsx:13,24` disabled neutral/50% | Source checked, browser native appearance pending |
+| Read-only interaction | Native checkbox/radio lack enforceable HTML readonly; old LMS has no explicit readonly choice rule in `components___form.scss:110-143` | `checkbox.tsx:7-14`, `radio.tsx:7-13`, `segmented-control.tsx:10-25` prevent readonly toggles | Additional accessibility/contract guard; no pixel parity claim |
+| Phone hit geometry | `components___variables.scss:139,148-156` 44px target <=767px | `selection-controls.tsx:13,24` label min-height 44px, `segmented-control.tsx:20-23` min-height 44px | Source breakpoint aligned, 375px touch testing pending |
+| Picker drop hover | `components___form.scss:38-75` menu/field hover background and transitions; `components___variables.scss:252-258` motion scale | `file-dropzone.tsx:48-52` teal tinted dragging paint, stable when cursor crosses descendants | No exact legacy drag target dimensions available; C5 remains open |
+
+**Exact fetched-file raw JSX counts:** `checkbox.tsx`: 1 raw `<input>` (intentional shared primitive); `radio.tsx`: 1 raw `<input>` (intentional shared primitive); `segmented-control.tsx`: **0** raw input/button/select/textarea tags after conversion; `selection-controls.tsx`: **0** raw input/button/select/textarea tags; `file-dropzone.tsx`: **0** raw input/button/select/textarea tags. Readonly handlers and closing component tags were reviewed from the complete GitHub source after each write. These numbers are limited to the five stated files, NOT a repo-wide grep.
+
+**Unresolved strict requirements:** A1–A4, C1–C7 and D remain **12 unticked / 0 ticked**. No runtime, CI, tests, browser or authoritative full-tree grep was performed. C4 still needs exact switch/radio geometry + phone/tablet interaction validation, and C5 needs upload crop and whole-flow verification. The code is directly committed to `chatgpt/chat-17-b` after each file; no push to main.
+
+**Next exact source file:** `src/components/ui/file-upload.tsx` — finish selection/preview error-state and required-label parity before proceeding to `src/components/ui/form-field.tsx`.

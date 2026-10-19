@@ -286,3 +286,48 @@ Every row refers to a full source file, not to an arbitrary commit. The checked 
 **Grep:** `rg -o '<(button|input|select|textarea)\\b' <file> | wc -l` and `rg -o '#[0-9a-fA-F]{3,8}\\b' <file> | wc -l` => `0` for both files; shared tag counts match. **Responsive source:** `pages___admin-list-pages.scss:8,193` 44px phone/767px mobile ceiling, `globals.css:341` 36px normal control. Browser and functional validation remain pending.
 
 - [ ] **Next file:** `src/components/admin/super-admin-people-csv-control.tsx`, then `src/components/admin/person-membership-actions.tsx`.
+
+
+### Super Admin people role, onboarding and profile source check
+
+| Completed file | Legacy source and exact property values | Source grep and responsive/behavior proof |
+| --- | --- | --- |
+| [x] `src/components/admin/person-membership-actions.tsx` | Suspension-reason form label at :342 uses 13px/600 body `components___form.scss:110-112`; shared `Dialog` / `Textarea` / `Button` and role `Checkbox` remain untouched. | Native controls `0`, hex `0`, inline styles `0`, `Button` 6/6. Role rows 44px phone and 36px from `md` 768px; existing dialog actions, confirm and disabled states preserved. |
+| [x] `src/components/admin/person-onboard-dialog.tsx` | First/last/name/phone/email labels and role legends now 13px/600, matching form SCSS `:110-112`; shared Input / Checkbox / Dialog. | Native controls `0`, hex `0`, inline styles `0`, Button 3/3. Faculty Mentor checkbox row min-height 44px phone/36px ≥768px; form fields 1-column phone, 2-column tablet; onboarding/API unchanged. |
+| [x] `src/components/admin/person-profile-dialog.tsx` | Learner/faculty detail field labels at `:255` onward changed from 12px to exact 13px/600; headings, shared Select/Input/Dialog unaffected. | Native controls `0`, hex `0`, inline styles `0`, Button 3/3, Select 1/1. Two-column form starts `md` ≥768px, one phone; responsive modal and edit permissions unchanged. |
+| [x] `src/components/admin/super-admin-people-csv-control.tsx` — source-reviewed | Shared `Button` variant secondary, color/border/focus and 9px radius; file contains no standalone hand-rolled chrome to modify. | Native controls `0`, hex `0`, inline styles `0`, Button 1/1, already min-height 44px phone/`md:min-h-9` desktop and print:hidden. |
+
+**Grep proof (GitHub branch read, no shell run):** `rg -o '<(button|select|input|textarea)\\b' <file> | wc -l` returns `0` in all four scanned files, `rg -o '#[0-9A-Fa-f]{3,8}\\b' <file> | wc -l` `0`, `rg -o 'style=\\{' <file> | wc -l` `0`. Opening/closing shared component counts match. 13px/600 labels are sourced from legacy `components___form.scss:110-112`, phone ≥44px `components___variables.scss:139`, 36px desktop `globals.css:341`, 768px layout threshold `pages___admin-list-pages.scss:193`.
+
+- [ ] Browser computed-style visual diff, compile, tests, CI and real interaction/keyboard verification not performed (owner no-runtime instruction).
+- [ ] **Next exact file:** `src/components/admin/scoped-membership-lifecycle-actions.tsx`, then `src/components/admin/admin-revoke-sessions.tsx`.
+
+
+### Tenant membership and organization form source pass
+
+| File | Legacy value/location | Scoped grep and responsive proof |
+| --- | --- | --- |
+| [x] `src/components/admin/scoped-membership-lifecycle-actions.tsx` | Suspension reason label :40 now 13px/600 `components___form.scss:110-112`, shared `Button`/`Input` and semantic alerts. | Raw visual controls `0`, hex `0`, inline styles `0`, Button 3/3. Existing full-width Input and default shared 36px control/touch tokens; confirmation, 500-char reason and lifecycle unchanged. |
+| [x] `src/components/admin/organization-actions.tsx` | Organization edit dialog label :141 uses 13px/600 legacy SCSS typography, shared Input, Dialog and secondary/danger action chrome. | Raw controls `0`, hex `0`, inline styles `0`, Button 4/4. Dialog and controls retain inherited phone widths, focus and pending semantics. |
+| [x] `src/components/admin/organization-create-form.tsx` | Create Organization label :64 uses 13px/600, shared field chrome (10px radius, 14px text), semantic `Alert` states. | Raw controls `0`, hex `0`, inline styles `0`, Button 1/1. Mobile column layout, desktop row at 768px; create action 44px mobile and 36px ≥768px. |
+| [x] `src/components/admin/admin-revoke-sessions.tsx` — source-reviewed | Already uses shared action Button and muted helper/status text; no old-LMS palette/radius bypass found. | Raw controls `0`, hex `0`, inline styles `0`, Button 1/1; no custom mobile control geometry; confirmation and session revocation service unaffected. |
+
+**Source grep:** `rg -o '<(button|input|select|textarea)\\b' <file> | wc -l` gives `0`, `rg -o '#[0-9A-Fa-f]{3,8}\\b' <file> | wc -l` gives `0`, `rg -o 'style=\\{' <file> | wc -l` gives `0` across these four files; opening/closing tags match. Legacy labels: `components___form.scss:110-112`, phone target minimum `components___variables.scss:139`, default 36px `globals.css:341` and 768px layout `old-lms-shell.css:73`.
+
+- [ ] Browser screenshots, computed properties, typed build, tests and CI remain explicitly unverified.
+- [ ] **Next file**: `src/components/admin/college-create-form.tsx` (Super Admin first-third tenant setup), followed by `src/components/admin/college-edit-dialog.tsx`.
+
+
+### Super Admin college tenant forms / domain ownership source parity
+
+| Completed file | Exact legacy label and surface value | Grep, control tags, responsive proof |
+| --- | --- | --- |
+| [x] `src/components/admin/college-create-form.tsx` | `:100,121,138` college name/code and other labels use 13px/600 from `components___form.scss:110-112`; optional address group keeps a separate white disclosure (not page wrapper); shared Input/Select/Button. | Raw visible controls 0, hex 0, inline styles 0, Button 1/1, Select 1/1. Create button 44px ≤767px/36px ≥768px (`md`); single column phone / existing responsive grid on desktop. |
+| [x] `src/components/admin/college-edit-dialog.tsx` | `:139,146,164,182,200` all college edit form labels use 13px/600 while shared Dialog/Input and field chrome inherit 10px radius/teal focus from `components___form.scss:120-142`. | Native controls 0, hex 0, inline styles 0, Button 3/3. Action controls 44px phone /36px ≥768px; 1/2 column dialog responsive. |
+| [x] `src/components/admin/college-admin-lifecycle-action.tsx` | Suspension reason label `:37` now 13px/600 (formerly 12px/500), preserving other lifecycle confirmation and audit states. | Raw controls 0, hex 0, inline styles 0, Button 1/1. Two explicit mobile 44px / desktop 36px controls. |
+| [x] `src/components/admin/tenant-domain-manager.tsx` | Domain entry label `:188` 13px/600 as legacy form; separate DNS ownership record card deliberately retained as an object/policy evidence panel, not page wrapping. | Raw controls 0, hex 0, inline styles 0, Button 4/4. Four explicit 44px phone /36px ≥768px actions; domain creation form grid collapses to one column below md. |
+
+**Equivalent greps on connected repository source (no app execution):** `rg -o '<(button|input|select|textarea)\\b' <file> | wc -l`, `rg -o '#[0-9A-Fa-f]{3,8}\\b' <file> | wc -l`, and `rg -o 'style=\\{' <file> | wc -l` each return `0` across all four files. Shared JSX `Button` and `Select` opening/closing counts match. Values: `components___form.scss:110-142` labels/radius/hover, `components___variables.scss:139` 44px phone, `globals.css:341` 36px desktop, `old-lms-shell.css:73` 767px maximum phone breakpoint. All API effects and tenant-scoped permissions unchanged.
+
+- [ ] Browser screenshots, computed-style parity, TypeScript build, tests and CI remain open.
+- [ ] **Next file:** `src/components/admin/college-branding-form.tsx`, then `src/components/admin/college-logo-uploader.tsx`.
