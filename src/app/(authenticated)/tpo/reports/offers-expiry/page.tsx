@@ -38,7 +38,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
           CSV export is unavailable until the DB09 verification gate is enabled.
         </p>
       ) : null}
-      <Link href="/tpo/reports" className="text-sm font-semibold text-link hover:underline">
+      <Link href="/tpo/reports" className="text-sm font-semibold text-link hover:underline lms-inline-link">
         ← Reports
       </Link>
       <form action="/tpo/reports/offers-expiry" method="get"
