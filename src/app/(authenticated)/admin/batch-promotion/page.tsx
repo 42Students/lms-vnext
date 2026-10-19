@@ -102,7 +102,7 @@ export default async function SuperAdminBatchPromotionPage({
       action={<Link href="/admin/batch-promotion" className="font-semibold text-[var(--lms-teal-deep)]">Reset selection</Link>} /> :
     !preview || !summary ? <EmptyState title="Choose a batch" description="No learner data is fetched until you select a college-owned batch." /> :
     <>
-      <section className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="min-w-0 space-y-3 border-b border-border pb-5">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h2 className="m-0 break-words font-semibold text-foreground">{preview.batch.name}</h2>
           <StatusBadge tone={preview.simulatedReadiness ? "success" : "warning"}>{preview.simulatedReadiness ? "No detected blockers" : "Blocked or incomplete"}</StatusBadge>
@@ -112,7 +112,7 @@ export default async function SuperAdminBatchPromotionPage({
           {([
             ["Action", summary.action], ["Target term", summary.targetTerm ?? "Unavailable"],
             ["Learners checked", summary.learnersChecked], ["Learners with blockers", summary.blockedLearners],
-          ] as const).map(([label, value]) => <div key={label} className="rounded-lg border border-border bg-muted p-3">
+          ] as const).map(([label, value]) => <div key={label} className="border-r border-border py-2 pr-3 last:border-r-0">
             <dt className="text-xs text-muted-foreground">{label}</dt>
             <dd className="mt-1 font-semibold text-foreground">{value}</dd>
           </div>)}
@@ -135,7 +135,7 @@ export default async function SuperAdminBatchPromotionPage({
               academicYearStart={preview.plan.academicYearStart} />
           ) : null}
       </section>
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Known batch blockers ({summary.knownBlockers})</h2>
         {preview.blockers.length ? <ul className="mt-2 list-inside list-disc text-sm text-body">
           {preview.blockers.map(b => <li key={b}>{b.replaceAll("_", " ")}</li>)}
@@ -145,7 +145,7 @@ export default async function SuperAdminBatchPromotionPage({
         <h2 className="font-semibold text-foreground">Learner-level preview</h2>
         <p className="text-xs text-muted-foreground">Showing at most 100 of {preview.learners.length} examined enrollments; a shortened display is not a complete readiness decision.</p>
         {preview.learners.length ? <div className="grid gap-3 md:grid-cols-2">
-          {preview.learners.slice(0, 100).map(learner => <article key={learner.membershipId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+          {preview.learners.slice(0, 100).map(learner => <article key={learner.membershipId} className="min-w-0 border-b border-border py-3">
             <h3 className="m-0 break-words font-semibold text-foreground">{learner.name}</h3>
             <p className="mt-1 text-sm text-body">Enrollment: {learner.enrollmentStatus}</p>
             <p className="mt-2 text-sm text-body">{learner.blockers.length ? learner.blockers.join(", ").replaceAll("_", " ") : "No detected learner blocker"}</p>
@@ -153,6 +153,6 @@ export default async function SuperAdminBatchPromotionPage({
         </div> : <EmptyState title="No enrolled learners" description="No registered learner enrollments were present for this batch." />}
       </section>
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">← Academics</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] hover:underline sm:min-h-9">← Academics</Link>
   </div>;
 }
