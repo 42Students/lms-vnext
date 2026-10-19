@@ -36,7 +36,7 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
     className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 text-sm"/></label>
   <button type="button" disabled={busy||domain.trim().length<4}
    onClick={()=>setReview({action:"TRUST",value:domain})}
-   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Trust @{domain.replace(/^@/,"")||"domain"}</button>
+   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Trust @{domain.replace(/^@/,"")||"domain"}</button>
   <ul className="divide-y divide-border">{domains.map(item=><li key={item} className="flex min-h-12 items-center justify-between gap-3 py-2">
    <span className="break-all text-sm">@{item}</span>
    <button type="button" disabled={busy} onClick={()=>setReview({action:"REMOVE",value:item})}
