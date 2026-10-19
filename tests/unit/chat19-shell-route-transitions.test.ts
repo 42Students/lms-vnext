@@ -53,4 +53,9 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(route()).toContain("event.ctrlKey");
  expect(route()).toContain("destination.origin!==window.location.origin");
 });
+ it("cleans up recovery timer when the route changes",()=>{
+ expect(route()).toContain("recoveryTimer.current=window.setTimeout(()=>setLeaving(false),3000)");
+ expect(route()).toContain("window.clearTimeout(recoveryTimer.current)");
+ expect(route()).toContain("document.removeEventListener");
+});
 });
