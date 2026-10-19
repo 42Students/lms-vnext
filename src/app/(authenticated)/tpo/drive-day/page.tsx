@@ -67,7 +67,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
         <dl aria-label="Current authorized live-round snapshot" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">{[
           ["Live rounds",liveTotals.rounds],["Roster",liveTotals.roster],["Checked in",liveTotals.checkedIn],
           ["Explicit no-shows",liveTotals.explicitNoShows],["Pending",liveTotals.pending],["Unrecorded",liveTotals.unrecorded],
-        ].map(([name,count])=><div key={name} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
+        ].map(([name,count])=><div key={name} className="border-b border-border px-1 py-3"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
         <p className="text-xs text-muted-foreground">Counts describe the full retrieved live-round sample before these screen filters, not every round in the college or verified attendance.</p>
         {snapshot.truncated ? (
           <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">

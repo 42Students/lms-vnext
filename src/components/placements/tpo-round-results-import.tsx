@@ -1,4 +1,9 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Radio } from "@/components/ui/radio";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -53,7 +58,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    Company portal IDs with no matching application are left unmatched. Contradictory IDs, email and roll must be reviewed; a manual match is audited. Nothing is applied to the round until the separate Apply results step.</p>
   <a href={url} download className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Download CSV template</a>
   <label className="block text-sm font-semibold text-body">Company results file
-   <input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+   <Input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     disabled={busy} onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}
     className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border p-3 text-foreground"/>
   </label>
@@ -69,16 +74,16 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </div>
    {preview.unmatched.length?<div className="space-y-2">
     <h4 className="font-semibold">Unmatched rows — review or skip</h4>
-    {preview.unmatched.map(row=><div key={row.line} className="grid gap-2 border-b border-border py-3 sm:grid-cols-2">
+    {preview.unmatched.map(row=><div key={row.line} className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 sm:grid-cols-2">
      <p className="text-sm">Row {row.line}: {row.identity||"No ID"} · {row.reason}</p>
      <div className="flex flex-wrap gap-2">
-      <select aria-label={"Match row "+row.line} className="min-h-11 md:min-h-9 flex-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"
+      <Select aria-label={"Match row "+row.line} className="min-h-11 md:min-h-9 flex-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"
        value={overrides[row.line]??""} disabled={busy} onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
        <option value="">Do not match this row</option>
        {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
-      </select>
+      </Select>
       <label className="flex items-center gap-2 text-sm">
-       <input type="checkbox" checked={skips.includes(row.line)} disabled={busy}
+       <Checkbox checked={skips.includes(row.line)} disabled={busy}
         onChange={e=>{setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line));if(e.target.checked)setOverrides(p=>({...p,[row.line]:""}));}}/> Skip row
       </label>
      </div>
@@ -94,22 +99,22 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </details>
    <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
     <legend className="font-semibold">Students not in the file</legend>
-    <label className="flex gap-2"><input type="radio" checked={missingPolicy==="LEAVE_PENDING"}
+    <label className="flex gap-2"><Radio checked={missingPolicy==="LEAVE_PENDING"}
      onChange={()=>{setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/> Leave pending (do not change their result)</label>
-    <label className="flex gap-2"><input type="radio" checked={missingPolicy==="MARK_NOT_CLEARED"}
+    <label className="flex gap-2"><Radio checked={missingPolicy==="MARK_NOT_CLEARED"}
      onChange={()=>setMissingPolicy("MARK_NOT_CLEARED")}/> Mark everyone missing as Not cleared</label>
     {missingPolicy==="MARK_NOT_CLEARED"?<div className="space-y-2 text-foreground">
      <p>This also stages Not cleared for {preview.notInFile.length} currently eligible applicants missing from the file. Unmatched source rows must be resolved. Students are not told until results are applied.</p>
      <label className="flex items-center gap-2 text-sm font-semibold">
-      <input type="checkbox" checked={confirmMissingFailure} onChange={e=>setConfirmMissingFailure(e.target.checked)}/>
+      <Checkbox checked={confirmMissingFailure} onChange={e=>setConfirmMissingFailure(e.target.checked)}/>
       I reviewed the missing students and choose to stage Not cleared.
      </label>
     </div>:null}
    </fieldset>
-   <button type="button" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
+   <Button variant="primary" type="button" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
     (!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&!Object.values(overrides).some(Boolean))} onClick={()=>setConfirmOpen(true)}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
-    {busy?"Staging…":"Confirm and stage results"}</button>
+    {busy?"Staging…":"Confirm and stage results"}</Button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
     title="Stage this reviewed result import?"

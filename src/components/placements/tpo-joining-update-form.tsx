@@ -102,7 +102,7 @@ export function TpoJoiningUpdateForm({
           {status === "JOINED" ? "Actual joining date" : "Revised joining date"}
           <input type="date" value={joiningDate}
             onChange={(event) => setJoiningDate(event.target.value)}
-            className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
+            className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
         </label>
       ) : null}
       {needsReason ? (
@@ -110,7 +110,7 @@ export function TpoJoiningUpdateForm({
           Outcome reason
           <textarea rows={2} value={reason} maxLength={2000}
             onChange={(event) => setReason(event.target.value)}
-            className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
+            className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
         </label>
       ) : null}
       {corrected ? (
@@ -118,7 +118,7 @@ export function TpoJoiningUpdateForm({
           Reason for correcting the recorded outcome
           <textarea rows={2} value={correctionReason} maxLength={2000}
             onChange={(event) => setCorrectionReason(event.target.value)}
-            className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
+            className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
         </label>
       ) : null}
       <div className="sm:col-span-2">

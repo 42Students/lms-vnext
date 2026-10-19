@@ -83,12 +83,12 @@ export default async function TpoCandidateSchedulePage({
       </div>
     ) : null}
     {drive.rounds.length === 0 ?
-      <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-5 text-sm text-body">
+      <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-[var(--lms-space-5)] text-sm text-body">
         No persisted rounds exist for this drive.
       </p> : roundId && !selectedRound ?
-      <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-5 text-sm text-body">No candidates shown for an unknown round.</p>
+      <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-[var(--lms-space-5)] text-sm text-body">No candidates shown for an unknown round.</p>
       : readiness.total === 0 ?
-      <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-5 text-sm text-body">
+      <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-[var(--lms-space-5)] text-sm text-body">
         No progression-eligible round participants are currently recorded.
         This does not imply slots were assigned.
       </p> : <>

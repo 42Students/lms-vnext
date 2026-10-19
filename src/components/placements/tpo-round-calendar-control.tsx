@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 type Choice = {
@@ -74,25 +78,25 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
     } catch (e) { setError(e instanceof Error ? e.message : "Calendar update failed."); }
     finally { setPending(false); }
   }
-  if (choices.length === 0) return <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
+  if (choices.length === 0) return <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">
     No pending or scheduled rounds exist in published drives. Create a round in its job workspace first.
   </p>;
   return <section className="space-y-4 border-b border-border pb-6">
     <label className="block text-sm font-semibold text-foreground">Drive round
-      <select className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-body"
+      <Select className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-body"
         value={id} onChange={(event) => choose(event.target.value)}>
         <option value="">Select a round</option>
         {choices.map((item) => <option key={item.id} value={item.id}>
           {item.companyName} · {item.jobTitle} · {item.name} ({item.status})
         </option>)}
-      </select>
+      </Select>
     </label>
     {round ? <>
       <p className="text-sm text-body">Status: {round.status}. Kind: {round.kind}.
         Duration: {round.durationMinutes ?? "Unknown"} minutes. On-campus rounds
         need a recorded duration for venue collision checking.</p>
       <label className="block text-sm font-semibold text-foreground">Date/time (IST)
-        <input type="datetime-local" className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
+        <Input type="datetime-local" className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
           value={dateInput} onChange={(event) => setDateInput(event.target.value)} />
       </label>
       {blockedDay?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-[var(--lms-gold-accent)]">
@@ -102,27 +106,27 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
        Blocked-date storage is unavailable; schedule clashes cannot be verified.
       </p>:null}
       <label className="block text-sm font-semibold text-foreground">Mode
-        <select className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
+        <Select className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
           value={mode} onChange={(event) => setMode(event.target.value as "ON_CAMPUS" | "VIRTUAL")}>
           <option value="ON_CAMPUS">On campus</option>
           <option value="VIRTUAL">Virtual</option>
-        </select>
+        </Select>
       </label>
       <label className="block text-sm font-semibold text-foreground">
         {mode === "ON_CAMPUS" ? "Venue" : "Meeting URL"}
-        <input value={mode === "ON_CAMPUS" ? venue : meetingUrl}
+        <Input value={mode === "ON_CAMPUS" ? venue : meetingUrl}
           onChange={(event) => mode === "ON_CAMPUS" ? setVenue(event.target.value) : setMeetingUrl(event.target.value)}
           className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
       </label>
       <label className="block text-sm font-semibold text-foreground">Cancellation reason (for Cancel only)
-        <textarea value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000}
-          className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
+        <Textarea value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000}
+          className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
       </label>
       <div className="flex flex-wrap gap-3">
-        <button disabled={pending} type="button" onClick={() => void submit("SCHEDULE")}
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
+        <Button variant="primary" disabled={pending} type="button" onClick={() => void submit("SCHEDULE")}
+          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50 text-primary-foreground">
           {round.status === "PENDING" ? "Confirm schedule" : "Confirm reschedule"}
-        </button>
+        </Button>
         <button disabled={pending} type="button" onClick={() => void submit("CANCEL")}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
           Confirm cancellation

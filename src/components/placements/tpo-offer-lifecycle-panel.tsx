@@ -92,7 +92,7 @@ export function TpoOfferLifecyclePanel({
 
   if (choices.length === 0) return null;
   return (
-    <section className="space-y-4 border-b border-border pb-6" aria-label="TPO verified offer lifecycle">
+    <section className="space-y-4 border-b border-border p-5" aria-label="TPO verified offer lifecycle">
       <div>
         <h3 className="text-base font-semibold text-foreground">Verified offer lifecycle</h3>
         <p className="mt-1 text-sm leading-6 text-body">

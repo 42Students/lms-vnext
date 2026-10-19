@@ -1,6 +1,6 @@
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+import { PublicPageLoading } from "@/components/public/public-page-loading";
 
-/** GR-19: loading is bounded by a visible recovery action. */
+/** Public placement loading inherits the same branded shell as the page. */
 export default function Loading() {
-  return <GracefulPageLoading />;
+  return <PublicPageLoading label="Loading placements..." />;
 }

@@ -55,11 +55,11 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   {views.length?<ul className="mt-3 flex flex-wrap gap-2">{views.map(view=>
    <li key={view.name} className="inline-flex items-center gap-1 rounded-[var(--lms-control-radius)] border border-border">
     <button type="button" onClick={()=>router.push("/tpo/placements/lifecycle"+(view.query?"?"+view.query:""))}
-     className="min-h-11 px-3 text-sm font-semibold text-primary-text md:min-h-9">{view.name}</button>
+     className="min-h-9 px-3 text-sm font-semibold text-primary-text">{view.name}</button>
     <button type="button" onClick={()=>{if(!navigator.clipboard){setError("Clipboard unavailable. Open the view and copy its URL.");return;}void navigator.clipboard.writeText(window.location.origin+"/tpo/placements/lifecycle"+(view.query?"?"+view.query:"")).then(()=>{setCopied(view.name);setError("");}).catch(()=>setError("Copy failed. Open the view and copy its URL."));}}
-     aria-label={"Copy link for saved view "+view.name} className="min-h-11 px-2 text-sm text-primary-text md:min-h-9">Copy link</button>
+     aria-label={"Copy link for saved view "+view.name} className="min-h-9 px-2 text-sm text-primary-text">Copy link</button>
     <button type="button" onClick={()=>remove(view.name)}
-     aria-label={"Delete saved view "+view.name} className="min-h-11 px-2 text-sm text-body md:min-h-9">×</button>
+     aria-label={"Delete saved view "+view.name} className="min-h-9 px-2 text-sm text-body">×</button>
    </li>)}</ul>:<p className="mt-2 text-sm text-body">No views saved in this browser yet.</p>}
  </section>;
 }

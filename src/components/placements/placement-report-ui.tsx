@@ -179,12 +179,12 @@ export function ReportMetrics({
   return (
     <section
       aria-label="Placement headline metrics"
-      className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4"
+      className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
     >
       {cards.map((card) => (
         <div
           key={card.label}
-          className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0"
+          className="rounded-xl border border-border bg-surface p-4"
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-body">
             {card.label}
@@ -280,7 +280,7 @@ export function ReportCsvLink({
   return (
     <a
       href={`/api/placements/reports?${params.toString()}`}
-      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground hover:border-primary-hover hover:bg-primary-hover md:min-h-9"
+      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover md:min-h-9"
     >
       Export CSV
     </a>

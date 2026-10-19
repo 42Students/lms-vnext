@@ -225,7 +225,7 @@ export function HrDriveDraftForm({
     }
   }
 
-  if(savedRequestId) return <section role="status" className="space-y-4 rounded-xl border border-border bg-surface p-6">
+  if(savedRequestId) return <section role="status" className="space-y-4 rounded-[var(--lms-radius-card)] border border-border bg-surface p-6">
     <h2 className="text-lg font-semibold text-foreground">Sent to the placement cell for review</h2>
     <p className="text-sm text-body">Your request was saved. The placement cell will review and set the dates before it can open to students.</p>
     <div className="flex flex-wrap gap-3">
@@ -274,7 +274,7 @@ export function HrDriveDraftForm({
           </label>
           <label className="grid gap-1 text-sm text-body sm:col-span-2">
             Job description
-            <textarea className={inputClass} rows={5} value={draft.description} maxLength={5000}
+            <textarea className={inputClass+" h-auto min-h-28 py-2"} rows={5} value={draft.description} maxLength={5000}
               onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))} />
           </label>
           <label className="grid gap-1 text-sm text-body">
@@ -409,7 +409,7 @@ export function HrDriveDraftForm({
         <p className="mt-2 text-xs text-muted-foreground">Preset replaces the round list in this unsent draft only; edit each step afterward.</p>
         <div className="mt-4 space-y-3">
           {draft.rounds.map((round, index) => (
-            <div key={index} className="grid min-w-0 gap-3 rounded-lg border border-border p-3 sm:grid-cols-[10rem_minmax(0,1fr)_auto]">
+            <div key={index} className="grid min-w-0 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[10rem_minmax(0,1fr)_auto]">
               <label className="grid gap-1 text-sm text-body">
                 Kind
                 <select className={inputClass} value={round.kind}

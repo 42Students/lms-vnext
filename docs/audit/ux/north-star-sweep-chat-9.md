@@ -244,3 +244,53 @@ This is an ancestry/source reconciliation only. No TypeScript execution, tests, 
 During this source sweep, `main` advanced by another 230 commits after the initial reconciliation. The lane made a non-forced two-parent merge `f4ba6594cf76` against upstream `6d6c7790bab2`, preserving 20 scoped source changes plus the two audit files. Among the changed paths, only the tracker overlapped with upstream, whose contents were a prefix of the updated lane tracker. At the checkpoint, the branch was **24 commits ahead and 0 behind `main`**. A short requested-path pointer at [north-star-sweep-9.md](./north-star-sweep-9.md) directs reviewers to this canonical ledger. No files were written to `main`; shared shell/UI kit and tests remained untouched.
 
 Strict TypeScript correctness, responsive browser rendering and screenshot parity remain unverified because no local application execution, tests, lint or CI were run.
+
+
+## Fourth scoped North Star sweep — 2026-10-19
+
+**Integration:** fast-forwarded `chatgpt/chat-9-b` to newer `main` (`6222f78a4a19`) before edits. This run made **32 individual source-file styling commits** in three overlapping batches, all prefixed `[chat-9]` and pushed only to `chatgpt/chat-9-b`. Meanwhile other lanes added more work to `main`; a non-forced two-parent reconciliation commit `6a3884b1a626` integrated newer `main` (`8175bfbde69c`) without rewriting it. The three files with simultaneous edits were merged by applying only the intended accent/radius changes to their newest `main` contents. Newer upstream file changes elsewhere were preserved.
+
+**What changed:** Super Admin Feature Controls and learner module trace/forms/history, Organizations filters, tenant setup/list and managed subdomains, scoped account access and branding widgets, Project template/detail/college availability and workspace creation recovery links, and global template plan editing. Replaced one heavily bespoke template plan field class used by Inputs, Selects and Textareas with shared kit styling; removed duplicate search/primary button skins; normalized semantic teal links, control radius, mobile/desktop heights and radio/checkbox/slider accents. Selected module trace and history headers, academic hierarchy tables, and college setup guide sections no longer add redundant white cards over the shared white canvas. Independent interactive module cards, college tiles, status/selection warnings and all dialogs remain structurally intact.
+
+**Compared to current main at the time of this ledger, lane-only source paths:**
+
+- `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- `src/app/(authenticated)/admin/settings/error.tsx`
+- `src/app/(authenticated)/admin/tenants/page.tsx`
+- `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
+- `src/components/admin/academic-module-scope-inventory.tsx`
+- `src/components/admin/admin-dashboard-actions.tsx`
+- `src/components/admin/college-dashboard-cards.tsx`
+- `src/components/admin/college-logo-uploader.tsx`
+- `src/components/admin/college-signin-method-form.tsx`
+- `src/components/admin/learner-module-access-drawer.tsx`
+- `src/components/admin/super-admin-today-board.tsx`
+- `src/components/projects/admin-readiness-workspace-picker.tsx`
+- `src/components/projects/super-admin-template-plan-editor.tsx`
+
+**Non-functional scope guarantee:** no changed navigation destinations, permissions, queries, API calls, validation schemas, visible labels, form state, confirmation flow, domain mutations, or content order. No edits to `src/components/ui/**`, `src/components/shell/**`, `src/app/globals.css` or shared layout. Changes were guarded against the source before each commit.
+
+**Verification outstanding:** no app startup, TypeScript compilation, tests, lint, CI, browser screenshot comparison, accessibility/device check or runtime behavior validation were performed, per lane instructions. The source-level visual audit is not a verified pixel-perfect or strict TypeScript build result. At ledger time the branch was 19 commits ahead and 0 behind moving `main`.
+
+
+### Fifth batch: additional project and module-rule surface parity — 2026-10-19
+
+**10 further file-level source commits**, following the fourth sweep's 32 commits; this continuation therefore has **42 individual styling commits** plus audit/integration commits. All were pushed to the lane branch with the `[chat-9]` tag. Remaining Super Admin template-directory links, version comparison links and source previews, learner membership-rule history, college Projects action touch targets, and template-resource/sprint/task fieldsets now use semantic legacy color, control-height and canvas-radius tokens. This batch also replaces literal workspace/dashboard tile radii with the shared card radius and retains independent learner rule notice and module editor cards.
+
+Files edited in this fifth batch:
+
+- `src/app/(authenticated)/admin/projects/templates/page.tsx`
+- `src/app/(authenticated)/admin/projects/page.tsx`
+- `src/app/(authenticated)/college/projects/page.tsx`
+- `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
+- `src/components/projects/super-admin-template-resource-editor.tsx`
+- `src/components/projects/super-admin-template-plan-editor.tsx`
+- `src/components/projects/project-admin-workspace-list.tsx`
+- `src/components/admin/admin-dashboard-actions.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
+
+**Scope preserved:** no user-visible copy or page-body section order changed; no API, request, state, auth, validation or routing logic changed. The shared UI kit and shell remain under their own lanes. Only source edits were performed. As instructed, no local code execution, tests, typecheck, lint, CI, runtime or screenshots were performed; exact old-LMS parity remains unverified. At ledger time, the lane was **30 commits ahead / 0 behind `main`**, with 25 changed files in the diff; merged upstream commits may include many earlier changes.

@@ -56,7 +56,7 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
   </div>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   {participants.length?<ul className="space-y-2">
-   {participants.map(person=><li key={person.id} className="flex flex-wrap items-center gap-3 border-b border-border py-3">
+   {participants.map(person=><li key={person.id} className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
     <span className="min-w-0 flex-1 text-sm">{person.name??"Unnamed learner"} · {outsideDriveResultLabel(person.result)}</span>
     <label className="text-xs">Change recorded result
      <select defaultValue={person.result} disabled={pending}

@@ -355,7 +355,7 @@ export function PlacementOfferControls({
       ) : null}
 
       {candidates.length === 0 ? (
-        <p className="m-0 py-6 text-sm text-muted-foreground">
+        <p className="m-0 px-5 py-6 text-sm text-muted-foreground">
           No shortlisted candidates are available for offer review.
         </p>
       ) : (
@@ -375,7 +375,7 @@ export function PlacementOfferControls({
             return (
               <div
                 key={item.applicationId}
-                className="grid gap-4 py-5"
+                className="grid gap-4 px-5 py-5"
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>

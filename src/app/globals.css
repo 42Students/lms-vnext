@@ -31,6 +31,7 @@
   --lms-neutral-200: #e5e9f0;
   --lms-neutral-100: #f1f4f9;
   --lms-neutral-50: #fafbfc;
+  --lms-avatar-placeholder: #c4c4c4;
 
   --lms-white: #ffffff;
   --lms-black: #000000;
@@ -1009,7 +1010,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
  * the authenticated shell's 24px / 32px vertical main padding. Longer pages
  * expand naturally; dialogs, toasts and the navigation remain outside this
  * minimum-height calculation. */
-.lms-authenticated-canvas {
+[data-slot="page-canvas"][data-authenticated-canvas="true"] {
   min-height: calc(100dvh - 106px);
   background: #fff;
   border: 1px solid #e5e9f0;
@@ -1017,8 +1018,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   box-shadow: none;
 }
 @media (min-width: 768px) {
-  .lms-authenticated-canvas { min-height: calc(100dvh - 116px); }
+  [data-slot="page-canvas"][data-authenticated-canvas="true"] { min-height: calc(100dvh - 116px); }
 }
 @media (min-width: 1024px) {
-  .lms-authenticated-canvas { min-height: calc(100dvh - 132px); }
+  [data-slot="page-canvas"][data-authenticated-canvas="true"] { min-height: calc(100dvh - 132px); }
 }

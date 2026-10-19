@@ -63,7 +63,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
    title={pendingAction==="REMOVE"?"Remove this managed web address?":pendingAction==="CHANGE"?"Change this college's live web address?":"Allot this platform subdomain?"}
    description="Confirm the managed web address change for this college." confirmLabel={pendingAction==="REMOVE"?"Remove":pendingAction==="CHANGE"?"Change":"Allot"}
    pending={busy} onConfirm={()=>{if(pendingAction)void send(pendingAction);}}>
-   {message?<p role="alert" className="text-sm text-foreground">{message}</p>:null}
+   {message?<p role="alert" className="text-sm text-body">{message}</p>:null}
   </ConfirmDialog>
   {message&&<p role="status" className="text-sm">{message}</p>}
  </section>;
