@@ -42,7 +42,9 @@ All file:line references are repository-relative. An explicitly different implem
 | Desktop breakpoint | `old-lms-shell.css:23` hidden through 767px | `app-shell.tsx:75` md:flex from 768px | Source match |
 | Mobile width | `legacy-styles/components___antddesign.scss:305-308` 82%, max300 | `sidebar-legacy.css:187-196` 82vw max300 on shared Drawer at 0–767px; `mobile-navigation.tsx:33-36` | Width values source-match; viewport visuals deferred |
 | Mobile header | `legacy-styles/components___antddesign.scss:314-325` safe-area, 52px, 10px/16px/4px | `sidebar-legacy.css:198-212`; shared `drawer.tsx:49-54` | Source values match mobile overrides |
-| Mobile body | `legacy-styles/components___antddesign.scss:348-359` top8, left/right12, bottom24+safe area | `mobile-navigation.tsx:35` shared Drawer viewport classes `!pt-2 !px-3 !bottom padding 24px plus safe area` | Source match |
+| Mobile body | `legacy-styles/components___antddesign.scss:348-359` top8, left/right12, bottom24+safe area | `mobile-navigation.tsx:35` shared Drawer viewport classes `!pt-2 !px-3 !pb-[calc(24px+env(...))]` | Source match |
+| Mobile backdrop | `legacy-styles/components___antddesign.scss:143-146` rgba(30,54,63,.1) with 0 4px 4px #00000040 shadow | `sidebar-legacy.css:198` native dialog ::backdrop same values | Source match |
+| Mobile close touch target | `legacy-styles/components___antddesign.scss:334-346` 44×44px target | `sidebar-legacy.css:208-214` 44px × min44px, padding0 | Source match |
 | Mobile scroll | `legacy-styles/components___antddesign.scss:354-359` y-auto, x-hidden, touch inertia, hidden thumb | `drawer.tsx:55`, `scroll-cue.tsx:61-69`, `sidebar-legacy.css:213-219` | Source rules match |
 | Reduced motion | `legacy-styles/components___learn-layout.scss:577-585` disables transitions | `sidebar-legacy.css:258-261` disables rail motion | Comparable intent; page motion below |
 
