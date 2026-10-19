@@ -1,0 +1,40 @@
+import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+
+const source = (path: string) => readFileSync(path, "utf8");
+const hr = "src/app/(authenticated)/hr/";
+
+describe("NORTH-STAR chat-19: legacy recruiter page canvas", () => {
+  it("separates Today sections using dividers rather than nested full-size cards", () => {
+    const text = source(hr + "home/page.tsx");
+    expect(text).toContain('aria-label="Next recruiter actions"');
+    expect(text).toContain('aria-label="Live recruiter hiring drives" className="border-b border-border pb-5"');
+    expect(text).not.toContain('<section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">');
+    expect(text).toContain('className="border-b border-border pb-5"');
+  });
+
+  it("uses a single old-LMS counter strip for calendar and company reports", () => {
+    const calendar = source(hr + "calendar/page.tsx");
+    const reports = source(hr + "company/reports/page.tsx");
+    expect(calendar).toContain('aria-label="Recruiter calendar summary"');
+    expect(calendar).toContain('xl:grid-cols-5');
+    expect(reports).toContain('aria-label="Hiring portfolio summary"');
+    expect(reports).toContain('className="border-b border-border p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"');
+  });
+
+  it("keeps proposal rows on the table-like hairlines", () => {
+    const text = source(hr + "drives/proposals/page.tsx");
+    expect(text).toContain('className="divide-y divide-border border-y border-border"');
+    expect(text).toContain('className="p-4"');
+    expect(text).not.toContain('className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4"');
+  });
+
+  it("keeps the mobile drawer icon-only triggers with balanced SVG markup", () => {
+    const text = source("src/components/shell/mobile-navigation.tsx");
+    expect(text).not.toContain('aria-hidden="true">☰');
+    expect(text).not.toContain('aria-hidden="true">×');
+    expect((text.match(/<svg\b/g) ?? []).length).toBe(2);
+    expect((text.match(/<\/svg>/g) ?? []).length).toBe(2);
+    expect(text).toContain("min-h-0 flex-1 overflow-x-hidden overflow-y-auto pt-2 pb-4");
+  });
+});
