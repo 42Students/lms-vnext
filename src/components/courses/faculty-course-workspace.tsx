@@ -73,7 +73,7 @@ function Metric({
   detail: string;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-surface p-4">
+    <section className="border-r border-border pr-4 last:border-r-0">
       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         {label}
       </p>
@@ -435,7 +435,7 @@ export function FacultyCourseWorkspace({
         }
       />
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
@@ -501,7 +501,7 @@ export function FacultyCourseWorkspace({
         />
       ) : (
         <>
-          <section id="learning-path" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
+          <section id="learning-path" className="scroll-mt-24 border-t border-border pt-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
