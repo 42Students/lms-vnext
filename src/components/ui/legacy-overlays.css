@@ -173,6 +173,7 @@
 [data-slot="popover-listbox"] { box-shadow: 0 4px 24px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04); }
 [data-slot="popover-listbox"] { max-width: min(420px, calc(100vw - 24px)); }
 [data-slot="popover-listbox"] { max-height: min(520px, calc(100dvh - 120px)); }
+[data-slot="popover-listbox"] a[href] { display: block; min-height: 44px; }
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
