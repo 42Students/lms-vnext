@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {projectResourceFileDeclaration,validProjectResourceUploadGrant,
  type ProjectResourceFile} from "@/modules/projects/project-resource-files-ui-model";
@@ -52,9 +53,9 @@ export function ProjectDeliveryFileUploader({projectId,disabled,onUploaded}:{
    <input type="file" accept={acceptAttributeFor("project-resource")} disabled={disabled||busy}
     className="mt-2 block w-full text-sm" onChange={e=>setFile(e.target.files?.[0]??null)}/>
   </label>
-  <button type="button" onClick={()=>void upload()} disabled={disabled||busy||!file}
-   className="min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-50">
-   {busy?"Uploading…":"Attach file"}</button>
+  <Button type="button" onClick={()=>void upload()} disabled={disabled||busy||!file}
+   className="">
+   {busy?"Uploading…":"Attach file"}</Button>
   {busy?<p role="status" className="text-xs text-body">Uploading · {progress}%</p>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
  </div>;
