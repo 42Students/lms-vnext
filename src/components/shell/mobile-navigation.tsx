@@ -64,7 +64,7 @@ export function MobileNavigation({
 
   return (
     <>
-      <button
+      <Button variant="secondary" size="icon"
         ref={triggerRef}
         type="button"
         aria-label="Open navigation menu"
@@ -77,7 +77,7 @@ export function MobileNavigation({
           fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <path d="M4 6h16 M4 12h16 M4 18h16" />
         </svg>
-      </button>
+      </Button>
 
       {open ? (
         <div style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties}
