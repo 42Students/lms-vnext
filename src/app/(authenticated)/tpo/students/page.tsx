@@ -257,7 +257,7 @@ export default async function TpoStudentsPage({
         />
         <section
           role="alert"
-          className="rounded-[12px] border border-border bg-surface p-6"
+          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6"
         >
           <h2 className="text-lg font-semibold text-foreground">
             Invalid Students filters
@@ -411,8 +411,8 @@ export default async function TpoStudentsPage({
        <summary className="min-h-11 cursor-pointer text-sm font-semibold">More student tools</summary>
        <nav aria-label="Student roster tools" className="mt-3 flex flex-wrap items-center gap-2">
         {manageAllowed?<TpoStudentSavedViews />:null}
-        <Link href="/tpo/students/requests" className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-3 text-sm font-semibold text-link">Student Requests</Link>
-        <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-3 text-sm font-semibold text-link">Preparation support</Link>
+        <Link href="/tpo/students/requests" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Student Requests</Link>
+        <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Preparation support</Link>
         <TpoSafeCsvDownload href={exportHref} filename="tpo-students.csv" label="Export filtered CSV" />
        </nav>
       </details>
@@ -425,7 +425,7 @@ export default async function TpoStudentsPage({
         <input type="hidden" name="classId" value={query.classId??""}/>
         <label className="text-sm font-semibold">Stage
           <select name="legacyStage" defaultValue={query.legacyStage??""}
-            className="mt-1 block min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All stages</option>
             {(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"] as const).map(stage=>
               <option key={stage} value={stage}>{stage.charAt(0)+stage.slice(1).toLowerCase()}</option>)}
@@ -434,52 +434,52 @@ export default async function TpoStudentsPage({
         <label className="grid gap-1 text-sm font-semibold">Interviewed with (company)
           <input type="search" name="interviewedWith" maxLength={100}
            defaultValue={query.interviewedWith??""} placeholder="Company name"
-           className="min-h-9 w-40 rounded-[var(--radius)] border border-border bg-surface px-3"/>
+           className="min-h-9 w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="text-sm font-semibold">Debarred
           <select name="debarred" defaultValue={query.debarred===undefined?"":query.debarred?"YES":"NO"}
-            className="mt-1 block min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option><option value="YES">Debarred</option><option value="NO">Not debarred</option>
           </select>
         </label>
         <label className="text-sm font-semibold">Needs attention
           <select name="needsAttention" defaultValue={query.needsAttention===undefined?"":query.needsAttention?"YES":"NO"}
-            className="mt-1 block min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option><option value="YES">Needs attention</option><option value="NO">No attention flags</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Furthest round reached (minimum)
           <input type="number" name="minRoundReached" min={0} max={10000} step={1}
-           defaultValue={query.minRoundReached??""} className="min-h-9 w-28 rounded-[var(--radius)] border border-border bg-surface px-3"/>
+           defaultValue={query.minRoundReached??""} className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
-        <details className="w-full rounded-[var(--radius)] border border-border p-3">
+        <details className="w-full rounded-[var(--lms-canvas-radius)] border border-border p-3">
          <summary className="cursor-pointer font-semibold">Profile strength filters</summary>
          <p className="mt-2 text-xs text-muted-foreground">Projects here are self-reported profile entries, not verified Projects workspace outcomes or released grades.</p>
          <div className="mt-3 flex flex-wrap gap-3">
           <label className="grid gap-1 text-sm">Gender
-           <select name="gender" defaultValue={query.gender??""} className="min-h-9 rounded-[var(--radius)] border border-border p-2">
+           <select name="gender" defaultValue={query.gender??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
             <option value="">Any</option>{(["Male","Female","Other"] as const).map(v=><option key={v}>{v}</option>)}
            </select>
           </label>
           <label className="grid gap-1 text-sm">Skill name
            <input type="search" name="skillName" defaultValue={query.skillName??""} maxLength={100}
-            placeholder="e.g. Java" className="min-h-9 rounded-[var(--radius)] border border-border p-2"/>
+            placeholder="e.g. Java" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2"/>
           </label>
           <label className="grid gap-1 text-sm">Birth year
-           <input name="birthYear" type="number" min={1900} max={2100} defaultValue={query.birthYear??""} className="min-h-9 w-28 rounded-[var(--radius)] border border-border p-2"/>
+           <input name="birthYear" type="number" min={1900} max={2100} defaultValue={query.birthYear??""} className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/>
           </label>
           {([["minSkills","Skills"],["minProjects","Projects"],["minCertifications","Certifications"],["minExperiences","Experience entries"]] as const).map(([key,label])=>
            <label key={key} className="grid gap-1 text-sm">Minimum {label}
-            <input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="min-h-9 w-28 rounded-[var(--radius)] border border-border p-2"/>
+            <input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/>
            </label>)}
           <label className="grid gap-1 text-sm">Profile links
-           <select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-9 rounded-[var(--radius)] border border-border p-2">
+           <select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
             <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
            </select>
           </label>
           {([["hasResume","Resume"],["hasCodingProfiles","Coding profiles"]] as const).map(([key,label])=>
            <label key={key} className="grid gap-1 text-sm">{label}
-            <select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-9 rounded-[var(--radius)] border border-border p-2">
+            <select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
              <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
             </select>
            </label>)}
@@ -487,7 +487,7 @@ export default async function TpoStudentsPage({
         </details>
         <label className="text-sm font-semibold">Profile verified
           <select name="profileStatus" defaultValue={query.profileStatus??""}
-            className="mt-1 block min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All verification states</option>
             <option value="VERIFIED">Verified</option>
             <option value="WAITING">Waiting to verify</option>
@@ -502,7 +502,7 @@ export default async function TpoStudentsPage({
          <label key={name} className="grid gap-1 text-sm font-semibold">{label}
           <input type="number" name={name} min={0} max={10} step="0.01"
            defaultValue={value??""} placeholder="Any"
-           className="min-h-9 w-28 rounded-[var(--radius)] border border-border bg-surface px-3"/>
+           className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
          </label>)}
         {([
           ["maxActiveBacklogs","Max active backlogs",query.maxActiveBacklogs],
@@ -511,9 +511,9 @@ export default async function TpoStudentsPage({
          <label key={name} className="grid gap-1 text-sm font-semibold">{label}
           <input type="number" name={name} min={0} max={100} step={1}
            defaultValue={value??""} placeholder="Any"
-           className="min-h-9 w-28 rounded-[var(--radius)] border border-border bg-surface px-3"/>
+           className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
          </label>)}
-        <details className="w-full rounded-[var(--radius)] border border-border p-3">
+        <details className="w-full rounded-[var(--lms-canvas-radius)] border border-border p-3">
           <summary className="cursor-pointer font-semibold">Academic marks and passing year filters</summary>
           <div className="mt-3 flex flex-wrap gap-3">
             {([
@@ -523,40 +523,40 @@ export default async function TpoStudentsPage({
               ["minUgPct","UG % from",query.minUgPct],
             ] as const).map(([key,label,value])=><label key={key} className="grid gap-1 text-sm">{label}
               <input type="number" min={0} max={100} step="0.01" name={key} defaultValue={value??""}
-               className="min-h-9 w-28 rounded-[var(--radius)] border border-border p-2"/></label>)}
+               className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/></label>)}
             <label className="grid gap-1 text-sm">Passing year
               <input name="passingYear" type="number" min={1950} max={2100} defaultValue={query.passingYear??""}
-                className="min-h-9 w-28 rounded-[var(--radius)] border border-border p-2"/></label>
+                className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
             <label className="grid gap-1 text-sm">Maximum gap years
               <input name="maxGapYears" type="number" min={0} max={100} defaultValue={query.maxGapYears??""}
-                className="min-h-9 w-28 rounded-[var(--radius)] border border-border p-2"/></label>
+                className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
             {([
               ["marksVerified","Marks verified",query.marksVerified],
               ["isLateralEntry","Lateral entry",query.isLateralEntry],
             ] as const).map(([key,label,value])=><label key={key} className="grid gap-1 text-sm">{label}
               <select name={key} defaultValue={value===undefined?"":value?"YES":"NO"}
-                className="min-h-9 rounded-[var(--radius)] border border-border p-2">
+                className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
                 <option value="">Any</option><option value="YES">Yes</option><option value="NO">No</option>
               </select></label>)}
           </div>
         </details>
         <label className="text-sm font-semibold">CGPA recorded
           <select name="cgpaRecorded" defaultValue={query.cgpaRecorded===undefined?"":query.cgpaRecorded?"YES":"NO"}
-            className="mt-1 block min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option><option value="YES">Recorded</option>
             <option value="NO">No recorded CGPA</option>
           </select>
         </label>
         <label className="text-sm font-semibold">Offer waiting on answer
           <select name="offerWaiting" defaultValue={query.offerWaiting===undefined?"":query.offerWaiting?"YES":"NO"}
-            className="mt-1 block min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Any</option>
             <option value="YES">Yes</option><option value="NO">No</option>
           </select>
         </label>
         <label className="text-sm font-semibold">After college
           <select name="afterCollege" defaultValue={query.afterCollege??""}
-            className="mt-1 block min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All outcomes</option>
             {AFTER_COLLEGE_OUTCOMES.map(outcome=>
               <option key={outcome} value={outcome}>{AFTER_COLLEGE_LABELS[outcome]}</option>)}
@@ -564,7 +564,7 @@ export default async function TpoStudentsPage({
         </label>
         <label className="text-sm font-semibold">Batch
           <select name="batchId" defaultValue={query.batchId??""}
-            className="mt-1 block min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+            className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">Current students</option>
             {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
@@ -578,9 +578,9 @@ export default async function TpoStudentsPage({
          <label key={name} className="grid gap-1 text-sm font-semibold">{label}
           <input type="number" name={name} min={0} max={10000} step={1}
            defaultValue={value??""} placeholder="Any"
-           className="min-h-9 w-28 rounded-[var(--radius)] border border-border bg-surface px-3"/>
+           className="min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
          </label>)}
-        <button className="min-h-9 rounded-[var(--radius)] border border-border px-4">Show students</button>
+        <button className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4">Show students</button>
       </form>
       {query.batchId?<p className="text-sm text-muted-foreground">
         Students from a finished batch include completed enrollments for follow-up and reporting.
@@ -592,13 +592,13 @@ export default async function TpoStudentsPage({
         <Link
           href="/tpo/students"
           aria-current="page"
-          className="rounded-[var(--radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link"
+          className="rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link"
         >
           Students roster
         </Link>
         <Link
           href="/tpo/students/requests"
-          className="rounded-[var(--radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted"
+          className="rounded-[var(--lms-control-radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted"
         >
           Requests
         </Link>
@@ -619,26 +619,26 @@ export default async function TpoStudentsPage({
       ) : null}
 
       {query.profileStatus&&!data.definitions.verificationAvailable?<section role="status"
-        className="rounded-[var(--radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm text-warning-text">
+        className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm text-warning-text">
         Profile-verification records are unavailable. A missing source must not be mistaken for Not verified.
         <Link href="/tpo/students" className="ml-2 text-link underline">Clear profile filter</Link>
       </section>:null}
       {query.afterCollege&&!data.definitions.afterCollegeAvailable?<section role="status"
-        className="rounded-[var(--radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm text-warning-text">
+        className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm text-warning-text">
         Saved after-college outcome records are unavailable. The selected outcome cannot be filtered until its registered table is available.
         <Link href="/tpo/students" className="ml-2 text-link underline">Clear outcome filter</Link>
       </section>:null}
       {!data.definitions.externalOffersAvailable ? (
         <section
           role="status"
-          className="rounded-[var(--radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm leading-6 text-body"
+          className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm leading-6 text-body"
         >
           External offer information is unavailable. Placed counts may be incomplete.
         </section>
       ) : null}
 
       {!data.debarmentAvailable?<p role="status" className="text-sm text-warning-text">Timed debarment records are not available right now. Debarment filters and counts may be incomplete.</p>:null}
-      {(data.uninvitedCount??0)>0?<section role="status" className="rounded-[12px] border border-border bg-surface p-4 text-sm">
+      {(data.uninvitedCount??0)>0?<section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm">
         Registration is not open for {data.uninvitedCount} students: their batch has not been invited, so they cannot register.
         <Link href="/tpo/batches" className="ml-2 font-semibold text-link underline">Open Placement eligibility</Link>
       </section>:null}
@@ -659,7 +659,7 @@ export default async function TpoStudentsPage({
 
         <p className="mt-3 text-sm text-body" aria-live="polite">Journey of the {summary.activeLearners} students in {query.batchId?"this batch":query.programId?"this program":query.branchId?"this branch":"placements"}.</p>
         <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Student placement journey">
-         {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="rounded-[var(--radius)] border border-border bg-surface p-4">
+         {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <h3 className="text-sm font-semibold">{step.label}</h3>
           <p className="mt-2 text-2xl font-bold tabular-nums">{step.count}</p>
           <p className="text-xs text-muted-foreground">{step.percent}% of {summary.activeLearners} student(s)</p>
@@ -668,11 +668,11 @@ export default async function TpoStudentsPage({
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Journey attention filters">
          {data.debarredCount!=null&&data.debarredCount>0?<Link
           href={scopedHref({...currentFilters,debarred:true,page:1})}
-          className="rounded-[var(--radius)]-full border border-border px-3 py-2 text-sm font-semibold text-link">
+          className="rounded-[var(--lms-control-radius)]-full border border-border px-3 py-2 text-sm font-semibold text-link">
           Debarred · {data.debarredCount}</Link>:null}
          {tpoStudentJourneyGaps(summary).map(gap=><Link key={gap.state}
           href={scopedHref({...currentFilters,journeyState:gap.state,page:1})}
-          className="rounded-[var(--radius)]-full border border-border px-3 py-2 text-sm font-semibold text-link">
+          className="rounded-[var(--lms-control-radius)]-full border border-border px-3 py-2 text-sm font-semibold text-link">
           {gap.label} · {gap.count}</Link>)}
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
@@ -690,7 +690,7 @@ export default async function TpoStudentsPage({
                 },state))}
                 aria-current={selected ? "page" : undefined}
                 className={
-                  "rounded-[var(--radius)] border p-4 transition hover:border-primary hover:bg-primary-subtle " +
+                  "rounded-[var(--lms-control-radius)] border p-4 transition hover:border-primary hover:bg-primary-subtle " +
                   (selected
                     ? "border-primary bg-primary-subtle"
                     : "border-border bg-surface")
@@ -713,7 +713,7 @@ export default async function TpoStudentsPage({
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-[var(--radius)] bg-muted px-4 py-3">
+          <div className="rounded-[var(--lms-canvas-radius)] bg-muted px-4 py-3">
             <p className="text-xs font-semibold text-muted-foreground">
               {query.batchId?"Students in selected batch":"Active enrolled learners"}
             </p>
@@ -721,7 +721,7 @@ export default async function TpoStudentsPage({
               {summary.activeLearners}
             </p>
           </div>
-          <div className="rounded-[var(--radius)] bg-muted px-4 py-3">
+          <div className="rounded-[var(--lms-canvas-radius)] bg-muted px-4 py-3">
             <p className="text-xs font-semibold text-muted-foreground">
               Registered placement pool
             </p>
@@ -729,7 +729,7 @@ export default async function TpoStudentsPage({
               {summary.placementPool}
             </p>
           </div>
-          <div className="rounded-[var(--radius)] bg-muted px-4 py-3">
+          <div className="rounded-[var(--lms-canvas-radius)] bg-muted px-4 py-3">
             <p className="text-xs font-semibold text-muted-foreground">
               Placed outside registered pool
             </p>
@@ -748,7 +748,7 @@ export default async function TpoStudentsPage({
         </p>
       </section>
 
-      <section className="rounded-[12px] border border-border bg-surface">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
           <h2 className="text-lg font-semibold text-foreground">
             Branch intelligence
@@ -822,7 +822,7 @@ export default async function TpoStudentsPage({
         )}
 
         {data.branches.length ? <ul className="space-y-3 px-4 pt-4 sm:hidden" aria-label="Branch intelligence">
-          {data.branches.map(branch => <li key={branch.branchId} className="min-w-0 rounded-[var(--radius)] border border-border p-4">
+          {data.branches.map(branch => <li key={branch.branchId} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4">
             <Link href={scopedHref(tpoBranchDrillFilters({
               journeyState:query.journeyState, search:query.search,
               columns:first(raw.columns)?.slice(0,800), pageSize:query.pageSize,
@@ -868,7 +868,7 @@ export default async function TpoStudentsPage({
         <form
           action="/tpo/students"
           method="get"
-          className="grid gap-3 rounded-[12px] border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4"
         >
           {first(raw.columns)&&<input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
@@ -876,7 +876,7 @@ export default async function TpoStudentsPage({
             <select
               name="journeyState"
               defaultValue={query.journeyState ?? ""}
-              className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
             >
               <option value="">All journeys</option>
               {TPO_STUDENT_JOURNEY_STATES.map((state) => (
@@ -892,7 +892,7 @@ export default async function TpoStudentsPage({
             <select
               name="branchId"
               defaultValue={query.branchId ?? ""}
-              className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
             >
               <option value="">All branches</option>
               {data.branches.map((branch) => (
@@ -913,7 +913,7 @@ export default async function TpoStudentsPage({
             <select
               name="pageSize"
               defaultValue={String(query.pageSize)}
-              className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
             >
               <option value="25">25 students</option>
               <option value="50">50 students</option>
@@ -924,7 +924,7 @@ export default async function TpoStudentsPage({
           <div className="sm:col-span-2 lg:col-span-4">
             <button
               type="submit"
-              className="inline-flex min-h-9 items-center rounded-[var(--radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
             >
               Apply filters
             </button>
@@ -932,7 +932,7 @@ export default async function TpoStudentsPage({
         </form>
 
         {roster.items.length === 0 ? (
-          <div className="rounded-[12px] border border-border bg-surface p-8 text-sm text-body">
+          <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-8 text-sm text-body">
             {roster.total > 0
               ? "This page is outside the matching result range. Return to the first page."
               : Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")
@@ -1029,7 +1029,7 @@ export default async function TpoStudentsPage({
                   ...currentFilters,
                   page: roster.page - 1,
                 })}
-                className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Previous
               </Link>
@@ -1041,7 +1041,7 @@ export default async function TpoStudentsPage({
                   ...currentFilters,
                   page: roster.page + 1,
                 })}
-                className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Next
               </Link>
