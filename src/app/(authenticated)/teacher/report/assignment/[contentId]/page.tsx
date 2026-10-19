@@ -1,3 +1,4 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
@@ -43,9 +44,7 @@ export default async function FacultyAssignmentReportPage({
   } = report;
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <Link href="/teacher/allAssignments" className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-        ← My Assignments
-      </Link>
+      <PageBackLink href="/teacher/allAssignments" label="My Assignments" />
       <PageHeader title={assignment.title} />
       <div className="flex flex-wrap items-center gap-3">
         <FacultyReportCsvDownload
