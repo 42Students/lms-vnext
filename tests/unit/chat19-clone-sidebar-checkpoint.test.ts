@@ -34,4 +34,9 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(sidebar()).toContain("padding:10px 12px;");
  expect(sidebar()).toContain("border-radius:8px;");
 });
+ it("matches the teal active fill and inset bar",()=>{
+ expect(legacy()).toContain("box-shadow: rgb(38, 186, 199) 3px 0px inset;");
+ expect(sidebar()).toContain("background:#eff8fa;");
+ expect(sidebar()).toContain("box-shadow:inset 3px 0 #26bac7;");
+});
 });
