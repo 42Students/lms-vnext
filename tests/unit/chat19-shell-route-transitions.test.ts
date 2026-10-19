@@ -47,4 +47,10 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(shell).toContain("<RouteTransition>{children}</RouteTransition>");
  expect(shell.indexOf("<RouteTransition>")).toBeGreaterThan(shell.indexOf("<LegacyTopbar"));
 });
+ it("skips external links and keyboard-modified route clicks",()=>{
+ expect(route()).toContain('link.target==="_blank"');
+ expect(route()).toContain('link.hasAttribute("download")');
+ expect(route()).toContain("event.ctrlKey");
+ expect(route()).toContain("destination.origin!==window.location.origin");
+});
 });
