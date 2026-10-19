@@ -5,10 +5,10 @@ import {getProjectReadiness} from "@/modules/projects/readiness-service";
 import {projectReadinessLegacyCopy as copy} from "@/modules/projects/readiness-override-copy";
 import {ProjectReadinessOverrideForm} from "./project-readiness-override-form";
 import {PageHeader} from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import {ErrorState} from "@/components/ui/error-state";
 import {formatProjectAdminActivityDateIst} from "@/modules/projects/project-admin-date-model";
 import {z} from "zod";
-import Link from "next/link";
 import {ProjectAdminNav} from "./project-admin-nav";
 import { Tabs } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -20,8 +20,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       <PageHeader title={copy.title} eyebrow="Projects"/>
       <ErrorState title="Workspace readiness unavailable"
         description="Return to workspaces and open an authorized workspace to try again."
-        action={<Link href={basePath}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Back to workspaces</Link>}/>
+        action={<PageBackLink href={basePath} label="Back to workspaces" />}/>
     </div>;
   const context=await getCurrentRequestContext();
   const result=await (async()=>{
@@ -33,15 +32,14 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       <PageHeader title={copy.title} eyebrow="Projects"/>
       <ErrorState title="Workspace readiness unavailable"
         description="Return to workspaces and open an authorized workspace to try again."
-        action={<Link href={basePath}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Back to workspaces</Link>}/>
+        action={<PageBackLink href={basePath} label="Back to workspaces" />}/>
     </div>;
   const readiness=result.value;
   return <div className="space-y-6">
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <PageHeader title={copy.title} eyebrow="Projects"
       description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side."
-      actions={<Link href={basePath} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Back to workspaces</Link>} />
+      actions={<PageBackLink href={basePath} label="Back to workspaces" />} />
     <Tabs ariaLabel="Workspace sections" renderPanel={false} value="readiness"
       items={([
         ["summary","Summary"], ["overview","Overview"], ["team","Team"], ["sprints","Sprints"],
