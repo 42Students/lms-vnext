@@ -126,7 +126,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
      <span className="mt-1 inline-block text-xs font-semibold text-primary-text">{!item.readAt&&!readIds.includes(item.id)?"New  →":"→"}</span>
      </Button>
     </li>)}</ul></li>)}</ul>:null}
-   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+   {error?<p role="alert" className={style.topbarNotificationError}>{error}</p>:null}
   </Drawer>
  </div>;
 }
