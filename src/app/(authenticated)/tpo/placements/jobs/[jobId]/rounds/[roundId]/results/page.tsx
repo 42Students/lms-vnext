@@ -30,7 +30,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
    description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}/>
   <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Result counts">
-   {Object.entries(data.counts).map(([label,n])=><div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+   {Object.entries(data.counts).map(([label,n])=><div key={label} className="border-b border-border px-1 py-3">
     <p className="text-xs capitalize text-body">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
   </section>
