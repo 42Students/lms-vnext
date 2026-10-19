@@ -1,4 +1,5 @@
 import type { LearnerProjectGoalSummary } from "@/modules/projects/learner-project-goals-model";
+import styles from "./legacy-project-goals.module.css";
 export function LearnerProjectGoals({overview}: {overview:LearnerProjectGoalSummary}) {
   const hasContent=Boolean(overview.goal || overview.description || overview.deliverables.length || overview.definitionOfDone.length || overview.personas.length);
   return (
@@ -9,12 +10,12 @@ export function LearnerProjectGoals({overview}: {overview:LearnerProjectGoalSumm
       ) : (
         <div className="mt-3 space-y-3">
           {overview.goal ? <div><h3 className="text-sm font-semibold text-foreground">Project goal</h3>
-            <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body">{overview.goal}</p></div> : null}
-          {overview.description ? <p className="whitespace-pre-wrap break-words text-sm leading-6 text-body">{overview.description}</p> : null}
+            <p className={"mt-1 whitespace-pre-wrap "+styles.richText}>{overview.goal}</p></div> : null}
+          {overview.description ? <p className={"whitespace-pre-wrap "+styles.richText}>{overview.description}</p> : null}
           {overview.deliverables.length > 0 ? (
             <div><h3 className="text-sm font-semibold text-foreground">Deliverables</h3>
-              <ul className="mt-2 list-inside list-disc space-y-2 text-sm leading-6 text-body">
-                {overview.deliverables.map((item,index)=><li key={index} className="break-words">{item}</li>)}
+              <ul className={"mt-2 "+styles.deliverables}>
+                {overview.deliverables.map((item,index)=><li key={index} className={styles.deliverableItem}>{item}</li>)}
               </ul>
             </div>
           ) : <p className="text-sm text-muted-foreground">No deliverables have been added yet.</p>}
