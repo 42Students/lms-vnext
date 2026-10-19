@@ -75,7 +75,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         setMobileOpen(true);
         requestAnimationFrame(() => input.current?.focus());
       }
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && open && !event.defaultPrevented &&
+          event.target instanceof Node && root.current?.contains(event.target)) {
+        event.preventDefault();
         setOpen(false);
         setMobileOpen(false);
       }
@@ -92,7 +94,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       document.removeEventListener("keydown", shortcut);
       document.removeEventListener("pointerdown", outside);
     };
-  }, []);
+  }, [open]);
 
   function submit() {
     if (query.trim() && courseMatches[0]) {
@@ -143,6 +145,8 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       {open ? <PopoverListbox id="lms-topbar-command-results" label="Workspace commands" className={style.dropdown}
         onDismiss={() => {setOpen(false);setMobileOpen(false);input.current?.focus();}}
         onKeyDown={event => {
+          if (event.defaultPrevented || event.isComposing) return;
+          if (event.defaultPrevented || event.isComposing) return;
           if (event.key === "Escape") {
             event.preventDefault();
             input.current?.focus();
@@ -150,7 +154,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
             setMobileOpen(false);
             return;
           }
-          if (event.key === "Backspace" && !event.ctrlKey && !event.metaKey) {
+          if (event.target instanceof Element &&
+              event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+          if (event.key === "Backspace" && !event.ctrlKey && !event.metaKey && !event.altKey) {
             event.preventDefault();
             setQuery(value => value.slice(0, -1));
             input.current?.focus();
