@@ -158,7 +158,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             }],
           }))}>Add release</Button>
         {draft.sprints.map((sprint, index) => <fieldset key={index}
-          className="grid gap-3 rounded-lg border border-border p-3">
+          className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
           <legend className="px-1 text-sm font-semibold">Sprint {index + 1}</legend>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className={label}>Key (optional)
@@ -212,7 +212,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             href={"/admin/projects/templates/" + props.templateId + "/sprints"}>Add sprints first</Link>.
         </p> : null}
         {draft.tasks.map((task, index) => <fieldset key={index}
-          className="grid gap-3 rounded-lg border border-border p-3">
+          className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
           <legend className="px-1 text-sm font-semibold">Task {index + 1}</legend>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className={label}>Key (optional)
