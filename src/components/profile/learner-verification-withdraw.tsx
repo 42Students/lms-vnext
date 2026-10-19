@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import { Button } from "@/components/ui/button";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
 
 export function LearnerVerificationWithdraw({
@@ -35,26 +36,26 @@ export function LearnerVerificationWithdraw({
   }
  }
  return <div className="mt-3 space-y-2">
-  {!confirm?<button type="button" onClick={()=>setConfirm(true)}
-   className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
+  {!confirm?<Button type="button" onClick={()=>setConfirm(true)}
+   variant="secondary" className="min-h-11 sm:min-h-9">
    Withdraw
-  </button>:<div role="group" aria-label="Withdraw" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
+  </Button>:<div role="group" aria-label="Withdraw" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-3">
    <p className="text-sm text-body">Withdraw</p>
    <div className="mt-3 flex flex-wrap gap-3">
-    <button type="button" disabled={pending||stale} onClick={withdraw}
-     className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover disabled:opacity-50 sm:min-h-9">
+    <Button type="button" disabled={pending||stale} onClick={withdraw}
+     variant="danger" className="min-h-11 sm:min-h-9">
      Withdraw
-    </button>
-    <button type="button" disabled={pending} onClick={()=>setConfirm(false)}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
+    </Button>
+    <Button type="button" disabled={pending} onClick={()=>setConfirm(false)}
+     variant="secondary" className="min-h-11 sm:min-h-9">
      Cancel
-    </button>
+    </Button>
    </div>
   </div>}
   {message?<p role="alert" className="text-sm text-body">{message}</p>:null}
-  {stale?<button type="button" onClick={()=>router.refresh()}
-   className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+  {stale?<Button type="button" onClick={()=>router.refresh()}
+   variant="secondary" className="min-h-11 sm:min-h-9">
    Refresh verification status
-  </button>:null}
+  </Button>:null}
  </div>;
 }
