@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -93,15 +94,15 @@ export function CollegeSlotManager({ options, row }: {
     {open ? <form onSubmit={submit} className="mt-3 grid max-w-3xl gap-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:grid-cols-2">
       {row?<p role="note" className="sm:col-span-2 text-xs text-muted-foreground">Academic identity is locked after creation. Changing existing learner picks, credits or choice limits is checked by the server before saving.</p>:null}
       {!row ? <>
-        <Field label="Program"><select required className={fieldClass} value={programId}
+        <Field label="Program"><Select required className={fieldClass} value={programId}
           onChange={event => setProgramId(event.target.value)}>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select></Field>
-        <Field label="Academic period (optional)"><select className={fieldClass} value={periodId}
+        </Select></Field>
+        <Field label="Academic period (optional)"><Select className={fieldClass} value={periodId}
           onChange={event => setPeriodId(event.target.value)}>
           <option value="">No period linked</option>
           {options.periods.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select></Field>
+        </Select></Field>
         <Field label="Semester number"><input required type="number" min={1} max={Math.min(12, limit)}
           className={fieldClass} value={term} onChange={event => setTerm(event.target.value)} /></Field>
         <Field label="Academic year (optional, YYYY-YY)"><input maxLength={9}
