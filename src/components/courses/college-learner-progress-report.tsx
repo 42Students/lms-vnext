@@ -32,7 +32,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
   <form action="/college/course-progress" method="get" className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Class
     <Select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
-     className="min-h-11">
+     className="min-h-11 md:min-h-9">
      <option value="">Select Class</option>
      {[...sections].map(([id,name])=><option key={id} value={id}>{name}</option>)}
     </Select>
@@ -40,7 +40,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Course
     <Select value={offeringId} onChange={event=>setOfferingId(event.target.value)}
      name="offeringId" disabled={!sectionId}
-     className="min-h-11">
+     className="min-h-11 md:min-h-9">
      <option value="">Select Course</option>
      {courses.map(item=><option key={item.offeringId} value={item.offeringId}>
       {item.courseCode} · {item.courseName}
@@ -49,29 +49,29 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
    </label>
    <Input type="hidden" name="deliveryId" value={deliveryId}/>
    <Button type="submit" disabled={!deliveryId}
-    className="min-h-11">
+    className="min-h-11 md:min-h-9">
     Show progress
    </Button>
    <Link href="/college/course-progress"
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
     Clear
    </Link>
   </form>
   {!report?<p className="text-sm text-muted-foreground">
    Select a Class and Course to see each enrolled learner’s progress.
   </p>:<>
-   <div className="grid gap-3 sm:grid-cols-4" role="group" aria-label="Class course progress summary">
+   <div className="grid gap-3 md:grid-cols-4" role="group" aria-label="Class course progress summary">
     {[
      ["Average completion",report.averageCompletion+"%"],
      ["Students",String(report.students)],
      ["Not started",String(report.notStarted)],
      ["Items measured",String(report.itemsMeasured)],
-    ].map(([label,value])=><StatTile key={label} label={label} value={value} className="p-3 sm:p-3" />)}
+    ].map(([label,value])=><StatTile key={label} label={label} value={value} className="p-3" />)}
    </div>
    <Link prefetch={false} download
     href={"/api/courses/college/learner-progress/export?"+
      new URLSearchParams({offeringId:report.chosen.offeringId,deliveryId:report.chosen.deliveryId}).toString()}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
     Export per-learner CSV
    </Link>
    <DataTable
