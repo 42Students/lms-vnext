@@ -37,7 +37,6 @@ export default async function LearnerApplicationHistoryPage({
         ← Back to application
       </Link>
       <PageHeader
-        eyebrow="My Placements · Application History"
         title={history.roleTitle}
         description={history.companyName + " · Persisted status-change timeline"}
         actions={<StatusBadge>{history.currentStatus.replaceAll("_", " ")}</StatusBadge>}
