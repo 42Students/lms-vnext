@@ -8,6 +8,7 @@ import { TrackerTelegramManualPanel } from "@/components/tracker/tracker-telegra
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
+import { Alert } from "@/components/ui/alert";
 import { isSuperAdmin } from "@/modules/identity/context";
 import {
   listKnownErrorsForAdmin,
@@ -42,14 +43,10 @@ export default async function TrackerLogsPage({
       {!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
         <TrackerLiveLogsExplorer initialQuery={liveQuery}/>:null}
       {!cloudLogPollConfigured() ? (
-        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
-          Cloud Logging backup is not configured. In-app errors can still be reported to Telegram.
-        </p>
+        <Alert tone="warning">Cloud Logging backup is not configured. In-app errors can still be reported to Telegram.</Alert>
       ) : null}
       {!telegramAlertsConfigured() ? (
-        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
-          Telegram alerts are not configured
-        </p>
+        <Alert tone="warning">Telegram alerts are not configured</Alert>
       ) : null}
     </>
   );
@@ -58,9 +55,7 @@ export default async function TrackerLogsPage({
     return (
       <div className="space-y-6">
         {header}
-        <p role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
-          Clear the Super Admin organization/college safety scope to view platform-wide log signatures.
-        </p>
+        <ErrorState title="Platform log access is scoped" description="Clear the Super Admin organization/college safety scope to view platform-wide log signatures."/>
       </div>
     );
   }
@@ -69,11 +64,7 @@ export default async function TrackerLogsPage({
     return (
       <div className="space-y-6">
         {header}
-        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
-          Known Errors persistence is staged but not enabled. W01 must register
-          and replay the DB10 log-alert tables before this page can read data.
-          This message is not a healthy-log status.
-        </p>
+        <Alert tone="warning">Known Errors persistence is staged but not enabled. W01 must register and replay the DB10 log-alert tables before this page can read data. This message is not a healthy-log status.</Alert>
       </div>
     );
   }
