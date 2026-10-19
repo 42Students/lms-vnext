@@ -98,7 +98,7 @@ export function TpoAfterCollegeBulkEditor({
         onChange={event => setSelected(event.target.checked ? rows.map(row => row.membershipId) : [])} />
       Select all {rows.length} students on this page
     </label>
-    <div className="max-h-40 space-y-1 overflow-auto rounded border border-border p-2">
+    <div className="max-h-40 space-y-1 overflow-auto rounded-[var(--radius)] border border-border p-2">
       {rows.map(row => <label key={row.membershipId}
         className="flex items-center gap-2 p-1 text-sm">
         <input type="checkbox" disabled={!available || busy} checked={ids.includes(row.membershipId)}
@@ -111,7 +111,7 @@ export function TpoAfterCollegeBulkEditor({
     <div className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">After college
         <select value={outcome} onChange={event => setOutcome(event.target.value as AfterCollegeOutcome)}
-          disabled={!available || busy} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-2">
+          disabled={!available || busy} className="min-h-9 sm:min-h-9 rounded-[var(--radius)] border border-border bg-surface px-2">
           {!MANUAL_AFTER_COLLEGE_OUTCOMES.includes(outcome)?<option value={outcome} disabled>{AFTER_COLLEGE_LABELS[outcome]} · Automatic</option>:null}
           {afterCollegeOptions().map(option => <option key={option.value} value={option.value}>
             {option.label}</option>)}
@@ -119,11 +119,11 @@ export function TpoAfterCollegeBulkEditor({
       </label>
       <button type="button" disabled={!available || busy || !ids.length}
         onClick={() => setConfirmation("SAVE")}
-        className="min-h-10 rounded bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+        className="min-h-10 rounded-[var(--radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
         Update {ids.length} student(s)
       </button>
       {undo?.length ? <button type="button" disabled={busy} onClick={() => setConfirmation("UNDO")}
-        className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 font-semibold text-primary-text">Undo last bulk update</button> : null}
+        className="min-h-9 sm:min-h-9 rounded-[var(--radius)] border border-border px-4 font-semibold text-primary-text">Undo last bulk update</button> : null}
     </div>
     <Dialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setConfirmation(null);}}
       title={confirmation==="SAVE"?"Update after-college outcomes":"Undo bulk after-college update"}

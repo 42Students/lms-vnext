@@ -65,12 +65,12 @@ function companyHref(company: TpoCompanyRow) {
 
 /** Reject ambiguous multi-valued deep-links without silently choosing one. */
 function invalidCompanyFilters(){
- return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
-  <h1 className="text-[30px] font-semibold leading-9 text-[#172033]">Invalid companies filters</h1>
+ return <section role="alert" className="space-y-3">
+  <h1 className="text-[30px] font-semibold leading-9 text-[var(--lms-heading)]">Invalid companies filters</h1>
   <p className="mt-2 text-sm text-body">
    The requested search or pagination values are invalid. No company data was loaded.
   </p>
-  <Link href="/tpo/companies" className="mt-4 inline-block font-semibold text-[var(--lms-teal-deep)] hover:underline">
+  <Link href="/tpo/companies" className="mt-4 inline-block font-semibold text-link hover:underline">
    Clear filters
   </Link>
  </section>;
@@ -136,13 +136,13 @@ export default async function TpoCompanyMemoryPage({
             <TpoCompanyCreateForm />
             <Link
               href="/tpo/companies/archived"
-              className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
             >
               Archived relationships
             </Link>
             <Link
               href="/tpo/recruiters"
-              className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
             >
               Recruiter leads
             </Link>
@@ -153,7 +153,7 @@ export default async function TpoCompanyMemoryPage({
       {!data.contactsAvailable ? (
         <section
           role="status"
-          className="rounded-[9px] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm leading-6 text-body"
+          className="rounded-[var(--radius)] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm leading-6 text-body"
         >
           Recruiter CRM tables are not available in the registered
           database. Contact counts and companies known only from
@@ -171,7 +171,7 @@ export default async function TpoCompanyMemoryPage({
         ].map(([label, value]) => (
           <div
             key={label}
-            className="rounded-xl border border-border bg-surface p-4"
+            className="rounded-[12px] border border-border bg-surface p-4"
           >
             <p className="text-sm font-semibold text-body">{label}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
@@ -185,7 +185,7 @@ export default async function TpoCompanyMemoryPage({
         <form
           action="/tpo/companies"
           method="get"
-          className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
+          className="grid gap-3 rounded-[12px] border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Search companies
@@ -195,14 +195,14 @@ export default async function TpoCompanyMemoryPage({
               maxLength={150}
               defaultValue={query.search ?? ""}
               placeholder="Company name or website"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
             />
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Sort by
             <Select name="sort" defaultValue={query.sort}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground">
               <option value="NAME">Company name</option>
               <option value="CONTACTS">Most contacts</option>
               <option value="DRIVES">Most drives</option>
@@ -214,7 +214,7 @@ export default async function TpoCompanyMemoryPage({
             <Select
               name="pageSize"
               defaultValue={String(query.pageSize)}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm text-foreground"
             >
               <option value="25">25</option>
               <option value="50">50</option>
@@ -224,7 +224,7 @@ export default async function TpoCompanyMemoryPage({
 
           <Button
             type="submit"
-            className="self-end inline-flex min-h-11 items-center justify-center rounded-[9px] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+            className="self-end inline-flex min-h-9 items-center justify-center rounded-[var(--radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
           >
             Search
           </Button>
@@ -235,7 +235,7 @@ export default async function TpoCompanyMemoryPage({
             href={"/api/placements/tpo/companies/export?"+new URLSearchParams({
               ...(query.search?{search:query.search}:{}),sort:query.sort,
             }).toString()}
-            className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+            className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
             Export companies CSV ({page.total})
           </Link>:<p role="status" className="text-xs text-muted-foreground">
             Narrow your search to 2,000 companies to export all matching rows.
@@ -248,14 +248,14 @@ export default async function TpoCompanyMemoryPage({
           </p>
           <Link
             href="/tpo/companies"
-            className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
+            className="text-sm font-semibold text-link hover:underline"
           >
             Clear filters
           </Link>
         </div>
 
         {page.items.length === 0 ? (
-          <div className="rounded-xl border border-border bg-surface p-8">
+          <div className="rounded-[12px] border border-border bg-surface p-8">
             <p className="text-sm text-body">
               {page.total > 0
                 ? "This page is outside the available results."
@@ -267,7 +267,7 @@ export default async function TpoCompanyMemoryPage({
                 pageSize: query.pageSize,
                 sort: query.sort,
               })}
-              className="mt-3 inline-block font-semibold text-[var(--lms-teal-deep)] hover:underline"
+              className="mt-3 inline-block font-semibold text-link hover:underline"
             >
               First page
             </Link>
@@ -281,7 +281,7 @@ export default async function TpoCompanyMemoryPage({
             columns={[
               {key:"company",header:"Company",mobileLabel:"Company",mobilePriority:"primary",
                cell:company=><div className="min-w-0">
-                <Link href={companyHref(company)} className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline">{company.name}</Link>
+                <Link href={companyHref(company)} className="inline-flex min-h-9 items-center break-words font-semibold text-link underline">{company.name}</Link>
                 {company.unlinkedLeadGroup?<div className="mt-2"><StatusBadge tone="warning">CRM name only · not linked</StatusBadge></div>:<p className="mt-1 text-xs text-muted-foreground">Linked employer</p>}
                 {company.websiteUrl?<p className="mt-1 break-all text-xs text-body">{company.websiteUrl}</p>:null}
                </div>},
@@ -298,7 +298,7 @@ export default async function TpoCompanyMemoryPage({
               {key:"actions",header:"Actions",mobileLabel:"Actions",mobilePriority:"action",
                cell:company=>company.companyId?
                 <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-                  className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Create drive</Link>:
+                  className="inline-flex min-h-9 items-center font-semibold text-link underline">Create drive</Link>:
                 <span className="text-xs text-muted-foreground">Link company first</span>},
             ]}
           />
@@ -320,7 +320,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Previous
               </Link>
@@ -334,7 +334,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Next
               </Link>

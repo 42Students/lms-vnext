@@ -14,7 +14,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
   await requireTpoBatchActor(context);
   const { rows, truncated } = await listArchivedTpoCompanyRelationships(context);
   return <div className="space-y-5">
-    <Link href="/tpo/companies" className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
+    <Link href="/tpo/companies" className="font-semibold text-link hover:underline">
       ← Companies directory
     </Link>
     <PageHeader eyebrow="TPO · Companies" title="Archived company relationships"
@@ -22,13 +22,13 @@ export default async function ArchivedCompanyRelationshipsPage() {
     {truncated ? <p role="status" className="text-sm text-body">
       Showing only the first 100 archived relationships. This is not a complete list.
     </p> : null}
-    {rows.length === 0 ? <p role="status" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
+    {rows.length === 0 ? <p role="status" className="rounded-[12px] border border-border bg-surface p-6 text-sm text-body">
       No archived college-company relationships are recorded.
-    </p> : <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
+    </p> : <ul className="divide-y divide-border rounded-[12px] border border-border bg-surface">
       {rows.map((row) => <li key={row.companyId} className="flex flex-wrap justify-between gap-3 p-4 text-sm">
         <span className="font-semibold text-foreground">{row.name}</span>
         <Link href={"/tpo/companies/" + encodeURIComponent(row.companyId) + "/manage"}
-          className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Review / restore →</Link>
+          className="font-semibold text-link hover:underline">Review / restore →</Link>
       </li>)}
     </ul>}
   </div>;
