@@ -691,3 +691,31 @@
   color: var(--lms-error) !important;
   font-size: 12px !important;
 }
+
+/* Grouped input shares ONE outer field skin rather than two nested halos.
+ * Legacy: components___form.scss:117-143 (single .ln-in2 shell, 10px
+ * rounding, teal 15% focus halo, red 20% invalid focus halo).
+ * The group's Input retains native focus, validity and form semantics.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where([data-slot="input-group"] [data-slot="input"]):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+/* Legacy: components___form.scss:130-133 (one teal focus halo). */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where([data-slot="input-group"]:focus-within):not(:where([data-unskin], [data-unskin] *)) {
+  border-color: var(--lms-primary) !important;
+  box-shadow: 0 0 0 2px rgba(38, 186, 199, 0.15) !important;
+}
+/* Legacy: components___form.scss:136-143 (6% invalid fill, red 20% halo). */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where([data-slot="input-group"]:has([aria-invalid="true"])):not(:where([data-unskin], [data-unskin] *)) {
+  border-color: var(--lms-error) !important;
+  background-color: rgba(239, 68, 68, 0.06) !important;
+}
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where([data-slot="input-group"]:has([aria-invalid="true"]):focus-within):not(:where([data-unskin], [data-unskin] *)) {
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+}
