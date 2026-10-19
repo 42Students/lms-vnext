@@ -30,7 +30,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
         description={lessons ? undefined : COLLEGE_COURSE_TAB_COPY.progressDescription}
         actions={
           <Link href="/college/courses"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Course offerings
           </Link>
         }
@@ -531,8 +531,8 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </label>
           ) : null}
           <Button type="submit"
-            className="min-h-11 px-5 sm:min-h-9">Filter</Button>
-          <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
+            className="min-h-11 px-5 md:min-h-9">Filter</Button>
+          <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Clear
           </Link>
         </form>
@@ -659,7 +659,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
               <Input type="number" name="page" min={1} max={data.totalPages} defaultValue={data.query.page}
                 className="ml-2 w-20"/>
             </label>
-            <Button type="submit" className="min-h-11 sm:min-h-9">Go</Button>
+            <Button type="submit" className="min-h-11 md:min-h-9">Go</Button>
           </form>:null}
           <Pagination page={data.query.page} pageCount={data.totalPages}
             hrefForPage={page=>collegeLearningHref(data.kind,{...data.query,page})}
