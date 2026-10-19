@@ -17,4 +17,8 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(legacy()).toContain("animation: pageSlideIn 250ms ease-out");
  expect(css()).toContain("animation:lms-route-slide-in 250ms ease-out");
 });
+ it("uses a 220ms legacy fade with the measured easing",()=>{
+ expect(legacy()).toContain("opacity 220ms cubic-bezier(0.2, 0.8, 0.2, 1)");
+ expect(css()).toContain("opacity 220ms cubic-bezier(.2,.8,.2,1)");
+});
 });
