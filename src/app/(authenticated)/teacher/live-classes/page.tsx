@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -36,20 +36,20 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
    className="flex flex-wrap items-end gap-3">
    <label className="grid gap-1 text-sm">When
     <Select name="view" defaultValue={data.query.view}
-     className="min-h-9 rounded border border-border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     className="min-h-9 rounded border border-border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      <option value="UPCOMING">Upcoming and in progress</option>
      <option value="PAST">Past</option>
      <option value="ALL">All</option>
     </Select></label>
    <label className="grid gap-1 text-sm">Section
     <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
-     className="min-h-9 rounded border border-border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     className="min-h-9 rounded border border-border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      <option value="">All assigned Sections</option>
      {data.courses.map(c=><option key={c.deliveryId} value={c.deliveryId}>
       {c.courseName} · {c.sectionName}
      </option>)}
     </Select></label>
-   <Button variant="primary" type="submit" className="min-h-9 px-4 py-2">Filter</Button>
+   <button type="submit" className="min-h-9 rounded bg-primary px-4 py-2 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-on-primary">Filter</button>
    <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
   </form>
   <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching registered live session{data.total===1?"":"s"}</p>
