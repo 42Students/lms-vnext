@@ -1,5 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 import {useEffect,useRef,useState} from "react";
 import {hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 import {isVerifiedRecruiterThreadAcknowledgement} from "@/modules/placements/recruiter-thread-ack-receipt-model";
@@ -56,10 +58,9 @@ function RecruiterConversationReadControlState({threadId}:{threadId:string}){
   }finally{acknowledgePending.current=false;setBusy(false);}
  }
  return <div className="space-y-2">
-  <button type="button" disabled={busy} onClick={acknowledge}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-60">
+  <Button type="button" variant="secondary" className="min-h-11" disabled={busy} loading={busy} onClick={acknowledge}>
    {busy?"Updating…":"Mark placement cell messages as read"}
-  </button>
+  </Button>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
  </div>;
 }

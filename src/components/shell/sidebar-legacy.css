@@ -135,8 +135,10 @@
  align-items:center;
  justify-content:center;
  color:inherit;
+ line-height:1;
  opacity:.55;
 }
+.lms-sidebar-nav .lms-sidebar-item-icon svg {display:block;width:20px;height:20px;}
 /* The original legacy icon box keeps 0.55 opacity in every state:
  * active/hover recolor its inherited foreground, not its opacity. */
 .lms-sidebar-nav .lms-nav-label {

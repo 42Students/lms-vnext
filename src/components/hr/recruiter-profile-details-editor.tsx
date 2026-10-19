@@ -1,8 +1,12 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import {splitHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
 import {hrProfileSaveErrorFeedback,hrProfileDetailsSaveReceiptSchema} from "@/modules/placements/recruiter-profile-details-model";
 export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialPhone,
@@ -73,17 +77,17 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   <div className="grid gap-3 sm:grid-cols-2">
    {([["firstName","First name"],["lastName","Last name"],["title","Designation"],["phone","Mobile"]] as const).map(([key,label])=>
     <label key={key} className="grid gap-1 text-sm text-body">{label}
-     <input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
+     <Input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
       value={form[key]} disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?14:key==="title"?160:100}
       onChange={e=>update(key,e.target.value)}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/>
+      className="w-full"/>
     </label>)}
   </div>
   {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}
   {dirty?<p role="status" className="text-sm font-semibold">Unsaved changes</p>:null}
-  <button type="submit" disabled={busy||!dirty}
-   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50">
-   {busy?"Saving…":"Save changes"}</button>
+  <Button type="submit" disabled={busy||!dirty}
+   >
+   {busy?"Saving…":"Save changes"}</Button>
   {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className="text-sm">{feedback}</p>:null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
    consequence="Your changes have not been saved." confirmLabel="Discard"

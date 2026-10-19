@@ -1,4 +1,8 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 import { useRouter } from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -70,29 +74,29 @@ export function TpoParticipationDecisionForm({
     <form onSubmit={submit} className="space-y-5">
       <label className="grid gap-2 text-sm font-semibold text-body">
         Learner-level eligibility
-        <select
+        <Select
           value={status}
           onChange={(event) => setStatus(event.target.value as Status)}
           disabled={pending}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
+          
         >
           <option value="NOT_DECIDED">Inherit class/batch decision</option>
           <option value="ELIGIBLE">Eligible for placements</option>
           <option value="INELIGIBLE">Ineligible for placements</option>
-        </select>
+        </Select>
       </label>
 
       {status === "INELIGIBLE" ? (
         <div className="grid gap-2 text-sm font-semibold text-body">
           <label htmlFor="tpo-participation-reason">Reason (required)</label>
           <div role="group" aria-label="Ineligibility reason presets" className="flex flex-wrap gap-2">
-            {TPO_INELIGIBLE_REASONS.map(preset=><button type="button" key={preset}
+            {TPO_INELIGIBLE_REASONS.map(preset=><Button variant="secondary" type="button" key={preset}
               disabled={pending} onClick={()=>setReason(preset)}
-              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs">{preset}</button>)}
-            <button type="button" disabled={pending} onClick={()=>setReason("")}
-              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs">Other</button>
+              >{preset}</Button>)}
+            <Button variant="secondary" type="button" disabled={pending} onClick={()=>setReason("")}
+              >Other</Button>
           </div>
-          <input
+          <Input
             id="tpo-participation-reason"
             type="text"
             required
@@ -101,7 +105,7 @@ export function TpoParticipationDecisionForm({
             onChange={(event) => setReason(event.target.value)}
             disabled={pending}
             placeholder="Reason for restricting placement participation"
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
+            
           />
         </div>
       ) : null}
@@ -109,13 +113,13 @@ export function TpoParticipationDecisionForm({
       {status !== "NOT_DECIDED" ? (
         <label className="grid gap-2 text-sm font-semibold text-body">
           Internal note (optional)
-          <textarea
+          <Textarea
             rows={3}
             maxLength={300}
             value={note}
             onChange={(event) => setNote(event.target.value)}
             disabled={pending}
-            className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-foreground"
+            
           />
         </label>
       ) : null}
@@ -145,13 +149,13 @@ export function TpoParticipationDecisionForm({
         </p>
       ) : null}
 
-      <button
+      <Button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-60"
+        
       >
         {pending ? "Saving…" : "Save learner eligibility"}
-      </button>
+      </Button>
     </form>
   );
 }

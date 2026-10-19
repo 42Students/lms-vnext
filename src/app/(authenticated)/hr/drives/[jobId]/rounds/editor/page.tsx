@@ -56,7 +56,7 @@ export default async function HrRoundsEditorPage({params}:{
   </section>
   <section className="space-y-3">
    <h2 className="font-semibold text-foreground">Current rounds ({rounds.length})</h2>
-   {rounds.length===0?<p role="status" className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 text-sm text-body">
+   {rounds.length===0?<p role="status" className="border-y border-border py-4 text-sm text-body">
     This drive has no hiring rounds. Add a round using the form above.
    </p>:null}
    {rounds.map(round=><article key={round.id} className="space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
@@ -82,7 +82,7 @@ export default async function HrRoundsEditorPage({params}:{
      </form>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
     {round.editable?<Link
       href={"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id}
-      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       Review round removal
     </Link>:null}
    </article>)}

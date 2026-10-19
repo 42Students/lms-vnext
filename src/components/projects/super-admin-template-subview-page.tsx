@@ -174,6 +174,13 @@ export async function SuperAdminTemplateSubviewPage({
         active="templates"
       />
 
+      <Link
+        href="/admin/projects/templates"
+        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
+      >
+        ← Template catalogue
+      </Link>
+
       <PageHeader
         eyebrow={`Super Admin · Project Template · ${sectionTitle}`}
         title={detail.template.title}

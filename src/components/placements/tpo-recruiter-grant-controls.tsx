@@ -68,7 +68,7 @@ export function TpoRecruiterGrantForm({ companies }: {
             </label>
           </div>
           <Button variant="primary" type="button" disabled={busy || !email.trim()} onClick={() => setConfirmOpen(true)}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60">
+            className="min-h-11 md:min-h-9">
             {busy ? "Saving..." : "Review and confirm grant"}
           </Button>
         </>
@@ -111,10 +111,10 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
     } finally { setBusy(false); }
   }
   return <div className="mt-2">
-    <button type="button" disabled={busy} onClick={() => setConfirmOpen(true)}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
+    <Button type="button" variant="secondary" disabled={busy} onClick={() => setConfirmOpen(true)}
+      className="min-h-11 md:min-h-9 text-xs">
       {busy ? "Revoking..." : "Revoke access"}
-    </button>
+    </Button>
     {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}
     {notice ? <p role="status" className="text-xs text-success-text">{notice}</p> : null}
     <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
@@ -154,10 +154,10 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
     <option value={3}>3 months</option><option value={6}>6 months</option><option value={12}>12 months</option>
    </Select>
   </label>
-  <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs text-link disabled:opacity-50">
+  <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(true)}
+   className="min-h-11 md:min-h-9 text-xs">
    {busy?"Saving…":ended?"Give access again":"Extend"}
-  </button>
+  </Button>
   {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}
   {notice?<p role="status" className="w-full text-xs text-success-text">{notice}</p>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}

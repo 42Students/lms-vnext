@@ -56,7 +56,7 @@ export default async function SuperAdminModuleAccessPage({
           className="w-full"/>
       </label>
       <Button type="submit">Filter</Button>
-      <Link className="inline-flex min-h-11 sm:min-h-9 items-center px-3 text-sm font-semibold text-primary-text"
+      <Link className="inline-flex min-h-9 items-center px-3 py-2 text-sm font-semibold text-primary-text"
         href="/admin/module-access">Clear filters</Link>
     </form>
     <p role="status" className="text-sm text-body">
@@ -66,7 +66,7 @@ export default async function SuperAdminModuleAccessPage({
       description="No college in the current scope matches these filters."/>:
       <div className="grid gap-3 md:grid-cols-2">
         {result.items.map(college=><article key={college.id}
-          className="min-w-0 border-b border-border py-4">
+          className="min-w-0 rounded-[12px] border border-border bg-surface p-4">
           <h2 className="font-semibold text-foreground">{college.name}</h2>
           <p className="mt-1 text-sm text-body">{college.code}</p>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)}

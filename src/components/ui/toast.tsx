@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useState, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
+import { Button } from "@/components/ui/button";
 
 type ToastTone = "success" | "error" | "info";
 export type ToastItem = { id: string; title: string; description?: string; tone: ToastTone };
@@ -43,10 +44,11 @@ export type ToastViewport = { height: number; bottom: number };
  * keyboard-focusable and scrolls within the actual visual viewport, including
  * safe areas and a software keyboard. No offscreen dismiss buttons are lost.
  */
-export function ToastStack({ toasts, onDismiss, viewport }: {
+export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }: {
   toasts: readonly ToastItem[];
   onDismiss: (id: string) => void;
   viewport?: ToastViewport | null;
+  onInteractionChange?: (kind: "hover" | "focus", active: boolean) => void;
 }) {
   const bounds = {
     "--lms-toast-visual-height": viewport ? `${viewport.height}px` : "100dvh",
@@ -57,20 +59,26 @@ export function ToastStack({ toasts, onDismiss, viewport }: {
   return <div data-slot="toast-stack" role="region"
     aria-label="Notifications, scroll to review all notices"
     aria-live="polite" aria-relevant="additions"
+    onMouseEnter={() => onInteractionChange?.("hover", true)}
+    onMouseLeave={() => onInteractionChange?.("hover", false)}
+    onFocusCapture={() => onInteractionChange?.("focus", true)}
+    onBlurCapture={event => {
+      if (!event.currentTarget.contains(event.relatedTarget)) onInteractionChange?.("focus", false);
+    }}
     tabIndex={toasts.length > 0 ? 0 : -1}
     style={bounds}
-    className="lms-toast-scroll-cue pointer-events-auto fixed inset-x-4 z-50 flex min-w-0 max-w-sm flex-col gap-[var(--lms-space-2)] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:inset-x-auto sm:right-4">
+    className="lms-toast-scroll-cue pointer-events-auto fixed inset-x-4 z-[1050] flex min-w-0 max-w-sm flex-col gap-[var(--lms-space-2)] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:inset-x-auto sm:right-4">
     {toasts.map(toast => <section key={toast.id} role={toast.tone === "error" ? "alert" : "status"}
-      className={cx("min-w-0 shrink-0 rounded-[var(--lms-radius-card)] border border-l-4 bg-surface p-[var(--lms-space-3)] text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[toast.tone])}>
+      className={cx("min-w-0 shrink-0 rounded-[12px] border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[toast.tone])}>
       <div className="flex items-start gap-[var(--lms-space-3)]">
         <span aria-hidden="true" className={cx("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[toast.tone])} />
         <div className="min-w-0 flex-1">
           <p className="m-0 break-words text-[13px] leading-5 font-semibold text-[var(--lms-heading)]">{toast.title}</p>
           {toast.description ? <p className="mt-1 break-words text-[13px] leading-5 text-[var(--lms-body-text)]">{toast.description}</p> : null}
         </div>
-        <button type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
+        <Button variant="ghost" type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
           onClick={() => onDismiss(toast.id)}
-          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] text-lg font-semibold text-[var(--lms-heading)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">×</button>
+          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)]"><span aria-hidden="true">×</span></Button>
       </div>
     </section>)}
   </div>;
@@ -82,6 +90,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const itemsRef = useRef<ToastItem[]>([]);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const readingDurations = useRef<Map<string, number>>(new Map());
+  const interacting = useRef({ hover: false, focus: false });
   // Toast IDs are React keys, not credentials. Some embedded WebViews have no
   // crypto.randomUUID; a provider-scoped monotonic counter is collision-free
   // for the life of this mounted notification stack.
@@ -98,8 +107,24 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     const existing = timers.current.get(id);
     if (existing) clearTimeout(existing);
     timers.current.delete(id);
-    if (!document.hidden) timers.current.set(id, setTimeout(() => dismiss(id), duration));
+    if (!document.hidden && !interacting.current.hover && !interacting.current.focus) {
+      timers.current.set(id, setTimeout(() => dismiss(id), duration));
+    }
   }, [dismiss]);
+  const onInteractionChange = useCallback((kind: "hover" | "focus", active: boolean) => {
+    const pausedBefore = interacting.current.hover || interacting.current.focus;
+    interacting.current[kind] = active;
+    const pausedNow = interacting.current.hover || interacting.current.focus;
+    if (pausedBefore === pausedNow) return;
+    if (pausedNow) {
+      timers.current.forEach(timer => clearTimeout(timer));
+      timers.current.clear();
+    } else {
+      for (const [id, duration] of readingDurations.current) {
+        if (itemsRef.current.some(toast => toast.id === id)) scheduleTimedToast(id, duration);
+      }
+    }
+  }, [scheduleTimedToast]);
   const showToast = useCallback((input: ToastInput) => {
     const id = "toast-" + ++nextToastOrdinal.current;
     const { items, evictedIds } = enqueueToast(itemsRef.current, { ...input, id });
@@ -154,7 +179,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const value = useMemo(() => ({ showToast }), [showToast]);
   return <ToastContext.Provider value={value}>
     {children}
-    <ToastStack toasts={toasts} onDismiss={dismiss} viewport={viewport}/>
+    <ToastStack toasts={toasts} onDismiss={dismiss} viewport={viewport} onInteractionChange={onInteractionChange}/>
   </ToastContext.Provider>;
 }
 export function useToast() {
