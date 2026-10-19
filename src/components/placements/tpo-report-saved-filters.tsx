@@ -20,6 +20,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
   let live=true;
   void Promise.resolve().then(()=>{
    if(!live)return;
+   setPicked("");
    try{const stored=localStorage.getItem(keyFor(path,collegeId,userId));setViews(stored?clean(JSON.parse(stored)):[]);}catch{setViews([]);setMessage("Browser storage is unavailable.");}
   });
   return ()=>{live=false;};
