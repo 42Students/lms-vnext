@@ -455,3 +455,8 @@
 @media (prefers-reduced-motion:no-preference) {
   .dropdown { animation:topbarNotificationPanelIn .2s ease-out; }
 }
+
+@media (min-width:768px) and (max-width:900px) {
+  .topbarNotificationDrawer { max-width:calc(100vw - 24px) !important; }
+  .orgPopover { width:min(280px,calc(100vw - 24px)); }
+}
