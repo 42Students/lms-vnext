@@ -348,3 +348,72 @@ These do **not** satisfy the strict branch-wide zero-hand-rolled-overlay proof. 
 **CATEGORY GATES remain: F1 [ ], F2 [ ].** A source-edited file is not full parity unless all values, real viewport behavior, and checkout grep pass the STRICT TICK RULE.
 
 **Next source file:** `src/components/ui/overlay-close-icon.tsx` and `src/components/ui/use-overlay-exit.ts` (confirm/drawer glyph, reduced-motion exit), then continue F1 consumer audit for raw native modal declarations.
+
+
+## Chat-16 F1 primitive completion — current batch (2026-10-19)
+
+Reconciled latest `main` at `68d52934` into the lane before editing. No application, test, CI, lint, screenshot or computed-style runner executed.
+
+### Legacy exact-value and state comparisons
+
+| Element/state | Old LMS SCSS value, source | vNext value, source | Verdict |
+| --- | --- | --- | --- |
+| Mobile drawer cutoff | `components___notification-drawer.scss:23-24,399-406`: mobile through **767px**, right drawer **100%** width | `src/components/ui/drawer.tsx:42`: `md:` side-panel layout only from **768px**; full `w-full` below | Match for non-inline right Drawer |
+| Mobile drawer shadow | `components___notification-drawer.scss:401-406`: `-4px 0 24px rgba(0,0,0,.12)` | `src/components/ui/drawer.tsx:42`: same value | Match for right variant; left-nav shadow is separate |
+| Mobile drawer header safe area | `components___notification-drawer.scss:407-413`: `padding-top:16px + env(safe-area-inset-top)` | `src/components/ui/legacy-overlays.css:62-69`: same header top padding on right drawer | Match top only; remaining horizontal padding varies by consumer |
+| Mobile drawer close minimum | `components___notification-drawer.scss:421-431`: **44px** both axes | `src/components/ui/drawer.tsx:48`: `min-h-11 min-w-11` = **44px** | Match |
+| Left-nav drawer width | `components___antddesign.scss:305-308`: **82%**, max **300px** | `src/components/ui/legacy-overlays.css:48-54`: `min(82vw,300px)` | Match |
+| Mobile drawer scroll/safe area | `components___antddesign.scss:349-360`: bottom `24px+safe area`, scrolling; notification body separate `components___notification-drawer.scss:431-473` | `src/components/ui/drawer.tsx:50`, `legacy-overlays.css:74-87`: ScrollCue with overscroll, bottom safe area on left variant | Reviewed; consumer-specific scroll padding remains unproved |
+| Modal width on phone | `components___antddesign.scss:1038-1041`: `calc(100vw - 32px)` | `src/components/ui/dialog.tsx:44`: `w-[calc(100%_-_2rem)]` | Match for viewport-wide host |
+| Modal max height | `components___antddesign.scss:1057-1061`: `calc(100dvh - 48px)` | `dialog.tsx:44-45`: visualViewport height minus **3rem** = **48px** | Numeric match; visual-viewport enhancement |
+| Modal border radius | `components___antddesign.scss:1059-1062`: **12px** | `dialog.tsx:44` -> `var(--lms-canvas-radius)` -> `src/app/globals.css:345` **12px** | Source token resolution match; runtime cascade not checked |
+| Close glyph canvas | `components___common.scss:1068-1072`: close glyph area **16px** | `src/components/ui/overlay-close-icon.tsx:3-8`: stable `16×16` SVG, block/shrink-0, `aria-hidden` | Match canvas; visual stroke/path not SCSS-proved |
+| Modal close desktop diameter | `components___common.scss:1048-1055`: **40×40px**, radius **20px** | `dialog.tsx:51`: `md:min-h-10 md:min-w-10 rounded-full`, **40px** at **768px+** | Match desktop size |
+| Mobile close target | Notification mobile `components___notification-drawer.scss:421-431`: **44px** | `dialog.tsx:51` / `drawer.tsx:48`: `min-h-11 min-w-11` through 767px | Match source minimum |
+| Modal close placement / shadow | `components___common.scss:1048-1058`: **top16/right16**, shadow `0 2px 8px rgba(0,0,0,.1)` | `src/components/ui/legacy-overlays.css:28-36`, `dialog.tsx:51` | Match specified values |
+| Modal title right clearance | `components___common.scss:1100-1103`: **50px** | `legacy-overlays.css:24-27` | Match |
+| Modal header | `components___common.scss:1093-1098`: **16px 24px**, 1px bottom rule | `legacy-overlays.css:17-22` | Match stated padding; colour token needs cascade check |
+| Confirm content padding | `components___antddesign.scss:899-906`: **15px 15px 5px** | `legacy-overlays.css:394-405`; `src/components/ui/confirm-dialog.tsx:15-16` and `confirm-action-dialog.tsx:13-15` | Match both shared confirm wrappers |
+| Confirm footer top margin | `components___antddesign.scss:902-906`: **21px** | `legacy-overlays.css:401-405` | Match |
+| Confirm phone button gap / min height | `components___antddesign.scss:1064-1072`: **8px**, **44px** | `legacy-overlays.css:407-414` | Match mobile overrides |
+| Confirm disabled/pending | Old visual state is not specified in these SCSS fragments | `src/components/ui/confirm-dialog.tsx:15-20`: native `role=alertdialog`, cancel `autoFocus`, confirm disabled/loading, `dismissible={!pending}` | Source behavior maintained; exact legacy pending visuals not proved |
+| Entry animation | Notification panel `components___notification-drawer.scss:113-139`: **200ms ease-out** `translateY(-8px)` | `legacy-overlays.css:348-370`: **200ms ease-out** popup translateY(-8px) | Match notification-style nonmodal entry |
+| Dialog/drawer exit durations | No definitive Ant dialog/drawer exit duration in bundled SCSS | `src/components/ui/dialog.tsx:37` **180ms**, `drawer.tsx:36` **200ms**, `bottom-sheet.tsx:28` **180ms**; `use-overlay-exit.ts:16-58` | Implemented, **not claimed identical** |
+| Reduced-motion mid-exit | Legacy SCSS does not define native preference-change behavior | `use-overlay-exit.ts:20-57`: immediate close when preferred before or during exit; cleanup/connected opener-focus guard | Defensive behavior complete in source; needs browser test |
+| Inline filter drawer handoff | Old notification mobile cutoff **767px** does not govern inline form bars | `drawer.tsx:73-94`: existing **640px** handoff preserved for `inlineDesktop`; no false callbacks when already closed | Explicit separate product variant; not misrepresented as notification parity |
+
+### Responsive proof — source branch table, not browser screenshot
+
+| Width/state | Shared Dialog | Non-inline right Drawer | BottomSheet | Inline filter Drawer |
+| --- | --- | --- | --- | --- |
+| 375px | viewport-32 width, height-48, 44px close | full-width, 44px close, safe-area header | anchored to bottom, safe-area footer | modal |
+| 640px | still 44px close and mobile spacing | still full-width mobile | still bottom-anchored | existing `sm:` inline mode |
+| 767px | mobile 44px close and 8px footer gap | still full-width mobile, body paddings not all matched | still bottom-anchored | inline, intentionally distinct |
+| 768px | 40px close, desktop padding | bounded right side, up to 600px wide | centered with visualViewport-aware centre and 36rem max width | inline |
+| 1024px | bounded 36rem default, escape/backdrop handled by native dialog | max600px right panel | centered max36rem | inline |
+| prefers-reduced-motion | `useOverlayExit` closes without delay | same | same | same hook; custom inline layout |
+| pending=false / pending=true | confirms allow dismissal / block dismissal while pending | caller controls `dismissible` | caller controls `dismissible` | caller controls `open` |
+
+### Coverage proof from a *bounded indexed-candidate scan*
+
+Using GitHub code search for literal `<dialog` (indexed **default branch**, top 100) yielded **87 distinct TSX candidates** under `src/`. Each candidate was independently fetched **at lane branch HEAD** and inspected for regex `/<dialog(?=[\\s/>])/g`. Result: **87 files inspected, three containing literal native `<dialog>` JSX**: `src/components/ui/dialog.tsx`, `src/components/ui/drawer.tsx`, `src/components/ui/bottom-sheet.tsx`. The other **84** use the shared Dialog or mention it as a component/import. This is substantially stronger than trusting excerpts but **does not establish exhaustive checkout grep**: an unindexed file/dynamic construction could be missed. Supplemental default-branch index search for literal `fixed inset-0` returned one `src/` confidentiality watermark, previously exempted.
+
+**Required checkout commands still not executed:**
+```sh
+git grep -nE '<dialog([[:space:]>])|fixed inset-0|role="dialog"|role="alertdialog"' -- 'src/**/*.tsx'
+git grep -nE 'aria-modal|data-closing|prefers-reduced-motion' -- src/components/ui src/components/shell
+```
+
+### Whole-file source work completed in this batch
+
+- [x] `src/components/ui/overlay-close-icon.tsx` — 16×16 non-scaling box, hidden SVG, balanced `<svg>`/`</svg>` and native buttons remain labelled.
+- [x] `src/components/ui/use-overlay-exit.ts` — close/reopen, reduced motion change, timer cancel, detached opener checks; no JSX.
+- [x] `src/components/ui/dialog.tsx` — 767px desktop breakpoint handoff, 44→40px close hit area, named refs, balanced `<dialog>`/`</dialog>`.
+- [x] `src/components/ui/drawer.tsx` — right-drawer 767px mobile handoff, scoped 640px inlineDesktop remains, no false closed-state callbacks, paired `<dialog>` and `<Drawer>`.
+- [x] `src/components/ui/bottom-sheet.tsx` — 767px mobile sheet cutoff, visualViewport-centred desktop mode, paired `<dialog>`/`</dialog>`.
+- [x] `src/components/ui/confirm-dialog.tsx` — shared semantic alertdialog, pending guards and scoped confirm style; paired `<Dialog>`/`</Dialog>`.
+- [x] `src/components/ui/use-overlay-webview.ts` — reviewed rather than changed: marker-specific back ownership, cleanup, visualViewport resize/fallback; no local runtime proof.
+
+**F1 [ ], F2 [ ] still unticked**: index-source proof is not a checkout grep, no real phone/tablet focus and animation verification, no full variant/style audit for all consumers, no canonical legacy toast timing or modal exit animation equivalence. Do not promote source-file checkboxes to category completion.
+
+**Next:** `src/components/ui/searchable-select.tsx` and `src/components/ui/disclosure.tsx`, followed by shared `src/components/ui/dropdown.tsx` focus/exit corner cases in nested menus.
