@@ -343,8 +343,8 @@ export function LearnerPlacementRequests({
   );
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
-      <div className="border-b border-border px-5 py-4">
+    <section className="border-b border-border pb-5">
+      <div className="border-b border-border py-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -366,7 +366,7 @@ export function LearnerPlacementRequests({
         </div>
       </div>
 
-      <div role="group" aria-label="What do you need?" className="grid gap-5 p-5 xl:grid-cols-2">
+      <div role="group" aria-label="What do you need?" className="grid gap-5 py-5 xl:grid-cols-2">
         <div id="round-reschedule" className="scroll-mt-24 rounded-lg border border-border bg-muted p-4">
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Round reschedule
@@ -606,7 +606,7 @@ export function LearnerPlacementRequests({
       </div>
 
       {requests.length > 0 ? (
-        <div className="border-t border-border p-5">
+        <div className="border-t border-border py-5">
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Request history
           </h3>
