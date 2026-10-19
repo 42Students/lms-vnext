@@ -561,3 +561,44 @@ rg -n 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g loading.tsx
 - [ ] F5 **OPEN** until 403/404/500/offline/maintenance/session and every TPO/other-portal state are fully inventoried.
 
 **Exact next source**: `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`, then remaining `src/app/(authenticated)/tpo/students/page.tsx` and other portal pages.
+
+
+## Chat-5 company and roster states — five source files (2026-10-19)
+
+The next five previously unconverted TSX files were migrated and independently re-fetched from `chatgpt/chat-5-b` after each update. Counts below are exact **source-byte grep equivalents scoped to these five source files**, not checkout-wide `rg` output, TypeScript compilation, viewport screenshots, or visual comparison. No tests, lint, code execution or CI were run.
+
+| Re-fetched path | Alert opens/closes | EmptyState | InlineNotice | Skeleton | Remaining raw role status/alert | First shared JSX line | Phone/tablet source path |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx` | 2/2 | 3 | 0 | 0 | 0 | 167 | Existing `sm:grid-cols-2`, `xl:grid-cols-5`, responsive DataTable priorities and `min-w-0` |
+| `src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx` | 1/1 | 1 | 0 | 0 | 0 | 30 | Shared Alert `max-w-full` and EmptyState `min-w-0`; plain linked-contact list untouched |
+| `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx` | 3/3 | 1 | 0 | 0 | 0 | 70 | Existing `flex-wrap` controls, DataTable mobile-priority fields and shared status wrapping |
+| `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx` | 3/3 | 1 | 0 | 0 | 0 | 53 | Existing note timeline flex-wrap/list sections plus shared EmptyState wrapping |
+| `src/app/(authenticated)/tpo/students/page.tsx` | 6/6 | 0 | 1 | 1 | 0 | 264 | `sm:`/`md:` responsive layout and shared Skeleton grid fallback (five rows) |
+| **Scoped totals** | **15/15** | **6** | **1** | **1** | **0** | — | Static source only |
+
+The company detail retains its persisted drive/offer/hiring read conditions, including distinct records-unavailable vs recorded-zero evidence. Company people/contact log/feedback keep their DB09 or CRM-write gates, original links and table column priority. Student roster keeps the same saved filters and independent data-read requirements; invalid filters are Alert(error), missing registration/verification/outcome/external-offer sources are Alert(warning), timed-debarment incompleteness is InlineNotice(info), and the spreadsheet Suspense fallback is a labelled shared Skeleton rather than an unstyled live text paragraph. All source replacement pairs were re-read and balanced. No permission or server data-fetching branches were modified.
+
+### Value table carried through this batch
+
+| Property | Old LMS exact source/value | vNext actual source/value | Verdict |
+| --- | --- | --- | --- |
+| Warning background | `docs/design/legacy-styles/components___variables.scss:69-70`: `#d97706` and `rgba(217,119,6,.10)` | `src/app/globals.css:49-50` identical; shared `src/components/ui/alert.tsx:12` uses `--lms-warning-subtle` | **MATCH** base fill/hue; warning border and text metrics OPEN |
+| Info background | `components___variables.scss:73-74`: `#26bac7` and `#eff8fa` | `globals.css:56-57` identical; `inline-notice.tsx:11` uses `--lms-info-subtle` | **MATCH** base fill; outline/border OPEN |
+| Error background | `components___variables.scss:71-72`: `#ef4444` and `rgba(239,68,68,.10)` | `globals.css:51-52` identical; `alert.tsx:13` uses `--lms-error-subtle` | **MATCH** base fill; alpha border 0.25 not legacy-proven |
+| Control radius | `components___variables.scss:133`: 6px | `globals.css:343`: 9px, shared `Alert`/InlineNotice uses the same token | **OPEN mismatch**, global token owned by chat-17 |
+| Spacing scale | `components___variables.scss:116-123`: 4,8,12,16,24,32,40,48px | `globals.css:350-357`: 4,8,12,16,24,32,48,64px | MATCH first six, **OPEN mismatch** for 7/8 |
+| Focus/mouse action | `components___accessibility.scss:19-23`: 2px focus outline, 3px offset | `src/components/ui/inline-notice.tsx:35-36`: 2px outline, 2px offset; shared Alert has no dismiss button | **OPEN** full hover/focus/disabled exact parity |
+| Phone/tablet | `components___antddesign.scss:21-23`: mobile at max-width 767px | `src/components/ui/alert.tsx:18` `min-w-0 max-w-full`, `empty-state.tsx:6-9` wrap and responsive padding, `skeleton.tsx:24-30` `min-w-0` and reduced motion | Source constraints checked, **OPEN** 640–767 breakpoint and actual phone/tablet measurements |
+| Loading / empty skeleton | `docs/design/old-lms-pages.md:26`: small dotted spinner during dev compile (not UI spec) | `src/components/ui/skeleton.tsx:21-30` shimmer with `motion-reduce:animate-none`, 5-row `Skeleton` in student grid | **OPEN** exact placeholder timing, heights, viewport and network recovery proof |
+
+To reproduce on a checkout (commands **not executed** here):
+```sh
+rg -n '<(Alert|EmptyState|InlineNotice|Skeleton)([ >])|</Alert>' 'src/app/(authenticated)/tpo/companies' 'src/app/(authenticated)/tpo/students/page.tsx' -g '*.tsx'
+rg -n '<(p|div|section|span)[^>]*role="(status|alert)"[^>]*(rounded|border|bg-|p-[0-9]|px-|py-)' 'src/app/(authenticated)/tpo/companies' 'src/app/(authenticated)/tpo/students/page.tsx' -g '*.tsx'
+```
+
+- [ ] F3 **OPEN**: whole-repo zero hand-rolled coverage, exact semantic border/radius/focus/hover values, responsive/visual proof missing.
+- [ ] F4 **OPEN**: student Suspense source uses shared Skeleton; whole-route loader and motion parity still missing.
+- [ ] F5 **OPEN**: five migrated file-level states; full system-state and all-portal inventory not verified.
+
+**Next exact file:** `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx` (continue with student history and request state fallbacks). The companion `src/app/(authenticated)/tpo/companies/[companyId]/manage/page.tsx` has no bespoke role-status/alert, EmptyState or error JSX from its last source read and was deliberately left unchanged.
