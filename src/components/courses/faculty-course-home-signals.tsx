@@ -21,7 +21,7 @@ function SignalCard({
   return (
     <Link
       href={href}
-      className="rounded-xl border border-border bg-surface p-4 outline-none transition hover:border-primary hover:shadow-sm focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+      className="rounded-xl border border-border bg-surface p-4 outline-none transition hover:border-primary hover:bg-primary-subtle focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
     >
       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         {label}
@@ -90,7 +90,7 @@ export function FacultyCourseHomeSignals({
                 Teaching overview
               </span>
             </div>
-            <h2 className="mt-2 text-xl font-semibold text-foreground">
+            <h2 className="mt-2 text-xl font-semibold text-[var(--lms-heading)]">
               {firstPending
                 ? firstPending.assignmentTitle
                 : assignmentsReady ? "Nothing waiting on you" : "Some signals unavailable"}
@@ -116,7 +116,7 @@ export function FacultyCourseHomeSignals({
 
       <section aria-label="Pending work">
         <div className="mb-3">
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
             Pending work
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -170,7 +170,7 @@ export function FacultyCourseHomeSignals({
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="m-0 text-base font-semibold text-foreground">
+              <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
                 Needs attention
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -195,7 +195,7 @@ export function FacultyCourseHomeSignals({
                 <span className="text-sm font-semibold text-foreground">
                   {learner.name}
                 </span>
-                <details className="min-w-40 rounded-md border border-border bg-surface-subtle p-2 text-xs">
+                <details className="min-w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs">
                   <summary className="cursor-pointer font-semibold text-body">
                     {learner.severity>=3?"Critical":"Moderate"} · View snapshot
                   </summary>
@@ -219,7 +219,7 @@ export function FacultyCourseHomeSignals({
       </p>}
 
       {assignmentsReady ? <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           Performance
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -285,7 +285,7 @@ export function FacultyCourseHomeSignals({
           })}
         </div>
       </section> : <section aria-label="Performance" className="border-b border-border pb-5">
-        <h2 className="text-base font-semibold text-foreground">Performance</h2>
+        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Performance</h2>
         <p className="mt-2 text-sm text-body">Performance metrics are unavailable until assignment signals can be refreshed.</p>
       </section>}
     </div>
