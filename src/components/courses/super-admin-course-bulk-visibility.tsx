@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";
 import {ScrollCue} from "@/components/ui/scroll-cue";
@@ -71,7 +72,7 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
     className="text-primary-text">
     Hide from students</Button>
   </div>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   {report?<div role="status" className="space-y-2 text-sm">
    <p>{report.changed} updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
    {report.failures.length?<Button type="button" variant="secondary" disabled={pending||lastAction===null||!report.failedCourseIds.some(id=>currentIds.has(id))}

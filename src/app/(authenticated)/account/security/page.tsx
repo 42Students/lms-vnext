@@ -22,14 +22,13 @@ export default async function AccountSecurityPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Account"
         title="Signed-in devices"
         description="Every place you're signed in. Sign out any device you don't recognise."
       />
       {rows === null ? (
         <ErrorState description="Your current session could not be listed."
           action={<Link href="/account/security"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">Try again</Link>}/>
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Try again</Link>}/>
       ) : rows.length === 0 ? (
         <EmptyState
           title="No active devices"

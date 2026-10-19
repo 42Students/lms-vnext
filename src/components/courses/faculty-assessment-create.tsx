@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 
 import {useMemo,useState} from "react";
 import {Button} from "@/components/ui/button";
@@ -65,7 +66,7 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
       <strong>Quizzes are attached to lessons</strong>
       <p>This keeps faculty creation and learner attempts under the same course structure.</p>
     </div>
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
     {!continued?<Button onClick={start} disabled={!course||!lesson}>Continue</Button>:null}
     {continued&&lesson&&course?<div onInputCapture={()=>setDraftDirty(true)} onChangeCapture={()=>setDraftDirty(true)}><FacultyLessonAuthoring
       key={course.deliveryId+":"+lesson.lessonId+":"+kind}

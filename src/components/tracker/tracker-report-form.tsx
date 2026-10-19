@@ -111,7 +111,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   }
 
   if (created) return (
-    <section className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6" aria-live="polite">
+    <section className="space-y-4 border-b border-border py-5" aria-live="polite">
       <p className="text-sm font-semibold text-success">Issue reported</p>
       <h2 className="text-xl font-semibold">{created}</h2>
       <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
@@ -132,7 +132,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   return (
     <form onSubmit={submit} onKeyDown={onFormKeyDown}
       className="space-y-5">
-      {restored?<div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+      {restored?<div role="status" className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 text-sm">
         <span>Unsaved report restored.</span><Button type="button" variant="secondary" onClick={()=>{setDraft(initial);clearDraft();}}>Discard draft</Button>
       </div>:null}
       {dirty?<p className="text-xs text-muted-foreground">Unsaved changes are kept on this device until your report is submitted.</p>:null}

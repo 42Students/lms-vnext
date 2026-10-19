@@ -10,9 +10,11 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
+import { Pagination } from "@/components/ui/pagination";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref,projectAdminSubmissionHref } from "@/modules/projects/admin-submissions-query-model";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
@@ -44,7 +46,6 @@ function tone(status: string) {
 export async function ProjectAdminSubmissionsPage({
   collegeId,
   basePath,
-  eyebrow,
   searchParams,
 }: {
   collegeId: string;
@@ -61,7 +62,7 @@ export async function ProjectAdminSubmissionsPage({
   const parsed = parseProjectAdminSubmissionsQuery(searchParams);
   if (!parsed.success) {
     return <div className="space-y-6">
-      <PageHeader eyebrow={eyebrow} title="Submissions dashboard"
+      <PageHeader title="Submissions dashboard"
         description="Final project deliverables across all workspaces." />
       <ErrorState title="Invalid submission filters"
         description="Check the submission view, status, page and rows filters, or clear them to continue."
@@ -99,7 +100,7 @@ export async function ProjectAdminSubmissionsPage({
     const suffix=params.toString();
     return <div className="space-y-6">
       <ProjectAdminNav basePath={basePath} active="submissions"/>
-      <PageHeader eyebrow={eyebrow} title="Submissions dashboard"
+      <PageHeader title="Submissions dashboard"
         description="Final project deliverables across all workspaces."/>
       <ErrorState title="Submissions unavailable"
         description="The submissions list could not be loaded. Your filters have not changed."
@@ -115,7 +116,6 @@ export async function ProjectAdminSubmissionsPage({
         active="submissions"
       />
       <PageHeader
-        eyebrow={eyebrow}
         title="Submissions dashboard"
         description="Final project deliverables across all workspaces."
         needsDoingLabel="Review status:"
@@ -158,15 +158,11 @@ export async function ProjectAdminSubmissionsPage({
               <Link href={basePath+"/"+row.id+"/delivery"}
                 className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open</Link>},
           ]}
-          empty={<p className="text-sm text-muted-foreground">All matching workspaces have a submission.</p>}
+          empty={<EmptyState title="All workspaces submitted" description="All matching workspaces have a submission."/>}
         />
-        <div className="flex flex-wrap gap-3 text-sm">
-          {unsubmitted.page>1?<Link href={projectAdminUnsubmittedHref(queuePath,query,unsubmitted.page-1)}
-           className="text-primary-text underline">Previous</Link>:null}
-          <span>Page {unsubmitted.page} of {unsubmitted.totalPages}</span>
-          {unsubmitted.page<unsubmitted.totalPages?<Link href={projectAdminUnsubmittedHref(queuePath,query,unsubmitted.page+1)}
-           className="text-primary-text underline">Next</Link>:null}
-        </div>
+        <Pagination page={unsubmitted.page} pageCount={unsubmitted.totalPages}
+          hrefForPage={page=>projectAdminUnsubmittedHref(queuePath,query,page)}
+          label="Unsubmitted workspace pages"/>
       </section>:null}
       {view==="ALL" && result ? <>
       {summary?<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -206,9 +202,7 @@ export async function ProjectAdminSubmissionsPage({
       }))}/>} />
 
       {!result.items.length ? (
-        <section className="border-b border-border py-6 text-sm text-muted-foreground">
-          No final-delivery versions match these filters.
-        </section>
+        <EmptyState title="No matching deliveries" description="No final-delivery versions match these filters."/>
       ) : (
         <div className="space-y-3">
           {result.items.map((submission) => (

@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -107,15 +108,14 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
   </div>
   <p className="text-xs text-muted-foreground">{filtered.length} events · Times shown in your device timezone.</p>
   {!filtered.length
-    ? <p className="border-b border-border py-4 text-sm text-muted-foreground">
-      {items.length===0
-       ? "No project activity yet. Task moves, sprint updates and resource changes will appear here."
-       : (type||search||resourceAction!=="ALL") && (fromDate||toDate||range!=="ALL")
-        ? "No activity matches this source and date range."
-        : search||resourceAction!=="ALL" ? "No activity matches these resource or search filters."
-        : fromDate||toDate||range!=="ALL" ? "No activity in this date range."
-        : "No activity recorded from this source yet."}
-    </p>
+    ? <EmptyState title={items.length===0?"No project activity yet":"No matching activity"}
+      description={items.length===0
+        ? "Task moves, sprint updates and resource changes will appear here."
+        : (type||search||resourceAction!=="ALL") && (fromDate||toDate||range!=="ALL")
+          ? "No activity matches this source and date range."
+          : search||resourceAction!=="ALL" ? "No activity matches these resource or search filters."
+          : fromDate||toDate||range!=="ALL" ? "No activity in this date range."
+          : "No activity recorded from this source yet."} />
     : <div role="feed" aria-label="Project activity" className="space-y-2">
       {filtered.map(event=><article key={event.id} className="border-b border-border py-4">
        <div className="flex flex-wrap items-start justify-between gap-3">

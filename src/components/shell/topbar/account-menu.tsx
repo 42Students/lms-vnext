@@ -39,7 +39,7 @@ export function TopbarAccountMenu({
   useEffect(() => {
     if (!open) return;
     // The legacy dropdown is an operable menu, not merely an avatar hover card.
-    root.current?.querySelector<HTMLElement>('[role="dialog"] a, [role="dialog"] button, [role="dialog"] input, [role="dialog"] select')?.focus();
+    root.current?.querySelector<HTMLElement>('[data-slot="popover"] a, [data-slot="popover"] button, [data-slot="popover"] input, [data-slot="popover"] select')?.focus();
     const onPointer = (event: PointerEvent) => {
       if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
     };
@@ -55,7 +55,7 @@ export function TopbarAccountMenu({
           !root.current?.contains(event.target) ||
           event.target.matches("input, select, textarea")) return;
       const actions = Array.from(root.current.querySelectorAll<HTMLElement>(
-        '[role="dialog"] a[href], [role="dialog"] button:not([disabled])'
+        '[data-slot="popover"] a[href], [data-slot="popover"] button:not([disabled])'
       )).filter(action => action.getClientRects().length > 0);
       if (!actions.length) return;
       const index = actions.indexOf(event.target);

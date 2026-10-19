@@ -3,7 +3,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { PlacementDriveWorkspace } from "@/components/placements/placement-drive-workspace";
-import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import { getSuperAdminDrivePipeline } from "@/modules/placements/super-admin-drive-pipeline-service";
 import { SuperAdminDrivePipeline } from "@/components/placements/super-admin-drive-pipeline";
 
@@ -14,7 +13,7 @@ export default async function AdminPlacementDrivePage({
 }) {
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
-    <PageHeader eyebrow="Super Admin" title="Placement Drives" description="Placement administration requires a college safety scope." />
+    <PageHeader title="Placement Drives" description="Placement administration requires a college safety scope." />
     <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
   </div>;
   requireSuperAdminSelectedCollege(context,"placements.manage");
@@ -22,7 +21,7 @@ export default async function AdminPlacementDrivePage({
   const pipeline = await getSuperAdminDrivePipeline(context, jobId);
   return (
    <div className="space-y-5">
-    <SuperAdminDriveTabs jobId={jobId} active="Overview"/>
+    
     <PlacementDriveWorkspace
       context={context}
       jobId={jobId}

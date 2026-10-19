@@ -20,7 +20,6 @@ import { isProjectMentorOverloaded } from "@/modules/projects/mentor-overload-mo
 export async function ProjectAdminReassignMentorPage({
   collegeId,
   basePath,
-  eyebrow,
   searchParams,
 }: {
   collegeId: string;
@@ -33,7 +32,7 @@ export async function ProjectAdminReassignMentorPage({
 }) {
   const parsed=parseProjectAdminReassignMentorQuery(searchParams);
   if(!parsed.success)return <div className="space-y-6">
-    <PageHeader eyebrow={eyebrow} title="Bulk mentor reassignment"/>
+    <PageHeader title="Bulk mentor reassignment"/>
     <ErrorState title="Invalid mentor reassignment filters"
       description="Check the mentor, workspace, search, status, page and rows filters, or clear them to continue."
       action={<Link href={basePath+"/reassign-mentor"}
@@ -54,7 +53,7 @@ export async function ProjectAdminReassignMentorPage({
      mentorsRead.status==="rejected"||workloadRead.status==="rejected")
     return <div className="space-y-6">
       <ProjectAdminNav basePath={basePath} active="workspaces"/>
-      <PageHeader eyebrow={eyebrow} title="Bulk mentor reassignment"/>
+      <PageHeader title="Bulk mentor reassignment"/>
       <ErrorState title="Mentor reassignment unavailable"
         description="The workspace, mentor or workload details could not be verified. No reassignment action is available."
         action={<Link href={projectAdminReassignMentorHref(basePath,parsed.data)}
@@ -72,7 +71,6 @@ export async function ProjectAdminReassignMentorPage({
         active="workspaces"
       />
       <PageHeader
-        eyebrow={eyebrow}
         title="Bulk mentor reassignment"
         description="Move selected non-archived project workspaces to a new primary mentor."
         actions={<Link href={basePath}
