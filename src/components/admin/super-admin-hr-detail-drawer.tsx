@@ -155,7 +155,7 @@ export function SuperAdminHrDetailDrawer({
         />
       ) : (
         <div className="space-y-6">
-          <section className="rounded-xl border border-border bg-surface p-5">
+          <section className="border-b border-border pb-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h3 className="m-0 text-base font-semibold text-foreground">
@@ -202,7 +202,7 @@ export function SuperAdminHrDetailDrawer({
             </dl>
           </section>
 
-          <section className="rounded-xl border border-border bg-surface p-5">
+          <section className="border-b border-border pb-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h3 className="m-0 text-base font-semibold text-foreground">
@@ -367,7 +367,7 @@ export function SuperAdminHrDetailDrawer({
             )}
           </section>
 
-          {account.grantHistory?.length ? <section aria-label="College grant history" className="rounded-xl border border-border bg-surface p-5">
+          {account.grantHistory?.length ? <section aria-label="College grant history" className="border-b border-border pb-5">
             <h3 className="font-semibold">College access history</h3>
             <ul className="mt-3 space-y-2 text-sm">{account.grantHistory.map(grant=><li key={grant.id} className="flex flex-wrap justify-between gap-2 border-b border-border pb-2">
               <span>{grant.collegeName}</span>
@@ -375,7 +375,7 @@ export function SuperAdminHrDetailDrawer({
                {" · "}{grant.validUntil?"Until "+grant.validUntil.slice(0,10):"No recorded expiry"}</span>
             </li>)}</ul>
           </section>:null}
-          <section className="rounded-xl border border-border bg-surface p-5">
+          <section className="border-b border-border pb-5">
             <h3 className="m-0 text-base font-semibold text-foreground">
               Account security
             </h3>

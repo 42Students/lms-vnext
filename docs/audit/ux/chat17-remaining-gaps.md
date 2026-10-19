@@ -63,3 +63,17 @@ Do not wrap `PageCanvas` per page: it is already present in the authenticated la
 - Reverified that `AuthenticatedLayout` renders **one** `PageCanvas` inside `AppShell`, enclosing portal access notice, connectivity notice and route children, while session/access guards still enforce authorization outside. Added the named `lms-authenticated-canvas` class and full-viewport minimum height on short pages, accounting for the existing mobile (58px) and desktop (68px) top bars and shell main padding (24px or 32px). Longer content grows naturally.
 - Both white canvas colors (`#fff`, `#e5e9f0`), 12px radius, 24px desktop / 16px mobile padding and the `#f1f4f9` shell remain intact. No nested page-level canvas was introduced.
 - **Unverified:** no CI, tests, compilation or browser screenshot comparison was run per owner instruction. Integration with concurrent header/sidebar and portal lane commits needs combined browser review, especially height, responsive overlays, focus, and reduced-motion behavior.
+
+
+## Continued shared primitive sweep — 2026-10-19 (later pass)
+
+**Source baseline:** `main@d5798cd5a0d4aba3ae022293b231211cf1dbb04d`, fast-forwarded onto `chatgpt/chat-17-b` before editing. Previous chat-17 commits had already been merged. Each subsequent `src/components/ui` change was committed directly and separately to **the lane branch only**.
+
+- Neutral/feedback: `avatar`, `skeleton`, `empty-state`, `error-state`, `card`, `status-badge` and `badge` use the actual legacy body/header/accent colors and shadowless white surfaces. Default avatar remains 44px, independent of the topbar owner’s 42px header avatar.
+- Layout/scroll: `page-header` uses the shell-era heading/canvas border tokens; `scroll-cue` uses a teal visible keyboard focus and a **theme-sensitive** fade `from-surface` rather than a hard-coded white fade. No changes to overflow measurement or input handlers.
+- Core controls: `button`, `input`, `select`, `textarea`, `pagination` and `dropdown` use the effective measured 9px control radius, neutral input border and teal focus token. Standard button continues to use 36px primary height, solid `#0a7c88` and white text.
+- Interactive data: `table`/`data-table` preserve compact old-LMS hairlines and muted `#fafbfc` headings; responsive per-row hidden-field and safe URL semantics were not touched. Tracker opt-in dark surface remains variable-driven, not forced white inside mobile rows.
+- Overlays and messaging: `toast`, `tooltip`, `dialog`, `drawer`, `bottom-sheet`, `alert`, `banner` and `tabs` use matched old-LMS palettes, elevation, radius and border variables. Native `<dialog>` focus/close behavior and all ARIA descriptions remain unchanged.
+- File/menu/selection: `file-upload`, `menu`, `selection-controls` keep legacy form labels and the teal checkbox/switch treatment, with existing pointer/keyboard and disabled handling intact.
+- **Authenticated canvas:** `src/app/(authenticated)/layout.tsx` continues to own exactly one `<PageCanvas className="lms-authenticated-canvas" data-authenticated-canvas="true">` wrapping the portal notices and authenticated route children. `PageCanvas` applies 24px desktop padding from the shared `--lms-canvas-padding` token; outer surface remains `#fff`, border `#e5e9f0`, radius 12px on `#f1f4f9` shell. Topbar/sidebar remain dedicated lane ownership.
+- **Verification gate still open:** source-level code edits only. Per owner direction, no local app run, typecheck, unit/E2E, screenshot diff or CI was performed.

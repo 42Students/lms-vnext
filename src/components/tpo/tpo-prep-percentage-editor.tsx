@@ -38,11 +38,11 @@ export function TpoPrepPercentageEditor({initial,version}:{initial:number;versio
   <label className="block text-sm">Average progress required (%)
    <input type="number" min={0} max={100} step={1} value={percent} disabled={busy}
     onChange={e=>setPercent(e.target.value===""?-1:Number(e.target.value))}
-    className="mt-1 block min-h-11 sm:min-h-9 w-28 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+    className="mt-1 block min-h-11 sm:min-h-9 w-28 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"/>
   </label>
   <p className="text-xs text-muted-foreground">This threshold is applied to learner course-progress records when the selected preparation courses have published content. Unavailable records are not treated as a failed learner.</p>
   <button type="button" disabled={busy||percent===saved||!Number.isInteger(percent)||percent<0||percent>100}
-   onClick={()=>void save()} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save changes</button>
+   onClick={()=>void save()} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save changes</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </section>;

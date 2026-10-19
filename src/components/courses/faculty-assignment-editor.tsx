@@ -151,7 +151,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   finally{mutationLock.current=false;setPending(false);}
  }
  return <section className="space-y-4">
-  <h2 className="text-lg font-semibold">Assignment authoring</h2>
+  <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Assignment authoring</h2>
   <label className="grid gap-1 text-sm">Choose draft or create new
    <Select value={selected} disabled={pending} onChange={e=>choose(e.target.value)}
     className="text-base sm:text-sm">

@@ -31,8 +31,8 @@ type Queue = {
   window:"DUE"|"NEXT_7_DAYS";
 };
 
-const field = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground sm:text-sm";
-const action = "min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50";
+const field = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-base text-foreground sm:text-sm";
+const action = "min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50";
 function displayDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
@@ -120,9 +120,9 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
 
   return (
     <div className="space-y-6">
-      {error ? <p role="alert" className="rounded-lg border border-border p-3 text-sm text-error">{error}</p> : null}
-      {success ? <p role="status" className="rounded-lg border border-border p-3 text-sm text-body">{success}</p> : null}
-      <section className="rounded-xl border border-border bg-surface p-5">
+      {error ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-error">{error}</p> : null}
+      {success ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">{success}</p> : null}
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
         <h2 className="text-base font-semibold text-foreground">Schedule a follow-up</h2>
         <p className="mt-1 text-sm text-body">
           Select a college recruiter, choose an India-local date and time, and confirm.
@@ -167,7 +167,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           </div>
         )}
       </section>
-      <section className="rounded-xl border border-border bg-surface">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <div className="border-b border-border p-5">
           <h2 className="text-base font-semibold text-foreground">
             {data.window==="DUE"?"Follow-ups due":"Upcoming follow-ups"} ({data.total})
@@ -204,13 +204,13 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                       setActiveId(activeId === row.id ? null : row.id);
                       setDoneNote(""); setOutcome("CONTACTED");
                     }}
-                    className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">
+                    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground">
                     {activeId === row.id ? "Cancel" : "Record outcome and Done"}
                   </button>
                 </div>
                 {row.note ? <p className="whitespace-pre-wrap text-sm text-body">{row.note}</p> : null}
                 {activeId === row.id ? (
-                  <div className="grid gap-3 rounded-md bg-surface-secondary p-4 sm:grid-cols-2">
+                  <div className="grid gap-3 rounded-[var(--lms-control-radius)] bg-surface-secondary p-4 sm:grid-cols-2">
                     <label className="block text-sm font-semibold text-foreground">
                       Outcome
                       <select value={outcome} disabled={pending}

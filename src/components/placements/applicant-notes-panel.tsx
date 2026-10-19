@@ -92,7 +92,7 @@ export function ApplicantNotesPanel({
             name="body"
             rows={3}
             maxLength={APPLICANT_NOTE_MAX_LENGTH}
-            className="mt-2 w-full rounded-[9px] border border-border bg-surface p-3 text-foreground"
+            className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"
           />
         </label>
         {error ? (
@@ -103,7 +103,7 @@ export function ApplicantNotesPanel({
         <button
           type="submit"
           disabled={pending}
-          className="min-h-11 rounded-[9px] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50"
+          className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50"
         >
           {pending ? "Saving…" : "Save note"}
         </button>
