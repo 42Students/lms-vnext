@@ -209,7 +209,7 @@ export function CollegeBrandingPreview({
             <dt className="font-semibold text-foreground">Support email</dt>
             <dd className="mt-1 text-body">
               {branding.supportEmail ? (
-                <a href={"mailto:" + branding.supportEmail} className="text-link underline">
+                <a href={"mailto:" + branding.supportEmail} className="text-link underline lms-inline-link">
                   {branding.supportEmail}
                 </a>
               ) : "Not configured"}
