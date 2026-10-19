@@ -318,9 +318,9 @@ export function AcademicsOverview({
           }))}
       />
 
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="admin-academic-periods-title">
         <div>
-          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <h2 id="admin-academic-periods-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Academic periods
           </h2>
           <p className="mt-1 text-sm text-body">
