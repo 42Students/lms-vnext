@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 export function TpoTrustToggle({
   relationshipId, companyName, isTrusted,
@@ -53,7 +54,7 @@ export function TpoTrustToggle({
           aria-describedby="tpo-company-trust-reason-help"/>
       </label>
       <p id="tpo-company-trust-reason-help" className="mt-2 text-sm text-body">Enter a reason between 8 and 500 characters.</p>
-      {error?<p role="alert" className="mt-2 text-sm text-foreground">{error}</p>:null}
+      {error?<InlineNotice tone="error" message={error}/>:null}
     </ConfirmDialog>
     {error&&!review?<p role="alert" className="mt-2 text-sm text-foreground">{error}</p>:null}
   </div>;
