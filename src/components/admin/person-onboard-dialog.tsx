@@ -10,6 +10,7 @@ import {
   type MembershipRole,
 } from "@/modules/identity/constants";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { onboardingRoleSelection } from "@/modules/people/college-faculty-onboarding-model";
 import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
 import { Dialog } from "@/components/ui/dialog";
@@ -230,7 +231,7 @@ export function PersonOnboardDialog({
                   <Checkbox
                     checked={roles.includes(role)}
                     onChange={() => toggleRole(role)}
-                    
+                    className="size-5"
                   />
                 </label>
               ))}
