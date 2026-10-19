@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -78,6 +79,6 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
         </Button>
       </li>)}
     </ul>:<p className="mt-2 text-sm text-body">No saved views yet.</p>}
-    {notice?<p role="alert" className="mt-2 text-sm text-error">{notice}</p>:null}
+    {notice?<InlineNotice tone="error" message={notice}/>:null}
   </section>;
 }
