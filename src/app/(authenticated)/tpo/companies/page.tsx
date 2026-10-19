@@ -1,4 +1,4 @@
-import {DataTable} from "@/components/ui/data-table";
+import {TpoCompaniesSpreadsheet} from "@/components/tpo/tpo-companies-spreadsheet";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
@@ -10,13 +10,11 @@ import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-rea
 import { TpoCompanyMemoryWorkspace } from "@/components/tpo/tpo-company-memory-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoCompanyCreateForm } from "@/components/tpo/tpo-company-create-form";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { can } from "@/modules/permissions/policy";
 import {
   getTpoCompaniesView,
   tpoCompaniesQuerySchema,
 } from "@/modules/placements/tpo-companies-view-service";
-import type { TpoCompanyRow } from "@/modules/placements/tpo-companies-view-model";
 import {tpoCompanyFiltersShapeValid} from "@/modules/placements/tpo-company-url-validation";
 
 type PageProps = {
@@ -57,11 +55,6 @@ function companiesHref(
   return query ? `/tpo/companies?${query}` : "/tpo/companies";
 }
 
-function companyHref(company: TpoCompanyRow) {
-  return company.companyId
-    ? `/tpo/companies/${encodeURIComponent(company.companyId)}`
-    : `/tpo/companies?name=${encodeURIComponent(company.name)}`;
-}
 
 /** Reject ambiguous multi-valued deep-links without silently choosing one. */
 function invalidCompanyFilters(){
@@ -273,35 +266,7 @@ export default async function TpoCompanyMemoryPage({
             </Link>
           </div>
         ) : (
-          <DataTable
-            caption="Companies on this page"
-            rows={page.items}
-            getRowKey={company=>company.companyId??"unlinked:"+company.name}
-            empty={<p role="status" className="text-sm text-body">No companies match these filters.</p>}
-            columns={[
-              {key:"company",header:"Company",mobileLabel:"Company",mobilePriority:"primary",
-               cell:company=><div className="min-w-0">
-                <Link href={companyHref(company)} className="inline-flex min-h-9 items-center break-words font-semibold text-link underline lms-inline-link">{company.name}</Link>
-                {company.unlinkedLeadGroup?<div className="mt-2"><StatusBadge tone="warning">CRM name only · not linked</StatusBadge></div>:<p className="mt-1 text-xs text-muted-foreground">Linked employer</p>}
-                {company.websiteUrl?<p className="mt-1 break-all text-xs text-body">{company.websiteUrl}</p>:null}
-               </div>},
-              {key:"contacts",header:"Contacts",mobileLabel:"Contacts",mobilePriority:"secondary",
-               cell:company=>company.contacts??"Unavailable"},
-              {key:"drives",header:"Drives",mobileLabel:"Drives",mobilePriority:"secondary",
-               cell:company=>company.drives},
-              {key:"offers",header:"Offers",mobileLabel:"Offers",mobilePriority:"secondary",
-               cell:company=>company.offers},
-              {key:"accepted",header:"Accepted",mobileLabel:"Accepted",mobilePriority:"secondary",
-               cell:company=>company.acceptedOffers},
-              {key:"joins",header:"Confirmed joins",mobileLabel:"Confirmed joins",mobilePriority:"secondary",
-               cell:company=>company.confirmedJoinedLearners},
-              {key:"actions",header:"Actions",mobileLabel:"Actions",mobilePriority:"action",
-               cell:company=>company.companyId?
-                <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-                  className="inline-flex min-h-9 items-center font-semibold text-link underline">Create drive</Link>:
-                <span className="text-xs text-muted-foreground">Link company first</span>},
-            ]}
-          />
+          <TpoCompaniesSpreadsheet rows={page.items}/>
         )}
 
         <nav
