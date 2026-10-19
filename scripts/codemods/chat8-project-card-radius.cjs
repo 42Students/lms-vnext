@@ -66,9 +66,9 @@ for (const file of files) {
         return ts.forEachChild(node, visit);
       }
       const cls = init.text;
-      const isCard = /(?:^|\\s)border(?:\\s|$)/.test(cls) &&
-        /(?:^|\\s)p-[2345](?:\\s|$)/.test(cls) &&
-        (/(?:^|\\s)bg-surface(?:\\s|$)/.test(cls) || /(?:^|\\s)bg-white(?:\\s|$)/.test(cls));
+      const isCard = /(?:^|\s)border(?:\s|$)/.test(cls) &&
+        /(?:^|\s)p-[2345](?:\s|$)/.test(cls) &&
+        (/(?:^|\s)bg-surface(?:\s|$)/.test(cls) || /(?:^|\s)bg-white(?:\s|$)/.test(cls));
       if (cls.includes(BEFORE) && isCard && (tag === "article" || draggable)) {
         replacements.push({
           start: init.getStart(source),

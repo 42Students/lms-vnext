@@ -1,0 +1,52 @@
+/*
+ * Original TPO report chart row values:
+ * 42Students/lms2-fe@prod-2026
+ * src/styles/components/_tpo-reports.scss:429-483,602-605.
+ * This is presentation-only; the existing MetricBar retains its a11y meter.
+ */
+.figure { border-color: #e7ecf2; }
+.title {
+  color: #334155;
+  font-size: 14px;
+  font-weight: 650;
+}
+.chartRow {
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) minmax(0, 1fr) 52px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.chartRow:last-child { margin-bottom: 0; }
+.label {
+  overflow: hidden;
+  color: #44536a;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.value {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 650;
+  text-align: right;
+}
+.track {
+  height: 11px !important;
+  border-radius: 999px;
+  background-color: #e7ecf2 !important;
+}
+.track > div {
+  min-width: 0;
+  background-color: #26bac7 !important;
+}
+.track[aria-valuenow]:not([aria-valuenow="0"]) > div {
+  min-width: 2px;
+}
+@media (max-width: 767px) {
+  .chartRow {
+    grid-template-columns: minmax(82px, 110px) minmax(0, 1fr) 42px;
+    gap: 7px;
+  }
+}

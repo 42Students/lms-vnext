@@ -168,14 +168,15 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 
 ## Repeating patterns (scripts — dry-run by default)
 
-- [ ] Native-looking project/mentor inline status pills, duplicate nested headings and ad-hoc view wrappers: use scoped AST codemod for genuinely identical patterns only; keep risky dynamic class conditions for manual review.
+- [ ] Card/article radius (missing: actual count after orchestrator runs the dry run): `scripts/codemods/chat8-project-card-radius.cjs`. Dry-run `node scripts/codemods/chat8-project-card-radius.cjs`; apply with `--apply` after review. It scans only owned folders and only modifies static, padded/bordered `<article>` and draggable `<li>` task cards. Legacy: `components___variables.scss:133-136` (12px card versus 6px control); vNext `globals.css:815` token `--lms-radius-card`. Script committed `d687779` and regex corrected `210c2e6`. **Not applied here; no code/test executed.**
+- [ ] Native-looking inline status pills and other dynamic controls: judgement review remains, do not mass-rewrite conditional class expressions.
 - [ ] All PageHeader child headings / validation error page titles: orchestrator owns `scripts/codemods/chat9-page-header.cjs`; do not duplicate its global rewrite.
 - [ ] Generic alerts, error and loading markup: orchestrator owns `scripts/codemods/chat5-states.cjs`; do not hand-migrate the repeating pattern.
 
 ## Manual judgement checklist
 
-- [ ] Mentor board inside project detail: ensure just one top-level `PageHeader`; section heading remains accessible.
-- [ ] Mentor and learner board lane count chips: shared badge visual, phone-width sideways scrolling and keyboard focus.
-- [ ] Project list hover/focus cards: legacy border/radius/shadow values.
+- [ ] Mentor board/detail head (implemented, NOT strict-ticked: missing runtime grep, full property table and responsive proof). `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx:61-64` renders `ProjectWorkspaceHeader` once before tabs for every view; `src/components/projects/project-workspace.tsx:170-203,326` extracts/reuses existing title, mentor/course subtitle and status badge, while `hidePageHeader` suppresses only the nested mentor duplicate; `src/components/projects/mentor-lane-board.tsx:97-117` uses an h2 for the nested Board section. These preserve content. Commits `2157a88`, `fd4f6ff`, `a0d38fd`.
+- [ ] Mentor and learner board count chips (partially implemented; missing full review/greps/responsive proof). Mentor Board now uses shared `Badge` for lane counts at `src/components/projects/mentor-lane-board.tsx:194`; shared `BoardColumn` retained and drag/drop props unchanged. Learner lane already uses `Badge` at `src/components/projects/learner-board-interactive.tsx:109-110`.
+- [ ] Project list hover/focus cards (shadow value implemented; missing full verification and responsive proof). Legacy `components___common.scss:141-146`: 0 4px 12px rgba(0,0,0,.08) and 0.2s transition; `src/components/projects/project-list.tsx:81` now uses hover shadow `0_4px_12px_rgba(0,0,0,0.08)` and `duration-200`. Commit `3cad22e`.
 - [ ] Sprints, tasks, backlog, releases, meeting logs, approvals, resources: preserve content and use one canvas; check nested cards separately.
 - [ ] Tracker issues and audit findings: status badges, filters, pagination and loading/empty/error states.

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
 import {facultyCourseTabHref} from "@/modules/courses/faculty-course-navigation";
@@ -383,24 +384,27 @@ export function FacultyCourseWorkspace({
         eyebrow="Faculty · Course"
         title={course.courseName}
         description={`${course.courseCode} · ${course.sectionName} · ${course.academicPeriodName}`}
-      />
-
-      {view !== "BLUEPRINT" ? (
-        <>
+        actions={view !== "BLUEPRINT" ? (
       <nav aria-label="Overview actions" className="flex flex-wrap gap-3">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Section reports hub
         </Link>
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Current Section students
         </Link>
       </nav>
+        ) : undefined}
+      />
+
+      {view !== "BLUEPRINT" ? (
+        <>
+
       <FacultyCourseHomeSignals
         signals={homeSignals}
         deliveryId={course.deliveryId}
@@ -516,20 +520,20 @@ export function FacultyCourseWorkspace({
             </div>
           </section>
 
-          <nav aria-label="Blueprint content filters" className="flex flex-wrap gap-2">
-            {([
+          <Tabs
+            ariaLabel="Blueprint content filters"
+            value={contentFilter}
+            renderPanel={false}
+            items={([
               ["ALL","All"],["LECTURES","Lectures"],["RESOURCES","Resources"],
               ["ASSESSMENTS","Assessments"],["LIVE","Live sessions"],
-            ] as const).map(([value,label])=><Link key={value}
-              href={facultyCourseTabHref(course.deliveryId,"blueprint")+
-                (value==="ALL"?"":"?filter="+value)}
-              aria-current={contentFilter===value?"page":undefined}
-              className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold "+
-                (contentFilter===value?"border-primary bg-primary-subtle text-primary-text":
-                "border-border bg-surface text-body")}>
-              {label}
-            </Link>)}
-          </nav>
+            ] as const).map(([value,label]) => ({
+              value,
+              label,
+              href: facultyCourseTabHref(course.deliveryId,"blueprint")+
+                (value==="ALL"?"":"?filter="+value),
+            }))}
+          />
           {selectedLessonId?<nav aria-label="Lesson navigation" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
             <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline">
               Back to Blueprint
