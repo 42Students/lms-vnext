@@ -9,8 +9,8 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-xl border border-border bg-surface p-6">
-      <h1 className="m-0 text-[26px] font-semibold leading-[1.35] tracking-[-0.02em] text-[#172033] sm:text-[30px]">
+    <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+      <h1 className="m-0 text-[26px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)] sm:text-[30px]">
         Couldn&apos;t load Settings · Season
       </h1>
       <p className="mt-2 text-sm text-body">

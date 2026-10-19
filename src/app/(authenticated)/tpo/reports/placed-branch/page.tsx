@@ -34,28 +34,28 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
         description="Unique learners with accepted offers and confirmed joins by current branch and season."
         actions={report.season ? <a
           href={"/api/placements/reports/placed-branch?" + csvParams}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
           Download CSV
         </a> : null}
       />
-      <Link href="/tpo/reports" className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline">← Reports</Link>
+      <Link href="/tpo/reports" className="text-sm font-semibold text-link hover:underline">← Reports</Link>
       <form action="/tpo/reports/placed-branch" method="get"
         className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2">
         <label className="text-sm font-semibold text-body">Season
           <select name="seasonId" defaultValue={report.season?.id ?? ""}
-            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             {report.seasons.length === 0 ? <option value="">No season</option> : null}
             {report.seasons.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
           </select>
         </label>
         <label className="text-sm font-semibold text-body">Drive
           <select name="jobId" defaultValue={report.selectedJobId ?? ""}
-            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="">All drives</option>
             {report.jobs.map((item) => <option key={item.id} value={item.id}>{item.companyName} · {item.title}</option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-[650] text-on-primary sm:col-span-2"
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary sm:col-span-2"
           disabled={!report.season}>Apply filters</button>
       </form>
       {!report.season ? <EmptyState title="No placement season" description="No results can be inferred without a recorded season." /> : (
@@ -66,13 +66,13 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
               ["Confirmed joined learners", report.totals.joined],
               ["Accepted offer versions", report.totals.acceptedOfferVersions],
             ] as const).map(([label, count]) => (
-              <div key={label} className="rounded-xl border border-border bg-surface p-4">
+              <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
                 <h2 className="text-xs font-semibold text-body">{label}</h2>
                 <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{reportNumber(count)}</p>
               </div>
             ))}
           </section>
-          <p className="rounded-xl border border-border bg-surface-subtle p-4 text-sm text-body">{report.branchScopeNote}</p>
+          <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">{report.branchScopeNote}</p>
           <ReportTable title="Branch outcomes" headings={["Current branch", "Placed learners", "Confirmed joined", "Accepted offer versions"]}
             rows={report.rows.map((row) => [row.departmentName, row.placed, row.joined, row.acceptedOfferVersions])}
             emptyDescription="No accepted offers have been recorded in this reporting scope." />
