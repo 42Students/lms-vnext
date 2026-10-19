@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -130,7 +131,7 @@ export function TpoJoiningUpdateForm({
           className="min-h-11 md:min-h-9">
           {busy ? "Saving..." : corrected ? "Confirm corrected outcome" : "Confirm joining outcome"}
         </Button>
-        {error ? <p role="alert" className="mt-2 text-sm text-foreground">{error}</p> : null}
+        {error ? <InlineNotice tone="error" message={error}/> : null}
       </div>
       <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
         title={"Record "+status.replaceAll("_"," ")+" for this accepted offer?"}
