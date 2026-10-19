@@ -73,7 +73,7 @@ export default async function RecruiterCompanyReportsPage({
           action={
             <Link
               href="/hr/company/reports"
-              className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+              className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
             >
               Clear filters
             </Link>
@@ -115,7 +115,7 @@ export default async function RecruiterCompanyReportsPage({
                   href={recruiterCompanyReportsHref({
                     collegeId: grant.collegeId,
                   })}
-                  className="rounded-lg border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+                  className="rounded-lg border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
                 >
                   <span className="font-semibold text-primary-text">
                     {grant.collegeName}
@@ -165,10 +165,10 @@ export default async function RecruiterCompanyReportsPage({
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
         actions={<div className="flex flex-wrap gap-2">
           <Link href={"/api/placements/recruiter/reports/export?collegeId="+encodeURIComponent(collegeId)+"&status="+query.status}
-            className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+            className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
             Export report CSV
           </Link>
-          <Link href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)} className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+          <Link href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)} className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
             Drives →
           </Link>
         </div>}
@@ -208,14 +208,14 @@ export default async function RecruiterCompanyReportsPage({
       >
         <Link
           href={`${companyBase}&tab=company`}
-          className="px-3 py-3 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+          className="px-3 py-3 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
         >
           Company
         </Link>
 
         <Link
           href={`${companyBase}&tab=team`}
-          className="px-3 py-3 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+          className="px-3 py-3 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
         >
           Team
         </Link>
@@ -225,7 +225,7 @@ export default async function RecruiterCompanyReportsPage({
             collegeId,
           })}
           aria-current="page"
-          className="border-b-2 border-primary px-3 py-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+          className="border-b-2 border-primary px-3 py-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
         >
           Reports
         </Link>
@@ -301,7 +301,7 @@ export default async function RecruiterCompanyReportsPage({
             <select
               name="status"
               defaultValue={query.status}
-              className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-base sm:text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+              className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-base sm:text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
             >
               <option value="ALL">
                 All visible drives
@@ -320,7 +320,7 @@ export default async function RecruiterCompanyReportsPage({
             <select
               name="pageSize"
               defaultValue={String(pageSize)}
-              className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-base sm:text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+              className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-base sm:text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
             >
               <option value="10">10</option>
               <option value="25">25</option>
@@ -330,7 +330,7 @@ export default async function RecruiterCompanyReportsPage({
 
           <button
             type="submit"
-            className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+            className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
           >
             Apply filters
           </button>
@@ -339,7 +339,7 @@ export default async function RecruiterCompanyReportsPage({
             href={recruiterCompanyReportsHref({
               collegeId,
             })}
-            className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+            className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
           >
             Clear filters
           </Link>
@@ -393,7 +393,7 @@ export default async function RecruiterCompanyReportsPage({
               {key:"drive",header:"Drive",mobilePriority:"primary",
                 cell:(job)=><div>
                   <Link href={"/hr/placements/jobs/"+encodeURIComponent(job.id)}
-                    className="inline-flex min-h-9 items-center break-words font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">{job.title}</Link>
+                    className="inline-flex min-h-9 items-center break-words font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">{job.title}</Link>
                   <p className="mt-1 text-xs text-muted-foreground">{job.employmentType.replaceAll("_"," ")}</p>
                 </div>},
               {key:"status",header:"Status",mobilePriority:"secondary",
@@ -435,7 +435,7 @@ export default async function RecruiterCompanyReportsPage({
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+                className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
               >
                 Previous
               </Link>
@@ -449,7 +449,7 @@ export default async function RecruiterCompanyReportsPage({
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+                className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
               >
                 Next
               </Link>
