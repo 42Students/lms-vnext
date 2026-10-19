@@ -1,5 +1,6 @@
 "use client";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Dialog } from "@/components/ui/dialog";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -179,13 +180,12 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           Save issue link
         </Button>
       </div>
-      {confirmMute && !item.muted ? (
-        <section aria-label="Mute this error"
-          className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
-          <p className="font-semibold text-foreground">Mute this error</p>
-          <p className="text-sm text-body">
-            Why is it safe to ignore? It comes back on its own if it suddenly spikes.
-          </p>
+      <Dialog open={confirmMute&&!item.muted}
+        onOpenChange={next=>{if(!pending)setConfirmMute(next);}}
+        title="Mute this error"
+        description="Why is it safe to ignore? It comes back on its own if it suddenly spikes."
+        dismissible={!pending}>
+        <div className="space-y-3">
           <label className="block text-sm text-body">
             Reason (optional)
             <Input className="mt-1" value={muteReason} maxLength={255}
@@ -193,8 +193,8 @@ function KnownErrorCard({ item }: { item: KnownError }) {
               placeholder="Why this error is expected"
             />
           </label>
-          <div className="flex flex-wrap gap-2">
-            <Button size="sm" disabled={pending}
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button size="sm" disabled={pending} loading={pending}
               onClick={() => void update({
                 action: "MUTE", muted: true,
                 ...(muteReason.trim() ? { reason: muteReason.trim() } : {}),
@@ -206,8 +206,8 @@ function KnownErrorCard({ item }: { item: KnownError }) {
               Cancel
             </Button>
           </div>
-        </section>
-      ) : null}
+        </div>
+      </Dialog>
       {item.issuePublicId ? (
         <p className="m-0 text-xs text-muted-foreground">
           Linked tracker issue: {item.issuePublicId}
