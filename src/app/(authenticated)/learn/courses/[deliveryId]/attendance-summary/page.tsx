@@ -36,7 +36,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Course attendance
       </Link>
       <PageHeader title="Course attendance history" />
@@ -53,7 +53,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
           </article>
         ))}
       </section>
-      <section className="rounded-xl border border-border bg-surface p-4" aria-label="Threshold context">
+      <section className="border-b border-border py-4" aria-label="Threshold context">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="font-semibold text-foreground">Attendance threshold</h2>
           <StatusBadge tone={attendance.overall?.percentage === null ? "neutral" :
@@ -72,7 +72,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
       <nav aria-label="Attendance month filter" className="flex flex-wrap gap-2">
         <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendance-summary"}
           aria-current={selectedMonth === null ? "page" : undefined}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
           All months
         </Link>
         {available.map((entry) => (
@@ -80,13 +80,13 @@ export default async function LearnerCourseAttendanceSummaryPage({
             href={"/learn/courses/" + encodeURIComponent(deliveryId) +
               "/attendance-summary?month=" + entry.month}
             aria-current={selectedMonth === entry.month ? "page" : undefined}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
             {entry.month}
           </Link>
         ))}
       </nav>
       {filtered.length === 0 ? (
-        <section role="status" className="rounded-xl border border-border bg-surface p-5">
+        <section role="status" className="border-b border-border py-4">
           <h2 className="font-semibold text-foreground">No attendance sessions for this selection</h2>
           <p className="mt-2 text-sm text-body">
             No recorded or scheduled classes were found for this course and month. A missing
