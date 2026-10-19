@@ -118,6 +118,7 @@ export function CollegeEditDialog({
             </Button>
             <Button
               disabled={pending || !name.trim()}
+              loading={pending}
               onClick={save}
             >
               {pending ? "Saving…" : "Save changes"}
