@@ -87,6 +87,7 @@ export function FacultyQuizReview({
 }) {
   const router = useRouter();
   const openedOnce=useRef(false);
+  const resultUpdatePending=useRef(false);
   const actions = quizReviewActions({
     deliveryOwned,
     status,
@@ -153,6 +154,8 @@ export function FacultyQuizReview({
   async function setResults(
     published: boolean,
   ) {
+    if (resultUpdatePending.current) return;
+    resultUpdatePending.current=true;
     setError(null);setNotice(null);
     setSavingResults(true);
 
@@ -188,6 +191,7 @@ export function FacultyQuizReview({
         "Could not update Quiz result visibility. Check your connection and try again.",
       );
     } finally {
+      resultUpdatePending.current=false;
       setSavingResults(false);
       setConfirmPublished(null);
     }
@@ -199,6 +203,7 @@ export function FacultyQuizReview({
       <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         <Button
           size="sm"
+          className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={load}
         >
@@ -208,6 +213,7 @@ export function FacultyQuizReview({
         {actions.canPublishResults ? (
           <Button
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={savingResults}
             onClick={() =>
               setConfirmPublished(true)
@@ -222,6 +228,7 @@ export function FacultyQuizReview({
         {actions.canHideResults ? (
           <Button
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={savingResults}
             onClick={() =>
@@ -263,6 +270,7 @@ export function FacultyQuizReview({
           {actions.canPublishResults ? (
             <Button
               size="sm"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               disabled={savingResults}
               onClick={() =>
                 setConfirmPublished(true)
@@ -276,6 +284,7 @@ export function FacultyQuizReview({
           {actions.canHideResults ? (
             <Button
               size="sm"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={savingResults}
               onClick={() =>
@@ -289,6 +298,7 @@ export function FacultyQuizReview({
           ) : null}
           <Button
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={loading}
             onClick={load}
