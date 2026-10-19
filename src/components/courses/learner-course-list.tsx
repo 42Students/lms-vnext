@@ -2,6 +2,7 @@
 
 import { MetricBar } from "@/components/ui/metric-bar";
 import { Badge } from "@/components/ui/badge";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -304,15 +305,14 @@ export function LearnerCourseList({
           ) : null}
         </div>
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
-          <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
-            <summary className="cursor-pointer font-semibold">Semester Details</summary>
+          <Disclosure title="Semester Details" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
             <dl className="mt-2 space-y-1 text-body">
               <div>Program: {periodRows[0]?.course.programName??"Not recorded"}</div>
               <div>Batch: {periodRows[0]?.course.cohortName??"Not recorded"}</div>
               <div>Academic Year: {selectedPeriod?.startDate?.slice(0,4)??"Not recorded"}</div>
               <div>Semester: {selectedPeriod?.name??"Not recorded"}</div>
             </dl>
-          </details>
+          </Disclosure>
           <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
             <summary className="cursor-pointer font-semibold">All Courses</summary>
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
