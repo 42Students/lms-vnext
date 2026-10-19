@@ -392,8 +392,8 @@ export function LoginForm({
                 }}
                 className={
                   channel === value
-                    ? "min-h-10 rounded-[var(--lms-control-radius)] bg-surface text-sm font-semibold text-primary-text shadow-none "
-                    : "min-h-10 rounded-[var(--lms-control-radius)] text-sm font-medium text-body hover:bg-primary-subtle hover:text-primary-text "
+                    ? "min-h-11 rounded-[var(--lms-control-radius)] bg-surface text-sm font-semibold text-primary-text shadow-none md:min-h-9 "
+                    : "min-h-11 rounded-[var(--lms-control-radius)] text-sm font-medium text-body hover:bg-primary-subtle hover:text-primary-text md:min-h-9 "
                 }
               >
                 {value === "PHONE" ? "Phone" : "Email"}
@@ -431,7 +431,7 @@ export function LoginForm({
 
           <Button
             type="submit"
-            className="w-full"
+            className="min-h-11 w-full md:min-h-9"
             disabled={busy}
           >
             {busy ? "Sending code…" : "Continue"}
@@ -511,7 +511,7 @@ export function LoginForm({
 
           <Button
             type="submit"
-            className="w-full"
+            className="min-h-11 w-full md:min-h-9"
             disabled={
               busy ||
               Boolean(errorCode && RESTART_ERRORS.has(errorCode)) ||
@@ -527,7 +527,7 @@ export function LoginForm({
               type="button"
               onClick={() => void start()}
               disabled={busy || cooldown > 0}
-              className="inline-flex min-h-9 items-center font-medium text-primary-text underline-offset-2 hover:underline  disabled:text-muted-foreground disabled:no-underline"
+              className="inline-flex min-h-11 items-center font-medium text-primary-text underline-offset-2 hover:underline disabled:text-muted-foreground disabled:no-underline md:min-h-9"
             >
               {cooldown > 0 ? "Resend code in "+Math.floor(cooldown/60)+":"+
                 String(cooldown%60).padStart(2,"0") : "Resend code"}
@@ -537,7 +537,7 @@ export function LoginForm({
                 type="button"
                 onClick={() => void sendEmailCode()}
                 disabled={busy || emailCooldown > 0}
-                className="inline-flex min-h-9 items-center font-medium text-primary-text underline-offset-2 hover:underline  disabled:text-muted-foreground disabled:no-underline"
+                className="inline-flex min-h-11 items-center font-medium text-primary-text underline-offset-2 hover:underline disabled:text-muted-foreground disabled:no-underline md:min-h-9"
               >
                 {emailCooldown>0?`Email another code in ${emailCooldown}s`:"Get the code by email"}
               </Button>
@@ -547,7 +547,7 @@ export function LoginForm({
           <Button variant="ghost"
             type="button"
             onClick={reset}
-            className="inline-flex min-h-9 items-center text-sm text-muted-foreground hover:text-foreground "
+            className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground md:min-h-9"
           >
             Change
           </Button>
