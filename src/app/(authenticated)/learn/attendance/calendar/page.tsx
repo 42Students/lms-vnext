@@ -40,7 +40,7 @@ export default async function LearnerAttendanceCalendarPage({
     status:first(raw.status)??undefined,
   });
   if(!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Invalid attendance calendar filters</h1>
+    <PageHeader title="Invalid attendance calendar filters" />
     <Link href="/learn/attendance/calendar" className="text-primary-text underline">
       Clear filters
     </Link>
