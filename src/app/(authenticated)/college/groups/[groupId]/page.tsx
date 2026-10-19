@@ -144,7 +144,7 @@ export default async function CollegeGroupDetailPage({
       ) : null}
 
       {rule ? (
-        <section className="- border-t border-border pt-4">
+        <section className="border-t border-border pt-4">
           <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/rule-preview"}
             className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
             Preview persisted membership rule (read-only)
