@@ -1,0 +1,22 @@
+/*
+ * Original learner course dashboard progress bar neutralisation:
+ * lms2-fe@prod-2026/src/styles/components/_learn-courses.scss:2486-2500.
+ * The existing real course-completion percentage and 100-point meter are kept.
+ */
+.track {
+  width: 100%;
+  min-width: 0;
+  height: 8px;
+  border-radius: 999px;
+  background: #f1f4f9 !important;
+}
+.track > div {
+  border-radius: inherit;
+  background: #6b7280 !important;
+}
+@media (max-width: 767px) {
+  .track { width: 100%; min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track > div { transition: none; }
+}
