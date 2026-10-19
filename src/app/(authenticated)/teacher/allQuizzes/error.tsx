@@ -11,7 +11,7 @@ export default function FacultyQuizzesOverviewError({
 }) {
   return (
     <section className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
-      <h1 className="text-lg font-semibold text-foreground">Failed to load quizzes. Please try again.</h1>
+      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Failed to load quizzes. Please try again.</h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         We could not load your teaching quizzes. The previous assessment list was not silently replaced with an empty result.
       </p>

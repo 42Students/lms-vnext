@@ -84,7 +84,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <nav aria-label="Profile sections" className="rounded-xl border border-border bg-surface p-4">
     <p className="mb-3 text-sm font-semibold text-foreground">Jump to a profile section</p>
     <div className="flex flex-wrap gap-2">{FACULTY_PROFILE_NAV.map(item=><a key={item.section}
-      className="rounded-md border border-border px-3 py-2 text-sm text-primary-text hover:underline"
+      className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text hover:underline"
       href={"#"+facultyProfileAnchor(item.section)}>{item.label}</a>)}</div>
   </nav>
   <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"

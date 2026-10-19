@@ -52,7 +52,7 @@ export function DepartmentCreateForm({
     <form
       onSubmit={submit}
       aria-label={DEPARTMENT_COPY.createCardTitle}
-      className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
+      className="flex flex-wrap items-end gap-3"
     >
       <h2 className="m-0 w-full text-base font-semibold text-foreground">{DEPARTMENT_COPY.createCardTitle}</h2>
       <div className="min-w-48 flex-1">
