@@ -289,7 +289,10 @@
 [data-slot="notification-popover"] :is(ul, ol)::-webkit-scrollbar {
   display: none;
 }
+/* Legacy desktop notification panel: components___notification-drawer.scss:109-125.
+ * Keep 360px desktop minimum without overflowing a phone viewport. */
 [data-slot="notification-popover"] {
+  min-width: min(360px, calc(100vw - 24px));
   max-width: min(420px, calc(100vw - 24px));
   max-height: min(520px, calc(100dvh - 120px));
   border: 1px solid var(--lms-neutral-200);
