@@ -433,3 +433,12 @@
 .orgTrigger:focus-visible {
   outline:2px solid var(--lms-button-primary); outline-offset:2px;
 }
+
+.orgPopover {
+  position:absolute; right:0; top:calc(100% + 9px); z-index:70;
+  width:min(280px,calc(100vw - 24px)); max-height:min(520px,calc(100dvh - 88px));
+  overflow:auto; overscroll-behavior:contain; box-sizing:border-box;
+  border:1px solid #e7ecf2; border-radius:6px;
+  padding:16px; background:#fff;
+  box-shadow:9px 11px 28px rgba(0,0,0,.1);
+}
