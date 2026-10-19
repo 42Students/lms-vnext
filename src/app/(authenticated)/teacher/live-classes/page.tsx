@@ -56,7 +56,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   {data.items.length===0?<EmptyState title="No matching live classes"
    description="No published LIVE_CLASS content matches these filters in your current teaching Sections. Unregistered meetings are not invented."/>
    :<ul className="grid gap-3">{data.items.map(s=><li key={s.deliveryId+":"+s.id}
-     className="space-y-2 rounded-xl border border-border bg-surface p-4">
+     className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">{s.title}</h2>
     <p className="text-sm text-body">{s.courseName} · {s.sectionName}</p>
     <p className="text-sm text-body">
