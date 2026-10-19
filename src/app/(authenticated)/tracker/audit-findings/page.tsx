@@ -1,4 +1,3 @@
-import { Banner } from "@/components/ui/banner";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
