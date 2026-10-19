@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import {TenantRestoreAction} from "@/components/admin/tenant-restore-action";
 import { CollegeServiceError } from "@/modules/colleges/service";
 import { getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-tenant-lifecycle-service";
@@ -22,14 +23,15 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
  ];
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Tenant" title={item.name} description="Read-only tenant identity and setup links in the authorized scope."/>
-  <nav aria-label="College tabs" className="flex flex-wrap items-center gap-3">
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}`}
-     aria-current="page" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text">College</Link>
-   <Link href={`/activity?collegeId=${encodeURIComponent(item.id)}`}
-     className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline">Activity</Link>
+  <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+   <Tabs ariaLabel="College tabs" value="college" renderPanel={false}
+    items={[
+     {value:"college",label:"College",href:`/admin/colleges/${encodeURIComponent(item.id)}`},
+     {value:"activity",label:"Activity",href:`/activity?collegeId=${encodeURIComponent(item.id)}`},
+    ]}/>
    <Link href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}
-     className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline">Export activity CSV</Link>
-  </nav>
+    className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline">Export activity CSV</Link>
+  </div>
   <dl className="grid gap-4 border-t border-border pt-4 sm:grid-cols-2">
    {fields.map(([label,value])=><div key={label}><dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
     <dd className="mt-1 break-words text-sm text-body">{value}</dd></div>)}
