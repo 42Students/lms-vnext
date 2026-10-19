@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import {TpoHomeReturnRefresh} from "@/components/tpo/tpo-home-return-refresh";
 import {eq} from "drizzle-orm";
@@ -195,9 +196,9 @@ export default async function TpoHome(){
   {next?<div className="mt-2 space-y-2">
    <p className="break-words font-semibold">{next.title}</p>
    <p className="text-sm text-muted-foreground">{next.text}</p>
-   <Link href={next.href} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm text-on-primary">{next.action}</Link>
+   <Link href={next.href} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)]">{next.action}</Link>
   </div>:rows.find(row=>row.needsAttention)?<div className="mt-2 space-y-2"><p className="text-sm">{rows.find(row=>row.needsAttention)?.status}</p>
-   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm text-on-primary">Open</Link>
+   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)]">Open</Link>
   </div>:<div className="mt-2 space-y-1"><p className="font-semibold">Nothing is waiting on you.</p><p className="text-sm text-muted-foreground">New requests, results and replies show up here first.</p></div>}
  </section>
  <section className="min-w-0 space-y-2" aria-label="Your placement work">
@@ -207,7 +208,7 @@ export default async function TpoHome(){
      <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary-subtle text-sm font-semibold">{row.title.slice(0,1)}</span>
      <span className="min-w-0 flex-1"><strong className="block text-sm text-foreground">{row.title}</strong>
       <span className="block break-words text-xs text-muted-foreground">{row.status}</span></span>
-     {row.needsAttention?<span aria-label="Needs you" className="shrink-0 rounded-full bg-warning-subtle px-2 py-1 text-xs font-semibold text-foreground">Needs you</span>:null}
+     {row.needsAttention?<Badge aria-label="Needs you"  tone="warning" className="shrink-0">Needs you</Badge>:null}
      <span aria-hidden="true" className="shrink-0 text-link">›</span>
     </Link>
    </li>)}</ul>

@@ -51,7 +51,7 @@ export default async function FacultyContactsPage({
   if(!filters)return <section role="alert" className="space-y-3 p-5">
     <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid directory filters</h1>
     <Link href={"/teacher/contacts/"+contactsTab}
-      className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Return to Contacts
     </Link>
   </section>;
@@ -92,8 +92,8 @@ export default async function FacultyContactsPage({
                 }
                 className={
                   active
-                    ? "inline-flex min-h-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] border border-primary bg-primary px-4 text-sm font-semibold text-foreground"
-                    : "inline-flex min-h-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-teal-deep)]"
+                    ? "inline-flex min-h-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary border border-primary bg-primary px-4 text-sm font-semibold text-foreground"
+                    : "inline-flex min-h-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text"
                 }
               >
                 {tab.label}
@@ -135,7 +135,7 @@ export default async function FacultyContactsPage({
               Contacts per page
               <Select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
-                className="mt-1.5 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                className="mt-1.5 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
@@ -153,7 +153,7 @@ export default async function FacultyContactsPage({
             </span>
             <Link
               href={baseHref}
-              className="font-semibold text-[var(--lms-teal-deep)] hover:underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+              className="font-semibold text-primary-text hover:underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Clear search
             </Link>

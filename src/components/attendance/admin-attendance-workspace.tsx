@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { ScrollCue } from "@/components/ui/scroll-cue";
+import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -319,7 +319,7 @@ export function AdminAttendanceWorkspace({
 
   return (
     <div className="space-y-5">
-      {notice?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-semibold text-body">{notice}</p>:null}
+      {notice?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm font-semibold text-body">{notice}</p>:null}
       <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="border-b border-border pb-4">
@@ -493,9 +493,9 @@ export function AdminAttendanceWorkspace({
             </div>
           </section>
 
-          <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-              <ScrollCue axis="x" label="College attendance monthly grid" className="min-w-0">
-            <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
+          <section className="min-w-0">
+              
+            <Table scrollLabel="College attendance monthly grid" className="min-w-[56rem]">
               <caption className="sr-only">College attendance for every calendar day of the selected month. Cross means no scheduled class.</caption>
               <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
                 <tr>
@@ -552,7 +552,7 @@ export function AdminAttendanceWorkspace({
                           const multiple = sessions.length > 1;
                           return (
                             <td key={day} className="px-3 py-3 text-center">
-                              <Button
+                              <button
                                 type="button"
                                 disabled={!multiple && new Date(first.startsAt).getTime() > loadedAt}
                                 aria-label={multiple
@@ -568,7 +568,7 @@ export function AdminAttendanceWorkspace({
                                 <StatusBadge tone={multiple ? "neutral" : state.tone}>
                                   {multiple ? String(sessions.length) + " sessions" : state.code}
                                 </StatusBadge>
-                              </Button>
+                              </button>
                             </td>
                           );
                         })}
@@ -602,8 +602,8 @@ export function AdminAttendanceWorkspace({
                   },
                 )}
               </tbody>
-            </table>
-              </ScrollCue>
+            </Table>
+              
           </section>
 
           <p className="text-xs leading-5 text-muted-foreground">
@@ -675,7 +675,7 @@ export function AdminAttendanceWorkspace({
       >
         {target ? (
           <div className="space-y-4 text-sm">
-            <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4">
+            <div className="rounded-lg bg-surface-subtle p-4">
               <p className="font-semibold text-foreground">
                 Current status
               </p>

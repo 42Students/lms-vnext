@@ -1,6 +1,5 @@
 "use client";
 
-import { Select } from "@/components/ui/select";
 import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -85,11 +84,11 @@ export function DepartmentDirectory({
         <div className="flex flex-wrap items-end gap-2">
           <label htmlFor="department-directory-page-size" className="grid gap-1 text-xs font-semibold text-body">
             Rows per page
-            <Select id="department-directory-page-size" value={pageSize}
+            <select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
-              className="min-h-10 px-2">
+              className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground">
               {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
-            </Select>
+            </select>
           </label>
           {search.trim() ? <Button size="sm" variant="secondary" onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
           {filtered.length ? (
@@ -120,9 +119,9 @@ export function DepartmentDirectory({
       <DataTable
         columns={columns.map(column => column.key === "name" ? {
           ...column,
-          header: <Button type="button" aria-label="Sort Department Name"
+          header: <Button variant="ghost" type="button" aria-label="Sort Department Name"
             onClick={() => { setNameOrder(nameOrder === "ASC" ? "DESC" : "ASC"); setPage(1); }}
-            className="inline-flex items-center gap-2">
+            className="gap-2">
             Department Name {nameOrder === "ASC" ? "↑" : "↓"}
           </Button>,
         } : column)}

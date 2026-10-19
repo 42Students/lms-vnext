@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -137,7 +138,7 @@ export function TpoAcademicImportWorkspace() {
           empty={<p>No students were found in the import preview.</p>}
           columns={[
             {key:"include",header:"Include",mobilePriority:"action",cell:row=>
-              <input type="checkbox" aria-label={"Include "+row.studentCode}
+              <Checkbox aria-label={"Include "+row.studentCode}
                 checked={!excluded.includes(row.studentCode)}
                 disabled={row.match!=="WILL_UPDATE"}
                 onChange={event=>setExcluded(current=>event.target.checked
@@ -149,7 +150,7 @@ export function TpoAcademicImportWorkspace() {
             {key:"result",header:"Result",mobilePriority:"secondary",cell:row=>row.match==="WILL_UPDATE"?"Will update":"Can't match"},
           ]}/>
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={preview.filter(row => row.match === "WILL_UPDATE")
+          <Checkbox checked={preview.filter(row => row.match === "WILL_UPDATE")
             .every(row => !excluded.includes(row.studentCode))}
             onChange={event => setExcluded(event.target.checked
               ? preview.filter(row => row.match !== "WILL_UPDATE").map(row => row.studentCode)

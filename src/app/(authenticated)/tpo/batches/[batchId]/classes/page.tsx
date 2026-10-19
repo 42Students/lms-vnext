@@ -13,8 +13,8 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
    description="Class decisions are inherited by students without a direct eligibility override."/>
   <Link href="/tpo/batches" className="font-semibold text-link underline">← All batches</Link>
   <TpoBatchWorkspaceTabs batchId={batchId} active="classes"/>
-  {!data.ready?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">Batch lifecycle storage is unavailable. Decisions cannot be saved.</p>:null}
-  {data.finished?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">This batch is finished. Eligibility decisions are read-only.</p>:null}
+  {!data.ready?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm">Batch lifecycle storage is unavailable. Decisions cannot be saved.</p>:null}
+  {data.finished?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm">This batch is finished. Eligibility decisions are read-only.</p>:null}
   <p className="text-sm text-muted-foreground">{data.classes.length} active classes · Whole batch: {data.inherited.replaceAll("_"," ").toLowerCase()}</p>
   {data.classes.length?<div className="grid gap-4 md:grid-cols-2">
    {data.classes.map(row=><section key={row.id} className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
@@ -29,7 +29,7 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
     {data.ready?<TpoBatchClassDecision batchId={batchId} classId={row.id}
       initial={row.decision} expectedVersion={row.expectedVersion} finished={data.finished}/>:null}
    </section>)}
-  </div>:<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">No active classes exist in this batch.</p>}
+  </div>:<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm">No active classes exist in this batch.</p>}
   <p className="text-xs text-muted-foreground">An Eligible class does not override an explicit Ineligible student decision. A student with two active class assignments requires review rather than an inferred choice.</p>
  </div>;
 }

@@ -1,3 +1,4 @@
+import {Textarea} from "@/components/ui/textarea";
 import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import {z} from "zod";
@@ -24,7 +25,7 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
   {rows.length===0?<p role="status">No preparation-support candidates on this page.</p>:<ul className="space-y-3">{rows.map(row=><li key={row.membershipId} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
    <h2 className="font-semibold">{row.displayName}</h2>
    <p className="text-xs text-muted-foreground">{row.branchName} · {row.cohortName} · {row.readinessSignal.replaceAll("_"," ").toLowerCase()}</p>
-   <label className="mt-3 block text-sm">Manual follow-up draft<textarea readOnly rows={3} value={tpoPreparationNudgeMessage(row)} className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/></label>
+   <label className="mt-3 block text-sm">Manual follow-up draft<Textarea readOnly rows={3} value={tpoPreparationNudgeMessage(row)} className="mt-1"/></label>
    <Link href={"/tpo/students/"+row.membershipId+"/history"} className="mt-2 inline-flex min-h-9 items-center text-link underline">Review recorded placement history</Link>
   </li>)}</ul>}
   <nav aria-label="Preparation candidate pages" className="flex flex-wrap gap-3">

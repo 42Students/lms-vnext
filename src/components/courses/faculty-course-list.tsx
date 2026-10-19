@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import Image from "next/image";
 import {FacultyCourseFilterAutoSubmit} from "./faculty-course-filter-auto-submit";
@@ -135,9 +136,9 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           className="group flex min-h-64 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <div className="flex items-start justify-between gap-3">
-            <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle">
+            <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-lg border border-border bg-primary-subtle">
               <Image src="/assets/images/common/course.svg" alt="" width={64} height={64}
-                className="size-full rounded-[var(--lms-control-radius)] object-contain" />
+                className="size-full rounded-lg object-contain" />
             </span>
             <div className="min-w-0">
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-[var(--lms-teal-deep)]">
@@ -164,18 +165,18 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           </p>
 
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-            <span className="rounded-full bg-muted px-2.5 py-1">
+            <Badge  tone="neutral">
               {course.sectionName} ({course.cohortName})
-            </span>
-            <span className="rounded-full bg-muted px-2.5 py-1">
+            </Badge>
+            <Badge  tone="neutral">
               {course.academicPeriodName}
-            </span>
-            <span className="rounded-full bg-muted px-2.5 py-1" title="Academic year / period">
+            </Badge>
+            <Badge  title="Academic year / period" tone="neutral">
               {course.academicPeriodCode}
-            </span>
-            {course.teachingRole!=="PRIMARY"?<span className="rounded-full bg-muted px-2.5 py-1">
+            </Badge>
+            {course.teachingRole!=="PRIMARY"?<Badge  tone="neutral">
               Your role: {course.teachingRole.replaceAll("_"," ").toLowerCase()}
-            </span>:null}
+            </Badge>:null}
           </div>
 
           <div className="mt-auto pt-5">

@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {canToggleTpoGridColumn,countVisibleTpoColumns} from "@/modules/placements/tpo-grid-column-selection";
 
@@ -16,7 +17,7 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
     <p role="status" className="text-xs text-muted-foreground">{visibleCount} of {available.length} display columns visible. Export-only fields remain hidden.</p>
     <div className="flex flex-wrap gap-3">
       {available.map((column) => <label key={column.key} className="flex min-h-11 items-center gap-2 text-sm">
-        <input type="checkbox" checked={selected.includes(column.key)} disabled={selected.length === 1 && selected.includes(column.key)} onChange={(event) => {
+        <Checkbox checked={selected.includes(column.key)} disabled={selected.length === 1 && selected.includes(column.key)} onChange={(event) => {
           if (!canToggleTpoGridColumn(selected, event.target.checked)) return;
           const next = event.target.checked ? [...selected, column.key] : selected.filter((key) => key !== column.key);
           onChange(next);

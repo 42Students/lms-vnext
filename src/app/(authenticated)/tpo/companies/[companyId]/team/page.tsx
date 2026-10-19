@@ -32,7 +32,7 @@ export default async function TpoCompanyTeamPage({params}:{
   <Link href={"/tpo/companies/"+encodeURIComponent(companyId)}
    className="inline-flex min-h-9 items-center text-sm text-primary-text underline">Back to company</Link>
   {result.status==="NOT_REGISTERED"?
-   <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm text-body">
+   <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
     Company Team discussions require their registered database migration. No messages were inferred from private conversations.
    </p>:
    <>

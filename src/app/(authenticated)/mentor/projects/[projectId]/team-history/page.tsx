@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -78,20 +79,7 @@ export default async function MentorTeamHistoryPage({
             Filter role
           </Button>
         </form>
-        <nav aria-label="Team membership history views" className="flex flex-wrap gap-2">
-          {([
-            ["ALL", "All records"],
-            ["OPEN", "Open membership records"],
-            ["ENDED", "Ended membership records"],
-          ] as const).map(([view, label]) =>
-            <Link key={view} href={mentorTeamHistoryHref(projectId,{view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:1})}
-              aria-current={data.query.view === view ? "page" : undefined}
-              className={data.query.view === view
-                ? "rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
-                : "rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-body"}>
-              {label}
-            </Link>)}
-        </nav>
+        <Tabs ariaLabel="Team membership history views" renderPanel={false} value={data.query.view} items={([["ALL","All records"],["OPEN","Open membership records"],["ENDED","Ended membership records"]] as const).map(([view,label])=>({value:view,label,href:mentorTeamHistoryHref(projectId,{view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:1})}))}/>
         <p className="text-sm text-body">{data.total} matching membership record{data.total === 1 ? "" : "s"}</p>
         {data.items.length === 0
           ? <EmptyState title="No team membership records"
