@@ -18,7 +18,7 @@ export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
     {lanes.map(lane=><section key={lane.id} aria-label={lane.label}
       className="w-64 shrink-0 rounded-xl border border-border bg-surface-subtle p-3">
       <h2 className="flex items-center justify-between font-semibold text-foreground">
-       <span>{lane.label}</span><Badge  tone="neutral" className="tabular-nums">{lane.tasks.length}</Badge>
+       <span>{lane.label}</span><Badge tone="neutral" className="tabular-nums">{lane.tasks.length}</Badge>
       </h2>
       <ul className="mt-3 space-y-2">
        {lane.tasks.map(task=>{
