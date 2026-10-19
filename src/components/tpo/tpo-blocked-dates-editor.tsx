@@ -1,4 +1,5 @@
 "use client";
+import { Disclosure } from "@/components/ui/disclosure";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Input} from "@/components/ui/input";
@@ -78,12 +79,11 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
       versions:range.items.map(item=>({id:item.id,expectedVersion:item.updatedAt})),
      });
     }} className="min-h-11 sm:min-h-9">Remove whole range</Button>:null}
-    <details className="min-w-0">
-     <summary className="cursor-pointer text-sm font-semibold text-primary-text">Manage individual days ({range.items.length})</summary>
+    <Disclosure title={`Manage individual days (${range.items.length})`} className="min-w-0">
      <div className="mt-2 flex max-h-48 flex-wrap gap-1 overflow-y-auto">{range.items.map(item=><Button key={item.id} variant="secondary" type="button" disabled={busy} onClick={()=>{
      if(!window.confirm("Remove "+item.day+" from blocked dates?"))return;
      void request("/api/placements/tpo/settings/blocked-dates/"+item.id,"DELETE",{expectedVersion:item.updatedAt});
-    }} className="min-h-11 sm:min-h-9">Remove {item.day}</Button>)}</div></details></li>)}</ul>}
+    }} className="min-h-11 sm:min-h-9">Remove {item.day}</Button>)}</div></Disclosure></li>)}</ul>}
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
