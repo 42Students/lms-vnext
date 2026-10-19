@@ -1517,9 +1517,7 @@ export function ProjectWorkspace({
           </h3>:null}
           <div className="space-y-3">
             {workspace.meetings.length === 0 ? (
-              <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-                {mode==="LEARNER"?"No meetings yet.":"No meetings yet."}
-              </div>
+              <EmptyState title="No meetings yet." description="No project meetings have been recorded." />
             ) : (
               workspace.meetings.map((meeting) => {
                 const href = safeHttpHref(
