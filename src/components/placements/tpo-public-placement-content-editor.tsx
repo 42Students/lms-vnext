@@ -70,10 +70,10 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
   <ol aria-label="Public number order" className="space-y-2">
    {metricKeys.map((key,index)=><li key={key} className="flex items-center justify-between gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-2 text-sm">
     <span>{index+1}. {PUBLIC_METRIC_LABELS[key]}</span>
-    <span className="flex gap-2"><button type="button" disabled={busy||index===0}
-     onClick={()=>move(index,-1)} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-sm">Move up</button>
-     <button type="button" disabled={busy||index===metricKeys.length-1}
-      onClick={()=>move(index,1)} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-sm">Move down</button></span>
+    <span className="flex gap-2"><Button type="button" variant="secondary" disabled={busy||index===0}
+     onClick={()=>move(index,-1)} className="min-h-11 sm:min-h-9 text-xs">Move up</Button>
+     <Button type="button" variant="secondary" disabled={busy||index===metricKeys.length-1}
+      onClick={()=>move(index,1)} className="min-h-11 sm:min-h-9 text-xs">Move down</Button></span>
    </li>)}
   </ol>
   {dirty?<p role="status">Unsaved changes</p>:null}
