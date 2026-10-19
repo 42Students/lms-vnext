@@ -68,6 +68,13 @@
   -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
 }
+[data-slot="drawer"][data-side="left"] [data-slot="drawer-header"] > button {
+  flex: 0 0 44px;
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+  margin: 0;
+}
 [data-slot="drawer-footer"] {
   padding: 12px 20px max(12px, env(safe-area-inset-bottom));
   background: var(--lms-neutral-50);
