@@ -642,7 +642,7 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xl font-bold text-foreground">{item.value}</p>
             </div>)}
           </div>
-          <section className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
+          <section className="space-y-2 border-b border-border pb-4 sm:pb-5">
             <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
             {driveOverview.readOnly ? <p role="status" className="text-sm text-body">
               This drive is finished, so a selection list can no longer be sent.
