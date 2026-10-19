@@ -352,3 +352,22 @@ compiler or browser visual test.
 **Source review:** re-fetched changed TSX files and reviewed `Button`, `Select`, `Link` opening/closing pairs and known truncated-tag patterns. No truncated `</Select>` or other touched JSX closing tag was found. No code execution, build, lint, tests or CI was performed; TS compilation and visual fidelity remain unverified.
 
 **Concurrent integration state:** after this continuation began, `main` advanced rapidly. The last branch comparison read `29` commits ahead and `831` behind `main`. GitHub branch updates here preserve the lane commits without force-pushing; this is *not* a claim of a subsequent merge of those new upstream commits. A conflict-aware merge remains necessary before final integration.
+
+
+## Chat-9 page-head/canvas completion and Super Admin continuation — 2026-10-19
+
+**Upstream integration:** merged the then-current `main` commit `8049636671c97d9e4ef6476e2d41f219ab3d3fa4` into `chatgpt/chat-9-b` using a non-force GitHub merge commit with both parents. Files changed on both sides were reconciled against the upstream source so newer styles and fixes were preserved. The next comparison showed zero commits behind; no changes were pushed to `main`.
+
+**Completed in this continuation:**
+- Verified authenticated layout still owns exactly one white PageCanvas and app-shell gutter placement, with 24px canvas padding enforced despite conflicting small-screen global CSS.
+- Removed the extra Super Admin grouped-tabs heading that duplicated page titles.
+- Moved catalogue return links and creation actions into the right-hand PageHeader actions for Super Admin Project template details, template subviews, college assignment availability, version comparison, new template, workspace creation and readiness.
+- Moved the Settings authentication, Tenant Setup and verification navigation into the page head, retaining existing action destinations and wording.
+- Moved Projects audit refresh and activity actions, readiness override CSV export, and Projects workspace/mentor action links into PageHeader actions.
+- Standardized Project submissions category tabs to 3px teal underline and kept the invalid audit-filter warning a slim legacy notice.
+- Super Admin Students now renders one page-level `Students` heading with its registration and membership actions, while the shared scoped directory renders `Registered Students` as an h2 section heading. Introduced optional `headingMode="section"` while preserving `"page"` as the default for all other scoped-directory callers. The student read-failure case now retains its page heading.
+- Left legacy page content, service calls, routing, role checks, form data and mutations unchanged.
+
+**Static source review:** fetched changed TSX files after editing, reviewed matching JSX closing tags (especially `</Select>`, `</Button>`, `</Link>`, `</section>`, `</div>`) and checked for incomplete closing tags and isolated `as` casts. The touched markup did not show truncated or excess closing tags. This is manual/static review, **not** compile/typecheck, CI, browser or screenshot verification. No code or CI was run, as requested.
+
+**Outstanding visual acceptance:** verify real 320–390px viewport wrapping for long Super Admin labels and the legacy reference screenshots. Other page/portal owners continue to own their individual global control skins, sidebar and top bar. The Super Admin group strip is still rendered by its admin layout ahead of route-specific PageHeader; do not claim full screenshot parity until the app is visually inspected.
