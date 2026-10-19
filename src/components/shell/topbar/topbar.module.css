@@ -502,3 +502,5 @@
 @media (prefers-reduced-motion:reduce) { .learnerNotificationPopover,.learnerNotificationPopover a { animation:none; transition:none; } }
 
 @media (min-width:768px) and (max-width:1199px) { .learnerNotificationPopover { right:0; width:min(420px,calc(100vw - 24px)); } }
+
+.hrNotificationPopover { position:absolute; z-index:70; right:0; top:calc(100% + 8px); display:flex; flex-direction:column; box-sizing:border-box; width:min(420px,calc(100vw - 24px)); min-width:min(360px,calc(100vw - 24px)); max-height:min(520px,calc(100dvh - 120px)); overflow:hidden; border:1px solid #e5e9f0; border-radius:12px; background:#fff; box-shadow:0 4px 24px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04); }
