@@ -1,4 +1,5 @@
 import { Select } from "@/components/ui/select";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -229,9 +230,7 @@ export async function CollegeRoleDirectoryWorkspace({
               First 100 distinct types shown.
             </span> : null}
           </label> : null}
-          <details className="min-w-0 basis-full rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3"
-            open={collegeRoleDirectoryHasActiveFilters(kind,result.filter)}>
-            <summary className="min-h-[var(--lms-control-height)] cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
+          <Disclosure title="Advanced filters" className="min-w-0 basis-full rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3" defaultOpen={collegeRoleDirectoryHasActiveFilters(kind,result.filter)}>
             <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Platform account
@@ -345,7 +344,7 @@ export async function CollegeRoleDirectoryWorkspace({
             </Select>
           </label>
             </div>
-          </details>
+          </Disclosure>
           <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Apply
           </Button>
