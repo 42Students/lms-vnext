@@ -1,5 +1,7 @@
 "use client";
+import { Select } from "@/components/ui/select";
 
+import { Button } from "@/components/ui/button";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { shouldPersistPlayback } from "./course-media-model";
@@ -209,8 +211,8 @@ export function LearnerVideoPlayer({
     </video>
     <label className="flex flex-wrap items-center gap-2 text-xs font-medium text-body">
       Playback speed
-      <select aria-label="Playback speed" defaultValue="1"
-        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
+      <Select aria-label="Playback speed" defaultValue="1"
+        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
         onChange={event=>{
           const rate=Number(event.target.value);
           playbackRateRef.current=rate;
@@ -218,7 +220,7 @@ export function LearnerVideoPlayer({
         }}>
         {[0.5,0.75,1,1.25,1.5,2].map(rate=>
           <option key={rate} value={rate}>{rate}x</option>)}
-      </select>
+      </Select>
     </label>
     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
       <span role="status">{loading ? "Loading video…" : mediaError ? "Video could not be loaded" :
@@ -227,10 +229,10 @@ export function LearnerVideoPlayer({
     </div>
     {mediaError ? <div className="space-y-2">
       <p role="alert" className="text-sm font-semibold text-error">{mediaError}</p>
-      <button type="button" onClick={() => { failureRefreshRef.current = 0; void start(); }}
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+      <Button variant="secondary" type="button" onClick={() => { failureRefreshRef.current = 0; void start(); }}
+        className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
         Retry video
-      </button>
+      </Button>
     </div> : null}
     {saveError ? <p role="alert" className="text-sm font-semibold text-error">{saveError}</p> : null}
   </div>;
