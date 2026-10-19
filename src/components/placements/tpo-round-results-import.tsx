@@ -4,6 +4,7 @@ import { Radio } from "@/components/ui/radio";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { FileUpload } from "@/components/ui/file-upload";
+import { DataTable } from "@/components/ui/data-table";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -66,9 +67,15 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   {preview?<div className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
    <h3 className="font-semibold">Import preview</h3>
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
-   <div tabIndex={0} role="group" aria-label="Imported round preview, scroll for more rows" className="max-h-44 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
-    {preview.matched.map(row=><p key={row.line} className="border-b border-border px-2 py-2 text-sm last:border-b-0">
-     Row {row.line}: {row.name} · {row.outcome} {row.status?"· existing "+row.status:""}</p>)}
+   <div className="max-h-44 min-w-0 overflow-auto">
+    <DataTable<Match> caption="Imported round matched rows" rows={preview.matched}
+     getRowKey={row=>String(row.line)} empty={<p>No matching rows were found.</p>}
+     columns={[
+      {key:"line",header:"Row",cell:row=>row.line,mobilePriority:"primary"},
+      {key:"name",header:"Applicant",cell:row=>row.name,mobilePriority:"secondary"},
+      {key:"outcome",header:"Outcome",cell:row=>row.outcome,mobilePriority:"secondary"},
+      {key:"existing",header:"Existing",cell:row=>row.status?"existing "+row.status:"—",mobilePriority:"secondary"},
+     ]}/>
    </div>
    {preview.unmatched.length?<div className="space-y-2">
     <h4 className="font-semibold">Unmatched rows — review or skip</h4>
