@@ -92,35 +92,35 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Search
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-     placeholder="Content, lesson or course" className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+     placeholder="Content, lesson or course" className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Status
     <select name="status" defaultValue={data.query.status}
-     className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+     className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
      {statuses.map(status=><option key={status}>{status}</option>)}
     </select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Course / offering
-    <select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+    <select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
      <option value="">All courses</option>{offerings.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
     </select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Lesson
-    <select name="lessonId" defaultValue={data.query.lessonId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+    <select name="lessonId" defaultValue={data.query.lessonId??""} className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
      <option value="">All lessons</option>{lessons.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.name} · {item.courseCode}</option>)}
     </select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Section
-    <select name="deliveryId" defaultValue={data.query.deliveryId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+    <select name="deliveryId" defaultValue={data.query.deliveryId??""} className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
      <option value="">All sections</option>{sections.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.sectionName}</option>)}
     </select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Audience
-    <select name="scope" defaultValue={data.query.scope} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+    <select name="scope" defaultValue={data.query.scope} className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
       <option value="ALL">All audiences</option><option value="SHARED">All currently eligible sections</option><option value="SECTION">One specific section</option>
     </select>
    </label>
-   <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+   <button type="submit" className="min-h-9 self-end rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-on-primary text-[var(--lms-on-primary)]">Filter</button>
   </form>
   <p className="text-sm text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · up to 25 per page</p>
   {data.items.length?<div className="grid gap-3 md:grid-cols-2">
