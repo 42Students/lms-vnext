@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {collegeBulkImportToast} from "@/modules/colleges/bulk-import-feedback-model";
@@ -74,7 +75,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
      columns={[
       {key:"row",header:"Row",mobileLabel:"Row",mobilePriority:"primary",cell:row=>row.line},
       {key:"code",header:"Code",mobileLabel:"Code",mobilePriority:"secondary",cell:row=>row.code},
-      {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",cell:row=>row.status},
+      {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="CREATED"?"success":row.status==="FAILED"?"error":"neutral"}>{row.status}</StatusBadge>},
       {key:"details",header:"Details",mobileLabel:"Details",mobilePriority:"secondary",cell:row=>row.message},
      ]}/>
    </div>:null}
