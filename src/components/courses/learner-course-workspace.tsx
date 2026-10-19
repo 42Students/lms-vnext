@@ -14,7 +14,7 @@ import { learnerSafeExternalContentHref } from "@/modules/courses/learner-extern
 import {LearnerLiveClassLink} from "./learner-live-class-link";
 import { assignmentFilesRuntimeEnabled,multipartAssignmentRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
-import { ScrollCue } from "@/components/ui/scroll-cue";
+import { Tabs } from "@/components/ui/tabs";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -794,28 +794,17 @@ export function LearnerCourseWorkspace({
         />
       </div>
 
-      <ScrollCue axis="x" label="Learning path content filter" className="rounded-xl border border-border bg-surface" viewportClassName="p-2">
-      <nav aria-label="Learning path content filter">
-        <div className="flex min-w-max gap-1">
-          {filters.map((item) => (
-            <Link
-              key={item.key}
-              href={`/learn/courses/${deliveryId}/roadmap?filter=${item.key}`}
-              aria-current={activeFilter === item.key ? "page" : undefined}
-              className={
-                activeFilter === item.key
-                  ? "inline-flex min-h-11 items-center rounded-lg bg-primary-subtle px-3 py-2 text-sm font-semibold text-primary-text"
-                  : "inline-flex min-h-11 items-center rounded-lg px-3 py-2 text-sm font-semibold text-body hover:bg-muted hover:text-primary-text"
-              }
-            >
-              {item.label}{" "}
-              <span className="text-xs text-muted-foreground">
-                {filterCounts[item.key]}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </nav></ScrollCue>
+      <Tabs
+        ariaLabel="Learning path content filter"
+        value={activeFilter}
+        renderPanel={false}
+        items={filters.map(item => ({
+          value: item.key,
+          label: item.label,
+          count: filterCounts[item.key],
+          href: `/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${encodeURIComponent(item.key)}`,
+        }))}
+      />
 
       <details className="rounded-xl border border-border bg-surface sm:hidden">
         <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">
