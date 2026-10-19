@@ -370,3 +370,24 @@
   :not(:where([data-unskin], [data-unskin] *)):focus-visible {
   box-shadow: 0 0 0 2px rgba(26, 149, 161, 0.12) !important;
 }
+
+/* FORM LABELS
+ * Legacy: components___form.scss:110-115 (.ln-lb2: #a9a7ae,
+ * 13px/600), components___variables.scss:28,183,178.
+ * Field spacing and mandatory-star placement remain with page components.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(label):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-400) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  font-family: inherit !important;
+}
+/* Legacy: components___global.scss:60-69 (.ln-required-asterisk
+ * and .ln-form-error), components___variables.scss:71.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(label [aria-hidden="true"].text-red-500,
+    label .ln-required-asterisk):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-error) !important;
+}
