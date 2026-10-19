@@ -40,7 +40,7 @@ export default async function MentorProjectTimelinePage({
           <Link key={status} href={mentorTimelineHref({
             ...data.query,releaseStatus:status,page:1,
           })} aria-current={data.query.releaseStatus===status?"page":undefined}
-            className="inline-flex min-h-11 items-center rounded-full border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 sm:min-h-9 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             {status.replaceAll("_"," ")}
           </Link>)}
       </nav>
@@ -48,7 +48,7 @@ export default async function MentorProjectTimelinePage({
         {(["ALL","PLANNED","ACTIVE","COMPLETED"] as const).map(status=>
           <Link key={status} href={mentorTimelineHref({...data.query,sprintStatus:status,page:1})}
             aria-current={data.query.sprintStatus===status?"page":undefined}
-            className="inline-flex min-h-11 items-center rounded-full border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 sm:min-h-9 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             {status==="ALL"?"All Sprint states":status}
           </Link>)}
       </nav>
