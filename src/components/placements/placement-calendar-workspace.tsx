@@ -582,7 +582,7 @@ export async function PlacementCalendarWorkspace({
                   ? "/admin/placements"
                   : "/college/placements"
             }
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             Placement operations →
           </Link>
@@ -591,7 +591,7 @@ export async function PlacementCalendarWorkspace({
 
       {partialCalendar?<section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warning-border bg-warning-subtle p-4 text-sm">
         <p className="font-semibold text-warning-text">Calendar summary is partially unavailable. The events shown are from the successful calendar read; unavailable counts are not shown as zero.</p>
-        <Link href={calendarHref(basePath,audience,state,{})} className="min-h-11 rounded-md border border-border bg-surface px-4 py-2 font-semibold text-[var(--lms-link-text)]">Retry</Link>
+        <Link href={calendarHref(basePath,audience,state,{})} className="min-h-9 rounded-[9px] border border-border bg-surface px-4 py-2 font-semibold text-[var(--lms-link-text)]">Retry</Link>
       </section>:null}
 
       {calendarFollowupsWritable ? (
@@ -618,15 +618,15 @@ export async function PlacementCalendarWorkspace({
        <h2 className="text-base font-semibold">Needs doing</h2>
        <div className="grid gap-3 sm:grid-cols-3">
         <Link href={overdue.length?basePath+"?view=week&date="+placementCalendarDayKey(overdue[0].startsAt)+"&kind=FOLLOW_UP":basePath}
-         className="rounded-md border border-border p-3 text-sm text-[var(--lms-link-text)]">
+         className="rounded-[9px] border border-border p-3 text-sm text-[var(--lms-link-text)]">
          <strong className="block text-lg">{needsWindow?overdue.length:"Unavailable"}</strong>Follow-ups overdue (last 90 days)
         </Link>
         <Link href={blockedRounds.length?basePath+"?view=week&date="+placementCalendarDayKey(blockedRounds[0].startsAt):basePath}
-         className="rounded-md border border-border p-3 text-sm text-[var(--lms-link-text)]">
+         className="rounded-[9px] border border-border p-3 text-sm text-[var(--lms-link-text)]">
          <strong className="block text-lg">{needsWindow&&blockedDays?.ready?blockedRounds.length:"Unavailable"}</strong>Rounds on a blocked date
         </Link>
         <Link href={busyDays.length?basePath+"?view=week&date="+busyDays[0][0]:basePath}
-         className="rounded-md border border-border p-3 text-sm text-[var(--lms-link-text)]">
+         className="rounded-[9px] border border-border p-3 text-sm text-[var(--lms-link-text)]">
          <strong className="block text-lg">{needsWindow?busyDays.length:"Unavailable"}</strong>Busy days (3 or more)
         </Link>
        </div>
@@ -715,7 +715,7 @@ export async function PlacementCalendarWorkspace({
               { anchor: previous },
             )}
             aria-label="Previous calendar period"
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             ←
           </Link>
@@ -726,7 +726,7 @@ export async function PlacementCalendarWorkspace({
               state,
               { anchor: today },
             )}
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             Today
           </Link>
@@ -738,7 +738,7 @@ export async function PlacementCalendarWorkspace({
               { anchor: next },
             )}
             aria-label="Next calendar period"
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             →
           </Link>
@@ -775,7 +775,7 @@ export async function PlacementCalendarWorkspace({
               name="date"
               defaultValue={state.anchor}
               required
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             />
           </label>
 
@@ -788,7 +788,7 @@ export async function PlacementCalendarWorkspace({
               maxLength={150}
               defaultValue={state.company}
               placeholder="Search company name"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             />
           </label>
 
@@ -798,7 +798,7 @@ export async function PlacementCalendarWorkspace({
       .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,16).map(name=>
       <Link key={name} href={calendarHref(basePath,audience,state,{company:name})}
        aria-current={state.company===name?"page":undefined}
-       className="inline-flex min-h-11 max-w-52 items-center truncate rounded-full border border-border px-3 text-xs text-[var(--lms-link-text)]"
+       className="inline-flex min-h-9 max-w-52 items-center truncate rounded-full border border-border px-3 text-xs text-[var(--lms-link-text)]"
        title={name}>{name}</Link>)}
     {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
        className="inline-flex min-h-11 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>:null}
@@ -813,7 +813,7 @@ export async function PlacementCalendarWorkspace({
               <select
                 name="kind"
                 defaultValue={state.kind ?? ""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
               >
                 {EVENT_FILTERS.map((filter) => (
                   <option
@@ -832,7 +832,7 @@ export async function PlacementCalendarWorkspace({
                 <select
                   name="roundKind"
                   defaultValue={state.roundKind ?? ""}
-                  className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                  className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 >
                   {ROUND_FILTERS.map((filter) => (
                     <option
@@ -853,7 +853,7 @@ export async function PlacementCalendarWorkspace({
                   maxLength={150}
                   defaultValue={state.job}
                   placeholder="Search job title"
-                  className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                  className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 />
               </label>
             </>
@@ -862,7 +862,7 @@ export async function PlacementCalendarWorkspace({
           <div className="flex items-end">
             <button
               type="submit"
-              className="min-h-11 w-full rounded-md bg-primary px-4 text-sm font-semibold text-foreground transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="min-h-9 w-full rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] transition hover:bg-[var(--lms-button-primary)]-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             >
               Apply filters
             </button>
@@ -1025,7 +1025,7 @@ export async function PlacementCalendarWorkspace({
                           key={event.id}
                           href={href}
                           title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                          className="block min-h-11 rounded-md bg-primary-subtle px-2 py-1 text-xs font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                          className="block min-h-9 rounded-[9px] bg-[var(--lms-button-primary)]-subtle px-2 py-1 text-xs font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] text-[var(--lms-on-primary)]"
                         >
                           <span className="block truncate">
                             {eventTime(
@@ -1069,7 +1069,7 @@ export async function PlacementCalendarWorkspace({
         {bookings?.failed ? <section role="alert" className="rounded-xl border border-border bg-surface p-5">
           <p>Could not load candidate interviews right now. The calendar is still available.</p>
           <Link href={calendarHref(basePath,audience,state,{})}
-           className="mt-3 inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-[var(--lms-link-text)] focus-visible:ring-2 focus-visible:ring-primary">Retry interviews</Link>
+           className="mt-3 inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 font-semibold text-[var(--lms-link-text)] focus-visible:ring-2 focus-visible:ring-primary">Retry interviews</Link>
         </section> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
        </PlacementPanelErrorBoundary> : null}
       <section
