@@ -20,7 +20,7 @@ export type PlacementSeasonItem = {
 };
 
 const inputClass =
-  "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
+  "min-h-10 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
 
 function humanizeError(value: string) {
   return value
