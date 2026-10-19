@@ -157,7 +157,7 @@ export async function ProjectAdminSubmissionsPage({
               <Link href={basePath+"/"+row.id+"/delivery"}
                 className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open</Link>},
           ]}
-          empty={<p className="text-sm text-muted-foreground">All matching workspaces have a submission.</p>}
+          empty={<EmptyState title="All workspaces submitted" description="All matching workspaces have a submission."/>}
         />
         <div className="flex flex-wrap gap-3 text-sm">
           {unsubmitted.page>1?<Link href={projectAdminUnsubmittedHref(queuePath,query,unsubmitted.page-1)}
