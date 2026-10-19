@@ -111,7 +111,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     </Dropdown>
     <Button variant="secondary" type="button" onClick={()=>void copy()} disabled={showing.length===0} size="sm">Copy shown</Button>
     <Button variant="secondary" type="button" onClick={saveCsv} disabled={showing.length===0} size="sm">Export shown CSV</Button>
-    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);}}
+    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);setMessage("");}}
      size="sm">Reset view</Button>
    </div>
    <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
