@@ -397,7 +397,7 @@ export function AdminOfferingLearningOverview({
         <p className="mt-1 text-sm text-muted-foreground">Recorded shared learning items only. Visibility and publication are separate controls.</p>
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
           {summarizeCollegeCourseContents(workspace.lessons).map(item=>(
-            <StatTile key={item.key} label={item.label} value={item.count} className="p-3 md:p-3" />
+            <StatTile key={item.key} label={item.label} value={item.count} className="p-3" />
           ))}
         </div>
       </section>
@@ -451,7 +451,7 @@ export function AdminOfferingLearningOverview({
                       ) : null}
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
-                      <Badge  tone="neutral">
+                      <Badge tone="neutral">
                         {itemCount} items
                       </Badge>
                       <CollegeLessonReorderActions
