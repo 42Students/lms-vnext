@@ -167,7 +167,7 @@ export default async function AnnouncementsPage({
         <label className="min-w-[14rem] flex-1 text-sm font-semibold text-body">Search announcement title or message
           <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
         </label>
-        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Search</Button>
+        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</Button>
         <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Clear</Link>
       </form>
       <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
