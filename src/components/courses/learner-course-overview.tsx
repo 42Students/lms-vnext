@@ -267,7 +267,7 @@ export function LearnerCourseOverview({
         </p>
       </div>
 
-      {(aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0)?<section id="course-overview-about" className="scroll-mt-32 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      {(aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0)?<section id="course-overview-about" className="scroll-mt-32 border-b border-border pb-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-4xl">
             <h3 className="m-0 text-lg font-semibold text-foreground">
@@ -355,7 +355,7 @@ export function LearnerCourseOverview({
         </div>
       </section>:null}
 
-      <section id="course-overview-path" aria-label="Learning path preview" className="scroll-mt-32 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section id="course-overview-path" aria-label="Learning path preview" className="scroll-mt-32 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="text-base font-semibold text-foreground">Learning path preview</h3>
@@ -463,7 +463,7 @@ export function LearnerCourseOverview({
       </div>
 
       {unifiedUpdates.length > 0 ? (
-        <section id="course-overview-updates" className="scroll-mt-32 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <section id="course-overview-updates" className="scroll-mt-32 border-b border-border pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="m-0 text-base font-semibold text-foreground">
@@ -482,11 +482,11 @@ export function LearnerCourseOverview({
           </div>
           <nav aria-label="Recent course update categories" className="mt-4 flex flex-wrap gap-2">
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=assessments"}
-              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Assessments</Link>
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Assessments</Link>
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Discussions</Link>
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Discussions</Link>
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=live-sessions"}
-              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Live Sessions</Link>
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Live Sessions</Link>
           </nav>
           <div className="mt-4 divide-y divide-border">
             {unifiedUpdates.map((update) => (
