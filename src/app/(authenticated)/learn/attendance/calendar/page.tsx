@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -77,11 +77,11 @@ export default async function LearnerAttendanceCalendarPage({
       className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Month
         <Input name="month" type="month" defaultValue={data.query.month}
-          className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course
         <Select name="deliveryId" defaultValue={data.query.deliveryId}
-          className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All accessible Courses</option>
           {data.courses.map(course=>
             <option key={course.deliveryId} value={course.deliveryId}>
@@ -91,14 +91,14 @@ export default async function LearnerAttendanceCalendarPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <Select name="status" defaultValue={data.query.status}
-          className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All status types</option>
           {Object.entries(statusNames).map(([value,label])=>
             <option key={value} value={value}>{label}</option>)}
         </Select>
       </label>
       <div className="flex flex-wrap items-center gap-3 sm:col-span-3">
-        <Button variant="primary" type="submit">
+        <Button type="submit" className="min-h-11">
           Apply filters
         </Button>
         <Link href="/learn/attendance/calendar"
