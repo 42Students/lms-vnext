@@ -2,6 +2,7 @@
 
 import { MetricBar } from "@/components/ui/metric-bar";
 import progressStyles from "./learner-course-progress.module.css";
+import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FilterChip } from "@/components/ui/filter-chip";
@@ -171,7 +172,7 @@ export function LearnerCourseList({
     <div className="space-y-5">
       <section className="py-1">
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             <label className="text-xs font-semibold text-body">
               Semester
               <Select
@@ -226,7 +227,7 @@ export function LearnerCourseList({
                 { value: "core", label: `Regular ${coreCount}` },
                 { value: "elective", label: `Electives ${electiveCount}` },
               ]}
-              className="w-full sm:w-auto [&>label]:flex-1 sm:[&>label]:flex-none [&>label>span]:min-h-11 sm:[&>label>span]:min-h-9"
+              className="w-full md:w-auto [&>label]:flex-1 md:[&>label]:flex-none [&>label>span]:min-h-11 md:[&>label>span]:min-h-9"
             />
           ) : null}
         </div>
@@ -275,27 +276,27 @@ export function LearnerCourseList({
         ) : null}
         <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
           {periodRows[0]?.course.programName ? (
-            <Badge  tone="neutral">
+            <Badge tone="neutral">
               {periodRows[0].course.programName}
             </Badge>
           ) : null}
           {selectedPeriod ? (
-            <Badge  tone="neutral">
+            <Badge tone="neutral">
               {selectedPeriod.name}
             </Badge>
           ) : null}
-          <Badge  tone="neutral">
+          <Badge tone="neutral">
             {periodRows.length} {periodRows.length === 1 ? "Course" : "Courses"}
           </Badge>
           {creditSummary.recordedCount > 0 ? (
-            <Badge  tone="neutral">
+            <Badge tone="neutral">
               {creditSummary.credits} recorded credits
               {creditSummary.missingCount > 0
                 ? ` · ${creditSummary.missingCount} course credit values unavailable`
                 : ""}
             </Badge>
           ) : creditSummary.missingCount > 0 ? (
-            <Badge  tone="neutral">Credits not recorded</Badge>
+            <Badge tone="neutral">Credits not recorded</Badge>
           ) : null}
         </div>
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
@@ -328,10 +329,10 @@ export function LearnerCourseList({
       </section>
 
       {rows.some(row => row.unavailable) ? (
-        <p role="alert" className="rounded-lg border border-warning bg-surface p-4 text-sm text-body">
-          Some course records have incomplete or duplicate information. Unavailable cards cannot be opened.
-          <Button type="button" onClick={() => window.location.reload()} variant="ghost" className="ml-2 !text-[var(--lms-primary-text)] underline">Retry</Button>
-        </p>
+        <Alert tone="warning" role="alert" className="flex-row flex-wrap items-center justify-between gap-3">
+          <span className="min-w-0 flex-1">Some course records have incomplete or duplicate information. Unavailable cards cannot be opened.</span>
+          <Button type="button" onClick={() => window.location.reload()} variant="secondary" className="min-h-11 md:min-h-9">Retry</Button>
+        </Alert>
       ) : null}
       <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length, periodRows.length)}</p>
       {visibleRows.length === 0 ? (
@@ -406,14 +407,14 @@ export function LearnerCourseList({
                       </p>
 
                       <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                        <Badge  tone="neutral">
+                        <Badge tone="neutral">
                           {row.course.sectionName}
                         </Badge>
-                        {row.course.cohortName ? <Badge  tone="neutral">
+                        {row.course.cohortName ? <Badge tone="neutral">
                           Batch: {row.course.cohortName}
                         </Badge> : null}
                         {row.course.credits ? (
-                          <Badge  tone="neutral">
+                          <Badge tone="neutral">
                             {row.course.credits} Credits
                           </Badge>
                         ) : null}
@@ -470,13 +471,13 @@ export function LearnerCourseList({
                           readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
                           nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
                         })!}
-                        className="mt-2 flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-warning px-3 text-sm font-semibold text-foreground">
+                        className="mt-2 flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-warning px-3 text-sm font-semibold text-foreground transition-colors hover:bg-warning-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                         Open overdue assignment: {row.firstOverdue.title}
                       </Link>
                     ) : null}
                     {learnerCourseNextItemHref(row) ? (
                       <Link href={learnerCourseNextItemHref(row)!}
-                        className="mt-2 flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text hover:bg-muted">
+                        className="mt-2 flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                         Continue at next learning item →
                       </Link>
                     ) : null}
