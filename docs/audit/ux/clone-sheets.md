@@ -61,39 +61,17 @@ Branch fast-forwarded from b1d0962 to then-current main b275ca0 BEFORE changes. 
 - [ ] Wire remaining Drives, batches and roster page grids while keeping server permissions, query guards and actions.
 - [ ] Exact responsive, hover/focus/loading/export/selection checks and valid JSX proof. No grep or screenshot was run; do not fabricate counts. Source reads are not grep coverage.
 
-## Continuation: fallback hardening (2026-10-19)
+**Next file:** src/components/tpo/recruiter-leads-workspace.tsx after confirming current Engage/Drives sheet routing; then src/app/(authenticated)/tpo/batches/[batchId]/page.tsx for eligibility and roster sheets.
 
-The AG Grid source remains unavailable and the package manifest does not declare either `ag-grid-community` or `ag-grid-react`. E8 is **[ ]**. This turn deliberately did not create unresolved imports, fabricate Quartz theme parameters, claim native AG Grid grid state, or run CI.
+## chat-12 bounded turn — 2026-10-19 (recruiter-leads-workspace.tsx)
 
-| Incremental contract | vNext evidence | Limit |
-|---|---|---|
-| Explicit engine identity | src/components/tpo/grid/tpo-grid.tsx:12 | `TpoGrid` still delegates to shared Table |
-| Pinned checkbox separation | src/components/tpo/tpo-spreadsheet-grid.tsx:62 | 48px offset, no browser scroll proof |
-| Safe clipboard fallback | src/components/tpo/tpo-spreadsheet-grid.tsx:160 | Browser clipboard permissions not executed |
-| Deduplicated filtered selection | src/components/tpo/tpo-spreadsheet-grid.tsx:68 | Backend still owns authorized/filter-scoped `allIds` |
-| Selection anchor cleanup | src/components/tpo/tpo-spreadsheet-grid.tsx:94 | No interactive keyboard test |
-| Versioned data-free layout | src/components/tpo/tpo-spreadsheet-grid.tsx:50 | Sanitized `:layout-v3` storage on manual resize/pin; legacy `:layout-v2` restored when no valid v3 record, no AG Grid column API |
-| v3 restore | src/components/tpo/tpo-spreadsheet-grid.tsx:104 | Saves widths/pins; URL column chooser remains source of visibility |
+- **Baseline:** chat-12 fast-forwarded to origin/main head 8b8c39571765 before edits. The main branch continued to advance during the turn; do not claim this branch is perpetually up to date.
+- **Legacy reference:** lms2-fe/src/components/tpo/grid/GridWorkspace.jsx:396-457 search, Filters, Views, Columns, Export toolbar; :458-494 count and selected act-bar; :499-508 Grid, filtered empty state; :513-516 paste rolls.
+- **GridWorkspace port:** src/components/tpo/grid/grid-workspace.tsx:18-42 adds externally owned search, columns, filter toggle, Excel/CSV/copy handlers; :59-118 preserves URL mode for existing student/application/companies pages while avoiding query writes for controlled tables; :173-265 renders toolbar, controlled Filters, Views, Columns, CSV/Excel, counts and selection.
+- **Recruiter Leads wiring:** src/components/tpo/recruiter-leads-workspace.tsx:986-1064, wraps *table view only* in GridWorkspace with existing authorized sortedVisible rows and selectedIds, existing client-side filters, saved-view controls, column preference callback, and established recruiterTableExportCsv/recruiterLeadsXlsx/recruiterTableExportTsv handlers. src/components/tpo/recruiter-roster-display-controls.tsx:6-35 keeps sorting controls and hides the redundant Columns dropdown in table view. The Board keeps its original export toolbar and Saved Views; Companies retain their separate service and table.
+- **Icons and links:** original 16px white plus SVG now used on Add recruiter lead; contact/person/board links use canonical text-link, lms-inline-link and visible keyboard focus.
+- **Safety:** no server APIs, database schemas, permissions, filters or bulk mutation logic were changed. The GridWorkspace never expands beyond supplied authorized rows. No src/components/ui or package.json edits.
+- **Unresolved:** current src/components/tpo/grid/tpo-grid.tsx advertises TPO_GRID_ENGINE="shared-table-fallback"; package.json on the connected branch does not declare ag-grid-react/ag-grid-community. Native AG Grid themeQuartz migration belongs to chat-14 and remains **unticked**. Recruiter Leads still renders its existing DataTable under the workspace chrome; this is a behavior-preserving incremental port, not an AG Grid claim.
+- **Strict tick rule:** E8 remains unticked. No dev runtime, typecheck, CI, browser screenshots or local grep were run, and component and page-wide zero-mismatch coverage was not established. Source line comparisons are partial only.
 
-Source inspection was performed through GitHub file reads; **no** runtime, exhaustive repository grep, visual state matrix, or AG Grid integration evidence exists. Future continuation: `src/components/tpo/grid/tpo-grid.tsx` when upstream legacy-grid and declared AG Grid dependencies become available; otherwise work E1–E5 coverage.
-
-
-## chat-15 continuation — main sync `46cd0161a0e289e7da68e615359589b03ee463e9` (2026-10-19)
-
-Fast-forward of `chatgpt/chat-15-b` to this main head was verified before edits (branch had zero unique commits and 1,029 behind). This section supersedes the earlier **missing-grid-path** notes; it does not supersede the missing-native-engine and reference blockers.
-
-- [ ] E8 native AG Grid parity (missing: exact legacy `docs/design/legacy-grid/*.txt`; real `ag-grid-community` / `ag-grid-react` package declarations; `AgGridReact`/Quartz implementation; exhaustive visual/value and interaction proof). `src/components/tpo/grid/tpo-grid.tsx:12-17` explicitly reports `shared-table-fallback`, not native AG Grid.
-- [ ] HR report sheet parity (pending visual/state matching): `src/components/hr/hr-company-reports-grid.tsx:15-33` maps the exact existing 10 report columns, preserving numeric/date distinctions; `:35-48` attaches authorized navigation and a status pill to the shared grid. The row source is the existing filtered/paginated `jobs` at `src/app/(authenticated)/hr/company/reports/page.tsx:333-344`. `storageKey` is scoped by user and college.
-- [ ] HR round-results sheet parity (pending visual/state matching): `src/components/hr/hr-round-results-grid.tsx:16-33` maps candidate/outcome/status/score/waitlist rank, with numeric-only sort on score/rank; authorized `results.rows` are passed from `src/app/(authenticated)/hr/round-results/page.tsx:80-86`. `storageKey` includes employer, college, job, round. Existing outcome filter Tabs and read-only explanation remain.
-- [ ] Recruiter job applicants, offers, selection history, drive list and round-editor grids remain open. The job's selection/offer `DataTable` components preserve badge-and-action semantics; replacing them blindly with a text-only grid would remove content. Do not tick until a wrapper retains every action, pill, and mobile detail.
-- [ ] Exact export wording/filenames against old LMS (missing legacy-grid files). Existing server export links were not replaced by client CSV generators.
-
-| Inspected surface | Reference evidence | Current vNext evidence | Match / gap |
-| --- | --- | --- | --- |
-| One canvas, compact tables, filter toolbar | `docs/design/old-lms-pages.md:6-12` | `src/components/tpo/grid/grid-workspace.tsx:123-160` and shared table fallback | Structural reference available; HR toolbar not yet wired on all sheets |
-| Read-only results numeric values | `docs/design/ui-clone-checklist.md:65` (E8) | `src/components/hr/hr-round-results-grid.tsx:19-23` | Numeric-only sort contract wired, interaction not run |
-| Selection column 48px | `docs/design/ui-clone-checklist.md:65` | `src/components/tpo/tpo-spreadsheet-grid.tsx:190-196` | Available in shared fallback, not currently requested for read-only HR sheets |
-| Hover/focus/mobile | Legacy source lines unavailable in `legacy-grid/` | `src/components/tpo/tpo-spreadsheet-grid.tsx:175-220` | No exact proof; remain open |
-| AG Grid Quartz | Requested legacy grid source absent | `src/components/tpo/grid/tpo-grid.tsx:12-17` | **Not implemented** |
-
-No CI, app build, app execution, visual comparison or authentic local grep was run by chat-15. Do not claim completed AG Grid integration. Resume at `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` for remaining selection/offer sheet wiring.
+**Next E8 file:** src/components/tpo/tpo-company-memory-workspace.tsx (company/drive sheet chrome and contextual actions), after verifying Recruiter Leads column/selection behavior by source review. Then src/app/(authenticated)/tpo/batches/[batchId]/page.tsx for the roster workspace.
