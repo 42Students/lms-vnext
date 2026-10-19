@@ -139,7 +139,7 @@ export function LearnerCareerCalendar({
             type="button"
             onClick={downloadCalendar}
             disabled={period.events.length === 0}
-            className="min-h-11 rounded-md border border-primary bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
           >
             Export selected period .ics
           </button>
@@ -165,19 +165,19 @@ export function LearnerCareerCalendar({
             aria-label="Previous calendar period"
             onClick={() => {if(previousDate)changeCalendar({date:previousDate});}}
             disabled={previousDate===null}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body disabled:cursor-not-allowed disabled:opacity-50"
           >←</button>
           <button
             type="button"
             onClick={() => changeCalendar({date:initialCareerCalendarDay()})}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body"
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body"
           >Today</button>
           <button
             type="button"
             aria-label="Next calendar period"
             onClick={() => {if(nextDate)changeCalendar({date:nextDate});}}
             disabled={nextDate===null}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body disabled:cursor-not-allowed disabled:opacity-50"
           >→</button>
           <span className="text-sm font-semibold text-foreground">
             {view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}
@@ -191,7 +191,7 @@ export function LearnerCareerCalendar({
               const day=parseLearnerCareerDate(event.target.value);
               if(day)changeCalendar({date:day});
             }}
-            className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
+            className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
         </label>
         <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter career events">
           {filters.map((option) => (
@@ -288,7 +288,7 @@ export function LearnerCareerCalendar({
                         Event details
                       </button>
                       <Link href={learnerCareerCalendarEventTarget(event)}
-                        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
                         Open exact round →
                       </Link>
                     </div>
@@ -339,7 +339,7 @@ export function LearnerCareerCalendar({
                 Event details
               </button>
               <Link href={hrefForEvent(event)}
-                className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+                className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
                 View application →
               </Link>
             </div>
@@ -352,11 +352,11 @@ export function LearnerCareerCalendar({
         footer={
           <>
             {selected?<Link href={learnerCareerCalendarEventTarget(selected)}
-              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Open exact round
             </Link>:null}
             <button type="button" onClick={()=>setSelectedKey(null)}
-              className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body">
+              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body">
               Close
             </button>
           </>
