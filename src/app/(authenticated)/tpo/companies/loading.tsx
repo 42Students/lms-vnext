@@ -5,17 +5,17 @@ export default function TpoCompaniesLoading() {
       aria-label="Loading TPO companies"
       className="space-y-5"
     >
-      <div className="h-24 animate-pulse rounded-[12px] bg-muted" />
+      <div className="h-24 animate-pulse rounded-[var(--lms-canvas-radius)] bg-muted" />
       <div className="grid gap-3 sm:grid-cols-3">
         {Array.from({ length: 3 }, (_, index) => (
           <div
             key={index}
-            className="h-24 animate-pulse rounded-[12px] bg-muted"
+            className="h-24 animate-pulse rounded-[var(--lms-canvas-radius)] bg-muted"
           />
         ))}
       </div>
-      <div className="h-24 animate-pulse rounded-[12px] bg-muted" />
-      <div className="h-96 animate-pulse rounded-[12px] bg-muted" />
+      <div className="h-24 animate-pulse rounded-[var(--lms-canvas-radius)] bg-muted" />
+      <div className="h-96 animate-pulse rounded-[var(--lms-canvas-radius)] bg-muted" />
     </div>
   );
 }
