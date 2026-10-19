@@ -1,3 +1,4 @@
+import { Checkbox } from "@/components/ui/checkbox";
 "use client";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
