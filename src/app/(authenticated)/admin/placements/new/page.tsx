@@ -10,7 +10,7 @@ export default async function AdminNewPlacementPage() {
     context.adminScope?.collegeId ?? null;
   if (!collegeId) {
     return <div className="min-w-0 space-y-4">
-      <PageHeader eyebrow="Super Admin" title="Placement Drives" description="Placement administration requires a college safety scope." />
+      <PageHeader title="Placement Drives" description="Placement administration requires a college safety scope." />
       <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
     </div>;
   }

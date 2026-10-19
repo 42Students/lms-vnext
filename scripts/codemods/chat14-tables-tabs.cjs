@@ -5,9 +5,9 @@
  * chat-14 E1-E4 source codemod.
  *
  * node scripts/codemods/chat14-tables-tabs.cjs
- * node scripts/codemods/chat14-tables-tabs.cjs --apply [--only=table|chip]
+ * node scripts/codemods/chat14-tables-tabs.cjs --apply [--only=table|chip|toggle]
  *
- * Table and explicit status-chip conversions are deliberately narrow.
+ * Table, display-chip and pressed-toggle conversions are AST-backed.
  * Stateful tablists and pagination links require manual integration to
  * preserve routing, selection, focus and URL behavior; those are inventoried.
  * Never mutate shared src/components/ui primitives from this script.
@@ -18,13 +18,13 @@ const ts = require("typescript");
 const root = path.join(process.cwd(), "src");
 const apply = process.argv.includes("--apply");
 const only = (process.argv.find(arg => arg.startsWith("--only=")) || "").slice(7);
-if (only && !["table", "chip"].includes(only)) {
-  process.stderr.write("Expected --only=table or --only=chip\n");
+if (only && !["table", "chip", "toggle"].includes(only)) {
+  process.stderr.write("Expected --only=table, --only=chip or --only=toggle\n");
   process.exit(2);
 }
 const stats = {
-  scanned: 0, changed: 0, table: 0, chip: 0,
-  pendingTabs: 0, pendingPagination: 0, pendingChip: 0, skipped: {},
+  scanned: 0, changed: 0, table: 0, chip: 0, toggle: 0,
+  pendingTabs: 0, pendingPagination: 0, pendingChip: 0, pendingToggle: 0, skipped: {},
   candidates: [],
 };
 const bump = name => { stats.skipped[name] = (stats.skipped[name] || 0) + 1; };
@@ -96,9 +96,22 @@ const tones = [
   [/^(?:gray|grey|slate|neutral|zinc)/, "neutral"],
 ];
 function chipTone(className) {
+  const semantic = className.match(/(?:bg|text)-\[var\(--lms-(success|warning|error|primary|info|neutral)[a-z-]*\)\]/);
+  if (semantic) return semantic[1] === "primary" ? "info" : semantic[1];
   const match = className.match(/(?:^|\s)bg-([a-z]+)/);
   if (!match) return null;
   return tones.find(([pattern]) => pattern.test(match[1]))?.[1] || null;
+}
+function isDisplayChip(cls,open) {
+  if (!cls || !cls.split(/\s+/).includes("rounded-full")) return false;
+  if (!/(?:^|\s)(?:text-xs|text-sm|text-\[12px\]|text-\[11px\])(?:\s|$)/.test(cls)) return false;
+  if (!/(?:bg-|border-)/.test(cls)) return false;
+  if (/(?:^|\s)(?:absolute|fixed|sr-only|h-[0-9]|w-[0-9]|size-|rounded-full.*animate-spin)(?:\s|$)/.test(cls)) return false;
+  if (open.attributes.properties.some(p => ts.isJsxSpreadAttribute(p))) return false;
+  return !["onClick","onKeyDown","role","style","ref","dangerouslySetInnerHTML"].some(k=>hasAttr(open,k));
+}
+function safeChipClasses(cls) {
+  return cls.split(/\s+/).filter(token => KEEP.test(token.split(":").pop()));
 }
 function lineAt(source, pos) {
   return source.getLineAndCharacterOfPosition(pos).line + 1;
@@ -148,27 +161,54 @@ for (const file of collect(root)) {
         }
       }
       if (name === "span" && (!only || only === "chip")) {
-        const marker = hasAttr(open, "data-status") || hasAttr(open, "data-chip");
-        const classes = stringAttr(open, "className");
-        if (marker && classes && classes.split(/\s+/).includes("rounded-full")) {
+        const classes = stringAttr(open,"className");
+        if (classes && classes.split(/\s+/).includes("rounded-full")) {
           const tone = chipTone(classes);
-          if (!tone || open.attributes.properties.some(p => ts.isJsxSpreadAttribute(p)) ||
-              ["onClick", "onKeyDown", "role", "style", "ref"].some(k => hasAttr(open, k)) ||
-              conflictingImport(source, "Badge", "@/components/ui/badge")) {
+          if (!isDisplayChip(classes,open) || !tone ||
+              conflictingImport(source,"Badge","@/components/ui/badge")) {
             stats.pendingChip++;
-            stats.candidates.push(relative + ":" + lineAt(source, node.getStart()) + " chip:manual");
+            stats.candidates.push(relative+":"+lineAt(source,node.getStart())+" chip:manual");
           } else {
-            rename(node, "Badge");
-            const attr = open.attributes.properties.find(p =>
-              ts.isJsxAttribute(p) && p.name.getText() === "className");
-            const kept = classes.split(/\s+/).filter(token => KEEP.test(token.split(":").pop()));
-            edits.push([attr.getStart(source), attr.getEnd(),
-              kept.length ? 'className="' + kept.join(" ") + '"' : ""]);
-            edits.push([open.tagName.getEnd(), open.tagName.getEnd(), ' tone="' + tone + '"']);
+            rename(node,"Badge");
+            const attr=open.attributes.properties.find(p=>
+              ts.isJsxAttribute(p)&&p.name.getText()==="className");
+            const kept=safeChipClasses(classes);
+            edits.push([attr.getStart(source),attr.getEnd(),
+              kept.length?'className="'+kept.join(" ")+'"':""]);
+            edits.push([open.tagName.getEnd(),open.tagName.getEnd(),' tone="'+tone+'"']);
             needs.add("Badge");
             stats.chip++;
-            stats.candidates.push(relative + ":" + lineAt(source, node.getStart()) + " chip");
+            stats.candidates.push(relative+":"+lineAt(source,node.getStart())+" chip");
           }
+        }
+      }
+      if ((name==="button"||name==="Button")&&(!only||only==="toggle")&&hasAttr(open,"aria-pressed")) {
+        const classes=stringAttr(open,"className");
+        const isTab=hasAttr(open,"role")||Boolean(classes&&/border-b-2|border-b-\[/.test(classes));
+        if(isTab){
+          stats.pendingTabs++;
+          stats.candidates.push(relative+":"+lineAt(source,node.getStart())+" tab-toggle:manual");
+        } else if(!classes||!classes.includes("rounded-full")||
+          open.attributes.properties.some(p=>ts.isJsxSpreadAttribute(p))||
+          conflictingImport(source,"FilterChip","@/components/ui/filter-chip")){
+          stats.pendingToggle++;
+          stats.candidates.push(relative+":"+lineAt(source,node.getStart())+" pressed-toggle:manual");
+        } else {
+          rename(node,"FilterChip");
+          const attr=open.attributes.properties.find(p=>
+            ts.isJsxAttribute(p)&&p.name.getText()==="className");
+          const kept=safeChipClasses(classes);
+          edits.push([attr.getStart(source),attr.getEnd(),
+            kept.length?'className="'+kept.join(" ")+'"':""]);
+          const variantAttr=open.attributes.properties.find(p=>
+            ts.isJsxAttribute(p)&&p.name.getText()==="variant");
+          const sizeAttr=open.attributes.properties.find(p=>
+            ts.isJsxAttribute(p)&&p.name.getText()==="size");
+          if(variantAttr)edits.push([variantAttr.getStart(source),variantAttr.getEnd(),""]);
+          if(sizeAttr)edits.push([sizeAttr.getStart(source),sizeAttr.getEnd(),""]);
+          needs.add("FilterChip");
+          stats.toggle++;
+          stats.candidates.push(relative+":"+lineAt(source,node.getStart())+" pressed-toggle");
         }
       }
     }
@@ -183,6 +223,10 @@ for (const file of collect(root)) {
   if (needs.has("Badge") && !importExists(source, "Badge", "@/components/ui/badge")) {
     const point = insertionPoint(source);
     edits.push([point, point, '\nimport {Badge} from "@/components/ui/badge";']);
+  }
+  if (needs.has("FilterChip") && !importExists(source,"FilterChip","@/components/ui/filter-chip")) {
+    const point=insertionPoint(source);
+    edits.push([point,point,'\nimport {FilterChip} from "@/components/ui/filter-chip";']);
   }
   let output = original;
   // Insertions at the same offset are intentionally both retained.
