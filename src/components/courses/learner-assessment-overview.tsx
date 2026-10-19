@@ -1,5 +1,7 @@
 "use client";
+import { Input } from "@/components/ui/input";
 
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {useRouter} from "next/navigation";
@@ -210,7 +212,7 @@ export function LearnerAssessmentOverview({
   if(items.length===0 && kind==="QUIZ" && classScope==="UNAVAILABLE"){
     return <div role="alert" className="rounded-lg border border-border bg-surface p-4">
       <p>Couldn&apos;t load your class, so quizzes can&apos;t be shown.</p>
-      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
+      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
     </div>;
   }
   if (items.length === 0) {
@@ -279,22 +281,22 @@ export function LearnerAssessmentOverview({
       <nav aria-label={kind === "ASSIGNMENT" ? "Assignment quick views" : "Quiz quick views"}
         className="flex flex-wrap gap-2">
         {quickCounts.map(quick => (
-          <button key={quick.value} type="button" aria-pressed={stateFilter === quick.value}
+          <Button variant="secondary" key={quick.value} type="button" aria-pressed={stateFilter === quick.value}
             onClick={() => { setStateFilter(value => value === quick.value ? "ALL" : quick.value); setPage(1); }}
             className={stateFilter === quick.value
-              ? "min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
-              : "min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body"}>
+              ? "min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
+              : "min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body"}>
             {LEARNER_ASSESSMENT_STATE_OPTIONS.find(option => option.value === quick.value)?.label} ({quick.count})
-          </button>
+          </Button>
         ))}
       </nav>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
-          <input type="search" value={search} maxLength={100}
+          <Input type="search" value={search} maxLength={100}
             onChange={event => {setSearch(event.target.value);setPage(1);}}
             placeholder="Title, lesson or course"
-            className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" />
+            className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" />
         </label>
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -346,12 +348,12 @@ export function LearnerAssessmentOverview({
       </div>
 
       {learnerAssessmentFiltersActive({courseId:activeCourseId,search,stateFilter,sort}) ? (
-        <button type="button" onClick={() => {
+        <Button variant="secondary" type="button" onClick={() => {
           setCourseId("");setSearch("");setStateFilter("ALL");setSort("DUE");setPage(1);
           if(initialCourseId)router.push(learnerAssessmentCourseHref(kind,null));
-        }} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        }} className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Clear assessment filters
-        </button>
+        </Button>
       ) : null}
       <p role="status" className="text-sm text-muted-foreground">
         {learnerAssessmentPageSummary({
@@ -399,9 +401,9 @@ export function LearnerAssessmentOverview({
                   const state=quizOverviewActionState(item,currentNowMs);
                   return <div className="flex flex-wrap gap-2">
                     <Link href={`/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review?"&review=true":""}`}
-                      className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">{state.action}</Link>
+                      className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">{state.action}</Link>
                     <Link href={"/learn/allQuizzes/"+encodeURIComponent(item.id)+"?deliveryId="+encodeURIComponent(item.deliveryId)}
-                      className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Attempt history</Link>
+                      className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">Attempt history</Link>
                   </div>;
                 }},
             ]}
@@ -489,21 +491,21 @@ export function LearnerAssessmentOverview({
                         : `${item.totalPoints} points · ${item.attemptsUsed}/${item.maxAttempts} attempts`}
                     </span>
                     {item.kind === "ASSIGNMENT" ? (
-                      <button
+                      <Button variant="secondary"
                         type="button"
                         onClick={() =>
                           setSelectedAssignmentKey(
                             `${item.deliveryId}:${item.id}`,
                           )
                         }
-                        className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
+                        className="inline-flex min-h-9 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
                       >
                         {state.action}
-                      </button>
+                      </Button>
                     ) : (
                       <Link
                         href={href}
-                        className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
+                        className="inline-flex min-h-9 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
                       >
                         {state.action}
                       </Link>
@@ -511,7 +513,7 @@ export function LearnerAssessmentOverview({
                     {item.kind === "QUIZ" ? (
                       <Link
                         href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
-                        className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center text-xs font-semibold text-primary-text underline sm:min-h-11 sm:min-h-9 sm:w-auto"
+                        className="inline-flex min-h-9 sm:min-h-9 w-full items-center justify-center text-xs font-semibold text-primary-text underline sm:min-h-9 sm:min-h-9 sm:w-auto"
                       >
                         Attempt history
                       </Link>
@@ -544,12 +546,12 @@ export function LearnerAssessmentOverview({
             <>
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
-              className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text sm:w-auto"
+              className="inline-flex min-h-9 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text sm:w-auto"
             >
               Open in Learning Path
             </Link>
             <Link href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
-              className="mt-2 inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:underline sm:ml-2 sm:mt-0 sm:w-auto">
+              className="mt-2 inline-flex min-h-9 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:underline sm:ml-2 sm:mt-0 sm:w-auto">
               Full assignment details
             </Link>
             </>
@@ -692,10 +694,10 @@ export function LearnerAssessmentOverview({
                     assignmentId={selectedAssignment.id}
                     deliveryId={selectedAssignment.deliveryId}
                   />
-                ) : <button type="button" disabled aria-disabled="true"
-                  className="mt-3 min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-muted-foreground">
+                ) : <Button variant="secondary" type="button" disabled aria-disabled="true"
+                  className="mt-3 min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-muted-foreground">
                   {selectedAssignment.dueAt?"Submission closed":"Unavailable"}
-                </button>}
+                </Button>}
               </>
             )}
           </div>
@@ -707,25 +709,25 @@ export function LearnerAssessmentOverview({
           aria-label={kind === "ASSIGNMENT" ? "Assignment pages" : "Quiz pages"}
           className="flex flex-wrap items-center justify-center gap-3"
         >
-          <button
+          <Button variant="secondary"
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             Previous
-          </button>
+          </Button>
           <span className="text-sm font-semibold text-body">
             Page {currentPage} of {totalPages}
           </span>
-          <button
+          <Button variant="secondary"
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             Next
-          </button>
+          </Button>
         </nav>
       ) : null}
     </div>
