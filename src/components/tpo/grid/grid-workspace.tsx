@@ -56,7 +56,8 @@ export function GridWorkspace<Row>({
 }:GridWorkspaceProps<Row>){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const id=useId();
- const querySearch=params.get(searchParam)??"";
+ const querySearch=searchMode==="controlled"?(searchValue??""):
+  searchMode==="hidden"?"":params.get(searchParam)??"";
  const [typed,setTyped]=useState(querySearch);
  const [filterOpen,setFilterOpen]=useState(false);
  const [columnsOpen,setColumnsOpen]=useState(false);
