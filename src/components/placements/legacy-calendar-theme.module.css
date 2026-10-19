@@ -1,0 +1,30 @@
+/*
+ * Portal calendar paint only. Source: docs/design/legacy-styles/
+ * components___variables.scss:270-275.
+ * Geometry, navigation, timezone and keyboard handlers stay in each caller.
+ */
+.calendarHairline {
+  /* $tableBordersLightGreyColor: #dddddd52, variables.scss:275 */
+  border-color: #dddddd52 !important;
+  background-color: #dddddd52 !important;
+}
+.calendarWeekday {
+  background-color: #fff;
+}
+.calendarDay {
+  background-color: #fff;
+  border-color: #dddddd52 !important;
+  border-radius: 0 !important;
+}
+.calendarSunday {
+  /* $sunCalendarColor: #ff7576, variables.scss:273 */
+  color: #ff7576 !important;
+}
+.calendarCurrentDay {
+  /* $activeCalendarDayColor: #26bac7, variables.scss:272 */
+  box-shadow: inset 0 0 0 2px #26bac7;
+}
+.calendarDay:focus-visible {
+  outline: 2px solid #26bac7;
+  outline-offset: -2px;
+}
