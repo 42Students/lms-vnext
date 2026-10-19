@@ -97,3 +97,13 @@ Fast-forward of `chatgpt/chat-15-b` to this main head was verified before edits 
 | AG Grid Quartz | Requested legacy grid source absent | `src/components/tpo/grid/tpo-grid.tsx:12-17` | **Not implemented** |
 
 No CI, app build, app execution, visual comparison or authentic local grep was run by chat-15. Do not claim completed AG Grid integration. Resume at `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` for remaining selection/offer sheet wiring.
+
+## chat-15 continuation: job sheets after SMARTER PLAN (2026-10-19)
+
+- [ ] **Native E8** remains open: `src/components/tpo/grid/tpo-grid.tsx:12-17` reports `shared-table-fallback`. Neither `ag-grid-community` nor `ag-grid-react` is declared in the inspected `package.json`. The legacy `docs/design/legacy-grid/` directory was absent when checked. **No Quartz rendering, imports, filenames, or legacy event semantics are claimed.**
+- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`: read-only **selection history** and **offers** now use `HrJobSelectionGrid` and `HrJobOffersGrid` (same authorized page rows, headings, outcome labels, CTC display, IST reply deadline and joining state/date; no mutation). The existing server-controlled offer CSV, stage tabs, and both independent pagination links remain unchanged.
+- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`: filtered round result cards now use the previously authorized `HrRoundResultsGrid` with keys scoped to user/company/college/job/round. Evaluative outcome tabs and controls were not moved into the grid.
+- [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`: restored `HrCompanyReportsGrid` after the main sync; continues to use server-scoped report rows and its original server CSV endpoint. The grid keeps numeric/date sorting opt-in, with no client-side broad export.
+- [ ] **Remaining**: recruiter drives portfolio currently remains a rich action-card list; changing it to a text-only sheet would drop employer actions, status pills and deadline notices. Need a parity-preserving contract before migration. Need a full live and mobile comparison before any strict ticks.
+
+The visible shared grid fallback has column choice, TSV copy, numeric-sort opt-ins, mobile primary fields, storage-keyed preferences and 48px checkbox support. The source-level wiring does **not** prove AG Grid parity. No CI, runtime, typecheck or local browser testing was performed.
