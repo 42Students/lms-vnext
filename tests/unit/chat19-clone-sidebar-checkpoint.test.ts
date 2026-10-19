@@ -71,4 +71,11 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(sidebar()).toContain("outline:2px solid rgba(38,186,199,.45);");
  expect(sidebar()).toContain("outline-offset:-2px;");
 });
+ it("uses the original four-pixel TPO hover scrollbar",()=>{
+ expect(legacy()).toContain("scrollbar-width: thin; scrollbar-color:");
+ const css=sidebar();
+ expect(css).toContain('data-sidebar-portal="tpo"');
+ expect(css).toContain("scrollbar-width:thin;");
+ expect(css).toContain("width:4px;");
+});
 });
