@@ -1,1 +1,5 @@
-export default function Loading(){return <main aria-busy="true" className="space-y-4"><p role="status" className="text-sm text-body">Loading your verification status…</p><div className="h-24 animate-pulse rounded-xl bg-surface"/></main>}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function Loading() {
+  return <GracefulPageLoading label="Loading your verification status…" shape="card" />;
+}
