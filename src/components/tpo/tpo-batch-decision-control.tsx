@@ -1,5 +1,6 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
  status:string;reason:string|null;expectedVersion:string;
 }}){
  const router=useRouter();
+ const {askConfirm,dialog}=useConfirmFlow();
  const [decision,setDecision]=useState<Decision>(
   current.status==="ELIGIBLE"?"ELIGIBLE":current.status==="INELIGIBLE"?"INELIGIBLE":"NOT_DECIDED");
  const [reason,setReason]=useState(current.reason??"");
@@ -18,7 +20,7 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
  const valid=decision!=="INELIGIBLE"||reason.trim().length>=3;
  async function submit(){
   if(pending||!valid)return;
-  if(!window.confirm("Apply this eligibility decision to the entire batch? Learner and class overrides take precedence."))return;
+  if(!(await askConfirm("Apply this eligibility decision to the entire batch? Learner and class overrides take precedence.")))return;
   setPending(true);setError("");setMessage("");setActionId(null);
   try{
    const response=await fetch("/api/placements/tpo/batches/"+batchId+"/decisions",{
@@ -38,7 +40,7 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
   <h2 className="font-semibold">Who is in placements?</h2>
   <p className="text-sm text-muted-foreground">This sets the default for this whole cohort. More specific class and student decisions override it.</p>
   <label className="block text-sm">Batch default decision
-   <Select  value={decision} disabled={pending}
+   <Select className="min-h-11 min-[768px]:min-h-9" value={decision} disabled={pending}
      onChange={e=>setDecision(e.target.value as Decision)}>
     <option value="NOT_DECIDED">Not decided</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
    </Select>
@@ -48,9 +50,10 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
     onChange={e=>setReason(e.target.value)} disabled={pending}/>
   </label>:null}
   <Button type="button" onClick={()=>void submit()} disabled={pending||!valid}
-   >{pending?"Saving…":"Review and save batch decision"}</Button>
+   className="min-h-11 min-[768px]:min-h-9">{pending?"Saving…":"Review and save batch decision"}</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm">{message}</p>:null}
   {actionId?<TpoBatchUndoControl batchId={batchId} actionId={actionId}/>:null}
+  {dialog}
  </section>;
 }
