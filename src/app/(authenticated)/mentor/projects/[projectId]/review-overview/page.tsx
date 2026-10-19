@@ -30,7 +30,7 @@ export default async function MentorReviewOverviewPage({
  <PageHeader eyebrow="Mentor · Project" title="Delivery review overview"
  description={data.project.title+" · "+data.project.status}
  actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-  className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+  className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0">
   Delivery workspace</Link>}/>
  <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
  className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
