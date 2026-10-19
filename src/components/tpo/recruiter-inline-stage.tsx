@@ -1,4 +1,5 @@
 "use client";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
@@ -35,7 +36,7 @@ export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:stri
     </Select>
    </label>
    {action==="NOT_NOW"?<label className="block text-xs">Reason
-    <input value={reason} maxLength={255} onChange={e=>setReason(e.target.value)}
+    <Input value={reason} maxLength={255} onChange={e=>setReason(e.target.value)}
      className="min-h-10 w-full rounded border border-border bg-surface px-2"/>
    </label>:null}
    <Button variant="primary" type="button" disabled={busy} onClick={()=>void save()}
