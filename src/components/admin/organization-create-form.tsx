@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {createdOrganizationStepHref} from "@/modules/colleges/admin-tenant-organization-step";
 
@@ -55,7 +56,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
   return (
     <form
       onSubmit={submit}
-      className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-end"
+      className="flex min-w-0 flex-col gap-3 border-t border-border pt-4 md:flex-row md:items-end"
     >
       <div className="min-w-0 flex-1">
         <label
@@ -78,9 +79,9 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
       </Button>
       {restored?<p role="status" className="text-xs text-body">Draft restored</p>:null}
       {error ? (
-        <p role="alert" className="m-0 text-xs font-semibold text-error sm:w-full">
+        <Alert tone="error" className="md:w-full">
           {error}
-        </p>
+        </Alert>
       ) : null}
     </form>
   );
