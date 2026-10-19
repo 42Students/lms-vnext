@@ -49,7 +49,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
       {!previousHref ?
         <span aria-disabled="true" className={cx(buttonClass, "cursor-not-allowed opacity-50")}>Previous</span> :
         <Link className={buttonClass} href={previousHref} aria-label="Previous page">Previous</Link>}
-      <span className="sr-only" aria-label="Current page">Page {current} of {total}</span>
+      <span role="status" className="px-1 text-[12px] font-medium text-[var(--lms-neutral-500)] md:sr-only">Page {current} of {total}</span>
       {pageLinks.map(({item,href}) => isSafeInternalHref(href) ?
         <Link key={item} href={href}
           aria-label={`Page ${item} of ${total}`}
