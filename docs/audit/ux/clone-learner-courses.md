@@ -308,7 +308,7 @@ Checked full contents of 99 course TSX files using tag-pattern equivalents of th
 
 **Branch sync:** `chatgpt/chat-7-b` was 1,193 commits behind `main` and had no divergent commits; successfully fast-forwarded to `55a3efe0a5917631ab26e17e158a29f6e5282e25` through the branch ref before writing. All writes remained on `chatgpt/chat-7-b`.
 
-**Ten file commits (pushed via GitHub contents API, no CI, tests, local server, screenshots, or repository code execution):** `13bf70e` discussion focus; `084dc65` shared segmented course filter; `727e20e` review PageHeader; `498704a` timed PageHeader actions; `122edca` full-width timed header; `24abd1c` accessible assessment filter group; `74a4d8b` progress Clear link; `5aca112` progress MetricBar; `a6887a7` progress Export link; `5507bbc` shared progress StatTiles.
+**Eleven file commits (pushed via GitHub contents API, no CI, tests, local server, screenshots, or repository code execution):** `13bf70e` discussion focus; `084dc65` shared segmented course filter; `727e20e` review PageHeader; `498704a` timed PageHeader actions; `122edca` full-width timed header; `24abd1c` accessible assessment filter group; `74a4d8b` progress Clear link; `5aca112` progress MetricBar; `a6887a7` progress Export link; `5507bbc` shared progress StatTiles; `544f688` accessible labelled progress-stat group.
 
 ### Value and state evidence for edited surfaces (source comparison, not an H tick)
 
