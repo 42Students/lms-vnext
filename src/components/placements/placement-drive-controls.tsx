@@ -1,5 +1,6 @@
 "use client";
 
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   useMemo,
   useState,
@@ -1526,13 +1527,7 @@ export function PlacementDriveControls({
                 round.status ===
                   "SCHEDULED") &&
               schedule ? (
-                <details className="mt-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
-                  <summary className="cursor-pointer text-sm font-semibold text-foreground">
-                    {round.status ===
-                    "SCHEDULED"
-                      ? "Reschedule / manage round"
-                      : "Schedule round"}
-                  </summary>
+                <Disclosure title={round.status==="SCHEDULED"?"Reschedule / manage round":"Schedule round"} className="mt-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
                   <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                     <label>
                       <FieldLabel>
@@ -1751,7 +1746,7 @@ export function PlacementDriveControls({
                       Cancel round
                     </Button>
                   </div>
-                </details>
+                </Disclosure>
               ) : null}
 
               {round.kind !== "TALK" &&
