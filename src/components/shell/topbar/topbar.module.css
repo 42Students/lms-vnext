@@ -472,3 +472,5 @@
 
 @media (max-width:767px) { .topbarNotificationDrawer [data-slot="drawer-footer"] { padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px)); } }
 .topbarNotificationDrawer [data-slot="drawer-footer"] a { min-height:44px; display:inline-flex; align-items:center; }
+
+.topbarNotificationBody ul[aria-label^="Notifications for "] { padding:0; margin:0; list-style:none; }
