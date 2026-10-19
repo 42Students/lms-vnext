@@ -19,7 +19,7 @@ export default async function CollegeCreateProjectPage() {
   const templates=await listAssignedProjectTemplates(context,collegeId);
   return <div className="space-y-6">
     <ProjectAdminNav basePath="/college/projects" active="workspaces"/>
-    <PageHeader eyebrow="College Admin · Projects" title="Create workspace"
+    <PageHeader title="Create workspace"
       description="Choose the published template and learners for this workspace."/>
     <Link href="/college/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline lms-inline-link">
       Back to workspaces
