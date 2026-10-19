@@ -9,7 +9,7 @@ export default function FacultyCourseDiscussionsError({
   reset: () => void;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
+    <section className="border-b border-border bg-transparent py-6 text-center">
       <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Couldn&apos;t load discussions</h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         Course discussion access could not be loaded. Retry instead of treating this as an empty conversation.
