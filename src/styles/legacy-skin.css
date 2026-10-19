@@ -163,3 +163,29 @@
   border-color: var(--lms-error) !important;
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
 }
+
+/* READ-ONLY / DISABLED FIELDS
+ * Legacy: components___variables.scss:27-32 (muted ink #6b7280,
+ * disabled labels #a9a7ae and off-white neutral-50 #fafbfc);
+ * components___form.scss:117-143 (field error/focus surface).
+ * Do not change native disabled state or pointer/keyboard handling.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])
+    :not([type="file"]):not([type="range"]):not([type="color"])
+    :not([type="button"]):not([type="submit"]):not([type="reset"])
+    :not([type="image"]), select, textarea]):not(:where([data-unskin], [data-unskin] *)):disabled {
+  color: var(--lms-neutral-400) !important;
+  background-color: var(--lms-neutral-50) !important;
+  border-color: var(--lms-neutral-200) !important;
+  box-shadow: none !important;
+}
+/* Legacy: components___variables.scss:28,32 and
+ * components___form.scss:119-120 (quiet non-editable fill/radius).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])
+    :not([type="file"]):not([type="range"]), textarea):not(:where([data-unskin], [data-unskin] *)):read-only {
+  background-color: var(--lms-neutral-50) !important;
+  border-color: var(--lms-neutral-200) !important;
+}
