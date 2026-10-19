@@ -58,7 +58,7 @@ function SignInStylePreview({
           />
         ) : (
           <div
-            className="mb-3 flex h-10 w-10 items-center justify-center rounded-[var(--lms-control-radius,9px)] text-lg font-bold"
+            className="mb-3 flex h-10 w-10 items-center justify-center rounded-[var(--lms-control-radius)] text-lg font-bold"
             style={{
               color: branding.tokens.text,
               backgroundColor: branding.tokens.subtle,
@@ -74,11 +74,11 @@ function SignInStylePreview({
         <p className="mt-1 text-xs text-muted-foreground">
           Sign in to your college
         </p>
-        <div className="mt-5 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface-subtle px-3 py-2 text-xs text-muted-foreground">
+        <div className="mt-5 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2 text-xs text-muted-foreground">
           Email or mobile number
         </div>
         <div
-          className="mt-3 rounded-[var(--lms-control-radius,9px)] px-3 py-2 text-center text-xs font-semibold"
+          className="mt-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-center text-xs font-semibold"
           style={{
             backgroundColor: branding.tokens.primary,
             color: branding.tokens.onPrimary,
@@ -104,9 +104,9 @@ function ColorSwatch({
   overridden: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+    <div className="flex items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
       <span
-        className="h-11 w-11 shrink-0 rounded-[var(--lms-control-radius,9px)] border border-border"
+        className="h-11 w-11 shrink-0 rounded-[var(--lms-control-radius)] border border-border"
         style={{ backgroundColor: color }}
         aria-hidden="true"
       />
@@ -133,7 +133,7 @@ export function CollegeBrandingPreview({
     <div className="space-y-6">
       <Link
         href="/admin/colleges"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline"
       >
         ← Colleges
       </Link>
@@ -209,7 +209,7 @@ export function CollegeBrandingPreview({
             <dt className="font-semibold text-foreground">Support email</dt>
             <dd className="mt-1 text-body">
               {branding.supportEmail ? (
-                <a href={"mailto:" + branding.supportEmail} className="text-primary-text underline">
+                <a href={"mailto:" + branding.supportEmail} className="text-link underline">
                   {branding.supportEmail}
                 </a>
               ) : "Not configured"}
@@ -221,7 +221,7 @@ export function CollegeBrandingPreview({
               {branding.supportPhone ? (
                 <a
                   href={"tel:" + branding.supportPhone.replaceAll(/[ ()-]/g, "")}
-                  className="text-primary-text underline"
+                  className="text-link underline"
                 >
                   {branding.supportPhone}
                 </a>
@@ -233,7 +233,7 @@ export function CollegeBrandingPreview({
             <dd className="mt-1 text-body">
               {branding.termsUrl ? (
                 <a href={branding.termsUrl}
-                   className="text-primary-text underline">Open terms link</a>
+                   className="text-link underline">Open terms link</a>
               ) : "Not configured"}
             </dd>
           </div>
@@ -242,7 +242,7 @@ export function CollegeBrandingPreview({
             <dd className="mt-1 text-body">
               {branding.privacyUrl ? (
                 <a href={branding.privacyUrl}
-                   className="text-primary-text underline">Open privacy link</a>
+                   className="text-link underline">Open privacy link</a>
               ) : "Not configured"}
             </dd>
           </div>

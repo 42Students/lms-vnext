@@ -103,37 +103,37 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
     (editing && row.courseId === editing.courseId) || !offered.has(row.courseId));
   return <div className="min-w-0">
     <button type="button" onClick={() => void open()}
-      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm text-primary-text">
+      className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link">
       Manage offerings
     </button>
     {opened && <section aria-label="Elective course offerings"
-      className="mt-2 min-w-64 max-w-xl space-y-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3">
+      className="mt-2 min-w-64 max-w-xl space-y-3 border-t border-border pt-3">
       {loading && <p role="status">Loading eligible courses and groups…</p>}
       {data && <>
         <h3 className="text-sm font-semibold">Courses in this elective slot</h3>
         {data.offerings.length === 0 && <p className="text-sm text-muted-foreground">
           No courses added yet.</p>}
         {data.offerings.map(offering => <div key={offering.offeringId}
-          className="flex flex-wrap items-center justify-between gap-2 rounded-[var(--lms-control-radius,9px)] border border-border p-2 text-sm">
+          className="flex flex-wrap items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
           <span>{offering.courseName} ({offering.courseCode}) · Seats: {offering.capacity ?? "No cap"} · Enrolled: {offering.activeMembers} · Waitlist: {offering.waitlistedCount} · {offering.status}</span>
           <div className="flex flex-wrap items-center gap-2">
             <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/offerings/" +
               encodeURIComponent(offering.offeringId) + "/roster"}
-              className="rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-1 font-semibold text-primary-text">
+              className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 font-semibold text-link">
               Roster
             </Link>
             {offering.status === "ACTIVE" && <>
               <button type="button" onClick={() => startEdit(offering)}
-                className="rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-1 text-primary-text">Edit</button>
+                className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-link">Edit</button>
               <button type="button" disabled={busy} onClick={() => void archive(offering)}
-                className="rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-1 text-error">Archive</button>
+                className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-error">Archive</button>
             </>}
           </div>
         </div>)}
         <div className="border-t border-border pt-3">
           <h4 className="text-sm font-semibold">{editing ? "Edit offering" : "Add offering"}</h4>
           <label className="mt-2 block text-sm">Course
-            <select className="mt-1 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-background p-2"
+            <select className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
               value={deliveryId} onChange={event => setDeliveryId(event.target.value)}>
               <option value="">Select course and class</option>
               {selectable.map(row => <option key={row.id} value={row.id}>
@@ -141,7 +141,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
             </select>
           </label>
           {!editing && <label className="mt-2 block text-sm">Group (optional)
-            <select className="mt-1 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-background p-2"
+            <select className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
               value={groupId} onChange={event => setGroupId(event.target.value)}>
               <option value="">Create elective group automatically</option>
               {data.groups.map(group => <option key={group.id} value={group.id}>{group.name}</option>)}
@@ -150,18 +150,18 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           <label className="mt-2 block text-sm">Capacity
             <input type="number" min="1" max="100000" required
               value={capacity} onChange={event => setCapacity(event.target.value)}
-              className="mt-1 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-background p-2" />
+              className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
           </label>
           {selectable.length === 0 && <p role="status" className="mt-2 text-sm">
             Create an active elective course delivery for this program before adding an offering.</p>}
           <div className="mt-3 flex flex-wrap gap-2">
             <button type="button" disabled={busy || loading || !deliveryId || selectable.length === 0}
-              onClick={() => void save()} className="min-h-10 rounded-[var(--lms-control-radius,9px)] bg-primary px-3 text-sm text-on-primary disabled:opacity-50">
+              onClick={() => void save()} className="min-h-10 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm text-on-primary disabled:opacity-50">
               {busy ? "Saving…" : editing ? "Save offering" : "Add offering"}
             </button>
             {editing && <button type="button" disabled={busy} onClick={() => {
               setEditing(null); setDeliveryId(data.deliveries.find(row => !offered.has(row.courseId))?.id ?? "");
-            }} className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm">Cancel edit</button>}
+            }} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Cancel edit</button>}
           </div>
         </div>
       </>}
