@@ -14,14 +14,14 @@ export default async function CollegeCreateProjectPage() {
     <p role="alert" className="rounded-[8px] border border-border bg-surface p-4 text-sm">
       Choose a college from the account switcher before creating a workspace.
     </p>
-    <Link href="/college/projects" className="text-link underline">Back to workspaces</Link>
+    <Link href="/college/projects" className="text-link underline lms-inline-link">Back to workspaces</Link>
   </div>;
   const templates=await listAssignedProjectTemplates(context,collegeId);
   return <div className="space-y-6">
     <ProjectAdminNav basePath="/college/projects" active="workspaces"/>
     <PageHeader eyebrow="College Admin · Projects" title="Create workspace"
       description="Choose the published template and learners for this workspace."/>
-    <Link href="/college/projects" className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline">
+    <Link href="/college/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline lms-inline-link">
       Back to workspaces
     </Link>
     <CreateProjectControl standalone collegeId={collegeId} basePath="/college/projects"
