@@ -19,49 +19,49 @@ export default async function MentorReviewOverviewPage({
   filters?{projectId,...filters}:null,
  );
  if(!parsed.success)return <section role="alert">
- <h1 className="text-xl font-semibold">Invalid project review filters</h1>
- <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
+ <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid project review filters</h1>
+ <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>
  </section>;
  const data=await getMentorDeliveryReviewOverview(await getCurrentRequestContext(),parsed.data);
  return <div className="min-w-0 max-w-full space-y-6">
  <PageHeader eyebrow="Mentor · Project" title="Delivery review overview"
  description={data.project.title+" · "+data.project.status}
  actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-  className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+  className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
   Delivery workspace</Link>}/>
  <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
- className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+ className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
   <label className="grid gap-1 text-sm font-semibold text-body">Delivery status
-   <select name="status" defaultValue={data.query.status}
-    className="min-h-11 rounded-md border border-border bg-background px-3">
+   <select data-slot="select" name="status" defaultValue={data.query.status}
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
     {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
      <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
    </select>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">Written feedback
-   <select name="feedback" defaultValue={data.query.feedback}
-    className="min-h-11 rounded-md border border-border bg-background px-3">
+   <select data-slot="select" name="feedback" defaultValue={data.query.feedback}
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
     <option value="ALL">Any</option>
     <option value="WITH">Recorded</option>
     <option value="WITHOUT">Not recorded</option>
    </select>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">Exact delivery version
-   <input type="number" name="version" min={1} max={1000000}
+   <input data-slot="input" type="number" name="version" min={1} max={1000000}
     defaultValue={data.query.version??""}
-    placeholder="All versions" className="min-h-11 rounded-md border border-border bg-background px-3"/>
+    placeholder="All versions" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
   </label>
   <Button type="submit" variant="primary">
    Filter
   </Button>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
  </form>
  <div className="flex flex-wrap items-center gap-3 text-sm">
   <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
    new URLSearchParams({status:data.query.status,feedback:data.query.feedback,
     ...(data.query.version===undefined?{}:{version:String(data.query.version)})}).toString()}
-   download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+   download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    Export filtered delivery review CSV (max 200)
   </Link>
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
@@ -85,7 +85,7 @@ export default async function MentorReviewOverviewPage({
  <p className="mt-2 text-sm text-body">{item.reviewLabel}</p>
  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
   "/deliveries/"+encodeURIComponent(item.id)+"/review"}
-  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
   View recorded review details
  </Link>
  <p className="mt-1 text-xs text-muted-foreground">
@@ -103,9 +103,9 @@ export default async function MentorReviewOverviewPage({
  <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
  <div className="flex gap-3">
  {data.page>1&&<Link href={mentorReviewOverviewHref({...data.query,page:data.page-1})}
- className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+ className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
  {data.page<data.totalPages&&<Link href={mentorReviewOverviewHref({...data.query,page:data.page+1})}
- className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+ className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
  </div></nav>
  <p className="text-xs text-muted-foreground">
  Only registered decision and feedback presence are shown. Historical missing versions,

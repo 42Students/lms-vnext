@@ -255,7 +255,7 @@ export function LearnerCourseOverview({
         className="sticky top-16 z-10 -mx-1 flex gap-2 overflow-x-auto rounded-lg border border-border bg-surface p-2 shadow-sm sm:hidden">
         {jumpLinks.map(item=>(
           <a key={item.id} href={"#"+item.id}
-            className="inline-flex min-h-11 shrink-0 items-center rounded-md border border-border px-3 text-xs font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
+            className="inline-flex min-h-11 sm:min-h-9 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
             {item.label}
           </a>
         ))}
@@ -418,7 +418,7 @@ export function LearnerCourseOverview({
           </div>
           <Link
             href={nextAction?.href ?? `/learn/courses/${deliveryId}/roadmap`}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            className="inline-flex min-h-11 sm:min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
           >
             {readOnly
               ? "View Learning Path"

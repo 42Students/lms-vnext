@@ -30,8 +30,8 @@ export default async function MentorSprintProgressPage({
     page: first(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid sprint progress filters</h1>
-    <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid sprint progress filters</h1>
+    <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
   </section>;
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
@@ -39,52 +39,52 @@ export default async function MentorSprintProgressPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Projects" title="Sprint progress"
       description="Registered sprint, release and task status across your current project assignments."
-      actions={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      actions={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Mentoring projects
       </Link>} />
     {!data.enabled ? <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       Projects access is disabled. Sprint progress was not loaded.
     </section> : <>
       <form action="/mentor/sprint-progress" method="get"
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Search
-          <input type="search" name="search" defaultValue={data.query.search} maxLength={120}
-            placeholder="Sprint, release or project" className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground" />
+          <input data-slot="input" type="search" name="search" defaultValue={data.query.search} maxLength={120}
+            placeholder="Sprint, release or project" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint status
-          <select name="state" defaultValue={data.query.state}
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <select data-slot="select" name="state" defaultValue={data.query.state}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All</option><option value="ACTIVE">Active</option>
             <option value="PLANNED">Planned</option><option value="COMPLETED">Completed</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Registered task attention
-          <select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All sprints</option><option value="BLOCKED">Has blocked tasks</option><option value="IN_REVIEW">Has submitted tasks in review</option><option value="DONE">Sprints with recorded Done tasks</option><option value="TODO">Sprints with recorded To Do tasks</option><option value="NO_TASKS">Sprints without recorded tasks</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Release status
-          <select name="release" defaultValue={data.query.release}
-            className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="release" defaultValue={data.query.release}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All releases</option><option value="PLANNED">Planned</option>
             <option value="IN_PROGRESS">In progress</option><option value="SHIPPED">Shipped</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint order
-          <select name="order" defaultValue={data.query.order} className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="order" defaultValue={data.query.order} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="PROJECT">Project and Sprint order</option><option value="ACTIVE_FIRST">Active Sprints first</option>
           </select>
         </label>
         <Button type="submit" variant="primary">
           Filter
         </Button>
-        <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/mentor/sprint-progress/export?"+
@@ -93,7 +93,7 @@ export default async function MentorSprintProgressPage({
             projectId:data.query.projectId??"",taskAttention:data.query.taskAttention,
             order:data.query.order,
           }).toString()}
-          download className="min-h-11 rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          download className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Export filtered sprint CSV (max 100)
         </Link>
         {data.total>100?<span role="status">
@@ -129,7 +129,7 @@ export default async function MentorSprintProgressPage({
               ? "Unknown (no tasks)" : item.tasks.completionPercent + "%"} of persisted tasks marked Done
           </p>
           <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=sprints"}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Open authorized sprint workspace →
           </Link>
         </article>)}</div>}
@@ -137,9 +137,9 @@ export default async function MentorSprintProgressPage({
         <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
           {data.page > 1 && <Link href={mentorSprintProgressHref({...data.query, page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
           {data.page < data.totalPages && <Link href={mentorSprintProgressHref({...data.query, page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
         </div>
       </nav>
     </>}

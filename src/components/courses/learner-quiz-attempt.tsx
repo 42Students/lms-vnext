@@ -342,11 +342,11 @@ export function LearnerQuizAttempt() {
   if (error && !quiz) {
     return (
       <div className="rounded-xl border border-error/30 bg-surface p-8">
-        <h1 className="m-0 text-xl font-semibold text-foreground">Something went wrong</h1>
+        <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Something went wrong</h1>
         <p className="mt-2 text-sm text-body">{error}</p>
         <div className="mt-4 flex gap-2">
           <Button onClick={() => void load()}>Try Again</Button>
-          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)]">All Quizzes</Link>
+          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)]">All Quizzes</Link>
         </div>
       </div>
     );
@@ -360,7 +360,7 @@ export function LearnerQuizAttempt() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">Quiz review</p>
-            <h1 className="mt-2 text-2xl font-semibold text-foreground">{quiz.quiz.title}</h1>
+            <h1 className="mt-2 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">{quiz.quiz.title}</h1>
             <p className="mt-2 text-sm text-body">
               {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
                 ? learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
@@ -373,7 +373,7 @@ export function LearnerQuizAttempt() {
                   : "No attempt is available to review."}
             </p>
           </div>
-          <button type="button" onClick={leaveQuiz} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Back</button>
+          <button type="button" onClick={leaveQuiz} className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Back</button>
         </div>
         {deadlineMissing && !latestAttempt ? (
           <p role="status" className="mt-4 rounded-lg border border-warning p-3 text-sm text-body">
@@ -391,7 +391,7 @@ export function LearnerQuizAttempt() {
         {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt)) ? (
           <div role="status" className="mt-6 rounded-xl border border-border bg-surface-subtle p-5">
             <p className="text-sm text-body">{learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))}</p>
-            <Link href="/learn/allQuizzes" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
+            <Link href="/learn/allQuizzes" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
               Return to All Quizzes
             </Link>
           </div>
@@ -448,19 +448,19 @@ export function LearnerQuizAttempt() {
             <p className="m-0 text-xs font-semibold text-muted-foreground">
               Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
             </p>
-            <h1 className="mt-1 text-xl font-semibold text-foreground">{quiz.quiz.title}</h1>
+            <h1 className="mt-1 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">{quiz.quiz.title}</h1>
             <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
             {learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable) ? (
               <p role="status" className="mt-2 rounded-md border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>
             ) : null}
           </div>
-          <button type="button" onClick={leaveQuiz} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back</button>
+          <button type="button" onClick={leaveQuiz} className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back</button>
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-body" aria-live="polite">
           <span>{answerProgress.answered} answered · {answerProgress.total-answerProgress.answered} unanswered</span>
           {answerProgress.firstUnanswered!==null ? (
             <button type="button" onClick={() => setStep(answerProgress.firstUnanswered!)}
-              className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
               Go to first unanswered
             </button>
           ) : <span className="font-semibold text-success">All questions answered</span>}
@@ -523,7 +523,7 @@ export function LearnerQuizAttempt() {
               {(answers[current.id] ?? []).length > 0 ? (
                 <button type="button"
                   onClick={() => setAnswers(currentAnswers => clearLearnerQuizAnswer(currentAnswers,current.id))}
-                  className="mt-4 inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
+                  className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
                   Clear this answer
                 </button>
               ) : null}
@@ -532,7 +532,7 @@ export function LearnerQuizAttempt() {
           <div className="mt-6">
             <button type="button" aria-expanded={showReview}
               onClick={()=>setShowReview(value=>!value)}
-              className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">
               {showReview ? "Hide answer review" : "Review answers before submitting"}
             </button>
             {showReview ? (
@@ -542,7 +542,7 @@ export function LearnerQuizAttempt() {
                   {reviewRows.map((item,index)=>(
                     <li key={item.questionId}>
                       <button type="button" onClick={()=>{setStep(index);setShowReview(false);}}
-                        className="flex min-h-11 w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface px-3 text-left text-sm text-[var(--lms-link-text)]">
+                        className="flex min-h-11 sm:min-h-9 w-full items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-left text-sm text-[var(--lms-link-text)]">
                         <span>Question {index+1}</span>
                         <span>{item.answered ? item.selectedCount+" selected" : "Unanswered"}</span>
                       </button>

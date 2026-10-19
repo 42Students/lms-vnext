@@ -59,16 +59,16 @@ export function MentorMeetingReschedule(props:{
         event.preventDefault();if(parsed.success&&changed){setOpen(false);setConfirm(true);}
       }} className="grid gap-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Start (IST)
-          <input type="datetime-local" required value={start}
+          <input data-slot="input" type="datetime-local" required value={start}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
             onChange={event=>setStart(event.target.value)}
-            className="min-h-11 min-w-0 max-w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
+            className="min-h-11 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">End (IST)
-          <input type="datetime-local" required value={end}
+          <input data-slot="input" type="datetime-local" required value={end}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
             onChange={event=>setEnd(event.target.value)}
-            className="min-h-11 min-w-0 max-w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
+            className="min-h-11 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
         </label>
         {!parsed.success?<p id={validationId} role="alert" className="text-sm text-foreground">
           Select valid start/end times, with a duration up to 12 hours.</p>:null}
