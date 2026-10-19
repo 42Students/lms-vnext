@@ -117,7 +117,7 @@ export function LearnerNotificationsInbox({
 
   return (
     <section className="space-y-5" aria-label="Learner notifications inbox">
-      <p role="status" className="text-sm text-body sm:hidden">{mobileSummary}</p>
+      <p role="status" className="text-sm text-body min-[768px]:hidden">{mobileSummary}</p>
       <nav aria-label="Filter notifications by type" className="min-w-0">
         <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible">
           {learnerNotificationCategories.map(({ key, label }) => (
@@ -134,7 +134,7 @@ export function LearnerNotificationsInbox({
           ))}
         </div>
       </nav>
-      <div className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+      <div className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto] min-[768px]:items-end">
         <label className="text-xs font-semibold text-body">
           Search notifications
           <Input type="search" value={search} maxLength={100}

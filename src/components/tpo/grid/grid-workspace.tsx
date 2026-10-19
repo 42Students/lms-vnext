@@ -20,7 +20,7 @@ type GridWorkspaceProps<Row>={
  columnStorageKey?:string;
  filters?:readonly TpoFilterField[];
  selection?:Selection;
- rollOf?:(row:Row)=>string|null|undefined;
+ rollOf?:(row:Row)=>string|readonly string[]|null|undefined;
  savedViews?:ReactNode;
  extraActions?:ReactNode;
  act?:(shown:readonly Row[],selected:readonly Row[],clear:()=>void)=>ReactNode;
@@ -131,15 +131,20 @@ export function GridWorkspace<Row>({
  };
  const selectRolls=()=>{
   if(!selection||!rollOf)return;
-  const tokens=[...new Set(pasteText.split(/[\s,;]+/).map(part=>part.trim().toLowerCase()).filter(Boolean))];
+  const tokens=[...new Set(pasteText.split(/[\s,;]+/).map(part=>part.trim().toLowerCase())
+  .filter(part=>Boolean(part)&&!/^\d{1,3}[).]$/.test(part)))];
   if(tokens.length>500){setNotice("Paste at most 500 roll numbers at a time.");return;}
   const lookup=new Map<string,string|null>();
   for(const row of rows){
-   const key=String(rollOf(row)??"").trim().toLowerCase();
-   if(!key)continue;
-   const id=rowKey(row);
-   if(lookup.has(key)&&lookup.get(key)!==id)lookup.set(key,null);
-   else if(!lookup.has(key))lookup.set(key,id);
+   const values=rollOf(row);
+   const candidates=typeof values==="string"?[values]:Array.isArray(values)?values:[];
+   for(const candidate of candidates){
+    const key=candidate.trim().toLowerCase();
+    if(!key)continue;
+    const id=rowKey(row);
+    if(lookup.has(key)&&lookup.get(key)!==id)lookup.set(key,null);
+    else if(!lookup.has(key))lookup.set(key,id);
+   }
   }
   const matches=tokens.map(token=>lookup.get(token));
   const chosen=matches.filter((value):value is string=>typeof value==="string");
