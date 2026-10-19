@@ -657,7 +657,7 @@ export default async function HrPlacementJobPage({
                 status==="REVOKED"?"Selection cancelled":recruiterOfferStatusLabel(status),
               href:"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status+returnQuery}))}/>
           {(filters.offerState==="ALL"||["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState))?
-            <section aria-label="Placement-cell selection history" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
+            <section aria-label="Placement-cell selection history" className="space-y-3 border-b border-border pb-4 sm:pb-5">
               <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
               <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
               {selectionRows.length ? <HrJobSelectionGrid
