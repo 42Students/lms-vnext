@@ -51,7 +51,7 @@ export function InfoPopover({ content, children, className, label }: TooltipProp
         }} className="inline-flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">
         {children}
       </summary>
-      <div id={contentId} role="tooltip" className="relative z-30 mt-[var(--lms-space-2)] max-w-[calc(100vw_-_2rem)] whitespace-normal break-words rounded-[8px] border border-[var(--lms-tooltip-background)] undefined text-[12px] leading-4 text-white shadow-[var(--lms-tooltip-shadow)] sm:absolute sm:left-0 sm:w-max sm:max-w-[260px]"><span aria-hidden="true" className="pointer-events-none absolute -top-[5px] left-4 h-[10px] w-[10px] rotate-45 bg-[var(--lms-tooltip-background)]" />{content}</div>
+      <div id={contentId} role="tooltip" className="relative z-30 mt-[var(--lms-space-2)] max-w-[calc(100vw_-_2rem)] whitespace-normal break-words rounded-[8px] border border-[var(--lms-tooltip-background)] bg-[var(--lms-tooltip-background)] px-[var(--lms-space-4)] py-1.5 text-[12px] leading-4 text-white shadow-[var(--lms-tooltip-shadow)] sm:absolute sm:left-0 sm:w-max sm:max-w-[260px]"><span aria-hidden="true" className="pointer-events-none absolute -top-[5px] left-4 h-[10px] w-[10px] rotate-45 bg-[var(--lms-tooltip-background)]" />{content}</div>
     </details>
   );
 }
