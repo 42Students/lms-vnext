@@ -71,14 +71,14 @@ export function TpoParticipationDecisionForm({
   }
 
   return (
-    <form onSubmit={submit} className="space-y-5">
+    <form onSubmit={submit} className="min-w-0 space-y-5">
       <label className="grid gap-2 text-sm font-semibold text-body">
         Learner-level eligibility
         <Select
           value={status}
           onChange={(event) => setStatus(event.target.value as Status)}
           disabled={pending}
-          
+          className="min-h-11 w-full md:min-h-9"
         >
           <option value="NOT_DECIDED">Inherit class/batch decision</option>
           <option value="ELIGIBLE">Eligible for placements</option>
@@ -105,7 +105,7 @@ export function TpoParticipationDecisionForm({
             onChange={(event) => setReason(event.target.value)}
             disabled={pending}
             placeholder="Reason for restricting placement participation"
-            
+            className="min-h-11 w-full md:min-h-9"
           />
         </div>
       ) : null}
@@ -124,7 +124,7 @@ export function TpoParticipationDecisionForm({
         </label>
       ) : null}
 
-      <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-secondary p-4 text-sm leading-6 text-body">
+      <div className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm leading-6 text-body">
         <p className="font-semibold text-foreground">
           This is not a registration-choice editor.
         </p>
@@ -152,7 +152,7 @@ export function TpoParticipationDecisionForm({
       <Button
         type="submit"
         disabled={pending}
-        
+        className="min-h-11 md:min-h-9"
       >
         {pending ? "Saving…" : "Save learner eligibility"}
       </Button>
