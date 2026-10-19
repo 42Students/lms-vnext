@@ -13,6 +13,7 @@ import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-adm
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { ListToolbar } from "@/components/ui/list-toolbar";
+import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import {parseCollegeProjectsQuery,canonicalCollegeProjectsPageHref} from "@/modules/projects/college-projects-query-model";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
@@ -126,7 +127,7 @@ export default async function CollegeProjectsPage({
          {value:"archived",label:"Archived workspaces",href:"/college/projects?status=ARCHIVED"},
         ]}/>
       </div>
-      {!templatesResult.ok && <p role="status" className="border-b border-border pb-3 text-sm text-body">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</p>}
+      {!templatesResult.ok && <Banner tone="warning">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</Banner>}
       <ProjectAdminFilters query={query} />
       <ListToolbar label="College project workspaces" viewCount={result.total}
         exportAction={<ProjectAdminWorkspacePageExport items={items}/>} />
