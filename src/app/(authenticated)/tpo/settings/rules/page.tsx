@@ -85,7 +85,7 @@ export default async function TpoPlacementRulesSettingsPage({
     return (
       <div className="space-y-6">
         <TpoSettingsNav active="rules" />
-        <PageHeader eyebrow="TPO · Settings" title="Placement rules" />
+        <PageHeader title="Placement rules" />
         <ErrorState
           title="Invalid placement rules filters"
           description="The requested job page is invalid. No placement job records were loaded."
@@ -110,7 +110,7 @@ export default async function TpoPlacementRulesSettingsPage({
       <TpoSettingsNav active="rules" />
 
       <section className="space-y-2">
-        <PageHeader eyebrow="TPO · Settings" title="Placement rules" />
+        <PageHeader title="Placement rules" />
         <p className="text-sm leading-6 text-body">
           The college-wide offer policy and
           job-specific eligibility criteria.
