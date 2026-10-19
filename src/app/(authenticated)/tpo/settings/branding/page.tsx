@@ -159,7 +159,7 @@ export default async function TpoPlacementBrandingPage() {
         </div>
 
         {branding.logoPreviewUrl ? (
-          <div className="mt-5 flex min-h-32 items-center justify-center rounded-lg border border-border bg-surface-subtle p-6">
+          <div className="mt-5 flex min-h-32 items-center justify-center rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-6">
             {/* Same validated public HTTPS image pattern
                 used by the college sign-in page. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -173,7 +173,7 @@ export default async function TpoPlacementBrandingPage() {
         ) : (
           <div
             role="status"
-            className="mt-5 rounded-lg bg-surface-subtle p-5 text-sm leading-6 text-body"
+            className="mt-5 border-t border-border pt-4 text-sm leading-6 text-body"
           >
             {branding.logoPreviewSuppressed
               ? "A logo address is stored, but it cannot be safely previewed as a public image. The address is not exposed here."
