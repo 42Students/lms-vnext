@@ -85,7 +85,7 @@ export function HrRecruiterBell(){
    <div className="-mx-4 -mt-4 flex items-center justify-between gap-2 rounded-t-[12px] border-b border-[#e5e9f0] bg-[#fafbfc] px-4 py-3">
     <h2 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.02em] text-[#1a1d21]">Notifications</h2>
     <button type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
-     className="min-h-9 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
+     className="min-h-11 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
    </div>
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
    {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
@@ -98,9 +98,9 @@ export function HrRecruiterBell(){
       <span className="flex-1">{item.label}</span><span className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</span>
      </Link></li>)}</ul></ScrollCue>}
    <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
-    {unread>0?<Button variant="primary" type="button" disabled={loading} onClick={()=>void markAll()}
-     >{loading?"Saving…":"Mark all read"}</Button>:null}
+    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
+    {unread>0?<button type="button" disabled={loading} onClick={()=>void markAll()}
+      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50">{loading?"Saving…":"Mark all read"}</button>:null}
    </div>
    {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}
   </section>:null}
