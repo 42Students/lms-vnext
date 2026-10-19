@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CollegeClassRowActions } from "@/components/academics/college-section-management";
 import { CollegeSectionLifecycleAction } from "@/components/academics/college-section-lifecycle-action";
@@ -342,10 +343,10 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </div>
           </details>
           <div className="flex items-end gap-2">
-            <button type="submit"
-              className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+            <Button variant="primary" type="submit"
+              >
               Filter
-            </button>
+            </Button>
             <Link href={path}
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Clear
