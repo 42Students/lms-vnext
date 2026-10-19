@@ -9,6 +9,7 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { ErrorState } from "@/components/ui/error-state";
 import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref,projectAdminSubmissionHref } from "@/modules/projects/admin-submissions-query-model";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
@@ -115,31 +116,23 @@ export async function ProjectAdminSubmissionsPage({
         eyebrow={eyebrow}
         title="Submissions dashboard"
         description="Final project deliverables across all workspaces."
+        needsDoingLabel="Review status:"
+        selectedNeedKey={query.submissionStatus}
+        needsDoingItems={[
+          {key:"UNDER_REVIEW",label:"Under Review",href:projectAdminSubmissionHref(queuePath,query,"UNDER_REVIEW"),tone:"warning"},
+          {key:"LOCKED",label:"Locked",href:projectAdminSubmissionHref(queuePath,query,"LOCKED"),tone:"neutral"},
+          {key:"DRAFT_REVISING",label:"Draft (revising)",href:projectAdminSubmissionHref(queuePath,query,"DRAFT_REVISING"),tone:"info"},
+        ]}
       />
-
-      <nav aria-label="Submission categories" className="flex flex-wrap gap-3 border-b border-border text-sm font-semibold">
-        <Link href={projectAdminSubmissionHref(queuePath,query)} aria-current={view==="ALL"?"page":undefined}
-          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text">All submissions</Link>
-        <Link href={projectAdminUnsubmittedHref(queuePath,query)} aria-current={view==="NOT_SUBMITTED"?"page":undefined}
-          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text">Not submitted</Link>
-      </nav>
-      <nav aria-label="Review status shortcuts" className="flex flex-wrap gap-2 text-xs font-semibold">
-        <Link href={projectAdminSubmissionHref(queuePath,query,"UNDER_REVIEW")}
-          aria-current={query.submissionStatus==="UNDER_REVIEW"?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
-          Under Review
-        </Link>
-        <Link href={projectAdminSubmissionHref(queuePath,query,"LOCKED")}
-          aria-current={query.submissionStatus==="LOCKED"?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
-          Locked
-        </Link>
-        <Link href={projectAdminSubmissionHref(queuePath,query,"DRAFT_REVISING")}
-          aria-current={query.submissionStatus==="DRAFT_REVISING"?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
-          Draft (revising)
-        </Link>
-      </nav>
+      <Tabs
+        ariaLabel="Submission categories"
+        renderPanel={false}
+        value={view}
+        items={[
+          {value:"ALL",label:"All submissions",href:projectAdminSubmissionHref(queuePath,query),count:result?.total},
+          {value:"NOT_SUBMITTED",label:"Not submitted",href:projectAdminUnsubmittedHref(queuePath,query),count:unsubmitted?.total},
+        ]}
+      />
       {view==="NOT_SUBMITTED"&&!unsubmitted?<ErrorState
         title="Unsubmitted workspaces unavailable"
         description="The unsubmitted workspace list could not be loaded. Your filters have not changed."
