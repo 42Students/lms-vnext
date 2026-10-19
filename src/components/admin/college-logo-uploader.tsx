@@ -77,12 +77,12 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   {(savedUrl||currentUrl)?<Card as="div" className="w-fit p-3 sm:p-3">
    <img src={savedUrl||currentUrl!} alt="Current college logo" className="h-24 w-24 object-contain"/>
   </Card>:null}
-  {canEdit?<><label className="block text-[13px] font-semibold text-body">Select logo to crop
+  {canEdit?<><label className="block text-[13px] font-semibold text-body print:hidden">Select logo to crop
     <Input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy}
      onChange={e=>select(e.target.files?.[0]??null)}
      className="mt-2 min-h-11 md:min-h-9 w-full"/>
    </label>
-   {file&&preview?<div className="space-y-3">
+   {file&&preview?<div className="space-y-3 print:hidden">
     <div className="relative h-52 w-52 overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
       <img src={preview} alt="Selected logo crop preview" className="h-full w-full object-cover"
        style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
@@ -102,7 +102,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
     </Button>
    </div>:null}</>:<Alert tone="info">You can view the logo, but cannot change it.</Alert>}
   {canEdit&&(savedUrl||currentUrl)?<Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirmRemove(true)}
-   className="min-h-11 md:min-h-9">
+   className="min-h-11 md:min-h-9 print:hidden">
    Remove uploaded logo
   </Button>:null}
   <ConfirmDialog open={confirmRemove} onOpenChange={setConfirmRemove} title="Remove this college's uploaded logo?" description="The uploaded logo will be removed from this college." confirmLabel="Remove uploaded logo" confirmVariant="danger" pending={busy} onConfirm={()=>void remove()}/>
