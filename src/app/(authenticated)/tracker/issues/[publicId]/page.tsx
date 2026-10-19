@@ -131,9 +131,9 @@ export default async function TrackerIssueDetailPage({
         {detail.attachments.length === 0 ? (
           <p className="border-y border-border py-5 text-sm text-muted-foreground">No screenshot metadata.</p>
         ) : (
-          <div className="grid gap-2">
+          <div className="divide-y divide-border border-y border-border">
             {detail.attachments.map((attachment) => (
-              <div key={attachment.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm">
+              <div key={attachment.id} className="py-4 text-sm">
                 <p className="m-0 font-semibold text-foreground">{attachment.originalFilename}</p>
                 <p className="mt-1 text-muted-foreground">
                   {attachment.contentType} · {Math.ceil(attachment.sizeBytes / 1024)} KiB · {when(attachment.createdAt)}
@@ -160,9 +160,9 @@ export default async function TrackerIssueDetailPage({
         {detail.activities.length === 0 ? (
           <p className="border-y border-border py-5 text-sm text-muted-foreground">No workflow history yet.</p>
         ) : (
-          <ol className="grid gap-3">
+          <ol className="divide-y divide-border border-y border-border">
             {detail.activities.map((activity) => (
-              <li key={activity.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+              <li key={activity.id} className="py-4">
                 <p className="m-0 text-sm font-semibold text-foreground">{activity.type}</p>
                 <p className="mt-1 text-sm text-body">
                   {auditActivityTransition(activity)}
