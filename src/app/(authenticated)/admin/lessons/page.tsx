@@ -73,11 +73,11 @@ export default async function SuperAdminLessonsPage({
     <Link className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text" href="/admin/lessons">Clear filters</Link>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
     {filtersResult.status==="rejected"?<p role="status"
-      className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+      className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
       Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
     </p>:null}
     {pathsResult.status==="fulfilled"?<SuperAdminLessonCreate paths={paths}/>:
-      <p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+      <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
         Lesson creation options are temporarily unavailable. Existing lessons remain visible.
       </p>}
     {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items}/>:null}
@@ -99,7 +99,7 @@ export default async function SuperAdminLessonsPage({
             expectedSequence={lesson.sequence} canMoveUp={lesson.sequence>0} canMoveDown={true}/>
         </div>:null}
         <Link href={`/admin/courses/offerings/${encodeURIComponent(lesson.offeringId)}`}
-          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
           Open offering to add lessons →
         </Link>
       </article>)}
