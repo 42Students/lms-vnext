@@ -54,7 +54,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
          <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
         </Select>
       </label>:null}
-      <button type="submit" className="min-h-11 self-end rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">Filter</button>
+      <Button variant="primary" type="submit" className="self-end">Filter</Button>
     </form>
     <p className="text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
     {data.items.length ? <div className="divide-y divide-border border-y border-border">
