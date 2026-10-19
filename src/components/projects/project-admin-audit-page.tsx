@@ -192,7 +192,7 @@ export async function ProjectAdminAuditPage({
 
       <Tabs ariaLabel="Audit time range" renderPanel={false} value={selectedAuditRange} items={auditRangeTabs} />
       <form
-        className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-5"
+        className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2 min-[1366px]:grid-cols-5"
         action={basePath + "/audit"}
       >
         <label>
@@ -270,7 +270,7 @@ export async function ProjectAdminAuditPage({
             defaultValue={to}
           />
         </label>
-        <div className="flex flex-wrap items-end gap-2 sm:col-span-2 xl:col-span-5">
+        <div className="flex flex-wrap items-end gap-2 md:col-span-2 min-[1366px]:col-span-5">
           <Button
             type="submit"
             className="justify-center"
@@ -286,7 +286,7 @@ export async function ProjectAdminAuditPage({
         </div>
       </form>
 
-      <section aria-label="Audit page summary" className="grid divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+      <section aria-label="Audit page summary" className="grid min-w-0 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
         {([
           {label:"Actions shown",value:result.groups.reduce((sum,g)=>sum+g.count,0)},
           {label:"People who made changes",value:new Set(result.groups.map(g=>g.latest.actor?.id)
