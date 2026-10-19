@@ -26,7 +26,7 @@ export default async function CollegeSemestersPage({
       <PageHeader eyebrow="College Admin · Academic Setup" title="Semesters" />
       <ErrorState title="Invalid semester filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
-        action={<Link href="/college/semesters" className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>} />
+        action={<Link href="/college/semesters" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>} />
     </main>;
   }
   return <main className="min-w-0 space-y-4">
