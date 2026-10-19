@@ -2,6 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import {useState} from "react";
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 type Answer={id:string;promptSnapshot:string;questionType:string;pointsPossible:number;pointsAwarded:number;
@@ -67,8 +68,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
      <p>Attempt {item.attemptNumber} · {item.score}/{item.maxScore} points</p>
      <p className="text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{
       dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.submittedAt))} IST</p>
-    <details className="mt-2 rounded border border-border p-2">
-      <summary className="cursor-pointer font-semibold">View Answers ({item.answers.length})</summary>
+    <Disclosure title={`View Answers (${item.answers.length})`} className="mt-2 rounded border border-border p-2">
       {item.answers.length===0?<p className="mt-2 text-muted-foreground">No saved answers for this attempt.</p>:null}
       <ol className="mt-2 space-y-3">{item.answers.map((answer,index)=><li key={answer.id} className="rounded border border-border p-2">
        <p className="font-semibold">Question {index+1}: {answer.promptSnapshot}</p>
@@ -80,7 +80,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
         {option.correct?<span className="ml-2 text-success">(Correct answer)</span>:null}
        </li>)}</ul>
       </li>)}</ol>
-     </details>
+     </Disclosure>
     </li>)}</ul>
    </>:null}
     {loading?<p role="status" className="mt-3 text-xs text-muted-foreground">Loading quiz submissions, page {page}…</p>:null}
