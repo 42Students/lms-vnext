@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
+import { DataTable } from "@/components/ui/data-table";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -55,9 +56,14 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
      disabled={busy} onFiles={files=>void read(files?.[0]??null)}/>
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
-   <div tabIndex={0} role="group" aria-label="Selection import preview, scroll for more" className="max-h-52 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
-    {entries.map(e=><p key={e.applicationId} className="min-h-9 border-b border-border px-2 py-2 last:border-b-0">{e.name} · {e.roleTitle}
-     {e.annualCtcInr==null?"":" · ₹"+(e.annualCtcInr/100000)+" LPA"}</p>)}
+   <div className="max-h-52 min-w-0 overflow-auto">
+    <DataTable<SelectionImportEntry> caption="Selection import preview" rows={entries}
+     getRowKey={item=>item.applicationId} empty={<p>No matched selections yet.</p>}
+     columns={[
+      {key:"student",header:"Student",cell:item=>item.name,mobilePriority:"primary"},
+      {key:"role",header:"Role",cell:item=>item.roleTitle,mobilePriority:"secondary"},
+      {key:"package",header:"Package",cell:item=>item.annualCtcInr==null?"—":"₹"+item.annualCtcInr/100000+" LPA",mobilePriority:"secondary"},
+     ]}/>
    </div>
    <Button variant="primary" type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
     className="min-h-11 md:min-h-9 px-4">
