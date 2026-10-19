@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
@@ -73,9 +74,9 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
     {query.tab==="WAITING"?<fieldset className="min-w-0 space-y-2 sm:col-span-2">
       <legend className="text-sm font-semibold">Waiting since</legend>
       <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("TODAY")} className="min-h-[var(--lms-control-height)] ">Today</Button>
-        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("WEEK")} className="min-h-[var(--lms-control-height)] ">This week</Button>
-        <Button variant="secondary" type="button" onClick={()=>chooseWaitingPreset("OLDER")} className="min-h-[var(--lms-control-height)] ">Over a week</Button>
+        <FilterChip type="button" onClick={()=>chooseWaitingPreset("TODAY")}>Today</FilterChip>
+        <FilterChip type="button" onClick={()=>chooseWaitingPreset("WEEK")}>This week</FilterChip>
+        <FilterChip type="button" onClick={()=>chooseWaitingPreset("OLDER")}>Over a week</FilterChip>
       </div>
       <p className="text-xs text-muted-foreground">These shortcuts filter persisted submitted dates in IST and reset conflicting waiting-age filters.</p>
     </fieldset>:null}

@@ -2,6 +2,7 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Alert} from "@/components/ui/alert";
 import {TpoDriveEditForm} from "@/components/placements/tpo-drive-edit-form";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
@@ -18,11 +19,11 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
  return <div className="min-w-0 space-y-5">
   <Link href={"/tpo/placements/jobs/"+job.id} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Drives" title="Edit drive" description={"Update "+job.title+" carefully. Save changes before returning to the drive."}/>
-  {job.editable?<TpoDriveEditForm job={job}/>:<section role="status" aria-label="Drive edit unavailable" className="space-y-3 text-sm text-body border-b border-border pb-6">
+  {job.editable?<TpoDriveEditForm job={job}/>:<Alert tone="warning" aria-label="Drive edit unavailable">
    <p>{job.status==="CLOSED"||job.status==="CANCELLED"
     ?"This drive is closed: nothing here can be changed. To run it again, open Create drive and pick it under Clone a past drive."
     :"This drive is not editable. The saved details are preserved. Open the drive workspace to review them."}</p>
    <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Create drive</Link>
-  </section>}
+  </Alert>}
  </div>;
 }

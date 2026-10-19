@@ -1,4 +1,5 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import {collegeCourseCatalogueHref,paginateCollegeCourses,type CollegeCourseCatalogueQuery} from "@/modules/courses/college-course-catalogue-model";
 import {collegeCourseCatalogueExportHref} from "@/modules/courses/college-course-catalogue-export-model";
@@ -511,16 +512,12 @@ export function AdminCourseOverview({
           rows={catalogue?catalogue.items:workspace.courses}
           getRowKey={(course) => course.id}
         />
-        {catalogue&&catalogueQuery?<nav aria-label="Course catalogue pages"
-          className="flex flex-wrap items-center justify-between gap-3 text-sm">
-          <p className="text-muted-foreground">{catalogue.total} matching courses · page {catalogue.page} of {catalogue.pages} · {catalogue.pageSize} per page</p>
-          <div className="flex gap-3">
-           {catalogue.page>1?<Link className="font-semibold text-primary-text"
-            href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page-1}).replace("/college/courses",courseBasePath)}>Previous</Link>:null}
-           {catalogue.page<catalogue.pages?<Link className="font-semibold text-primary-text"
-            href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page+1}).replace("/college/courses",courseBasePath)}>Next</Link>:null}
-          </div>
-         </nav>:null}
+        {catalogue&&catalogueQuery?<div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+          <p className="text-muted-foreground">{catalogue.total} matching courses · {catalogue.pageSize} per page</p>
+          <Pagination page={catalogue.page} pageCount={catalogue.pages}
+            hrefForPage={page => collegeCourseCatalogueHref({...catalogueQuery,page}).replace("/college/courses",courseBasePath)}
+            label="Course catalogue pages" showBoundaryLinks={false}/>
+         </div>:null}
       </section>
 
       <section className="space-y-3">

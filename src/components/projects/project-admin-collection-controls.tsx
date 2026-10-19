@@ -213,12 +213,12 @@ export function ProjectAdminPagination({
         {total} result{total === 1 ? "" : "s"} ·
         Page {page} of {totalPages}
       </p>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Link
           href={href(Math.max(1, page - 1))}
           aria-disabled={page <= 1}
           className={
-            "rounded-lg border border-border px-3 py-2 font-semibold " +
+            "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 " +
             (page <= 1
               ? "pointer-events-none opacity-50"
               : "hover:bg-muted")
@@ -232,7 +232,7 @@ export function ProjectAdminPagination({
           )}
           aria-disabled={page >= totalPages}
           className={
-            "rounded-lg border border-border px-3 py-2 font-semibold " +
+            "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 " +
             (page >= totalPages
               ? "pointer-events-none opacity-50"
               : "hover:bg-muted")

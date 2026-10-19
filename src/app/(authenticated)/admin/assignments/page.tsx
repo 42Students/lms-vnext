@@ -49,7 +49,7 @@ export default async function SuperAdminAssignmentsPage({
   return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Assignments" />
     <a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
-     className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export assignments.csv</a>
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Export assignments.csv</a>
     {lessonsResult.status==="fulfilled"
       ?<CollegeAssignmentCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>
       :<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">

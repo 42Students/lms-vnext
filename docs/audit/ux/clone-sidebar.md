@@ -3,7 +3,7 @@
 Owner: chat-19. Source: `docs/design/ui-clone-checklist.md:8-18`, `docs/design/old-lms-shell.css`, `docs/design/old-lms-shell-spec.md` and `docs/design/legacy-styles/`. The owner runs runtime/CI and screenshot comparison later; **none was run here**.
 
 - [ ] **B3 Sidebar** (missing: command-level full-repository grep proof and exact historical icon/artwork equivalence; browser icon/hover/tablet verification is deferred to checklist J. See refreshed source-value and import evidence below.)
-- [ ] **B4 Footer, progress and route transitions** (footer roles and original styling now source-matched to lms2-fe/prod-2026; slow-route overlay matches legacy fullscreen layout and 20s recovery text, but indeterminate thin bar and hand-rendered spin dots are modern adaptations; exact browser comparison and executable full-repo greps remain outstanding.)
+- [ ] **B4 Footer, progress and route transitions** (role-specific mobile footer and 20s recovery are source-matched; the four-dot spinner now follows Ant Design v5 dimensions and per-dot animation, but the thin intent bar remains a modern adaptation; executable repo-wide greps and browser comparison are outstanding.)
 
 ## B3 value proof (legacy → vNext)
 
@@ -252,3 +252,54 @@ measure, not an old LMS property.
 The mixed solution is intentionally labeled as partial legacy parity.
 **Do not tick B4** without the full checkout grep, final icon/spinner artwork
 comparison and actual phone/tablet browser proof. No CI/browser run occurred.
+
+## Replacement-lane checkpoint — 2026-10-19 (commits 287c109, dd61fe8, 372911a)
+
+The previous chat-19 head `e21ba2a` was already an ancestor of
+`main` (0 ahead, 653 behind). Branch `chatgpt/chat-19-b` was fast-forwarded
+to `12ee0a58` before the following new work; no unique lane commits
+were discarded. All writes in this checkpoint target only this lane branch.
+
+### B4: exact source/implementation delta
+
+| Property / interaction | Original old-LMS reference and value | vNext reference and value | Strict result |
+|---|---|---|---|
+| Fullscreen masking | `lms2-fe/prod-2026/src/styles/components/_common.scss:1008-1019`: fixed, white .99 mask, z999 | `route-progress.css:35-46`: matching mask | Source matched |
+| Large spinner selection | `lms2-fe/prod-2026/src/components/Loader/loader.js:20`: AntD `Spin size="large"` | `route-progress.tsx:92-96`, `route-progress.css:58-77`: 32px group, four 14px dot elements | AntD v5 pattern reproduced in CSS; rendered identity pending |
+| Individual dot animation | Legacy `package.json` dependency `antd:^5.1.7`; large Spin uses per-dot 1s alternate opacity with stagger | `route-progress.css:67-87`: opacity .3→1, scale(.75), delays 0/.4/.8/1.2s, 1.2s rotating wrapper | Closer source adaptation, not browser-certified |
+| Spinner colour | AntD v5 default `colorPrimary` is #1677ff, no ConfigProvider in legacy `src/pages/_app.js` | `route-progress.css:72` #1677ff | ConfigProvider elsewhere not exhaustively ruled out; keep unverified |
+| Slow recovery | `lms2-fe/prod-2026/Loader/loader.js:6-30`: 20s then “Still loading…” and Reload | `route-progress.tsx:43,97-100`: 20s and same copy/action | Source matched |
+| Back/forward query-only history | Legacy App Router equivalent not present; no historical progress bar | `route-progress.tsx:63-73`: if pathname unchanged, clear timers/overlay rather than starting a 30s pending state | Modern correctness fix; no historic equality claim |
+| Accessibility and reduced motion | Old full-screen loader offered a status, AntD handles Spin internals | `route-progress.tsx:89-95` role=status; `route-progress.css:90-92` stops wrapper AND dot animation when reduced-motion | Adaptation |
+| Desktop, tablet and phone | Fullscreen old `_common.scss:1008-1019` does not vary by media breakpoint | New `route-progress.css:35-46` fixed fullscreen at 0–767, 768–1199 and ≥1200; sidebar remains a separate flex sibling | Structural rule proof only, browser check outstanding |
+
+**Source regression guard:** `tests/unit/chat19-route-progress.test.ts` now checks
+the four staggering delays, dot dimensions, reduced-motion behaviour, and the
+same-path popstate early clear. It was written but **not run**, per no-code/no-CI
+instruction.
+
+**Coverage status:** No local `git grep` was executed. The prior shell-subtree
+fetch scan of 40 files / 144 imports / 0 unresolved and 0 raw controls remains
+the available source-only coverage record; it is not sufficient to tick either
+category under STRICT TICK RULE. The committed exact commands live at
+`scripts/audit/chat19-shell-grep.cjs`. B3 and B4 remain `[ ]` until the
+orchestrator executes the ledger, attaches output counts, and completes the
+historical icon/spinner and phone/tablet comparisons.
+
+**Next file:** `docs/audit/ux/clone-sidebar.md` after the orchestrator runs
+`node scripts/audit/chat19-shell-grep.cjs` and provides the full checkout output.
+
+### B3 no-regression test correction (commits 63a76a2, be2fad7)
+
+Two existing chat-19 suites described earlier abandoned DOM variants and would have
+incorrectly failed the current legacy-matched implementation:
+
+| State | Original source requirement | vNext actual file:line | Guard now checks |
+|---|---|---|---|
+| Push rather than overlay | `old-lms-shell.css:13,18`: rail is a relative flex sibling, width 96→256px | `app-shell.tsx:75-104`; `sidebar-legacy.css:7-25` | `chat19-north-star-legacy-sidebar.test.ts:150-152`: flex frame/page sizing, no fake padding-left shift |
+| Mobile drawer role and Escape | `legacy-styles/components___antddesign.scss:305-359`: modal left drawer, 82% width / max300px | `mobile-navigation.tsx:25-37`; `ui/drawer.tsx:38-41`: native dialog and onCancel | `chat19-north-star-legacy-sidebar.test.ts:178-186,229-235` and `chat19-sidebar-hr-original-icons-and-secondary-surfaces.test.ts:30-34` |
+| Mobile body gutter | `components___antddesign.scss:348-359`: 12px sides, 8px top | `mobile-navigation.tsx:35`: `!px-3 !pt-2`, `sidebar-legacy.css:220`: internal nav padding 0 | Guard compares Drawer body gutter rather than obsolete nav padding |
+
+No page, route, or UI shell contract was weakened; the assertions now inspect
+where the behaviour actually lives. Neither suite was run, and **neither B3
+nor B4 is ticked** without the pending coverage/output and browser proof.

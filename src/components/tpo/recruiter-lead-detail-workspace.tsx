@@ -1,5 +1,6 @@
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
+import { FilterChip } from "@/components/ui/filter-chip";
 
 import {Dialog} from "@/components/ui/dialog";
 
@@ -560,9 +561,8 @@ export function RecruiterLeadDetailWorkspace({
               <h2 className="text-lg font-semibold">Log activity</h2>
               <form className="space-y-3" onSubmit={e => void addActivity(e)}>
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Interaction type">
-                  {ACTIVITY_TYPES.map(type=><button type="button" key={type}
-                    className={logType===type?primary:button} aria-pressed={logType===type}
-                    onClick={()=>{setLogType(type);setLogOutcome("");}}>{type==="CALL"?"Call":type==="EMAIL"?"Email":type==="MEETING"?"Meeting":"Note"}</button>)}
+                  {ACTIVITY_TYPES.map(type=><FilterChip type="button" key={type} aria-pressed={logType===type}
+                    onClick={()=>{setLogType(type);setLogOutcome("");}}>{type==="CALL"?"Call":type==="EMAIL"?"Email":type==="MEETING"?"Meeting":"Note"}</FilterChip>)}
                 </div>
                 <label className="block text-sm">Type
                   <select className={input + " mt-1"} value={logType}
@@ -572,9 +572,8 @@ export function RecruiterLeadDetailWorkspace({
                 </label>
                 {logType==="CALL"?<div className="flex flex-wrap gap-2" role="group" aria-label="Call outcome">
                   {["Connected","No answer","Busy","Wrong number","Not interested"].map(outcome=>
-                   <button key={outcome} type="button" aria-pressed={logOutcome===outcome}
-                    className={logOutcome===outcome?primary:button}
-                    onClick={()=>setLogOutcome(outcome)}>{outcome}</button>)}
+                   <FilterChip key={outcome} type="button" aria-pressed={logOutcome===outcome}
+                    onClick={()=>setLogOutcome(outcome)}>{outcome}</FilterChip>)}
                 </div>:null}
                 <label className="block text-sm">Outcome
                   {logType==="CALL"?<select className={input + " mt-1"} required

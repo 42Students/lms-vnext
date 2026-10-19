@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Alert } from "@/components/ui/alert";
+import { Disclosure } from "@/components/ui/disclosure";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {tenantCreationScopeRequest} from "@/modules/colleges/admin-tenant-create-handoff";
 
@@ -90,7 +92,7 @@ export function CollegeCreateForm({
     <form
       onSubmit={submit}
       aria-busy={pending}
-      className="grid gap-3 lg:grid-cols-[1fr_1fr_12rem_auto] lg:items-end border-t border-border pt-4"
+      className="grid min-w-0 gap-3 border-t border-border pt-4 lg:grid-cols-[1fr_1fr_12rem_auto] lg:items-end"
     >
       <div>
         <label
@@ -151,9 +153,8 @@ export function CollegeCreateForm({
         />
       </div>
       <div className="space-y-3 lg:col-span-4">
-       <details className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
-        <summary className="cursor-pointer text-sm font-semibold">Address details (optional)</summary>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+       <Disclosure title="Address details (optional)" className="rounded-[var(--lms-radius-card)] border border-border p-3">
+        <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
          {([
           ["City",city,setCity,128],["State",state,setState,128],
           ["Address",addressLine1,setAddressLine1,255],["Address line 2",addressLine2,setAddressLine2,255],
@@ -161,10 +162,10 @@ export function CollegeCreateForm({
           ["Country",country,setCountry,128],
          ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-1 text-xs font-semibold">
           {label}<Input value={value} disabled={pending} onChange={e=>setter(e.target.value)} maxLength={maxLength}
-           className="min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] w-full"/>
+           className="w-full"/>
          </label>)}
         </div>
-       </details>
+       </Disclosure>
        <p id="college-code-help" className="text-xs text-muted-foreground">Unique ID / Code identifies this college across links and integrations. Choose it carefully; it is not editable after creation.</p>
       </div>
       <Button
@@ -181,9 +182,9 @@ export function CollegeCreateForm({
       </Button>
       {restored?<p role="status" className="text-xs text-body">Draft restored</p>:null}
       {error ? (
-        <p role="alert" className="m-0 text-xs font-semibold text-error lg:col-span-4">
+        <Alert tone="error" className="lg:col-span-4">
           {error}
-        </p>
+        </Alert>
       ) : null}
     </form>
   );

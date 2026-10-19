@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <PageHeader title="College availability" />
     <ErrorState title="College availability access denied"
       description="Only an active Super Admin can read global project template assignments."
-      action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>} />
+      action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />} />
   </div>;
   const raw = await searchParams;
   const parsed = templateCollegeAvailabilityQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
@@ -51,7 +52,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   return <div className="min-w-0 space-y-5">
     <PageHeader title={data.template.title}
       description="Availability within the current safety scope. Existing workspaces retain their pinned versions."
-      actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Template catalogue</Link>} />
+      actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">← Template catalogue</Link>} />
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">College name or code
@@ -68,7 +69,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
         canAssign:can(context,"project-template.assign",{collegeId:row.id,organizationId:row.organizationId})}))}/>
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
       {data.items.map(row => <article key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="break-words text-base font-semibold text-foreground">{row.name}</h2>
+        <h2 className="break-words text-base font-semibold text-[var(--lms-heading)]">{row.name}</h2>
         <p className="text-xs text-muted-foreground">{row.code}</p>
         <StatusBadge tone={row.assignment ? "success" : "neutral"}>{row.assignment ? "Assigned" : "Not assigned"}</StatusBadge>
         {row.assignment ? <p className="text-sm text-body">Pinned version {row.assignment.assignedVersion ?? "Unresolved"} ·

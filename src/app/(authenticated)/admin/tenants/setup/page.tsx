@@ -5,6 +5,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Tabs} from "@/components/ui/tabs";
 import {ErrorState} from "@/components/ui/error-state";
+import {Alert} from "@/components/ui/alert";
+import {Card} from "@/components/ui/card";
+import {EmptyState} from "@/components/ui/empty-state";
 import {getSuperAdminTenantLifecycleDetail,getSuperAdminTenantLifecycleDirectory} from "@/modules/colleges/admin-tenant-lifecycle-service";
 import {CollegeServiceError} from "@/modules/colleges/service";
 import {can,requirePermission} from "@/modules/permissions/policy";
@@ -27,14 +30,14 @@ export default async function SuperAdminTenantSetup({
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
   return <div className="min-w-0 space-y-5">
-   <PageHeader title="Tenant Setup"/>
+   <PageHeader title="Tenant Setup" actions={<PageBackLink href="/dashboard" label="Dashboard"/>}/>
    <ErrorState title="Tenant setup access denied"
     description="Your account cannot configure Super Admin tenants."
-    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+    action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
   </div>;
  const parsed=parseSuperAdminTenantSetupQuery(await searchParams);
  if(!parsed.success)return <div className="min-w-0 space-y-5">
-  <PageHeader title="Tenant Setup"/>
+  <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
   <ErrorState title="Invalid tenant setup step"
    description="Select a valid Tenant structure or Launch setup step."
    action={<Link href="/admin/tenants/setup"
@@ -63,7 +66,7 @@ export default async function SuperAdminTenantSetup({
  }catch(error){
   if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();
   return <div className="min-w-0 space-y-5">
-   <PageHeader title="Tenant Setup"/>
+   <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
    <ErrorState title="Tenant setup unavailable"
     description="The authorized organization or college readiness information could not be verified. Setup actions are unavailable until the read succeeds."
     action={<Link href={tabLink(tab)} className="font-semibold text-primary-text">Retry tenant setup</Link>}/>
@@ -77,7 +80,7 @@ export default async function SuperAdminTenantSetup({
   <PageHeader title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."
    actions={<PageBackLink href="/admin/tenants" label="Tenant directory" />} />
-  <section aria-label="Tenant setup overview" className="grid gap-3 sm:grid-cols-3">
+  <section aria-label="Tenant setup overview" className="grid min-w-0 gap-3 md:grid-cols-3">
    <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Current step</p>
     <p className="mt-2 font-semibold">{tab==="STRUCTURE"?"1. Tenant structure":"2. Launch setup"}</p>
@@ -97,16 +100,16 @@ export default async function SuperAdminTenantSetup({
       {value:"LAUNCH",label:"2. Launch setup",href:tabLink("LAUNCH")},
     ]}/>
   {tab==="STRUCTURE"?<>
-   <section aria-label="Create organization and college" className="grid min-w-0 gap-4 xl:grid-cols-2">
+   <section aria-label="Create organization and college" className="grid min-w-0 gap-4 lg:grid-cols-2">
     <div className="min-w-0 space-y-3 border-b border-border pb-5">
      <h2 className="font-semibold text-foreground">Create an organization</h2>
      {orgCreate?<OrganizationCreateForm/>:
-      <p role="status" className="text-sm text-body">Organization creation is not permitted in your selected administrative scope.</p>}
+      <Alert tone="warning">Organization creation is not permitted in your selected administrative scope.</Alert>}
     </div>
     <div className="min-w-0 space-y-3 border-b border-border pb-5">
      <h2 className="font-semibold text-foreground">Create a college</h2>
      {creatable.length?<CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
-      <p role="status" className="text-sm text-body">No authorized active organization is available. Create one or change the Super Admin scope.</p>}
+      <Alert tone="warning">No authorized active organization is available. Create one or change the Super Admin scope.</Alert>}
     </div>
    </section>
    <section aria-label="Existing organizations and colleges" className="grid min-w-0 gap-4 lg:grid-cols-2">
@@ -138,27 +141,29 @@ export default async function SuperAdminTenantSetup({
    <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 min-[768px]:min-h-9  items-center font-semibold text-primary-text underline">Continue to launch setup →</Link>
   </>:college?<>
    <h2 className="text-lg font-semibold">{college.name} · Launch setup</h2>
-   <p role="status" className="border-b border-border py-4 text-sm text-body">
+   <Alert tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
     Persisted readiness: {summary.label}. {summary.detail}
-   </p>
-   <div className="grid gap-3 sm:grid-cols-3">
+   </Alert>
+   <div className="grid min-w-0 gap-3 md:grid-cols-3">
     {[
      {label:"Web address",href:"/subdomain",description:"Configure and verify the college login domain."},
      {label:"Sign-in",href:"/signin",description:"Review login methods and account access."},
      {label:"Look and feel",href:"/branding",description:"Set visible college branding and identity."},
-    ].map(card=><Link key={card.label} href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
-     className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 hover:border-primary">
-     <h3 className="font-semibold text-primary-text">{card.label}</h3>
-     <p className="mt-2 text-sm text-body">{card.description}</p>
-    </Link>)}
+    ].map(card=><Card key={card.label} as="article" className="min-w-0 hover:border-[var(--lms-primary)]">
+     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
+      className="block min-h-11 rounded-[var(--lms-control-radius)] font-semibold text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <h3 className="font-semibold">{card.label}</h3>
+      <p className="mt-2 text-sm font-normal text-body">{card.description}</p>
+     </Link>
+    </Card>)}
    </div>
    <section aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="text-lg font-semibold">Launch checklist</h2>
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="text-sm font-semibold text-primary-text underline">Inspect persisted readiness →</Link>
     </div>
-    <ol className="grid min-w-0 gap-3 sm:grid-cols-2">
-     {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <ol className="grid min-w-0 gap-x-5 gap-y-2 md:grid-cols-2">
+     {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <h3 className="mt-1 break-words font-semibold text-foreground">{step.title}</h3>
       <p className="mt-2 text-sm text-body">{step.description}</p>
@@ -167,10 +172,8 @@ export default async function SuperAdminTenantSetup({
     </ol>
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
-  </>:<section role="status" className="border-b border-border py-5">
-    <h2 className="font-semibold">No college selected</h2>
-    <p className="mt-2 text-sm text-body">No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant.</p>
-    <Link href={tabLink("STRUCTURE")} className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9  items-center font-semibold text-primary-text underline">Create or select a college →</Link>
-  </section>}
+  </>:<EmptyState title="No college selected"
+   description="No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant."
+   action={<Link href={tabLink("STRUCTURE")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Create or select a college →</Link>}/>}
  </div>;
 }

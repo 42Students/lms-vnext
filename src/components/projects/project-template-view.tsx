@@ -142,24 +142,24 @@ function TemplateRows({
           None configured.
         </p>
       ) : (
-        <div className="mt-3 space-y-3">
+        <div className="mt-3 divide-y divide-border border-y border-border">
           {rows.map((row, index) => (
             <article
               key={row.key ?? index}
-              className="rounded-lg border border-border bg-muted p-3"
+              className="min-w-0 py-3"
             >
-              <p className="m-0 text-sm font-semibold text-foreground">
+              <p className="m-0 break-words text-sm font-semibold text-foreground">
                 {row.title?.trim() ||
                   row.key?.trim() ||
                   "Untitled"}
               </p>
               {row.description ? (
-                <p className="mt-1 text-xs leading-5 text-body">
+                <p className="mt-1 break-words text-xs leading-5 text-body">
                   {row.description}
                 </p>
               ) : null}
               {row.priority ? (
-                <p className="mb-0 mt-2 text-xs text-muted-foreground">
+                <p className="mb-0 mt-2 break-words text-xs text-muted-foreground">
                   Priority: {row.priority}
                 </p>
               ) : null}

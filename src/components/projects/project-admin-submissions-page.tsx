@@ -165,7 +165,7 @@ export async function ProjectAdminSubmissionsPage({
           label="Unsubmitted workspace pages"/>
       </section>:null}
       {view==="ALL" && result ? <>
-      {summary?<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      {summary?<div className="grid min-w-0 gap-3 md:grid-cols-2 min-[1366px]:grid-cols-4">
         {([
           ["Active workspaces", summary.activeWorkspaces, basePath+"?status=ACTIVE"],
           ["Pending review", summary.pendingReview, queuePath+"?status=ACTIVE&submissionStatus=SUBMITTED"],
@@ -238,7 +238,7 @@ export async function ProjectAdminSubmissionsPage({
                     submission.status==="SUBMITTED"?"Under Review":submission.status}
                 </StatusBadge>
               </div>
-              <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-3">
+              <dl className="mt-3 grid min-w-0 gap-2 text-xs text-body md:grid-cols-3">
                 <div><dt className="font-semibold">Pending</dt><dd>{
                   submission.status === "SUBMITTED" && submission.submittedAt
                     ? (projectAdminElapsedDays(submission.submittedAt,renderedAt)===null?"—":projectAdminElapsedDays(submission.submittedAt,renderedAt)+" days")
