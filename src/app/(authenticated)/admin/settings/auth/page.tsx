@@ -5,6 +5,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {can} from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {ErrorState} from "@/components/ui/error-state";
+import {Banner} from "@/components/ui/banner";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {platformAuthPostureItems} from "@/modules/platform-settings/auth-posture-model";
 import {LEGACY_TENANT_SETTING_SPECS} from "@/modules/platform-settings/legacy-setting-specs";
@@ -23,9 +24,9 @@ export default async function SuperAdminAuthSettings(){
   <PageHeader title="Authentication settings"
    description="Read-only checklist of deployment-managed privileged login policies. This page neither inspects secrets nor changes authentication."
    actions={<PageBackLink href="/admin/settings" label="Platform settings" />} />
-  <div role="status" className="border-b border-border pb-4 text-sm text-body">
+  <Banner tone="info">
    Configuration runtime status is not attested by this page. Privileged second-factor readiness must be verified separately before production.
-  </div>
+  </Banner>
   <ul className="grid min-w-0 gap-3 sm:grid-cols-2">
    {platformAuthPostureItems().map(item=><li key={item.id} className="min-w-0 border-b border-border py-4">
     <h2 className="break-words font-semibold text-foreground">{item.title}</h2>

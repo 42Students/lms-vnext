@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -83,10 +85,10 @@ export default async function TpoScheduleConflictsPage({
         ))}
       </section>
       {data.limited ? (
-        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
+        <Alert tone="warning">
           More than 1,000 scheduled rounds match. Only the first 1,000 were assessed;
           this is not a complete conflict audit. Narrow the window.
-        </p>
+        </Alert>
       ) : null}
       <p className="text-sm text-body">
         {data.virtualExcluded} virtual round(s) excluded from room checking.
@@ -98,10 +100,7 @@ export default async function TpoScheduleConflictsPage({
           <h2 className="text-lg font-semibold text-foreground">Confirmed venue/time overlaps</h2>
         </div>
         {data.conflicts.length === 0 ? (
-          <p role="status" className="p-6 text-sm text-body">
-            No overlapping on-campus venue bookings could be proven among the
-            assessed rounds. This does not certify the whole schedule as conflict-free.
-          </p>
+          <EmptyState title="No overlapping on-campus venue bookings could be proven among the assessed rounds. This does not certify the whole schedule as conflict-free."/>
         ) : (
           <div className="divide-y divide-border">
             {data.conflicts.map(({ left, right, overlapMinutes }) => (

@@ -236,3 +236,49 @@ Fetched **all three complete current branch file bodies** after editing and scan
 **Responsive proof status:** desktop/phone/tablet source rules line-by-line verified against the original SCSS, with no physical browser rendered or computed-style screenshot. The user and orchestrator have asked for stricter responsive comparison, so do not call this a visual pass.
 
 **Completed source migrations (3 files):** `mentor-lane-board.tsx`, `learner-board-interactive.tsx`, `mentor-task-allocation.tsx`. The shared scoped stylesheet is also finished for those callers. **Overall G6 remains [ ]** because other kanban variants, selection/drag touch tests, full repo grep and any remaining state differences are not covered; do not tick the umbrella item. Next unticked E7 target: `src/components/placements/placement-calendar-workspace.tsx` to review 42-day/week/day responsiveness, then `src/components/placements/tpo-week-hour-calendar.tsx`.
+
+
+## 2026-10-19 replacement chat-2 — TPO calendar source-value batch (10 commits including this audit)
+
+**Source sync:** At entry the lane was **0 ahead / 1,633 behind** `main@12ee0a58fd9af5e0e1f1ad975155f864966cb6c0`; the lane ref was fast-forwarded to that exact main SHA before any write. Nine working commits were then pushed on `chatgpt/chat-2-b` (one additional audit commit here), all prefixed `[chat-2]`. **No changes to main or `src/components/ui/*`.** At the most recent comparison before this audit: 9 ahead / 0 behind; main can move independently.
+
+### Source-to-source comparison — the exact TPO week grid
+
+| Property/state | Original old LMS file:line/value | vNext file:line/value | Source inspection |
+| --- | --- | --- | --- |
+| Hour height | `lms2-fe@prod-2026/src/components/tpo/ui/calendarGrid.js:4-6` `HOUR_PX=52`, 07:00–21:00 | `src/components/placements/tpo-week-hour-calendar.tsx:18` `FIRST=7,LAST=21,HEIGHT=52` | Match |
+| Time gutter and 7 day columns | `lms2-fe/src/styles/components/_tpo-ui.scss:202,210` `56px repeat(7,minmax(120px,1fr))` | `tpo-week-hour-calendar.module.css:13-16`, called from `tpo-week-hour-calendar.tsx:134`; 56rem minimum width | Match for defined track widths |
+| Outer surface | `_tpo-ui.scss:201` border 1px `#e7ecf2`, radius `$tpo-radius=10px`, white and horizontal scroll | `tpo-week-hour-calendar.module.css:8-12`, `tpo-week-hour-calendar.tsx:133` | Match; removed a non-legacy edge-fade mask |
+| Weekday heading | `_tpo-ui.scss:204-206` padding 8px, muted `#5b6b82`, day divider `#e7ecf2` | `tpo-week-hour-calendar.module.css:23-28`, `tpo-week-hour-calendar.tsx:136` | Paint match; old separate day-number pill differs from vNext combined label, preserved its wording |
+| Hour labels | `_tpo-ui.scss:211` 12px, `#5b6b82`, 0 6px padding, right-aligned, Y -8px | `tpo-week-hour-calendar.module.css:29-36`, `tpo-week-hour-calendar.tsx:140-141` | Match |
+| Dividers, hover and focus | `_tpo-ui.scss:212-213` line `#e7ecf2`, droppable teal at 4% | `tpo-week-hour-calendar.module.css:37-53`, `tpo-week-hour-calendar.tsx:157`; teal focus outlined | Match line/hover fill; focus is an accessible addition, not literal old UI |
+| Current-time marker | `_tpo-ui.scss:214` `#d92d20`, 2px, z3 | `tpo-week-hour-calendar.module.css:54-57`, `tpo-week-hour-calendar.tsx:160` | Match |
+| Event lane inset | `lms2-fe/src/components/tpo/WeekTimeGrid.jsx`: `left calc(lane% + 2px)`, `width calc(share% - 4px)` | `tpo-week-hour-calendar.tsx:166-167` same 2px inset | Match source formula |
+| Event min visual height | `lms2-fe/src/components/tpo/ui/calendarGrid.js:25` min `22`px | `tpo-week-hour-calendar.tsx:164` min 22px | Match |
+| Event body fill/border/radius/padding/type | `lms2-fe/src/styles/components/_tpo-calendar.scss:217-227` 1px `#e7ecf2`, 4px kind-colour left edge, 7px radius, `#f8fafc`, `#334155`, 5px 7px, 12px, 1.35 | `tpo-week-hour-calendar.module.css:57-67`, on 3 render alternatives at `tpo-week-hour-calendar.tsx:175,183-184` | Paint/geometry match, exact kind map for represented legacy kinds; new interview kind uses the legacy talk purple |
+| Event hover | `_tpo-calendar.scss:230-237` 150ms, fill `#f6f9fd`, three other edges `#dde6f0` | `tpo-week-hour-calendar.module.css:68-73` | Match paint/transition |
+| Mobile horizontal layout | `_tpo-ui.scss:201-210` overflow-x:auto, 120px/day + 56px gutter, no edge mask | `tpo-week-hour-calendar.tsx:133-134` uses x-scroll and min 896px; no edge mask | Source geometry match; physical scroll/touch not tested |
+
+### TPO month and responsive command bar (no page-content restructuring)
+
+| Property/state | Original source and value | vNext source and value | Verdict |
+| --- | --- | --- | --- |
+| Command bar surface | `lms2-fe/src/styles/components/_tpo-calendar.scss:25-38`: border `#e7ecf2`, radius 14px, white, 16px 18px padding, shadow `0 4px 18px rgba(26,45,72,.045)` | `legacy-calendar-theme.module.css:38-44`, scoped to TPO in `placement-calendar-workspace.tsx:672` | Match static values; TPO's existing controls and text retained |
+| TPO month surround | `_tpo-calendar.scss:253-269`: 1px `#e7ecf2`, radius 14px, shadow `0 4px 18px rgba(26,45,72,.045)`, inner padding 10px 14px 14px | `legacy-calendar-theme.module.css:45-52`, TPO-only `placement-calendar-workspace.tsx:963` | Match surface; old Ant Calendar internals not proven |
+| Phone command bar | `_tpo-calendar.scss:349-370`: <=767px, 13px padding, 3 equal view switches | `legacy-calendar-theme.module.css:60-76`, `placement-calendar-workspace.tsx:684` | Match source breakpoint + dimensions; no screenshot |
+| Phone navigation | `_tpo-calendar.scss:372-385`: vertical navigation grouping, 10px gap, three equal full-width buttons | `legacy-calendar-theme.module.css:77-95`, `placement-calendar-workspace.tsx:714` | Match geometry; existing period label displayed above controls rather than modifying its content |
+| Tablet responsive | `_tpo-calendar.scss:333-345`: <=991px no forced desktop two-column command body | TPO wrapper flex-wraps; `legacy-calendar-theme.module.css:53-56` prevents min-content expansion | Partial: exact tablet wrapping and actual computed styles unverified |
+
+### Scoped source search, paired tags and exceptions
+
+Connector-fetched *complete* bodies of the four changed source files were checked after writes. Reproducible check expressions for the orchestrator:
+
+- `grep -nE 'HEIGHT=64|min-w-\\[63rem\\]|grid-cols-\\[5rem' src/components/placements/tpo-week-hour-calendar.tsx` ⇒ **0** obsolete geometry matches.
+- `grep -o 'weekStyles.event' src/components/placements/tpo-week-hour-calendar.tsx | wc -l` ⇒ **3** event render paths, with `data-event-kind={event.kind}` ⇒ **3**.
+- `grep -o '<CalendarGrid' src/components/placements/placement-calendar-workspace.tsx | wc -l` ⇒ **1 open**, `grep -o '</CalendarGrid>' ... | wc -l` ⇒ **1 close**.
+- Exact-case raw native source-tag counts in the two edited TSX files: **0 raw `<select>`**, **1 raw `<input>`** (the existing `type="hidden" name="view"` at `placement-calendar-workspace.tsx:770`, exempt because native hidden field has no long styling), **0 raw `<textarea>`**.
+- Suspicious duplicate quote-before-className pattern in the four fetched files: **0 matches**. Existing `<Select>…</Select>`, `<Dialog>…</Dialog>` and `<CalendarGrid>…</CalendarGrid>` pairs were retained; no raw JSX tag renamed without its closing partner.
+
+**STRICT TICK RULE:** `- [ ] E7 stats/funnels/charts/calendar and G6 boards (missing: every remaining portal file and value state, all-repo grep, keyboard/touch/phone/tablet computed-style side-by-side; current evidence is scoped source only).` `- [ ] E8 TPO/HR exports (missing: full legacy-vNext column/value/type parity, whole-export route coverage, downloaded XLSX/CSV comparisons and original grid name-vs-owner date-suffix exception).` No UI screenshot, rendered browser, compilation, lint, CI or runtime application code was executed.
+
+**Next exact file:** `src/components/placements/learner-career-calendar.tsx` — compare its toolbar, metric legend and 767px phone period navigation to `lms2-fe@prod-2026/src/styles/components/_learn-career-calendar.scss:225-386,549-599,610-690`, then continue all remaining calendar/chart instances. Do not tick umbrella items without whole-category proof.

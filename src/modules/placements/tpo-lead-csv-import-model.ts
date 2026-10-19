@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { tpoLeadSourceSchema } from "./tpo-crm-validation";
+import { mapTpoImportHeaders, normalizeTpoImportHeader } from "./tpo-import-header-aliases";
 
 export const TPO_LEAD_CSV_MAX_ROWS = 5000;
 export const TPO_LEAD_CSV_MAX_CHARACTERS = 2_000_000;
@@ -130,14 +131,21 @@ export function previewTpoLeadCsv(csv: string) {
   }
   const records = parseCells(csv);
   const header = records[0]?.map(value => value.trim().replace(/^\uFEFF/, ""));
-  const headerAliases:Record<string,string>={
-   name:"name",fullName:"name",contact:"name",email:"email",workEmail:"email",
-   phone:"phone",mobile:"phone",company:"companyName",companyName:"companyName",
-   designation:"designation",title:"designation",source:"source",foundThrough:"source",
-  };
-  const normalized=header?.map(value=>Object.entries(headerAliases).find(
-    ([alias])=>alias.toLowerCase()===value.toLowerCase(),
-  )?.[1]??"");
+  // Reuse the legacy import-with-preview HEADER_ALIASES shared with TPO
+  // academic/results imports. Keep the existing foundThrough export spelling.
+  // A company header maps to the recruiter-specific companyName field; this
+  // parser never treats roll numbers or external references as lead IDs.
+  const mapped=header?mapTpoImportHeaders(
+    header,["name","email","phone","company","designation","source"],
+  ):null;
+  const normalized=header?.map((value,index)=>{
+    const resolved=mapped?.fields[index];
+    if(resolved==="company")return "companyName";
+    if(resolved)return resolved;
+    if(normalizeTpoImportHeader(value)==="foundthrough")return "source";
+    return "";
+  });
+  if(mapped?.duplicates.length)throw new Error("CSV_HEADER_MISMATCH");
   if(!header||!normalized||TPO_LEAD_CSV_HEADERS.some(expected=>
    normalized.filter(actual=>actual===expected).length!==1)){
     throw new Error("CSV_HEADER_MISMATCH");

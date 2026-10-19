@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toast";
 import { describePrimaryDomainSwitch, canConfirmPrimaryDomainDelete } from "@/modules/tenant-domains/admin-confirmation-model";
 
@@ -211,15 +213,10 @@ export function TenantDomainManager({
       </section>
 
       {domains.length === 0 ? (
-        <section className="border-t border-border pt-6">
-          <p className="m-0 text-sm font-semibold text-foreground">
-            No tenant domains configured
-          </p>
-          <p className="mt-2 text-sm leading-6 text-body">
-            Add a college hostname above. It will not route
-            tenant traffic until DNS ownership is verified.
-          </p>
-        </section>
+        <div className="border-t border-border pt-4">
+          <EmptyState title="No tenant domains configured"
+           description="Add a college hostname above. It will not route tenant traffic until DNS ownership is verified."/>
+        </div>
       ) : (
         <div className="space-y-4">
           {domains.map((domain) => {
@@ -316,11 +313,8 @@ export function TenantDomainManager({
 
                 {!domain.isVerified &&
                 domain.verificationToken ? (
-                  <div className="mt-5 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-muted p-4">
-                    <p className="m-0 text-sm font-semibold text-foreground">
-                      DNS ownership record
-                    </p>
-                    <p className="mt-2 text-xs leading-5 text-body">
+                  <Card as="section" title="DNS ownership record" className="mt-5">
+                    <p className="text-xs leading-5 text-body">
                       Publish this TXT record with your DNS
                       provider. Verification requires an exact
                       match.
@@ -353,7 +347,7 @@ export function TenantDomainManager({
                         </dd>
                       </div>
                     </dl>
-                  </div>
+                  </Card>
                 ) : null}
               </section>
             );

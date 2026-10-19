@@ -5,6 +5,7 @@ import {getSuperAdminPlacementRetentionReport} from "@/modules/admin-ui/super-ad
 import {PageHeader} from "@/components/ui/page-header";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {EmptyState} from "@/components/ui/empty-state";
+import {Banner} from "@/components/ui/banner";
 export default async function SuperAdminRetentionPage(){
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="space-y-5"><PageHeader title="Data retention report"/>
@@ -25,9 +26,9 @@ export default async function SuperAdminRetentionPage(){
    description="Applications withdrawn or rejected with no recorded application updates for at least 180 days."/>
   <nav><Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/admin/placements">← Placements</Link></nav>
   <p role="status" className="text-sm text-body">{report.rows.length} candidates for retention review{report.truncated?" (showing first 200)":""}; cutoff {fmt(new Date(report.cutoff))}.</p>
-  <p className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+  <Banner tone="warning">
    This is a review-only report, not an automated deletion or proof of legal retention eligibility. Account for offers, disputes and local retention policy before removing anything.
-  </p>
+  </Banner>
   <DataTable columns={columns} rows={report.rows} getRowKey={row=>row.id}
     caption="Data retention report" empty={<EmptyState title="No applications needing review"
     description="No rejected or withdrawn applications have passed the 180-day idle threshold."/>}/>

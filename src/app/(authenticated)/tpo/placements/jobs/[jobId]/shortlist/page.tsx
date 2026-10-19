@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -71,7 +72,7 @@ export default async function TpoDriveShortlistPage({
       </p>
       <DataTable<(typeof data.rows)[number]> caption="Current shortlist"
         rows={data.rows} getRowKey={item=>item.applicationId}
-        empty={<p role="status" className="text-sm text-body">No currently shortlisted submitted applications appear on this page. A previously shortlisted learner may have withdrawn or changed screening state.</p>}
+        empty={<EmptyState title="No currently shortlisted submitted applications appear on this page. A previously shortlisted learner may have withdrawn or changed screening state." />}
         columns={[
           {key:"learner",header:"Learner",mobilePriority:"primary",cell:item=><strong>{item.displayName}</strong>},
           {key:"roll",header:"Roll number",mobilePriority:"secondary",cell:item=>item.rollNumber??"Not recorded"},
