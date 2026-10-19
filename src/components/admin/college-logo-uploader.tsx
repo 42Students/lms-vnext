@@ -84,13 +84,13 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
        style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
     </div>
     <label className="block text-sm">Horizontal crop position ({positionX}%)
-     <Input aria-label="Horizontal crop position" className="block !min-h-0 !h-5 !w-52 !border-0 !bg-transparent !p-0 !shadow-none accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
+     <Input aria-label="Horizontal crop position" className="block !h-auto !min-h-0 !w-52 !min-w-0 !border-0 !bg-transparent !p-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
     </label>
     <label className="block text-sm">Vertical crop position ({positionY}%)
-     <Input aria-label="Vertical crop position" className="block !min-h-0 !h-5 !w-52 !border-0 !bg-transparent !p-0 !shadow-none accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
+     <Input aria-label="Vertical crop position" className="block !h-auto !min-h-0 !w-52 !min-w-0 !border-0 !bg-transparent !p-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
     </label>
     <label className="block text-sm">Zoom ({Math.round(zoom*100)}%)
-     <Input aria-label="Crop zoom" className="block !min-h-0 !h-5 !w-52 !border-0 !bg-transparent !p-0 !shadow-none accent-[var(--lms-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
+     <Input aria-label="Crop zoom" className="block !h-auto !min-h-0 !w-52 !min-w-0 !border-0 !bg-transparent !p-0 accent-[var(--lms-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
     </label>
     <Button type="button" disabled={busy} onClick={()=>void upload()}
      className="min-h-11 sm:min-h-9">
