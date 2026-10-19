@@ -1,5 +1,6 @@
 "use client";
 import { Tabs } from "@/components/ui/tabs";
+import { Dropdown } from "@/components/ui/dropdown";
 
 import Link from "next/link";
 import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
@@ -1064,8 +1065,7 @@ export function RecruiterLeadsWorkspace({
                            </span>:null}
                            {lead.ownerName?<span className="text-xs text-muted-foreground">Owner: {lead.ownerName}</span>:null}
                          </div>
-                         <details className="mt-2 rounded-md border border-border p-2 text-xs">
-                           <summary className="cursor-pointer text-[var(--lms-teal-deep)]">Move to… / Actions</summary>
+                         <Dropdown mobileSheet align="end" label={"Actions for "+lead.name} trigger="Move to… / Actions" className="mt-2 text-xs">
                            <p className="mt-1 text-muted-foreground">
                              Invited, Joined, Drive planned and Recruited update automatically.
                              Not now requires a reason.
@@ -1076,7 +1076,7 @@ export function RecruiterLeadsWorkspace({
                              <Link className="inline-block text-[var(--lms-teal-deep)] underline"
                                href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
                            </div>
-                         </details>
+                         </Dropdown>
                          {!lead.recruiterUserId&&!lead.unsubscribedAt?
                          <button type="button" className={buttonStyle+" mt-2"}
                           disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId} onClick={()=>void createInviteLink(lead)}>Create invite link</button>:null}
