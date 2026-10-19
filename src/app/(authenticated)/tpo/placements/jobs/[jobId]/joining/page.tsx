@@ -48,9 +48,9 @@ export default async function TpoDriveJoiningPage({
         title={tracker.job.title + " · Joining outcomes"}
         description="Record joining outcomes only for persisted accepted offers. All edits reuse the audited joining-history API."
       />
-      <section aria-label="Joining summary" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <section aria-label="Joining summary" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-5">
         {labels.map(([name, value]) => (
-          <div key={name} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+          <div key={name} className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
