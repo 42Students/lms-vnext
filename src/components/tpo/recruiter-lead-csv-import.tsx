@@ -1,6 +1,7 @@
 "use client";
 import {Dialog} from "@/components/ui/dialog";
 import {DataTable} from "@/components/ui/data-table";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
@@ -217,7 +218,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       {key:"name",header:"Name",mobilePriority:"primary",cell:item=>item.name||"Unnamed"},
                       {key:"row",header:"File row",mobilePriority:"secondary",cell:item=>item.row},
                       {key:"status",header:"Validation",mobilePriority:"secondary",cell:item=><span>
-                        {item.error??(existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}
+                        <StatusBadge tone={item.error?"error":existingNumbers.has(item.row)?"info":skipRows.includes(item.row)?"warning":"success"}>{item.error??(existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}</StatusBadge>
                         {existing.find(entry=>entry.row===item.row)?
                           <Link className="ml-2 inline-flex min-h-11 items-center text-primary-text underline" href={"/tpo/recruiters/"+existing.find(entry=>entry.row===item.row)!.leadId}>Open</Link>:null}
                       </span>},
