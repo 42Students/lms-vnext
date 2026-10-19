@@ -85,7 +85,7 @@ export function HrRecruiterBell(){
 
  const unread=state?.unread??0;
  const panelFooter=<><div role="group" aria-label="Recruiter notification actions" className="flex flex-wrap items-center justify-between gap-3">
-    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
+    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
     {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
       variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>
