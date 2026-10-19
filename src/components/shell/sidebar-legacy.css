@@ -249,3 +249,13 @@
  .lms-desktop-sidebar,.lms-shell-page,.lms-sidebar-nav .lms-sidebar-item,
  .lms-sidebar-role-details {transition:none!important;}
 }
+
+/* Original lms2-fe mark/wordmark asset: 38×36 rail, 151×37 expanded. */
+.lms-desktop-sidebar .lms-sidebar-brand-link { flex:0 0 auto; width:44px; }
+.lms-desktop-sidebar .lms-sidebar-brand-mark { display:flex; align-items:center; justify-content:center; }
+.lms-desktop-sidebar .lms-sidebar-brand-wordmark { display:none; }
+@media (min-width:768px) {
+ .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-link { width:151px; }
+ .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-mark { display:none; }
+ .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-wordmark { display:block; }
+}
