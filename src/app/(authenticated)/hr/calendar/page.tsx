@@ -211,7 +211,7 @@ function RecruiterCalendarEventCard({
       {href ? (
         <Link
           href={href}
-          className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+          className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
         >
           Open hiring drive →
         </Link>
@@ -311,7 +311,7 @@ export default async function HrCalendarPage({
         actions={
           <Link
             href="/hr/placements"
-            className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+            className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
           >
             Drives →
           </Link>
@@ -320,7 +320,7 @@ export default async function HrCalendarPage({
 
       {!noCollegeAccess?<div className="flex justify-end">
         <Link href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
-          className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+          className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
           Export calendar CSV
         </Link>
       </div>:null}
@@ -339,7 +339,7 @@ export default async function HrCalendarPage({
 
           <Link
             href="/hr/home"
-            className="mt-4 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+            className="mt-4 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
           >
             Return to Today →
           </Link>
@@ -392,7 +392,7 @@ export default async function HrCalendarPage({
             {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {calendar.resultsDue.map(item => (
                 <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
-                  className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+                  className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
                   <span className="block break-words font-semibold text-primary-text">{item.roundName}</span>
                   <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
                   <span className="mt-2 block text-xs text-muted-foreground">Due {eventDateTime(item.dueAt)} IST · {item.status}</span>
@@ -417,7 +417,7 @@ export default async function HrCalendarPage({
                 {HR_CALENDAR_CATEGORIES.map(option=><Link key={option}
                   href={calendarHref(anchor,view,option)}
                   aria-current={category===option?"page":undefined}
-                  className="rounded-[9px] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+                  className="rounded-[9px] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
                   {option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
                     option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds"}
                 </Link>)}
@@ -463,14 +463,14 @@ export default async function HrCalendarPage({
                     ? "Previous week"
                     : "Previous month"
                 }
-                className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+                className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
               >
                 ← Previous
               </Link>
 
               <Link
                 href={calendarHref(today, view, category)}
-                className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+                className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
               >
                 Today
               </Link>
@@ -482,7 +482,7 @@ export default async function HrCalendarPage({
                     ? "Next week"
                     : "Next month"
                 }
-                className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+                className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
               >
                 Next →
               </Link>
@@ -511,13 +511,13 @@ export default async function HrCalendarPage({
                   name="date"
                   defaultValue={anchor}
                   required
-                  className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-base sm:text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+                  className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-base sm:text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
                 />
               </label>
 
               <button
                 type="submit"
-                className="min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+                className="min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
               >
                 Go to date
               </button>
@@ -575,7 +575,7 @@ export default async function HrCalendarPage({
                       ))}
                       {day.resultsDue.map((item) => (
                         <Link key={"due:"+item.id} href={hrResultsDueHref(item.jobId,item.id)}
-                          className="rounded-[9px] border border-border bg-surface p-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+                          className="rounded-[9px] border border-border bg-surface p-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
                           <strong className="block">Results due · {item.roundName}</strong>
                           <span className="mt-1 block text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</span>
                         </Link>
@@ -657,7 +657,7 @@ export default async function HrCalendarPage({
                               key={event.id}
                               href={href}
                               title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                              className="block rounded-[9px] bg-primary-subtle px-2 py-2 text-xs text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] min-h-9"
+                              className="block rounded-[9px] bg-primary-subtle px-2 py-2 text-xs text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-text min-h-9"
                             >
                               <span className="block font-semibold">
                                 {eventTime(
@@ -675,7 +675,7 @@ export default async function HrCalendarPage({
                         {resultsDue.map((item) => (
                           <Link key={"due:" + item.id} href={hrResultsDueHref(item.jobId,item.id)}
                             title={"Results due at " + eventTime(item.dueAt) + " IST"}
-                            className="block rounded-[9px] border border-warning/40 bg-surface px-2 py-2 text-xs text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)] min-h-9">
+                            className="block rounded-[9px] border border-warning/40 bg-surface px-2 py-2 text-xs text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text min-h-9">
                             <span className="block font-semibold">Results due · {eventTime(item.dueAt)}</span>
                             <span className="mt-1 block break-words">{item.roundName}</span>
                           </Link>
@@ -738,7 +738,7 @@ export default async function HrCalendarPage({
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due</p>
                         <h4 className="mt-2 font-semibold text-foreground">{item.roundName}</h4>
                         <p className="mt-1 text-sm text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</p>
-                        <Link href={hrResultsDueHref(item.jobId,item.id)} className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+                        <Link href={hrResultsDueHref(item.jobId,item.id)} className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
                           Open hiring rounds →
                         </Link>
                       </article>
