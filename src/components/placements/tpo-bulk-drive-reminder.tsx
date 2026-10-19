@@ -44,7 +44,7 @@ export function TpoBulkDriveReminder(){
    </button>
   </div>
   <button type="button" disabled={busy} onClick={e=>void remind(e)}
-   className="min-h-11 md:min-h-9 rounded border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
    {busy?"Checking selected drives…":"Remind non-applicants in selected drives"}
   </button>
   {message?<span role="status" className="text-xs text-body">{message}</span>:null}

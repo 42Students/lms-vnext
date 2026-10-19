@@ -34,7 +34,7 @@ export function TpoDriveCloneAction({jobId,label="Run it again"}:{jobId:string;l
  return <>
   <div className="inline-flex flex-col gap-1">
    <button type="button" disabled={pending} onClick={()=>setOpen(true)}
-    className="min-h-11 md:min-h-9 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+    className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
     {pending?"Creating draft…":label}
    </button>
    {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
