@@ -540,3 +540,23 @@ The following three work-queue items return `null` unconditionally and define **
 **Gaps that remain open:** exact computed hover/focus/default/error/disabled/loading values, screenshots at phone and tablet widths, native AG Grid runtime (the branch manifest does not declare required AG Grid packages), and old-LMS filename contract. Do not tick visible pages based on these source scans alone. A queue entry for `recruiter-private-rating-editor.tsx` and one for `recruiter-request-queue.tsx` returned GitHub NOT_FOUND on this branch; neither can be marked completed from the old inventory.
 
 **Exact next file:** `src/components/tracker/known-errors-workspace.tsx` — complete error-signature action/layout state audit and unresolved dense-row screens.
+
+
+## Full route-file native control / hex / header scan — 145 pages (replacement lane)
+
+The complete `Work queue` route inventories, fetched individually from the active lane's GitHub tree, now have **zero** matching native control tags (`button`, `input`, `select`, `textarea`, `table`), literal hex tokens or hand-authored `h1` tags.
+
+| Exact scoped inventory | Full files read | Native control/table instances | Literal 3–8 digit hex instances | Custom h1 instances | Missing files |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `src/app/(authenticated)/hr/**/*.tsx` queue | 71 | 0 | 0 | 0 | 0 |
+| `src/app/(authenticated)/recruiter/**/*.tsx` queue | 53 | 0 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tracker/**/*.tsx` queue | 21 | 0 | 0 | 0 | 0 |
+| **Total exact queued routes** | **145** | **0** | **0** | **0** | **0** |
+
+These counts are from fetching and searching all 145 complete file contents in the source connector (five HR batches of 11–15, four recruiter batches, two tracker batches). Expressions applied per file: `/<(button|input|select|textarea|table)(?=[\\s/>])/g`, `/#[0-9a-fA-F]{3,8}\\b/g`, `/<h1(?=[\\s>])/g`. The tracker audit findings page's single native hidden input was found and changed to shared `Input type="hidden"`, then re-read with count 0. This is **full coverage for these patterns on these queued routes** but not a claim of whole-repository grep, computed CSS equality or pixel parity.
+
+**Responsive source proof:** the legacy listing SCSS `components___listing-page-header.scss:131-158` defines phone as max-width 767px, so the amended HR interview and tracker report forms place multi-column grids at Tailwind `md:` (min-width 768px), not `sm:` (640px). Existing page-specific `flex-wrap` and `min-w-0` handle narrow widths in source; actual phone/tablet screenshots and scroll/keyboard QA remain open.
+
+**Audit integrity:** Native/hex/h1 scan passing **does not** satisfy the strict state-value/viewport tick rule by itself. All visible HR/recruiter/tracker page checklist boxes remain unticked until default, hover, active, focus, disabled, loading, empty, error and phone/tablet comparisons are recorded. The three nonvisual effect helpers and 17 recruiter route-only shims remain separately ticked with their zero-own-DOM proof.
+
+**Next:** `src/components/tracker/known-errors-workspace.tsx` now uses shared `Dialog` for mute confirmation instead of an inline custom confirmation panel. Verify its live focus/keyboard/scroll and then proceed to `src/components/placements/recruiter-result-controls.tsx` dense result tables.
