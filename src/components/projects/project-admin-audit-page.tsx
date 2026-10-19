@@ -162,9 +162,9 @@ export async function ProjectAdminAuditPage({
       ) : null}
 
       <div className="flex flex-wrap gap-2">
-        <a href={basePath + "/audit"} className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">Refresh</a>
+        <a href={basePath + "/audit"} className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">Refresh</a>
         {basePath === "/admin/projects" ? <a href="/admin/audit"
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">
           View activity log
         </a> : null}
       </div>
