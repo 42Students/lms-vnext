@@ -223,8 +223,8 @@ export function LearnerCourseList({
                   }}
                   className={
                     effectiveTypeFilter === value
-                      ? "min-w-0 rounded-md bg-surface px-2 py-2 text-sm font-semibold text-primary-text shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
-                      : "min-w-0 rounded-md px-2 py-2 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
+                      ? "min-w-0 rounded-[var(--lms-control-radius)] bg-surface px-2 py-2 text-sm font-semibold text-primary-text shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
+                      : "min-w-0 rounded-[var(--lms-control-radius)] px-2 py-2 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
                   }
                 >
                   {label}
@@ -267,8 +267,8 @@ export function LearnerCourseList({
           <button type="button" aria-pressed={continueOnly}
             onClick={() => {setContinueOnly(value => !value);setVisibleLimit(PAGE_SIZE);}}
             className={continueOnly
-              ? "min-h-11 rounded-lg border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
-              : "min-h-11 rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary"}>
+              ? "min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
+              : "min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary"}>
             Continue learning only
           </button>
         </div>

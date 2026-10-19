@@ -409,7 +409,7 @@ function JobActions({
             href={safeExternalUrl!}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-on-primary transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle sm:min-h-9"
           >
             Open employer form
           </a>
