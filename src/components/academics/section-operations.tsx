@@ -7,7 +7,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -238,7 +238,7 @@ export function SectionOperations({
     });
   }
 
-  const enrollmentColumns = [
+  const enrollmentColumns: DataTableColumn<ProgramEnrollment>[] = [
     {
       key: "learner",
       mobilePriority: "primary",
@@ -308,7 +308,7 @@ export function SectionOperations({
     },
   ];
 
-  const rosterColumns = [
+  const rosterColumns: DataTableColumn<RosterRow>[] = [
     {
       key: "learner",
       mobilePriority: "primary",
@@ -384,7 +384,7 @@ export function SectionOperations({
     },
   ];
 
-  const facultyColumns = [
+  const facultyColumns: DataTableColumn<FacultyAssignment>[] = [
     {
       key: "faculty",
       mobilePriority: "primary",
@@ -441,7 +441,7 @@ export function SectionOperations({
     },
   ];
 
-  const scheduleColumns = [
+  const scheduleColumns: DataTableColumn<ScheduleEvent>[] = [
     {
       key: "event",
       mobilePriority: "primary",
