@@ -84,7 +84,7 @@ export function MobileNavigation({
           <button
             type="button"
             aria-label="Close navigation"
-            className="absolute inset-0 h-full w-full bg-foreground/20"
+            className="absolute inset-0 h-full w-full bg-black/45"
             onClick={() => setOpen(false)}
           />
           <aside
