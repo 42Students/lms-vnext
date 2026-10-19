@@ -15,6 +15,7 @@ import { onboardingRoleSelection } from "@/modules/people/college-faculty-onboar
 import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 
 function roleLabel(role: MembershipRole) {

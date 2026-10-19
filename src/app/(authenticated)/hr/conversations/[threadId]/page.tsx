@@ -92,7 +92,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
       <p className="mt-1 text-xs text-muted-foreground">Recorded change requests for this hiring drive. Decisions are controlled by the placement cell.</p>
       <ScrollCue axis="y" label="Drive change request updates" className="mt-3" viewportClassName="max-h-56"><ol className="space-y-2">
         {changeRequests.requests.slice(0,8).map(request=><li key={request.id}
-          className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm">
+          className="rounded-[8px] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-3 text-sm">
           <span className="font-semibold text-foreground">
             {request.proposerParty==="COMPANY"?"You asked":"Placement cell asked"} · {request.field.replaceAll("_"," ")}
           </span>
@@ -112,9 +112,9 @@ export default async function RecruiterConversationDetail({params,searchParams}:
         Review requests, answers and decisions
       </Link>
     </section>:null}
-  <ol aria-label="Employer and placement cell messages" className="divide-y divide-border border-y border-border">
+  <ol aria-label="Employer and placement cell messages" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {messages.map(message=><li key={message.id}
-    className="py-4">
+    className="rounded-[8px] px-2 py-4 transition-colors hover:bg-[var(--lms-neutral-50)]">
     <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} · {dateTime(message.createdAt)} IST</p>
     {message.proposal?<div className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-xs text-body">
       <p className="font-semibold text-foreground">Drive proposal · sent as discussion message</p>
@@ -133,13 +133,13 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <RecruiterConversationReplyForm threadId={result.thread.id}/>
   <nav aria-label="Conversation history" className="flex flex-wrap gap-3">
    {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newest messages</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">Newest messages</Link>:null}
    {result.page<result.pages&&result.pages>2?<Link href={hrConversationDetailHref(threadId,result.pages)}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Oldest messages</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">Oldest messages</Link>:null}
    {result.page<result.pages?<Link href={hrConversationDetailHref(threadId,result.page+1)}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Older</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">Older</Link>:null}
    {result.page>1?<Link href={hrConversationDetailHref(threadId,result.page-1)}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">Newer</Link>:null}
   </nav>
  </div>;
 }

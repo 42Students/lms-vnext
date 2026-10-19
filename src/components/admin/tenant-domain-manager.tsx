@@ -316,7 +316,7 @@ export function TenantDomainManager({
 
                 {!domain.isVerified &&
                 domain.verificationToken ? (
-                  <div className="mt-5 rounded-[var(--college-card-radius,8px)] border border-border bg-muted p-4">
+                  <div className="mt-5 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-muted p-4">
                     <p className="m-0 text-sm font-semibold text-foreground">
                       DNS ownership record
                     </p>

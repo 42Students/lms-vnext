@@ -1,4 +1,8 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -37,72 +41,72 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
   finally{setBusy(false);}
  }
  return <section className="space-y-3">
-  <button type="button" onClick={()=>setOpen(x=>!x)}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+  <Button type="button" onClick={()=>setOpen(x=>!x)}
+   className="min-h-11">
    Add my task
-  </button>
+  </Button>
   {!available.length?<p className="text-sm text-muted-foreground">
     No sprint is active. You can add your task to the product backlog.</p>:null}
   {open?<form onSubmit={e=>void save(e)}
    className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
    <label className="text-sm font-semibold">Task title
-    <input required maxLength={200} value={title} onChange={e=>setTitle(e.target.value)}
-     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3"/></label>
+    <Input required maxLength={200} value={title} onChange={e=>setTitle(e.target.value)}
+     className="mt-1 min-h-11"/></label>
    <label className="text-sm font-semibold">Sprint
-    <select value={sprintId} onChange={e=>{setSprintId(e.target.value);setStatus("TODO")}}
-     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3">
+    <Select value={sprintId} onChange={e=>{setSprintId(e.target.value);setStatus("TODO")}}
+     className="mt-1 min-h-11">
      <option value="">Leave blank for the backlog</option>
      {available.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
-    </select></label>
+    </Select></label>
    <label className="text-sm font-semibold sm:col-span-2">Description
-    <textarea maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/></label>
+    <Textarea maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}
+      className="mt-1"/></label>
    <label className="text-sm font-semibold sm:col-span-2">Approach (optional)
-    <textarea maxLength={4000} value={approach} onChange={e=>setApproach(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/></label>
+    <Textarea maxLength={4000} value={approach} onChange={e=>setApproach(e.target.value)}
+      className="mt-1"/></label>
    <label className="text-sm font-semibold sm:col-span-2">Done when
-    <textarea maxLength={4000} value={acceptance} onChange={e=>setAcceptance(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/></label>
+    <Textarea maxLength={4000} value={acceptance} onChange={e=>setAcceptance(e.target.value)}
+      className="mt-1"/></label>
    <label className="text-sm font-semibold">Priority
-    <select value={priority} onChange={e=>setPriority(e.target.value)}
-     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3">
+    <Select value={priority} onChange={e=>setPriority(e.target.value)}
+     className="mt-1 min-h-11">
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(x=><option key={x} value={x}>{x}</option>)}
-    </select></label>
+    </Select></label>
    <label className="text-sm font-semibold">Status
-    <select value={status} disabled={!sprintId}
+    <Select value={status} disabled={!sprintId}
       onChange={e=>setStatus(e.target.value as typeof status)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3">
+      className="mt-1 min-h-11">
       <option value="TODO">To Do</option>
       {sprintId?<><option value="IN_PROGRESS">In Progress</option>
         <option value="BLOCKED">Blocked</option></>:null}
-    </select>
+    </Select>
    </label>
    <label className="text-sm font-semibold">Type
-    <select value={type} onChange={e=>setType(e.target.value)}
-     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3">
+    <Select value={type} onChange={e=>setType(e.target.value)}
+     className="mt-1 min-h-11">
      <option value="">Not set</option>{["STORY","BUG","CHORE","SPIKE"].map(x=><option key={x} value={x}>{x}</option>)}
-    </select></label>
+    </Select></label>
    <label className="text-sm font-semibold">Estimate points
-    <input type="number" min={0} max={1000} value={estimate} onChange={e=>setEstimate(e.target.value)}
-     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3"/></label>
+    <Input type="number" min={0} max={1000} value={estimate} onChange={e=>setEstimate(e.target.value)}
+     className="mt-1 min-h-11"/></label>
    <label className="text-sm font-semibold">Due date
-    <input type="date" value={due} onChange={e=>setDue(e.target.value)}
-     className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] sm:min-h-9 border border-border bg-surface px-3"/></label>
+    <Input type="date" value={due} onChange={e=>setDue(e.target.value)}
+     className="mt-1 min-h-11"/></label>
    <label className="text-sm font-semibold sm:col-span-2">What&apos;s blocking this task?
-    <textarea maxLength={4000} value={blockerReason} onChange={e=>setBlockerReason(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/></label>
+    <Textarea maxLength={4000} value={blockerReason} onChange={e=>setBlockerReason(e.target.value)}
+      className="mt-1"/></label>
    {status==="BLOCKED"&&!blockerReason.trim()?
      <p role="alert" className="text-sm text-error sm:col-span-2">
        Explain what&apos;s blocking this task before saving.</p>:null}
    {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
    <div className="flex flex-wrap gap-2 sm:col-span-2">
-    <button type="submit" disabled={busy||!title.trim()||
+    <Button type="submit" disabled={busy||!title.trim()||
       (status==="BLOCKED"&&!blockerReason.trim())||
       (estimate!==""&&(!Number.isInteger(Number(estimate))||Number(estimate)<0||Number(estimate)>1000))}
-     className="min-h-9 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)]">
-     {busy?"Saving…":"Add task"}</button>
-    <button type="button" disabled={busy} onClick={()=>setOpen(false)}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</button>
+     className="min-h-11">
+     {busy?"Saving…":"Add task"}</Button>
+    <Button type="button" disabled={busy} onClick={()=>setOpen(false)}
+     variant="secondary" className="min-h-11">Cancel</Button>
    </div>
   </form>:null}
  </section>;
@@ -118,9 +122,9 @@ export function LearnerDeleteOwnTask({projectId,taskId}:{projectId:string;taskId
   }catch(e){setError(e instanceof Error?e.message:"Task cannot be deleted.");}
   finally{setBusy(false);}
  }
- return <div><button type="button" disabled={busy} onClick={()=>void remove()}
-  className="mt-2 min-h-10 text-xs font-semibold text-error underline">
-  {busy?"Deleting…":"Delete my task"}</button>
+ return <div><Button type="button" disabled={busy} onClick={()=>void remove()}
+  variant="ghost" className="mt-2 min-h-11 text-xs !text-[var(--lms-error)] underline">
+  {busy?"Deleting…":"Delete my task"}</Button>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
  </div>;
 }

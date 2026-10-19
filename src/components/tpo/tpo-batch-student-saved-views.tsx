@@ -1,4 +1,6 @@
 "use client";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -55,28 +57,28 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
  }
  const selectedView=views.find(view=>view.id===selected);
  return <section aria-label="BATCH_STUDENTS saved views" className="space-y-2">
-  <button type="button" aria-expanded={open} onClick={toggle}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Saved batch views</button>
+  <Button variant="secondary" type="button" aria-expanded={open} onClick={toggle}
+   >Saved batch views</Button>
   {open?<div className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
    <h3 className="font-semibold">Saved views</h3>
    <p className="text-xs text-body">These filters are private to your account and this batch. Pin up to five views.</p>
    <div className="flex flex-wrap gap-2" aria-label="Pinned batch views">
-    {views.filter(view=>view.pinned).map(view=><button type="button" key={view.id}
+    {views.filter(view=>view.pinned).map(view=><Button variant="secondary" type="button" key={view.id}
       disabled={busy||guarded} onClick={()=>void openSaved(view)}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">{view.name}</button>)}
+      >{view.name}</Button>)}
    </div>
    <label className="block text-sm">View name
-    <input value={name} onChange={e=>setName(e.target.value)} maxLength={100}
-     className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border px-3"/></label>
+    <Input value={name} onChange={e=>setName(e.target.value)} maxLength={100}
+     className="mt-1"/></label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
     <input type="checkbox" checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</label>
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={busy||guarded||!name.trim()} onClick={()=>void action({
+    <Button variant="primary" type="button" disabled={busy||guarded||!name.trim()} onClick={()=>void action({
      action:"CREATE",name:name.trim(),pinned,filters:current(),
-    })} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Save current filters</button>
-    <button type="button" disabled={busy||guarded||!selected||!name.trim()} onClick={()=>void action({
+    })} >Save current filters</Button>
+    <Button variant="secondary" type="button" disabled={busy||guarded||!selected||!name.trim()} onClick={()=>void action({
      action:"UPDATE",id:selected,name:name.trim(),pinned,filters:current(),
-    })} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Update selected</button>
+    })} >Update selected</Button>
    </div>
    <ul className="space-y-2">{views.map(view=><li key={view.id}
     className="flex flex-wrap items-center gap-2 rounded-[var(--lms-canvas-radius)] border border-border p-2 text-sm">
@@ -85,12 +87,12 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
      {view.name}{view.pinned?" · Pinned":""}
     </label>
-    <button type="button" disabled={busy||guarded} onClick={()=>void openSaved(view)}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border px-2">Open</button>
+    <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>void openSaved(view)}
+     >Open</Button>
     <a href={batchStudentViewExportHref(batchId,1,view.query)}
      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-2">Download CSV</a>
-    <button type="button" disabled={busy||guarded} onClick={()=>setDeleteTarget(view)}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border px-2">Delete</button>
+    <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>setDeleteTarget(view)}
+     >Delete</Button>
    </li>)}</ul>
    {selectedView?<p className="text-xs text-body">Selected: {selectedView.name}</p>:null}
    {!views.length?<p className="text-sm">No saved batch views yet.</p>:null}

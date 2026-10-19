@@ -34,7 +34,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  if(!parsed.success || !statuses.includes(parsed.data.status))
  return <div className="space-y-5">{heading("Super Admin")}
   <ErrorState title="Invalid directory filters" description="Check the search, status or page."
-   action={<Link href={path} className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/></div>;
+   action={<Link href={path} className="font-semibold text-primary-text">Clear filters</Link>}/></div>;
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))return <div className="space-y-5">
   {heading("Super Admin")}
@@ -85,7 +85,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-4">
-   {!applicationFilters&&data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
+   {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
    </label>
@@ -157,15 +157,15 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    <Button type="submit" variant="primary" className="self-end">Filter</Button>
   </form>
   <form method="get" action={path} aria-label="Refresh directory">
-    {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
-    <input type="hidden" name="status" value={data.query.status} />
-    {!applicationFilters&&data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
-    {data.query.pipelineStage!=="ALL"?<input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
-    {data.query.channel!=="ALL"?<input type="hidden" name="channel" value={data.query.channel}/>:null}
-    {data.query.source!=="ALL"?<input type="hidden" name="source" value={data.query.source}/>:null}
-    {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
-    <input type="hidden" name="page" value={String(data.query.page)} />
-    <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
+    {data.query.q ? <Input type="hidden" name="q" value={data.query.q} /> : null}
+    <Input type="hidden" name="status" value={data.query.status} />
+    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
+    {data.query.pipelineStage!=="ALL"?<Input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
+    {data.query.channel!=="ALL"?<Input type="hidden" name="channel" value={data.query.channel}/>:null}
+    {data.query.source!=="ALL"?<Input type="hidden" name="source" value={data.query.source}/>:null}
+    {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<Input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
+    <Input type="hidden" name="page" value={String(data.query.page)} />
+    <Input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
     <Button type="submit" variant="secondary" className="self-end">Refresh</Button>
   </form>
   {applicationFilters?<p role="status" className="text-sm text-body">
@@ -188,17 +188,17 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <p className="break-words text-sm text-body">{row.subtitle}</p>
     {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground">{value}</p>)}
     {renderRowActions?<div className="border-t border-border pt-3">{renderRowActions(row)}</div>:null}
-    {row.href?<Link href={row.href} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open details →</Link>:null}
-    {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{row.secondaryLabel??"Manage →"}</Link>:null}
+    {row.href?<Link href={row.href} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open details →</Link>:null}
+    {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{row.secondaryLabel??"Manage →"}</Link>:null}
    </article>)}
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
   <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9">Clear search</Link>
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline sm:min-h-9">Clear search</Link>
   <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
    <div className="flex flex-wrap gap-3">
-    {data.query.page>1?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9">Previous</Link>:null}
-    {data.query.page<data.totalPages?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9">Next</Link>:null}
+    {data.query.page>1?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9">Previous</Link>:null}
+    {data.query.page<data.totalPages?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline sm:min-h-9">Next</Link>:null}
    </div>
   </nav>
  </div>;

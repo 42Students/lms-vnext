@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -29,9 +30,6 @@ export type PlacementRequestQueueItem = {
   offerExpiresAt: string | null;
   effectPayload: Record<string, unknown>;
 };
-
-const inputClass =
-  "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
 
 function humanize(value: string) {
   return value
@@ -243,7 +241,7 @@ export function PlacementRequestQueue({
 
               {item.requestType ===
               "ROUND_RESCHEDULE" ? (
-                <div className="mt-3 rounded-md border border-border bg-surface px-3 py-2 text-sm text-body">
+                <div className="mt-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2 text-sm text-body">
                   <p className="m-0">
                     {item.roundName ??
                       "Round"}{" "}
@@ -270,7 +268,7 @@ export function PlacementRequestQueue({
 
               {item.requestType ===
               "OFFER_EXTENSION" ? (
-                <div className="mt-3 rounded-md border border-border bg-surface px-3 py-2 text-sm text-body">
+                <div className="mt-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2 text-sm text-body">
                   <p className="m-0">
                     {item.offerRoleTitle ??
                       "Offer"}{" "}
@@ -293,8 +291,7 @@ export function PlacementRequestQueue({
                     <span className="mb-1 block text-xs font-semibold text-body">
                       Decision note
                     </span>
-                    <input
-                      className={inputClass}
+                    <Input
                       placeholder="Optional for approval, required for rejection"
                       value={
                         notes[item.id] ?? ""

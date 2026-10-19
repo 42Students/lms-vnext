@@ -1,4 +1,6 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -64,19 +66,19 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   <p role="status" className="text-xs text-muted-foreground">{validSelected.length} selected;
    {outside} not registered for placements (messages still deliver).</p>
   <label className="grid gap-1 text-sm">Message template
-   <select value={template} disabled={pending} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
+   <Select value={template} disabled={pending} 
     onChange={e=>setChoice(e.target.value as TpoStudentNudgeTemplate)}>
     {Object.entries(tpoStudentNudgeLabels).map(([key,label])=><option key={key} value={key}>{label}</option>)}
-   </select>
+   </Select>
   </label>
   <label className="grid gap-1 text-sm">Message
-   <textarea rows={3} minLength={5} maxLength={1000} required
-    className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
+   <Textarea rows={3} minLength={5} maxLength={1000} required
+    
     disabled={pending} value={message} onChange={e=>{setMessage(e.target.value);setNotice("");}}/>
   </label>
-  <button type="button" disabled={pending||guardedPending||!validSelected.length}
-   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
-   onClick={()=>setConfirmOpen(true)}>{"Send to "+validSelected.length+" selected"}</button>
+  <Button type="button" disabled={pending||guardedPending||!validSelected.length}
+   
+   onClick={()=>setConfirmOpen(true)}>{"Send to "+validSelected.length+" selected"}</Button>
   <Dialog open={confirmOpen} onOpenChange={value=>{if(!pending&&!guardedPending)setConfirmOpen(value);}}
    title="Send a message" description={"Send an in-app message to "+validSelected.length+" learner(s)? The message will be audited."}
    footer={<><Button variant="secondary" disabled={pending||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>

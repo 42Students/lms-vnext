@@ -1,4 +1,5 @@
 "use client";
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {useState} from "react";
 import {filterTpoBatchFacets,type TpoBatchFacetQuery,type TpoBatchFacetRow,type TpoBatchFacetState} from "@/modules/placements/tpo-batch-facets-model";
@@ -68,17 +69,17 @@ export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row
     </fieldset>
    </div>
    <div role="status" aria-live="polite" className="flex flex-wrap items-center gap-2 text-sm">
-    {active.map((chip,index)=><button key={chip.key+":"+chip.label+":"+index} type="button"
-     onClick={chip.remove} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2" aria-label={"Remove "+chip.label+" filter"}>
+    {active.map((chip,index)=><Button variant="secondary" key={chip.key+":"+chip.label+":"+index} type="button"
+     onClick={chip.remove}  aria-label={"Remove "+chip.label+" filter"}>
      {chip.label} ×
-    </button>)}
+    </Button>)}
     <span>{count} matching batches</span>
    </div>
    <div className="flex flex-wrap gap-2 text-sm">
-    <button type="button" onClick={()=>setSelected({states:[],programs:[],departments:[],finalYears:[]})}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3">Reset</button>
+    <Button variant="secondary" type="button" onClick={()=>setSelected({states:[],programs:[],departments:[],finalYears:[]})}
+     >Reset</Button>
     <Link href="/tpo/batches" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3">Clear all</Link>
-    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-on-primary">Show {count}</button>
+    <Button type="submit" >Show {count}</Button>
    </div>
   </form>
  </details>;

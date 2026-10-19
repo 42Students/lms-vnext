@@ -95,10 +95,10 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
         </>
       )}
       {seasons.filter((season) => season.status === "ACTIVE").map((season) => (
-        <button type="button" key={season.id} onClick={() => select(season)}
-          className="block min-h-11 md:min-h-9 text-sm font-semibold text-primary-text hover:underline">
+        <Button type="button" variant="ghost" key={season.id} onClick={() => select(season)}
+          className="min-h-11 md:min-h-9 text-sm underline">
           Edit {season.name} →
-        </button>
+        </Button>
       ))}
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
     </section>

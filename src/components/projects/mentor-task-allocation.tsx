@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
@@ -97,44 +98,44 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   <button type="button" aria-expanded={filtersOpen}
     aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
     onClick={()=>setFiltersOpen(open=>!open)}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link">
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
     Filters{activeFilterCount?" ("+activeFilterCount+")":""}
   </button>
   {filtersOpen?<div id="mentor-allocation-filters"
-    className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
+    className="flex flex-wrap gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
    <label className="text-sm font-semibold">Release
-    <select data-slot="select" value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
+    <Select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
       remember("release",e.target.value);remember("sprint","");}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All releases</option>
      {releases.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="text-sm font-semibold">Sprint
-    <select data-slot="select" value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
+    <Select value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All sprints</option>
      {sprints.filter(item=>!release||item.releaseId===release).map(item=>
       <option key={item.id} value={item.id}>{item.title}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="text-sm font-semibold">Priority
-    <select data-slot="select" value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
+    <Select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(value=><option key={value} value={value}>{value}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="text-sm font-semibold">Status
-    <select data-slot="select" value={status} onChange={e=>{setStatus(e.target.value);remember("status",e.target.value);}}
+    <Select value={status} onChange={e=>{setStatus(e.target.value);remember("status",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All statuses</option>
      {["TODO","IN_PROGRESS","IN_REVIEW","BLOCKED","DONE"].map(value=>
       <option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="text-sm font-semibold">Assignment
-    <select data-slot="select" value={assignmentScope}
+    <Select value={assignmentScope}
       onChange={e=>{setAssignmentScope(e.target.value);remember("assignment",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">Everyone</option>
@@ -142,7 +143,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
      <option value="ASSIGNED">Assigned</option>
      {learners.map(member=><option value={member.membershipId} key={member.membershipId}>
       {member.displayName??"Learner"}</option>)}
-    </select>
+    </Select>
    </label>
    <button type="button" onClick={()=>{
     setRelease("");setSprint("");setPriority("");setStatus("");setAssignmentScope("");
@@ -220,7 +221,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
            Reassign from former member
          </p>:null}
        {!readOnly?<label className="mt-2 block text-xs font-semibold">Assign to
-        <select data-slot="select" aria-label={"Reassign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
+        <Select aria-label={"Reassign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
          value={task.assigneeMembershipId??""}
          onChange={event=>void assign(task.id,event.target.value||null)}
          className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
@@ -229,7 +230,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
            <option value={task.assigneeMembershipId} disabled>Former member (reassign)</option>:null}
          {learners.map(member=>
           <option key={member.membershipId} value={member.membershipId}>{member.displayName??"Learner"}</option>)}
-        </select></label>:null}
+        </Select></label>:null}
       </li>)}
       {!cards.length?<li className="py-5 text-center text-xs text-muted-foreground">No tasks</li>:null}
      </ul>

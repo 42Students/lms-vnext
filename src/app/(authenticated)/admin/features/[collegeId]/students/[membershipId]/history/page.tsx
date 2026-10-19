@@ -41,7 +41,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
   <Link href={studentRuleHistoryExportHref(collegeId,membershipId,
    cursor.data.beforeOccurredAt&&cursor.data.beforeId?{beforeOccurredAt:new Date(cursor.data.beforeOccurredAt),beforeId:cursor.data.beforeId}:null,
    cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export this history page (CSV)</Link>
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Export this history page (CSV)</Link>
   <p className="text-xs text-muted-foreground">Export contains at most 40 authorized changes from this page, not an unrestricted audit archive.</p>
   {result.items.length===0?<p className="border-b border-border py-5 text-sm text-body">No module override changes have been recorded for this membership.</p>:
    <ol className="min-w-0 space-y-3">{result.items.map(item=><li key={item.id} className="border-b border-border py-4 last:border-b-0">
@@ -49,7 +49,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
     <p className="mt-2 text-sm text-body">{item.change}</p>
     <p className="mt-2 text-xs text-muted-foreground">{item.actorName} · {item.occurredAt.toLocaleString("en-IN")}</p>
    </li>)}</ol>}
-  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Older changes →</Link>:null}
+  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Older changes →</Link>:null}
   <Link href={"/admin/audit?collegeId="+encodeURIComponent(collegeId)+"&subjectType=MEMBERSHIP&subjectId="+encodeURIComponent(membershipId)}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open scoped Activity Log →</Link>
  </div>;
