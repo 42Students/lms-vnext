@@ -71,7 +71,7 @@ export default async function TpoMyNotificationsPage({
           action={
             <Link
               href="/tpo/settings/notifications"
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Clear filters
             </Link>
@@ -160,7 +160,7 @@ export default async function TpoMyNotificationsPage({
             <Select
               name="view"
               defaultValue={query.view}
-              className="min-h-11 sm:min-h-9"
+              className="min-h-11 min-[768px]:min-h-9"
             >
               {TPO_NOTIFICATION_VIEWS.map((view) => (
                 <option key={view} value={view}>
@@ -179,7 +179,7 @@ export default async function TpoMyNotificationsPage({
             <Select
               name="pageSize"
               defaultValue={String(pageSize)}
-              className="min-h-11 sm:min-h-9"
+              className="min-h-11 min-[768px]:min-h-9"
             >
               <option value="25">25</option>
               <option value="50">50</option>
@@ -189,14 +189,14 @@ export default async function TpoMyNotificationsPage({
 
           <Button
             type="submit"
-            className="min-h-11 sm:min-h-9"
+            className="min-h-11 min-[768px]:min-h-9"
           >
             Apply
           </Button>
 
           <Link
             href="/tpo/settings/notifications"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Clear filters
           </Link>
@@ -278,7 +278,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Previous
               </Link>
@@ -291,7 +291,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Next
               </Link>
