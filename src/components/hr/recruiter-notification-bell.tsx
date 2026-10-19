@@ -70,12 +70,12 @@ export function RecruiterNotificationBell(){
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-11 rounded-[8px] px-3 py-3 text-sm text-primary-text hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="block min-h-9 max-sm:min-h-11 rounded-[var(--lms-control-radius)] px-3 py-3 text-sm text-primary-text hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}
    <Link href={href} onClick={()=>setIsOpen(false)}
-    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
+    className="mt-4 inline-flex min-h-9 max-sm:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
   </Drawer>
  </div>;
 }
