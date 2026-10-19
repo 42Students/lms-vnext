@@ -429,3 +429,7 @@
 .orgTrigger:hover { background:#fafbfc; border-color:#e7ecf2; }
 
 .orgTrigger:active { background:rgba(0,0,0,.035); }
+
+.orgTrigger:focus-visible {
+  outline:2px solid var(--lms-button-primary); outline-offset:2px;
+}
