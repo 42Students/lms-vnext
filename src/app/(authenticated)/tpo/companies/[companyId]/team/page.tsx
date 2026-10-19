@@ -32,21 +32,21 @@ export default async function TpoCompanyTeamPage({params}:{
   <Link href={"/tpo/companies/"+encodeURIComponent(companyId)}
    className="inline-flex min-h-9 items-center text-sm text-primary-text underline">Back to company</Link>
   {result.status==="NOT_REGISTERED"?
-   <p role="status" className="rounded-[var(--radius)] border border-border p-4 text-sm text-body">
+   <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm text-body">
     Company Team discussions require their registered database migration. No messages were inferred from private conversations.
    </p>:
    <>
     <TpoLiveRefresh intervalMs={30000}/>
     <ol aria-label="Company Team messages" className="space-y-3">
      {result.messages.map(message=><li key={message.id} id={"team-message-"+message.id}
-      className="rounded-[var(--radius)] border border-border bg-surface p-4">
+      className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <p className="text-xs text-muted-foreground">{message.authorName??"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
          dateStyle:"medium",timeStyle:"short"}).format(message.createdAt)} IST</p>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
      </li>)}
     </ol>
-    {result.truncated?<p role="status" className="rounded-[var(--radius)] border border-border p-3 text-sm text-body">
+    {result.truncated?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
      Showing the latest 100 company Team messages. Older messages are not loaded here.
     </p>:null}
     {!result.messages.length?<p role="status" className="text-sm text-body">

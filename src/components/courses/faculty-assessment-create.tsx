@@ -61,7 +61,7 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
     {!lessonChoices.length?<p role="status" className="text-sm text-muted-foreground">
      No lessons in this course yet. Create a lesson before attaching a {name.toLowerCase()} to this course.
     </p>:null}
-    <div className="rounded-lg border border-border bg-surface-subtle p-3 text-sm">
+    <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm">
       <strong>Quizzes are attached to lessons</strong>
       <p>This keeps faculty creation and learner attempts under the same course structure.</p>
     </div>

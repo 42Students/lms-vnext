@@ -39,7 +39,7 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
    I reviewed the batch and understand this change will be audited.
   </label>
   <button type="button" disabled={disabled} onClick={()=>void submit()}
-   className="min-h-9 rounded-[var(--radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
    {busy?"Updating…":action==="FINISH"?"Mark finished":"Reopen batch"}
   </button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

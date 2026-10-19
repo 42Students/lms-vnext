@@ -27,11 +27,11 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
  }).format(date);
  return <div className="min-w-0 space-y-5">
-  <Link href={base} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← College admins</Link>
+  <Link href={base} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">← College admins</Link>
   <PageHeader eyebrow="Super Admin · Tenant" title={data.target.name+" · History"}
    description="Recorded identity, college-admin lifecycle and platform actions concerning this administrator in this college. Cross-college and raw event metadata are excluded."/>
   <a href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export shown history (CSV)</a>
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export shown history (CSV)</a>
   <p role="status" className="text-sm text-body">
    Page {data.page} · {data.events.length} recorded event(s) shown{data.truncated?" · more available":""}.
   </p>
@@ -43,9 +43,9 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
       {key:"summary",header:"Summary",mobilePriority:"secondary",cell:row=><span className="break-words">{row.summary}</span>},
     ]}/>  <nav aria-label="Administrator activity pages" className="flex flex-wrap gap-3 text-sm">
     {data.page>1?<Link href={"?page="+(data.page-1)}
-     className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Previous 100</Link>:null}
+     className="inline-flex min-h-11 items-center text-primary-text underline">Previous 100</Link>:null}
     {data.truncated?<Link href={"?page="+(data.page+1)}
-     className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Next 100</Link>:null}
+     className="inline-flex min-h-11 items-center text-primary-text underline">Next 100</Link>:null}
   </nav>
  </div>;
 }

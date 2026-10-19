@@ -75,7 +75,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         {row.testUrl&&row.assessmentDueAt&&(row.roundKind==="TEST"||row.roundKind==="VENDOR_TEST")?<span className="font-semibold text-body">Take it by {fmt(row.assessmentDueAt)}</span>:null}
       </div>
       {row.exception ? (
-        <p role="status" className="text-xs font-semibold text-[var(--lms-teal-deep)]">
+        <p role="status" className="text-xs font-semibold text-primary-text">
           Rescheduled · The time, venue and links shown above are the latest recorded booking.
         </p>
       ) : null}
@@ -90,7 +90,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         <p className="rounded-lg border border-warning bg-surface-subtle p-3 text-sm text-body">
           Marked absent. If this is wrong, tell the placement cell.
           <Link href="/learn/my-placements/placement#requests"
-            className="ml-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+            className="ml-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">
             Wrong? Tell the placement cell
           </Link>
         </p>
@@ -102,14 +102,14 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   return (
     <div className="min-w-0 space-y-6">
       <p className="text-sm text-body">Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice.</p>
-      {needsConfirmation>0?<p role="status" className="rounded border border-warning bg-surface-subtle p-3 text-sm font-semibold">{needsConfirmation} rounds need your confirmation</p>:null}
+      {needsConfirmation>0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm font-semibold">{needsConfirmation} rounds need your confirmation</p>:null}
       <nav aria-label="Schedule view" className="flex flex-wrap gap-2">
         {([
           ["coming","Coming up"],["past","Past"],["calendar","Calendar"],
         ] as const).map(([key,label])=><Link key={key}
           href={"/learn/my-placements/schedule?view="+key} aria-current={view===key?"page":undefined}
           className={"inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold "+
-            (view===key?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border text-foreground")}>
+            (view===key?"border-primary bg-primary-subtle text-primary-text":"border-border text-foreground")}>
           {label}
         </Link>)}
       </nav>
@@ -120,16 +120,16 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
           {undated.length} upcoming round(s) have no confirmed time yet. Check the details below.
         </p> : null}
         {ahead.map(row => <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
-          <p className="mb-1 text-xs font-semibold uppercase text-[var(--lms-teal-deep)]">{dayLabel(row.exception?.scheduledAt??row.scheduledAt)}</p>
+          <p className="mb-1 text-xs font-semibold uppercase text-primary-text">{dayLabel(row.exception?.scheduledAt??row.scheduledAt)}</p>
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
           <p className="text-sm text-body">{row.roleTitle} · {fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
           {details(row)}
           <LearnerScheduleReschedule applicationId={row.applicationId} roundId={row.roundId}
             mode={(row.exception?.mode??row.mode)==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS"} venue={row.exception?.venue??row.venue}
             meetingUrl={row.exception?.meetingUrl??row.meetingUrl}/>
-          <Link className="text-sm font-semibold text-[var(--lms-teal-deep)] underline" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</Link>
+          <Link className="text-sm font-semibold text-primary-text underline" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</Link>
         </article>)}
-        {ahead.length === 0 ? <Link className="text-sm font-semibold text-[var(--lms-teal-deep)] underline" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
+        {ahead.length === 0 ? <Link className="text-sm font-semibold text-primary-text underline" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
         {undated.map(row => <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
           <p className="text-sm text-body">Date to be told</p>

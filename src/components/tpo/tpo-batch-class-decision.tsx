@@ -36,20 +36,20 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
   <div className="flex flex-wrap items-end gap-2">
    <label className="grid gap-1 text-sm font-semibold">Who is in
     <select value={choice} onChange={e=>{setChoice(e.target.value as Decision);setError("");}} disabled={busy||finished}
-     className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
      <option value="NOT_DECIDED">Follows the batch</option>
      <option value="ELIGIBLE">Eligible</option>
      <option value="INELIGIBLE">Ineligible</option>
     </select>
    </label>
    <button type="button" onClick={review} disabled={busy||finished||!changed}
-    className="min-h-9 rounded-[var(--radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
     {busy?"Saving…":"Save"}
    </button>
   </div>
   {choice==="INELIGIBLE"?<label className="grid gap-1 text-sm">Reason
    <textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={200} rows={2}
-    disabled={busy||finished} className="w-full rounded-[var(--radius)] border border-border bg-surface p-2" placeholder="Reason for ineligible decision"/>
+    disabled={busy||finished} className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" placeholder="Reason for ineligible decision"/>
   </label>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}

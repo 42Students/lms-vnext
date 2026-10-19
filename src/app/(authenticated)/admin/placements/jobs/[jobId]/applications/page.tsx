@@ -39,7 +39,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <SuperAdminDriveTabs jobId={jobId} active="Applications"/>
     <PageHeader eyebrow="Super Admin · Placements" title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
-      actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Drive overview</Link>} />
+      actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
         <Input name="q" defaultValue={query.q} maxLength={100} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2" />
@@ -100,7 +100,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <div className="flex flex-wrap justify-between gap-3 text-sm">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${adminHref(jobId,query,true).split("/export")[1] ?? ""}`}
-        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
       <p role="status" className="border-b border-border py-4 text-sm">

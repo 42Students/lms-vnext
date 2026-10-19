@@ -77,7 +77,7 @@ export function TpoDebarControl({
   }
 
   return (
-    <section className="rounded-[12px] border border-border bg-surface p-5">
+    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
       <h2 className="m-0 text-lg font-semibold text-foreground">
         Debar / remove learner restriction
       </h2>
@@ -121,7 +121,7 @@ export function TpoDebarControl({
                   setConfirmed(false);
                 }}
                 placeholder="Reason for restricting placement applications"
-                className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-foreground"
+                className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
               />
             </label>
           ) : null}
@@ -145,7 +145,7 @@ export function TpoDebarControl({
           <button
             type="submit"
             disabled={pending || !confirmed || (!debarred && !reason.trim())}
-            className="inline-flex min-h-9 items-center rounded-[var(--radius)] bg-primary px-5 text-sm font-[650] text-on-primary disabled:opacity-60"
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary disabled:opacity-60"
           >
             {pending
               ? "Saving…"

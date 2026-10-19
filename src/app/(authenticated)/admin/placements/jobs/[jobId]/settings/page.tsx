@@ -24,7 +24,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
    <p className="text-sm text-body">Status: {job.status}</p>
    <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? driveSettingsIstDate(job.applicationDeadline) : "Not configured"}</p>
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
-   <Link href={base} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Open drive controls →</Link>
+   <Link href={base} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Open drive controls →</Link>
   </section>
   {job.status==="PUBLISHED"?
     <SuperAdminPublishedDriveEdit job={{
@@ -61,6 +61,6 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   <SuperAdminDriveDuplicate jobId={jobId} title={job.title}/>
   {job.status!=="ARCHIVED"?<SuperAdminDriveArchive jobId={jobId} title={job.title}/>:null}
   {job.status==="PUBLISHED"?<SuperAdminDriveDeadline jobId={jobId} deadline={job.applicationDeadline?.toISOString()??null}/>:null}
-  <Link href="/admin/placements" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Platform placement policy →</Link>
+  <Link href="/admin/placements" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Platform placement policy →</Link>
  </div>;
 }

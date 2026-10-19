@@ -1,11 +1,12 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 export function TpoNoticeAcknowledge({id}:{id:string}){
  const [read,setRead]=useState(false),[busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  return <div className="mt-3 space-y-1">
-  <button type="button" disabled={read||busy}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-60"
+  <Button variant="secondary" type="button" disabled={read||busy}
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-60"
    onClick={async()=>{
     setBusy(true);setError("");
     try{
@@ -17,7 +18,7 @@ export function TpoNoticeAcknowledge({id}:{id:string}){
      if(result.read)setRead(true);else setError("No delivered notification is available to acknowledge yet.");
     }catch(e){setError(e instanceof Error?e.message:"Read status couldn't be saved");}
     finally{setBusy(false);}
-   }}>{busy?"Saving…":read?"Read confirmed":"Mark notice read"}</button>
+   }}>{busy?"Saving…":read?"Read confirmed":"Mark notice read"}</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </div>;
 }

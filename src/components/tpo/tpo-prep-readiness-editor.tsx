@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -66,8 +67,8 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
   <fieldset disabled={busy} className="max-h-72 space-y-2 overflow-y-auto">
    <legend className="text-sm">Courses used for readiness</legend>
    {choices.filter(course=>(course.name+" "+course.code).toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))).map(course=>
-    <label key={course.id} className="flex min-h-11 sm:min-h-9 min-w-0 items-center gap-2 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm">
-     <input type="checkbox" checked={selected.includes(course.id)} onChange={e=>{
+    <label key={course.id} className="flex min-h-11 sm:min-h-9 min-w-0 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">
+     <Checkbox checked={selected.includes(course.id)} onChange={e=>{
       setSelected(current=>e.target.checked?current.includes(course.id)?current:[...current,course.id]:
        current.filter(id=>id!==course.id));
      }}/><span className="min-w-0 break-words">{course.name} ({course.code})</span>

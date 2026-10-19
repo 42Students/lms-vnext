@@ -12,10 +12,10 @@ export default async function LearnerSupportHistory({searchParams}:{
   const choices=["ALL","PENDING","APPROVED","REJECTED","CANCELLED"] as const;
   const requestTypes=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Placement Cell</Link>
+    <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Placement Cell</Link>
     <PageHeader eyebrow="My Placements" title="My support requests"
       description="Your application withdrawal, round rescheduling and offer-extension requests from your college placement team." />
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <section className="border-b border-border pb-5">
       <h2 className="text-sm font-semibold text-foreground">What is covered?</h2>
       <p className="mt-2 text-sm leading-6 text-body">
         Only persisted placement requests are shown. General helpdesk tickets and free-form feedback are not yet available because their data source is not registered.
@@ -25,8 +25,8 @@ export default async function LearnerSupportHistory({searchParams}:{
       {choices.map(status=><Link key={status}
         aria-current={data.status===status?"page":undefined}
         href={learnerSupportHistoryHref({status,type:data.type})}
-        className={"inline-flex min-h-11 items-center rounded-lg border px-3 text-xs font-semibold "+
-          (data.status===status?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border bg-surface text-foreground")}>
+        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-xs font-semibold "+
+          (data.status===status?"border-primary bg-primary-subtle text-primary-text":"border-border bg-surface text-foreground")}>
         {status==="ALL"?"All requests":status.charAt(0)+status.slice(1).toLowerCase()}
       </Link>)}
     </nav>
@@ -34,8 +34,8 @@ export default async function LearnerSupportHistory({searchParams}:{
       {requestTypes.map(type=><Link key={type}
         aria-current={data.type===type?"page":undefined}
         href={learnerSupportHistoryHref({status:data.status,type})}
-        className={"inline-flex min-h-11 items-center rounded-lg border px-3 text-xs font-semibold "+
-          (data.type===type?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border bg-surface text-foreground")}>
+        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-xs font-semibold "+
+          (data.type===type?"border-primary bg-primary-subtle text-primary-text":"border-border bg-surface text-foreground")}>
         {type==="ALL"?"All types":placementRequestTypeLabel(type)}
       </Link>)}
     </nav>
@@ -64,18 +64,18 @@ export default async function LearnerSupportHistory({searchParams}:{
               expectedUpdatedAt={row.request.updatedAt.toISOString()}/>
           </div>
         ) : null}
-        {row.request.decisionNote?<p className="mt-3 whitespace-pre-wrap break-words rounded-md bg-surface-subtle p-3 text-sm text-body">
+        {row.request.decisionNote?<p className="mt-3 whitespace-pre-wrap break-words rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-sm text-body">
           Placement-team note: {row.request.decisionNote}
         </p>:null}
       </li>)}
     </ol>}
     <nav aria-label="Request history pages" className="flex flex-wrap gap-3">
       {data.hasPrevious?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page-1})}
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
         ← Newer requests
       </Link>:null}
       {data.hasMore?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page+1})}
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
         Older requests →
       </Link>:null}
     </nav>

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -40,16 +41,16 @@ export function TpoRoundCheckIn({
   return (
     <div className="mt-2 flex flex-wrap gap-2">
       {attendance !== "PRESENT" ? (
-        <button type="button" disabled={busy} onClick={() => void mark("PRESENT")}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60 md:min-h-9">
+        <Button variant="secondary" type="button" disabled={busy} onClick={() => void mark("PRESENT")}
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold text-primary-text disabled:opacity-60">
           Mark checked-in
-        </button>
+        </Button>
       ) : null}
       {attendance !== "ABSENT" ? (
-        <button type="button" disabled={busy} onClick={() => void mark("ABSENT")}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60 md:min-h-9">
+        <Button variant="secondary" type="button" disabled={busy} onClick={() => void mark("ABSENT")}
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold text-primary-text disabled:opacity-60">
           Mark no-show
-        </button>
+        </Button>
       ) : null}
       {error ? <p role="alert" className="w-full text-xs text-error">{error}</p> : null}
     </div>
