@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 type Preview={count:number;day:string;alreadySent:boolean;allowed:boolean;reason:string|null;previewToken:string|null};
 export function TpoRemindNonApplicants({jobId}:{jobId:string}){
  const [open,setOpen]=useState(false);const [preview,setPreview]=useState<Preview|null>(null);
@@ -36,10 +37,8 @@ export function TpoRemindNonApplicants({jobId}:{jobId:string}){
    {busy?"Checking…":"Remind students who haven't applied"}</Button>
   {outcome?<span role="status" className="text-xs text-body">{outcome}</span>:null}
   {error&&!open?<span role="alert" className="text-xs text-error">{error}</span>:null}
-  {open&&preview?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <div role="dialog" aria-modal="true" aria-label="Review not-applied reminder"
-    className="w-full max-w-xl space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 shadow-xl">
-    <h2 className="text-lg font-semibold">Remind students who haven&apos;t applied</h2>
+  {preview?<Dialog open={open} onOpenChange={setOpen} title="Remind students who haven't applied" className="max-w-xl">
+   <div className="space-y-4">
     <p className="text-sm text-body">{preview.count} eligible registered students have not applied to this drive.
      These students will receive an in-app notification linking to the drive. Reminders are allowed once per drive each day before the deadline.</p>
     {preview.alreadySent?<p role="status" className="text-sm">Students were already reminded today ({preview.day}).</p>:null}
@@ -56,6 +55,6 @@ export function TpoRemindNonApplicants({jobId}:{jobId:string}){
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4">Cancel</button>
     </div>
    </div>
-  </div>:null}
+  </Dialog>:null}
  </div>;
 }
