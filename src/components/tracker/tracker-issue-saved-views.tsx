@@ -50,28 +50,28 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
     persist(next);setName("");
   }
   return <section aria-label="Saved issue views"
-    className="rounded-xl border border-border bg-surface p-4">
+    className="border-b border-border pb-4">
     <h2 className="mb-2 font-semibold">Saved views</h2>
     <div className="flex flex-wrap items-end gap-2">
       <label className="grid gap-1 text-sm font-semibold">View name
         <input value={name} onChange={event=>setName(event.target.value)}
           maxLength={60} placeholder="Name these filters"
-          className="min-h-10 rounded-md border border-border bg-background px-3"/>
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3"/>
       </label>
       <button type="button" onClick={save}
-        className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">
+        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
         Save current filters
       </button>
     </div>
     {views.length?<ul className="mt-3 flex flex-wrap gap-2">
-      {views.map(view=><li key={view.name} className="flex items-center gap-1 rounded-md border border-border">
+      {views.map(view=><li key={view.name} className="flex items-center gap-1 rounded-[var(--lms-control-radius)] border border-border">
         <button type="button" onClick={()=>router.push("/tracker/issues"+(view.filters?"?"+view.filters:""))}
-          className="min-h-10 px-3 text-sm font-semibold text-primary-text">
+          className="min-h-9 px-3 text-sm font-semibold text-primary-text">
           {view.name}
         </button>
         <button type="button" aria-label={"Delete saved view "+view.name}
           onClick={()=>persist(views.filter(item=>item.name!==view.name))}
-          className="min-h-10 border-l border-border px-3 text-sm font-semibold">
+          className="min-h-9 border-l border-border px-3 text-sm font-semibold">
           Delete
         </button>
       </li>)}
