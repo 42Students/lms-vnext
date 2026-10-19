@@ -271,3 +271,78 @@ Re-fetched all nine then-current lane-only TSX paths from the GitHub branch and 
 - [ ] All category H tick boxes remain open until every strict-proof condition is met. No CI, build, tests or local application run were performed.
 
 **Next exact file:** `src/components/courses/faculty-assignment-review.tsx` — confirmation prompts and grading state judgement cases; then `src/components/courses/faculty-quiz-review.tsx` and `src/components/admin/person-membership-actions.tsx`.
+
+
+## Targeted review completion — three files, source-level evidence (2026-10-19)
+
+Scope: `src/components/courses/faculty-assignment-review.tsx`, `src/components/courses/faculty-quiz-review.tsx`, `src/components/admin/person-membership-actions.tsx`. This pass completes the **source migrations** for these three files while retaining the API actions, version receipts, roles and current page copy. No build, typecheck, CI or rendered pixel comparison was run. Strict pixel-parity checkboxes remain unticked until computed-style/browser evidence is available.
+
+### 1. Faculty assignment review — implementation complete, visual verification pending
+
+| Visual/state property | Legacy source with exact value | Current implementation with line | Source result |
+|---|---|---|---|
+| Submission record surface | `legacy-styles/components___variables.scss:30,134`: hairline #e5e9f0; 12px card radius; white from the surface palette | `faculty-assignment-review.tsx:293`: `border-[var(--lms-canvas-border)] rounded-[var(--lms-canvas-radius)] bg-[var(--lms-surface)]`; tokens `globals.css:329,335,71` resolve #e5e9f0, 12px, #fff | Exact source token match |
+| Internal padding | `components___variables.scss:119`: `$space-4:16px` | `faculty-assignment-review.tsx:293`: `p-[var(--lms-space-4)]`, `globals.css:343` =16px | Match |
+| Form grouping gap | `components___variables.scss:118`: `$space-3:12px` | `faculty-assignment-review.tsx:351`: `gap-[var(--lms-space-3)]`; `globals.css:342` =12px | Match |
+| Input/textarea typography + focus/error | `legacy-styles/components___form.scss:111-141`: 13px label, 14px normal entry, teal focus shadow, red error border | `faculty-assignment-review.tsx:354-390` delegates to shared `Input`/`Textarea`; `legacy-skin.css:103-175` owns font, focus and invalid state | Inherited; browser cascade not verified |
+| Primary/secondary action skin | Owner north star `old-lms-pages.md:7` + `master-queue.md`: 14px/650, #0a7c88 white, 9px radius, outlined secondary, 36px desktop | `faculty-assignment-review.tsx:394-420` uses shared Button, `ui/button.tsx:11-28`, `globals.css:21-25,331,333` | Default/hover/focus/disabled token mapping verified; shared size=`sm` uses 13px (`button.tsx:18`), not 14px; do not claim full visual equality |
+| Phone hit area and form columns | `components___variables.scss:139,148`: 44px target, 767px cutoff; `pages___admin-list-pages.scss:209-215` also 44px phone actions | `faculty-assignment-review.tsx:394,401,410,543,621,629,658,660`: `min-h-11 md:min-h-[var(--lms-control-height)]`; `md:` activates at 768px; `351` has one column below 768px, 2 above | Static breakpoint match; screenshot outstanding |
+| Student navigation wrapping | `pages___admin-list-pages.scss:193-215`: narrow 767px layout, touch actions | `faculty-assignment-review.tsx:612-630`: 2-column phone grid and `md:flex` tablet toolbar; same filter and selection handlers | Static phone/tablet proof |
+| Selected grading filters | `pages___admin-list-pages.scss:236-242`: bottom rule 1px #e5e9f0, tabs font 0.875rem (14px) | `faculty-assignment-review.tsx:585` delegates to `ui/tabs.tsx:71-89`, which has 13px shared labels and focus/selection rules | Functional migration present; 1px font-size mismatch owned by shared Tabs |
+| Confirmation for regrade/save+publish/publish | Native `window.confirm` had no legacy modal styling | `faculty-assignment-review.tsx:92,95-287,446-464` uses one shared `ConfirmDialog`; warning copy and versioned POST/PATCH receipts preserved; guarded in-flight `useRef` | Overlay implementation complete; shared Dialog visuals `ui/dialog.tsx:39-54` |
+| Loading/empty/error/success | Legacy `components___form.scss:137-141` red error, neutral/success palette in `components___variables.scss` | `faculty-assignment-review.tsx:439,445,508,601,604,608`: shared `Alert`, `LoadingState`, `EmptyState`; no old raw error blocks | Shared states complete; visual comparison outstanding |
+| IST date presentation | User project timezone rule is IST | `faculty-assignment-review.tsx:42-53` explicitly `Asia/Kolkata`; unchanged submission rows | Correct source formatting |
+
+### 2. Faculty quiz review — implementation complete, visual verification pending
+
+| Property/state | Legacy exact source | vNext implementation | Source result |
+|---|---|---|---|
+| Attempt card/background/border/radius | `components___variables.scss:30,134`: #e5e9f0, 12px | `faculty-quiz-review.tsx:334`: `--lms-canvas-border`, `--lms-canvas-radius`, `--lms-surface`; `globals.css:329,335,71` | Exact match for source values |
+| Attempt spacing | `components___variables.scss:118-119`: 12px and 16px | `faculty-quiz-review.tsx:334,365`: `--lms-space-4` and `--lms-space-3`; `globals.css:342-343` | Match |
+| Result badges | `pages___admin-list-pages.scss:138-141`: subtle neutral background, 12px | `faculty-quiz-review.tsx:354,374` uses shared `StatusBadge`; `ui/status-badge.tsx:9-18` defines 12px/700 and status tones | Token comparison, not full per-tone screenshot |
+| Release/withhold button skin | Owner north star `master-queue.md`: primary #0a7c88, 9px radius, 36px desktop | `faculty-quiz-review.tsx:207-309` uses shared `Button`; `ui/button.tsx:11-28`, `globals.css:21-25,331,333` | Delegated token values; `size=sm` 13px vs owner 14px |
+| Phone hit target | `components___variables.scss:139,148`: 44px <=767px; desktop 36px owner | `faculty-quiz-review.tsx:209,219,234,276,290,304`: `min-h-11 md:min-h-[var(--lms-control-height)]` | Static source match for six trigger buttons |
+| Responsive drawer/scroll | `pages___admin-list-pages.scss:193-215`: phone treatment | `faculty-quiz-review.tsx:255` uses shared Drawer; `ui/drawer.tsx:37-51` supplies viewport sizing, overscroll, sticky header/footer | Shared behavior; rendered widths not verified |
+| Confirmation states | Browser-native confirmation did not match LMS modal skin | `faculty-quiz-review.tsx:106,153-198,439-450`: shared `ConfirmDialog` for publish/hide in both button placements, original warnings and `expectedUpdatedAt` preserved; `resultUpdatePending` ref prevents simultaneous mutation | Source implementation complete |
+| Loading/error/empty/success | Legacy messages/palette per `components___form.scss:137-141` and `components___variables.scss:31` | `faculty-quiz-review.tsx:205,317,320,324`: shared Alert/LoadingState/EmptyState with unchanged visible messages | Shared state migration complete |
+| Reduced-motion/focus | `components___form.scss:23-32`: keyboard focus distinguished from pointer focus | Inherited `ui/button.tsx:28`, `ui/dialog.tsx:39-54`, `globals.css:193-246` | Source mapping, computed proof pending |
+
+### 3. Super Admin membership actions — implementation complete, visual verification pending
+
+| Property/state | Legacy exact source | vNext implementation | Source result |
+|---|---|---|---|
+| Action bar and gap | `components___variables.scss:117`: `$space-2=8px` | `person-membership-actions.tsx:202` uses `flex-wrap` and `gap-[var(--lms-space-2)]` | Match to 8px token |
+| Action buttons | Owner north star `master-queue.md`: 9px radius, primary #0a7c88, 36px desktop, white on-primary, outlined secondary | `person-membership-actions.tsx:210-258,309-329` uses shared `Button`, `globals.css:21-25,331,333`, `ui/button.tsx:11-28` | Delegated; no local bespoke pill |
+| Mobile action height | `legacy-styles/components___variables.scss:139,148`; `pages___admin-list-pages.scss:209-215`: 44px to 767px | `person-membership-actions.tsx:213,224,236,252,311,319` uses `min-h-11 md:min-h-[var(--lms-control-height)]` | Exact static breakpoint comparison |
+| Role row minimum height | Same 44px through 767px | `person-membership-actions.tsx:277`: 44px base, 36px from `md`; labels wrap within flex row | Match |
+| Role row hover and keyboard focus | `components___variables.scss:13`: subtle teal `#eff8fa`; `components___form.scss:23-32` keyboard-only focus treatment | `person-membership-actions.tsx:277`: hover/focus-within `var(--lms-primary-subtle)`, 150ms `--lms-motion-fast`; Checkbox has 2px keyboard focus outline in `ui/checkbox.tsx:10` | Source color/transition match, outline runtime not verified |
+| Checked/disabled checkbox | `components___variables.scss:10,13`: teal accent and subtler background | `person-membership-actions.tsx:282-290` shared Checkbox; `ui/checkbox.tsx:7-10` defines teal checked, disabled, focus and reduced-motion | Shared state present |
+| Row hairlines | `components___variables.scss:30`: #e5e9f0 | `person-membership-actions.tsx:269`: `border-[var(--lms-canvas-border)]`, `globals.css:329` #e5e9f0 | Exact token match |
+| Role mutation feedback | 13px form label `components___form.scss:111-113`; status palettes in `components___variables.scss` | `person-membership-actions.tsx:292` has screen-reader live pending status; existing `showToast` success/error receipts stay unchanged | Behavior preserved, specific toast computed styling not verified |
+| Suspend dialog | `pages___admin-list-pages.scss:193-215`: mobile action touch target | `person-membership-actions.tsx:301-352` uses shared Dialog/Textarea/Button; reason required; pending prevents dismissal; `ui/dialog.tsx:39-54` owns focus/trap/backdrop/footer | Shared modal, static source evidence |
+| Terminal END confirmation | Old native prompts not present | `person-membership-actions.tsx:355-364` uses shared `ConfirmDialog`, terminal-warning copy unchanged, `verifiedMembershipLifecycleReceipt` still validates response | Source implementation complete |
+
+### Source-scanned coverage / reproduction grep
+
+The following **whole-file equivalent regex scans were actually evaluated** on the complete UTF-8 GitHub blobs at this lane head, not just search snippets. For reproducibility the shell equivalent is:
+
+```sh
+git grep -nE '<(button|input|select|textarea|table|dialog)([ >])|window[.]confirm[(]|#[0-9a-fA-F]{3,8}\\b|rounded-full|aria-pressed' -- \
+  src/components/courses/faculty-assignment-review.tsx \
+  src/components/courses/faculty-quiz-review.tsx \
+  src/components/admin/person-membership-actions.tsx
+```
+
+Actual Code Mode full-file scan used the equivalent expression `/<(?:button|input|select|textarea|table|dialog)\\b|\\bwindow\\.confirm\\s*\\(|#[0-9a-fA-F]{3,8}\\b|rounded-full|aria-pressed/g` on each fetched blob. Result **0, 0, 0** respectively (the shell command is provided to reproduce, not claimed executed). Additional counters: assignment shared Button 11 / Alert 3 / EmptyState 2 / LoadingState 1 / ConfirmDialog 1 / Drawer 2; quiz Button 6 / Alert 2 / EmptyState 1 / LoadingState 1 / ConfirmDialog 1 / Drawer 1; membership Button 6 / Dialog 2 / ConfirmDialog 1 / Checkbox 1 / Textarea 1. No hard-coded hex and no hand-rolled tabs or toggles in these files.
+
+The textual tag-pair scan found assignment `<Button>` **11/11** and `<Drawer>` **2/2**, quiz `<Button>` **6/6** and `<Drawer>` **1/1**, membership `<Button>` **6/6** and `<Dialog>` **2/2**; other listed shared components are self-closing as appropriate. Reviewed all changed file contents for stray quotes, malformed imports and mismatched explicitly paired JSX tags. This is not a parser/TS compile result.
+
+### Responsive proof — source rules, not screenshots
+
+Legacy breakpoint `components___variables.scss:148` and `pages___admin-list-pages.scss:193` applies phone treatment at viewport widths **<=767px**. Tailwind `md:` begins at **768px**. All three targeted files use base `min-h-11` (44px at standard 16px root), switching to `--lms-control-height=36px` at `md`; they have **zero `sm:` overrides** that would prematurely shrink controls between 640–767px. Assignment uses a phone 2-column student navigation grid switching to tablet flex (`faculty-assignment-review.tsx:612`), and one-column grading fields switching to 2-column grid at 768px (`351`); quiz action bars wrap (`faculty-quiz-review.tsx:205`) and shared Drawer scrolls (`255`); membership row/actions wrap and allow 44px touch targets (`person-membership-actions.tsx:202,277`). These are comparisons of CSS source branches, **not empirical viewport screenshots**.
+
+### Final strict-tick boundary
+
+The three requested **source files are completed** for native-control removal, modal conversion, shared-state handling, visual token use, and the source-responsive pass. **Do not tick pixel-level parity yet:** exact computed button font size for size=`sm` (13px versus north-star 14px), shared `ConfirmDialog` footer touch targets, full state-by-state rendered visual comparisons (hover/focus/disabled/error/empty), screenshots at 375px/767px/768px/1024px, and full portal-wide exhaustive category-H grep remain outside verifiable evidence. The shared-component owner must resolve any cross-component discrepancies; this lane must not edit `src/components/ui`.
+
+**Next exact file outside this three-file request:** `src/components/courses/faculty-assessment-editor.tsx` — inspect assessment editor page-level responsive states and raw confirmation opportunities, then `src/components/admin/person-profile-dialog.tsx`.
