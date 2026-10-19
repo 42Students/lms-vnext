@@ -13,7 +13,7 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 ## Follow-on execution
 
 - Fast-forwarded `chatgpt/chat-11-b` to `main` (`7e3ab610`) before edits; the historical chat-11 sweep was already merged.
-- **82 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 57 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
+- **96 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 57 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
 - Eliminated duplicate filters/form shell cards in TPO blocked dates and Super Admin module filters, plus redundant section padding in settings and public placements. Preserved distinct metric/tenant/setup cards and status notices.
 - Replaced residual literal 9px, generic `rounded-md`, and legacy `--radius` control overrides with the canonical `--lms-control-radius`, without changing inputs' values, forms, labels or handlers. Fixed inconsistent tap targets on tenant setup tabs.
 - Removed invalid standalone `-`/`-subtle` utility tokens in tenant domains, college sign-in, logo upload, college setup checklist, and tenant settings scope.
@@ -125,6 +125,27 @@ The chat-11 branch was fast-forwarded again to `main` at `6222f78a4a19` **before
 - `src/components/tpo/tpo-notice-undo-toast.tsx`
 - `src/components/tpo/tpo-notification-refresh.tsx`
 - `src/components/tpo/tpo-outcome-labels-editor.tsx`
+
+## Third source pass — 2026-10-19 (14 commits)
+
+A further **14 `[chat-11]` source commits** refined **10 previously inventoried pages/editors**, resulting in **96 cumulative source commits across 57 unique source files**. All 14 commits were pushed to `chatgpt/chat-11-b`, not `main`.
+
+This batch removes residual parallel styling from TPO notification and recruiter access list filters, personal and college email preferences, trusted domains, preparation percentage and course readiness, blocked-date filters, job types, and communication policy editors. Their buttons, text/number/date/search controls, selects, and message textareas now use the canonical `Button`, `Input`, `Select`, and `Textarea` wherever applicable. Native checkboxes/radio controls, form submission handlers, confirmation dialogs, and permission/data logic remain unchanged. Small control-specific mobile heights and separate data-object tiles remain.
+
+### Exact changed files in this pass
+
+- `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- `src/components/tpo/tpo-blocked-dates-editor.tsx`
+- `src/components/tpo/tpo-communication-settings-editors.tsx`
+- `src/components/tpo/tpo-job-types-editor.tsx`
+- `src/components/tpo/tpo-my-notification-preferences-editor.tsx`
+- `src/components/tpo/tpo-optional-emails-editor.tsx`
+- `src/components/tpo/tpo-prep-percentage-editor.tsx`
+- `src/components/tpo/tpo-prep-readiness-editor.tsx`
+- `src/components/tpo/tpo-trusted-domain-editor.tsx`
+
+Source text was fetched again from the lane branch after the edits. The scoped scan found no `rounded-[9px]`, unrelated blue/slate/gray palette classes, malformed lone dash classes, or wrong foreground-on-primary classes in these ten files. Their opening/closing `Button` and `Select` component tags were also counted and matched. **This is not a compiler, runtime, accessibility, screenshot, or CI test.** The owner/orchestrator still needs to reconcile concurrent changes to `main`.
 
 ## Remaining verification and ownership boundaries
 
