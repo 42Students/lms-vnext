@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {can} from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,7 @@ export default async function TenantDirectory({searchParams}:{
    <PageHeader title="Tenant Setup"/>
    <ErrorState title="Tenant directory access denied"
     description="Your account cannot view platform tenant records."
-    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+    action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
   </div>;
  const raw=await searchParams;
  const parsed=parseTenantLifecycleSearchParams(raw);
@@ -53,28 +54,28 @@ export default async function TenantDirectory({searchParams}:{
    actions={<div className="flex flex-wrap items-center justify-end gap-2">
     <TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />
     <Link href="/admin/tenants/create"
-      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover ">
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover ">
       Create an organization and its colleges
     </Link>
    </div>} />
-  <Link href="/admin/domains" className="inline-flex min-h-11 min-[768px]:min-h-9  items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">Domains</Link>
+  <Link href="/admin/domains" className="inline-flex min-h-11 md:min-h-9  items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">Domains</Link>
   <div className="flex flex-wrap gap-3">
-   <Link href="/admin/tenants/setup" className="inline-flex min-h-11 min-[768px]:min-h-9  items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">Get this college ready to go live</Link>
+   <Link href="/admin/tenants/setup" className="inline-flex min-h-11 md:min-h-9  items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">Get this college ready to go live</Link>
   </div>
-  <form className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 xl:grid-cols-4">
+  <form className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 min-[1366px]:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold text-body">College
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-     className="min-h-11 min-[768px]:min-h-9"/>
+     className="min-h-11 md:min-h-9"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Organization
     <Select name="organizationId" defaultValue={data.query.organizationId}
-     className="min-h-11 min-[768px]:min-h-9">
+     className="min-h-11 md:min-h-9">
      <option value="">All permitted</option>
      {data.organizations.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">College status
-    <Select name="status" defaultValue={data.query.status} className="min-h-11 min-[768px]:min-h-9">
+    <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
      {statuses.map(status=><option key={status}>{status}</option>)}
     </Select>
    </label>
