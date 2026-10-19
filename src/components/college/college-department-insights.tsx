@@ -71,7 +71,7 @@ export function CollegeDepartmentInsights({
           className="mt-2 inline-block font-semibold text-primary-text">Attendance policy settings</Link>
       </section>
     ) : null}
-    <section aria-label="Department filters" className="- sm: border-t border-border pt-4">
+    <section aria-label="Department filters" className="sm: border-t border-border pt-4">
       <form method="get" action={path} className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
           Department name

@@ -42,7 +42,7 @@ export default async function MentorSprintProgressPage({
       actions={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Mentoring projects
       </Link>} />
-    {!data.enabled ? <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+    {!data.enabled ? <section role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Sprint progress was not loaded.
     </section> : <>
       <form action="/mentor/sprint-progress" method="get"
@@ -103,8 +103,8 @@ export default async function MentorSprintProgressPage({
       <p className="text-sm text-body">{data.total} matching sprint{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No persisted sprint progress"
         description="No sprints matched the selected state and current Mentor assignments. Unmaterialized or missing pre-migration work is not counted." />
-      : <div className="grid gap-3">{data.items.map(item =>
-        <article key={item.id} className="rounded-xl border border-border bg-surface p-4">
+      : <div className="divide-y divide-border">{data.items.map(item =>
+        <article key={item.id} className="py-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div><h2 className="font-semibold text-foreground">{item.title}</h2>
               <p className="mt-1 text-sm text-body">{item.projectTitle} · {item.releaseTitle}</p>

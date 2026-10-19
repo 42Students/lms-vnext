@@ -45,7 +45,7 @@ export default async function MentorTeamHistoryPage({
         Team workspace
       </Link>} />
     {!data.enabled
-      ? <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      ? <section role="status" className="border-b border-border pb-4 text-sm text-body">
           Projects access is disabled. Team history cannot be displayed.
         </section>
       : <>
@@ -94,8 +94,8 @@ export default async function MentorTeamHistoryPage({
         {data.items.length === 0
           ? <EmptyState title="No team membership records"
               description="No registered membership rows match this project and filter. History from before migration may not be available." />
-          : <div className="grid gap-3">{data.items.map(item =>
-              <article key={item.id} className="rounded-xl border border-border bg-surface p-4">
+          : <div className="divide-y divide-border">{data.items.map(item =>
+              <article key={item.id} className="py-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="font-semibold text-foreground">{item.displayName}</h2>
                   <span className="text-xs font-semibold text-body">{item.state}</span>

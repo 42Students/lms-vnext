@@ -193,7 +193,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       <input id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
         disabled={busy||files.length>=PROJECT_FILE_LIMIT}
         onChange={event=>setSelected(event.target.files?.[0]??null)}
-        className="block max-w-full text-sm text-body"/>
+        className="block min-h-9 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm text-body file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-primary-subtle file:px-3 file:py-1 file:text-link"/>
       <p className="text-xs text-muted-foreground">{limitsSummary("project-resource")}</p>
       {progress!==null&&<div role="status" className="text-xs text-body">
         Uploading… {progress}%
@@ -210,10 +210,10 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
     </form>}
     {files.length===0?<p className="text-sm text-muted-foreground">
       No resources yet. Share the first link or file with your team.
-    </p>:<ul className="space-y-3">
+    </p>:<ul className="divide-y divide-border">
       {files.map(file=>{
         const descriptor=fileStatusDescriptor(file.status);
-        return <li key={file.id} className="rounded-lg border border-border p-3">
+        return <li key={file.id} className="py-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               <p className="break-words font-semibold text-foreground">{file.title}</p>

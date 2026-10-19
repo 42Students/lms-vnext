@@ -41,7 +41,7 @@ export default async function MentorReviewsPage({
           Projects
         </Link>
       </div>} />
-    {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+    {!data.enabled ? <div role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No project data was loaded.
     </div> : <>
       <form action="/mentor/reviews" method="get" className={mentorDeliveryReviewMobileForm}>
@@ -98,8 +98,8 @@ export default async function MentorReviewsPage({
       <p className="text-sm text-body">{data.total} matching review item{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
         description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." />
-        : <div className="grid gap-3">{data.items.map(item =>
-          <Link key={item.key} href={item.href} className="min-h-11 block rounded-xl border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        : <div className="grid">{data.items.map(item =>
+          <Link key={item.key} href={item.href} className="min-h-11 block border-b border-border py-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             <p className="min-w-0 break-words font-semibold text-link">{item.description}</p>
             <p className="mt-2 text-xs text-muted-foreground">Submitted: {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",

@@ -68,7 +68,7 @@ export default async function LearnerProfilePage({
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Review verification status</Link>
       </section>
       {sectionNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{sectionNotice}</p> : null}
-      <section aria-label="Academic identity" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+      <section aria-label="Academic identity" className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Academic identity</h2>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
         {!academicOutcome.available ? <div role="status" className="mt-3 text-sm text-body">
@@ -129,7 +129,7 @@ export default async function LearnerProfilePage({
         </p>}
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">View my verification status →</Link>
       </section>
-      <section aria-label="Coding profiles" className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
+      <section aria-label="Coding profiles" className="min-w-0 border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Coding platform profiles</h2>
         <p className="mt-1 text-sm text-body">Saved GitHub and coding-platform links are learner-authored, not verified skill evidence.</p>
         {learnerSavedCodingProfiles(profile.profileDocument).length === 0 ? (
