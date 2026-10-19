@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {hrApplicantFilterSchema} from "@/modules/placements/hr-job-applicants-model";
@@ -33,7 +34,7 @@ export async function GET(request:Request,{params}:{params:Promise<{jobId:string
   const exportResult=buildHrOfferCsv(rows,total);
   return new Response(exportResult.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="recruiter-offers.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiter-offers", "csv") + '"',
    "Cache-Control":"private, no-store","X-Export-Omitted":String(exportResult.omitted),
   }});
  }catch(error){return apiErrorResponse(error);}
