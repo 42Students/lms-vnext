@@ -595,7 +595,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   [data-slot="page-canvas"] h1,
   [data-slot="page-header"] h1 { font-size: 26px; }
   [data-slot="button"], [data-slot="input"], [data-slot="select"], [data-slot="pagination"] a { min-height: 44px; }
-  [data-slot="dialog"] { border-radius: 0; box-shadow: none; }
+  /* Legacy Ant mobile modals are centered, inset 16px with rounded panels. */
+  [data-slot="dialog"] { border-radius: 12px; box-shadow: var(--lms-elevation-4); }
 }
 @media (prefers-reduced-motion: reduce) {
   [data-slot="button"], [data-slot="input"], [data-slot="select"],
