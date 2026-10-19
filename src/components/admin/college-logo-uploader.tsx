@@ -76,7 +76,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   {canEdit?<><label className="block text-sm font-medium">Select logo to crop
     <Input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy}
      onChange={e=>select(e.target.files?.[0]??null)}
-     className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-2"/>
+     className="mt-2 block min-h-11 w-full p-2"/>
    </label>
    {file&&preview?<div className="space-y-3">
     <div className="relative h-52 w-52 overflow-hidden rounded-[var(--lms-control-radius,9px)] border border-border bg-surface-subtle">
