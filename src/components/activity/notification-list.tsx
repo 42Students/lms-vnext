@@ -128,7 +128,7 @@ export function NotificationList({
                     ) : null}
                     {!item.readAt && item.source !== "ANNOUNCEMENT" ? <StatusBadge tone="info">Unread</StatusBadge> : null}
                   </div>
-                  <h3 className="mt-3 text-sm font-semibold leading-[1.35] text-foreground sm:text-base">
+                  <h3 className="mt-3 text-sm font-semibold leading-[1.35] text-foreground min-[768px]:text-base">
                     {onSelect ? (
                       <Button
                         type="button"
