@@ -327,7 +327,7 @@ export function LoginForm({
       {error ? (
         <div
           role="alert" ref={errorSummaryRef} tabIndex={-1}
-          className="mt-4 rounded-lg border border-error bg-[var(--lms-error-subtle)] p-3 text-sm text-error"
+          className="mt-4 rounded-[9px] border border-error bg-[var(--lms-error-subtle)] p-3 text-sm text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
         >
           {error}
         </div>
@@ -343,7 +343,7 @@ export function LoginForm({
       {notice ? (
         <div
           role="status"
-          className="mt-4 rounded-lg border border-border bg-primary-subtle p-3 text-sm text-body"
+          className="mt-4 rounded-[9px] border border-border bg-primary-subtle p-3 text-sm text-body"
         >
           {notice}
         </div>
@@ -354,7 +354,7 @@ export function LoginForm({
           {allowedChannels.length>1?<div
             role="tablist"
             aria-label="Sign in method"
-            className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1"
+            className="grid grid-cols-2 gap-1 rounded-[9px] bg-muted p-1"
           >
             {(["EMAIL", "PHONE"] as const).filter(value=>allowedChannels.includes(value)).map((value) => (
               <button
@@ -392,8 +392,8 @@ export function LoginForm({
                 }}
                 className={
                   channel === value
-                    ? "min-h-9 rounded-md bg-surface text-sm font-semibold text-primary-text shadow-sm"
-                    : "min-h-9 rounded-md text-sm font-medium text-body hover:text-primary-text"
+                    ? "min-h-10 rounded-[9px] bg-surface text-sm font-semibold text-primary-text shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    : "min-h-10 rounded-[9px] text-sm font-medium text-body hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 }
               >
                 {value === "PHONE" ? "Phone" : "Email"}
@@ -527,7 +527,7 @@ export function LoginForm({
               type="button"
               onClick={() => void start()}
               disabled={busy || cooldown > 0}
-              className="font-medium text-primary-text underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
+              className="inline-flex min-h-9 items-center font-medium text-primary-text underline-offset-2 hover:underline focus-visible:rounded-[9px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
             >
               {cooldown > 0 ? "Resend code in "+Math.floor(cooldown/60)+":"+
                 String(cooldown%60).padStart(2,"0") : "Resend code"}
@@ -537,7 +537,7 @@ export function LoginForm({
                 type="button"
                 onClick={() => void sendEmailCode()}
                 disabled={busy || emailCooldown > 0}
-                className="font-medium text-primary-text underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
+                className="inline-flex min-h-9 items-center font-medium text-primary-text underline-offset-2 hover:underline focus-visible:rounded-[9px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
               >
                 {emailCooldown>0?`Email another code in ${emailCooldown}s`:"Get the code by email"}
               </button>
@@ -547,7 +547,7 @@ export function LoginForm({
           <button
             type="button"
             onClick={reset}
-            className="text-sm text-muted-foreground hover:text-foreground"
+            className="inline-flex min-h-9 items-center text-sm text-muted-foreground hover:text-foreground focus-visible:rounded-[9px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Change
           </button>

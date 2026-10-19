@@ -7,7 +7,7 @@ export function TpoNoticeComposerDialog({children,mode="NEW"}:{children:ReactNod
  const title=mode==="EDIT"?"Edit announcement":"New announcement";
  return <>
   <button type="button" onClick={()=>setOpen(true)}
-   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-5 text-sm font-[650] text-on-primary">
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-[650] text-on-primary">
    {title}
   </button>
   <Dialog open={open} onOpenChange={setOpen} title={title}>

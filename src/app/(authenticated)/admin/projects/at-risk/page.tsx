@@ -24,7 +24,7 @@ export default async function SuperAdminProjectAtRiskRoute({
       <PageHeader eyebrow="Super Admin Projects" title="At-risk projects" />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
-        action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)] underline">Back to dashboard</Link>}
+        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}
       />
     </div>;
   }

@@ -1,5 +1,6 @@
 "use client";
 import { ErrorState } from "@/components/ui/error-state";
+import { Button } from "@/components/ui/button";
 export default function FacultyDirectoryError({ reset }: {
   error: Error & { digest?: string };
   reset: () => void;
@@ -7,7 +8,6 @@ export default function FacultyDirectoryError({ reset }: {
   return <ErrorState
     title="Faculty directory unavailable"
     description="The directory could not be loaded. No empty-result conclusion is assumed."
-    action={<button type="button" onClick={reset}
-      className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Retry</button>}
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
   />;
 }
