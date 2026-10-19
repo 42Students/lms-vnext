@@ -34,7 +34,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
           </Link>
         }
       />
-      <section aria-label={title + " filters"} className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label={title + " filters"} className="border-b border-border pb-5">
         <form method="get" action={href} className="flex flex-wrap items-end gap-3">
           {lessons?<label className="grid min-w-32 gap-1 text-sm font-semibold text-body">
             Rows per page
