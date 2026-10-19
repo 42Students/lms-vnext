@@ -185,7 +185,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         {key:"points",header:"Points",cell:row=>row.points,mobilePriority:"secondary"},
         {key:"unsized",header:"Unsized",cell:row=>row.unsized,mobilePriority:"secondary"},
       ]}
-      empty={<p>No learners to summarize yet.</p>}
+      empty={<EmptyState title="No learners to summarize" description="No learners to summarize yet." />}
     />
   </section>
   {filtered.length===0?<EmptyState title={tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters."} description={tasks.length===0?"There are no tasks to assign.":"Use Clear all to see every task."} />:null}
