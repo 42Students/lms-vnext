@@ -17,7 +17,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  const raw=await searchParams;
  const page=parseAdminSessionHistoryPage(raw);
  if(page===null)return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Tenant" title="Administrator activity history"/>
+  <PageHeader title="Administrator activity history"/>
   <ErrorState title="Invalid history page" description="Choose a valid page without repeated or unrelated filters."
    action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-semibold underline">Clear history filters</Link>}/>
  </div>;
@@ -28,7 +28,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  }).format(date);
  return <div className="min-w-0 space-y-5">
   <Link href={base} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">← College admins</Link>
-  <PageHeader eyebrow="Super Admin · Tenant" title={data.target.name+" · History"}
+  <PageHeader title={data.target.name+" · History"}
    description="Recorded identity, college-admin lifecycle and platform actions concerning this administrator in this college. Cross-college and raw event metadata are excluded."/>
   <a href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Export shown history (CSV)</a>
