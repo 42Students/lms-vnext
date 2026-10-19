@@ -19,11 +19,15 @@ function NavLinks({ links }: { links: readonly { href: string; label: string }[]
 }
 
 export function SuperAdminPlacementOversightNav() {
+  const pathname = usePathname();
+  const additionalActive = SUPER_ADMIN_PLACEMENT_OVERSIGHT_ADDITIONAL.some(link =>
+    pathname === link.href || pathname.startsWith(link.href + "/")
+  );
   return <div className="space-y-2">
     <nav aria-label="Super Admin placement oversight" className="flex min-w-0 flex-wrap gap-2">
       <NavLinks links={SUPER_ADMIN_PLACEMENT_OVERSIGHT_PRIMARY} />
     </nav>
-    <Disclosure title="More placement reports" className="border-t border-border pt-3">
+    <Disclosure title="More placement reports" defaultOpen={additionalActive} className="border-t border-border pt-3">
       <nav aria-label="Additional placement reports" className="mt-3 flex flex-wrap gap-2">
         <NavLinks links={SUPER_ADMIN_PLACEMENT_OVERSIGHT_ADDITIONAL} />
       </nav>
