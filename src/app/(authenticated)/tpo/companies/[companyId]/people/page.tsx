@@ -18,19 +18,19 @@ export default async function TpoCompanyPeoplePage({
   if (!company) notFound();
   return (
     <div className="space-y-5">
-      <Link className="text-sm font-semibold text-[var(--lms-teal-deep)]"
+      <Link className="text-sm font-semibold text-link"
         href={"/tpo/companies/" + encodeURIComponent(companyId)}>
         ← Back to company
       </Link>
       <PageHeader eyebrow="TPO · Companies" title={company.name+" · Contact people"} description="Persisted linked recruiter leads only, not an independent contacts directory."/>
       {process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? (
         <TpoCompanyPersonEditor companyId={companyId} contacts={company.contacts}/>
-      ) : <p role="status" className="rounded-lg border p-4">DB09 contact writes are unavailable.</p>}
+      ) : <p role="status" className="rounded-[var(--radius)] border p-4">DB09 contact writes are unavailable.</p>}
       {company.contacts.length === 0
-        ? <p role="status" className="rounded-lg border p-4 text-sm text-body">
+        ? <p role="status" className="rounded-[var(--radius)] border p-4 text-sm text-body">
             No contact people are linked to this company yet.
           </p>
-        : <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
+        : <ul className="divide-y divide-border rounded-[12px] border border-border bg-surface">
             {company.contacts.map(contact => (
               <li key={contact.id} className="p-4 text-sm">
                 <strong>{contact.name}</strong>
