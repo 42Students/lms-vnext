@@ -27,7 +27,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   const resolution = resolveLearnerOfferingDelivery(overview.assignments, path.assignmentId, query.deliveryId);
   if (resolution.kind === "none") notFound();
   if (resolution.kind === "choose") return <div className="min-w-0 space-y-6">
-    <Link href="/learn/allAssignments" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)]">← All Assignments</Link>
+    <Link href="/learn/allAssignments" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-link-text)]">← All Assignments</Link>
     <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." />
     <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
       {resolution.options.map(option => <li key={option.deliveryId} className="p-4">
@@ -44,7 +44,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   if (!item) notFound();
   const materials=await listOwnLearnerAssignmentMaterialLinks(await getCurrentRequestContext(),item.id,item.deliveryId);
   return <div className="space-y-6">
-    <Link href="/learn/allAssignments" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)]">← All Assignments</Link>
+    <Link href="/learn/allAssignments" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-link-text)]">← All Assignments</Link>
     <PageHeader title={item.title} />
     <div className="grid gap-4 sm:grid-cols-2">
       <section className="rounded-xl border border-border bg-surface p-4">
@@ -67,7 +67,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       {materials.links.length>0 ? <ul className="mt-3 space-y-2" aria-label="Instructor resources">
         {materials.links.map(link=><li key={link.id} className="text-sm">
           <a href={link.href} rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline">
+            className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline">
             Open link: {link.title}
           </a>
         </li>)}
@@ -103,7 +103,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         ) : <div className="mt-2 space-y-2">
           <p className="text-sm text-body">{item.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}</p>
           <button type="button" disabled aria-disabled="true"
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-muted-foreground">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-muted-foreground">
             {item.dueAt?"Submission closed":"Unavailable"}
           </button>
         </div>}
