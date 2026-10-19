@@ -387,7 +387,7 @@ export function LearnerPlacementOffers({
             </div>
 
             {item.status==="ACCEPTED" && item.acceptanceChannel==="EXTERNAL_IMPORT" ? (
-              <aside role="status" className="mt-4 rounded-lg border border-warning bg-surface-subtle p-4 text-sm text-body">
+              <aside role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-4 text-sm text-body">
                 <p>The company told us you accepted this offer. If that is wrong, tell the placement cell
                   {item.acceptedDisputableUntil ? " before "+(formatWhen(item.acceptedDisputableUntil)??"the recorded deadline")+" IST." : "."}
                 </p>
@@ -467,7 +467,7 @@ export function LearnerPlacementOffers({
             {item.joining &&
             item.joining.status !==
               "PENDING" ? (
-              <div className="mt-4 rounded-lg border border-border bg-muted px-4 py-3 text-sm text-body">
+              <div className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-4 py-3 text-sm text-body">
                 <p className="m-0 font-semibold text-foreground">
                   Joining outcome
                 </p>

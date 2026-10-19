@@ -50,7 +50,8 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   const statuses = ["ALL", "ASSIGNED", "UNASSIGNED"] as const;
   return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin · Template college availability" title={data.template.title}
-      description="Availability within the current safety scope. Existing workspaces retain their pinned versions." />
+      description="Availability within the current safety scope. Existing workspaces retain their pinned versions."
+      actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Template catalogue</Link>} />
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">College name or code
