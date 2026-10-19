@@ -8,12 +8,12 @@ export default function RouteError({ reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <div className="min-w-0 space-y-4">
-    <PageHeader title="Messages" />
-    <ErrorState
-      title="Messages are temporarily unavailable"
-      description="We could not retrieve your employer-college conversations. This does not mean your messages are missing or have been marked read."
-      action={<Button type="button" variant="secondary" onClick={reset}>Retry messages</Button>}
-    />
-  </div>;
+ return <Alert tone="error" className="text-left">
+  <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">Messages are temporarily unavailable</h1>
+  <p className="mt-2 max-w-xl text-sm text-body">
+   We could not retrieve your employer-college conversations.
+   This does not mean your messages are missing or have been marked read.
+  </p>
+  <Button className="mt-5" onClick={reset}>Retry messages</Button>
+ </Alert>;
 }
