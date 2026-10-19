@@ -26,21 +26,21 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
  return <section className="border-b border-border pb-5">
   <h2 className="text-base font-semibold text-foreground">This college&apos;s companies</h2>
   {!open?<Button type="button" onClick={()=>setOpen(true)}
-   className="mt-2 min-h-11 sm:min-h-9">
+   className="mt-2 min-h-11 min-[768px]:min-h-9">
    Add company</Button>:
    <form onSubmit={e=>void submit(e)} className="mt-3 grid gap-3 sm:grid-cols-2">
     <label className="grid gap-1 text-[13px] font-semibold text-body">Company name<Input name="name" required minLength={2}
-     maxLength={200} className="min-h-11 w-full sm:min-h-9"/></label>
+     maxLength={200} className="min-h-11 w-full min-[768px]:min-h-9"/></label>
     <label className="grid gap-1 text-[13px] font-semibold text-body">Company domain<Input name="primaryDomain" maxLength={255}
-     placeholder="example.com" className="min-h-11 w-full sm:min-h-9"/></label>
+     placeholder="example.com" className="min-h-11 w-full min-[768px]:min-h-9"/></label>
     <label className="grid gap-1 text-sm sm:col-span-2">Website (HTTPS preferred)
-     <Input name="websiteUrl" type="url" className="min-h-11 w-full sm:min-h-9"/></label>
+     <Input name="websiteUrl" type="url" className="min-h-11 w-full min-[768px]:min-h-9"/></label>
     {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
     <div className="flex gap-3 sm:col-span-2">
-     <Button type="submit" disabled={pending} className="min-h-11 sm:min-h-9">
+     <Button type="submit" disabled={pending} className="min-h-11 min-[768px]:min-h-9">
       {pending?"Saving…":"Create company"}</Button>
      <Button type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}
-      className="min-h-11 sm:min-h-9">Cancel</Button>
+      className="min-h-11 min-[768px]:min-h-9">Cancel</Button>
     </div>
    </form>}
  </section>;
@@ -73,18 +73,18 @@ export function SuperAdminCollegeCompanyRelationshipActions({relationshipId,name
  return <div className="mt-2 space-y-2 text-sm">
   <div className="flex flex-wrap gap-2">
    {archive?<Button type="button" variant="secondary" disabled={pending} onClick={()=>void trust()}
-    className="min-h-11 sm:min-h-9">
+    className="min-h-11 min-[768px]:min-h-9">
     {trusted?"Mark not trusted":"Mark trusted"}</Button>:null}
    <Button type="button" variant={archive?"danger":"secondary"} disabled={pending||(archive&&driveCount>0)||companyStatus!=="ACTIVE"}
     title={archive&&driveCount>0?"Cannot delete a company with drives":undefined}
     onClick={()=>setConfirm(true)}
-    className="min-h-11 sm:min-h-9">
+    className="min-h-11 min-[768px]:min-h-9">
     {archive?"Delete company":"Restore company"}</Button>
   </div>
   {confirm?<div role="group" aria-label="Confirm company change" className="space-y-2 border-l-2 border-border py-2 pl-4">
    <p>{archive?"Delete":"Restore"} {name} for this college? The global company record will be kept.</p>
    <Button type="button" variant={archive?"danger":"primary"} disabled={pending} onClick={()=>void change()}
-    className="min-h-11 sm:min-h-9">
+    className="min-h-11 min-[768px]:min-h-9">
     Confirm {archive?"delete":"restore"}</Button>
    <Button type="button" variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}
     className="ml-2 min-h-10">Cancel</Button>
