@@ -60,7 +60,16 @@ export function RouteProgress() {
           destination.pathname === pathname) return;
       beginPending();
     };
-    const onPopState = () => beginPending();
+    // Back/forward within the same pathname only changes search/hash state.
+    // Next's pathname hook does not rerun for that navigation, so starting a
+    // timer here would leave the full-screen slow loader up for 30 seconds.
+    const onPopState = () => {
+      if (window.location.pathname === pathname) {
+        clearPending();
+        return;
+      }
+      beginPending();
+    };
     document.addEventListener("click", onClick, true);
     window.addEventListener("popstate", onPopState);
     window.addEventListener("pageshow", clearPending);
