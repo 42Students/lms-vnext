@@ -208,6 +208,11 @@
     animation: lms-legacy-popup-enter 200ms ease-out both;
   }
 }
+@media (min-width: 768px) {
+  [data-slot="drawer"][data-side="left"].lms-mobile-sidebar {
+    display: none;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   [data-slot="dialog"],
   [data-slot="drawer"],
