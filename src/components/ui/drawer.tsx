@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, type ReactNode, type CSSProperties } from "react";
+import { useEffect, useId, useRef, type ReactNode, type RefObject, type CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { cx } from "@/lib/class-names";
@@ -63,7 +63,7 @@ export function ResponsiveFilterDrawer({
   open: boolean;
   onOpenChange: (next: boolean) => void;
   title: string;
-  launcher: React.RefObject<HTMLButtonElement | null>;
+  launcher: RefObject<HTMLButtonElement | null>;
   children: ReactNode;
 }) {
   const panel = useRef<HTMLDivElement>(null);
