@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -87,7 +91,7 @@ export function TpoJoiningUpdateForm({
     <div className="mt-3 grid gap-3 border-t border-border pt-3 sm:grid-cols-2">
       <label className="text-sm font-medium text-foreground">
         New joining outcome
-        <select
+        <Select
           value={status}
           onChange={(event) => setStatus(event.target.value as JoiningChoice)}
           className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
@@ -95,12 +99,12 @@ export function TpoJoiningUpdateForm({
           <option value="JOINED">Joined</option>
           <option value="DEFERRED">Deferred</option>
           <option value="DID_NOT_JOIN">Did not join</option>
-        </select>
+        </Select>
       </label>
       {needsDate ? (
         <label className="text-sm font-medium text-foreground">
           {status === "JOINED" ? "Actual joining date" : "Revised joining date"}
-          <input type="date" value={joiningDate}
+          <Input type="date" value={joiningDate}
             onChange={(event) => setJoiningDate(event.target.value)}
             className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
         </label>
@@ -108,7 +112,7 @@ export function TpoJoiningUpdateForm({
       {needsReason ? (
         <label className="text-sm font-medium text-foreground sm:col-span-2">
           Outcome reason
-          <textarea rows={2} value={reason} maxLength={2000}
+          <Textarea rows={2} value={reason} maxLength={2000}
             onChange={(event) => setReason(event.target.value)}
             className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
         </label>
@@ -116,16 +120,16 @@ export function TpoJoiningUpdateForm({
       {corrected ? (
         <label className="text-sm font-medium text-foreground sm:col-span-2">
           Reason for correcting the recorded outcome
-          <textarea rows={2} value={correctionReason} maxLength={2000}
+          <Textarea rows={2} value={correctionReason} maxLength={2000}
             onChange={(event) => setCorrectionReason(event.target.value)}
             className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
         </label>
       ) : null}
       <div className="sm:col-span-2">
-        <button type="button" disabled={busy} onClick={() => void save()}
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
+        <Button variant="primary" type="button" disabled={busy} onClick={() => void save()}
+          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-on-primary">
           {busy ? "Saving..." : corrected ? "Confirm corrected outcome" : "Confirm joining outcome"}
-        </button>
+        </Button>
         {error ? <p role="alert" className="mt-2 text-sm text-foreground">{error}</p> : null}
       </div>
       <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
