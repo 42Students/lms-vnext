@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 
 import { useRouter } from "next/navigation";
@@ -111,7 +113,7 @@ export function TpoDebarControl({
           {!debarred ? (
             <label className="grid gap-2 text-sm font-semibold text-body">
               Reason for Debar (required)
-              <input
+              <Input
                 type="text"
                 value={reason}
                 maxLength={200 - TPO_DEBAR_REASON_PREFIX.length}
@@ -122,14 +124,13 @@ export function TpoDebarControl({
                   setConfirmed(false);
                 }}
                 placeholder="Reason for restricting placement applications"
-                className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
+                className="min-h-9"
               />
             </label>
           ) : null}
 
           <label className="flex items-start gap-3 text-sm text-body">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={confirmed}
               disabled={pending}
               onChange={(event) => setConfirmed(event.target.checked)}
