@@ -21,9 +21,12 @@
   border-block: 1px solid #e3e8ef;
   padding-bottom: 6px;
 }
-.board {
+/* The shared CalendarGrid supplies grid-cols-7/gap-1. Match the original
+ * recruiter-v2 board with a more specific, route-scoped selector rather
+ * than relying on the ordering of Tailwind and CSS-module styles. */
+.board[data-slot="calendar-grid"] {
   display: grid;
-  grid-template-columns: repeat(7,minmax(150px,1fr));
+  grid-template-columns: repeat(7, minmax(150px, 1fr));
   gap: 10px;
   min-width: 0;
   padding-bottom: 6px;
@@ -100,9 +103,12 @@
   color: #66758d;
   font-size: 12px;
 }
+/* At <=860px the route renders occupied-day articles instead of a
+ * seven-column grid; the hidden CalendarGrid must never create a horizontal
+ * 1110px overflow region beneath those mobile articles. */
 @media (max-width: 860px) {
-  .board {
-    grid-template-columns: minmax(0,1fr);
+  .board[data-slot="calendar-grid"] {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 767px) {
