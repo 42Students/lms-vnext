@@ -258,7 +258,7 @@ export function TpoBulkRoundResultRecorder({
         title={"Stage "+pendingTotal+" result(s) as "+({PASS:"Shortlisted",FAIL:"Not selected",HOLD:"Waitlisted",ABSENT:"Marked absent"}[outcome])+"?"}
         description={(failUnselected?unselected.length+" additional unmarked applicants will be staged Not cleared. ":"")+"Each successful result will be audited individually. This does NOT publish results; a completed round requires separate APPLY confirmation. Some rows may succeed even if others fail. Continue?"}
         confirmLabel="Review and confirm staged results" onConfirm={()=>void stageSelected(true)}/>
-      {error ? <p role="alert" className="text-sm text-foreground">{error}</p> : null}
+      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {results.length > 0 ? (
         <div role="status" className="space-y-2 text-sm text-body">
           <Button variant="secondary" type="button" onClick={()=>{
