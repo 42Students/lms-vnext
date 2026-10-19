@@ -66,11 +66,11 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
     };
   }, [open]);
 
-  return <section data-slot="filter-bar" aria-label={title} className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
+  return <section data-slot="filter-bar" data-active-count={count} aria-label={title} className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
     <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
       {search ? <div className="min-w-0 flex-1 basis-40 sm:basis-[220px] sm:max-w-[380px]">{search}</div> : null}
       <div className="sm:hidden">
-        <Button ref={launcher} variant="secondary" aria-expanded={open} aria-controls={panelId}
+        <Button ref={launcher} variant="secondary" aria-label={count > 0 ? `${title}, ${count} active` : title} aria-expanded={open} aria-controls={panelId}
           onClick={() => setOpen(true)}>{title}{count > 0 ? ` (${count})` : ""}</Button>
       </div>
       {views || columns || exportAction ? <div role="toolbar" aria-label="List actions" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">{views}{columns}{exportAction}</div> : null}
