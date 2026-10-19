@@ -400,3 +400,48 @@ git grep -nE '<(button|input|select|textarea|table|dialog)([ >])|window[.]confir
 **Unresolved strict proof:** 375px/767px/768px/1024px rendered screenshots, actual focus/disabled/hover states, shared button `size=sm` font size vs legacy 14px, shared overlay phone breakpoint, and portal-wide transitive grep. Therefore category H route/component strict boxes remain open.
 
 **Next exact unreviewed file:** `src/components/courses/faculty-lesson-authoring.tsx`; then `src/components/courses/faculty-content-editor.tsx`. Do not change shared `src/components/ui/*`.
+
+
+## Replacement chat-3 bounded turn — next source files (2026-10-19)
+
+**Branch synchronization:** \`chatgpt/chat-3-b\` was 1,259 commits behind main and had no lane-only commits (compare status \`behind\`). Fast-forwarded the lane ref without forcing or changing main; all writes below target only the lane ref. Previous source work was already included in main. GitHub Contents API updates are individual \`[chat-3]\` commits.
+
+### Source-complete migrations (do NOT treat these as H strict ticks)
+
+- [x] Source migration — \`src/components/courses/faculty-lesson-authoring.tsx\`: removed duplicated Checkbox/Radio imports; standardized primary/secondary action sizes; 13px/600/16px labels; canvas-radius authoring/question sections; phone hit area, two-column and option-breakpoint corrections; shared Alert feedback.
+- [x] Source migration — \`src/components/courses/faculty-content-editor.tsx\`: replaced browser \`window.confirm\` with shared \`ConfirmDialog\`, preserved the save lock and guarded dismissal; aligned clean snapshot duration with initial/reset duration (so the form does not start spuriously dirty); shared phone targets, 13px field labels, responsive live session times.
+- [x] Source migration — \`src/components/courses/faculty-quiz-learner-preview.tsx\`: removed duplicate/unused imports; shared Alert and EmptyState; 14px Button type, 44px phone target; 12px section radii; retained preview-only mode and correct-answer toggle.
+- [x] Source migration — \`src/components/courses/faculty-live-class-editor.tsx\`: moved form columns and font-size reduction to 768px, inherited shared Input/Select skin; 13px labels, shared Alert for warnings/errors/success, 44px phone button and pending state, preserved confirmation and IST rules.
+- [x] Source migration — \`src/components/courses/faculty-lesson-video-manager.tsx\`: replaced both native delete/replace prompts with one shared \`ConfirmDialog\` and explicit typed pending action; file replacement requires confirmation before any upload; pending lock maintained; video list loads/empties/feedback use LoadingState/EmptyState/Alert; labels, controls, panel radius and tablet/phone grid match legacy source breakpoints.
+
+### Legacy source / vNext value matrix (source evidence, not computed styles)
+
+| Property / state | Legacy source and target | vNext source evidence | Result |
+|---|---|---|---|
+| Form label type | \`components___form.scss:111-114\` 13px, weight 600, 16px line-height | \`faculty-lesson-authoring.tsx:65\`; \`faculty-content-editor.tsx:127-160\`; \`faculty-live-class-editor.tsx:108-137\`; \`faculty-lesson-video-manager.tsx:222-315\` use 13px and semibold; authored explicit 16px in lesson/content/video | Source type match for changed labels; live class inherits line height |
+| White section/panel radius | \`components___variables.scss:134\` 12px | \`faculty-lesson-authoring.tsx:600,872\`; \`faculty-quiz-learner-preview.tsx:42,53\`; \`faculty-lesson-video-manager.tsx:252\` use \`--lms-canvas-radius\` (12px) | Token match |
+| Compact buttons | Owner \`master-queue.md:5\`: 14px/650, 36px desktop, primary teal and white; shared \`ui/button.tsx:16-29\` delegates tone | Replaced 13px \`size=sm\` with 14px \`size=md\` in lesson authoring, quiz preview, video manager | Source sizing match; exact rendered variants require shared-component owner |
+| Phone action targets | \`components___variables.scss:139,148\` 44px at <=767px; \`pages___admin-list-pages.scss:194-215\` | Lesson/video root \`max-[767px]:[&_button]:min-h-11\`; quiz preview/content editor/live editor buttons explicit 44px base, 36px from \`md\` | Source media/touch match |
+| Phone forms | \`pages___admin-list-pages.scss:193-215\` single column <=767px | \`faculty-lesson-authoring.tsx:931,1018\`; \`faculty-content-editor.tsx:153\`; \`faculty-live-class-editor.tsx:107\` use \`md:\` not \`sm:\` | Single column through 767px; two columns at 768px, source proof |
+| Larger screens | \`components___variables.scss:149-151\` tablet cutoff 991px | Video form \`faculty-lesson-video-manager.tsx:221\` adds third column only at 992px | Exact source breakpoint |
+| Error, empty, loading | \`components___variables.scss:30,58-72\` neutral border/status tones; \`components___form.scss:137-142\` error treatment | Shared \`Alert\`, \`EmptyState\`, \`LoadingState\`, \`ConfirmDialog\` in all five files; default/disabled/loading inherited | Shared source contracts; computed colors/focus/hover unverified |
+| Destructive and replace confirmation | Legacy modals per \`pages___admin-list-pages.scss:323-364\`: 12px corner and phone footer target | \`faculty-content-editor.tsx:169-179\` and \`faculty-lesson-video-manager.tsx:327-339\` use shared ConfirmDialog instead of \`window.confirm\` | Source migration; overlays require browser comparison |
+
+### Whole-file coverage proof and JSX review
+
+All five full UTF-8 blobs were fetched again after connector writes, and scanned with the regex equivalent to:
+
+\`\`\`sh
+git grep -nE '<(button|input|select|textarea|table|dialog)([ >])|window[.]confirm[(]|#[0-9a-fA-F]{3,8}|rounded-full|aria-pressed' -- \
+  src/components/courses/faculty-lesson-authoring.tsx \
+  src/components/courses/faculty-content-editor.tsx \
+  src/components/courses/faculty-quiz-learner-preview.tsx \
+  src/components/courses/faculty-live-class-editor.tsx \
+  src/components/courses/faculty-lesson-video-manager.tsx
+\`\`\`
+
+**Actual per-file full-blob regex counts: 0 / 0 / 0 / 0 / 0** respectively, including zero native prompts and no hard-coded hex. The command above is provided for local reproduction, **not claimed as executed**. The lesson authoring file has 11 Button opening and 11 Button closing tags, 1 Select pair, 1 ConfirmDialog pair, and 2 Alert pairs; video manager has 11 Button opening and closing tags and one self-closing ConfirmDialog. No shared \`src/components/ui/*\` files edited.
+
+Phone 375px and 767px, tablet 768px/991px, and 1024px classes were compared statically with the legacy media source. **No rendered screenshots, computed state values, JSX compiler, TypeScript typecheck, tests, lint, or CI were executed**, per lane constraints. The full portal-wide transitive scans, screenshot/focus/hover/disabled proof and shared-component gap resolution remain open. Therefore leave **all 94 original H Work queue boxes unchecked** under STRICT TICK RULE, even though the five source migrations above are completed.
+
+**Next exact source file:** \`src/components/courses/faculty-course-home-signals.tsx\`; then \`src/components/courses/faculty-ist-quarter-hour-picker.tsx\`.
