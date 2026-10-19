@@ -1,4 +1,6 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {useState} from "react";
 import { Select } from "@/components/ui/select";
 import {useRouter} from "next/navigation";
@@ -77,7 +79,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       }catch{setError("Could not add backlog task");}
       finally{setBusy(false);}
     }} className="grid gap-3 border-t border-border pt-3 sm:grid-cols-2">
-      <label className="text-sm font-semibold">Title<input data-slot="input" required maxLength={200} value={title}
+      <label className="text-sm font-semibold">Title<Input required maxLength={200} value={title}
         onChange={e=>setTitle(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
       <label className="text-sm font-semibold">Priority<Select value={priority}
@@ -85,16 +87,16 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
       </Select></label>
-      <label className="text-sm font-semibold">Description<textarea data-slot="textarea" maxLength={4000}
+      <label className="text-sm font-semibold">Description<Textarea maxLength={4000}
         value={description} onChange={e=>setDescription(e.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="text-sm font-semibold">Approach (optional)<textarea data-slot="textarea" maxLength={4000}
+      <label className="text-sm font-semibold">Approach (optional)<Textarea maxLength={4000}
         value={approach} onChange={event=>setApproach(event.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="text-sm font-semibold">Done when<textarea data-slot="textarea" maxLength={4000}
+      <label className="text-sm font-semibold">Done when<Textarea maxLength={4000}
         value={criteria} onChange={e=>setCriteria(e.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="text-sm font-semibold">Estimate points<input data-slot="input" type="number" min={0} max={1000}
+      <label className="text-sm font-semibold">Estimate points<Input type="number" min={0} max={1000}
         value={points} onChange={e=>setPoints(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
       <label className="text-sm font-semibold">Task type
@@ -106,11 +108,11 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         </Select>
       </label>
       <label className="text-sm font-semibold">Due date
-        <input data-slot="input" type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
+        <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
       <label className="text-sm font-semibold sm:col-span-2">What&apos;s blocking this task?
-        <textarea data-slot="textarea" value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
+        <Textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
       <div className="flex items-end gap-2"><button type="submit"
