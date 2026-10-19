@@ -1,4 +1,5 @@
 import { Tabs } from "@/components/ui/tabs";
+import { HrRoundResultsGrid } from "@/components/hr/hr-round-results-grid";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
@@ -76,14 +77,13 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
        <Tabs renderPanel={false} ariaLabel="Outcome" value={query.data.outcome}
         items={filters.map(filter=>({value:filter,label:filter.replaceAll("_"," "),count:countValues[filter],
           href:recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:filter})}))}/>
-       {results.rows.length?<div className="grid gap-3 md:grid-cols-2">
-         {results.rows.map(row=><article key={row.key} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
-           <h3 className="break-words font-semibold text-foreground">{row.name}</h3>
-           <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{row.outcome??"NOT RECORDED"}</StatusBadge>
-              {row.outcome?<StatusBadge>{row.status}</StatusBadge>:null}</div>
-           {row.scorePercent!==null?<p className="mt-2 text-sm text-body">Score: {row.scorePercent}%</p>:null}
-           {row.waitlistRank!==null?<p className="mt-1 text-sm text-body">Waitlist rank: {row.waitlistRank}</p>:null}
-         </article>)}</div>:<p className="text-sm text-muted-foreground">No shared candidates match this outcome.</p>}
+       {results.rows.length?<HrRoundResultsGrid
+        rows={results.rows.map(row=>({
+          key:row.key,name:row.name,outcome:row.outcome,status:row.status,
+          scorePercent:row.scorePercent,waitlistRank:row.waitlistRank,
+        }))}
+        scopeKey={[workspace.company.id,workspace.college.id,workspace.job.id,results.round.id].join(":")}
+       />:<p className="text-sm text-muted-foreground">No shared candidates match this outcome.</p>}
        <p className="text-xs text-muted-foreground">STAGED results are awaiting placement-cell review; APPLIED results are recorded decisions. This read-only table does not submit or notify applicants.</p>
       </>}
     </section>:null}
