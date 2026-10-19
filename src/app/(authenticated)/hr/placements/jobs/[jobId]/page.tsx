@@ -14,6 +14,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { HrJobSelectionGrid } from "@/components/hr/hr-job-selection-grid";
 import { Input } from "@/components/ui/input";
 import { HrJobOffersGrid } from "@/components/hr/hr-job-offers-grid";
+import { HrJobApplicantsGrid } from "@/components/hr/hr-job-applicants-grid";
 import { HrRoundResultsGrid } from "@/components/hr/hr-round-results-grid";
 import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focus-refresh";
 import {RecruiterRoundInlineEditor} from "@/components/hr/recruiter-round-inline-editor";
@@ -519,7 +520,27 @@ export default async function HrPlacementJobPage({
             items={HR_RECRUITER_STAGES.map(({value:stage,label})=>({value:stage,label,count:stageCounts[stage],
               href:`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}${returnQuery}`}))}/>
           <p className="text-xs text-muted-foreground">These milestones reflect only applicants the placement cell has shared. A candidate may appear in multiple historical stages; unshared or privately rejected applicants remain hidden.</p>
-          {applicants.rows.length ? <div className="grid gap-3 md:grid-cols-2">
+          {applicants.rows.length ? <>
+            <div className="hidden min-w-0 md:block">
+              <HrJobApplicantsGrid
+                scopeKey={context.user.id+":"+workspace.job.id+":"+filters.stage}
+                rows={applicants.rows.map(applicant=>({
+                  id:applicant.id,
+                  name:applicant.name||"Unnamed applicant",
+                  role:String(applicant.role??""),
+                  rollNumber:applicant.rollNumber==null?null:String(applicant.rollNumber),
+                  branch:applicant.branch==null?null:String(applicant.branch),
+                  ugPercentage:applicant.ugPercentage==null?null:String(applicant.ugPercentage),
+                  tenthPercentage:applicant.tenthPercentage==null?null:String(applicant.tenthPercentage),
+                  twelfthOrDiplomaPercentage:applicant.twelfthOrDiplomaPercentage==null?null:String(applicant.twelfthOrDiplomaPercentage),
+                  status:String(applicant.status??""),
+                  screening:String(applicant.screening??""),
+                  applied:new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(applicant.submittedAt),
+                  reviewHref:"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+
+                    "&page="+filters.page+"&applicant="+encodeURIComponent(applicant.id)+returnQuery,
+                }))}/>
+            </div>
+            <div className="grid gap-3 md:hidden">
             {applicants.rows.map(applicant => (
               <article key={applicant.id} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
                 <p className="m-0 break-words font-semibold text-foreground">{applicant.name || "Unnamed applicant"}</p>
@@ -535,7 +556,8 @@ export default async function HrPlacementJobPage({
                   className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review applicant</Link>
               </article>
             ))}
-          </div> : <p className="text-sm text-muted-foreground">{applicants.counts.all===0 ? "The placement cell has not shared the applicants yet" : "No shared applicants match this stage."}</p>}
+          </div>
+          </> : <p className="text-sm text-muted-foreground">{applicants.counts.all===0 ? "The placement cell has not shared the applicants yet" : "No shared applicants match this stage."}</p>}
           {selectedApplicant ? (
             <RecruiterApplicantReviewDrawer
               title={focused ? "Focused review" : "Applicant review"}

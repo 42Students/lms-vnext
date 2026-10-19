@@ -1,4 +1,5 @@
 "use client";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -8,13 +9,14 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   id:string;version:number;title:string};
  currentVersion:number;status:string}){
  const router=useRouter();
+ const {askConfirm,dialog}=useConfirmFlow();
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const enabled=selectedVersion.version!==currentVersion&&status!=="ARCHIVED";
  async function rollback(){
   if(!enabled||busy)return;
-  if(!window.confirm("Roll back to version "+selectedVersion.version+"? "+
+  if(!(await askConfirm("Roll back to version "+selectedVersion.version+"? "+
    "This creates version "+(currentVersion+1)+" from the older snapshot. "+
-   "Existing workspaces and the published version are unchanged until you publish again."))return;
+   "Existing workspaces and the published version are unchanged until you publish again.")))return;
   setBusy(true);setError("");
   try{
    const r=await projectMutation("/api/projects/templates/"+encodeURIComponent(templateId)+
@@ -37,5 +39,6 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   {selectedVersion.version===currentVersion?<p className="text-xs text-muted-foreground">This is already the current version.</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+   {dialog}
  </div>;
 }

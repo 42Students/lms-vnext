@@ -518,7 +518,7 @@ export default async function HrCalendarPage({
                   </p>
                 ) : null}
               </div>
-              <CalendarGrid className={"hidden md:grid "+styles.board}>
+              <CalendarGrid variant="hairline" className={"hidden md:grid "+styles.board}>
                 {[
                   "Mon",
                   "Tue",

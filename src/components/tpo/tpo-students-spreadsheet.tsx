@@ -195,13 +195,13 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     Export selected CSV
   </Button>
   {downloadError?<p role="alert" className="text-xs text-error">{downloadError}</p>:null}
-  <Disclosure title="Bulk Add a note" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 [&>summary]:font-semibold">
+  <Disclosure title="Bulk Add a note" className="border-y border-border py-3 [&>summary]:font-semibold">
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
    <label className="mt-3 flex min-h-11 items-center gap-2 text-sm"><Checkbox 
      checked={rows.length>0&&rows.every(r=>noteSelection.includes(r.membershipId))}
      onChange={e=>setNoteSelection(e.target.checked?rows.slice(0,100).map(r=>r.membershipId):[])} />Select visible page</label>
-   <div className="my-3 grid max-h-44 grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
-    {rows.map(row=><label className="flex gap-2 text-sm" key={row.membershipId}>
+   <div className="my-3 grid max-h-44 min-w-0 grid-cols-1 gap-2 overflow-y-auto overscroll-contain md:grid-cols-2 xl:grid-cols-3">
+    {rows.map(row=><label className="flex min-h-11 min-w-0 items-center gap-2 break-words text-sm" key={row.membershipId}>
      <Checkbox  checked={noteSelection.includes(row.membershipId)}
        disabled={!noteSelection.includes(row.membershipId)&&noteSelection.length>=100}
        onChange={e=>setNoteSelection(ids=>e.target.checked?[...ids,row.membershipId]:ids.filter(id=>id!==row.membershipId))}/>
@@ -210,7 +210,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    <p className="text-sm">{noteSelection.length} selected</p>
    <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
   </Disclosure>
-  <label className="inline-flex items-center gap-3 text-sm font-semibold">Sort visible roster page
+  <label className="flex min-h-11 min-w-0 flex-wrap items-center gap-3 text-sm font-semibold">Sort visible roster page
    <Select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}
     >
     <option value="NAME">Name</option><option value="APPLICATIONS_DESC">Applications · most</option>
@@ -227,7 +227,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
-    <Button variant="ghost" type="button" className="underline text-link lms-inline-link px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    <Button variant="ghost" type="button" className="lms-inline-link min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
       Open student panel
     </Button>
@@ -237,9 +237,9 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
       initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none"}}
       available={afterCollegeAvailable} />
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
-      aria-label={"Placement history for "+row.displayName} className="underline text-link lms-inline-link px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Placement history</Link>
+      aria-label={"Placement history for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Placement history</Link>
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-      aria-label={"Change participation for "+row.displayName} className="underline text-link lms-inline-link px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Change participation</Link>
+      aria-label={"Change participation for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Change participation</Link>
    </div>}/>
   </GridWorkspace>
   {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}

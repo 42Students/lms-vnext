@@ -448,7 +448,7 @@ export function LearnerYouTubePlayer({
           href={externalUrl}
           
           rel="noopener noreferrer"
-          className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
+          className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
         >
           Open on YouTube ↗
         </a>
@@ -492,7 +492,7 @@ export function LearnerYouTubePlayer({
           href={externalUrl}
           
           rel="noopener noreferrer"
-          className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
+          className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
         >
           Open on YouTube ↗
         </a>

@@ -61,7 +61,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
       <div className="min-w-0 flex-1">
         <label
           htmlFor="organization-name"
-          className="mb-1.5 block text-xs font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold text-body"
         >
           Organization name
         </label>

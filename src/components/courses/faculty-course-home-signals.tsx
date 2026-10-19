@@ -1,5 +1,6 @@
 import { Alert } from "@/components/ui/alert";
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "./faculty-course-home-signals.module.css";
 import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -172,7 +173,7 @@ export function FacultyCourseHomeSignals({
                 <Disclosure title={`${learner.severity>=3?"Critical":"Moderate"} · View snapshot`} className="min-w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs">
                   <div className="mt-2 space-y-2 text-xs text-muted-foreground">
                     <p>Attendance: {learner.attendancePercent===null?"Not enough marked sessions":learner.attendancePercent+"%"}</p>
-                    {learner.attendancePercent!==null?<MetricBar role="img"
+                    {learner.attendancePercent!==null?<MetricBar role="img" className={styles.track}
                       label={"Attendance "+learner.attendancePercent+" percent"}
                       value={learner.attendancePercent} maximum={100} unit="percent" />:null}
                     <p>Submissions missing: {learner.missingSubmissionCount}</p>
@@ -229,16 +230,17 @@ export function FacultyCourseHomeSignals({
               (bucket.count / total) * 100,
             );
             return (
-              <Disclosure
-                key={bucket.label}
-                className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
-                title={<span className="grid w-full min-w-0 grid-cols-[minmax(0,6rem)_minmax(0,1fr)_2rem] items-center gap-3">
-                  <span className="text-body">{bucket.label}</span>
-                  <MetricBar label={bucket.label+" grade distribution"}
-                    value={width} maximum={100} unit="percent" />
-                  <strong className="text-right text-foreground">{bucket.count}</strong>
+              <Disclosure key={bucket.label}
+                title={<span className={styles.distribution+" min-w-0 flex-1"}>
+
+                <span className={styles.distributionLabel}>
+                  {bucket.label}
+                </span>
+                <MetricBar className={styles.track} label={bucket.label+" grade distribution"}
+                  value={width} maximum={100} unit="percent" />
+                <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </span>}
-              >
+                className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [&>summary]:px-0">
                 {bucket.count>0?<ul className="mt-2 space-y-1 border-t border-border pt-2">
                   {signals.performance.studentAverages.filter(student=>
                     student.averagePercent>=bucket.min&&student.averagePercent<=bucket.max
