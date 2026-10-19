@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -16,7 +17,7 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
   const csv=exportTpoBatchStudentsCsv(data.students);
   return new Response("\uFEFF"+csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="tpo-batch-students-page.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-batch-students-page", "csv") + '"',
    "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
    "X-TPO-Export-Scope":"CURRENT_PAGE_ONLY",Vary:"Cookie",
   }});
