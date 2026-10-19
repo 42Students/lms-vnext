@@ -10,7 +10,7 @@
  * Requires ag-grid-community and ag-grid-react 36.x at install time.
  * Both packages must be declared upstream before this module can compile.
  */
-import {useCallback,useEffect,useMemo,useRef,useState,type ReactNode} from "react";
+import {useCallback,useEffect,useMemo,useRef,useState,} from "react";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {AgGridReact} from "ag-grid-react";
 import {
@@ -61,7 +61,6 @@ function compareNumberDate(kind:"number"|"date",a:unknown,b:unknown):number{
  if(bv===null)return -1;
  return av-bv;
 }
-type Selection=NonNullable<TpoSpreadsheetGridProps<unknown>["selection"]>;
 type NativeProps<Row>=TpoSpreadsheetGridProps<Row>;
 
 /** AG Grid uses the same Row props as the existing TPO fallback. */
@@ -73,7 +72,6 @@ export function TpoGrid<Row>({
  const api=useRef<GridApi<Row>|null>(null);
  const anchor=useRef<string|null>(null);
  const [notice,setNotice]=useState("");
- const [,setLayoutVersion]=useState(0);
  const permitted=useMemo(()=>columns.filter(col=>!col.exportOnly).map(col=>col.key),[columns]);
  const permittedCsv=permitted.join(",");
  const queryColumns=params.get("columns")??"";
@@ -140,7 +138,6 @@ export function TpoGrid<Row>({
   }));
   try{window.localStorage.setItem(layoutKey,serializeGridViewMemory(entries,permitted));}
   catch{/* Saving layout is optional; never store cell values. */}
-  setLayoutVersion(version=>version+1);
  },[layoutKey,permittedCsv]);
  const [gridApiReady,setGridApiReady]=useState(false);
  const currentVisibleIds=()=>{
@@ -166,9 +163,8 @@ export function TpoGrid<Row>({
   const target=event.event?.target;
   if(target instanceof HTMLElement&&target.closest("button,a,input,label,select,textarea,[role=button],[role=checkbox]"))return;
   const native=event.event;
-  const modifiers=native&&("shiftKey" in native)?{
-   shiftKey:Boolean(native.shiftKey),ctrlKey:Boolean(native.ctrlKey),
-   metaKey:Boolean(native.metaKey),
+  const modifiers=native instanceof MouseEvent?{
+   shiftKey:native.shiftKey,ctrlKey:native.ctrlKey,metaKey:native.metaKey,
   }:{};
   const id=rowKey(event.data);
   const result=gridSelectionClick(currentVisibleIds(),selection.selected,id,anchor.current,modifiers);
