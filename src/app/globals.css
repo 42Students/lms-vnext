@@ -1073,6 +1073,17 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   box-shadow: 0 0 0 4px rgba(26, 149, 161, .12);
 }
 
+@media (forced-colors: active) {
+  :is([data-slot="dropdown-root"] > summary, [data-slot="info-popover"] > summary,
+      [data-slot="menu"] [role="menuitem"], [data-slot="toast-stack"] button,
+      [data-slot="dialog"] button, [data-slot="drawer"] button,
+      [data-slot="bottom-sheet"] button,
+      [role="dialog"][aria-modal="false"] button):focus-visible {
+    outline: 2px solid Highlight;
+    box-shadow: none;
+  }
+}
+
 /* Legacy overlay lists keep scrolling and mobile momentum without visible chrome.
    Their content is not clipped by a fixed-height body or nested browser scrollbar. */
 [data-slot="dropdown"],
