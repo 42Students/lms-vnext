@@ -9,9 +9,9 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
 
 const variantClasses = {
   primary: "border-primary bg-primary text-on-primary hover:border-primary-hover hover:bg-primary-hover",
-  secondary: "border-[#bfc9da] bg-surface text-[#54505d] hover:border-[#26bac7] hover:bg-primary-subtle hover:text-[#1a95a1]",
-  ghost: "border-transparent bg-transparent text-[#54505d] hover:bg-primary-subtle hover:text-[#1a95a1]",
-  danger: "border-error bg-error text-white hover:brightness-95",
+  secondary: "border-[#bfc9da] bg-surface text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)]",
+  ghost: "border-transparent bg-transparent text-[var(--lms-body-text)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)]",
+  danger: "border-[var(--lms-error)] bg-[var(--lms-error)] text-white hover:brightness-95",
 } as const;
 const sizeClasses = { sm: "min-h-9 px-3 text-[13px]", md: "min-h-9 px-3.5 text-[14px]" } as const;
 

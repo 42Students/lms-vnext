@@ -1226,7 +1226,7 @@ export function PlacementDriveControls({
             (round, index) => (
               <div
                 key={round.id}
-                className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4 lg:grid-cols-[5rem_10rem_minmax(12rem,1fr)_8rem_auto]"
+                className="grid gap-3 border-b border-border py-4 lg:grid-cols-[5rem_10rem_minmax(12rem,1fr)_8rem_auto]"
               >
                 <div className="flex min-h-10 items-center text-sm font-semibold text-muted-foreground">
                   Round {index + 1}
@@ -1463,7 +1463,7 @@ export function PlacementDriveControls({
           return (
             <article
               key={round.id}
-              className="rounded-xl border border-border bg-surface p-5"
+              className="border-b border-border py-5"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>

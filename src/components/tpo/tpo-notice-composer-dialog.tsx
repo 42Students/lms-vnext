@@ -1,15 +1,16 @@
 "use client";
 import {useState,type ReactNode} from "react";
 import {Dialog} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
 /** TPO-inbox-team-50: shared modal traps focus, supports Escape and restores the opener. */
 export function TpoNoticeComposerDialog({children,mode="NEW"}:{children:ReactNode;mode?:"NEW"|"EDIT"}){
  const [open,setOpen]=useState(false);
  const title=mode==="EDIT"?"Edit announcement":"New announcement";
  return <>
-  <button type="button" onClick={()=>setOpen(true)}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-[650] text-on-primary">
+  <Button type="button" onClick={()=>setOpen(true)}
+   className="min-h-11 sm:min-h-9">
    {title}
-  </button>
+  </Button>
   <Dialog open={open} onOpenChange={setOpen} title={title}>
    {children}
   </Dialog>

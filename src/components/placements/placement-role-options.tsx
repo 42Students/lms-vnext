@@ -42,7 +42,7 @@ const emptyDraft: RoleDraft = {
   maximumAnnualCtcInr: "",
 };
 
-const inputClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9";
 
 function humanize(value: string) {
   return value
@@ -284,11 +284,11 @@ export function PlacementRoleOptions({
         </div>
       </div>
 
-      <div className="grid gap-3 p-5 lg:grid-cols-2">
+      <div className="grid gap-3 pt-4 lg:grid-cols-2">
         {activeRoles.map((role) => (
           <article
             key={role.id}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
+            className="border-b border-border py-4"
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
@@ -368,7 +368,7 @@ export function PlacementRoleOptions({
       </div>
 
       {editable ? (
-        <div className="border-t border-border p-5">
+        <div className="border-t border-border py-5">
           <div className="mb-4">
             <h3 className="m-0 text-sm font-semibold text-foreground">
               {editingId
