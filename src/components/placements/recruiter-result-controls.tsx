@@ -7,6 +7,8 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -85,8 +87,6 @@ function formatWhen(
   }).format(new Date(value));
 }
 
-const inputClass =
-  "min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
 
 export function RecruiterResultControls({
   rounds,focusApplicantId,
@@ -553,11 +553,9 @@ export function RecruiterResultControls({
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Outcome
                                 </span>
-                                <select
+                                <Select
                                   aria-label="Outcome"
-                                  className={
-                                    inputClass
-                                  }
+                                  className="w-full"
                                   value={
                                     draft.outcome
                                   }
@@ -592,18 +590,16 @@ export function RecruiterResultControls({
                                   <option value="ABSENT">
                                     Absent
                                   </option>
-                                </select>
+                                </Select>
                               </label>
 
                               <label>
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Score %
                                 </span>
-                                <input
+                                <Input
                                   aria-label="Score %"
-                                  className={
-                                    inputClass
-                                  }
+                                  className="w-full"
                                   type="number"
                                   min="0"
                                   max="100"
@@ -638,11 +634,9 @@ export function RecruiterResultControls({
                                   <span className="mb-1 block text-xs font-semibold text-body">
                                     Waitlist rank
                                   </span>
-                                  <input
+                                  <Input
                                     aria-label="Waitlist rank"
-                                    className={
-                                      inputClass
-                                    }
+                                    className="w-full"
                                     type="number"
                                     min="1"
                                     max="100000"
@@ -676,11 +670,9 @@ export function RecruiterResultControls({
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Reason category
                                 </span>
-                                <select
+                                <Select
                                   aria-label="Reason category"
-                                  className={
-                                    inputClass
-                                  }
+                                  className="w-full"
                                   value={
                                     draft.reasonCategory
                                   }
@@ -718,7 +710,7 @@ export function RecruiterResultControls({
                                   <option value="OTHER">
                                     Other
                                   </option>
-                                </select>
+                                </Select>
                               </label>
 
                               <label className="lg:col-span-2">
