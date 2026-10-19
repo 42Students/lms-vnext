@@ -54,12 +54,12 @@ export default async function LearnerNotificationHistoryPage({
       <nav aria-label="Notification history filters" className="flex flex-wrap gap-2">
         <Link href="/learn/notifications/history"
           aria-current={!page.unreadOnly ? "page" : undefined}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-radius-md)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className={!page.unreadOnly ? "inline-flex min-h-11 items-center rounded-[8px] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover sm:min-h-9" : "inline-flex min-h-11 items-center rounded-[8px] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle sm:min-h-9"}>
           All personal
         </Link>
         <Link href="/learn/notifications/history?unread=1"
           aria-current={page.unreadOnly ? "page" : undefined}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-radius-md)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className={!page.unreadOnly ? "inline-flex min-h-11 items-center rounded-[8px] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover sm:min-h-9" : "inline-flex min-h-11 items-center rounded-[8px] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle sm:min-h-9"}>
           Unread only
         </Link>
       </nav>
