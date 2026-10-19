@@ -1,7 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { Alert } from "@/components/ui/alert";
-import { EmptyState } from "@/components/ui/empty-state";
+import styles from "./legacy-project-board.module.css";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
@@ -187,18 +186,19 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   {undo?<Button variant="ghost" type="button" disabled={busy} 
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
   <div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0}
-    className="overflow-x-auto overscroll-x-contain pb-3 [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"><div className="flex min-w-max gap-3">
+    className={styles.scrollRegion}><div className={styles.track}>
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
+    className={[styles.lane, lane.id==="BACKLOG"?styles.backlogLane:"", lanes.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
-    <h2 className="flex items-center justify-between gap-2 font-semibold"><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h2>
-    <ul className="mt-3 space-y-2">{lane.tasks.map(task=>{
+    <h2 className={styles.header}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h2>
+    <ul className={styles.body}>{lane.tasks.map(task=>{
      const sprintRow=task.sprintId?bySprint.get(task.sprintId):null;
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
        editable.includes(task.status as typeof editable[number]);
      return <li key={task.id} draggable={canMove}
       onDragStart={e=>e.dataTransfer.setData("text/plain",task.id)}
-      className="space-y-2 rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm">
+      className={"space-y-2 border p-3 text-sm "+styles.card}>
       <Button variant="ghost" type="button" onClick={()=>setSelected(task.id)}
         className="min-h-11 text-left">{task.title}</Button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
