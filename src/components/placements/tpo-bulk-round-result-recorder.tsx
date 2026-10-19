@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -177,8 +178,7 @@ export function TpoBulkRoundResultRecorder({
             <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-52 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
               {visible.map((row) => (
                 <label key={row.applicationId} className="flex min-h-11 md:min-h-9 items-center gap-3 px-2 text-sm text-body">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={selected.includes(row.applicationId)}
                     onChange={(event) => toggle(row.applicationId, event.target.checked)}
                     disabled={busy || (!selected.includes(row.applicationId) && selected.length >= 25)}
@@ -206,7 +206,7 @@ export function TpoBulkRoundResultRecorder({
           <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3">
             <legend className="text-sm font-semibold text-foreground">Everyone I did not mark</legend>
             <label className="flex items-start gap-2 text-sm text-body">
-              <input type="checkbox" disabled={busy||available.length>25}
+              <Checkbox disabled={busy||available.length>25}
                 checked={failUnselected}
                 onChange={e=>setFailUnselected(e.target.checked)}
                 className="mt-1 h-4 w-4 accent-primary"/>
