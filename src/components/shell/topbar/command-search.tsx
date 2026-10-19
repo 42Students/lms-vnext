@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import { PopoverListbox } from "@/components/ui/popover";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ShellNavItem } from "../shell-model";
@@ -139,8 +140,8 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           }}/>
         <kbd id="lms-topbar-command-key-help" className={style.searchHint}>Ctrl K</kbd>
       </div>
-      {open ? <div id="lms-topbar-command-results" role="listbox"
-        aria-label="Workspace commands" className={style.dropdown}
+      {open ? <PopoverListbox id="lms-topbar-command-results" label="Workspace commands" className={style.dropdown}
+        onDismiss={() => { setOpen(false); setMobileOpen(false); input.current?.focus(); }}
         onKeyDown={event => {
           if (event.key === "Escape") {
             event.preventDefault();
@@ -211,7 +212,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           !(config.portal === "tpo" && query.trim().length >= 2) && !courseLoading ? <p role="status" className="p-2 text-xs text-muted-foreground">
           No matching shortcuts. Press Enter to search this portal.
         </p> : null}
-      </div> : null}
+      </PopoverListbox> : null}
     </div>
   </div>;
 }
