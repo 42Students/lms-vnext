@@ -61,3 +61,11 @@ Items are in workflow order; `[ ]` means full STRICT TICK RULE evidence is **not
 **Still open:** complete exact SCSS property/state tables for settings, profile, message bubbles, composer, row, unread, empty, error, focus, disabled; remaining imported-component sweeps; full repository grep with exemptions; phone/tablet/browser visual comparisons. Neither G2 nor G3 is eligible for a STRICT TICK RULE checkmark.
 
 **Exact next source to inspect:** `src/app/(authenticated)/mentor/notifications/page.tsx` (then `src/components/activity/learner-notifications-inbox.tsx` and recruiter conversation composer).
+
+### Concurrent-main synchronization and end-of-turn handoff
+
+While this turn was editing, `main` advanced by 47 commits after the initial fast-forward. A path-level comparison showed three overlaps: `tpo/messages/page.tsx`, `tpo/settings/notifications/page.tsx`, and `tpo/settings/season/page.tsx`. Reconciled each to the latest main version, merged `main` **into the lane branch only** using PR #189 (merge commit `b149197988dd24832539c4cd5a16454ce7059b4c`), then removed legacy-incompatible eyebrow props again on the merged versions. Concurrent main edits were retained. No change was pushed to `main`, and no force update was used.
+
+Final pre-handoff branch compare: **43 commits ahead, 0 behind** current `main` at `d915bd67b20838f496d2a5b25b4365e748a35dd5`; this ledger-update commit follows. Counting this audit update: **44 commits added to the lane branch this turn** (including synchronization commits). **34 distinct TSX pages changed** and one audit document; no shared-UI files edited. The full 34-page readback counted zero raw buttons/selects/textareas/eyebrow props/hex literals; 10 hidden form inputs are written exemptions. This remains a static sample, not whole-category coverage.
+
+**Status:** G2 OPEN; G3 OPEN. Remaining high-priority work is to compare list/bubble/composer and settings state values with legacy SCSS, migrate leftover hand-rolled page controls, then run complete coverage/responsive proof. Resume **`src/app/(authenticated)/mentor/notifications/page.tsx`**.
