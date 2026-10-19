@@ -96,7 +96,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
           This changes only this college&apos;s relationship and is audited.</p>
         <div className="mt-2 flex gap-2">
           <button type="button" disabled={busy} onClick={()=>void submit(reviewAction)}
-            className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary text-primary-foreground">Confirm change</button>
+            className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 font-[650] text-on-primary text-primary-foreground">Confirm change</button>
           <button type="button" disabled={busy} onClick={()=>setReviewAction(null)}
             className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4">Cancel</button>
         </div>

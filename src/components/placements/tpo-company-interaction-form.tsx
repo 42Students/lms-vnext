@@ -120,7 +120,7 @@ export function TpoCompanyInteractionForm({
         <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewing(false)}>Cancel review</button>
       </div>:null}
       <button type="button" onClick={() => void submit()} disabled={busy || !leadId || note.trim().length < 3}
-        className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+        className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
         {busy ? "Recording..." : reviewing?"Confirm activity":"Review and confirm activity"}
       </button>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
