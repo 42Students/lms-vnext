@@ -1,5 +1,7 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { DateInput } from "@/components/ui/date-input";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 type Classroom={id:string;name:string;cohortName:string;periodStart:string;periodEnd:string;updatedAt:string};
@@ -50,12 +52,12 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
         <label className="grid gap-1 text-sm font-semibold">Title
           <Input className={field} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold">Date (IST)
-          <Input className={field} required type="date" min={selected?.periodStart} max={selected?.periodEnd}
+          <DateInput className={field} required mode="date" min={selected?.periodStart} max={selected?.periodEnd}
             value={date} onChange={e=>setDate(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold">Starts (IST)
-          <Input className={field} required type="time" value={from} onChange={e=>setFrom(e.target.value)}/></label>
+          <DateInput className={field} required mode="time" value={from} onChange={e=>setFrom(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold">Ends (IST)
-          <Input className={field} required type="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
+          <DateInput className={field} required mode="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
         <div className="sm:col-span-2 lg:col-span-3">
           <Button variant="primary" type="submit" disabled={pending||!sectionId||!title.trim()}
             >
