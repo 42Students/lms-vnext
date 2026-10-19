@@ -133,25 +133,25 @@ export default async function ElectiveRoster({
         {!archived && <form action={changeFaculty}>
           <input type="hidden" name="action" value="END" />
           <input type="hidden" name="assignmentId" value={item.id} />
-          <button className="min-h-11 rounded border border-border px-3 py-2 text-error">Remove faculty</button>
+          <button className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-error">Remove faculty</button>
         </form>}
       </div>)}
       {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-3">
         <input type="hidden" name="action" value="ASSIGN" />
         <label className="grid gap-1 text-sm">Faculty
-          <select name="membershipId" required defaultValue="" className="min-h-11 rounded border border-border bg-surface p-2 text-base sm:text-sm">
+          <select name="membershipId" required defaultValue="" className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-2 text-base sm:text-sm">
             <option value="" disabled>Choose faculty</option>
             {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm">Role
-          <select name="role" className="min-h-11 rounded border border-border bg-surface p-2 text-base sm:text-sm">
+          <select name="role" className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-2 text-base sm:text-sm">
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
           </select>
         </label>
         <button disabled={faculty.length === 0}
-          className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
           Assign faculty
         </button>
       </form>}
@@ -179,7 +179,7 @@ export default async function ElectiveRoster({
                   <input type="hidden" name="membershipId" value={member.membershipId} />
                   <select name="targetOfferingId" required defaultValue=""
                     aria-label="Move to another offering"
-                    className="min-h-11 rounded border border-border bg-surface px-2 text-base sm:text-sm">
+                    className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2 text-base sm:text-sm">
                     <option value="" disabled>Move to another offering</option>
                     {targets.map(target => <option key={target.offeringId} value={target.offeringId}>
                       {target.courseName} ({target.courseCode})</option>)}
@@ -187,7 +187,7 @@ export default async function ElectiveRoster({
                   <label className="inline-flex min-h-11 items-center gap-2">
                     <input type="checkbox" name="confirm" value="yes" required /> Confirm
                   </label>
-                  <button className="min-h-11 rounded border border-border px-3 text-[var(--lms-teal-deep)]">Move</button>
+                  <button className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-[var(--lms-teal-deep)]">Move</button>
                 </form>}
                 <form action={mutate} className="flex flex-wrap items-center gap-2">
                   <input type="hidden" name="action" value="REMOVE" />
@@ -195,7 +195,7 @@ export default async function ElectiveRoster({
                   <label className="inline-flex min-h-11 items-center gap-2">
                     <input type="checkbox" name="confirm" value="yes" required /> Confirm removal
                   </label>
-                  <button className="min-h-11 rounded border border-border px-3 text-foreground">Remove</button>
+                  <button className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-foreground">Remove</button>
                 </form>
               </div> : "—" },
         ]}
