@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 "use client";
 
 import {useEffect,useState} from "react";
@@ -44,9 +45,9 @@ export function AssignmentSubmissionLinks({submissionId}:{submissionId:string}){
       rel="noopener noreferrer" className="break-all text-primary-text underline">
       {link.caption||link.url}
     </a>:<span>Link unavailable</span>}
-    <span className="ml-2 text-xs text-muted-foreground">
+    <Badge tone="neutral" className="ml-2">
       {link.kind==="REPOSITORY_LINK"?"Repository":"Website"}
-    </span>
+    </Badge>
    </li>)}
   </ul>
  </section>;
