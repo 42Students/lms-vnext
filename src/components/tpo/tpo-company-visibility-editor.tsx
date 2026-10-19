@@ -22,7 +22,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
  const {askConfirm,dialog}=useConfirmFlow();
  async function save(){
-  if(busy||!window.confirm("Save what companies can see? These choices control the college's recruiter-visible information policy."))return;
+  if(busy||!(await askConfirm("Save what companies can see? These choices control the college's recruiter-visible information policy.")))return;
   setBusy(true);setMessage("");
   try{
    await apiFetch("/api/placements/tpo/company-visibility",{
