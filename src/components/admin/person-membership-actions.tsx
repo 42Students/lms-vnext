@@ -222,7 +222,7 @@ export function PersonMembershipActions({
             variant="secondary"
             size="sm"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
-            disabled={lifecyclePending || Boolean(rolePending)}
+            disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() => setSuspendOpen(true)}
           >
             Suspend
@@ -234,7 +234,7 @@ export function PersonMembershipActions({
             variant="secondary"
             size="sm"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
-            disabled={lifecyclePending || Boolean(rolePending)}
+            disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() =>
               lifecycle({ action: "REACTIVATE" })
             }
@@ -250,7 +250,7 @@ export function PersonMembershipActions({
             variant="ghost"
             size="sm"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
-            disabled={lifecyclePending || Boolean(rolePending)}
+            disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() => setEndOpen(true)}
           >
             End
@@ -266,7 +266,7 @@ export function PersonMembershipActions({
         description="Roles are membership-scoped. SUPER_ADMIN is never assigned here."
       >
         <p className="mb-3 text-sm text-body">The College Admin role can only be assigned or removed by a Super Admin.</p>
-        <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+        <div role="group" aria-label="Membership roles" className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
           {MEMBERSHIP_ROLES.map((role) => {
             const checked = currentRoles.includes(role);
             const pending = rolePending === role;
@@ -289,7 +289,7 @@ export function PersonMembershipActions({
                   onChange={() => mutateRole(role)}
                   className="size-4"
                 />
-                <span className="sr-only">
+                <span className="sr-only" role="status" aria-live="polite">
                   {pending ? "Updating role" : ""}
                 </span>
               </label>
@@ -315,6 +315,7 @@ export function PersonMembershipActions({
             </Button>
             <Button
               variant="danger"
+              loading={lifecyclePending}
               disabled={
                 lifecyclePending ||
                 Boolean(rolePending) ||
