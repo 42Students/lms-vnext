@@ -119,24 +119,24 @@ export async function ProjectAdminSubmissionsPage({
 
       <nav aria-label="Submission categories" className="flex flex-wrap gap-3 text-sm font-semibold">
         <Link href={projectAdminSubmissionHref(queuePath,query)} aria-current={view==="ALL"?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 text-primary-text">All submissions</Link>
+          className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">All submissions</Link>
         <Link href={projectAdminUnsubmittedHref(queuePath,query)} aria-current={view==="NOT_SUBMITTED"?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 text-primary-text">Not submitted</Link>
+          className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">Not submitted</Link>
       </nav>
       <nav aria-label="Review status shortcuts" className="flex flex-wrap gap-2 text-xs font-semibold">
         <Link href={projectAdminSubmissionHref(queuePath,query,"UNDER_REVIEW")}
           aria-current={query.submissionStatus==="UNDER_REVIEW"?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
+          className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">
           Under Review
         </Link>
         <Link href={projectAdminSubmissionHref(queuePath,query,"LOCKED")}
           aria-current={query.submissionStatus==="LOCKED"?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
+          className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">
           Locked
         </Link>
         <Link href={projectAdminSubmissionHref(queuePath,query,"DRAFT_REVISING")}
           aria-current={query.submissionStatus==="DRAFT_REVISING"?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
+          className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">
           Draft (revising)
         </Link>
       </nav>
