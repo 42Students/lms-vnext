@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content-order-readiness";
@@ -36,35 +38,35 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
         <form method="get" action={path} className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Title, lesson or course
-            <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
+            <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
               placeholder="Search authored content"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11" />
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Course code (exact)
-            <input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode ?? ""}
+            <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode ?? ""}
               placeholder="e.g. CS101"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11" />
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Program code (exact)
-            <input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""}
+              className="min-h-11" />
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Batch code (exact)
-            <input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
+              className="min-h-11" />
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Academic period code (exact)
-            <input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
+              className="min-h-11" />
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Learning path status
             <Select name="pathStatus" defaultValue={data.query.pathStatus??"ALL"}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">All learning paths</option>
               <option value="DRAFT">Draft</option><option value="PUBLISHED">Published</option>
               <option value="ARCHIVED">Archived</option>
@@ -72,27 +74,27 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Course department name
-            <input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            <Input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""}
+              className="min-h-11"/>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Course offering type
             <Select name="offeringType" defaultValue={data.query.offeringType??"ALL"}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">All offering types</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
             </Select>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Owning lesson state
             <Select name="lessonStatus" defaultValue={data.query.lessonStatus??"ALL"}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">All lessons</option><option value="ACTIVE">Active lesson</option><option value="ARCHIVED">Archived lesson</option>
             </Select>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Content status
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">All statuses</option>
               <option value="DRAFT">Draft</option>
               <option value="PUBLISHED">Published</option>
@@ -103,7 +105,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Video format
               <Select name="format" defaultValue={data.query.format}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                className="min-h-11">
                 <option value="ALL">All video formats</option>
                 <option value="VIDEO">Stored video</option>
                 <option value="YOUTUBE">YouTube</option>
@@ -113,7 +115,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Visible to students
             <Select name="visibility" defaultValue={data.query.visibility}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">All visibility settings</option>
               <option value="VISIBLE">Visible</option>
               <option value="HIDDEN">Hidden</option>
@@ -122,7 +124,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Owning offering status
             <Select name="offeringStatus" defaultValue={data.query.offeringStatus??"ALL"}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">All offerings</option><option value="ACTIVE">Active</option>
               <option value="ARCHIVED">Archived</option>
             </Select>
@@ -130,7 +132,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">
             Section
             <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="">Showing every section&apos;s content together</option>
               {data.sectionOptions.map(option=><option key={option.deliveryId} value={option.deliveryId}>
                 {option.courseCode} · {option.courseName} · {option.sectionName} ({option.sectionCode})
@@ -145,15 +147,15 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Audience scope
             <Select name="scope" defaultValue={data.query.scope}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11">
               <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
               <option value="SECTION">Section-specific</option>
             </Select>
           </label>
-          <button type="submit"
-            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          <Button type="submit"
+            className="min-h-11">
             Filter
-          </button>
+          </Button>
           <Link href={path}
             className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Clear
