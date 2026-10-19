@@ -10,7 +10,7 @@ export default async function NewSuperAdminTemplatePage(){
  if (!can(ctx,"project-template.manage")) return <div className="w-full min-w-0 space-y-5">
   <PageHeader title="New project template"/>
   <ErrorState title="Access denied" description="Global project templates can only be created outside a selected college or organization scope."
-   action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>}/>
+   action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
  </div>;
  return <div className="min-w-0 space-y-5">
   <PageHeader title="New project template"
