@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 "use client";
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
