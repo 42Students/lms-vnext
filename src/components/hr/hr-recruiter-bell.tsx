@@ -82,9 +82,9 @@ export function HrRecruiterBell(){
    className="relative min-h-11 gap-1 rounded-[8px] px-3">
    Notifications {unread>0?<span className="ml-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#ff7576] px-1 text-[10px] leading-3 text-white">{unread}</span>:null}
   </Button>
-  {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-[1050] mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[400px] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[#e5e9f0] bg-white p-4 shadow-[var(--lms-overlay-shadow)]">
-   <div className="-mx-4 -mt-4 flex items-center justify-between gap-2 rounded-t-[12px] border-b border-[#e5e9f0] bg-[#fafbfc] px-4 py-3">
-    <h2 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.02em] text-[#1a1d21]">Notifications</h2>
+  {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-[1050] mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[400px] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-[var(--lms-overlay-shadow)]">
+   <div className="-mx-4 -mt-4 flex items-center justify-between gap-2 rounded-t-[12px] border-b border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-4 py-3">
+    <h2 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--lms-foreground)]">Notifications</h2>
     <Button variant="ghost" type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
      className="min-h-11 px-3 text-primary-text">Close</Button>
    </div>
