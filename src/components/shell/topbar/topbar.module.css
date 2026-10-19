@@ -442,3 +442,9 @@
   padding:16px; background:#fff;
   box-shadow:9px 11px 28px rgba(0,0,0,.1);
 }
+
+@media (min-width:768px) and (max-width:1199px) {
+  .orgSwitcher { min-width:170px; max-width:190px; }
+  .orgTrigger { max-width:190px; width:100%; }
+  .orgTrigger .orgName { max-width:160px; }
+}
