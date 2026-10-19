@@ -209,3 +209,7 @@ The source-level comparison is documented; **no browser, computed style, screens
 `scripts/codemods/chat1-learner-page-responsive.cjs`: dry-run by default; explicitly scoped to 11 chat-1 learner pages, parses generated TSX, normalizes 767px cutoff, deduplicates `md:min-h-9` and protects courses. Source edits were applied directly to those pages through GitHub file commits; the script documents the repeated transformation for orchestrator replay.
 
 **Next file in LRN-04:** `src/components/placements/learner-placement-academic-evidence.tsx`; then `src/components/placements/learner-placement-requests.tsx` and `src/components/attendance/learner-attendance-workspace.tsx` remaining interactive refinements.
+
+### Post-sweep branch replay verified
+
+On 2026-10-19, replayed only the **29 paths in this lane's source diff** onto current `main` commit `68d52934a61acdeeda3b4c68804550b86607a5ea` with a force-with-lease ref update followed by scoped [chat-1] file commits. Immediately afterward, GitHub compare reported **29 ahead, 0 behind, 29 changed paths**; no updates to `main`, courses, shared UI, global skin, or shell. Source-level proof only; strict LRN checkboxes remain open.
