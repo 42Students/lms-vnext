@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
 "use client";
+import { Badge } from "@/components/ui/badge";
 
 import {useEffect,useState} from "react";
 
