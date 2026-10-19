@@ -19,7 +19,7 @@ for(const file of files){
  const h1=[...src.matchAll(/<h1\b/g)];
  const tabs=[...src.matchAll(/border-b-2\b/g)];
  const controls=[...src.matchAll(/<(?:button|input|select|textarea|table)\b[\s\S]*?(?:\/>|>)/g)].map(x=>x[0]);
- const rawVisible=controls.filter(x=>!/^<input\b/.test(x)||!\btype=["']hidden["']/.test(x));
+ const rawVisible=controls.filter(x=>!/^<input\b/.test(x)||!/\btype=["']hidden["']/.test(x));
  hidden+=controls.length-rawVisible.length;
  visibleRaw+=rawVisible.length;headings+=h1.length;hardHex+=hex.length;handTabs+=tabs.length;
  if(rawVisible.length||h1.length||hex.length||tabs.length)
