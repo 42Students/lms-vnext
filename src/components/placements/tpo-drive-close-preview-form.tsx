@@ -1,4 +1,5 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -60,7 +61,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
     </div>)}
   </dl>
   <label className="block text-sm font-semibold text-body">Reason for closure (audited)
-   <textarea required name="reason" minLength={10} maxLength={1000} rows={3}
+   <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
     className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/></label>
   <p className="text-xs text-body">If the drive version or these counts change, closing is rejected and you must review the consequences again.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
