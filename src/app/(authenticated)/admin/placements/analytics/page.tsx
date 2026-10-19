@@ -93,7 +93,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
    <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Export report (CSV) →</a>
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Export report (CSV) →</a>
   </div>
   {data.truncated?<Banner tone="warning">
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
@@ -103,7 +103,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     <dd className="mt-1 text-2xl font-semibold tabular-nums">{totals[key]}</dd></div>)}</dl>
   <section className="border-b border-border pb-5" aria-label="Hiring Funnel">
    <div className="flex flex-wrap items-start justify-between gap-3">
-    <h2 className="text-lg font-semibold">Hiring Funnel</h2>
+    <h2 className="text-lg font-semibold text-foreground">Hiring Funnel</h2>
     <p className="text-sm text-muted-foreground">Current persisted stages · the percentage is relative to the previous stage.</p>
    </div>
    <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{funnel.map(step=>
@@ -118,7 +118,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   </section>
   <p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. Stage-transition timestamps are required for an accurate duration.</p>
   <section aria-label="Company hiring results" className="min-w-0 space-y-4">
-   <h2 className="text-lg font-semibold">Company hiring results</h2>
+   <h2 className="text-lg font-semibold text-foreground">Company hiring results</h2>
    <DataTable columns={columns} rows={data.rows} getRowKey={row=>row.jobId}
      caption="Company hiring report" empty={<EmptyState title="No hiring results" description="No hiring results match these filters."/>}/>
   </section>
