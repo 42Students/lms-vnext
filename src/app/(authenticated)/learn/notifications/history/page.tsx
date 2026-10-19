@@ -54,12 +54,12 @@ export default async function LearnerNotificationHistoryPage({
       <nav aria-label="Notification history filters" className="flex flex-wrap gap-2">
         <Link href="/learn/notifications/history"
           aria-current={!page.unreadOnly ? "page" : undefined}
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-radius-md)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           All personal
         </Link>
         <Link href="/learn/notifications/history?unread=1"
           aria-current={page.unreadOnly ? "page" : undefined}
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-radius-md)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Unread only
         </Link>
       </nav>
@@ -68,7 +68,7 @@ export default async function LearnerNotificationHistoryPage({
         Counts are page-local; this is not a complete-inbox count.
       </p>
       {emptyMessage ? (
-        <section role="status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5">
+        <section role="status" className="rounded-[var(--lms-radius-lg)] border border-border bg-surface p-5">
           <p className="text-sm text-body">{emptyMessage}</p>
         </section>
       ) : (
