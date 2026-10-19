@@ -26,7 +26,7 @@ export default async function MyTrackerReportDetail({
   return <article className="space-y-4">
     <PageHeader title={report.publicId} description={report.issueType}/>
     <Link href="/tracker/mine" className="font-semibold text-primary-text underline">Back to my reports</Link>
-    <section className="rounded-lg border border-border bg-surface p-5">
+    <section className="border-b border-border pb-5">
       <p className="text-sm font-semibold">Status: {report.status} · Severity: {report.severity}</p>
       <p className="mt-2 text-sm text-body">{report.description}</p>
       <p className="mt-2 text-xs text-muted-foreground">Reported: {report.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
