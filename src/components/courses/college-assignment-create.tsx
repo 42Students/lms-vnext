@@ -92,7 +92,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <p className="text-xs text-muted-foreground">Create a shared or Section-specific assignment draft.</p>
    </div>
    <Button type="button" variant="secondary" disabled={!lessons.length||pending}
-    className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
+    variant="secondary" className="min-h-11"
     onClick={()=>{setError("");setMessage("");setOpened(true);}}>Create New Assignment</Button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">

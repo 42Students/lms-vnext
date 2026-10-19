@@ -1,5 +1,6 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {useToast} from "@/components/ui/toast";
@@ -38,7 +39,7 @@ export function CollegeLessonDragOrder({learningPathId,lessons}:{
     description:error instanceof Error?error.message:"Refresh and try again."});
   }finally{setBusy(false);setDragging(null);}
  }
- return <section aria-label="Reorder shared lessons" className="rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Reorder shared lessons" className="border-b border-border pb-4">
   <h3 className="font-semibold">Reorder Lessons</h3>
   <p className="mt-1 text-xs text-muted-foreground">Drag a lesson onto another to change its place, or use Move up and Move down. Changes affect every section sharing this offering.</p>
   <ol className="mt-3 space-y-2">
@@ -56,7 +57,7 @@ export function CollegeLessonDragOrder({learningPathId,lessons}:{
         className="min-h-11">Move down</Button>
    </li>)}
   </ol>
-  {busy?<p role="status" className="mt-2 text-sm">Saving lesson order…</p>:null}
-  {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
+  {busy?<Alert tone="info" className="mt-2">Saving lesson order…</Alert>:null}
+  {error?<Alert tone="error" className="mt-2">{error}</Alert>:null}
  </section>;
 }

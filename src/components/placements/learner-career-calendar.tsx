@@ -29,6 +29,7 @@ import {
   type CareerCalendarView,
 } from "@/modules/placements/learner-career-calendar-model";
 import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 
 const views: CareerCalendarView[] = ["agenda", "month", "week", "day"];
 type EventFilter = "ALL" | CareerCalendarEvent["kind"];
@@ -199,15 +200,12 @@ export function LearnerCareerCalendar({
         </label>
         <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter career events">
           {filters.map((option) => (
-            <button
+            <FilterChip
               type="button"
               key={option.key}
               aria-pressed={filter === option.key}
               onClick={() => changeCalendar({kind:option.key})}
-              className={filter === option.key
-                ? "min-h-11 rounded-full bg-primary-subtle px-3 text-xs font-bold text-primary-text ring-1 ring-primary"
-                : "min-h-11 rounded-full border border-border px-3 text-xs font-semibold text-body"}
-            >{option.label}</button>
+            >{option.label}</FilterChip>
           ))}
         </div>
       </section>

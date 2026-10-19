@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
@@ -208,9 +209,8 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
           className="">Cancel</Button>}
       </div>
     </form>}
-    {files.length===0?<p className="text-sm text-muted-foreground">
-      No resources yet. Share the first link or file with your team.
-    </p>:<ul className="divide-y divide-border">
+    {files.length===0?<EmptyState title="No resources yet"
+      description="Share the first link or file with your team." />:<ul className="divide-y divide-border">
       {files.map(file=>{
         const descriptor=fileStatusDescriptor(file.status);
         return <li key={file.id} className="py-4">

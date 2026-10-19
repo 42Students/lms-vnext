@@ -1,4 +1,3 @@
-import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -24,7 +23,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
 }) {
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
-    <PageHeader eyebrow="Super Admin" title="Placement Drives" description="Placement administration requires a college safety scope." />
+    <PageHeader title="Placement Drives" description="Placement administration requires a college safety scope." />
     <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
   </div>;
   requireSuperAdminSelectedCollege(context,"placements.manage");
@@ -36,8 +35,8 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     listCollegeDriveApplicationFilters(context),
   ]);
   return <div className="min-w-0 space-y-6">
-    <SuperAdminDriveTabs jobId={jobId} active="Applications"/>
-    <PageHeader eyebrow="Super Admin · Placements" title={"Applications · " + data.drive.title}
+    
+    <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -113,7 +112,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle},
         {key:"application",header:"Application",mobilePriority:"secondary",cell:row=>row.status},
         {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening??"Not recorded"},
-       ]} empty={<p role="status" className="text-sm text-body">No applications match these filters.</p>}/>
+       ]} empty={<EmptyState title="No matching applications" description="No applications match these filters."/>}/>
      </section>:
      <CollegeApplicationPipelineControls jobId={jobId} rows={data.items} total={data.total} query={query} basePath="/admin/placements"/>}
     <p role="status" className="text-sm text-muted-foreground">Page {query.page} of {data.totalPages}</p>
