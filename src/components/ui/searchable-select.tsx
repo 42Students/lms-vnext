@@ -100,7 +100,7 @@ export function SearchableSelect({
   function keyDown(event: KeyboardEvent<HTMLInputElement>) {
     onKeyDown?.(event);
     if (event.defaultPrevented || disabled || readOnly) return;
-    if (event.key === "Escape") { setOpen(false); setActiveIndex(-1); return; }
+    if (event.key === "Escape") { event.preventDefault(); setOpen(false); setActiveIndex(-1); return; }
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();
       setOpen(true);
@@ -115,6 +115,7 @@ export function SearchableSelect({
       event.preventDefault();
       select(matches[activeIndex].value);
     }
+    if (event.key === "Enter" && !creatable && activeIndex < 0) validate(event.currentTarget.value);
     if (event.key === "Tab") { setOpen(false); validate(event.currentTarget.value); }
   }
 
