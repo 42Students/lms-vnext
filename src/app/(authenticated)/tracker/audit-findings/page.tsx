@@ -38,7 +38,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    Bug reports are not substituted for independent audit findings.
   </p></div>;
  const [data,sync]=await Promise.all([listIndependentAuditFindings(ctx,parsed),readIndependentFindingSyncState(ctx)]);
- const selectClass="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
+
  const refusedColumns:DataTableColumn<NonNullable<typeof sync>["refusedFiles"][number]>[]=[
   {key:"path",header:"Source file",mobilePriority:"primary",cell:item=>
     <span className="block min-w-0 break-all font-mono text-xs">{item.path||"Unknown file"}</span>},
@@ -97,19 +97,19 @@ export default async function IndependentFindingsPage({searchParams}:{
   <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-3">
    <input type="hidden" name="view" value={parsed.view}/>
    <label className="text-sm font-semibold">Search
-    <Input name="q" defaultValue={parsed.q} maxLength={120} className={selectClass} placeholder="ID, title or summary"/></label>
+    <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="ID, title or summary"/></label>
    <label className="text-sm font-semibold">Area
-    <Input name="area" defaultValue={parsed.area} maxLength={80} className={selectClass} placeholder="All areas"/></label>
+    <Input name="area" defaultValue={parsed.area} maxLength={80} placeholder="All areas"/></label>
    <label className="text-sm font-semibold">Status (multiple)
-    <Select name="status" multiple size={4} defaultValue={parsed.statuses} className={selectClass}>
+    <Select name="status" multiple size={4} defaultValue={parsed.statuses}>
      {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
     </Select></label>
    <label className="text-sm font-semibold">Severity (multiple)
-    <Select name="severity" multiple size={4} defaultValue={parsed.severities} className={selectClass}>
+    <Select name="severity" multiple size={4} defaultValue={parsed.severities}>
      {FINDING_SEVERITIES.map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
    <label className="text-sm font-semibold">Kind (multiple)
-    <Select name="kind" multiple size={4} defaultValue={parsed.kinds} className={selectClass}>
+    <Select name="kind" multiple size={4} defaultValue={parsed.kinds}>
      {FINDING_KINDS.map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
    <div className="flex items-end gap-3">
