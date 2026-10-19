@@ -22,14 +22,14 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 - [x] I: notification panel open 200ms ease-out from 8px, backdrop 150ms — `components___notification-drawer.scss:83-102,112-143`; micro CSS 296-321.
 - [x] I: active-tab underline width and opacity 200ms ease-in-out — `components___common.scss:381-415`; micro CSS 394-396 (same native tab pseudo-element; no layout changes).
 - [x] I: selected menu option #26bac7/white (separate from nav tint) — `components___antddesign.scss:134-137`; micro CSS 142-147.
-- [x] I: sticky shadow paint on **already sticky** table cells — `old-lms-shell.css:56`: 0 1px 3px rgba(26,45,72,.035); micro CSS 151-154,290-297. No sticky positioning added.
+- [ ] I: **sticky table shadow parity** — corrected the earlier false source mapping: `old-lms-shell.css:55-56` applies `0 1px 3px rgba(26,45,72,.035)` to `.tpo-shell-header.ln-head` **only**, not `thead`/`th`. Removed ungrounded sticky-table shadows from micro CSS (comments `micro-details.css:149-155,291-296`); table header shadow, if any, requires a real legacy table selector or browser measurement. Topbar styling belongs to chat-13.
 - [x] I: reduced-motion preference — `components___accessibility.scss:116-124`, `components___antddesign.scss:184-189`; existing `globals.css:304-312`; micro CSS 173-177,379-386.
 - [x] I: print interaction paint only, no layout — `components___accessibility.scss:116-124`; micro CSS 355-372; `src/app/(authenticated)/authenticated-print.css` owns paper/layout rules.
 - [ ] A4: text-selection **legacy exact parity** — `components___variables.scss:10-13,24` supplies colours but no `::selection` selector; micro CSS 122-127 uses those tokens. Actual legacy selection paint unverified.
 - [ ] I: table-row hover and selected-row **whole-app parity** — standard `.ln-table` hover is now source-matched (`components___common.scss:697-714,849-855` → micro CSS 443-454: cell `background:none !important`); `components___common.scss:130-139` proves the white no-hover exemption. Selected-row colour is still not specified by legacy SCSS (`old-lms-shell.css:45-48` is navigation, not a table), and custom/non-shared table instances have not been exhaustively grepped; full strict tick withheld.
 - [ ] I: checkbox/radio glyph and switch-thumb **animation parity** — teal checked colours matched, 150ms track-transition aligned to `components___variables.scss:251-259` (micro CSS 327-340); the old SCSS does not define the glyph/thumb animation, and native browser checkmarks are not tweenable by CSS.
 - [ ] I: input browser autofill **exact parity** — `components___form.scss:57-60` gives placeholder but not autofill; micro CSS 115-120,342-353 preserves ink/caret. Browser-autofill background remains user-agent controlled.
-- [ ] I: tooltip mouse-enter/mouse-leave **delay parity** — `components___antddesign.scss:46-80` defines visual palette, not delay. `src/components/ui/tooltip.tsx:18-34` opens immediately on pointer-enter. CSS cannot alter the trigger's JS event timing; no delay invented.
+- [ ] I: tooltip mouse-enter/mouse-leave **delay parity** — confirmed source mismatch, not a styling mystery: `42Students/lms2-fe@prod-2026/src/components/Global/Tooltips/CustomToolTipTable.jsx:10-31` passes no timing props to AntD v5 Tooltip; [AntD v5 Tooltip API](https://5x.ant.design/components/tooltip/) documents **0.1s/0.1s** enter/leave defaults. `src/components/ui/tooltip.tsx:30-45` opens/closes immediately (**0ms**). CSS cannot delay JS `details.open` mutations, so leave unticked for tooltip component owner.
 - [ ] I: toast **timeout parity** — no toast lifetime in the supplied legacy SCSS. `src/components/ui/toast.tsx:133-143` uses 4500–15000ms reading time, errors persistent, timers paused during focus/hover. Timer logic is not CSS-editable.
 - [ ] I: toast **placement parity** — old SCSS has no toast placement. Current bottom-right safe-area placement is `src/components/ui/toast.tsx:49-73`; positioning would change layout/JS scope and is not modified.
 - [ ] I: toast **animation exact parity** — `globals.css:269-287` already has 250ms entrance (generic normal token from `components___variables.scss:253-259`); no legacy toast keyframes were found to confirm exact curves.
@@ -68,7 +68,7 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 | Notification panel enter | `components___notification-drawer.scss:125-143` 200ms ease-out, -8px | `micro-details.css:308-314` same | Equal |
 | Notification backdrop enter | `components___notification-drawer.scss:90-102` 150ms ease-out | `micro-details.css:304-307,316-318` same | Equal declaration |
 | Selected option | `components___antddesign.scss:134-137` teal + white | `micro-details.css:142-147` teal + white | Equal |
-| Sticky shadow | `old-lms-shell.css:56` 0 1px 3px rgba(26,45,72,.035) | `micro-details.css:290-296` same | Equal shadow |
+| Sticky **topbar** shadow, not a table rule | `old-lms-shell.css:55-56` `.tpo-shell-header.ln-head` only: `0 1px 3px rgba(26,45,72,.035)` | `micro-details.css:149-155,291-296` deliberately carries **no** table shadow; chat-13 owns header | Previous table application was incorrect; corrected, table-specific value unverified |
 | Reduced motion | `components___accessibility.scss:116-124` .01ms and scroll auto | `globals.css:304-312`, `micro-details.css:379-386` | Equal |
 | Print interaction | No legacy print-specific declarations in copied SCSS | `micro-details.css:355-372`: transition/animation none, no geometry | Unverifiable |
 
@@ -90,9 +90,9 @@ This batch changed only `src/styles/micro-details.css` plus this audit; componen
 
 | Exact search string | Hits | Production declarations found |
 | --- | ---: | --- |
-| `@import "../styles/micro-details.css"` | 1 | `src/app/globals.css:9`, exactly once after legacy skin at line 6 |
-| `data-slot="table"` | 3 | `src/components/ui/table.tsx:14`; `src/styles/micro-details.css`; `src/app/globals.css` |
-| `data-slot="data-table"` | 14 | `src/components/ui/data-table.tsx:38,93`; remaining hits are skin/print CSS and tests; only one production component source |
+| `@import "../styles/micro-details.css"` | 2 indexed-file hits (1 code + 1 audit) | Only production CSS import: `src/app/globals.css:9`, once after legacy skin at line 6 |
+| `data-slot="table"` | 4 indexed-file hits | `src/components/ui/table.tsx:14`, `src/styles/micro-details.css`, `src/app/globals.css`, this audit; only one shared component definition |
+| `data-slot="data-table"` | 15 indexed-file hits | `src/components/ui/data-table.tsx:38,93` and style/print CSS, this audit, and tests; only one production component source |
 | `data-slot="scroll-cue"` | 12 | `src/components/ui/scroll-cue.tsx:61-69` provides `[tabindex]` and its actual first-child scroll viewport; remaining matches are style/audit/test references |
 
 Whole-repository negative greps required by the STRICT TICK RULE remain **unrun** because this lane is expressly not permitted to run code. Re-run these source-only commands in the orchestrator before ticking broad closure:
@@ -137,6 +137,23 @@ The current pass also inspected the **original legacy repository** `42Students/l
 - Responsive: baseline hidden scrollbars and focus rules apply on mobile and desktop; the thin scrollbar exceptions are for horizontally overflowing table/tab viewport only. Touch press is guarded by `@media (hover:none)`; reduced motion is guarded by the OS setting; print rules are in `@media print`. No widths, paddings, grid/flex, positioning or modal dimensions changed.
 - No CI, TypeScript checks or app execution were performed, as requested. GitHub code search is not a substitute for a whole-repo grep; **do not claim zero hand-rolled instances**. Full paired-screen verification is a separate future orchestrator step.
 
+**Correction to earlier audit evidence:** `docs/design/old-lms-shell.css:56` does **not** establish a sticky *table* header shadow. It specifically styles the TPO top bar. The two `box-shadow` declarations formerly assigned to table headers in `micro-details.css` were unsupported and have been removed without changing `position`, `z-index` or responsive breakpoints. Preserve a table-header-specific shadow only when independently proven from legacy code or computed styles. The topbar's shadow stays under chat-13 ownership.
+
+## Focused CSS-only compatibility closure — dark-theme selected state
+
+This is a **vNext-only regression prevention**, not an assertion that the old LMS had a dark theme. The legacy light-theme colours and focus geometry remain unchanged. The opt-in tracker mode declares the following values in `src/app/globals.css:168-181`, while `micro-details.css:12-18` defines legacy light-only fallback tokens.
+
+| Property and state | Legacy light / vNext source | vNext dark-mode declaration | Result |
+| --- | --- | --- | --- |
+| Selected row background | Legacy text/selected-table paint unresolved; light vNext `micro-details.css:17` `#eff8fa` | `globals.css:180` `--lms-primary-subtle:#164e57`, now linked by `micro-details.css:469-472` to `--lms-micro-selected` | **Dark-mode compatibility fixed**; table-selected legacy parity still unticked |
+| Keyboard focus tint | Legacy `components___accessibility.scss:19-23` `#1a95a1`, outline 2px, offset 3px | `globals.css:176` `--lms-primary-text:#75dce3`; `micro-details.css:469-472` reuses it for `--lms-micro-focus` | **Dark contrast paint corrected**; ring width/offset unchanged |
+| Normal light selection and focus | `components___variables.scss:12-13` `#1a95a1`, `#eff8fa` | `micro-details.css:16-18` untouched for default theme | **No light-mode regression** |
+| Responsive behaviour | Old `components___accessibility.scss:19-23,116-124` does not assign viewport-specific keyboard ring colour | Same CSS custom-property substitutions at phone 375px, tablet 768px and desktop 1280px; `prefers-reduced-motion` has no bearing on static colour | **Source media-query proof only**, no screenshot claim |
+
+**Proof inventory (GitHub repository search, exact returned file-hit counts):** `@import "../styles/micro-details.css"` → **2 file hits**, one being the audit itself and only one production import in `src/app/globals.css:9`; `data-slot="table"` → **4** (component, two styles, audit); `data-slot="data-table"` → **15** (shared component, styles, audit and tests); `data-slot="scroll-cue"` → **12**; `data-slot="card"` → **4**; `data-slot="toast-stack"` → **8**; `data-slot="info-popover"` → **5**. Search index snapshots may lag moving `main`. These are source-index results, **not local grep output** or proof that no hand-rolled variants remain.
+
+**Tooltip timing mismatch, now sourced:** Original source `CustomToolTipTable.jsx:10-31` renders AntD Tooltip without an override. AntD 5.x's [documented defaults](https://5x.ant.design/components/tooltip/) are 100ms before opening and 100ms before closing for pointer hover. vNext `src/components/ui/tooltip.tsx:30-45` mutates `details.open` immediately. **This is a real 100ms-vs-0ms source difference**, but requires a trigger/timer change in `src/components/ui/tooltip.tsx`, forbidden for chat-20. Do not paper over it with a 100ms CSS entry fade (the tooltip would still be interactive before the delay and its close timer would remain wrong).
+
 ## Remaining acceptance queue — ownership and exact unblock condition
 
 This is a deliberately finite list of the **unticked requirements**. The source-matched micro stylesheet is feature-complete within the allowed CSS-only surface, but the whole checklist is not closed until these external acceptance artifacts exist. Record verified values here; do not infer them from nearby menu/sidebar styles.
@@ -144,7 +161,7 @@ This is a deliberately finite list of the **unticked requirements**. The source-
 | Open requirement | Missing proof or required non-CSS change | Next action / owner |
 | --- | --- | --- |
 | A4 text selection | Legacy browser-computed `::selection` foreground/background and selected-range screenshot; SCSS did not define it | Orchestrator old-LMS browser comparison; update `micro-details.css` only if measured paint differs |
-| Table selected row | AntD legacy selected-cell background, focus-within and hover-over-selected computed properties; source `_common.scss:849-855` specifies only ordinary hover | chat-14 table owner or orchestrator browser; never substitute the sidebar tint for a selected table value |
+| Table selected row and sticky-header shadow | AntD legacy selected-cell background, focus-within, hovered-selected and **table** sticky-header shadow computed properties; `_common.scss:849-855` specifies only ordinary hover, while `old-lms-shell.css:56` belongs to the **top bar** | chat-14 table owner or orchestrator browser; never substitute the sidebar tint or topbar shadow for table paint |
 | Checkbox/radio/switch glyph | Checkmark/dot/thumb motion and disabled/indeterminate state recordings on same browser/device | chat-17 shared controls owner + orchestrator; native glyph is not CSS-interpolable |
 | Browser autofill | Chrome/Safari/Firefox user-agent paint and inherited ink measured against the old portal | Orchestrator; avoid forced background overrides until verified |
 | Tooltip delay | Mouse-enter and mouse-leave timers from legacy AntD tooltip rendered behavior, then JS `InfoPopover` trigger semantics | chat-16/17 tooltip owner; CSS animation is not a mouse delay |
