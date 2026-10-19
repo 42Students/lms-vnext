@@ -300,3 +300,15 @@ The `/admin/recruiters` route in the original 211-file inventory is a compatibil
 - `/admin/recruiters` reexports `/admin/hr/page.tsx`; the live Super Admin account list, form and drawer were inspected through their real imported components. Updated three presentation sources and left the existing dialog on shared styles.
 - Second-pass people directory: flattened GET filter forms, repeated user tiles, and membership summary border cards to preserve the one-canvas page hierarchy; kept platform-wide block security controls visually distinct.
 - No behavioural changes, copy edits, service changes or test/CI execution.
+
+## Follow-on value-by-value pass — 2026-10-19
+
+After the initial 211-file sweep, this lane revisited the high-density teaching and Super Admin forms against the same old-LMS references. The follow-on pass pushed **33 incremental presentation-only commits** (plus a safe merge of the latest `main` with disjoint changes). Changes stay on `chatgpt/chat-3-b`.
+
+- **Faculty quiz builder:** removed an unnecessary outer boxed canvas; normalized quiz/answer/input buttons to 9px, 36px desktop height (retaining 44px mobile touch targets); fixed the two explicit dark-on-teal primary buttons to `text-on-primary`; aligned the draft review surface and headings.
+- **Faculty course pages:** revised list-filter control typography, clear-filter action, course card hover treatment, workspace headings, home headings and related lesson controls without changing data, flow or item structure.
+- **Faculty attendance/authoring:** flattened nested filter/scheduling wrappers, adjusted table header tint/sticky header, removed excess sticky toolbar shadow, normalized assignment and submission navigation styles, and aligned content ordering, video-manager and report-table shells.
+- **Super Admin academics/people:** converted directory tab pills to the legacy underline treatment, changed hard-coded 9px/12px radius values to shared CSS tokens, normalized faculty bulk-registration/teaching-assignment actions, aligned section and dialog heading colors, and preserved all memberships/roster operations.
+- **Scope coordination:** merged `main` into the lane using a branch-only merge; the 29 files independently changed since the merge base had no path overlap with the 132-file main-side change list. No files owned by the shared token/sidebar/topbar lanes were edited here.
+
+**Validation boundary:** Source-only edits and connector-level review; no application execution, TypeScript build, tests, CI or screenshot/pixel-diff were run, per owner instruction. Browser comparison against the legacy LMS remains the final validation gate.
