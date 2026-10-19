@@ -497,8 +497,7 @@
  * Shared button/field components have their own focus systems.
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(summary, [role="button"], button:not([data-slot="button"]))
-  :not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  :where(summary, [role="button"]:not(button)):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   box-shadow: 0 0 0 4px rgba(26, 149, 161, 0.12) !important;
 }
 /* Legacy: components___accessibility.scss:13-23,
