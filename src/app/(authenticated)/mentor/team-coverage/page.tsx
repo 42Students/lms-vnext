@@ -40,7 +40,7 @@ export default async function MentorTeamCoveragePage({
   });
   if (duplicated || !parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid team coverage filters</h1>
-    <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+    <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -98,7 +98,7 @@ export default async function MentorTeamCoveragePage({
             </Select>
           </label>
           <Button type="submit" variant="primary">Filter</Button>
-          <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+          <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
         </form>
         <section aria-label="Registered team coverage summary"
           className="grid gap-3 sm:grid-cols-3">
