@@ -1,4 +1,7 @@
 "use client";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 type Classroom={id:string;name:string;cohortName:string;periodStart:string;periodEnd:string;updatedAt:string};
@@ -38,27 +41,27 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
     {classes.length===0?<p role="status">No active classes are available for booking.</p>:
       <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <label className="grid gap-1 text-sm font-semibold">Class
-          <select className={field} required value={sectionId} onChange={e=>setSectionId(e.target.value)}>
+          <Select className={field} required value={sectionId} onChange={e=>setSectionId(e.target.value)}>
             <option value="">Select class</option>
             {classes.map(c=><option key={c.id} value={c.id}>{c.name} · {c.cohortName}</option>)}
-          </select></label>
+          </Select></label>
         <label className="grid gap-1 text-sm font-semibold">Faculty (optional)
-          <select className={field} value={facultyId} onChange={e=>setFacultyId(e.target.value)}>
+          <Select className={field} value={facultyId} onChange={e=>setFacultyId(e.target.value)}>
             <option value="">None</option>{faculty.map(f=><option key={f.id} value={f.id}>{f.displayName||"Unnamed Faculty"}</option>)}
-          </select></label>
+          </Select></label>
         <label className="grid gap-1 text-sm font-semibold">Title
-          <input className={field} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}/></label>
+          <Input className={field} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold">Date (IST)
-          <input className={field} required type="date" min={selected?.periodStart} max={selected?.periodEnd}
+          <Input className={field} required type="date" min={selected?.periodStart} max={selected?.periodEnd}
             value={date} onChange={e=>setDate(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold">Starts (IST)
-          <input className={field} required type="time" value={from} onChange={e=>setFrom(e.target.value)}/></label>
+          <Input className={field} required type="time" value={from} onChange={e=>setFrom(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold">Ends (IST)
-          <input className={field} required type="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
+          <Input className={field} required type="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
         <div className="sm:col-span-2 lg:col-span-3">
-          <button type="submit" disabled={pending||!sectionId||!title.trim()}
-            className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-            {pending?"Booking…":"Confirm booking"}</button>
+          <Button variant="primary" type="submit" disabled={pending||!sectionId||!title.trim()}
+            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+            {pending?"Booking…":"Confirm booking"}</Button>
         </div>
       </form>}
     {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
