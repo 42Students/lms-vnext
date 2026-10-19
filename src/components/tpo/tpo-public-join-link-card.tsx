@@ -156,8 +156,8 @@ export function TpoPublicJoinLinkCard({
       {!status.ready ? (
         <p role="status" className="mt-3 text-sm text-body">
           {isCompany ? "Couldn't load the company link" : "Couldn't load the public link"}
-          <button type="button" disabled={busy} onClick={()=>void retryStatus()}
-            className="ml-3 font-semibold text-primary-text underline">Retry</button>
+          <Button type="button" variant="ghost" disabled={busy} onClick={()=>void retryStatus()}
+            className="ml-3 min-h-11 sm:min-h-9 underline">Retry</Button>
         </p>
       ) : (
         <>
