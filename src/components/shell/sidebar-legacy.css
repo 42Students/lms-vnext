@@ -16,7 +16,6 @@
  }
  .lms-desktop-sidebar:is(:hover,:focus-within) {width:256px;}
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-logo-row {justify-content:flex-start;padding-left:20px;}
- .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-logo-row {justify-content:flex-start;padding-left:20px;}
  .lms-shell-page {
   min-width:0;
   padding-left:96px;
@@ -178,9 +177,18 @@
  text-transform:uppercase;
  pointer-events:none;
 }
+@media (max-width:767px) {
+ .lms-mobile-sidebar .lms-nav-heading {
+  justify-content:flex-start;
+  margin:12px 12px 6px 46px;
+  font-size:9px;
+ }
+ .lms-mobile-sidebar .lms-nav-heading-text {display:block;}
+ .lms-mobile-sidebar .lms-nav-heading::after {display:none;}
+}
 .lms-sidebar-heading-label {min-width:0; white-space:nowrap;}
 .lms-sidebar-role-details {z-index:2;min-width:0;margin-top:auto;transition:opacity .15s cubic-bezier(.2,0,0,1);}
-.lms-sidebar-scroll {overscroll-behavior-y:contain;scrollbar-width:none;}
+.lms-sidebar-scroll {overscroll-behavior-y:contain;overflow-x:hidden;scrollbar-width:none;}
 .lms-sidebar-scroll::-webkit-scrollbar {display:none;width:0;height:0;}
 @media (prefers-reduced-motion:reduce) {
  .lms-desktop-sidebar,.lms-shell-page,.lms-sidebar-nav .lms-sidebar-item,

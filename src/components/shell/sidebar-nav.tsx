@@ -86,7 +86,7 @@ export function SidebarNav({
       <span className="lms-nav-heading-text">{label}</span>
      </div>:null}
     <Link href={item.href}
-     aria-label={item.label}
+     aria-label={badge&&count!==null?`${item.label}, ${count} pending`:item.label}
      title={item.label}
      aria-current={active?"page":undefined}
      data-active={active?"true":undefined}
@@ -94,8 +94,8 @@ export function SidebarNav({
      className="lms-sidebar-item group"
     >
      <span className="lms-sidebar-item-icon" aria-hidden="true">
-      {item.icon&&item.activeIcon?
-       <Image src={active?item.activeIcon:item.icon}
+      {item.icon?
+       <Image src={active?item.activeIcon??item.icon:item.icon}
         alt="" width={20} height={20} className="h-5 w-5 object-contain"/>:
        <ShellNavGlyph name={shellNavIconKey(item)}/>}
      </span>
