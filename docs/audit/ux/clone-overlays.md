@@ -673,3 +673,35 @@ File-level source-completed:
 **F1 [ ], F2 [ ] still not eligible for ticking.** Legacy search popup offsets/heights/shadow, compact bell desktop hit target, profile visual avatar diameter, full context icon/divider variants and actual device/code-grep proof remain unmatched or unverified.
 
 **Next file:** `src/components/ui/searchable-select.tsx` and `src/components/profile/learner-skill-catalog-input.tsx` — check keyboard selected/disabled states under the shared listbox and find any further missing F2 consumer variants.
+
+
+## Chat-16 skill-search overlay and shared combobox — 2026-10-20
+
+| Searchable listbox property/state | Legacy old LMS `docs/design/legacy-styles/components___form.scss` | vNext source at this lane HEAD | Result |
+| --- | --- | --- | --- |
+| Anchoring | `63-70`: absolute, top calc(100%+5px), left0, width100% | `src/components/profile/learner-skill-catalog-input.tsx:44,72-73`; `src/components/ui/searchable-select.tsx:137,151-153`: same relative parent / absolute listbox geometry | Numeric/source match |
+| Panel vertical bounds | `70-72`: min120px, max200px | Both listboxes `min-h-[120px] max-h-[200px]`; `src/components/ui/legacy-overlays.css:419-422` | Match |
+| Popup shadow and white background | `73-76`: `#fff`, `0 14px 16px rgba(0,0,0,.04)`, radius12px | Shared PopoverListbox white/radius12; both inside `[data-slot=searchable-select]` so scoped CSS `legacy-overlays.css:419-429` applies exact shadow | Match sourced values |
+| Popup top padding and scrollbar | `75-79`: top5px, Firefox hidden, WebKit hidden | Both panels `pt-[5px]`; CSS scoped `scrollbar-width:none` and `::-webkit-scrollbar display:none` | Match |
+| Option padding/minheight | `82-87`: 5px vertical, 10px horizontal, min44px | Skill `learner-skill-catalog-input.tsx:75-77`: li/button min44 and 5/10; shared `searchable-select.tsx:156-161`: same | Match |
+| Option hover/motion | `82,88-91`: `#d1f1f1`, background transition 200ms ease-in-out | Skill button `learner-skill-catalog-input.tsx:76`: important 200ms ease-in-out and hover `#d1f1f1`; shared options inherited 200ms scoped selector with same hover | Match declared properties (needs computed-style cascade proof) |
+| Suggestion list empty/disabled | No disabled/empty form option styles beyond `__No-results` 10px padding in `94-105` | Shared select offers `No results`, disabled nonfocusable options; skill list loading/empty/unavailable text kept outside popup | Functionality inventoried; old complete state styling **unproved** |
+| Skill listbox Escape/focus | Legacy SCSS no keyboard algorithm | `learner-skill-catalog-input.tsx:35-63`: pointer/focus outside closes; Escape only when open stops propagation so native parent dialog stays; active option IDs only while valid; popup can reopen on input focus | Source regression covered, actual interaction untested |
+| Shared select Escape/focus | Legacy SCSS no nested modal Escape procedure | `searchable-select.tsx:108-118`: Escape consumes only own visible popup; when closed, allows parent modal Escape; keeps standard Arrow/Enter/Tab validity | Source regression covered, runtime untested |
+| Input and list roles | Legacy Ant input behavior defined by widget, not SCSS | Both `role=combobox`, `aria-haspopup=listbox`, `aria-expanded`, controlled `aria-controls` and valid `aria-activedescendant`; shared `PopoverListbox role=listbox` | Valid source semantics; browser/a11y tree not inspected |
+| Z-index | `components___form.scss:69`: 9 | both `var(--lms-z-dropdown)` = 100 `src/app/globals.css:837` | **Known mismatch** retained to preserve shared layering |
+
+**Responsive source comparison:** 280px/375px phone, 640px and 767px: both suggestion popups cover 100% of their respective form fields, maintain 120–200px panel vertical bounds, 44px item targets, overflow scrolling and pointer/blur dismissal. At 768px/1024px, listbox items remain 44px even when host inputs use 36px; popup width is still 100% of parent. This is **static source proof**, not screenshots, computed styles, real device scrolling or rendered overflow measurement.
+
+**Coverage:** GitHub default-branch index found **5** `src/` `<PopoverListbox` consumers (topbar command search, learner topbar course search, shared SearchableSelect, learner skill catalogue, TPO find shortcut). The previous five are reviewed in this audit, but the index is not exhaustive and cannot substantiate local checkout `git grep`. Required:
+```sh
+git grep -nE '<PopoverListbox|<dialog([[:space:]>])|role="dialog"|fixed inset-0' -- 'src/**/*.tsx'
+```
+
+- [x] `src/components/profile/learner-skill-catalog-input.tsx` source complete: old popup geometry, hover/motion, pointer/focus/Escape visibility, ARIA reference guards; balanced listbox, ul, li and button JSX.
+- [x] `src/components/ui/searchable-select.tsx` source complete: consume Escape only when own popup open; other keyboard/option/validity behavior retained; balanced listbox JSX.
+- [x] Checked existing scope `src/components/ui/legacy-overlays.css:419-433`: source selectors now apply to both searchable-select roots and do not apply to unrelated notification menus.
+
+**F1 [ ], F2 [ ] still not tickable:** a real checkout grep, computed CSS and keyboard/touch viewport behavior remain unrun. Header compact actions, nonmodal popup closing animation, and old toast timing still have unresolved parity rows.
+
+**Next source file:** `src/components/tpo/tpo-find-shortcut.tsx` to reconcile nested search results' listbox Escape with its parent native Dialog; then F2 checkpoint and remaining context menu consumer inventory.
