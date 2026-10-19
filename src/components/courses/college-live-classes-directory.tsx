@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
@@ -15,26 +17,26 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
     <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
       Session, lesson or course
-      <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
+      <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
         className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
     </label>
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
       Course code (exact)
-      <input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
+      <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
         placeholder="e.g. CS101"
         className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
     </label>
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
       Publication
       <Select name="status" defaultValue={data.query.status}
-        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        className="min-h-11">
         <option value="ALL">All statuses</option><option value="DRAFT">Draft</option>
         <option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option>
       </Select>
     </label>
     <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Section
       <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
-        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        className="min-h-11">
         <option value="">All classes</option>
         {data.sectionOptions.map(option=><option key={option.deliveryId} value={option.deliveryId}>
           {option.courseCode} · {option.sectionName} ({option.sectionCode})
@@ -43,27 +45,27 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Session audience
       <Select name="scope" defaultValue={data.query.scope}
-        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        className="min-h-11">
         <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option>
         <option value="SECTION">Section-specific</option>
       </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Timing
       <Select name="view" defaultValue={data.view}
-        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        className="min-h-11">
         <option value="ALL">All sessions</option><option value="UPCOMING">Upcoming or ongoing</option>
         <option value="PAST">Past sessions</option>
       </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">From (IST)
-      <input type="date" name="from" defaultValue={data.from??""}
-        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+      <Input type="date" name="from" defaultValue={data.from??""}
+        className="min-h-11"/>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Through (IST)
-      <input type="date" name="to" defaultValue={data.to??""}
-        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+      <Input type="date" name="to" defaultValue={data.to??""}
+        className="min-h-11"/>
     </label>
-    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+    <Button type="submit" className="min-h-11">Filter</Button>
     <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
   </form>
   <CollegeContentCsvExport filename={"live-classes-page-"+data.query.page+".csv"}
