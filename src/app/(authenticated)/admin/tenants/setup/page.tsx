@@ -5,7 +5,6 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Tabs} from "@/components/ui/tabs";
 import {ErrorState} from "@/components/ui/error-state";
-import {EmptyState} from "@/components/ui/empty-state";
 import {getSuperAdminTenantLifecycleDetail,getSuperAdminTenantLifecycleDirectory} from "@/modules/colleges/admin-tenant-lifecycle-service";
 import {CollegeServiceError} from "@/modules/colleges/service";
 import {can,requirePermission} from "@/modules/permissions/policy";
@@ -132,7 +131,7 @@ export default async function SuperAdminTenantSetup({
        {" · "}{item.code} · {item.status}
       </li>)}
      </ul>
-     {!list?.items.length?<EmptyState title="No colleges in scope" description="No colleges in the current scope."/>:null}
+     {!list?.items.length?<p role="status" className="text-sm text-body">No colleges in the current scope.</p>:null}
      <p className="mt-2 text-xs text-muted-foreground">First page only. Archived colleges remain marked; no implicit restoration.</p>
     </div>
    </section>
@@ -168,8 +167,10 @@ export default async function SuperAdminTenantSetup({
     </ol>
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
-  </>:<EmptyState title="No college selected"
-    description="Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant."
-    action={<Link href={tabLink("STRUCTURE")} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline">Create or select a college →</Link>}/>
+  </>:<section role="status" className="border-b border-border py-5">
+    <h2 className="font-semibold">No college selected</h2>
+    <p className="mt-2 text-sm text-body">No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant.</p>
+    <Link href={tabLink("STRUCTURE")} className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9  items-center font-semibold text-primary-text underline">Create or select a college →</Link>
+  </section>}
  </div>;
 }
