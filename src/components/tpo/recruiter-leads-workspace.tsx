@@ -30,7 +30,6 @@ import {tpoCompanyDirectoryCsv} from "@/modules/placements/tpo-company-directory
 import {deriveLegacyCompanyCommunication} from "@/modules/placements/tpo-company-communication-legacy-model";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {Dialog} from "@/components/ui/dialog";
-import {DataTable} from "@/components/ui/data-table";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
@@ -102,6 +101,12 @@ type CompanySummary = {
   studentsPlaced: number | null;
   studentsPlacedEvidence: string;
 };
+/** The company tab is a distinct authorized sheet, not the global company directory. */
+const EngageCompanyTpoGrid=dynamic<TpoSpreadsheetGridProps<CompanySummary>>(
+ ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<CompanySummary>),
+ {ssr:false,loading:()=> <p role="status" className="py-4 text-sm text-muted-foreground">Loading company contacts…</p>},
+);
+
 type Phase = "loading" | "ready" | "error" | "migration-pending";
 /** Quartz table is browser-only; all rows remain college-scoped page data. */
 const RecruiterTpoGrid=dynamic<TpoSpreadsheetGridProps<RosterGridRow>>(
@@ -396,6 +401,17 @@ export function RecruiterLeadsWorkspace({
       (communication[company.key]??"NOT_CONTACTED")!==companyCommunicationFilter)return false;
     return true;
   });
+  const engageCompanyColumns:readonly TpoGridColumn<CompanySummary>[]=[
+    {key:"Company",label:"Company",read:company=>company.name+
+      (company.aliases.length?" · Also "+company.aliases.length+" other spellings":"")},
+    {key:"Communication",label:"Communication",read:company=>
+      communication[company.key]??deriveLegacyCompanyCommunication(company.drivesRan,
+        rows.filter(lead=>company.people.some(person=>person.id===lead.id)))},
+    {key:"People",label:"People",read:company=>company.people.map(person=>person.name).join(", ")||"No contacts"},
+    {key:"Drives that ran",label:"Drives that ran",read:company=>company.drivesRan,sortKind:"number"},
+    {key:"Accepted-offer drives",label:"Accepted-offer drives",read:company=>company.acceptedOfferDrives,sortKind:"number"},
+    {key:"Students placed",label:"Students placed",read:company=>company.studentsPlaced??"Not enough data yet",sortKind:"number"},
+  ];
   const leadDriveCounts=useMemo(()=>new Map(companies.flatMap(company=>
     company.people.map(person=>[person.id,company.drivesRan] as const))),[companies]);
   const rosterRows=useMemo(()=>rows.map(row=>({
@@ -959,38 +975,38 @@ export function RecruiterLeadsWorkspace({
                   No companies match the current filters.
                 </p>
               ) : (
-                <DataTable<(typeof visibleCompanies)[number]> caption="Company contacts and communication"
-                  rows={visibleCompanies} getRowKey={company=>company.key}
-                  empty={<p role="status">No companies match the current filters.</p>}
-                  columns={[
-                    {key:"Company",header:"Company",mobilePriority:"primary",cell:company=><div className="min-w-0">
-                      <Link href={"/tpo/companies?name="+encodeURIComponent(company.name)}
-                        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">{company.name}</Link>
-                      {company.aliases.length?<p className="text-xs text-muted-foreground" title={company.aliases.join(", ")}>
-                        Also {company.aliases.length} other spellings</p>:null}
-                    </div>},
-                    {key:"Communication",header:"Communication",mobilePriority:"action",cell:company=>
+                <GridWorkspace rows={visibleCompanies} columns={engageCompanyColumns}
+                  rowKey={company=>company.key} searchMode="hidden"
+                  columnScope="local" columnStorageKey="tpo-engage-company-contacts-v1"
+                  exportName="companies" onExportCsv={()=>exportCompanies()}>
+                  {columnKeys=><EngageCompanyTpoGrid rows={visibleCompanies}
+                    columns={engageCompanyColumns.filter(column=>columnKeys.includes(column.key))}
+                    rowKey={company=>company.key} storageKey="tpo-engage-company-contacts-v1"
+                    integratedWorkspace mobileActionsCollapsible
+                    mobilePrimaryKeys={["Company","People","Communication"]}
+                    openPrimary={{columnKey:"Company",ariaLabel:company=>"Open "+company.name+" company details",
+                      onOpen:company=>router.push("/tpo/companies?name="+encodeURIComponent(company.name))}}
+                    rowActions={company=><div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
                       <Select aria-label={"Communication for "+company.name}
-                        
                         value={communication[company.key]??deriveLegacyCompanyCommunication(company.drivesRan,
                           rows.filter(row=>company.people.some(person=>person.id===row.id)))}
                         disabled={!communicationReady}
-                        onChange={e=>void changeCompanyCommunication(company.key,e.target.value)}>
-                        <option value="NOT_CONTACTED">Not contacted</option><option value="EMAILED">Emailed</option>
-                        <option value="REPLIED">Replied</option><option value="MEETING_SET">Meeting set</option>
+                        onChange={event=>void changeCompanyCommunication(company.key,event.target.value)}>
+                        <option value="NOT_CONTACTED">Not contacted</option>
+                        <option value="EMAILED">Emailed</option>
+                        <option value="REPLIED">Replied</option>
+                        <option value="MEETING_SET">Meeting set</option>
                         <option value="NOT_INTERESTED">Not interested</option>
-                      </Select>},
-                    {key:"People",header:"People",mobilePriority:"secondary",cell:company=><div className="flex flex-wrap gap-2">
-                      {company.people?.length?company.people.map(person=>
-                        <Link key={person.id} className="inline-flex min-h-11 items-center text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                          href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>):
-                        <Button variant="secondary" type="button" className="min-h-11 text-[var(--lms-teal-deep)] underline"
-                          onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</Button>}
-                    </div>},
-                    {key:"Drives that ran",header:"Drives that ran",mobilePriority:"secondary",cell:company=>company.drivesRan},
-                    {key:"Accepted-offer drives",header:"Accepted-offer drives",mobilePriority:"secondary",cell:company=>company.acceptedOfferDrives},
-                    {key:"Students placed",header:"Students placed",mobilePriority:"secondary",cell:company=>company.studentsPlaced??"Not enough data yet"},
-                  ]}/>
+                      </Select>
+                      {company.people.length?company.people.map(person=>
+                        <Link key={person.id}
+                          className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                          href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>
+                      ):<Button variant="secondary" type="button" className="min-h-11"
+                        onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</Button>}
+                    </div>}
+                  />}
+                </GridWorkspace>
 
               )}
             </section>
