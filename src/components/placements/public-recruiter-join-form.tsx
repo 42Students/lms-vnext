@@ -122,17 +122,17 @@ export function PublicRecruiterJoinForm({
       <Card as="section" className="w-full">
         {preview.kind !== "READY" ? (
           <>
-            <h1 className="text-2xl font-semibold text-foreground">This link is no longer valid</h1>
+            <h1 className="text-[30px] font-semibold leading-[1.3] text-[#172033]">This link is no longer valid</h1>
             <p className="mt-3 text-sm text-body">Ask the placement cell for a new one.</p>
           </>
         ) : blockedReason ? (
           <div role="alert" className="space-y-3">
-           <h1 className="text-xl font-semibold">Recruiter verification unavailable</h1>
+           <h1 className="text-[30px] font-semibold leading-[1.3] text-[#172033]">Recruiter verification unavailable</h1>
            <p className="text-sm text-body">{blockedReason}</p>
           </div>
         ) : joined ? (
           <>
-            <h1 className="text-2xl font-semibold text-foreground">{alreadyJoined?"You already have access to "+college:"You now have access to "+college}</h1>
+            <h1 className="text-[30px] font-semibold leading-[1.3] text-[#172033]">{alreadyJoined?"You already have access to "+college:"You now have access to "+college}</h1>
             <p className="mt-3 text-sm text-body">
               {alreadyJoined
                 ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
@@ -142,7 +142,7 @@ export function PublicRecruiterJoinForm({
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-semibold text-foreground">
+            <h1 className="text-[30px] font-semibold leading-[1.3] text-[#172033]">
               {scope === "COLLEGE" ? "Hire from " + college : college + " would like " + companyLabel + " to hire from their students"}
             </h1>
             <p className="mt-3 text-sm text-body">
