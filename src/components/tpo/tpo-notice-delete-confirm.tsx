@@ -14,10 +14,9 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
  },[open]);
  function dismiss(){setOpen(false);trigger.current?.focus();}
  return <div className="mt-4">
-  <button ref={trigger} type="button" onClick={()=>setOpen(true)}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+  <Button ref={trigger} variant="secondary" type="button" onClick={()=>setOpen(true)}>
    Delete
-  </button>
+  </Button>
   {open?<div role="presentation" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <section role="alertdialog" aria-modal="true" aria-labelledby={"delete-title-"+id}
     aria-describedby={"delete-desc-"+id}
