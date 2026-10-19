@@ -1,5 +1,5 @@
 "use client";
-import { Input } from "@/components/ui/input";
+import {Input} from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,7 @@ export function FacultyIstQuarterHourPicker({label,value,onChange,disabled=false
    <label className="grid min-w-0 gap-1 text-xs">Date
     <Input type="date" required aria-label={label+" date"} value={parts.date}
      onChange={event=>emit(event.target.value)}
-     className="min-h-11 min-w-0 px-2 sm:min-h-9"/>
+     className="min-h-11 min-w-0"/>
    </label>
    <label className="grid gap-1 text-xs">Hour
     <Select aria-label={label+" hour (12-hour clock)"} value={hour}
