@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -25,33 +26,33 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  ["Quizzes",data.breakdown.quizzes],
  ["Published assignments",data.breakdown.publishedAssignments],
  ["Published quizzes",data.breakdown.publishedQuizzes]] as const).map(([title,n])=>
- <section key={title} className="rounded-xl border border-border bg-surface p-4">
+ <section key={title} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
  <h2 className="text-xs font-semibold text-muted-foreground">{title}</h2>
  <p className="mt-2 text-xl font-semibold tabular-nums">{n}</p></section>)}</div>
  <div className="grid gap-3 sm:grid-cols-2">
- <section className="rounded-xl border border-border bg-surface p-5">
+ <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
  <h2 className="font-semibold">Attendance</h2>
  <p className="mt-2 text-sm text-body">{data.attendance.scheduled} scheduled sessions;
  {" "}{data.attendance.marked} marked. Unmarked attendance is unknown, not zero.</p>
  <Link href={root+"/attendanceDetail"} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open attendance report →</Link>
  </section>
- <section className="rounded-xl border border-border bg-surface p-5">
+ <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
  <h2 className="font-semibold">Published gradebook</h2>
  <p className="mt-2 text-sm text-body">Published assessment counts are not a final grade. Individual published scores are shown only in the gradebook.</p>
  <Link href={root+"/gradebook"} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open gradebook →</Link>
  </section></div>
  <form method="get" className="flex flex-wrap items-end gap-3">
  <label className="grid gap-1 text-sm font-semibold">Assessment type
- <select name="kind" defaultValue={data.query.kind} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+ <Select name="kind" defaultValue={data.query.kind} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
  <option value="ALL">All</option><option value="ASSIGNMENT">Assignments</option><option value="QUIZ">Quizzes</option>
- </select></label>
+ </Select></label>
  <Button type="submit" variant="primary">Filter</Button>
  <Link href={facultyReportHubHref({...data.query,kind:"ALL",page:1})} className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
  </form>
  {data.health.items.length===0?<EmptyState title="No published assessment reports"
  description="This Section has no published assessments matching the filter. Private or ungraded work is not fabricated."/>
  :<div className="grid gap-3">{data.health.items.map(item=>
- <article key={item.kind+item.id} className="rounded-xl border border-border bg-surface p-4">
+ <article key={item.kind+item.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
  <h2 className="font-semibold">{item.title}</h2>
  <p className="mt-1 text-sm text-body">{item.kind} · {item.responded}/{item.eligible} recorded responses · {item.outstanding} not responded</p>
  <p className="mt-1 text-xs text-muted-foreground">Graded average: {item.averagePercent===null?"Unknown":item.averagePercent+"%"}</p>
