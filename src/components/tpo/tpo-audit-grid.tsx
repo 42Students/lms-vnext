@@ -57,11 +57,11 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  return <section aria-label="Audit history grid" className="min-w-0 space-y-3">
   <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3">
    <label className="text-sm">What happened
-    <input value={what} onChange={event=>setWhat(event.target.value)} type="search"
+    <Input value={what} onChange={event=>setWhat(event.target.value)} type="search"
      maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm" />
    </label>
    <label className="text-sm">Who
-    <input value={who} onChange={event=>setWho(event.target.value)} type="search"
+    <Input value={who} onChange={event=>setWho(event.target.value)} type="search"
      maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm" />
    </label>
    <label className="text-sm">When
