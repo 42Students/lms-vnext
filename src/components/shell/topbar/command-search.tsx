@@ -45,8 +45,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           typeof row.sectionName === "string",
         ));
         setCourseError(false);
+        setCourseLoading(false);
       })
-      .catch(() => { if (!cancelled) setCourseError(true); });
+      .catch(() => { if (!cancelled) { setCourseError(true); setCourseLoading(false); } });
     return () => { cancelled = true; };
   }, [config.portal]);
   const courseMatches = useMemo(() => {
