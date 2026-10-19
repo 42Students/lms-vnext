@@ -4,6 +4,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { Dropdown } from "@/components/ui/dropdown";
 
 import Link from "next/link";
+import Image from "next/image";
 import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
 import {filterEngageRoster,type EngageRosterFilters} from "@/modules/placements/tpo-engage-filter-model";
 import {recruiterTableExportCsv,recruiterTableExportGrid,recruiterTableExportTsv} from "@/modules/placements/tpo-recruiter-export-model";
