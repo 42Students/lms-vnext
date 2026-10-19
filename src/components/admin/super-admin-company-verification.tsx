@@ -25,13 +25,13 @@ export function SuperAdminCompanyVerification({companyId,name,verified}:{
    className="space-y-2 border-l-2 border-border py-2 pl-4 text-sm text-body">
    <p>{verified?"Unverify":"Verify"} {name} globally for 42?</p>
    <Button type="button" disabled={busy} onClick={()=>void save()}
-    className="min-h-11 sm:min-h-9">
+    className="min-h-11 min-[768px]:min-h-9">
     {busy?"Saving…":verified?"Confirm unverify":"Confirm verify"}</Button>
    <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirm(false)}
     className="ml-2">Cancel</Button>
   </div>:
   <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirm(true)}
-   className="min-h-11 sm:min-h-9">
+   className="min-h-11 min-[768px]:min-h-9">
    {verified?"Unverify":"Verify"} company</Button>}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
  </div>;
