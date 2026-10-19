@@ -26,13 +26,13 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
    void submit(parsed.toISOString());}}>
   <label className="grid gap-1 text-xs font-semibold">Away until (IST)
    <input type="datetime-local" value={date} disabled={busy} onChange={event=>setDate(event.target.value)}
-    className="min-h-11 rounded border border-border bg-surface px-3" />
+    className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3" />
   </label>
   {error?<p role="alert" className="text-xs text-danger">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-body">{notice}</p>:null}
   <div className="flex flex-wrap gap-2">
-   <button type="submit" disabled={busy||!date} className="min-h-11 rounded border border-border px-3 text-xs font-semibold">{busy?"Saving…":"Set away"}</button>
-   {until?<button type="button" disabled={busy} className="min-h-11 rounded border border-border px-3 text-xs font-semibold"
+   <button type="submit" disabled={busy||!date} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 text-xs font-semibold">{busy?"Saving…":"Set away"}</button>
+   {until?<button type="button" disabled={busy} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 text-xs font-semibold"
     onClick={()=>void submit(null)}>Back now</button>:null}
   </div>
  </form>;

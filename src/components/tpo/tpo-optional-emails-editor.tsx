@@ -42,7 +42,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
    inFlight.current=false;setBusy(false);
   }
  }
- return <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+ return <section className="space-y-3 border-t border-border pt-5">
   <h2 className="font-semibold">Optional emails</h2>
   <p className="text-sm">Switch off what your students do not need. The in-app notice always shows; these control only the email.</p>
   {fields.map(([key,label,help])=><label key={key} className="flex min-h-12 items-center justify-between gap-4 border-b border-border py-2 text-sm">
@@ -52,7 +52,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
   </label>)}
   <p className="text-xs text-muted-foreground">These are college preferences; sending requires verified mail templates and an enabled delivery provider.</p>
   <button type="button" disabled={busy||!dirty} onClick={()=>void save()}
-   className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save changes</button>
+   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save changes</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {status?<p role="status" className="text-sm">{status}</p>:null}
  </section>;

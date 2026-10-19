@@ -47,7 +47,7 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
    </label>)}
   </div>
   <button type="button" disabled={busy||(!dirty&&currentVersion!==null)} onClick={()=>void save()}
-   className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</button>
+   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </section>;

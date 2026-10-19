@@ -31,26 +31,26 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
   <PageHeader eyebrow="TPO · Joining" title="Joining follow-ups"
    description="Accepted-offer joining evidence, pending confirmations and deferred dates."
    actions={report.season?<a href={"/api/placements/reports/joining-followups?"+params.toString()}
-    className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
     Export CSV</a>:null}/>
-  <Link href="/tpo/reports/joining-status" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Joining outcomes</Link>
+  <Link href="/tpo/reports/joining-status" className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline">← Joining outcomes</Link>
   <form action="/tpo/reports/joining-followups" method="get"
-   className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="min-w-40 flex-1 text-sm font-semibold text-body">Season
      <select name="seasonId" defaultValue={report.season?.id??""}
-      className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+      className="mt-2 block min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
       {report.seasons.length===0?<option value="">No season</option>:null}
       {report.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
      </select></label>
     <label className="min-w-36 flex-1 text-sm font-semibold text-body">Follow-up
      <select name="state" defaultValue={report.state}
-      className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+      className="mt-2 block min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
       <option value="ALL">All open</option><option value="PENDING">Pending</option>
       <option value="DEFERRED">Deferred</option><option value="DATE_DUE">Dated and due</option>
       <option value="DATE_MISSING">Missing joining date</option>
       <option value="UPCOMING_7_DAYS">Joining next 7 days</option>
      </select></label>
-    <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 font-semibold text-on-primary">Apply</button>
+    <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary">Apply</button>
   </form>
   {!report.season?<EmptyState title="No placement season" description="Joining follow-ups require a persisted placement season."/>:<>
    <section className="grid grid-cols-2 gap-3 sm:grid-cols-3" aria-label="Joining evidence">
@@ -73,7 +73,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
        <p className="mt-1 text-sm text-body">{o.candidateName??"Name not recorded"} · {o.jobTitle}</p>
        <p className="mt-1 text-sm text-body">{o.joiningStatus??"PENDING"} · Joining date: {o.scheduledDate??"Not recorded"}</p>
        <Link href={"/tpo/placements/jobs/"+o.jobId+"/joining"}
-         className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+         className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
          Open drive joining records →</Link>
      </article>)}</section>}
   </>}

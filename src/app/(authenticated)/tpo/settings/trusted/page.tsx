@@ -38,7 +38,7 @@ export default async function TpoTrustedCompaniesPage() {
         actions={
           <Link
             href="/tpo/settings/team"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             Placement Team
           </Link>
@@ -99,7 +99,7 @@ export default async function TpoTrustedCompaniesPage() {
         ))}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface">
+      <section className="border-t border-border">
         <div className="border-b border-border px-5 py-4">
           <h2 className="text-lg font-semibold text-foreground">
             Company trust
@@ -125,7 +125,7 @@ export default async function TpoTrustedCompaniesPage() {
             columns={[
               {key:"company",header:"Company",mobilePriority:"primary",cell:company=>
                 <Link href={"/tpo/companies/"+encodeURIComponent(company.companyId)}
-                  className="font-semibold text-[var(--lms-teal-deep)] underline">{company.name}</Link>},
+                  className="font-semibold text-[var(--lms-link-text)] underline">{company.name}</Link>},
               {key:"trust",header:"Trust status",mobilePriority:"secondary",cell:company=>
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
                   <StatusBadge tone={company.isTrusted?"success":"neutral"}>

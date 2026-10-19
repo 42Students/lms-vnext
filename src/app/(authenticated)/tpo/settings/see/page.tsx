@@ -63,7 +63,7 @@ export default async function TpoWhatCompaniesSeePage() {
         showAttendance:visibility.showAttendance}}/>
       <section
         aria-label="Company visibility policy source"
-        className="rounded-xl border border-border bg-surface p-5"
+        className="border-t border-border pt-5"
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -180,7 +180,7 @@ export default async function TpoWhatCompaniesSeePage() {
 
       <section
         aria-label="Company visibility methodology"
-        className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+        className="border-t border-border bg-surface-subtle pt-4 text-sm leading-6 text-body"
       >
         <h3 className="m-0 text-sm font-semibold text-foreground">
           How these settings work

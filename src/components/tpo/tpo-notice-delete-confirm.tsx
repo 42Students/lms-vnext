@@ -14,7 +14,7 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
  function dismiss(){setOpen(false);trigger.current?.focus();}
  return <div className="mt-4">
   <button ref={trigger} type="button" onClick={()=>setOpen(true)}
-   className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+   className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text">
    Delete
   </button>
   {open?<div role="presentation" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -32,11 +32,11 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
      <input type="hidden" name="expectedVersion" value={version}/>
      <input type="hidden" name="action" value="DELETE"/>
      <button ref={confirmButton} type="submit"
-      className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+      className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary">
       Delete announcement
      </button>
      <button type="button" onClick={dismiss}
-      className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">
+      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-foreground">
       Cancel
      </button>
     </form>

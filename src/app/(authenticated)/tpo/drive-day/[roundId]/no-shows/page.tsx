@@ -51,7 +51,7 @@ export default async function TpoNoShowReportPage({
 
   return (
     <div className="space-y-6">
-      <Link href={roundHref} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+      <Link href={roundHref} className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
         ← Back to round overview
       </Link>
       <PageHeader
@@ -63,13 +63,13 @@ export default async function TpoNoShowReportPage({
           <div className="flex flex-wrap gap-2">
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/no-shows/export"}
-              className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground"
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-white"
             >
               Export explicit no-shows CSV
             </a>
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
             >
               Export complete attendance CSV
             </a>

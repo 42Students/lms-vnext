@@ -155,34 +155,34 @@ export default async function TpoPlacementSummaryPage({
         />
       ) : (
         <>
-          <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4" aria-label="Filter drive rows">
+          <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4" aria-label="Filter drive rows">
             {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
             {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
             <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold">Company
-             <select name="companyId" defaultValue={companyId} className="min-h-11 rounded border border-border bg-surface px-2">
+             <select name="companyId" defaultValue={companyId} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-2">
               <option value="">All companies</option>
               {byCompany.map(row=><option key={row.companyId} value={row.companyId}>{row.companyName}</option>)}
              </select>
             </label>
             <label className="grid gap-1 text-sm font-semibold">Work mode
-             <select name="workMode" defaultValue={workMode} className="min-h-11 rounded border border-border bg-surface px-2">
+             <select name="workMode" defaultValue={workMode} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-2">
               <option value="">All modes</option><option value="ONSITE">Onsite</option>
               <option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
              </select>
             </label>
             <label className="grid gap-1 text-sm font-semibold">Pay evidence
-             <select name="payCategory" defaultValue={payCategory} className="min-h-11 rounded border border-border bg-surface px-2">
+             <select name="payCategory" defaultValue={payCategory} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-2">
               <option value="">All</option><option value="CTC_RECORDED">CTC recorded</option>
               <option value="STIPEND_RECORDED">Stipend recorded</option>
               <option value="NOT_RECORDED">Not recorded</option>
              </select>
             </label>
-            <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
+            <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
             {(companyId||workMode||payCategory)?<a href={"/tpo/reports/placement-summary?"+
              new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
-             }).toString()} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
+             }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
               Clear drive dimensions
              </a>:null}
 
@@ -196,7 +196,7 @@ export default async function TpoPlacementSummaryPage({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
               ...(companyId?{companyId}:{}),...(workMode?{workMode}:{}),...(payCategory?{payCategory}:{}),
-            }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 py-2 font-semibold text-[var(--lms-teal-deep)]">Retry</Link>
+            }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 py-2 font-semibold text-[var(--lms-link-text)]">Retry</Link>
           </section>:null}
           {dimensions?<p role="status" className="text-xs text-muted-foreground">
            Showing {shownDrives.length} of {byDrive.length} drive rows. This filters the drive table only.

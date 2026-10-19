@@ -72,7 +72,7 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
     {localMuted?"Muted: no unread count, no noise":"Everyone in the team can read and reply."}
    </p>
    <button type="button" disabled={busy} onClick={()=>void updateMute()}
-    className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50">
+    className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50">
     {busy?"Updating…":localMuted?"Unmute":"Mute"}
    </button>
   </div>
@@ -87,7 +87,7 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
    </label>
    <p aria-live="polite" className="text-xs text-muted-foreground">{message.length}/4000</p>
    <button type="submit" disabled={busy||!message.trim()}
-    className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50">
+    className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50">
     {busy?"Sending…":"Send to Everyone"}
    </button>
   </form>

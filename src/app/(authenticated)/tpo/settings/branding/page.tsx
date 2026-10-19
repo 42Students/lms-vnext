@@ -99,7 +99,7 @@ export default async function TpoPlacementBrandingPage() {
         description="Review your college's existing name, public logo and brand colours. Manage your placement email signature."
       />
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-t border-border pt-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -138,7 +138,7 @@ export default async function TpoPlacementBrandingPage() {
 
       <section
         aria-label="College logo"
-        className="rounded-xl border border-border bg-surface p-5"
+        className="border-t border-border pt-5"
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -222,7 +222,7 @@ export default async function TpoPlacementBrandingPage() {
 
       {communication.ready?<TpoEmailSignatureEditor initial={communication.emailSignature} version={communication.version}/>:
        <p role="status" className="rounded-xl border border-border p-4 text-sm">Email signature settings are not available in this database.</p>}
-      <section className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body">
+      <section className="border-t border-border bg-surface-subtle pt-4 text-sm leading-6 text-body">
         <h2 className="m-0 text-sm font-semibold text-foreground">
           Source and scope
         </h2>

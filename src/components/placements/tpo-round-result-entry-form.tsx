@@ -34,7 +34,7 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
   }catch(caught){setConfirmOpen(false);setError(caught instanceof Error?caught.message:"Result staging failed");}
   finally{setPending(false);}
  }
- const cls="min-h-11 rounded-md border border-border bg-surface px-3 py-2 text-foreground";
+ const cls="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3 py-2 text-foreground";
  return <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2">
   <label className="text-sm text-body">Outcome
    <select name="outcome" value={outcome} onChange={event=>setOutcome(event.target.value)} disabled={pending||saved} className={"mt-1 block w-full "+cls}>
@@ -49,7 +49,7 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
   </label>
   {error?<p role="alert" className="text-sm text-foreground sm:col-span-2">{error}</p>:null}
   {saved?<p role="status" className="text-sm text-body sm:col-span-2">Result staged. Refresh to review the new version before another edit.</p>:null}
-  <button type="submit" disabled={pending||saved} className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground disabled:opacity-50 sm:col-span-2">
+  <button type="submit" disabled={pending||saved} className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-white disabled:opacity-50 sm:col-span-2">
    {pending?"Saving…":saved?"Result staged":"Confirm staged result"}</button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
     title="Stage this round result?"

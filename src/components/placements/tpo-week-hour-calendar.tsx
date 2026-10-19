@@ -187,7 +187,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   {move?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
     onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();setMove(null);}}}>
     <section role="dialog" aria-modal="true" aria-label="Move recruiter follow-up"
-      className="w-full max-w-lg rounded-xl border border-border bg-surface p-5">
+      className="w-full max-w-lg border-t border-border pt-5">
       <h2 className="text-lg font-semibold">Move follow-up</h2>
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
       <button type="button" onClick={()=>setMove(null)}
@@ -202,12 +202,12 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}
     <label className="grid gap-1 text-sm">Date and time (IST)
      <input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}
-      className="min-h-11 rounded border border-border px-3"/></label>
+      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3"/></label>
     <label className="grid gap-1 text-sm">Search recruiter lead
      <input value={leadQuery} onChange={e=>{setLeadQuery(e.target.value);setLeadId("");}}
-      className="min-h-11 rounded border border-border px-3" maxLength={120}/>
+      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3" maxLength={120}/>
      <select value={leadId} disabled={loadingLeads} required onChange={e=>setLeadId(e.target.value)}
-      className="min-h-11 rounded border border-border px-3">
+      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3">
       <option value="">{loadingLeads?"Loading recruiters…":"Choose recruiter"}</option>
       {matches.map(lead=><option key={lead.id} value={lead.id}>{lead.name}{lead.companyName?" · "+lead.companyName:""}</option>)}
      </select></label>
@@ -217,9 +217,9 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     {message?<p role="alert" className="text-sm text-warning-text">{message}</p>:null}
     <div className="flex justify-end gap-2">
      <button type="button" disabled={saving} onClick={cancelDraft}
-      className="min-h-11 rounded border border-border px-4 text-sm">Cancel</button>
+      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 text-sm">Cancel</button>
      <button type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
-      className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">{saving?"Saving…":"Add follow-up"}</button>
+      className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">{saving?"Saving…":"Add follow-up"}</button>
     </div>
    </div>
   </div>:null}
