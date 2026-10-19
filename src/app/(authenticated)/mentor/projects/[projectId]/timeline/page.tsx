@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -22,7 +23,7 @@ export default async function MentorProjectTimelinePage({
     normalized?{projectId:p.projectId,...normalized}:null,
   );
   if(!parsed.success)return <section role="alert" className="space-y-2">
-    <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid timeline selector</h1>
+    <PageHeader title={"Invalid timeline selector"} />
     <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Projects</Link>
   </section>;
   const data=await getMentorProjectTimeline(

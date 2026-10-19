@@ -123,7 +123,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
     </section>
 
     {report ? <section aria-label="CSV validation and result report"
-      className="space-y-4 - border-t border-border pt-4">
+      className="space-y-4 border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">
         {report.preview ? "Dry-run report" : "Import result"}
       </h2>
@@ -158,7 +158,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
               setError(reason instanceof Error ? reason.message : "Import failed");
             }
           })}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-[var(--lms-control-height)]">
           {pending ? "Importing..." : "Confirm import of validated rows"}
         </Button>
       </div> : null}

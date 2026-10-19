@@ -1,5 +1,6 @@
 import {facultyAssignmentRoleLabel} from "@/modules/courses/college-courses-copy";
 import type {listOfferingTeachingOverview} from "@/modules/courses/college-course-teachers-service";
+import { Alert } from "@/components/ui/alert";
 type Roster=Awaited<ReturnType<typeof listOfferingTeachingOverview>>;
 
 export function AdminOfferingTeachersPanel({roster,academicPeriodName}:{
@@ -12,7 +13,7 @@ export function AdminOfferingTeachersPanel({roster,academicPeriodName}:{
    No active Faculty assignment was found for this Course Offering.
   </p>:<ul className="divide-y divide-border border-y border-border">
    {roster.faculty.map(item=><li key={item.assignmentId}
-    className="min-w-0 rounded-xl border border-border p-3">
+    className="min-w-0 py-3">
     <p className="break-words font-semibold text-foreground">
      {item.facultyName?.trim()||item.facultyEmail||"Unnamed Faculty"}</p>
     <p className="mt-1 text-sm text-body">
@@ -21,8 +22,8 @@ export function AdminOfferingTeachersPanel({roster,academicPeriodName}:{
      {academicPeriodName} · {facultyAssignmentRoleLabel(item.role)}</p>
    </li>)}
   </ul>}
-  {roster.truncated?<p role="status" className="text-xs text-muted-foreground">
+  {roster.truncated?<Alert tone="info">
    Showing the first 100 active teaching assignments. Additional assignments are not listed here.
-  </p>:null}
+  </Alert>:null}
  </section>;
 }
