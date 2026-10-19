@@ -3,9 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import {useEffect,useState} from "react";
-import {Input} from "@/components/ui/input";
-import {Select} from "@/components/ui/select";
-import {Button} from "@/components/ui/button";
 import {useRouter,useSearchParams} from "next/navigation";
 type SavedView={name:string;seasonId:string;jobId:string;batchId?:string;branchId?:string;sort?:string;outcome?:string;q?:string;group?:string;state?:string;days?:string;companyId?:string;workMode?:string;payCategory?:string};
 const keyFor=(path:string,collegeId:string,userId:string)=>"lms.tpo.report-view."+collegeId+"."+userId+"."+path.replace(/[^a-z0-9/-]/gi,"");
@@ -62,20 +59,20 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Name this view
     <Input value={name} onChange={e=>setName(e.target.value)} maxLength={50}
-     className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-2 text-sm" placeholder="e.g. Current season"/>
+      placeholder="e.g. Current season"/>
    </label>
-   <Button variant="secondary" type="button" onClick={save} disabled={!name.trim()} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Save current</Button>
+   <Button variant="secondary" type="button" onClick={save} disabled={!name.trim()} >Save current</Button>
   </div>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Choose saved view
     <Select value={picked} onChange={e=>setPicked(e.target.value)}
-     className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-2 text-sm">
+     >
      <option value="">Select view</option>
      {views.map(v=><option key={v.name} value={v.name}>{v.name}</option>)}
     </Select>
    </label>
-   <Button variant="secondary" type="button" disabled={!picked} onClick={apply} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Apply</Button>
-   <Button variant="secondary" type="button" disabled={!picked} onClick={remove} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Delete</Button>
+   <Button variant="secondary" type="button" disabled={!picked} onClick={apply} >Apply</Button>
+   <Button variant="secondary" type="button" disabled={!picked} onClick={remove} >Delete</Button>
   </div>
   {message?<p role="status" className="mt-2 text-xs text-body">{message}</p>:null}
  </details>;

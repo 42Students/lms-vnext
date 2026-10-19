@@ -192,7 +192,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
           <label className="grid gap-1 text-xs font-semibold text-body">
             {SEMESTER_COPY.nameLabel}
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-              className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
+              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
           </label>
           <p className="text-xs text-body">Credits come from mapped courses and cannot be edited here.</p>
           <label className="flex items-center gap-2 text-xs text-body">

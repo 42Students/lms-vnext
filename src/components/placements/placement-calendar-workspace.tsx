@@ -1065,7 +1065,7 @@ export async function PlacementCalendarWorkspace({
             })}
           </CalendarGrid>
         </section>
-      ) : null)
+      ) : null}
 
       {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
         {bookings?.failed ? <section role="alert" className="border-l-2 border-error bg-error-subtle p-4">

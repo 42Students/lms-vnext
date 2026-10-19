@@ -1,5 +1,6 @@
 import type {ShellNavIconName} from "./shell-model";
 import Image from "next/image";
+import {legacyAntPaths} from "./legacy-ant-paths";
 
 /** Inline, stroke-based icons: lucide-react is not installed in lms-vnext.
  * Using SVG instead of initial-letter boxes preserves the legacy icon rail. */

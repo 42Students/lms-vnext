@@ -1,5 +1,6 @@
 import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {redirect} from "next/navigation";
@@ -46,10 +47,12 @@ export default async function HrJobActivityPage({searchParams}:{
        placeholder="Search hiring drive titles" className="min-w-48 flex-1"/>
      <Button variant="secondary" type="submit">Search</Button>
    </form>
-   <Tabs renderPanel={false} ariaLabel="Hiring activity event type" value={input.data.kind}
-    items={HR_ACTIVITY_FILTER_KINDS.map(kind=>({value:kind,
-      label:kind==="ALL"?"All events":kind==="PUBLISHED"?"Published":"Closed",
-      href:"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind+"&q="+encodeURIComponent(input.data.q)}))}/>
+   <Tabs ariaLabel="Hiring activity event type" renderPanel={false} value={input.data.kind}
+     items={HR_ACTIVITY_FILTER_KINDS.map(kind=>({
+       value:kind,
+       label:kind==="ALL"?"All events":kind==="PUBLISHED"?"Published":"Closed",
+       href:"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind+"&q="+encodeURIComponent(input.data.q),
+     }))} />
    {result.events.length?<ol className="divide-y divide-border border-y border-border">{result.events.map(item=>
     <li key={item.id} className="py-4">
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}

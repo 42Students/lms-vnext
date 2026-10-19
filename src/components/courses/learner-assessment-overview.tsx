@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -105,16 +106,7 @@ function Metric({
   label: string;
   value: number;
 }) {
-  return (
-    <div className="rounded-xl border border-border bg-surface p-4">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold text-foreground">
-        {value}
-      </p>
-    </div>
-  );
+  return <StatTile label={label} value={value} />;
 }
 
 const PAGE_SIZE = 20;
