@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -42,14 +44,14 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
     </section>
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border bg-surface p-5">
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">From (IST)
-        <input name="from" type="date" required defaultValue={data.query.from??""}
+        <Input name="from" type="date" required defaultValue={data.query.from??""}
           className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
       </label>
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">To (IST)
-        <input name="to" type="date" required defaultValue={data.query.to??""}
+        <Input name="to" type="date" required defaultValue={data.query.to??""}
           className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
       </label>
-      <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">View sessions</button>
+      <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">View sessions</Button>
     </form>
     {!data.queried?<p className="rounded-[8px] border border-border bg-surface p-6 text-sm text-body">
       Select an IST date range to inspect recorded sessions and their Faculty marking windows.
