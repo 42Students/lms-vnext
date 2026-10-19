@@ -1,5 +1,5 @@
+import { DateInput } from "@/components/ui/date-input";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
@@ -58,12 +58,12 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
       </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">From (IST)
-      <Input type="date" name="from" defaultValue={data.from??""}
-        className="min-h-11"/>
+      <DateInput mode="date" name="from" defaultValue={data.from??""}
+        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Through (IST)
-      <Input type="date" name="to" defaultValue={data.to??""}
-        className="min-h-11"/>
+      <DateInput mode="date" name="to" defaultValue={data.to??""}
+        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
     </label>
     <Button type="submit" className="min-h-11">Filter</Button>
     <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
