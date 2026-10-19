@@ -1,2 +1,2 @@
 "use client";
-export default function Error({reset}:{error:Error&{digest?:string};reset:()=>void;}){return <section role="alert" className="space-y-3 p-5"><h1>Release timeline could not load</h1><p>Milestone status is unavailable.</p><button type="button" onClick={reset} className="text-primary-text underline">Retry</button></section>;}
+export default function Error({reset}:{error:Error&{digest?:string};reset:()=>void;}){return <section role="alert" className="space-y-3 p-5"><h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Release timeline could not load</h1><p>Milestone status is unavailable.</p><button type="button" onClick={reset} className="text-link underline">Retry</button></section>;}

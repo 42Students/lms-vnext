@@ -93,7 +93,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
    {([["Total",rows.length],["Showing",filtered.length],["Links",links],
      ["Files",files],["Other",other],["Drafts",drafts],["Archived",archive],
      ["Pinned",pinnedCount]] as const)
-     .map(([label,value])=><div key={label} className="rounded-lg border border-border p-3 text-sm">
+     .map(([label,value])=><div key={label} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
        <strong>{label}</strong><p className="mt-1 tabular-nums">{value}</p>
      </div>)}
   </div>
@@ -127,7 +127,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
         </Select>
       </label>
       <label className="flex min-h-10 items-center gap-2 text-xs font-semibold">
-        <input type="checkbox" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
+        <input data-slot="input" type="checkbox" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
         Pinned only
       </label>
       <label className="grid gap-1 text-xs font-semibold">Sprint
@@ -146,7 +146,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       </label>
     </>:null}
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");}}
-      className="min-h-10 text-sm font-semibold text-primary-text underline">Clear filters</Button>
+      className="min-h-10 text-sm font-semibold text-link underline">Clear filters</Button>
   </div>
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground">
     {canReorder?"Drag resources to change their priority order, or use Move up and Move down.":

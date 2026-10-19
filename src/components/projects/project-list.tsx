@@ -78,16 +78,16 @@ export function ProjectList({
         <Link
           key={item.id}
           href={item.href ?? basePath + "/" + item.id}
-          className="group flex min-h-56 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="group flex min-h-56 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               {item.participation ? (
-                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-[var(--lms-teal-deep)]">
+                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-link">
                   {item.participation}
                 </p>
               ) : (
-                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-[var(--lms-teal-deep)]">
+                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-link">
                   Project
                 </p>
               )}
@@ -128,7 +128,7 @@ export function ProjectList({
           </p>
 
           {(item.mentorName || item.memberCount !== undefined || item.progressPercent !== undefined) ? (
-            <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg bg-muted p-3 text-xs">
+            <div className="mt-4 grid grid-cols-3 gap-2 rounded-[var(--lms-control-radius)] bg-muted p-3 text-xs">
               <div>
                 <p className="m-0 font-semibold text-muted-foreground">Mentor</p>
                 <p className="mt-1 truncate font-semibold text-foreground">
@@ -165,7 +165,7 @@ export function ProjectList({
             </span>
           ) : null}
           {item.actionLine ? (
-            <p className="mt-3 text-sm font-semibold text-[var(--lms-teal-deep)]">{item.actionLine} →</p>
+            <p className="mt-3 text-sm font-semibold text-link">{item.actionLine} →</p>
           ) : null}
           <div className="mt-auto flex items-end justify-between gap-3 pt-5">
             <p className="m-0 text-xs text-muted-foreground">
@@ -176,7 +176,7 @@ export function ProjectList({
             </p>
             <span
               aria-hidden="true"
-              className="text-lg text-[var(--lms-teal-deep)] transition-transform group-hover:translate-x-0.5"
+              className="text-lg text-link transition-transform group-hover:translate-x-0.5"
             >
               <span className="sr-only">Open workspace</span>→
             </span>
