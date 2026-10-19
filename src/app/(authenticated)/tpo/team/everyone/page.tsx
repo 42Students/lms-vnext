@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import {TpoEveryoneControls} from "@/components/tpo/tpo-everyone-controls";
 import {redirect} from "next/navigation";
@@ -20,11 +21,8 @@ export default async function TpoEveryonePage({searchParams}:{
   return {status:"FAILED" as const};
  });
  return <div className="space-y-5">
-  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-9 sm:min-h-9 items-center text-link lms-inline-link">← Team conversations</Link>
-  <header className="space-y-2">
-   <h1 className="text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">{TPO_EVERYONE_TITLE}</h1>
-   <p className="text-sm text-body">{TPO_EVERYONE_DESCRIPTION}</p>
-  </header>
+  <PageBackLink href="/tpo/team?tab=conversations" label="Team conversations" />
+  <PageHeader title={TPO_EVERYONE_TITLE} description={TPO_EVERYONE_DESCRIPTION} />
   {result.status==="FAILED"?<section role="alert" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
    <p>Could not load Everyone right now. Your messages were not changed.</p>
    <Link href="/tpo/team/everyone" className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-link underline lms-inline-link">Retry Everyone</Link>

@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,7 @@ export default function LearnerNotificationsError({
 }) {
   return (
     <section role="alert" className="py-8 text-center">
-      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
-        Unable to load notifications
-      </h1>
+      <PageHeader title={"Unable to load notifications"} />
       <p className="mt-2 text-sm text-body">
         Your notifications could not be loaded. Try again, or return to your dashboard.
       </p>

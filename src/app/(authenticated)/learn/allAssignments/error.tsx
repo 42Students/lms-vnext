@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 
 import Link from "next/link";
@@ -12,7 +13,7 @@ export default function LearnerAssessmentsError({
 }) {
   return (
     <div className="py-8 text-center">
-      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Assignments could not be loaded</h1>
+      <PageHeader title={"Assignments could not be loaded"} />
       <p className="mt-2 text-sm text-body">
         This is a loading problem, not an empty list. Check your connection and try again.
       </p>
