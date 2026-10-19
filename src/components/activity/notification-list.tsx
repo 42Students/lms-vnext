@@ -102,7 +102,7 @@ export function NotificationList({
                void markRead(item.id,item.actionHref??undefined);
               }}
               aria-label={"Open notification: "+item.title}
-              className="w-full min-h-12 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-left hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50">
+              className="w-full text-left">
               <div className="flex items-start gap-3">
                {!item.readAt?<span aria-hidden="true" className="mt-2 inline-block h-2 w-2 shrink-0 rounded-full bg-primary"/>:null}
                <div className="min-w-0 flex-1">
@@ -129,10 +129,10 @@ export function NotificationList({
                   </div>
                   <h3 className="mt-3 text-base font-semibold text-foreground">
                     {onSelect ? (
-                      <Button variant="secondary"
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => onSelect(item)}
-                        className="inline-flex min-h-[var(--lms-control-height)] items-center text-left underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-[var(--lms-control-radius)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                        className="text-left underline-offset-2 hover:underline"
                         aria-label={`View notification: ${item.title}`}
                       >
                         {item.title}
