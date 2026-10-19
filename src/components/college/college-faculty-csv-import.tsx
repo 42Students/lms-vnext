@@ -54,10 +54,10 @@ export function CollegeFacultyCsvImport(){
       </p>
       <p className="break-words font-mono text-xs">{header}</p>
       <a download="faculty-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(header+"\n")}
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download CSV template
       </a>
-      <FileUpload label="Choose CSV" maxBytes={1_000_000} accept=".csv,text/csv" disabled={pending} onFiles={async files=>{
+      <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Choose CSV" maxBytes={1_000_000} accept=".csv,text/csv" disabled={pending} onFiles={async files=>{
           const file=files?.[0];
           if(!file)return;
           const version=++csvRevision.current;
@@ -70,13 +70,13 @@ export function CollegeFacultyCsvImport(){
             if(facultyCsvResponseBelongsToDraft(version,csvRevision.current))setError("Unable to read CSV. Choose the file again.");
           }
         }}/>
-      <label className="grid gap-2 text-sm font-semibold">CSV contents
+      <label className="grid gap-2 text-sm font-semibold print:hidden">CSV contents
         <Textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
           setCsv(event.target.value);setReport(null);setConfirmed(false);
         }} className="font-mono text-xs"/>
       </label>
-      <Button variant="primary" type="button" disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
+      <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
         >
         {pending?"Validating…":"Validate CSV"}
       </Button>
@@ -85,7 +85,7 @@ export function CollegeFacultyCsvImport(){
     {report&&<section className="space-y-4 border-t border-border pt-5">
       <h2 className="text-lg font-semibold">{report.preview?"Preview":"Faculty registration results"}</h2>
       <p role="status" className="text-sm">{report.valid} valid; {report.invalid} invalid.</p>
-      {report.structuralErrors.length>0&&<p role="alert">{report.structuralErrors.join(", ")}</p>}
+      {report.structuralErrors.length>0&&<p role="alert" className="text-sm text-error">{report.structuralErrors.join(", ")}</p>}
       <a download="faculty-import-report.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent("row,status,detail,membershipId\r\n"+csvResult)}
         className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
@@ -102,11 +102,11 @@ export function CollegeFacultyCsvImport(){
 
       {report.preview&&report.valid>0&&report.structuralErrors.length===0&&
       <div className="space-y-3">
-        <label className="flex gap-2 text-sm">
+        <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
           <Checkbox checked={confirmed} onChange={event=>setConfirmed(event.target.checked)}/>
           I understand valid rows create real faculty memberships; partial failures require manual review.
         </label>
-        <Button variant="primary" type="button" disabled={pending||!confirmed} onClick={()=>run("IMPORT")}
+        <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={pending||!confirmed} onClick={()=>run("IMPORT")}
           >
           {pending?"Registering…":"Confirm faculty registration"}
         </Button>

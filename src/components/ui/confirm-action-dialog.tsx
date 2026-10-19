@@ -11,6 +11,7 @@ export function ConfirmActionDialog({ open, title, consequence, onCancel, onConf
   }) {
   return <Dialog open={open} onOpenChange={next => { if (!next && !pending) onCancel(); }} title={title}
     description={consequence} role="alertdialog" dismissible={!pending}
+    className="lms-legacy-confirm-dialog" bodyClassName="!p-0"
     footer={<>
       <Button variant="secondary" autoFocus disabled={pending} onClick={onCancel}>Cancel</Button>
       <Button variant="danger" loading={pending} disabled={pending} onClick={onConfirm}>{pending ? "Working…" : confirmLabel}</Button>

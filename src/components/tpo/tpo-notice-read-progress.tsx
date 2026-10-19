@@ -38,13 +38,13 @@ export function TpoNoticeReadProgress({id}:{id:string}){
   }finally{pending.current=false;setBusy(false);}
  }
  return <section className="mt-3 min-w-0 border-t border-border pt-3">
-  <Button variant="ghost" type="button" className="min-h-11 sm:min-h-9 text-sm underline"
+  <Button variant="ghost" type="button" className="min-h-11 min-[768px]:min-h-9 text-sm underline"
    disabled={busy} onClick={()=>void load()}>{busy?"Loading…":data?"Refresh read status":"Show read status"}</Button>
   {data?<div className="mt-2 min-w-0 space-y-2 text-sm">
    <p>{data.notDelivered?"Awaiting notification delivery":data.read+" of "+data.delivered+" read"}</p>
    {data.delivered>0?<progress aria-label="Notices read" max={data.delivered} value={data.read} className="w-full"/>:null}
    {data.unread.length?<Button variant="secondary" type="button" disabled={busy}
-    className="min-h-11 sm:min-h-9"
+    className="min-h-11 min-[768px]:min-h-9"
     onClick={()=>void remind()}>{busy?"Sending…":"Remind them"}</Button>:null}
    {reminder?<p role="status">{reminder}</p>:null}
    {data.unread.length?<Disclosure title="Who hasn't read">

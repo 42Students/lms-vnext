@@ -3,6 +3,8 @@
 import { useMemo, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
 import {LMS_BRANDING_DEFAULT_HEX,LMS_BRANDING_PLACEHOLDER_HEX} from "@/components/ui/branding-color-tokens";
 import { useToast } from "@/components/ui/toast";
 import { brandStyleVariables } from "@/modules/colleges/branding";
@@ -137,14 +139,14 @@ export function CollegeBrandingForm({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <form
         onSubmit={save}
-        className="space-y-5 border-t border-border pt-6"
+        className="min-w-0 space-y-5 border-t border-border pt-6"
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-4 md:grid-cols-2">
           {(["primaryColor", "secondaryColor"] as const).map((key) => (
-            <label key={key} className="block">
+            <label key={key} className="block min-w-0">
               <span className="mb-1 block text-sm font-medium text-foreground">
                 {key === "primaryColor" ? "Primary colour" : "Secondary colour"}
               </span>
@@ -167,9 +169,7 @@ export function CollegeBrandingForm({
                 />
               </div>
               {errors[key] ? (
-                <span role="alert" className="mt-1 block text-xs text-error">
-                  {errors[key]}
-                </span>
+                <Alert tone="error" className="mt-2">{errors[key]}</Alert>
               ) : null}
             </label>
           ))}
@@ -180,7 +180,7 @@ export function CollegeBrandingForm({
         </p>
 
         {FIELDS.map((field) => (
-          <label key={field.key} className="block">
+          <label key={field.key} className="block min-w-0">
             <span className="mb-1 block text-sm font-medium text-foreground">
               {field.label}
             </span>
@@ -198,33 +198,29 @@ export function CollegeBrandingForm({
               </span>
             ) : null}
             {errors[field.key] ? (
-              <span role="alert" className="mt-1 block text-xs text-error">
-                {errors[field.key]}
-              </span>
+              <Alert tone="error" className="mt-2">{errors[field.key]}</Alert>
             ) : null}
           </label>
         ))}
 
         {canEdit ? (
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" loading={saving} disabled={saving} className="min-h-11 md:min-h-9">
             {saving ? "Saving…" : "Save branding"}
           </Button>
         ) : (
-          <p className="m-0 text-sm text-muted-foreground">
-            You can view this branding but not change it.
-          </p>
+          <Alert tone="info">You can view this branding but not change it.</Alert>
         )}
       </form>
 
       <aside
         aria-label="Sign-in preview"
         style={previewStyle}
-        className="h-fit space-y-3 border-l border-border pl-4"
+        className="min-w-0 h-fit space-y-3 border-t border-border pt-4 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0"
       >
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Sign-in preview
         </p>
-        <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 shadow-none">
+        <Card as="div" className="min-w-0">
           {previewLogoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -252,7 +248,7 @@ export function CollegeBrandingForm({
             Send code
           </div>
           <p className="mb-0 mt-3 text-xs text-link">Resend code</p>
-        </div>
+        </Card>
       </aside>
     </div>
   );
