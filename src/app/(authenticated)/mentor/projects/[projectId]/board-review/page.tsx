@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -146,15 +147,7 @@ export default async function MentorBoardReviewPage({
           <p className="mt-2 text-sm text-body">{row.status.replaceAll("_"," ")} ·
             {row.priority} priority · {row.sprintTitle}</p>
         </li>)}</ol>}
-      <nav aria-label="Board status pages" className="flex items-center justify-between gap-3">
-        <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
-        <div className="flex gap-3">
-          {data.page>1?<Link href={mentorBoardReviewHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
-          {data.page<data.totalPages?<Link href={mentorBoardReviewHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
-        </div>
-      </nav>
+      <Pagination label="Board status pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorBoardReviewHref({...data.query,page})}/>
     </>}
     <p className="text-xs text-muted-foreground">Only registered task status, priority
       and sprint linkage are shown. No task assignee, effort or workload values
