@@ -120,7 +120,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="text-sm text-body">{next.detail}</p>
   <div className="flex flex-wrap gap-3">
    <Link href={"/tpo/batches/"+batchId+next.href}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
     {next.button} →
    </Link>
    {registrations.available&&(registrations.registered??0)>0?<Link href={"/tpo/batches/"+batchId+"/students"}
