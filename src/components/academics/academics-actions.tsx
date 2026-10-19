@@ -138,7 +138,7 @@ export function ProgramActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button
           size="sm"
           variant="secondary"
