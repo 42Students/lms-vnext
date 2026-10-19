@@ -678,3 +678,16 @@
   :where(tbody tr:hover td, tbody tr:focus-within td, tbody tr[aria-selected="true"] td):not(:where([data-unskin], [data-unskin] *)) {
   background-color: transparent !important;
 }
+
+/* Field validation COPY, not page banners or overlay alerts.
+ * Legacy: components___global.scss:66-70 (12px status-error #ef4444);
+ * components___variables.scss:71 (status error token).
+ * Other lanes own non-form alerts and notification banners.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where([data-slot="form-field"] > [role="alert"],
+    [data-slot="file-upload"] > [role="alert"],
+    [data-slot="file-dropzone"] > [role="alert"]):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-error) !important;
+  font-size: 12px !important;
+}
