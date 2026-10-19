@@ -212,7 +212,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Exact scope ID (optional)
           <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground"/>
         </label>
-        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter overrides</Button>
+        <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-foreground">Filter overrides</Button>
         <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text">Reset</Link>
       </form>
 
