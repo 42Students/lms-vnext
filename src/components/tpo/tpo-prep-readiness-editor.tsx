@@ -55,14 +55,14 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
   <p className="text-sm text-muted-foreground">Select active courses from this college only. TPO Students derives preparation support from saved learner course completions when published course evidence is available; missing progress remains unclassified.</p>
   <label className="block text-sm">Find a preparation course
    <Input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
-    placeholder="Search course name or code" className="mt-1 min-h-9 w-full"/>
+    placeholder="Search course name or code" className="mt-1 min-h-11 sm:min-h-9 w-full"/>
   </label>
   <p className="text-xs text-muted-foreground">With none picked, nobody is marked as needing prep.</p>
   {missing.length>0?<p role="alert" className="rounded-[var(--lms-canvas-radius)] border border-warning-border bg-warning-subtle p-3 text-sm">
    {missing.length} previously selected preparation course(s) are no longer active or available in this college.
    Remove the unavailable selections before saving; the existing policy has not been changed.
    <Button type="button" variant="secondary" disabled={busy} onClick={()=>setSelected(current=>current.filter(id=>available.has(id)))}
-    className="ml-2 min-h-9">Remove unavailable courses</Button>
+    className="ml-2 min-h-11 sm:min-h-9">Remove unavailable courses</Button>
   </p>:null}
   <fieldset disabled={busy} className="max-h-72 space-y-2 overflow-y-auto">
    <legend className="text-sm">Courses used for readiness</legend>
@@ -77,10 +77,10 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
   <label className="block text-sm">Minimum completed courses
    <Input type="number" min={0} max={selected.length} value={minimum} disabled={busy}
     onChange={e=>setMinimum(Number(e.target.value))}
-    className="mt-1 min-h-9 w-28"/>
+    className="mt-1 min-h-11 sm:min-h-9 w-28"/>
   </label>
   <Button type="button" disabled={busy||!dirty||!valid} onClick={()=>void save()}
-   className="min-h-9">
+   className="min-h-11 sm:min-h-9">
    {busy?"Saving…":"Save readiness policy"}
   </Button>
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}

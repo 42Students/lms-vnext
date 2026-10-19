@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { AdminScope } from "@/modules/identity/context";
 import type { AdminScopeChoices } from "@/modules/admin-scope/service";
 import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 function selectedValue(scope: AdminScope | null | undefined) {
   if (scope?.collegeId) {
@@ -71,8 +72,8 @@ export function AdminScopeSwitcher({
         Super Admin scope
       </label>
       <label htmlFor="admin-college-search" className="sr-only">Search colleges</label>
-      <input id="admin-college-search" type="search" value={search} onChange={event=>setSearch(event.target.value)}
-       placeholder="Search colleges" aria-label="Search colleges" className="mb-1 min-h-10 w-full rounded-md border border-border bg-surface px-2 text-sm text-foreground"/>
+      <Input id="admin-college-search" type="search" value={search} onChange={event=>setSearch(event.target.value)}
+       placeholder="Search colleges" aria-label="Search colleges" className="mb-1 min-h-9 w-full text-sm"/>
       <Select
         id="admin-scope-switcher"
         value={selectedValue(scope)}

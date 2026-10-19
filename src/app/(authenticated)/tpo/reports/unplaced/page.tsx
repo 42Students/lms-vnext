@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -93,15 +95,15 @@ export default async function TpoUnplacedReportPage({
        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
        {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
        <label className="grid gap-1 text-sm">Batch
-        <select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-3">
+        <Select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-3">
          <option value="">All current batches</option>
          {batches.batches.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}
-        </select></label>
+        </Select></label>
        <label className="grid gap-1 text-sm">Branch
-        <select name="branchId" defaultValue={branchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-3">
+        <Select name="branchId" defaultValue={branchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-3">
          <option value="">All branches</option>{branches.map(([id,label])=><option key={id} value={id}>{label}</option>)}
-        </select></label>
-       <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Filter</button>
+        </Select></label>
+       <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Filter</Button>
        {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Clear batch and branch</Link>:null}
        <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
         className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Act on them on Students</Link>

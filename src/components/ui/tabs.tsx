@@ -61,12 +61,12 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
     event.preventDefault();
     const item = items[target];
     if (!item) return;
-    if (interactive) onValueChange?.(item.value);
+    if (item.value !== selected?.value) onValueChange?.(item.value);
     buttons.current[target]?.focus();
   }
   return (
     <div className={cx("min-w-0", className)} data-slot="tabs">
-      {renderPanel ? <ScrollCue axis="x" label={`${ariaLabel} tabs`}><div role="tablist" aria-label={ariaLabel} className="flex min-w-max gap-[var(--lms-tab-gap)] border-b border-[var(--lms-canvas-border)] pb-0">
+      {renderPanel ? <ScrollCue axis="x" label={`${ariaLabel} tabs`}><div role="tablist" aria-orientation="horizontal" aria-label={ariaLabel} className="flex min-w-max gap-[var(--lms-tab-gap)] border-b border-[var(--lms-canvas-border)] pb-0">
         {items.map((item, index) => (
           <button key={item.value} ref={node => { buttons.current[index] = node; }}
             id={`${id}-tab-${index}`} type="button" role="tab"
@@ -77,7 +77,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
             aria-disabled={item.disabled || !interactive || undefined}
             tabIndex={interactive && index === activeIndex ? 0 : -1}
             onKeyDown={event => keyDown(event, index)}
-            onClick={() => { if (interactive) onValueChange?.(item.value); }}
+            onClick={() => { if (interactive && item.value !== selected?.value) onValueChange?.(item.value); }}
             className={cx("inline-flex min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap border-b-[3px] px-0 pb-[13px] pt-[13px] transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none text-[13px] leading-4 font-semibold focus-visible:rounded-t-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50",
               index === activeIndex ? "border-[var(--lms-primary)] text-[var(--lms-primary-text)]" : "border-transparent text-[var(--lms-body-text)] hover:bg-transparent hover:text-[var(--lms-primary-text)]")}>
             {tabLabel(item)}

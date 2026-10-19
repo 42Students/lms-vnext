@@ -376,3 +376,25 @@ Baseline: checked `origin/main` before changes; branch was 74 commits ahead and 
 - **Mentor list and detail pages (16):** activity, notifications, reports, reviews, sprint progress, review history, task reviews, task-review history, team coverage, board review, risk readiness, resources directory, team meetings, review overview, activity history and team history were normalized to shared `Select`/`Input` on forms. Route params, GET form fields and options remain unchanged.
 
 **Verification boundary:** Source-only per-file count checks confirmed every newly replaced `<Select>` has a matching complete `</Select>`; checked malformed closing-tag patterns, preserved JSX self-closing `Input`/`Textarea` and all existing handlers. No app run, build, lint, typecheck, tests, CI or browser/pixel comparison. This is still a visual-source sweep rather than runtime certification.
+
+## Shared list kit + mentor error/loading final pass — 2026-10-19
+
+Started with an up-to-date `chatgpt/chat-14-b` tracking `origin/main`. All edits were branch-only `[chat-14]` commits, published in batches of approximately five through the GitHub connector.
+
+### Shared UI kit
+- `src/components/ui/pagination.tsx`: selected page rendered as a non-navigating `aria-current="page"` indicator; boundary disabled links have meaningful accessible labels; safe destination validation retained.
+- `tabs.tsx`: skip redundant `onValueChange` callbacks for the selected tab while preserving keyboard focus behavior.
+- `table.tsx`, `data-table.tsx`: compact hairline, accessible overflow/focus treatments consistent with one-page canvas; no cell formatter or row action changes.
+- `needs-doing-chips.tsx`: disabled chips do not suggest hover interaction.
+- `badge.tsx`, `status-badge.tsx`: align compact pill spacing and typography.
+- `list-toolbar.tsx`: provide an accessible live view-count indicator without affecting page-owned search or bulk actions.
+- `filter-bar.tsx`: clarify optional drawer presence and accessible drawer name.
+
+### Remaining mentor route fallback sweep
+- Updated error routes across mentor activity, calendar, notifications, reports, reviews, sprint progress, task-review history, task reviews, team coverage, and Projects subroutes (board review, closeout, resources, risk/readiness, team history, team meetings, timeline, activity history, delivery review, review completeness, review overview, meeting notes and task feedback).
+- Replaced bespoke raw retry controls with shared `Button` in these error states. Removed duplicate heading font declarations and nested error-card chrome. Error copy, `reset` actions, and data-safety statements were unchanged.
+- Updated loading routes to use shared neutral background and control-radius placeholders with smaller heading skeletons, consistent hairline separators, and explicit busy state where appropriate; retained existing loading labels and route behavior.
+- Polished mentor meeting notes page navigation/separators and final delivery review sections; attachment list now uses compact hairline rows instead of separate boxes.
+
+### Source verification limits
+Checked the JSX opening/closing tag names, completed `</Button>` / `</Select>` and common DOM tag pairs across all changed files in this continuation, including intentionally self-closing controls. These are **source-only** checks, not TypeScript parsing or runtime validation. No application code, typecheck, tests, lint, build, CI, browser or visual snapshot comparison was run.

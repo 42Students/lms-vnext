@@ -4,7 +4,6 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
-import {Button} from "@/components/ui/button";
 export function TpoTeamFollowControls({threadId,following,muted,ready}:{
  threadId:string;following:boolean;muted:boolean;ready:boolean;
 }){
@@ -28,11 +27,11 @@ export function TpoTeamFollowControls({threadId,following,muted,ready}:{
  }
  return <section className="flex flex-wrap items-center gap-2" aria-label="Conversation preferences">
   <Button type="button" variant="secondary" disabled={busy||!ready} onClick={()=>void change(state.following?"UNFOLLOW":"FOLLOW")}
-   className="min-h-9">
+   className="min-h-11 sm:min-h-9">
    {state.following?"Stop following":"Follow"}
   </Button>
   <Button type="button" variant="secondary" disabled={busy||!ready} onClick={()=>void change(state.muted?"UNMUTE":"MUTE")}
-   className="min-h-9">
+   className="min-h-11 sm:min-h-9">
    {state.muted?"Unmute":"Mute"}
   </Button>
   {!ready?<p role="status" className="text-xs text-muted-foreground">

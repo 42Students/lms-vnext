@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -133,13 +135,13 @@ export function LearnerCareerRounds({
             {round.exception ? <p className="mt-3 text-xs font-semibold text-warning">This schedule includes your approved reschedule request.</p> : null}
             <div className="mt-4 flex flex-wrap gap-3">
               {onSelect ? (
-                <button
-                  type="button"
+                <Button
+                  type="button" variant="ghost"
                   onClick={() => onSelect(round)}
-                  className="min-h-11 sm:min-h-9 w-full text-left text-sm font-semibold text-primary-text hover:underline sm:w-auto focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                  className="min-h-11 w-full justify-start !text-[var(--lms-primary-text)] underline sm:w-auto"
                 >
                   Round details
-                </button>
+                </Button>
               ) : null}
               {meetingUrl ? <a href={meetingUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary-text">Open meeting ↗</a> : null}
               {assessmentLink ? <a href={assessmentLink} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary-text">Open employer assessment ↗</a> : null}

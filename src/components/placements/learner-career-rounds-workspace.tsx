@@ -1,4 +1,6 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 
 import {LearnerInterviewWithdrawalRequest} from "./learner-interview-withdrawal-request";
 import {learnerInterviewWithdrawalTarget,type LearnerInterviewWithdrawalTarget} from "@/modules/placements/learner-interview-withdrawal-model";
@@ -233,7 +235,7 @@ export function LearnerCareerRoundsWorkspace({
     const urgent = learnerRoundUrgency(round, nowMs);
     return urgent === "today" || urgent === "week";
   }).length;
-  const selectClass = "mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] text-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9";
+  const selectClass = "mt-1 min-h-11";
   const date = selected ? learnerRoundScheduledInstant(selected) : null;
   const meeting = externalLink(selected?.exception?.meetingUrl ?? selected?.meetingUrl ?? null);
   const mobileInterviewSummary=kind==="INTERVIEW"&&selected
@@ -301,15 +303,13 @@ export function LearnerCareerRoundsWorkspace({
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 sm:flex-wrap" role="group" aria-label="Filter by schedule">
           {timeChoices.map(({ value, label }) => (
-            <button
+            <Button
               type="button"
               key={value}
               aria-pressed={filters.time === value}
               onClick={() => chooseTimeView(value)}
-              className={filters.time === value
-                ? "min-h-11 shrink-0 whitespace-nowrap rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-                : "min-h-11 shrink-0 whitespace-nowrap rounded-full border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"}
-            >{label}{interviewCounts ? ` (${interviewCounts[value]})` : ""}</button>
+              variant={filters.time === value ? "primary" : "secondary"} className="min-h-11 shrink-0 whitespace-nowrap"
+            >{label}{interviewCounts ? ` (${interviewCounts[value]})` : ""}</Button>
           ))}
         </div>
         {kind==="INTERVIEW" ? (
@@ -321,46 +321,36 @@ export function LearnerCareerRoundsWorkspace({
         ) : null}
         {kind === "ASSESSMENT" ? (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Assessment due buckets">
-            <button type="button" aria-pressed={dueBucket === "all"}
+            <Button type="button" aria-pressed={dueBucket === "all"}
               onClick={() => selectDueBucket("all")}
-              className={dueBucket === "all"
-                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              variant={dueBucket === "all" ? "primary" : "secondary"} className="min-h-11">
               All assessment rounds ({relevant.length})
-            </button>
-            <button type="button" aria-pressed={missingLinkOnly}
+            </Button>
+            <Button type="button" aria-pressed={missingLinkOnly}
               onClick={()=>{const next=!missingLinkOnly;selectDueBucket("all");setMissingLinkOnly(next);}}
-              className={missingLinkOnly
-                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              variant={missingLinkOnly ? "primary" : "secondary"} className="min-h-11">
               Waiting on employer link ({relevant.filter(row=>learnerAssessmentLinkState(row)==="MISSING").length})
-            </button>
-            <button type="button" aria-pressed={dueBucket === "today"}
+            </Button>
+            <Button type="button" aria-pressed={dueBucket === "today"}
               onClick={() => selectDueBucket("today")}
-              className={dueBucket === "today"
-                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              variant={dueBucket === "today" ? "primary" : "secondary"} className="min-h-11">
               Due today ({dueCounts.today.length})
-            </button>
-            <button type="button" aria-pressed={dueBucket === "week"}
+            </Button>
+            <Button type="button" aria-pressed={dueBucket === "week"}
               onClick={() => selectDueBucket("week")}
-              className={dueBucket === "week"
-                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+              variant={dueBucket === "week" ? "primary" : "secondary"} className="min-h-11">
               Due this week ({dueCounts.week.length})
-            </button>
+            </Button>
             {([
               ["later","Later",dueCounts.later.length],
               ["past","Scheduled time passed",dueCounts.past.length],
               ["unscheduled","Awaiting employer schedule",dueCounts.unscheduled.length],
             ] as const).map(([value,label,count])=>(
-              <button type="button" key={value} aria-pressed={dueBucket===value}
+              <Button type="button" key={value} aria-pressed={dueBucket===value}
                 onClick={()=>selectDueBucket(value)}
-                className={dueBucket===value
-                  ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-                  : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+                variant={dueBucket===value ? "primary" : "secondary"} className="min-h-11">
                 {label} ({count})
-              </button>
+              </Button>
             ))}
             <p className="w-full text-xs text-muted-foreground">
               IST schedule categories: Today and this week refer to the published
@@ -372,7 +362,7 @@ export function LearnerCareerRoundsWorkspace({
         <div className="grid gap-3 sm:grid-cols-3">
           <label className="text-xs font-semibold text-body">
             Search employers or rounds
-            <input
+            <Input
               type="search" value={filters.search}
               maxLength={100}
               onChange={(event) => setFilter("search", event.target.value)}
@@ -382,30 +372,30 @@ export function LearnerCareerRoundsWorkspace({
           </label>
           <label className="text-xs font-semibold text-body">
             Urgency
-            <select value={filters.urgency}
+            <Select value={filters.urgency}
               onChange={(event) => setFilter("urgency", event.target.value as LearnerRoundBrowseFilters["urgency"])}
               className={selectClass}>
               <option value="all">Any date</option>
               <option value="today">Today</option>
               <option value="week">Within seven days</option>
-            </select>
+            </Select>
           </label>
           <label className="text-xs font-semibold text-body">
             Order
-            <select value={filters.sort}
+            <Select value={filters.sort}
               onChange={(event) => setFilter("sort", event.target.value as LearnerRoundBrowseFilters["sort"])}
               className={selectClass}>
               <option value="soonest">Soonest first</option>
               <option value="latest">Latest first</option>
               <option value="company">Employer A–Z</option>
-            </select>
+            </Select>
           </label>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <button type="button" onClick={saveSearchInUrl}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+          <Button type="button" onClick={saveSearchInUrl}
+            variant="secondary" className="min-h-11">
             Save {kind==="INTERVIEW"?"interview":"assessment"} search link
-          </button>
+          </Button>
           <p className="text-xs text-muted-foreground">
             Search filters your own shortlisted rounds as you type. Save the query in the URL
             to revisit it without sharing another learner&apos;s records.
@@ -443,22 +433,22 @@ export function LearnerCareerRoundsWorkspace({
           <p className="text-sm font-semibold text-foreground">
             The linked interview is hidden by your current filters.
           </p>
-          <button type="button" onClick={()=>{
+          <Button type="button" onClick={()=>{
             setFilters(defaults);setDueBucket("all");
-          }} className="mt-2 min-h-11 text-sm font-semibold text-primary-text hover:underline">
+          }} variant="ghost" className="mt-2 min-h-11 !text-[var(--lms-primary-text)] underline">
             Show linked interview
-          </button>
+          </Button>
         </aside>
       ) : null}
       {visibleRows.length === 0 && relevant.length > 0 ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-6 text-center">
           <p className="text-sm font-semibold text-foreground">No rounds match your filters</p>
           <p className="mt-2 text-sm text-body">Try a different date range or employer.</p>
-          <button type="button"
+          <Button type="button"
             onClick={() => { setFilters(defaults); setDueBucket("all"); setMissingLinkOnly(false); }}
-            className="mt-3 min-h-10 text-sm font-semibold text-primary-text hover:underline">
+            variant="ghost" className="mt-3 min-h-11 !text-[var(--lms-primary-text)] underline">
             Clear filters
-          </button>
+          </Button>
         </div>
       ) : (
         <LearnerCareerRounds
@@ -550,10 +540,10 @@ export function LearnerCareerRoundsWorkspace({
                   <div><dt className="font-semibold text-body">Location</dt>
                     <dd className="mt-1 text-foreground">{rescheduleSummary.location}</dd></div>
                 </dl>
-                <button type="button" onClick={()=>void copyRescheduleSummary()}
-                  className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto">
+                <Button type="button" onClick={()=>void copyRescheduleSummary()}
+                  variant="secondary" className="min-h-11 w-full sm:w-auto">
                   Copy schedule summary
-                </button>
+                </Button>
                 {copyStatus?<p role="status" className="text-xs text-body">{copyStatus}</p>:null}
                 <p className="text-xs text-body">
                   This approved time replaces the original schedule. Copying does not notify
@@ -563,10 +553,10 @@ export function LearnerCareerRoundsWorkspace({
             ) : null}
             <div className="flex flex-wrap gap-3">
               {externalAssessment ? (
-                <button type="button" onClick={()=>setConfirmExternalTest(externalAssessment.href)}
-                  className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline underline-offset-4">
+                <Button type="button" onClick={()=>setConfirmExternalTest(externalAssessment.href)}
+                  variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline underline-offset-4">
                   Open employer assessment ↗
-                </button>
+                </Button>
               ) : null}
               {meeting ? (
                 <a href={meeting} target="_blank" rel="noopener noreferrer"
