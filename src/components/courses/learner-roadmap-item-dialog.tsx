@@ -21,7 +21,7 @@ export function LearnerRoadmapItemDialog({
   const [open, setOpen] = useState(initiallyOpen);
   return (
     <div className={highlighted ? "rounded-[var(--lms-control-radius)] ring-4 ring-[var(--lms-focus-ring)]" : ""}>
-      <button type="button" onClick={() => setOpen(true)}
+      <Button variant="secondary" type="button" onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         className="flex min-h-14 w-full min-w-0 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-left hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
         <span className="min-w-0">
@@ -32,7 +32,7 @@ export function LearnerRoadmapItemDialog({
           <span className="block truncate text-sm font-semibold text-foreground">{title}</span>
         </span>
         <span className="shrink-0 text-sm font-semibold text-primary-text">Open ›</span>
-      </button>
+      </Button>
       <Dialog open={open} onOpenChange={setOpen} title={kind + ": " + title}
         description={caption ?? kind}
         footer={<Button variant="secondary" onClick={() => setOpen(false)}>Close</Button>}>
