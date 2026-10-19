@@ -4,6 +4,7 @@ import {useEffect,useRef,useState} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { courseApiError } from "./learner-course-api";
 import {
@@ -102,6 +103,7 @@ export function FacultyQuizReview({
   const [error, setError] =
     useState<string | null>(null);
   const [notice,setNotice]=useState<string|null>(null);
+  const [confirmPublished,setConfirmPublished]=useState<boolean|null>(null);
 
   useEffect(()=>{
     if(autoOpen&&actions.canReviewAttempts&&!openedOnce.current){
@@ -151,13 +153,6 @@ export function FacultyQuizReview({
   async function setResults(
     published: boolean,
   ) {
-    if (!window.confirm(published
-      ? "Release results? Learners can view their scores and correct answers."
-      : "Withhold results? Learners will no longer see scores or answers."
-    )) {
-      return;
-    }
-
     setError(null);setNotice(null);
     setSavingResults(true);
 
@@ -194,13 +189,14 @@ export function FacultyQuizReview({
       );
     } finally {
       setSavingResults(false);
+      setConfirmPublished(null);
     }
   }
 
   return (
     <>
       {notice?<p role="status" className="mt-2 text-sm text-success">{notice}</p>:null}
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         <Button
           size="sm"
           variant="secondary"
@@ -214,7 +210,7 @@ export function FacultyQuizReview({
             size="sm"
             disabled={savingResults}
             onClick={() =>
-              setResults(true)
+              setConfirmPublished(true)
             }
           >
             {savingResults
@@ -229,7 +225,7 @@ export function FacultyQuizReview({
             variant="ghost"
             disabled={savingResults}
             onClick={() =>
-              setResults(false)
+              setConfirmPublished(false)
             }
           >
             {savingResults
@@ -269,7 +265,7 @@ export function FacultyQuizReview({
               size="sm"
               disabled={savingResults}
               onClick={() =>
-                setResults(true)
+                setConfirmPublished(true)
               }
             >
               {savingResults
@@ -283,7 +279,7 @@ export function FacultyQuizReview({
               variant="secondary"
               disabled={savingResults}
               onClick={() =>
-                setResults(false)
+                setConfirmPublished(false)
               }
             >
               {savingResults
@@ -366,7 +362,7 @@ export function FacultyQuizReview({
                   (answer, index) => (
                     <div
                       key={answer.id}
-                      className="rounded-[var(--lms-control-radius)] border border-border p-3"
+                      className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] p-[var(--lms-space-3)]"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <p className="m-0 text-sm font-semibold text-foreground">
@@ -440,6 +436,18 @@ export function FacultyQuizReview({
       ) : null}
       </div>
       </Drawer>
+      <ConfirmDialog
+        open={confirmPublished !== null}
+        onOpenChange={nextOpen => { if (!nextOpen && !savingResults) setConfirmPublished(null); }}
+        title={confirmPublished ? "Release quiz results" : "Withhold quiz results"}
+        description={confirmPublished
+          ? "Release results? Learners can view their scores and correct answers."
+          : "Withhold results? Learners will no longer see scores or answers."}
+        confirmLabel={confirmPublished ? "Release results" : "Withhold results"}
+        confirmVariant={confirmPublished ? "primary" : "danger"}
+        pending={savingResults}
+        onConfirm={() => { if (confirmPublished !== null) void setResults(confirmPublished); }}
+      />
     </>
   );
 }
