@@ -196,3 +196,37 @@ Phone source path: custom forms and saved-view/selection lists are one column, w
 **STRICT TICK RULE:** These three files are **source-finished**, but global E8 remains **[ ]** (native AG Grid engine still a `shared-table-fallback`; rendered phone/tablet screenshots not performed; shared DataTable breakpoints differ; repo-wide grep coverage missing). Do not claim that source-only checks constitute pixel-level proof.
 
 **Exact next file:** `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx` — compact registration records and filter/export chrome, then `src/components/tpo/tpo-batch-student-saved-views.tsx` visual verification when real browser proof is available.
+
+
+## chat-12 replacement-lane continuation — registrations (2026-10-19)
+
+**Synced baseline:** GitHub two-parent merge `b9d1af7b9cb799ac317e14ecdc6069d1aa0a19bc` incorporates inspected main `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` and preserved all five outstanding chat-12 files. This was a merge, not a destructive branch reset or a git rebase. Later changes below are pushed ONLY to `chatgpt/chat-12-b`. The owner forbids app execution, CI and typecheck. Source inspection is not a screenshot.
+
+### File source-complete: `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx`
+
+| Property | Legacy source / actual value | vNext file source/value | Proof status |
+|---|---|---|---|
+| Sheet anatomy | `docs/design/old-lms-pages.md:9-10`: toolbar, compact continuous table, status pills, actions | `registrations/page.tsx:34-89`: existing validated GET filters, DataTable with Learner/Choice/Recorded source/Last recorded update/Consent evidence/Actions | Source-aligned; renderer's 640px mobile breakpoint remains cross-lane mismatch |
+| One canvas, no tiles inside sampled funnel | `old-lms-pages.md:5,12`: single canvas, hairline separators and summary strip | `registrations/page.tsx:55-57`: single `border-b` section, small metrics on `border-l-2` instead of nested metric cards | Source-aligned |
+| Status badge | `old-lms-pages.md:10`: compact coloured stage/status pills | `registrations/page.tsx:70-72`: shared Badge success for recorded choice, warning for unrecorded | Source-aligned; visual color/state measurements open |
+| Export and privacy | `old-lms-pages.md:9-10`: Export from current list | `registrations/page.tsx:58-63`: unchanged scoped /api/placements/tpo/batches/:id/registrations/export with validated filter/page keys | Existing server behavior intact; no unscoped XLSX inferred |
+| Link hover/focus | `docs/design/legacy-styles/components___common.scss:68-75`: teal link, underline on hover | `registrations/page.tsx:80-89`: lms-inline-link, text-link, underline + focus-visible outline; 44px target | Default/focus source matched; visited pixel proof open |
+| Phone/tablet | `old-lms-shell.css:68-85`: phone <768px, tablet from 768px | `registrations/page.tsx:36`: filter grid 1 col then 2 at md/768, 3 at xl; metric grid md:4 | Authored breakpoint proven; DataTable renders table at sm/640, requires other owner/browser correction |
+
+**File-scoped source scan** on fetched complete `registrations/page.tsx`: regexes `/<(button|input|select|textarea)(?:\\s|>)/g`, `/<svg(?:\\s|>)/g`, `/#[a-f0-9]{6}\\b/gi` each returned **0**. `<Link ` and `</Link>` are **4/4**; curly-brace counts **68/68**. No broad repository claim.
+
+### File source-complete: `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx`
+
+| Property | Legacy source/value | vNext file/value | Proof status |
+|---|---|---|---|
+| Continuous canvas timeline | `old-lms-pages.md:5,12`: ordinary sections use thin separators, not cards | `history/page.tsx:27-34`: ordered immutable history list now `divide-y` and `border-y` rather than cards | Source-aligned |
+| Filter layout | `old-lms-shell.css:68-85`: 768px phone/tablet transition | `history/page.tsx:22`: 1-column phone, 2-column md, 3-column xl, 44px shared selectors/button | Authored breakpoint; no browser screenshot |
+| Warning/availability | `old-lms-pages.md:11`: slim pale warning strips | `history/page.tsx:25-26`: left warning bar, subtle fill | Source-aligned, color rendered proof open |
+| Links | `components___common.scss:68-75`: teal hover underline | `history/page.tsx:21,23`: Back and CSV links styled with text-link, visible keyboard focus and 44px targets | Source-aligned |
+| Server scope / consent | Existing TPO history service provides tenant-scoped immutable events | Same service and filter parser unchanged; history still never reveals contact details or raw consent versions | Retained; not an authorization runtime test |
+
+**File-scoped source scan:** raw native form controls **0**, six-digit hex **0**, inline SVG **0**; `<Link` / `</Link>` **3/3**, `<Select` / `</Select>` **2/2**, `<Button` / `</Button>` **1/1**. JSX curly braces **34/34**.
+
+**E8 native grid dependency update:** Current main now contains `src/components/tpo/grid/tpo-grid.tsx` with `ag-grid-community`, `ag-grid-react` imports and `themeQuartz` (verified at source lines 10-31, 67); the former fallback-only note elsewhere in this audit is stale. This does **not** prove full native AG Grid row/column/export parity across all TPO sheets. The global E8 checkbox remains **[ ]** until complete coverage, legacy source evidence and rendered responsiveness are verified.
+
+**Unticked follow-up:** `src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx`, then registration/eligibility import, all legacy-grid HEADER_ALIASES and complete TPO sheet list. No tests, runtime or CI were run.
