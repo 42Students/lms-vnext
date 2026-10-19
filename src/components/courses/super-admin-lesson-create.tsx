@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -54,7 +55,7 @@ export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
     onChange={event=>setDescription(event.target.value)}
     className="min-h-11 w-full sm:min-h-9"/>
   </label>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   <Button type="submit" disabled={pending||!name.trim()||!pathId}>
    {pending?"Saving…":"Add Lesson"}</Button>
  </form>;
