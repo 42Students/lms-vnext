@@ -281,7 +281,7 @@ export function PlacementSeasonManager({
         (season) =>
           season.status === "CLOSED",
       ) ? (
-        <div className="border-t border-border px-5 py-4">
+        <div className="border-t border-border py-4">
           <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
             Historical seasons
           </p>
