@@ -103,7 +103,7 @@ export function NotificationList({
                void markRead(item.id,item.actionHref??undefined);
               }}
               aria-label={"Open notification: "+item.title}
-              className="w-full min-h-12 justify-start rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-left whitespace-normal shadow-[var(--lms-shadow-sm)] hover:border-primary/25 hover:shadow-[var(--lms-shadow-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:p-6">
+              className="w-full min-h-12 justify-start rounded-[8px] border border-border bg-surface p-4 text-left whitespace-normal transition-[background-color,border-color,box-shadow] duration-200 hover:bg-surface-subtle hover:border-border hover:shadow-[var(--lms-shadow-sm)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:px-4 min-[768px]:py-3">
               <div className="flex items-start gap-3">
                {!item.readAt?<span aria-hidden="true" className="mt-2 inline-block h-2 w-2 shrink-0 rounded-full bg-primary"/>:null}
                <div className="min-w-0 flex-1">
@@ -117,7 +117,7 @@ export function NotificationList({
               </div>
              </Button>:<article
               key={item.id}
-              className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 shadow-[var(--lms-shadow-sm)] transition-[box-shadow,border-color] duration-200 hover:border-primary/25 hover:shadow-[var(--lms-shadow-md)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:p-6"
+              className="rounded-[8px] border border-border bg-surface p-4 transition-[background-color,border-color,box-shadow] duration-200 hover:bg-surface-subtle hover:border-border hover:shadow-[var(--lms-shadow-sm)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:px-4 min-[768px]:py-3"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
