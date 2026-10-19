@@ -32,7 +32,7 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
    <div className="flex flex-wrap gap-2">
     <input id="hr-recruiter-designation" value={title} onChange={event=>setTitle(event.target.value)}
        maxLength={160} className="min-h-9 min-w-48 flex-1 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/>
-    <button type="submit" disabled={saving||title.length>160} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60">
+    <button type="submit" disabled={saving||title.length>160} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-60">
       {saving?"Saving…":"Save designation"}</button>
    </div>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
