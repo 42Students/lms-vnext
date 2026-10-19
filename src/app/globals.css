@@ -1199,3 +1199,12 @@ body {
     min-width: var(--lms-touch-target);
   }
 }
+
+
+/* components___antddesign.scss:171-174, keyboard only.
+   Keep the measured shell button geometry unchanged. */
+[data-slot="button"][data-variant="primary"]:focus-visible {
+  outline: 3px solid rgba(38,186,199,.35);
+  outline-offset: 2px;
+  box-shadow: none;
+}
