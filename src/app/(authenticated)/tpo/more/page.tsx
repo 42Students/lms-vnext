@@ -45,15 +45,15 @@ export default async function TpoMorePage() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group block rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                  className="group block rounded-[12px] border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-base font-semibold text-[var(--lms-teal-deep)]">
+                    <h3 className="text-base font-semibold text-link">
                       {item.label}
                     </h3>
                     <span
                       aria-hidden="true"
-                      className="text-[var(--lms-teal-deep)] transition group-hover:translate-x-1"
+                      className="text-link transition group-hover:translate-x-1"
                     >
                       →
                     </span>
