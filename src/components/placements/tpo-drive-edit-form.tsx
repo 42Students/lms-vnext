@@ -1,5 +1,7 @@
 "use client";
+import { DateInput } from "@/components/ui/date-input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {useState,type FormEvent} from "react";
 import Link from "next/link";
@@ -99,12 +101,12 @@ export function TpoDriveEditForm({job}:{job:Draft}){
       defaultValue={job.stipendPerMonthInr??""} className={cls}/></label>
   </div>
   <label className="flex items-center gap-3 text-sm font-semibold text-body">
-    <input type="checkbox" name="isDream" defaultChecked={job.isDream} className="h-4 w-4 accent-primary"/>
+    <Checkbox name="isDream" defaultChecked={job.isDream} className="h-4 w-4 accent-primary"/>
     Dream drive — held-offer limit exception
   </label>
   <div className="grid gap-4 sm:grid-cols-2">
    <label className="block text-sm font-semibold text-body">Application deadline (IST)
-    <Input name="applicationDeadline" type="datetime-local"
+    <DateInput name="applicationDeadline" mode="datetime-local"
       defaultValue={job.applicationDeadline?new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(job.applicationDeadline)).replace(" ","T"):""}
       className={cls}/>
    </label>
