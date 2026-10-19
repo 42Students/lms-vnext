@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 
 import { useRef, useState } from "react";
@@ -165,7 +166,7 @@ export function TpoPublicJoinLinkCard({
             </p>
           ) : null}
           {status.link?<label className="mt-3 flex items-center gap-3 text-sm text-body">
-            <input type="checkbox" checked={status.link.enabled} disabled={busy}
+            <Checkbox checked={status.link.enabled} disabled={busy}
               onChange={()=>void toggleLink()}/>
             Link is on
           </label>:null}
