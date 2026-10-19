@@ -1,4 +1,5 @@
 "use client";
+import {Button} from "@/components/ui/button";
 
 import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
@@ -82,7 +83,7 @@ export function FacultyReportStudentTable({
             type="button"
             disabled={result.page === 1}
             onClick={() => setRequestedPage(result.page - 1)}
-            className="min-h-11 hover:bg-primary-subtle sm:min-h-9"
+            className="min-h-11"
           >
             Previous
           </Button>
@@ -91,7 +92,7 @@ export function FacultyReportStudentTable({
             type="button"
             disabled={result.page >= result.pages}
             onClick={() => setRequestedPage(result.page + 1)}
-            className="min-h-11 hover:bg-primary-subtle sm:min-h-9"
+            className="min-h-11"
           >
             Next
           </Button>
