@@ -1,1 +1,7 @@
-"use client";export default function Error({reset}:{error:Error;reset:()=>void}){return <main role="alert" className="py-5"><h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Verification status unavailable</h1><p className="mt-2 text-sm">Please retry. A load failure does not mean a verification was rejected.</p><button type="button" onClick={reset} className="mt-4 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Retry</button></main>}
+"use client";
+import { ErrorState } from "@/components/ui/error-state";
+import { Button } from "@/components/ui/button";export default function Error({reset}:{error:Error;reset:()=>void}){return (
+    <ErrorState title={"Verification status unavailable"} description={"Please retry. A load failure does not mean a verification was rejected."}
+      action={<div className="flex flex-wrap items-center gap-3"><Button type="button" variant="secondary" onClick={reset}>Retry</Button></div>} />
+  );
+}
