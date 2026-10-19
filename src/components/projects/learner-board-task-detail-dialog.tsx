@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
 import { ProjectTaskComments } from "./project-task-comments";
 import { projectTaskVisibleFacts } from "@/modules/projects/project-task-visible-facts-model";
@@ -55,7 +56,7 @@ export function LearnerBoardTaskDetailDialog({
           <h2 id="learner-task-dialog-title" className="mt-1 break-words text-lg font-semibold">{task.title}</h2>
         </div>
         <form method="dialog">
-          <button className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold" aria-label="Close task details">Close</button>
+          <Button type="submit" variant="secondary" aria-label="Close task details">Close</Button>
         </form>
       </div>
       {task.carriedFromSprintId?<p className="mt-2 text-xs font-semibold text-warning-text">
