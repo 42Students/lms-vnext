@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { Tabs } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MEMBERSHIP_ROLES, MEMBERSHIP_STATUSES, USER_PLATFORM_STATUSES } from "@/modules/identity/constants";
 import { adminUsersQuerySchema, adminUsersHref, adminPeopleSearchState } from "@/modules/people/admin-user-directory-model";
@@ -62,12 +63,9 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
   {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
    <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Users without college memberships →</Link> : null}
-  <nav aria-label="People directory tabs" className="flex flex-wrap gap-2 border-b border-border">
-   {tabs.map(tab=><Link key={tab.id} href={adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}
-    aria-current={data.query.tab===tab.id?"page":undefined}
-    className={"inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-semibold sm:min-h-9 "+
-     (data.query.tab===tab.id?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>{tab.label}</Link>)}
-  </nav>
+  <Tabs ariaLabel="People directory tabs" value={data.query.tab} renderPanel={false}
+   items={tabs.map(tab=>({value:tab.id,label:tab.label,
+    href:adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}))}/>
   <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 text-sm">
    <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Student accounts</Link>
    <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Faculty accounts</Link>
