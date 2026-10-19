@@ -15,12 +15,16 @@ export type FilterBarProps = {
   filters?: ReactNode;
   children?: ReactNode;
   action?: ReactNode;
+  /** Optional list toolbar actions; render only controls the page actually implements. */
+  views?: ReactNode;
+  columns?: ReactNode;
+  exportAction?: ReactNode;
   className?: string;
 };
 
 const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
-export function FilterBar({ title = "Filters", activeCount = 0, search, filters, children, action, className }: FilterBarProps) {
+export function FilterBar({ title = "Filters", activeCount = 0, search, filters, children, action, views, columns, exportAction, className }: FilterBarProps) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const { availableHeight } = useOverlayWebview({ open, dismissible: true, onDismiss: () => setOpen(false) });
@@ -63,12 +67,13 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
   }, [open]);
 
   return <section data-slot="filter-bar" aria-label={title} className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
-    <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
-      {search ? <div className="min-w-0 flex-1 basis-40 sm:basis-48">{search}</div> : null}
+    <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
+      {search ? <div className="min-w-0 flex-1 basis-40 sm:basis-[220px] sm:max-w-[380px]">{search}</div> : null}
       <div className="sm:hidden">
         <Button ref={launcher} variant="secondary" aria-expanded={open} aria-controls={panelId}
           onClick={() => setOpen(true)}>{title} ({count})</Button>
       </div>
+      {views || columns || exportAction ? <div role="toolbar" aria-label="List actions" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">{views}{columns}{exportAction}</div> : null}
       {action}
     </div>
     {open ? <button type="button" aria-label="Close filters" onClick={() => setOpen(false)}
