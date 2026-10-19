@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
@@ -39,7 +38,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
-    <Button variant="secondary" type="button" className="rounded px-2 py-1" onClick={()=>setSearch("")}>Clear Metadata search</Button>
+    <Button variant="secondary" type="button" className="rounded border border-border px-2 py-1" onClick={()=>setSearch("")}>Clear Metadata search</Button>
    </div>:null}
   {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No metadata fields match. Clear the search to view all.</p>:null}
   {visibleRows.map(({row,index})=><div key={row.id} className="grid min-w-0 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_2fr_auto] sm:items-end">
@@ -61,15 +60,15 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <div className="flex flex-wrap gap-3">
    <Button variant="secondary" type="button" disabled={pending||rows.length>=100}
-    className="min-h-11" onClick={async()=>{
+     onClick={async()=>{
      setRows(current=>[...current,{id:crypto.randomUUID(),key:"",value:""}]);
      setSearch(current=>facultyProfileSearchAfterInsertion(current));setDirty(true);
     }}>Add field</Button>
    {dirty?<Button variant="secondary" type="button" disabled={pending} onClick={async()=>{
     if(!(await askConfirm("Discard unsaved metadata edits?")))return;
     setRows(restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));setDirty(false);setError(null);
-   }} className="min-h-11">Discard unsaved metadata</Button>:null}
-   <Button type="submit" disabled={pending||!dirty||Boolean(issue)} >
+   }} >Discard unsaved metadata</Button>:null}
+   <Button variant="primary" type="submit" disabled={pending||!dirty||Boolean(issue)} >
     {pending?"Saving…":"Save metadata"}
    </Button>
   </div>
