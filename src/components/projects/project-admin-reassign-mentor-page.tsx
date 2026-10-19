@@ -77,14 +77,14 @@ export async function ProjectAdminReassignMentorPage({
         actions={<PageBackLink href={basePath} label="Back to workspaces" />}
       />
       <section className="border-b border-border pb-5">
-        <h2 className="text-base font-semibold">Mentor workload</h2>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <h2 className="text-base font-semibold text-foreground">Mentor workload</h2>
+        <div className="mt-3 grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-3">
           {workload.map(row => {
             const mentor = mentors.find(person => person.membershipId === row.mentorMembershipId);
             const filter = row.mentorMembershipId ?? "UNASSIGNED";
             return <Link key={filter}
               href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
-              className="block min-h-11 rounded-lg border border-border p-3 hover:border-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+              className="block min-h-11 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
               <p className="text-sm">{row.activeWorkspaces} active workspaces</p>
               <p className="text-sm">{row.atRisk} at risk</p>
@@ -100,13 +100,13 @@ export async function ProjectAdminReassignMentorPage({
         {query.status?<Input type="hidden" name="status" value={query.status}/>:null}
         {query.fromMentorId?<Input type="hidden" name="fromMentorId" value={query.fromMentorId}/>:null}
         <Input type="hidden" name="pageSize" value={query.pageSize}/>
-        <label className="grid flex-1 gap-1 text-sm font-semibold">
+        <label className="grid flex-1 gap-1 text-[13px] font-semibold text-body">
           Search eligible mentors by name or email (across the college)
           <Input type="search" name="mentorSearch" maxLength={100} defaultValue={mentorSearch}
             placeholder="Enter mentor name or email" className="w-full"/>
         </label>
         <Button type="submit" className="">Find mentor</Button>
-        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Clear mentor search</Link>:null}
+        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Clear mentor search</Link>:null}
         <p className="w-full text-xs text-muted-foreground">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
       <ProjectAdminFilters query={query} />
@@ -114,7 +114,7 @@ export async function ProjectAdminReassignMentorPage({
         {query.q ? <Input type="hidden" name="q" value={query.q} /> : null}
         {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
         {query.pageSize ? <Input type="hidden" name="pageSize" value={query.pageSize} /> : null}
-        <label className="grid gap-1 text-sm font-semibold">
+        <label className="grid gap-1 text-[13px] font-semibold text-body">
           Filter by current mentor
           <Select name="fromMentorId" defaultValue={fromMentorId ?? ""}
             className="w-full">
