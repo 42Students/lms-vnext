@@ -137,8 +137,8 @@
  color:inherit;
  opacity:.55;
 }
-.lms-sidebar-nav .lms-sidebar-item[data-active="true"] .lms-sidebar-item-icon,
-.lms-sidebar-nav .lms-sidebar-item:hover .lms-sidebar-item-icon {opacity:1;}
+/* The original legacy icon box keeps 0.55 opacity in every state:
+ * active/hover recolor its inherited foreground, not its opacity. */
 .lms-sidebar-nav .lms-nav-label {
  min-width:0;
  max-width:165px;
@@ -185,6 +185,29 @@
  }
  .lms-mobile-sidebar .lms-nav-heading-text {display:block;}
  .lms-mobile-sidebar .lms-nav-heading::after {display:none;}
+}
+/* Legacy non-TPO groups are divided by a hairline, not a heading. */
+.lms-sidebar-nav .lms-nav-group-rule {
+ display:block;
+ box-sizing:border-box;
+ align-self:center;
+ flex:0 0 auto;
+ width:22px;
+ height:1px;
+ margin:14px 0 10px;
+ border-top:1px solid #f1f4f9;
+}
+@media (min-width:768px) {
+ .lms-desktop-sidebar:is(:hover,:focus-within) .lms-nav-group-rule {
+  align-self:stretch;
+  width:auto;
+  margin-inline:12px;
+ }
+}
+.lms-mobile-sidebar .lms-nav-group-rule {
+ align-self:stretch;
+ width:auto;
+ margin-inline:12px;
 }
 .lms-sidebar-heading-label {min-width:0; white-space:nowrap;}
 .lms-sidebar-role-details {z-index:2;min-width:0;margin-top:auto;transition:opacity .15s cubic-bezier(.2,0,0,1);}

@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useRef,useState} from "react";
 import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,
  type PublicPlacementMetricKey} from "@/modules/placements/public-page/content-model";
@@ -50,34 +53,34 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
  return <section className="mt-6 space-y-4 border-t border-border pt-5" aria-label="Public placements content">
   <h2 className="font-semibold">About your placements</h2>
   <label className="grid gap-1 text-sm">About your placements
-   <textarea rows={5} maxLength={4000} value={about} disabled={!initial.ready||busy}
+   <Textarea rows={5} maxLength={4000} value={about} disabled={!initial.ready||busy}
     onChange={e=>setAbout(e.target.value)}
     placeholder="Tell recruiters about your placement cell and your students."
-    className="min-h-28 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3"/>
+    className="min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
   </label>
   <p className="text-xs">{about.length}/4000 characters</p>
   <fieldset className="space-y-3">
    <legend className="font-semibold">Numbers to show</legend>
    <p className="text-xs text-muted-foreground">Choose the public numbers and their order. Small or unavailable values stay hidden.</p>
    {ALL.map(key=><label key={key} className="flex min-h-11 md:min-h-9 items-center gap-2 text-sm">
-    <input type="checkbox" checked={metricKeys.includes(key)} disabled={!initial.ready||busy}
+    <Checkbox checked={metricKeys.includes(key)} disabled={!initial.ready||busy}
      onChange={()=>toggle(key)}/>{PUBLIC_METRIC_LABELS[key]}
    </label>)}
   </fieldset>
   <ol aria-label="Public number order" className="space-y-2">
-   {metricKeys.map((key,index)=><li key={key} className="flex items-center justify-between gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-2 text-sm">
+   {metricKeys.map((key,index)=><li key={key} className="flex items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
     <span>{index+1}. {PUBLIC_METRIC_LABELS[key]}</span>
     <span className="flex gap-2"><button type="button" disabled={busy||index===0}
-     onClick={()=>move(index,-1)} className="rounded-[var(--lms-control-radius,9px)] border px-2 py-1">Move up</button>
+     onClick={()=>move(index,-1)} className="rounded-[var(--lms-control-radius)] border px-2 py-1">Move up</button>
      <button type="button" disabled={busy||index===metricKeys.length-1}
-      onClick={()=>move(index,1)} className="rounded-[var(--lms-control-radius,9px)] border px-2 py-1">Move down</button></span>
+      onClick={()=>move(index,1)} className="rounded-[var(--lms-control-radius)] border px-2 py-1">Move down</button></span>
    </li>)}
   </ol>
   {dirty?<p role="status">Unsaved changes</p>:null}
   {!initial.ready?<p role="status">Page content editing is temporarily unavailable until storage is ready.</p>:null}
-  <button type="button" disabled={busy||!initial.ready||!dirty}
-   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50"
-   onClick={()=>void save()}>{busy?"Saving…":"Save"}</button>
+  <Button variant="primary" type="button" disabled={busy||!initial.ready||!dirty}
+   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50"
+   onClick={()=>void save()}>{busy?"Saving…":"Save"}</Button>
   {message?<p role="status" className="text-sm">{message}</p>:null}
  </section>;
 }

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -40,9 +41,9 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
    This sends one email to each currently eligible recipient, excluding opt-outs, bounced and Not now leads.
    The system rechecks every contact before attempting delivery.
   </p>}
-  <button type="button" disabled={!ready||busy||recipients===0}
-   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-white disabled:opacity-50"
-   onClick={()=>setConfirmOpen(true)}>{busy?"Sending…":"Send campaign"}</button>
+  <Button variant="primary" type="button" disabled={!ready||busy||recipients===0}
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white disabled:opacity-50"
+   onClick={()=>setConfirmOpen(true)}>{busy?"Sending…":"Send campaign"}</Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
     title={"Send to up to "+recipients+" selected recruiter emails?"}
     description="This cannot be undone." confirmLabel="Send campaign"

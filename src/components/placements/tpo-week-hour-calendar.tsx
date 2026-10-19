@@ -121,7 +121,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    <h2 className="font-semibold">Week · 7 AM to 9 PM IST</h2>
    <label className="text-sm">Find an event
     <input type="search" value={filter} onChange={e=>setFilter(e.target.value)} maxLength={100}
-     className="ml-2 min-h-11 md:min-h-9 rounded-[9px] border border-border bg-surface px-2" placeholder="Company or event"/>
+     className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2" placeholder="Company or event"/>
    </label>
   </div>
   <p className="text-xs text-muted-foreground">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p>
@@ -166,7 +166,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         <button key={event.id} type="button"
          aria-label={"Move follow-up: "+event.title}
          onClick={()=>setMove({id:event.followupId!,currentIst:calendarDueAtToIstLocal(new Date(event.startsAt))})}
-         style={position} className={"absolute z-10 overflow-hidden rounded border border-border px-1 py-0.5 text-left text-[11px] leading-tight "+tone(event.kind)}>{inner}</button>:
+         style={position} className={"absolute z-10 overflow-hidden rounded-[var(--lms-control-radius)] border border-border px-1 py-0.5 text-left text-[11px] leading-tight "+tone(event.kind)}>{inner}</button>:
        event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title}
         draggable={canCreate&&Boolean(event.followupId)}
         onDragStart={dragEvent=>{
@@ -174,8 +174,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
          dragEvent.dataTransfer.setData("application/x-tpo-followup",event.followupId);
          dragEvent.dataTransfer.effectAllowed="move";
         }}
-        style={position} className={"absolute z-10 overflow-hidden rounded border border-border px-1 py-0.5 text-[11px] leading-tight "+tone(event.kind)}>{inner}</Link>:
-       <div key={event.id} style={position} className={"absolute z-10 overflow-hidden rounded border border-border px-1 py-0.5 text-[11px] leading-tight "+tone(event.kind)}>{inner}</div>;
+        style={position} className={"absolute z-10 overflow-hidden rounded-[var(--lms-control-radius)] border border-border px-1 py-0.5 text-[11px] leading-tight "+tone(event.kind)}>{inner}</Link>:
+       <div key={event.id} style={position} className={"absolute z-10 overflow-hidden rounded-[var(--lms-control-radius)] border border-border px-1 py-0.5 text-[11px] leading-tight "+tone(event.kind)}>{inner}</div>;
       })}
       {offHours.length?<div className="absolute inset-x-0 bottom-0 z-20 space-y-1 border-t border-border bg-surface/95 p-1">
        {offHours.map(e=><p key={e.id} className="truncate text-[10px]" title={e.title}>Outside displayed hours · {e.title}</p>)}
@@ -191,35 +191,35 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       <h2 className="text-lg font-semibold">Move follow-up</h2>
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
       <button type="button" onClick={()=>setMove(null)}
-        className="mt-3 min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm">Close</button>
+        className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Close</button>
     </section>
    </div>:null}
-  {!slot&&message?<p role="alert" className="rounded border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
+  {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
   {slot?<div role="dialog" aria-modal="true" aria-label="New recruiter follow-up" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <div className="w-full max-w-md space-y-3 rounded-xl border border-border bg-surface p-5" onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();cancelDraft();}}}>
     <h2 className="text-lg font-semibold">New recruiter follow-up</h2>
-    {slot&&blocked.has(slot.slice(0,10))?<p role="alert" className="rounded border border-warning px-3 py-2 text-sm text-[var(--lms-gold-accent)]">This day is blocked for placement scheduling. Choose another date if possible.</p>:null}
+    {slot&&blocked.has(slot.slice(0,10))?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-warning px-3 py-2 text-sm text-[var(--lms-gold-accent)]">This day is blocked for placement scheduling. Choose another date if possible.</p>:null}
     {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}
     <label className="grid gap-1 text-sm">Date and time (IST)
      <input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}
-      className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3"/></label>
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3"/></label>
     <label className="grid gap-1 text-sm">Search recruiter lead
      <input value={leadQuery} onChange={e=>{setLeadQuery(e.target.value);setLeadId("");}}
-      className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3" maxLength={120}/>
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3" maxLength={120}/>
      <select value={leadId} disabled={loadingLeads} required onChange={e=>setLeadId(e.target.value)}
-      className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3">
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3">
       <option value="">{loadingLeads?"Loading recruiters…":"Choose recruiter"}</option>
       {matches.map(lead=><option key={lead.id} value={lead.id}>{lead.name}{lead.companyName?" · "+lead.companyName:""}</option>)}
      </select></label>
     <label className="grid gap-1 text-sm">Note (optional)
      <textarea value={note} maxLength={500} onChange={e=>setNote(e.target.value)}
-      className="rounded-[9px] border border-border p-2"/></label>
+      className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
     {message?<p role="alert" className="text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
     <div className="flex justify-end gap-2">
      <button type="button" disabled={saving} onClick={cancelDraft}
-      className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm">Cancel</button>
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</button>
      <button type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
-      className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">{saving?"Saving…":"Add follow-up"}</button>
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">{saving?"Saving…":"Add follow-up"}</button>
     </div>
    </div>
   </div>:null}

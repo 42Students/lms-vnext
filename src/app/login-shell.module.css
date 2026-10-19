@@ -175,7 +175,7 @@
   box-shadow: none;
   transition: background-color .15s ease, box-shadow .15s ease;
 }
-.card :global(button[type="submit"]:hover:not(:disabled)) { background: var(--lms-button-primary-hover, #086873); }
+.card :global(button[type="submit"]:hover:not(:disabled)) { background: color-mix(in srgb, var(--auth-primary) 90%, #000); }
 .card :global(button[type="submit"]:focus-visible) {
   outline: 3px solid rgba(10, 124, 136, .25);
   outline-offset: 2px;

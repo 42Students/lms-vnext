@@ -1,6 +1,8 @@
 "use client";
 import {useRef,useState,type FormEvent} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:string|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -33,15 +35,15 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   }catch(e){setError(e instanceof Error?e.message:"Deadline extension failed.");}
   finally{inFlightRef.current=false;setBusy(false);}
  }
- return <div className="space-y-3"><form onSubmit={review} className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <div className="space-y-3"><form onSubmit={review} className="space-y-3 border-b border-border pb-5">
   <h2 className="text-base font-semibold">Extend deadline</h2>
   <p className="text-sm text-body">Current deadline: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
   <label className="grid max-w-md gap-1 text-sm font-semibold">New application deadline (IST)
-   <input name="deadline" type="datetime-local" required className="min-h-9 rounded-[9px] border border-border bg-[var(--lms-surface)] px-3 text-base sm:text-sm"/>
+   <Input name="deadline" type="datetime-local" required className="max-w-md"/>
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <button type="submit" disabled={busy} className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] disabled:opacity-50">
-   {busy?"Saving…":"Extend deadline"}</button>
+  <Button type="submit" disabled={busy}>
+   {busy?"Saving…":"Extend deadline"}</Button>
  </form>
  <ConfirmDialog open={pendingIso!==null} onOpenChange={next=>{if(!next&&!busy)setPendingIso(null);}}
   title="Extend the published application deadline? This affects when students can apply."

@@ -76,10 +76,10 @@ export function RecruiterNotificationBell(){
    <div className="flex items-center justify-between gap-3">
     <h2 className="font-semibold text-foreground">Notifications</h2>
     <button type="button" onClick={()=>setIsOpen(false)}
-     aria-label="Close notifications" className="min-h-9 px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
+     aria-label="Close notifications" className="min-h-9 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
    </div>
    {error?<div role="alert" className="mt-3 text-sm text-error">{error}
-    <button type="button" onClick={()=>void load()} className="ml-2 inline-flex min-h-9 items-center underline">Retry</button>
+    <button type="button" onClick={()=>void load()} className="ml-2 inline-flex min-h-9 items-center text-sm text-primary-text underline">Retry</button>
    </div>:null}
    {data?.status==="CHOOSE_COLLEGE"?
     <div className="mt-3 space-y-2 text-sm">{data.choices?.map(item=>
@@ -100,7 +100,7 @@ export function RecruiterNotificationBell(){
       </Link></li>)}
     </ul></ScrollCue>:null}
    <Link href={href} onClick={()=>setIsOpen(false)}
-    className="mt-4 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
+    className="mt-4 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
   </section>:null}
  </div>;
 }

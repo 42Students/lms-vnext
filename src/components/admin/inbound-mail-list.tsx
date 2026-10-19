@@ -2,6 +2,7 @@
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Drawer} from "@/components/ui/drawer";
+import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {safeInboundPreview} from "@/modules/inbound-mail/message-model";
 import {createInboundMailTriageGate} from "@/modules/inbound-mail/triage-submit-model";
@@ -49,8 +50,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
       <p className="mt-2 line-clamp-2 break-words text-sm text-muted-foreground">{safeInboundPreview(row.bodyPlain)}</p>
       <p className="mt-1 text-xs text-muted-foreground">Sender identity and conversation-routing status are not verified by this inbox.</p>
       <p className="mt-1 text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
-      <button type="button" onClick={()=>{setMessage("");setSelected(row);}}
-       className="mt-3 min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Read message</button>
+      <Button type="button" variant="secondary" className="mt-3" onClick={()=>{setMessage("");setSelected(row);}}>Read message</Button>
     </article>)}
    </div>}
   {selected?<Drawer open onOpenChange={open=>{if(!open)setSelected(null)}} title={selected.subject||"(No subject)"}
@@ -62,10 +62,9 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
     </dl>
     <div className="mt-4 flex flex-wrap gap-2">
      {inboundMailStatusActions(overrides[selected.id]?.status??selected.status).map(action=>
-      <button key={action.status} type="button" disabled={busy} onClick={()=>void change(selected,action.status)}
-       className={action.status==="RESOLVED"?"min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] disabled:opacity-50":"min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"}>
+      <Button key={action.status} type="button" variant={action.status==="RESOLVED"?"primary":"secondary"} disabled={busy} onClick={()=>void change(selected,action.status)}>
        {busy?"Saving…":action.label}
-      </button>)}
+      </Button>)}
     </div>
     {message?<p role="status" className="mt-3 text-sm text-body">{message}</p>:null}
     <section className="mt-5 min-w-0 rounded-[9px] border border-border p-4">

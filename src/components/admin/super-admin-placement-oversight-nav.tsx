@@ -6,7 +6,7 @@ import {
 
 function NavLinks({ links }: { links: readonly { href: string; label: string }[] }) {
   return <>{links.map(link => <Link key={link.href} href={link.href}
-    className="inline-flex min-h-10 max-w-full items-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+    className="inline-flex min-h-9 max-w-full items-center border-b-2 border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary">
     {link.label}</Link>)}</>;
 }
 
@@ -15,7 +15,7 @@ export function SuperAdminPlacementOversightNav() {
     <nav aria-label="Super Admin placement oversight" className="flex min-w-0 flex-wrap gap-2">
       <NavLinks links={SUPER_ADMIN_PLACEMENT_OVERSIGHT_PRIMARY} />
     </nav>
-    <details className="rounded-[9px] border border-border bg-surface p-3">
+    <details className="border-t border-border pt-3">
       <summary className="cursor-pointer text-sm font-semibold text-primary-text">More placement reports</summary>
       <nav aria-label="Additional placement reports" className="mt-3 flex flex-wrap gap-2">
         <NavLinks links={SUPER_ADMIN_PLACEMENT_OVERSIGHT_ADDITIONAL} />
