@@ -127,3 +127,18 @@ Reference facts: `docs/design/old-lms-pages.md` prescribes one #fff canvas radiu
 ## Next file
 
 `src/app/(authenticated)/teacher/allAssignments/page.tsx` — audit the styled link and downstream `src/components/courses/faculty-assessment-overview.tsx`, then proceed in route order.
+
+## Turn 1: verified changes (2026-10-19)
+
+- Branch was originally 2,289 commits behind `main` and 0 ahead; fast-forwarded the lane ref to `d915bd67b20838f496d2a5b25b4365e748a35dd5` before writing.
+- Migrated the one visible plain `<button type="submit">Filter</button>` at `src/app/(authenticated)/teacher/live-classes/page.tsx` to `<Button type="submit">Filter</Button>`; retains GET form submission, button text and semantics. Confirmed identical opening/closing JSX tag case by direct full-file review; no code/tests/CI executed.
+- Removed TypeScript-conflicting duplicate named UI imports in `faculty-assessment-overview.tsx` (Button), `faculty-ist-quarter-hour-picker.tsx` (Select + Input, including whitespace-variant duplicate), `person-onboard-dialog.tsx` (Checkbox), `faculty-profile-metadata.tsx` (Input), `faculty-profile-repeatable.tsx` (Input + Checkbox), and `faculty-profile-skills.tsx` (Input). No runtime handlers/props changed.
+- Full-file textual scan of 36 `src/components/courses/faculty-*` files and selected faculty attendance/profile components found no hardcoded hex or visible raw form controls in the scanned subset. This is **not** exhaustive component coverage; do not tick.
+- Full-file scan identified `src/app/(authenticated)/admin/people/directory/page.tsx` with one raw `<input type="hidden" name="tab" ... />`, `teacher/report/assignment/[contentId]/submissions/page.tsx` with four hidden inputs and `teacher/report/quiz/[quizId]/attempts/page.tsx` with three hidden inputs. These are exempt as invisible GET query preservation fields without class/style strings; replacing them with a styled input risks changing form semantics. Audit any other hidden inputs individually.
+- `src/components/attendance/faculty-attendance-workspace.tsx` retains one `<h1 className="sr-only">Attendance</h1>`; its embedding course-tab hierarchy must be checked before introducing another visible PageHeader, to avoid duplicate page heads.
+- Most inspected teacher route pages already use `PageHeader` or delegate to a workspace; delegated routes require following the rendered component tree. No responsive screenshot/device comparison has been conducted.
+- Search counts and the changed-file inspection are intentionally **not** recorded as completed greps or value proof. Strict section H items remain unchecked pending full counts, legacy-vNext file:line comparison tables and responsive proof.
+
+### Exact next file
+
+`src/components/attendance/faculty-attendance-workspace.tsx` — check whether the parent route or faculty course workspace owns PageHeader, then handle its screen-reader-only heading without duplicating headers. After that inspect `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` and indirect shared table/overlay components.
