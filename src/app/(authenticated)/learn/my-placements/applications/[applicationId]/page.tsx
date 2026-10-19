@@ -27,7 +27,7 @@ export default async function LearnerApplicationDetailPage({params}:{
   return <div className="min-w-0 space-y-6">
     <Link href="/learn/my-placements/applications"
       className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Applications</Link>
-    <PageHeader eyebrow="My Placements" title={record.roleTitle}
+    <PageHeader title={record.roleTitle}
       description={record.companyName+" · Own application status and timeline"}
       actions={<StatusBadge>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
