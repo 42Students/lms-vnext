@@ -465,3 +465,10 @@ The five-file transformation and exact source guards were saved as `scripts/code
 The owner requires value rows for default, hover, active, focus, disabled, loading and error where applicable, plus true old-vs-vNext responsive comparison. The source checks above establish only the layout declarations and route JSX; they do not replace computed-style inspection or real 375px/768px/1280px viewport proof. **Still 10/87 ticked; 77 open.** No CI, app execution, Node script execution or screenshots.
 
 **Next item:** `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx` — finish old-vs-new computed detail typography, link and event timeline at 375/768/1280px, then `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`.
+
+
+### Tracker independent-finding event timeline final source correction
+
+`src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`: the audit event history now renders `<ol className="mt-3 divide-y divide-border border-y border-border text-sm">` with each event in `<li className="py-3">`, rather than rounded/separately-spaced rows. This follows `docs/design/old-lms-pages.md:6,9-11` (one continuous hairline-bordered list, not a card per row). Dates remain formatted in Asia/Kolkata, descriptions and keys unchanged. Phone/tablet layout is one column without horizontal overflow by declaration. Exact inherited font, line-height, hover/focus, disabled and real viewport parity remain open; no visual tick claimed.
+
+Scope remains: **10/87 strict-complete files, 77/87 open**. The full source scan and repeatable assertions from the preceding section remain valid (this change introduces no native control, custom overlay, `h1` or hex in queued TSX). The CSS module is a supporting file outside the 87-item queue and is not added as an arbitrary extra tick.
