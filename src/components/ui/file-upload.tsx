@@ -16,6 +16,8 @@ export type FileUploadProps = Omit<ComponentPropsWithRef<"input">, "type" | "onC
   progress?: number;
   /** Opt in to a compact selection list; does not alter the upload request. */
   showSelectedFiles?: boolean;
+  /** Preview the first selected image locally; never uploads or stores image bytes. */
+  showImagePreview?: boolean;
 };
 
 export function fileSizeIsValid(size: number, maxBytes?: number) {
@@ -36,12 +38,20 @@ export function mustClearFileSelection(selected: boolean, pickerUnavailable: boo
 }
 
 export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerUnavailable = false,
-  progress, showSelectedFiles = false,
+  progress, showSelectedFiles = false, showImagePreview = false,
   id: suppliedId, className, disabled, accept, ref: forwardedRef, ...props }: FileUploadProps) {
   const autoId = useId();
   const id = suppliedId ?? autoId;
   const [error, setError] = useState<string | null>(null);
   const [selectedNames, setSelectedNames] = useState<string[]>([]);
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!showImagePreview || !previewFile || !previewFile.type.startsWith("image/")) { setPreviewUrl(null); return; }
+    const url = URL.createObjectURL(previewFile);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [previewFile, showImagePreview]);
   const percentage = typeof progress === "number" && Number.isFinite(progress) ? Math.max(0, Math.min(100, progress)) : null;
   // Preserve every applicable assistive description when a picker is disabled
   // or rejects a file; an error must not make the size/type guidance vanish.
@@ -58,7 +68,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
   // Clearing after a picker is disabled is necessary even if the DOM input
   // unmounts: the form's parent must never retain a previously approved file.
   useEffect(() => {
-    if (pickerUnavailable || disabled) { setError(null); setSelectedNames([]); }
+    if (pickerUnavailable || disabled) { setError(null); setSelectedNames([]); setPreviewFile(null); }
     if (!mustClearFileSelection(selectedRef.current, pickerUnavailable, Boolean(disabled))) return;
     selectedRef.current = false;
     if (inputRef.current) inputRef.current.value = "";
@@ -79,12 +89,14 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
       setError(oversized ? "This file is larger than the allowed limit." : "This file type is not allowed.");
       selectedRef.current = false;
       setSelectedNames([]);
+      setPreviewFile(null);
       onFiles(null);
       event.currentTarget.value = "";
       return;
     }
     selectedRef.current = Boolean(files?.length);
     setSelectedNames(Array.from(files ?? [], file => file.name));
+    setPreviewFile(files?.[0] ?? null);
     setError(null);
     onFiles(files);
   }
@@ -101,6 +113,10 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
       ? <ul aria-label="Selected files" className="space-y-1 text-[13px] leading-5 text-[var(--lms-body-text)]">
           {selectedNames.map((name, index) => <li key={`${index}-${name}`} className="min-w-0 break-all">{name}</li>)}
         </ul> : null}
+    {showImagePreview && previewUrl && !pickerUnavailable && !disabled
+      ? <div data-slot="image-upload-preview" className="rounded-[10px] border border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)] p-2">
+          <img src={previewUrl} alt={`${label} preview`} className="max-h-40 max-w-full rounded-[6px] object-contain" />
+        </div> : null}
     {percentage !== null && selectedNames.length > 0 && !pickerUnavailable && !disabled
       ? <div role="progressbar" aria-label={`${label} upload progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percentage}
           className="h-2 w-full overflow-hidden rounded-full bg-[var(--lms-primary-light)]">
