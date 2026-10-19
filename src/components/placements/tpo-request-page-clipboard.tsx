@@ -5,6 +5,7 @@ import { Dropdown } from "@/components/ui/dropdown";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
+import {Disclosure} from "@/components/ui/disclosure";
 export type TpoRequestClipboardRow={id:string;student:string;number:string|null;
  kind:string;company:string;asked:string;status:string;decided:string|null};
 export type TpoRequestClipboardColumn=Exclude<keyof TpoRequestClipboardRow,"id">;
@@ -79,17 +80,15 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
      <option value="DECIDED_NEW">Decided on · newest</option><option value="DECIDED_OLD">Decided on · oldest</option>
     </Select>
    </label>
-   <Dropdown mobileSheet align="end" label="Request column visibility" trigger="Choose columns">
-    <div className="min-w-52 space-y-3">
-     <div className="flex max-h-64 flex-wrap gap-3 overflow-y-auto">{options.map(option=><label key={option.key} className="flex min-h-11 items-center gap-2">
-       <Checkbox checked={visible.includes(option.key)}
-        disabled={visible.length===1&&visible.includes(option.key)}
-        onChange={e=>setVisible(keys=>e.target.checked?[...keys,option.key]:keys.filter(key=>key!==option.key))}/>
-       {option.label}
-      </label>)}</div>
-     <Button type="button" variant="secondary" onClick={()=>setVisible(options.map(option=>option.key))}>Reset columns</Button>
-    </div>
-   </Dropdown>
+   <Disclosure title="Choose columns" className="min-w-0 max-w-full rounded border border-border p-2 text-sm">
+    <div className="mt-2 flex flex-wrap gap-3">{options.map(option=><label key={option.key} className="flex min-h-11 items-center gap-2">
+      <Checkbox checked={visible.includes(option.key)}
+       disabled={visible.length===1&&visible.includes(option.key)}
+       onChange={e=>setVisible(keys=>e.target.checked?[...keys,option.key]:keys.filter(key=>key!==option.key))}/>
+      {option.label}
+    </label>)}</div>
+    <button type="button" className="mt-2 min-h-11 rounded-[9px] border border-border px-3 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" onClick={()=>setVisible(options.map(option=>option.key))}>Reset columns</button>
+   </Disclosure>
   </div>
   <DataTable<TpoRequestClipboardRow>
    caption="Request spreadsheet"
