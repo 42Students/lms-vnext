@@ -297,16 +297,16 @@
 - [ ] `src/components/academics/college-term-mapping-manager.tsx`
 - [ ] `src/components/academics/learner-class-schedule.tsx`
 - [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/college/college-admin-profile-editor.tsx`
-- [ ] `src/components/college/college-department-insights.tsx`
+- [ ] `src/components/college/college-admin-profile-editor.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/college-department-insights.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-faculty-assignment-actions.tsx`
 - [ ] `src/components/college/college-faculty-csv-import.tsx`
-- [ ] `src/components/college/college-faculty-lifecycle-action.tsx`
-- [ ] `src/components/college/college-faculty-reassign-action.tsx`
-- [ ] `src/components/college/college-faculty-schedule-reassign.tsx`
-- [ ] `src/components/college/college-legacy-group-tabs.tsx`
-- [ ] `src/components/college/college-offering-lifecycle-action.tsx`
-- [ ] `src/components/college/college-offering-metadata-action.tsx`
+- [ ] `src/components/college/college-faculty-lifecycle-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/college-faculty-reassign-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/college-faculty-schedule-reassign.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/college-legacy-group-tabs.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/college-offering-lifecycle-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/college-offering-metadata-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-person-audit-modal.tsx`
 - [ ] `src/components/college/college-person-edit-action.tsx`
 - [ ] `src/components/college/college-person-profile-overview-modal.tsx`
@@ -1044,3 +1044,137 @@ Shared component references from inspected source: `src/components/admin/managed
 **Strict tick result:** **0 newly ticked**. The 8 files were migrated and source-audited, but the required global grep, all-state visual/computed value equality, responsive screenshots and TypeScript parser evidence are not available under lane instructions. Source-only breakpoints are *not* proof of actual rendered phone/tablet UI. No unmatched opening/closing tag families were found in the scoped tag-count checks.
 
 **Exact next file:** `src/components/college/college-admin-profile-editor.tsx` (then department insights and College Admin faculty/student workflows, work queue order).
+
+
+### Replacement chat-4 College Admin academic, profile and faculty UI sweep — 2026-10-19
+
+**Files source-refactored and pushed in this bounded batch:** `src/components/college/college-admin-profile-editor.tsx`; `src/components/college/college-department-insights.tsx`; `src/components/college/college-legacy-group-tabs.tsx`; `src/components/college/college-offering-lifecycle-action.tsx`; `src/components/college/college-offering-metadata-action.tsx`; `src/components/college/college-faculty-reassign-action.tsx`; `src/components/college/college-faculty-schedule-reassign.tsx`; `src/components/college/college-faculty-lifecycle-action.tsx`. Kept service calls, tenant scope, original page contents, routing and existing backend decisions. Only per-file components were edited; shared UI and global styles were not altered. No app execution, browser, TypeScript compiler or CI (lane restriction).
+
+**Scope-limited grep:** fetched each entire updated TSX and applied `/<(button|input|select|textarea|table)\b/g`, `/#[a-f0-9]{3,8}\b/gi`, `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`; opening/closing tag families compared for UI/HTML components. Counts below apply to these eight files only, **not** the full repo.
+
+| File | Raw controls | Hex | Custom overlays | Native h1 | Orphan close families | sm/md/lg prefixes |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| `src/components/college/college-admin-profile-editor.tsx` | 0 | 0 | 0 | 0 | none found | 0/8/0 |
+| `src/components/college/college-department-insights.tsx` | 0 | 0 | 0 | 0 | none found | 0/6/0 |
+| `src/components/college/college-legacy-group-tabs.tsx` | 0 | 0 | 0 | 0 | none found | 0/2/0 |
+| `src/components/college/college-offering-lifecycle-action.tsx` | 0 | 0 | 0 | 0 | none found | 0/1/0 |
+| `src/components/college/college-offering-metadata-action.tsx` | 0 | 0 | 0 | 0 | none found | 0/3/0 |
+| `src/components/college/college-faculty-reassign-action.tsx` | 0 | 0 | 0 | 0 | none found | 0/3/0 |
+| `src/components/college/college-faculty-schedule-reassign.tsx` | 0 | 0 | 0 | 0 | none found | 0/3/0 |
+| `src/components/college/college-faculty-lifecycle-action.tsx` | 0 | 0 | 0 | 0 | none found | 0/2/0 |
+
+#### `src/components/college/college-admin-profile-editor.tsx`
+
+| Property and state | Legacy file/value | Current source/value | Strict result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-pages.md:6: white canvas, 12px radius, 1px #e5e9f0 border, 24px padding, no inner page canvas | Shared Input/Textarea and primary Button; original profile fields and section anchor links retained. | **Shared anatomy only; data dependent** |
+| Default/button | old-lms-shell-spec.md:22-24: 36px height, 9px radius, 14px/650 weight primary teal #0a7c88 white text; secondary white/border | Shared ui/button.tsx:10-29 plus college-admin-profile-editor.tsx:122; Shared Input/Textarea and primary Button; original profile fields and section anchor links retained. | **Token match for shared variant; not every content-specific state** |
+| Field/tab geometry | legacy-styles/components___form.scss:117-143: input radius 10px, 14px/20px, letter spacing .2px, focus 2px teal halo; listing-page-header.scss:26-58 tabs/head separate | Shared ui/input.tsx:13-44, ui/select.tsx and ui/tabs.tsx where used; Shared Input/Textarea and primary Button; original profile fields and section anchor links retained. | **Only existing controls; absent elements N/A** |
+| Hover/active/focus | legacy-styles/components___button.scss:13-24: 150ms transitions, hover/focus colour; form.scss:22-36 keyboard-visible focus retained | ui/button.tsx:10-29 and UI per-category classes; Shared Alert error/success; Button loading/disabled on mutation. Placeholder/readonly login contacts preserved. | **Interactive computed values not rendered** |
+| Disabled/loading | legacy-styles/components___button.scss:49-51: disabled CTA; old-lms-shell-spec.md:22-24 36px desktop | Shared disabled/loading semantics; Shared Alert error/success; Button loading/disabled on mutation. Placeholder/readonly login contacts preserved. | **Pending disabled behaviour source-reviewed; exact legacy palette unresolved** |
+| Error/success/empty | old-lms-pages.md:6,11: inside canvas, error/empty without hand-rolled nested cards | Shared Alert/EmptyState where applicable; Shared Alert error/success; Button loading/disabled on mutation. Placeholder/readonly login contacts preserved. | **State shape moved to shared UI; legacy special copy/sizes unmeasured** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: max 767px stacked, >=768px row; 44px phone hit target | form md:grid-cols-2 at 768px; one column below; internal anchor navigation horizontal overflow below 768px; 44px touch targets. | **Source breakpoint comparison only, browser proof open** |
+
+**Blocking item-specific discrepancy:** Profile anchor pill 8px legacy SCSS provenance missing; image avatar unchanged. No keyboard/viewport replay. No screenshots, keyboard simulation, compiled TSX parse or side-by-side computed style comparison performed. A strict checkbox is therefore left open.
+
+#### `src/components/college/college-department-insights.tsx`
+
+| Property and state | Legacy file/value | Current source/value | Strict result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-pages.md:6: white canvas, 12px radius, 1px #e5e9f0 border, 24px padding, no inner page canvas | PageHeader inside inherited single canvas, native policy box replaced with Alert; shared DataTable and EmptyState. | **Shared anatomy only; data dependent** |
+| Default/button | old-lms-shell-spec.md:22-24: 36px height, 9px radius, 14px/650 weight primary teal #0a7c88 white text; secondary white/border | Shared ui/button.tsx:10-29 plus college-department-insights.tsx:84; PageHeader inside inherited single canvas, native policy box replaced with Alert; shared DataTable and EmptyState. | **Token match for shared variant; not every content-specific state** |
+| Field/tab geometry | legacy-styles/components___form.scss:117-143: input radius 10px, 14px/20px, letter spacing .2px, focus 2px teal halo; listing-page-header.scss:26-58 tabs/head separate | Shared ui/input.tsx:13-44, ui/select.tsx and ui/tabs.tsx where used; PageHeader inside inherited single canvas, native policy box replaced with Alert; shared DataTable and EmptyState. | **Only existing controls; absent elements N/A** |
+| Hover/active/focus | legacy-styles/components___button.scss:13-24: 150ms transitions, hover/focus colour; form.scss:22-36 keyboard-visible focus retained | ui/button.tsx:10-29 and UI per-category classes; Attendance filter and pagination links preserve authorized paths; data service and copy unchanged. | **Interactive computed values not rendered** |
+| Disabled/loading | legacy-styles/components___button.scss:49-51: disabled CTA; old-lms-shell-spec.md:22-24 36px desktop | Shared disabled/loading semantics; Attendance filter and pagination links preserve authorized paths; data service and copy unchanged. | **Pending disabled behaviour source-reviewed; exact legacy palette unresolved** |
+| Error/success/empty | old-lms-pages.md:6,11: inside canvas, error/empty without hand-rolled nested cards | Shared Alert/EmptyState where applicable; Attendance filter and pagination links preserve authorized paths; data service and copy unchanged. | **State shape moved to shared UI; legacy special copy/sizes unmeasured** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: max 767px stacked, >=768px row; 44px phone hit target | PageHeader md breakpoint; filter wrap; link targets 44px below 768px and 36px above. | **Source breakpoint comparison only, browser proof open** |
+
+**Blocking item-specific discrepancy:** DataTable switches to mobile card at 640px (shared owner), different from 767px legacy cutoff; strict match open. No screenshots, keyboard simulation, compiled TSX parse or side-by-side computed style comparison performed. A strict checkbox is therefore left open.
+
+#### `src/components/college/college-legacy-group-tabs.tsx`
+
+| Property and state | Legacy file/value | Current source/value | Strict result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-pages.md:6: white canvas, 12px radius, 1px #e5e9f0 border, 24px padding, no inner page canvas | Uses shared Tabs navigation and StepIndicator; no page-owned tabstrip or nested card. | **Shared anatomy only; data dependent** |
+| Default/button | old-lms-shell-spec.md:22-24: 36px height, 9px radius, 14px/650 weight primary teal #0a7c88 white text; secondary white/border | Shared ui/button.tsx:10-29 plus college-legacy-group-tabs.tsx:n/a; Uses shared Tabs navigation and StepIndicator; no page-owned tabstrip or nested card. | **Token match for shared variant; not every content-specific state** |
+| Field/tab geometry | legacy-styles/components___form.scss:117-143: input radius 10px, 14px/20px, letter spacing .2px, focus 2px teal halo; listing-page-header.scss:26-58 tabs/head separate | Shared ui/input.tsx:13-44, ui/select.tsx and ui/tabs.tsx where used; Uses shared Tabs navigation and StepIndicator; no page-owned tabstrip or nested card. | **Only existing controls; absent elements N/A** |
+| Hover/active/focus | legacy-styles/components___button.scss:13-24: 150ms transitions, hover/focus colour; form.scss:22-36 keyboard-visible focus retained | ui/button.tsx:10-29 and UI per-category classes; Active tab derives from route selected value, links remain keyboard-operable and server-navigation-owned. | **Interactive computed values not rendered** |
+| Disabled/loading | legacy-styles/components___button.scss:49-51: disabled CTA; old-lms-shell-spec.md:22-24 36px desktop | Shared disabled/loading semantics; Active tab derives from route selected value, links remain keyboard-operable and server-navigation-owned. | **Pending disabled behaviour source-reviewed; exact legacy palette unresolved** |
+| Error/success/empty | old-lms-pages.md:6,11: inside canvas, error/empty without hand-rolled nested cards | Shared Alert/EmptyState where applicable; Active tab derives from route selected value, links remain keyboard-operable and server-navigation-owned. | **State shape moved to shared UI; legacy special copy/sizes unmeasured** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: max 767px stacked, >=768px row; 44px phone hit target | Shared Tabs scroll cues; previous/next anchor links 44px below 768px and 36px above. | **Source breakpoint comparison only, browser proof open** |
+
+**Blocking item-specific discrepancy:** Shared tab hover/active underline exact legacy values and tablet overflow not measured. No screenshots, keyboard simulation, compiled TSX parse or side-by-side computed style comparison performed. A strict checkbox is therefore left open.
+
+#### `src/components/college/college-offering-lifecycle-action.tsx`
+
+| Property and state | Legacy file/value | Current source/value | Strict result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-pages.md:6: white canvas, 12px radius, 1px #e5e9f0 border, 24px padding, no inner page canvas | Shared secondary Button and existing useCollegeConfirmation; no inline custom control skin. | **Shared anatomy only; data dependent** |
+| Default/button | old-lms-shell-spec.md:22-24: 36px height, 9px radius, 14px/650 weight primary teal #0a7c88 white text; secondary white/border | Shared ui/button.tsx:10-29 plus college-offering-lifecycle-action.tsx:29; Shared secondary Button and existing useCollegeConfirmation; no inline custom control skin. | **Token match for shared variant; not every content-specific state** |
+| Field/tab geometry | legacy-styles/components___form.scss:117-143: input radius 10px, 14px/20px, letter spacing .2px, focus 2px teal halo; listing-page-header.scss:26-58 tabs/head separate | Shared ui/input.tsx:13-44, ui/select.tsx and ui/tabs.tsx where used; Shared secondary Button and existing useCollegeConfirmation; no inline custom control skin. | **Only existing controls; absent elements N/A** |
+| Hover/active/focus | legacy-styles/components___button.scss:13-24: 150ms transitions, hover/focus colour; form.scss:22-36 keyboard-visible focus retained | ui/button.tsx:10-29 and UI per-category classes; Busy => shared loading/disabled, errors => shared Alert(error), server archive/restore checks intact. | **Interactive computed values not rendered** |
+| Disabled/loading | legacy-styles/components___button.scss:49-51: disabled CTA; old-lms-shell-spec.md:22-24 36px desktop | Shared disabled/loading semantics; Busy => shared loading/disabled, errors => shared Alert(error), server archive/restore checks intact. | **Pending disabled behaviour source-reviewed; exact legacy palette unresolved** |
+| Error/success/empty | old-lms-pages.md:6,11: inside canvas, error/empty without hand-rolled nested cards | Shared Alert/EmptyState where applicable; Busy => shared loading/disabled, errors => shared Alert(error), server archive/restore checks intact. | **State shape moved to shared UI; legacy special copy/sizes unmeasured** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: max 767px stacked, >=768px row; 44px phone hit target | One bounded control with min-h-11 below 768px, min-h-9 from 768px. | **Source breakpoint comparison only, browser proof open** |
+
+**Blocking item-specific discrepancy:** Confirmation is hook-owned; modal and disabled tone computed CSS unverified. No screenshots, keyboard simulation, compiled TSX parse or side-by-side computed style comparison performed. A strict checkbox is therefore left open.
+
+#### `src/components/college/college-offering-metadata-action.tsx`
+
+| Property and state | Legacy file/value | Current source/value | Strict result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-pages.md:6: white canvas, 12px radius, 1px #e5e9f0 border, 24px padding, no inner page canvas | Shared Dialog title (duplicate internal h2 removed), Select, Input and Button tokens, content preserved. | **Shared anatomy only; data dependent** |
+| Default/button | old-lms-shell-spec.md:22-24: 36px height, 9px radius, 14px/650 weight primary teal #0a7c88 white text; secondary white/border | Shared ui/button.tsx:10-29 plus college-offering-metadata-action.tsx:40; Shared Dialog title (duplicate internal h2 removed), Select, Input and Button tokens, content preserved. | **Token match for shared variant; not every content-specific state** |
+| Field/tab geometry | legacy-styles/components___form.scss:117-143: input radius 10px, 14px/20px, letter spacing .2px, focus 2px teal halo; listing-page-header.scss:26-58 tabs/head separate | Shared ui/input.tsx:13-44, ui/select.tsx and ui/tabs.tsx where used; Shared Dialog title (duplicate internal h2 removed), Select, Input and Button tokens, content preserved. | **Only existing controls; absent elements N/A** |
+| Hover/active/focus | legacy-styles/components___button.scss:13-24: 150ms transitions, hover/focus colour; form.scss:22-36 keyboard-visible focus retained | ui/button.tsx:10-29 and UI per-category classes; Disabled edit controls during pending; shared Button loading; both open/closed error Alert(error). | **Interactive computed values not rendered** |
+| Disabled/loading | legacy-styles/components___button.scss:49-51: disabled CTA; old-lms-shell-spec.md:22-24 36px desktop | Shared disabled/loading semantics; Disabled edit controls during pending; shared Button loading; both open/closed error Alert(error). | **Pending disabled behaviour source-reviewed; exact legacy palette unresolved** |
+| Error/success/empty | old-lms-pages.md:6,11: inside canvas, error/empty without hand-rolled nested cards | Shared Alert/EmptyState where applicable; Disabled edit controls during pending; shared Button loading; both open/closed error Alert(error). | **State shape moved to shared UI; legacy special copy/sizes unmeasured** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: max 767px stacked, >=768px row; 44px phone hit target | Controls min-width 0; action row flex-wrap; Button touch min-height 44/36 at 767/768. | **Source breakpoint comparison only, browser proof open** |
+
+**Blocking item-specific discrepancy:** Dialog sizing, focus/hover, number spinner and error border not verified in a browser. No screenshots, keyboard simulation, compiled TSX parse or side-by-side computed style comparison performed. A strict checkbox is therefore left open.
+
+#### `src/components/college/college-faculty-reassign-action.tsx`
+
+| Property and state | Legacy file/value | Current source/value | Strict result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-pages.md:6: white canvas, 12px radius, 1px #e5e9f0 border, 24px padding, no inner page canvas | Shared Dialog title now includes role, Select and Button; duplicate dialog h2 removed. | **Shared anatomy only; data dependent** |
+| Default/button | old-lms-shell-spec.md:22-24: 36px height, 9px radius, 14px/650 weight primary teal #0a7c88 white text; secondary white/border | Shared ui/button.tsx:10-29 plus college-faculty-reassign-action.tsx:40; Shared Dialog title now includes role, Select and Button; duplicate dialog h2 removed. | **Token match for shared variant; not every content-specific state** |
+| Field/tab geometry | legacy-styles/components___form.scss:117-143: input radius 10px, 14px/20px, letter spacing .2px, focus 2px teal halo; listing-page-header.scss:26-58 tabs/head separate | Shared ui/input.tsx:13-44, ui/select.tsx and ui/tabs.tsx where used; Shared Dialog title now includes role, Select and Button; duplicate dialog h2 removed. | **Only existing controls; absent elements N/A** |
+| Hover/active/focus | legacy-styles/components___button.scss:13-24: 150ms transitions, hover/focus colour; form.scss:22-36 keyboard-visible focus retained | ui/button.tsx:10-29 and UI per-category classes; Alert(info) previews scope, Alert(error) for in/out dialog failures, select disabled while pending, save loading. | **Interactive computed values not rendered** |
+| Disabled/loading | legacy-styles/components___button.scss:49-51: disabled CTA; old-lms-shell-spec.md:22-24 36px desktop | Shared disabled/loading semantics; Alert(info) previews scope, Alert(error) for in/out dialog failures, select disabled while pending, save loading. | **Pending disabled behaviour source-reviewed; exact legacy palette unresolved** |
+| Error/success/empty | old-lms-pages.md:6,11: inside canvas, error/empty without hand-rolled nested cards | Shared Alert/EmptyState where applicable; Alert(info) previews scope, Alert(error) for in/out dialog failures, select disabled while pending, save loading. | **State shape moved to shared UI; legacy special copy/sizes unmeasured** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: max 767px stacked, >=768px row; 44px phone hit target | Single-column dialog and flex-wrap footer; actions min-height 44px on phone, 36px >=768px. | **Source breakpoint comparison only, browser proof open** |
+
+**Blocking item-specific discrepancy:** Reassignment policy decision/version token retained; keyboard modal flows and exact legacy modal sizing unverified. No screenshots, keyboard simulation, compiled TSX parse or side-by-side computed style comparison performed. A strict checkbox is therefore left open.
+
+#### `src/components/college/college-faculty-schedule-reassign.tsx`
+
+| Property and state | Legacy file/value | Current source/value | Strict result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-pages.md:6: white canvas, 12px radius, 1px #e5e9f0 border, 24px padding, no inner page canvas | Shared Dialog title, Select, Buttons; native duplicate modal heading removed. | **Shared anatomy only; data dependent** |
+| Default/button | old-lms-shell-spec.md:22-24: 36px height, 9px radius, 14px/650 weight primary teal #0a7c88 white text; secondary white/border | Shared ui/button.tsx:10-29 plus college-faculty-schedule-reassign.tsx:45; Shared Dialog title, Select, Buttons; native duplicate modal heading removed. | **Token match for shared variant; not every content-specific state** |
+| Field/tab geometry | legacy-styles/components___form.scss:117-143: input radius 10px, 14px/20px, letter spacing .2px, focus 2px teal halo; listing-page-header.scss:26-58 tabs/head separate | Shared ui/input.tsx:13-44, ui/select.tsx and ui/tabs.tsx where used; Shared Dialog title, Select, Buttons; native duplicate modal heading removed. | **Only existing controls; absent elements N/A** |
+| Hover/active/focus | legacy-styles/components___button.scss:13-24: 150ms transitions, hover/focus colour; form.scss:22-36 keyboard-visible focus retained | ui/button.tsx:10-29 and UI per-category classes; Errors => Alert(error), completion counts => Alert(success); disabled selection/close while busy retained. | **Interactive computed values not rendered** |
+| Disabled/loading | legacy-styles/components___button.scss:49-51: disabled CTA; old-lms-shell-spec.md:22-24 36px desktop | Shared disabled/loading semantics; Errors => Alert(error), completion counts => Alert(success); disabled selection/close while busy retained. | **Pending disabled behaviour source-reviewed; exact legacy palette unresolved** |
+| Error/success/empty | old-lms-pages.md:6,11: inside canvas, error/empty without hand-rolled nested cards | Shared Alert/EmptyState where applicable; Errors => Alert(error), completion counts => Alert(success); disabled selection/close while busy retained. | **State shape moved to shared UI; legacy special copy/sizes unmeasured** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: max 767px stacked, >=768px row; 44px phone hit target | Modal and action rows wrap; action min-height 44 below 768px /36 above; no mobile custom CSS. | **Source breakpoint comparison only, browser proof open** |
+
+**Blocking item-specific discrepancy:** Bulk row list and modal scrolling not browser-tested; response mapping and race controls not changed. No screenshots, keyboard simulation, compiled TSX parse or side-by-side computed style comparison performed. A strict checkbox is therefore left open.
+
+#### `src/components/college/college-faculty-lifecycle-action.tsx`
+
+| Property and state | Legacy file/value | Current source/value | Strict result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-pages.md:6: white canvas, 12px radius, 1px #e5e9f0 border, 24px padding, no inner page canvas | Hand-built inline confirmation converted to shared ConfirmDialog with reason Input; audit-history Link remains. | **Shared anatomy only; data dependent** |
+| Default/button | old-lms-shell-spec.md:22-24: 36px height, 9px radius, 14px/650 weight primary teal #0a7c88 white text; secondary white/border | Shared ui/button.tsx:10-29 plus college-faculty-lifecycle-action.tsx:61; Hand-built inline confirmation converted to shared ConfirmDialog with reason Input; audit-history Link remains. | **Token match for shared variant; not every content-specific state** |
+| Field/tab geometry | legacy-styles/components___form.scss:117-143: input radius 10px, 14px/20px, letter spacing .2px, focus 2px teal halo; listing-page-header.scss:26-58 tabs/head separate | Shared ui/input.tsx:13-44, ui/select.tsx and ui/tabs.tsx where used; Hand-built inline confirmation converted to shared ConfirmDialog with reason Input; audit-history Link remains. | **Only existing controls; absent elements N/A** |
+| Hover/active/focus | legacy-styles/components___button.scss:13-24: 150ms transitions, hover/focus colour; form.scss:22-36 keyboard-visible focus retained | ui/button.tsx:10-29 and UI per-category classes; Validation >=3 chars; shared danger/primary confirmation; Alert(error/success); loading/disabled guards preserved. | **Interactive computed values not rendered** |
+| Disabled/loading | legacy-styles/components___button.scss:49-51: disabled CTA; old-lms-shell-spec.md:22-24 36px desktop | Shared disabled/loading semantics; Validation >=3 chars; shared danger/primary confirmation; Alert(error/success); loading/disabled guards preserved. | **Pending disabled behaviour source-reviewed; exact legacy palette unresolved** |
+| Error/success/empty | old-lms-pages.md:6,11: inside canvas, error/empty without hand-rolled nested cards | Shared Alert/EmptyState where applicable; Validation >=3 chars; shared danger/primary confirmation; Alert(error/success); loading/disabled guards preserved. | **State shape moved to shared UI; legacy special copy/sizes unmeasured** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: max 767px stacked, >=768px row; 44px phone hit target | Trigger and history action min-height 44px below 768px, 36px above; modal follows shared Dialog layout. | **Source breakpoint comparison only, browser proof open** |
+
+**Blocking item-specific discrepancy:** Different surface from previous inline confirmation; exact legacy policy modal unspecified, requires interaction review. No screenshots, keyboard simulation, compiled TSX parse or side-by-side computed style comparison performed. A strict checkbox is therefore left open.
+
+**Strict tick count:** 0 in this set. Full-scope zero-grep, complete every-state visual values, recorded phone+tablet screenshots and typecheck not available; the shared `PageHeader` typography and `DataTable` 640/767 switch are known upstream discrepancies. The source scans are proof of changes, not proof of full pixel parity.
+
+**Exact next file:** `src/components/college/college-faculty-assignment-actions.tsx`, then `college-faculty-csv-import.tsx`, `college-person-*`, and the remaining unticked College Admin queue.
