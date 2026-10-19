@@ -39,7 +39,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
    void send("/api/placements/tpo/settings/job-types","POST",{label:label.trim(),countsAsPlaced});
   }}>
    <label className="min-w-0 flex-1 text-sm">New job type
-    <input className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3"
+    <input className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground"
      maxLength={40} minLength={2} value={label} disabled={busy} onChange={event=>setLabel(event.target.value)}/>
    </label>
    <fieldset className="space-x-3 text-sm"><legend>Does an offer of this type count as placed?</legend>
