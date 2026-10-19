@@ -328,7 +328,7 @@ export function CreateProjectControl({
             </Select>
           </label>
           {!mentorMembershipId?<p className="text-xs text-warning">This workspace has no mentor.</p>:null}
-          {sectionId?<section className="rounded-lg border border-border p-3">
+          {sectionId?<section className="min-w-0 border-b border-border pb-4">
             <p className="mb-2 text-sm font-semibold">Students · {learnerMembershipIds.length} selected</p>
             {rosterError?<p role="alert" className="text-sm text-error">Class roster could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setRosterError(false);setRosterRetry(value=>value+1);}}>Try again</Button></p>:null}
             {!rosterError&&loadedRosterSectionId!==sectionId?<p role="status" className="text-sm text-body">Loading class roster…</p>:null}
@@ -338,8 +338,8 @@ export function CreateProjectControl({
               <Button variant="ghost" type="button" className="text-primary-text underline"
                 onClick={()=>setLearnerMembershipIds([])}>Clear</Button>
             </div>
-            <div className="mt-3 max-h-40 space-y-2 overflow-y-auto">
-              {roster.map(student=><label key={student.membershipId} className="flex items-center gap-2 text-sm">
+            <div className="mt-3 max-h-40 min-w-0 space-y-2 overflow-y-auto overscroll-contain">
+              {roster.map(student=><label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 break-words text-sm">
                 <input type="checkbox" checked={learnerMembershipIds.includes(student.membershipId)}
                   onChange={e=>setLearnerMembershipIds(old=>e.target.checked?
                     [...old,student.membershipId]:old.filter(id=>id!==student.membershipId))}/>

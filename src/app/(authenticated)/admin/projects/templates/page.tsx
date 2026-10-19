@@ -56,7 +56,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <PageHeader title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
-   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">New template →</Link>:undefined}/>
+   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">New template →</Link>:undefined}/>
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
@@ -75,7 +75,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   {data.items.length?<div className="grid gap-4 md:grid-cols-2">
    {data.items.map(item=><article key={item.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <div className="flex flex-wrap items-start justify-between gap-2">
-     <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
+     <h2 className="m-0 break-words text-base font-semibold text-[var(--lms-heading)]">{item.title}</h2>
      <StatusBadge tone={tone(item.status)}>{item.status}</StatusBadge>
     </div>
     <p className="mt-1 text-xs text-muted-foreground">{item.slug}</p>
@@ -89,7 +89,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     <p className="mt-3 text-sm text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"} · {item.activeAssignments} active assignments in scope</p>
     <div className="mt-3 flex flex-wrap items-center gap-3">
       <Link href={`/admin/projects/templates/${encodeURIComponent(item.id)}`}
-       className="inline-flex min-h-11 items-center font-semibold text-primary-text">Inspect template →</Link>
+       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-2 font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Inspect template →</Link>
       {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
         templateId={item.id} title={item.title} status={item.status}/>:null}
     </div>

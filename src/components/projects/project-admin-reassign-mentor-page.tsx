@@ -10,6 +10,7 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectMentorReassignment } from "@/components/projects/project-mentor-reassignment";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import {ErrorState} from "@/components/ui/error-state";
 import {parseProjectAdminReassignMentorQuery,projectAdminReassignMentorHref} from "@/modules/projects/admin-reassign-mentor-query-model";
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
@@ -73,8 +74,7 @@ export async function ProjectAdminReassignMentorPage({
       <PageHeader
         title="Bulk mentor reassignment"
         description="Move selected non-archived project workspaces to a new primary mentor."
-        actions={<Link href={basePath}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Back to workspaces</Link>}
+        actions={<PageBackLink href={basePath} label="Back to workspaces" />}
       />
       <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold">Mentor workload</h2>

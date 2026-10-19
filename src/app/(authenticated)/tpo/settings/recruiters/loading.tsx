@@ -1,17 +1,12 @@
+import { Skeleton } from "@/components/ui/skeleton";
+
 export default function TpoRecruiterAccessLoading() {
   return (
-    <div
-      aria-busy="true"
-      aria-label="Loading recruiter college grants"
-      className="space-y-5"
-    >
-      <div className="h-12 animate-pulse rounded-xl bg-muted" />
-
-      <div className="h-36 animate-pulse rounded-xl bg-muted" />
-
-      <div className="h-80 animate-pulse rounded-xl bg-muted" />
-
-      <div className="h-12 animate-pulse rounded-xl bg-muted" />
+    <div aria-busy="true" aria-label="Loading recruiter college grants" className="space-y-5">
+      <Skeleton variant="row" height={48} label="Loading recruiter college grants" />
+      <Skeleton variant="row" height={144} label="Loading recruiter college grants" />
+      <Skeleton variant="row" height={320} label="Loading recruiter college grants" />
+      <Skeleton variant="row" height={48} label="Loading recruiter college grants" />
     </div>
   );
 }

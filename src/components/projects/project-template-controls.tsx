@@ -197,7 +197,7 @@ export function CreateProjectTemplateControl() {
               }
             />
           </label>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid min-w-0 gap-3 min-[992px]:grid-cols-3">
             <label>
               <span className="mb-1.5 block text-xs font-semibold text-body">
                 Release

@@ -11,7 +11,7 @@ type Run = { when: string; students: number; created: number; failed: number };
 export function SuperAdminStudentImportHistory({ runs }: { runs: readonly Run[] }) {
   const [open, setOpen] = useState(false);
   return <>
-    <Button variant="secondary" type="button" onClick={() => setOpen(true)}>
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={() => setOpen(true)}>
       Import History
     </Button>
     <Dialog open={open} onOpenChange={setOpen} title="Bulk import history"

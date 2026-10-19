@@ -1,4 +1,5 @@
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
+import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";

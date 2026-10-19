@@ -31,6 +31,11 @@ import {learnerNoticeEmptyLabel} from "@/modules/placements/learner-notice-empty
 import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref, learnerNoticeMissing, learnerNoticeRecoveryHref } from "@/modules/placements/learner-notice-deep-link-model";
 import {TpoNoticeAcknowledge} from "@/components/tpo/tpo-notice-acknowledge";
 
+// Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
+const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[14px] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
+// Legacy mobile (<768px): single-line horizontal strip; desktop wraps (SCSS:56-74).
+const placementFilterNavClass = "min-w-0 max-w-[calc(100vw-48px)] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:max-w-full sm:flex-wrap sm:overflow-visible sm:pb-0";
+
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
   searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[]; alertQ?:string | string[]; focus?:string | string[]; source?:string | string[] }>;
 }) {
@@ -117,27 +122,27 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         </label>
         <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Apply sort</Button>
       </form>
-      <nav aria-label="Notice filter" className="flex flex-wrap gap-3 text-sm">
-        <Link href={learnerNoticeFilterHref({pinned:false,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={!pinnedOnly ? "page" : undefined} className="rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-primary-text inline-flex min-h-11 items-center whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">All notices</Link>
-        <Link href={learnerNoticeFilterHref({pinned:true,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={pinnedOnly ? "page" : undefined} className="rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-primary-text inline-flex min-h-11 items-center whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">Pinned only</Link>
+      <nav aria-label="Notice filter" className={placementFilterNavClass}>
+        <Link href={learnerNoticeFilterHref({pinned:false,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={!pinnedOnly ? "page" : undefined} className={placementFilterPillClass}>All notices</Link>
+        <Link href={learnerNoticeFilterHref({pinned:true,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={pinnedOnly ? "page" : undefined} className={placementFilterPillClass}>Pinned only</Link>
       </nav>
-      <nav aria-label="Notice author filter" className="flex flex-wrap gap-3 text-sm">
+      <nav aria-label="Notice author filter" className={placementFilterNavClass}>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source:"all"})}
           aria-current={source==="all"?"page":undefined}
-          className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text inline-flex min-h-11 items-center whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">
+          className={placementFilterPillClass}>
           All college notice authors
         </Link>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source:"placement-cell"})}
           aria-current={source==="placement-cell"?"page":undefined}
-          className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text inline-flex min-h-11 items-center whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">
+          className={placementFilterPillClass}>
           Placement-cell authored
         </Link>
       </nav>
-      <nav aria-label="Notice recency filter" className="flex flex-wrap gap-3 text-sm">
+      <nav aria-label="Notice recency filter" className={placementFilterNavClass}>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:false,q:queryText,sort:sortKey,alertQ,source})} aria-current={!recentOnly ? "page" : undefined}
-          className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text inline-flex min-h-11 items-center whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">All available dates</Link>
+          className={placementFilterPillClass}>All available dates</Link>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:true,q:queryText,sort:sortKey,alertQ,source})} aria-current={recentOnly?"page":undefined}
-          className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text inline-flex min-h-11 items-center whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">Last 30 days</Link>
+          className={placementFilterPillClass}>Last 30 days</Link>
       </nav>
       <p className="text-xs text-muted-foreground">These college-targeted announcements may include notices published by your placement cell. Only notices addressed to your membership are displayed.</p>
       {pageClamped && collegeNoticesRead.available ? (
@@ -220,9 +225,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-9 sm:min-h-9 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text">Next</Link> : null}
       </nav> : null}
       <div id="personal-updates" className="scroll-mt-24"/>
-      <nav aria-label="Personal alert filter" className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text inline-flex min-h-11 items-center whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]" aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
-        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text inline-flex min-h-11 items-center whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]" aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
+      <nav aria-label="Personal alert filter" className={placementFilterNavClass}>
+        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
+        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
       </nav>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
         {pinnedOnly?<Input type="hidden" name="pinned" value="1"/>:null}

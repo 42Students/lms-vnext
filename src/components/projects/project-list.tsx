@@ -73,7 +73,7 @@ export function ProjectList({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-2 min-[1366px]:grid-cols-3">
       {items.map((item) => (
         <Link
           key={item.id}
@@ -128,7 +128,7 @@ export function ProjectList({
           </p>
 
           {(item.mentorName || item.memberCount !== undefined || item.progressPercent !== undefined) ? (
-            <div className="mt-4 grid grid-cols-3 gap-2 rounded-[var(--lms-control-radius)] bg-muted p-3 text-xs">
+            <div className="mt-4 grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border py-3 text-xs min-[425px]:grid-cols-3 min-[425px]:divide-x min-[425px]:divide-y-0 [&>*]:min-w-0 [&>*]:px-2 [&>*]:py-2 min-[425px]:[&>*]:py-0">
               <div>
                 <p className="m-0 font-semibold text-muted-foreground">Mentor</p>
                 <p className="mt-1 truncate font-semibold text-foreground">

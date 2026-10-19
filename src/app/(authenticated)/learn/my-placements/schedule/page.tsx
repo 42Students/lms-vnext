@@ -1,3 +1,5 @@
+import { Tabs } from "@/components/ui/tabs";
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Suspense } from "react";
@@ -101,18 +103,13 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   };
   return (
     <div className="min-w-0 space-y-6">
-      <p className="text-sm text-body">Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice.</p>
+      <PageHeader title="Schedule" description="Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice." />
       {needsConfirmation>0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm font-semibold">{needsConfirmation} rounds need your confirmation</p>:null}
-      <nav aria-label="Schedule view" className="flex flex-wrap gap-2">
-        {([
-          ["coming","Coming up"],["past","Past"],["calendar","Calendar"],
-        ] as const).map(([key,label])=><Link key={key}
-          href={"/learn/my-placements/schedule?view="+key} aria-current={view===key?"page":undefined}
-          className={"inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold "+
-            (view===key?"border-primary bg-primary-subtle text-primary-text":"border-border text-foreground")}>
-          {label}
-        </Link>)}
-      </nav>
+      <Tabs ariaLabel="Schedule view" value={view} renderPanel={false} items={[
+        { value: "coming", label: "Coming up", href: "/learn/my-placements/schedule?view=coming" },
+        { value: "past", label: "Past", href: "/learn/my-placements/schedule?view=past" },
+        { value: "calendar", label: "Calendar", href: "/learn/my-placements/schedule?view=calendar" },
+      ]} />
       {view==="coming"?<section className="space-y-3" aria-label="Coming up">
         <h2 className="text-lg font-semibold text-foreground">Coming up ({ahead.length} dated)</h2>
         {ahead.length === 0 && undated.length === 0 ? <p className="text-body">Nothing coming up. When a company&apos;s round is planned, it shows here.</p> : null}

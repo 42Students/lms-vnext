@@ -1,2 +1,4 @@
 "use client";
-export default function Error({reset}:{error:Error;reset:()=>void}){return <section role="alert" className="rounded border border-border bg-surface p-6">Could not load offer evidence. <button type="button" onClick={reset} className="min-h-10 underline">Retry</button></section>}
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+export default function Error({reset}:{error:Error;reset:()=>void}){return <Alert tone="error">Could not load offer evidence. <Button type="button" variant="secondary" onClick={reset}>Retry</Button></Alert>}
