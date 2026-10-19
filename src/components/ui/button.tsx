@@ -23,7 +23,7 @@ const sizeClasses = {
 } as const;
 
 export function Button({ className, variant = "primary", size = "md", loading = false, type = "button", disabled, children, ...props }: ButtonProps) {
-  return <button data-slot="button" data-variant={variant} type={type} disabled={disabled || loading} {...props}
+  return <button data-slot="button" data-variant={variant} data-loading={loading ? "true" : undefined} type={type} disabled={disabled || loading} {...props}
     aria-busy={loading ? true : props["aria-busy"]}
     className={cx("inline-flex min-h-[var(--lms-control-height)] cursor-pointer items-center justify-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border font-[650] leading-5 min-w-0 max-w-full text-center whitespace-normal break-words shadow-none outline-none motion-safe:transition-colors motion-safe:duration-[var(--lms-motion-fast)] motion-safe:ease-[var(--lms-motion-ease)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-100 disabled:shadow-none aria-busy:cursor-progress aria-busy:pointer-events-none enabled:active:translate-y-px motion-reduce:active:translate-y-0", variantClasses[variant], sizeClasses[size], className)}
     >{loading ? <span aria-hidden="true" className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none" /> : null}{children}</button>;
