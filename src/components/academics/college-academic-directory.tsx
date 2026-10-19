@@ -35,7 +35,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
         }
       />
       {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
-      <section aria-label={title + " filters"} className="- sm: border-t border-border pt-4">
+      <section aria-label={title + " filters"} className="sm: border-t border-border pt-4">
         <form action={path} method="get" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">
             {semesters ? "Semester or program" : "Batch or program"}
