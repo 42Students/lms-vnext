@@ -25,7 +25,7 @@ export default async function TpoStudentNoticesSettings(){
   hasMore:announcements.status==="READY"&&announcements.hasMore});
  return <div className="min-w-0 space-y-5">
   <TpoSettingsNav active="notices"/>
-  <h1 className="text-xl font-semibold">Student Notices &amp; Preparation</h1>
+  <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Student Notices &amp; Preparation</h1>
   <p className="text-sm text-body">Use registered placement announcements and preparation settings. This page does not enable email/SMS delivery, bulk learner targeting or unregistered configuration switches.</p>
   <section className="space-y-3 border-t border-border pt-5">
    <h2 className="font-semibold">College placement notices</h2>

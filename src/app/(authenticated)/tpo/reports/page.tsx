@@ -41,7 +41,7 @@ export default async function TpoReportsPage({
   const parsedGroup=tpoReportGalleryGroupSchema.safeParse(first(query.group)??"ALL");
   if(!parsedSearch.success||!parsedGroup.success)return <section role="alert"
     className="rounded-xl border border-border bg-surface p-6">
-    <h1 className="font-semibold text-foreground">Invalid report search</h1>
+    <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Invalid report search</h1>
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
     <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">
       Clear search
@@ -186,7 +186,7 @@ export default async function TpoReportsPage({
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-white"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-white"
           >
             Open management view
           </Link>
@@ -242,7 +242,7 @@ export default async function TpoReportsPage({
             </option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-white">Search</button>
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 font-[650] text-white">Search</button>
         <Link href={reportHref("/tpo/reports",workspace)}
           className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
           Clear
