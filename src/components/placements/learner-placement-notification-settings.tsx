@@ -1,3 +1,4 @@
+import { Checkbox } from "@/components/ui/checkbox";
 "use client";
 
 import { useState } from "react";
@@ -61,16 +62,16 @@ export function LearnerPlacementNotificationSettings({initial}:{
     </p>
     <div className="mt-5 grid gap-4">
       <label className="flex min-h-12 items-start gap-3 rounded-[var(--lms-control-radius)] border border-border p-4">
-        <input type="checkbox" checked={matching} onChange={e=>setMatching(e.target.checked)}
-          disabled={pending} className="mt-1 h-5 w-5 shrink-0" />
+        <Checkbox checked={matching} onChange={e=>setMatching(e.target.checked)}
+          disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Matching opportunities</span>
           <span className="mt-1 block text-sm text-body">
             Choose whether to receive matching placement-job notifications.
           </span></span>
       </label>
       <label className="flex min-h-12 items-start gap-3 rounded-[var(--lms-control-radius)] border border-border p-4">
-        <input type="checkbox" checked={updates} onChange={e=>setUpdates(e.target.checked)}
-          disabled={pending} className="mt-1 h-5 w-5 shrink-0" />
+        <Checkbox checked={updates} onChange={e=>setUpdates(e.target.checked)}
+          disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Application updates</span>
           <span className="mt-1 block text-sm text-body">
             Choose whether to receive application-stage notifications.
