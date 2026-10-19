@@ -330,7 +330,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
               <div className="flex flex-wrap items-center gap-2">
                 <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Open drive</Link>
                 <Dropdown align="end" label={"More actions for "+job.company+" "+job.title} trigger="More ···">
-                  <nav aria-label={"Drive links for "+job.title} className="absolute right-0 z-10 mt-1 min-w-48 space-y-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 shadow-[0_14px_16px_rgba(0,0,0,0.04)]">
+                  <nav aria-label={"Drive links for "+job.title} className="min-w-48 space-y-1">
                     <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/applicants"}>Applicants</Link>
                     <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/rounds"}>Rounds and schedule</Link>
                     <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/offers"}>Offers</Link>
