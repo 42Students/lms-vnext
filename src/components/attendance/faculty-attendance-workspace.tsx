@@ -702,8 +702,8 @@ export function FacultyAttendanceWorkspace({
               description="Choose another month or schedule a class for this Course."
             />
           ) : (
-            <section className="rounded-xl border border-border bg-surface p-4">
-              <ScrollCue axis="x" label="Faculty attendance monthly grid" className="min-w-0">
+            <section className="min-w-0">
+              <ScrollCue axis="x" label="Faculty attendance monthly grid" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border">
               <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
                 <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>

@@ -191,11 +191,11 @@ export function TpoRoundDriveDayReadOnly({
           Applicant progress
         </h2>
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 lg:grid-cols-4">
           {summary.map(([label, count]) => (
             <div
               key={label}
-              className="border-b border-border px-1 py-4"
+              className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 lg:border-b-0"
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {label}

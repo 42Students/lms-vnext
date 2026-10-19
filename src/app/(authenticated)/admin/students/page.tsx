@@ -58,8 +58,8 @@ export default async function SuperAdminStudentsPage({searchParams}:{
  });
  return <div className="min-w-0 space-y-4">
   {context.adminScope?.collegeId?<div className="flex flex-wrap items-center gap-3 border-b border-border pb-4">
-    <a href="#register-student" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Register New Student ↓</a>
-    <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" href="/admin/people">
+    <a href="#register-student" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Register New Student ↓</a>
+    <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/admin/people">
       Manage memberships, profiles and account status →
     </Link>
   </div>:null}
