@@ -172,7 +172,7 @@ export function TpoRoundResultRecorder({
               value={outcome}
               disabled={busy}
               onChange={(event) => setOutcome(event.target.value as Outcome)}
-              className="mt-1 w-full rounded border border-border bg-surface p-2 text-foreground"
+              className="mt-1 w-full rounded-[9px] border border-border bg-surface p-2 text-foreground"
             >
               {Object.entries(TPO_RESULT_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
@@ -189,7 +189,7 @@ export function TpoRoundResultRecorder({
                 value={rank}
                 onChange={(event) => setRank(event.target.value)}
                 disabled={busy}
-                className="mt-1 w-full rounded border border-border bg-surface p-2 text-foreground"
+                className="mt-1 w-full rounded-[9px] border border-border bg-surface p-2 text-foreground"
               />
             </label>
           ) : null}
@@ -201,14 +201,14 @@ export function TpoRoundResultRecorder({
               value={message}
               onChange={(event) => setMessage(event.target.value)}
               disabled={busy}
-              className="mt-1 w-full rounded border border-border bg-surface p-2 text-foreground"
+              className="mt-1 w-full rounded-[9px] border border-border bg-surface p-2 text-foreground"
             />
           </label>
           <button
             type="button"
             disabled={busy}
             onClick={() => void submitStage()}
-            className="min-h-9 rounded bg-primary px-3 font-[650] text-on-primary disabled:opacity-50 text-primary-foreground"
+            className="min-h-9 rounded-[9px] bg-primary px-3 font-semibold text-on-primary disabled:opacity-50 text-primary-foreground"
           >
             {busy ? "Saving..." : "Confirm staged result"}
           </button>
@@ -219,7 +219,7 @@ export function TpoRoundResultRecorder({
           type="button"
           disabled={busy}
           onClick={() => void submitApply()}
-          className="min-h-9 rounded border border-primary px-3 font-semibold text-primary-text disabled:opacity-50"
+          className="min-h-9 rounded-[9px] border border-primary px-3 font-semibold text-primary-text disabled:opacity-50"
         >
           {busy ? "Applying..." : "Confirm and apply staged result"}
         </button>

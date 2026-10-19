@@ -91,7 +91,7 @@ export function TpoRoundDriveDayReadOnly({
               "/tpo/placements/jobs/" +
               encodeURIComponent(data.job.id)
             }
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-muted"
           >
             ← Back to job Drive Day
           </Link>
@@ -99,8 +99,8 @@ export function TpoRoundDriveDayReadOnly({
       />
 
       <nav aria-label="Round operational actions" className="flex flex-wrap gap-3">
-        <Link href={destinations.results} className="inline-flex min-h-11 md:min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Review round results →</Link>
-        <Link href={destinations.schedule} className="inline-flex min-h-11 md:min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Candidate schedule →</Link>
+        <Link href={destinations.results} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">Review round results →</Link>
+        <Link href={destinations.schedule} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">Candidate schedule →</Link>
       </nav>
       <p className="text-sm text-body">
         <a
