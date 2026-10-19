@@ -1,3 +1,4 @@
+import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Tabs } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -119,22 +120,12 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         </Link>
       </div>
 
-      {result.choices.length > 1 ? (
-        <div className="flex flex-wrap gap-2" aria-label="College access">
-          {result.choices.map((grant) => (
-            <Link
-              key={grant.id}
-              href={"/hr/company?collegeId=" + encodeURIComponent(grant.collegeId) + "&tab=" + tab}
-              aria-current={grant.collegeId === result.grant.collegeId ? "page" : undefined}
-              className={grant.collegeId === result.grant.collegeId
-                ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-1.5 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
-            >
-              {grant.collegeName}
-            </Link>
-          ))}
-        </div>
-      ) : null}
+      {result.choices.length > 1 ? <NeedsDoingChips label="College access:"
+        selectedKey={result.grant.collegeId}
+        items={result.choices.map(grant=>({
+          key:grant.collegeId,label:grant.collegeName,
+          href:"/hr/company?collegeId="+encodeURIComponent(grant.collegeId)+"&tab="+tab,
+        }))}/> : null}
 
       <Tabs renderPanel={false} ariaLabel="Company and team sections" value={tab}
         items={[{value:"company",label:"Company",href:base+"&tab=company"},
