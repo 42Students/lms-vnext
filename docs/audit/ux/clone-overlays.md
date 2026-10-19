@@ -462,3 +462,18 @@ git grep -nE 'aria-modal|data-closing|prefers-reduced-motion' -- src/components/
 **F1 [ ], F2 [ ] remain unticked.** GitHub-indexed candidate checks are bounded, not a checkout grep. Exact legacy dropdown z-index, popover exit timing, toast timeout policy, all consumer responsive/hover/disabled states and actual browser behavior are still open.
 
 **Next file for F2:** `src/components/ui/popover.tsx` — finish disabled/listbox keyboard interaction audit; then `src/components/ui/menu.tsx` and `src/components/ui/toast.tsx` for row/notification state completeness.
+
+
+### Final F2 keyboard-inert-option follow-up (same turn)
+
+- [x] `src/components/ui/popover.tsx`: `PopoverListbox` now filters `[aria-disabled="true"]` ancestry as well as hidden/inert, zero-geometry elements before arrow/home/end focus; keeps editable caret handling, Escape dismissal and the same closing `</div>` and `</section>` tags.
+- [x] `src/components/ui/menu.tsx`: all roving `MenuItem` candidates exclude disabled ancestry in addition to local disabled and hidden/inert; menu entry height `44px` and 200ms hover/active values retain their prior source matching.
+- [x] `src/components/ui/dropdown.tsx`: both summary-first and open-menu traversal use matching filter, so nested disabled/hidden descendants cannot gain programmatic focus; the mobile 767px cutoff, summary closure, Escape, outside-pointer and desktop inline exceptions remain unchanged.
+
+| State | Legacy reference | vNext result | Gate |
+| --- | --- | --- | --- |
+| Menu touch minimum | `components___notification-drawer.scss:21,37-49`: 44px | `src/components/ui/menu.tsx:39`: `min-h-11` | Numeric match |
+| Menu hover / active | `components___notification-drawer.scss:18-19`: `.035`/`.06` neutral black | `menu.tsx:39`, `legacy-overlays.css:173-178` | Numeric match |
+| Menu keyboard disabled ancestry | No canonical behavior in old SCSS | `menu.tsx:15-16`, `popover.tsx:47-55`, `dropdown.tsx:122,132`: excludes aria-disabled ancestry | Source functionality complete; browser unverified |
+
+**Strict category status: F1 [ ], F2 [ ].** Even the 87-file indexed JSX scan is not a checkout-wide grep; the viewport comparison tables above prove source breakpoints only. No application, CI or screenshot execution.
