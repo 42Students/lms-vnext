@@ -11,7 +11,7 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  const [{deliveryId},raw]=await Promise.all([params,searchParams]);
  const parsed=parseFacultyReportsHubLocation(deliveryId,raw);
  if(!parsed.success)return <section role="alert">
- <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid report filters</h1>
+ <PageHeader title="Invalid report filters" />
  <Link href="/teacher/courses" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Courses</Link>
  </section>;
  const data=await getFacultyReportsHub(await getCurrentRequestContext(),parsed.data);
