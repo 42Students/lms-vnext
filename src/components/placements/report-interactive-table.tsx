@@ -92,7 +92,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       </label>)}
      </div>
     </Dropdown>
-    <Dropdown mobileSheet align="end" label="Report visible columns" trigger="Columns">
+    <Dropdown mobileSheet align="end" label="Report visible columns" trigger={"Columns ("+(headings.length-hidden.length)+"/"+headings.length+")"}>
      <fieldset aria-label="Report columns, scroll for more" tabIndex={0} className="min-h-0 space-y-2">
       <legend className="sr-only">Choose report columns</legend>
       <Button variant="secondary" type="button" onClick={event=>{
