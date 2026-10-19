@@ -814,17 +814,9 @@ export default async function HrPlacementJobPage({
             <p className="mt-1 text-sm text-body">Authorized, placement-cell-shortlisted candidates only. STAGED means awaiting college review; APPLIED means official college-applied outcome.</p>
           </div>
           {workspace.rounds.length ? <>
-            <nav aria-label="Choose results round" className="flex flex-wrap gap-2">
-              {workspace.rounds.map(round => (
-                <Link key={round.id} href={hrInlineRoundResultsHref(workspace.job.id,round.id,"ALL")}
-                  aria-current={selectedRound?.id === round.id ? "page" : undefined}
-                  className={selectedRound?.id === round.id
-                    ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm text-on-primary"
-                    : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-body"}>
-                  {round.sequence}. {round.name}
-                </Link>
-              ))}
-            </nav>
+            <Tabs renderPanel={false} ariaLabel="Choose results round" value={selectedRound?.id??""}
+              items={workspace.rounds.map(round=>({value:round.id,label:round.sequence+". "+round.name,
+                href:hrInlineRoundResultsHref(workspace.job.id,round.id,"ALL")}))}/>
             {inlineResults ? inlineResults.round.kind === "TALK"
               ? <p className="text-sm text-muted-foreground">Informational rounds do not record candidate outcomes.</p>
               : <>
