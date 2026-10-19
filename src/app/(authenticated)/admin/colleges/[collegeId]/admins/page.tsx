@@ -14,7 +14,7 @@ export default async function CollegeAdministratorsPage({params}:{
  const context=await getCurrentRequestContext();
  const data=await listCollegeAdminSessionTargets(context,collegeId);
  return <div className="min-w-0 space-y-5">
-  <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)} className="text-sm font-semibold text-primary-text underline">← College setup</Link>
+  <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">← College setup</Link>
   <PageHeader eyebrow="Super Admin · Tenant" title={data.college.name+" · Admins"}
    description="Manage college administrators and placement-cell officers in this college. New accounts use the canonical college membership workflow."/>
   <div className="flex flex-wrap gap-3">

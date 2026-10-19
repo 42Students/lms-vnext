@@ -117,11 +117,11 @@ export async function ProjectAdminSubmissionsPage({
         description="Final project deliverables across all workspaces."
       />
 
-      <nav aria-label="Submission categories" className="flex flex-wrap gap-3 text-sm font-semibold">
+      <nav aria-label="Submission categories" className="flex flex-wrap gap-3 border-b border-border text-sm font-semibold">
         <Link href={projectAdminSubmissionHref(queuePath,query)} aria-current={view==="ALL"?"page":undefined}
-          className="inline-flex min-h-9 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text">All submissions</Link>
+          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text">All submissions</Link>
         <Link href={projectAdminUnsubmittedHref(queuePath,query)} aria-current={view==="NOT_SUBMITTED"?"page":undefined}
-          className="inline-flex min-h-9 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text">Not submitted</Link>
+          className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-primary-text aria-[current=page]:border-primary aria-[current=page]:text-primary-text">Not submitted</Link>
       </nav>
       <nav aria-label="Review status shortcuts" className="flex flex-wrap gap-2 text-xs font-semibold">
         <Link href={projectAdminSubmissionHref(queuePath,query,"UNDER_REVIEW")}

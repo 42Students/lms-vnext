@@ -1,6 +1,8 @@
 "use client";
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 import {
   APPLICANT_NOTE_MAX_LENGTH,
   type ApplicantNotesSnapshot,
@@ -87,12 +89,12 @@ export function ApplicantNotesPanel({
       <form onSubmit={(e) => void submit(e)} className="space-y-2">
         <label className="block text-sm font-semibold text-body">
           Add a note
-          <textarea
+          <Textarea
             required
             name="body"
             rows={3}
             maxLength={APPLICANT_NOTE_MAX_LENGTH}
-            className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"
+            className="mt-2 w-full"
           />
         </label>
         {error ? (
@@ -100,13 +102,13 @@ export function ApplicantNotesPanel({
             {error}
           </p>
         ) : null}
-        <button
+        <Button
           type="submit"
           disabled={pending}
-          className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50"
+          
         >
           {pending ? "Saving…" : "Save note"}
-        </button>
+        </Button>
       </form>
     </section>
   );

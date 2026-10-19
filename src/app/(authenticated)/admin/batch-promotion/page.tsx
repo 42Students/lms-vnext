@@ -1,3 +1,4 @@
+import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
@@ -69,7 +70,7 @@ export default async function SuperAdminBatchPromotionPage({
           defaultValue={input.data.yearStart ?? ""} className="min-h-11 sm:min-h-9" />
       </label>
       <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
-        <input name="showCompleted" type="checkbox" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
+        <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
       <Button type="submit" className="min-h-11 sm:min-h-9 self-end">Preview</Button>
     </form>
@@ -153,6 +154,6 @@ export default async function SuperAdminBatchPromotionPage({
         </div> : <EmptyState title="No enrolled learners" description="No registered learner enrollments were present for this batch." />}
       </section>
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] hover:underline sm:min-h-9">← Academics</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline sm:min-h-9">← Academics</Link>
   </div>;
 }

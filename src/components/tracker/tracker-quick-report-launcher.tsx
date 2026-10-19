@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
 import {TrackerReportForm} from "./tracker-report-form";
 import {Drawer} from "@/components/ui/drawer";
@@ -25,10 +26,10 @@ export function TrackerQuickReportLauncher(){
   return ()=>{live=false;};
  },[open]);
  return <>
-  <button type="button" aria-haspopup="dialog" onClick={()=>setOpen(true)}
-    className="fixed bottom-5 right-5 z-40 min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary shadow-[var(--lms-overlay-shadow)]">
+  <Button variant="primary" className="fixed bottom-5 right-5 z-40 shadow-[var(--lms-overlay-shadow)]" type="button" aria-haspopup="dialog" onClick={()=>setOpen(true)}
+   >
     Report issue · Alt+B
-  </button>
+  </Button>
   <Drawer open={open} onOpenChange={setOpen} title="Report an issue">
     <details className="mb-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-xs text-body">
       <summary className="min-h-9 cursor-pointer text-sm font-semibold">Captured page / browser / viewport</summary>

@@ -1,6 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 
 /** REC-home-drives-53: refetch after returning to a long-lived recruiter tab,
  * without claiming that a partial network failure means the data is empty. */
@@ -26,9 +28,8 @@ export function RecruiterDriveFocusRefresh(){
  },[router]);
  return stale?<div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-warning bg-surface px-4 py-3 text-sm text-body">
   <span>Some drive information may be stale or unavailable.</span>
-  <button type="button" onClick={()=>{setStale(false);router.refresh();}}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+  <Button variant="secondary" type="button" onClick={()=>{setStale(false);router.refresh();}}>
    Refresh drive
-  </button>
+  </Button>
  </div>:null;
 }

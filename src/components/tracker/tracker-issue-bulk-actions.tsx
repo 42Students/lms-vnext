@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -53,37 +56,37 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
   }
   return <section aria-label="Bulk issue status" className="space-y-3 border-b border-border pb-4">
     <div className="flex flex-wrap items-center gap-3">
-      <button type="button" disabled={busy} onClick={()=>{setSelecting(v=>!v);setSelected([]);setFailed([]);setNotice("");}}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
+      <Button variant="secondary" type="button" disabled={busy} onClick={()=>{setSelecting(v=>!v);setSelected([]);setFailed([]);setNotice("");}}
+       >
         {selecting?"Close selection":"Select issues"}
-      </button>
+      </Button>
       {selecting?<span role="status" className="text-sm">{selected.length} selected</span>:null}
     </div>
     {selecting?<div className="space-y-3">
       <div className="flex flex-wrap gap-3">
-        <button type="button" disabled={busy} onClick={()=>setSelected(rows.map(x=>x.publicId))}
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Select this page</button>
-        <button type="button" disabled={busy} onClick={()=>setSelected([])}
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear selection</button>
+        <Button variant="ghost" className="underline text-primary-text" type="button" disabled={busy} onClick={()=>setSelected(rows.map(x=>x.publicId))}
+         >Select this page</Button>
+        <Button variant="ghost" className="underline text-primary-text" type="button" disabled={busy} onClick={()=>setSelected([])}
+         >Clear selection</Button>
       </div>
       <div role="group" aria-label="Issues on this page" className="grid gap-2 sm:grid-cols-2">
         {rows.map(row=><label key={row.publicId} className="flex min-h-9 items-center gap-2 text-sm">
-          <input type="checkbox" checked={selected.includes(row.publicId)} disabled={busy}
+          <Checkbox checked={selected.includes(row.publicId)} disabled={busy}
             onChange={()=>toggle(row.publicId)}/>
           {row.publicId} <span className="text-muted-foreground">({row.status.toLowerCase().replaceAll("_"," ")})</span>
         </label>)}
       </div>
       <div className="flex flex-wrap items-end gap-3">
         <label className="grid gap-1 text-sm font-semibold">Set status to…
-          <select value={status} onChange={event=>setStatus(event.target.value as BugStatus)}
-            disabled={busy} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
+          <Select value={status} onChange={event=>setStatus(event.target.value as BugStatus)}
+            disabled={busy}>
             {BUG_STATUSES.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}
-          </select>
+          </Select>
         </label>
-        <button type="button" disabled={busy||selected.length===0} onClick={()=>void apply()}
-          className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+        <Button variant="primary" type="button" disabled={busy||selected.length===0} onClick={()=>void apply()}
+         >
           {busy?"Updating…":"Apply to "+selected.length+" selected"}
-        </button>
+        </Button>
       </div>
     </div>:null}
     {notice?<p role={failed.length?"alert":"status"} className="text-sm text-body">{notice}</p>:null}

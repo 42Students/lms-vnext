@@ -4,6 +4,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 type Props={threadId:string;messageId:string;body:string;expectedBodyHash:string;canEdit:boolean};
 export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,canEdit}:Props){
  const router=useRouter(),pending=useRef(false);
@@ -24,10 +25,10 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
   finally{pending.current=false;setBusy(false);}
  }
  return <div className="mt-2 flex flex-wrap items-center gap-2">
-  {canEdit?<button type="button" className="min-h-9 text-xs font-semibold underline"
-   onClick={()=>{setMode("EDIT");setError("");}}>Edit</button>:null}
-  <button type="button" className="min-h-9 text-xs font-semibold underline"
-   onClick={()=>{setMode("DELETE");setError("");}}>Delete</button>
+  {canEdit?<Button variant="ghost" type="button" 
+   onClick={()=>{setMode("EDIT");setError("");}}>Edit</Button>:null}
+  <Button variant="ghost" type="button" 
+   onClick={()=>{setMode("DELETE");setError("");}}>Delete</Button>
   {mode==="EDIT"?<form onSubmit={event=>{event.preventDefault();void submit("EDIT");}}
    className="w-full space-y-2">
    <label className="block text-xs">Edit message
@@ -35,16 +36,16 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
      onChange={event=>setDraft(event.target.value)} className="mt-1 w-full"/>
    </label>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-   <button type="submit" disabled={busy||!draft.trim()} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-xs text-on-primary">{busy?"Saving…":"Save edit"}</button>
-   <button type="button" disabled={busy} onClick={()=>setMode(null)} className="ml-2 min-h-9 text-xs underline">Cancel</button>
+   <Button variant="primary" type="submit" disabled={busy||!draft.trim()} >{busy?"Saving…":"Save edit"}</Button>
+   <Button variant="ghost" type="button" disabled={busy} onClick={()=>setMode(null)} >Cancel</Button>
   </form>:null}
   {mode==="DELETE"?<div role="alertdialog" aria-modal="false" aria-label="Delete this message?"
    className="w-full space-y-2 border-t border-border pt-3 text-xs">
    <p>Delete this message? Other team members will see Message removed.</p>
    {error?<p role="alert" className="text-error">{error}</p>:null}
-   <button type="button" disabled={busy} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-on-primary"
-    onClick={()=>void submit("DELETE")}>{busy?"Removing…":"Delete message"}</button>
-   <button type="button" disabled={busy} onClick={()=>setMode(null)} className="ml-2 min-h-9 underline">Cancel</button>
+   <Button variant="danger" type="button" disabled={busy}
+    onClick={()=>void submit("DELETE")}>{busy?"Removing…":"Delete message"}</Button>
+   <Button variant="ghost" type="button" disabled={busy} onClick={()=>setMode(null)} >Cancel</Button>
   </div>:null}
  </div>;
 }

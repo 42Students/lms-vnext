@@ -1,10 +1,12 @@
 "use client";
 import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/checkbox";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import {collegeRulePayload,isCollegeRuleDirty,collegeRuleReceipt,collegeRuleSelection,parseCollegeRuleRecheck,type CollegeModule,type CollegeChoice,type ObservedCollegeRule} from "@/modules/module-access/admin-college-rule-ui-model";
 export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked}:{collegeId:string;module:CollegeModule;stored:ObservedCollegeRule;ancestorLocked:boolean}){
  const router=useRouter();
@@ -71,7 +73,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
     <option value="INHERIT">Inherit</option><option value="ON" disabled={ancestorLocked}>On</option><option value="OFF" disabled={ancestorLocked}>Off</option>
    </Select>
   </label>
-  <label className="flex items-center gap-2 text-xs text-body"><input type="checkbox" checked={locked} disabled={busy||ancestorLocked||choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock this college rule</label>
+  <label className="flex items-center gap-2 text-xs text-body"><Checkbox checked={locked} disabled={busy||ancestorLocked||choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock this college rule</label>
   <div className="flex flex-wrap gap-2"><Button size="sm" variant="secondary" disabled={disabled||impactBusy} onClick={()=>{void reviewChange();}}>Review policy change</Button><Button size="sm" variant="ghost" disabled={busy} onClick={()=>{void recheck();}}>Recheck stored rule</Button></div>
   {feedback?<p role="status" className="text-xs text-body">{feedback}</p>:null}
   <ConfirmDialog open={confirm} onOpenChange={setConfirm} title={lockChanged?"Confirm college feature lock change":"Confirm college feature policy"}
@@ -82,7 +84,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
    {students!==null?<p className="mt-2 text-sm font-semibold text-body">Active learners in this college: {students.toLocaleString("en-IN")}</p>:
     <p role="alert" className="mt-2 text-sm text-warning-text">Student population could not be confirmed. The change will not be saved.</p>}
    {students!==null&&students>=100?<label className="mt-3 flex items-start gap-2 text-sm text-body">
-     <input type="checkbox" checked={acknowledgedPopulation}
+     <Checkbox checked={acknowledgedPopulation}
       onChange={e=>setAcknowledgedPopulation(e.target.checked)}/>
      I understand this may change access for {students.toLocaleString("en-IN")} active learners.
    </label>:null}

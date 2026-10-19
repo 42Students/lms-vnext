@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -79,9 +81,6 @@ export default async function TrackerIssuesPage({
     next.set("beforeId", page.nextCursor.beforeId);
   }
 
-  const inputClass =
-    "min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -102,39 +101,39 @@ export default async function TrackerIssuesPage({
       <form className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-5">
         <label className="text-xs font-semibold text-body">
           Search
-          <input className={inputClass} name="q" defaultValue={current.q ?? ""} placeholder="Search ID, description or page" />
+          <Input name="q" defaultValue={current.q ?? ""} placeholder="Search ID, description or page" />
         </label>
         <label className="text-xs font-semibold text-body">
           Reporter
-          <input className={inputClass} name="reporter" defaultValue={current.reporter??""} maxLength={100} placeholder="Reporter name"/>
+          <Input name="reporter" defaultValue={current.reporter??""} maxLength={100} placeholder="Reporter name"/>
         </label>
         <label className="text-xs font-semibold text-body">
           Status
-          <select className={inputClass} name="status" defaultValue={current.status ?? ""}>
+          <Select name="status" defaultValue={current.status ?? ""}>
             <option value="">All statuses</option>
             {BUG_STATUSES.map((x) => <option key={x} value={x}>{x}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="text-xs font-semibold text-body">
           Severity
-          <select className={inputClass} name="severity" defaultValue={current.severity ?? ""}>
+          <Select name="severity" defaultValue={current.severity ?? ""}>
             <option value="">All severities</option>
             {BUG_SEVERITIES.map((x) => <option key={x} value={x}>{x}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="text-xs font-semibold text-body">
           Environment
-          <select className={inputClass} name="environment" defaultValue={current.environment ?? ""}>
+          <Select name="environment" defaultValue={current.environment ?? ""}>
             <option value="">All environments</option>
             {BUG_ENVIRONMENTS.map((x) => <option key={x} value={x}>{x}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="text-xs font-semibold text-body">
           Sort
-          <select className={inputClass} name="sort" defaultValue={current.sort}>
+          <Select name="sort" defaultValue={current.sort}>
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
-          </select>
+          </Select>
         </label>
         <div className="flex items-end gap-2 sm:col-span-2 xl:col-span-5">
           <Button type="submit" variant="primary">Apply filters</Button>
