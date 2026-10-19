@@ -97,7 +97,7 @@ export function ProjectAdminWorkspaceList({
       {key:"members",header:"Members",mobilePriority:"secondary",cell:item=>item.memberCount},
       {key:"action",header:"Action",mobilePriority:"action",cell:item=>
         <div className="flex flex-wrap items-center gap-2">
-          <Link href={basePath+"/"+item.id} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open</Link>
+          <Link href={basePath+"/"+item.id} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open</Link>
           <ProjectArchiveControl projectId={item.id} projectTitle={item.title}
             status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
         </div>},
@@ -168,7 +168,7 @@ export function ProjectAdminWorkspaceList({
                 "/" +
                 item.id
               }
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-muted md:min-h-9"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
             >
               Open workspace
             </Link>
