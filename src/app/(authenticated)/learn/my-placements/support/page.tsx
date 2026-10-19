@@ -11,9 +11,13 @@ export default async function LearnerSupportHistory({searchParams}:{
   const data=await getOwnLearnerSupportRequests(await getCurrentRequestContext(),query);
   const choices=["ALL","PENDING","APPROVED","REJECTED","CANCELLED"] as const;
   const requestTypes=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
+  const supportFilterPillClass =
+    "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[14px] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
+  const supportFilterNavClass =
+    "min-w-0 max-w-[calc(100vw-48px)] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
   return <div className="min-w-0 space-y-6">
     <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">← Placement Cell</Link>
-    <PageHeader eyebrow="My Placements" title="My support requests"
+    <PageHeader title="My support requests"
       description="Your application withdrawal, round rescheduling and offer-extension requests from your college placement team." />
     <section className="border-b border-border pb-5">
       <h2 className="text-sm font-semibold text-foreground">What is covered?</h2>
@@ -21,21 +25,19 @@ export default async function LearnerSupportHistory({searchParams}:{
         Only persisted placement requests are shown. General helpdesk tickets and free-form feedback are not yet available because their data source is not registered.
       </p>
     </section>
-    <nav aria-label="Request status" className="flex flex-wrap gap-2">
+    <nav aria-label="Request status" className={supportFilterNavClass}>
       {choices.map(status=><Link key={status}
         aria-current={data.status===status?"page":undefined}
         href={learnerSupportHistoryHref({status,type:data.type})}
-        className={"inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3 text-xs font-semibold "+
-          (data.status===status?"border-primary bg-primary-subtle text-primary-text":"border-border bg-surface text-foreground")}>
+        className={supportFilterPillClass}>
         {status==="ALL"?"All requests":status.charAt(0)+status.slice(1).toLowerCase()}
       </Link>)}
     </nav>
-    <nav aria-label="Request category" className="flex flex-wrap gap-2">
+    <nav aria-label="Request category" className={supportFilterNavClass}>
       {requestTypes.map(type=><Link key={type}
         aria-current={data.type===type?"page":undefined}
         href={learnerSupportHistoryHref({status:data.status,type})}
-        className={"inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3 text-xs font-semibold "+
-          (data.type===type?"border-primary bg-primary-subtle text-primary-text":"border-border bg-surface text-foreground")}>
+        className={supportFilterPillClass}>
         {type==="ALL"?"All types":placementRequestTypeLabel(type)}
       </Link>)}
     </nav>
@@ -64,7 +66,7 @@ export default async function LearnerSupportHistory({searchParams}:{
               expectedUpdatedAt={row.request.updatedAt.toISOString()}/>
           </div>
         ) : null}
-        {row.request.decisionNote?<p className="mt-3 whitespace-pre-wrap break-words rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-sm text-body">
+        {row.request.decisionNote?<p className="mt-3 whitespace-pre-wrap break-words border-t border-border pt-3 text-sm text-body">
           Placement-team note: {row.request.decisionNote}
         </p>:null}
       </li>)}
