@@ -22,6 +22,13 @@ describe("chat13: topbar TPO authorized suggestion URL boundary", () => {
       "//example.com/tpo/students",
       "/admin/people",
       "/tpo//example.com",
+      "/tpo/../admin/people",
+      "/tpo/./students",
+      "/tpo/%2e%2e/admin",
+      "/tpo/%2fadmin",
+      "/tpo/%5cexample.com",
+      "/tpo/%",
+
       "/tpo/\\\\example.com",
       "/tpo/students\nInjected",
       "/tpo/students\rInjected",
