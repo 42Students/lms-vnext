@@ -1,3 +1,6 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
@@ -130,9 +133,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </p>:null}
     {!generalThread && (!generalLookup || generalLookup.ok)?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <input name="collegeId" type="hidden" value={result.collegeId}/>
-      <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-        Open general conversation
-      </button>
+      <Button type="submit">Open general conversation</Button>
     </form>:null}
    </section>
    <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
@@ -141,14 +142,13 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     <input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <input type="hidden" name="scope" value={parsed.data.scope}/>
     <label className="text-sm text-body">Order
-     <select name="sort" defaultValue={parsed.data.sort} className="mt-1 min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     <Select name="sort" defaultValue={parsed.data.sort} className="mt-1 w-full">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
-     </select>
+     </Select>
     </label>
     <label className="flex-1 text-sm text-body">Search by drive or message
-     <input name="q" maxLength={120} defaultValue={parsed.data.q}
-      className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/></label>
-    <button type="submit" className="self-end rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">Search</button>
+     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 w-full"/></label>
+    <Button variant="secondary" type="submit" className="self-end">Search</Button>
    </form>
    <nav aria-label="Conversation kind" className="flex flex-wrap gap-2">
     {HR_CONVERSATION_KINDS.map(item=><Link key={item.value}
@@ -179,9 +179,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,
       sort:parsed.data.sort,scope:parsed.data.scope,page:result.page,
      })}/>
-     <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-      Mark visible unread conversations as read
-     </button>
+     <Button variant="secondary" type="submit">Mark visible unread conversations as read</Button>
      <span className="text-xs text-muted-foreground">Only incoming placement-cell messages on this page.</span>
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
