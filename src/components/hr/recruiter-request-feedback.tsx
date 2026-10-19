@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {hrVerifiedDriveReceiptMessage} from "@/modules/placements/hr-drive-request-feedback-model";
 
 /** REC-home-drives-22: show a one-time receipt only after the server
@@ -15,7 +16,5 @@ export function RecruiterRequestFeedback({storageKey}:{storageKey:string}){
    queueMicrotask(()=>setNotice(verified));
   }catch{/* Storage unavailable: no unverified success claim. */}
  },[storageKey]);
- return notice?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle p-4 text-sm font-semibold text-body">
-  {notice}
- </p>:null;
+ return notice?<InlineNotice tone="success" message={notice}/>:null;
 }
