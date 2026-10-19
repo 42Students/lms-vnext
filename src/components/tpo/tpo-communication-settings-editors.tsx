@@ -4,6 +4,7 @@ import {useRef,useState} from "react";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 
 type ResponseBody={error?:string;version?:string};
 function saveError(body:ResponseBody){
@@ -36,15 +37,15 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
   <div className="flex flex-wrap gap-2">{[
    "Round scheduled or changed","Offer released, expiring, expired or withdrawn",
    "Drive cancelled","Application deadline today","Debarred or marked absent",
-  ].map(label=><span key={label} className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">{label}</span>)}</div>
+  ].map(label=><span key={label} className="rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-1 text-xs">{label}</span>)}</div>
   <label className="block text-sm font-semibold">Monthly limit on optional SMS
    <Input type="number" min={0} max={100000} step={1} value={value} disabled={busy}
     onChange={event=>setValue(event.target.value===""?-1:Number(event.target.value))}
     className="mt-2 min-h-11 sm:min-h-9 w-40"/>
   </label>
   <p className="text-xs text-muted-foreground">SMS used this month: unavailable until delivery usage is connected. Saving a limit does not enable SMS delivery.</p>
-  <button type="button" onClick={()=>void save()} disabled={busy||saved===value||value<0||value>100000||!Number.isInteger(value)}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save</button>
+  <Button type="button" onClick={()=>void save()} disabled={busy||saved===value||value<0||value>100000||!Number.isInteger(value)}
+   className="min-h-11 sm:min-h-9">Save</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
@@ -76,13 +77,13 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
     className="mt-2 w-full"/>
   </label>
   <p className="text-right text-xs text-muted-foreground">{value.length}/300</p>
-  <div className="rounded-[var(--lms-control-radius)] border border-dashed border-border p-4">
+  <div className="rounded-[var(--lms-control-radius,9px)] border border-dashed border-border p-4">
    <p className="mb-2 text-sm text-muted-foreground">How the end of an invite looks</p>
    <p className="whitespace-pre-line text-sm text-body">{value.trim()||"No signature yet"}</p>
   </div>
   <p className="text-xs text-muted-foreground">Saved signature is available for future invite and placement email templates. Sending requires configured email delivery.</p>
-  <button type="button" onClick={()=>void save()} disabled={busy||saved===value}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save</button>
+  <Button type="button" onClick={()=>void save()} disabled={busy||saved===value}
+   className="min-h-11 sm:min-h-9">Save</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
@@ -119,8 +120,8 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
    </Select>
   </label>
   <p className="text-xs text-muted-foreground">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
-  <button type="button" onClick={()=>void save()} disabled={busy||saved===months}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save</button>
+  <Button type="button" onClick={()=>void save()} disabled={busy||saved===months}
+   className="min-h-11 sm:min-h-9">Save</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
