@@ -65,7 +65,7 @@ export function TpoRecruiterGrantForm({ companies }: {
             </label>
           </div>
           <button type="button" disabled={busy || !email.trim()} onClick={() => setConfirmOpen(true)}
-            className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
+            className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60">
             {busy ? "Saving..." : "Review and confirm grant"}
           </button>
         </>

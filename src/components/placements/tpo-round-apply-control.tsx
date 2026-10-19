@@ -65,7 +65,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    {!preview.ready?<p role="alert" className="text-sm text-foreground">Complete this evaluation round before applying results.</p>:null}
    <div className="flex flex-wrap gap-3">
     <button type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
-     className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+     className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
      Confirm and apply {preview.staged} result(s)</button>
     <button type="button" disabled={busy} onClick={()=>setPreview(null)}
      className="min-h-11 md:min-h-9 rounded border border-border px-4 text-sm">Not yet</button>
