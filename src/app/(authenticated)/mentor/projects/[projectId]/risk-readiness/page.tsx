@@ -40,7 +40,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     <PageHeader eyebrow="Mentor · Project" title="At-risk & readiness drill-in"
       description={data.enabled?data.projectTitle+" · "+data.projectStatus:"Projects are disabled. No private task, meeting or delivery evidence was loaded."}
       actions={<Link href={base}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         Full project workspace
       </Link>}/>
     {!data.enabled?<section role="status" className="border-b border-border pb-4">

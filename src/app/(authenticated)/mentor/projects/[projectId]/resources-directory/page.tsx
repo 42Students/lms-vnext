@@ -29,7 +29,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
   <PageHeader eyebrow="Mentor · Project resources" title="Registered resource links"
    description={data.projectTitle}
    actions={<Link href={base+"?tab=resources"}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
      Project resources
    </Link>}/>
   {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">

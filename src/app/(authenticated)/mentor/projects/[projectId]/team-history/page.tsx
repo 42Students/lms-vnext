@@ -45,7 +45,7 @@ export default async function MentorTeamHistoryPage({
     <PageHeader eyebrow="Mentor · Project Team" title="Team membership history"
       description={data.enabled?data.title + " · Registered team join/end records":"Projects access is disabled. Team history cannot be displayed."}
       actions={<Link href={back}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0">
         Team workspace
       </Link>} />
     {!data.enabled
