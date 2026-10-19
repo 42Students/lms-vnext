@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -24,7 +25,7 @@ export default async function MentorBoardReviewPage({
     normalized?{projectId,...normalized}:null,
   );
   if(!validated.success)return <section role="alert" className="space-y-3">
-    <PageHeader title="Invalid board filters" />
+    <PageHeader title={"Invalid board filters"} />
     <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Projects</Link>
   </section>;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
