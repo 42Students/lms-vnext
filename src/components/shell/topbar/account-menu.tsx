@@ -39,7 +39,10 @@ export function TopbarAccountMenu({
   useEffect(() => {
     if (!open) return;
     // The legacy dropdown is an operable menu, not merely an avatar hover card.
-    root.current?.querySelector<HTMLElement>('[data-slot="popover"] a, [data-slot="popover"] button, [data-slot="popover"] input, [data-slot="popover"] select')?.focus();
+    const first = root.current?.querySelector<HTMLElement>(
+      '[data-slot="popover"] a[href]:not([aria-disabled="true"]), [data-slot="popover"] button:not(:disabled), [data-slot="popover"] input:not(:disabled), [data-slot="popover"] select:not(:disabled)'
+    );
+    (first ?? root.current?.querySelector<HTMLElement>('[data-slot="popover"]'))?.focus();
     const onPointer = (event: PointerEvent) => {
       if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
     };
@@ -106,13 +109,14 @@ export function TopbarAccountMenu({
       const next = event.relatedTarget;
       if (open && next instanceof Node && !event.currentTarget.contains(next)) setOpen(false);
     }}>
-    <Button variant="ghost" size="icon-sm" type="button" ref={trigger} className={style.avatar}
+    <Button variant="ghost" size="icon-sm" type="button" ref={trigger} className={`${style.avatar} !min-h-11 !min-w-11`}
       aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "lms-topbar-account-dialog" : undefined}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
       <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
     </Button>
-    {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={style.menu}>
+    {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={style.menu}
+      tabIndex={-1} onDismiss={() => { setOpen(false); trigger.current?.focus(); }}>
       <div className="px-2 pb-2 text-left">
         <p className={style.accountHeading}>{roleLabel}</p>
         <p className={style.accountSubheading}>{organizationName}</p>
