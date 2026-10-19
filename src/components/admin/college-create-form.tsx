@@ -139,6 +139,7 @@ export function CollegeCreateForm({
         </label>
         <Input
           id="college-code"
+          disabled={pending}
           value={code}
           onChange={(event) => setCode(event.target.value.toLowerCase())}
           required minLength={3} maxLength={63} pattern="[a-z0-9-]{3,63}"
