@@ -172,7 +172,7 @@ export function GridWorkspace<Row>({
  };
  return <section className="min-w-0 space-y-3" aria-label="TPO grid workspace" data-tpo-grid-workspace>
   <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label="TPO table tools">
-   <div className="flex min-w-[190px] max-w-lg flex-1 items-center gap-2">
+   {searchMode!=="hidden"?<div className="flex min-w-[190px] max-w-lg flex-1 items-center gap-2">
     <Input aria-label="Search table" value={typed} maxLength={searchMaxLength}
      placeholder={searchPlaceholder} onChange={event=>setTyped(event.target.value)}/>
     <Button variant="secondary" type="button" onClick={()=>{
