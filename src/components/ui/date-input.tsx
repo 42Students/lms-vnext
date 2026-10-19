@@ -118,7 +118,7 @@ export function DateInput({
     return Number.isFinite(utc) ? utc / 60000 : null;
   }
   const candidateMinutes = dateTimeMinuteNumber(dateTimeCandidate);
-  const stepBaseDateTime = dateTimeMinuteNumber(dateTimeMin) ?? dateTimeMinuteNumber(String(defaultValue ?? "")) ??
+  const stepBaseDateTime = dateTimeMinuteNumber(dateTimeMin) ?? dateTimeMinuteNumber(String(value ?? defaultValue ?? "")) ??
     dateTimeMinuteNumber("1970-01-01T00:00") ?? 0;
   const canApplyDateTime = mode === "datetime-local" && candidateMinutes !== null && minuteStep !== null &&
     (dateTimeMin === "" || dateTimeCandidate >= dateTimeMin) &&
@@ -138,7 +138,7 @@ export function DateInput({
     if (props.step === "any" || mode === "datetime-local") return true;
     const step = Number(props.step ?? 1);
     if (!Number.isInteger(step) || step <= 0) return true; // native constraint validation remains authoritative
-    const base = String(props.min ?? defaultValue ?? "");
+    const base = String(props.min ?? value ?? defaultValue ?? "");
     if (mode === "month") {
       const monthNumber = (raw: string): number | null => {
         const match = /^(\d{4})-(\d{2})$/.exec(raw);
