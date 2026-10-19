@@ -41,13 +41,13 @@ export default async function MentorProjectReviewCompletenessPage({
       </p>
       {data.items.length===0?<EmptyState title="No registered delivery versions"
         description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history."/>
-      :<ol className="divide-y divide-border">{data.items.map(item=>
-        <li key={item.id} className="py-4">
+      :<ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
+        <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="font-semibold text-foreground">Delivery version {item.version}</h2>
+            <h2 className="min-w-0 break-words font-semibold text-foreground">Delivery version {item.version}</h2>
             <span className="text-sm font-semibold text-body">{item.status}</span>
           </div>
-          <dl className="mt-3 grid gap-3 sm:grid-cols-2">
+          <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
             <div><dt className="text-xs text-muted-foreground">Review decision</dt>
               <dd className="mt-1 text-sm font-semibold">{item.reviewLabel}</dd>
             </div>
