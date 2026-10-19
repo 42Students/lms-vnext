@@ -47,6 +47,17 @@ export function SearchableSelect({
   const describedBy = [props["aria-describedby"], selectionError ? validationId : null]
     .filter(Boolean).join(" ") || undefined;
 
+  // A parent can reset a controlled value or replace the enabled options
+  // without a native input event; stale customValidity must not block submit.
+  useEffect(() => {
+    if (value === undefined) return;
+    const next = String(value);
+    if (creatable || next === "" || options.some(option => !option.disabled && option.value === next)) {
+      inputRef.current?.setCustomValidity("");
+      setSelectionError(null);
+    }
+  }, [value, creatable, options]);
+
   useEffect(() => {
     function onPointerDown(event: PointerEvent) {
       if (event.target instanceof Node && !rootRef.current?.contains(event.target)) setOpen(false);

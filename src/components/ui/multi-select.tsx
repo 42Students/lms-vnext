@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent, type ComponentPropsWithRef, type ReactNode } from "react";
+import { useRef, useState, type ChangeEvent, type ComponentPropsWithRef, type KeyboardEvent, type ReactNode } from "react";
 import { Select } from "./select";
 import { Button } from "./button";
 import { cx } from "@/lib/class-names";
@@ -10,6 +10,7 @@ export type MultiSelectProps = Omit<ComponentPropsWithRef<"select">, "multiple" 
   visibleRows?: number;
   error?: boolean;
   showSelectedTags?: boolean;
+  readOnly?: boolean;
   onValuesChange?: (values: string[]) => void;
 };
 
@@ -25,8 +26,8 @@ function valuesOf(value: string | number | readonly string[] | undefined): strin
  * Optional tags provide a separately labeled, mobile-friendly selection list.
  */
 export function MultiSelect({
-  options, visibleRows = 4, error = false, showSelectedTags = false,
-  onValuesChange, onChange, className, value, defaultValue, disabled,
+  options, visibleRows = 4, error = false, showSelectedTags = false, readOnly = false,
+  onValuesChange, onChange, onKeyDown, className, value, defaultValue, disabled,
   ref: forwardedRef, ...props
 }: MultiSelectProps) {
   const selectRef = useRef<HTMLSelectElement | null>(null);
@@ -41,6 +42,10 @@ export function MultiSelect({
     else if (forwardedRef) forwardedRef.current = node;
   }
   function change(event: ChangeEvent<HTMLSelectElement>) {
+    if (readOnly) {
+      for (const option of Array.from(event.currentTarget.options)) option.selected = selected.includes(option.value);
+      return;
+    }
     const next = Array.from(event.currentTarget.selectedOptions, option => option.value);
     setUncontrolledValues(next);
     // Tag removals report onValuesChange explicitly; do not emit it twice when
@@ -49,7 +54,7 @@ export function MultiSelect({
     onChange?.(event);
   }
   function remove(valueToRemove: string) {
-    if (disabled || options.find(option => option.value === valueToRemove)?.disabled) return;
+    if (disabled || readOnly || options.find(option => option.value === valueToRemove)?.disabled) return;
     const next = selected.filter(item => item !== valueToRemove);
     const field = selectRef.current;
     setUncontrolledValues(next);
@@ -64,11 +69,18 @@ export function MultiSelect({
     }
   }
 
+  function keyDown(event: KeyboardEvent<HTMLSelectElement>) {
+    onKeyDown?.(event);
+    if (event.defaultPrevented || !readOnly) return;
+    if ([" ", "ArrowDown", "ArrowUp", "Home", "End", "PageUp", "PageDown"].includes(event.key)) {
+      event.preventDefault();
+    }
+  }
   return (
     <div data-slot="multi-select-field" className={cx("min-w-0", className)}>
-      <Select {...props} ref={bindRef} multiple disabled={disabled}
+      <Select {...props} ref={bindRef} multiple disabled={disabled} aria-readonly={readOnly || undefined}
         value={value} defaultValue={defaultValue} size={rows} error={error}
-        data-slot="multi-select" onChange={change}>
+        data-slot="multi-select" onChange={change} onKeyDown={keyDown}>
         {options.map(option => (
           <option key={option.value} value={option.value} disabled={option.disabled}>
             {typeof option.label === "string" || typeof option.label === "number" ? option.label : option.value}
@@ -79,14 +91,16 @@ export function MultiSelect({
         ? <ul aria-label="Selected values" className="mt-2 flex min-w-0 flex-wrap gap-2">
             {selected.map(item => {
               const option = options.find(candidate => candidate.value === item);
-              const canRemove = !disabled && !option?.disabled;
+              const canRemove = !disabled && !readOnly && !option?.disabled;
+              const displayLabel = typeof option?.label === "string" || typeof option?.label === "number"
+                ? String(option.label) : item;
               return (
                 <li key={item} className="inline-flex min-h-9 max-w-full items-center gap-1 rounded-[6px] border border-[var(--lms-neutral-200)] bg-[var(--lms-primary-subtle)] pl-2 text-[13px] leading-5 text-[var(--lms-body-text)] max-[767px]:min-h-11">
                   <span className="min-w-0 break-words">
                     {option?.label ?? item}
                   </span>
                   <Button type="button" variant="ghost" size="icon-sm"
-                    disabled={!canRemove} aria-label={`Remove ${item}`}
+                    disabled={!canRemove} aria-label={`Remove ${displayLabel}`}
                     onClick={() => remove(item)}
                     className="!h-9 !w-9 !min-w-9 !rounded-[6px] !p-0 max-[767px]:!h-11 max-[767px]:!w-11 max-[767px]:!min-w-11">
                     <span aria-hidden="true">×</span>

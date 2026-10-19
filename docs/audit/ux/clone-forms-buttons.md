@@ -527,3 +527,90 @@ At the old LMS SCSS `components___variables.scss:148-156` phone boundary 767px a
 **Unresolved strict requirements:** A1–A4, C1–C7 and D remain **12 unticked / 0 ticked**. No runtime, CI, tests, browser or authoritative full-tree grep was performed. C4 still needs exact switch/radio geometry + phone/tablet interaction validation, and C5 needs upload crop and whole-flow verification. The code is directly committed to `chatgpt/chat-17-b` after each file; no push to main.
 
 **Next exact source file:** `src/components/ui/file-upload.tsx` — finish selection/preview error-state and required-label parity before proceeding to `src/components/ui/form-field.tsx`.
+
+
+
+## 2026-10-19 continuation — shared forms and buttons: bounded file-level pass
+
+This turn continued from \`file-upload.tsx\` after fast-forwarding \`chatgpt/chat-17-b\` to main. Checkmarks in the following **Work queue** attest only to completed **per-file source edits and complete-file searches**, not to the twelve category-wide STRICT TICK RULE items. No locally executed app, TypeScript build, CI, automated test, full-\`src\` grep or rendered viewport comparison is claimed.
+
+### Work queue — source-complete this turn
+
+- [x] \`src/components/ui/file-upload.tsx\` — required label/ARIA, valid and invalid picker, disabled/unavailable clearing, stable image-preview reset, externally supplied progress and keyboard-usable removal; native file field retained.
+- [x] \`src/components/ui/file-dropzone.tsx\` — picker unavailable and disabled modes uniformly reject drag; group error association; drag leave over children; dropped-file removal; stale preview/progress cleared.
+- [x] \`src/components/ui/search-field.tsx\` — preserve caller's React 19 ref alongside the internal search-submit ref; submit and Enter remain equivalent; search input width follows legacy clamp.
+- [x] \`src/components/ui/form-section.tsx\` — visible legend and described fieldset; connect optional description to its unique id without dropping caller \`aria-describedby\`; fieldset disabled behavior unchanged.
+- [x] \`src/components/ui/date-range-picker.tsx\` — visible required markers; per-input \`required\`, \`disabled\`, \`min\` and \`max\` preserved, with constrained start/end; reversed-range error linked to both inputs.
+- [x] \`src/components/ui/input-group.tsx\` — preserve decorative prefix/suffix \`aria-hidden\` defaults; allow explicitly interactive adornments to stay available to keyboard and assistive technology, without changing the 10px shared group.
+- [x] \`src/components/ui/button.tsx\` — all variants and sizes now inherit the 44px phone min-height at the **old-LMS 767px cutoff**, not only icon buttons and not only <=639px.
+- [x] \`src/components/ui/input.tsx\` — the same phone min-height rule for native/OTP/password/search/date inputs using the shared component, without changing value, onChange or ref contracts.
+- [x] \`src/components/ui/select.tsx\` — the same phone min-height for native, multiple and option-select controls; preserved typeahead, form data and default values.
+- [x] \`src/components/ui/form-field.tsx\` — complete-file source review only; existing label association, helper/error description merge, required marker and disabled/readonly delegation were already implemented. No source edit necessary.
+
+### Value proof matrix — legacy values vs updated shared components (static only)
+
+| Property / state | Legacy SCSS/spec value (file:line) | vNext value (file:line) | Result |
+| --- | --- | --- | --- |
+| Field text base | \`legacy-styles/components___form.scss:123-127\` 14px, 400, 20px, letter-spacing 0.2px, ink #0a0517 | \`src/components/ui/input.tsx:24\`, \`select.tsx:27\`, \`file-upload.tsx:130\` use \`--lms-font-base\`, 400, 20px and \`--lms-form-ink\` | Match in shared declarations; computed font unverified |
+| Field surface and radius | \`components___form.scss:117-123\` background #fbfcfd, 10px radius | \`globals.css:1073\` form ink and \`file-upload.tsx:130\`, \`file-dropzone.tsx:67\`, \`input-group.tsx:25-26\` use form background / field radius 10px | Matches role tokens; native file pseudo-button uses its own radius |
+| Field hover and focus | \`components___form.scss:117-133\` teal 15% 2px focus halo, 0.2s | \`input.tsx:27-31\`, \`select.tsx:29-32\`, \`input-group.tsx:27\` and \`globals.css:1116-1126\` | State source matches; focus-visible keyboard safeguard retained |
+| Invalid field | \`components___form.scss:135-143\` #ef4444, 6% background, red 20% halo | \`input.tsx:35-40\`, \`select.tsx:34-38\`, \`file-upload.tsx:126-130\`, \`input-group.tsx:28-29\` | Matches color/halo; error is tied to aria-describedby |
+| Form label | \`components___form.scss:110-115\` muted #a9a7ae, 13px/600/16px | \`file-upload.tsx:120-123\`, \`date-range-picker.tsx:48-60\`, \`form-field.tsx:31-38\` | Match, required red asterisk rendered visually and accessible label retained |
+| Helper/error type | \`components___global.scss:66-70\`, \`components___form.scss:110-115\` 12px invalid / 13px helper | \`file-upload.tsx:131-154\`, \`date-range-picker.tsx:67-71\`, \`form-field.tsx:38-39\` | Match respective role sizes/colors |
+| Search width | \`components___form.scss:38-47\` clamp(180px,20vw,280px) | \`search-field.tsx:20-22\` \`w-[clamp(180px,20vw,280px)]\` | Exact source value |
+| Search submit and disabled | \`components___form.scss:38-61\` white search/search action; \`components___button.scss:146-149\` disabled 50% | \`search-field.tsx:19-22\` shared secondary Button, no submit if disabled | Behaviour retained; standalone search+action spacing differs from legacy icon-only search |
+| Group focus / invalid | \`components___form.scss:117-143\` radius 10px, teal 15% focus, red 20% invalid | \`input-group.tsx:25-30\` 10px shared radius, focus/invalid paint and readonly neutral | Same token role, runtime needs computed check |
+| Fieldset grouping | \`components___form.scss:110-115\` form-label typography; \`variables.scss:148-157\` breakpoint contracts | \`form-section.tsx:15-26\` 14px legend, 13px description and native fieldset | Label family matched; group heading 14px distinct by design |
+| Date-range label/error | \`components___form.scss:110-143\` label 13px/600 and invalid red | \`date-range-picker.tsx:33-71\` two labels with red required mark; one linked 12px invalid message | Match type and color; popups and complete calendar C3 still open |
+| Upload preview frame | \`components___button.scss:319-333\` image frame with rounded corners, object-fit:cover | \`file-upload.tsx:141-145\` 10px neutral border and image object-contain | **Mismatch:** the legacy profile photo crop/cover geometry is not the same as a generic attachment preview; keep C5 unticked |
+| Upload selection/removal | \`components___antddesign.scss:498-505,698-748\` AntD upload/select affordance | \`file-upload.tsx:132-141\`, \`file-dropzone.tsx:70-79\` removable native file/dropped-file list | Functional equivalents; AntD file-row layout, crop and animations remain unverified |
+| Progress visual | \`components___variables.scss:10-15\` #26bac7 on #9ee4e8 light tint | \`file-upload.tsx:146-150\`, \`file-dropzone.tsx:83-87\` caller-owned percent, teal progress fill | Color tokens match; historical AntD progress geometry unproven |
+| Disabled picker | \`components___variables.scss:27-32\` muted disabled ink and pale neutral surface | \`file-upload.tsx:58,73-81,124-130,152-154\`, \`file-dropzone.tsx:23-39\` disabled/unavailable clears file and rejects drag | Matching muted family; native WebView picker differences remain |
+| Primary button | \`old-lms-shell-spec.md:22-24\` #0a7c88, white, radius 9px, 36px, 14px/650 | \`button.tsx:10-12,18-29\`, \`globals.css:629-648\` | Match desktop paint/geometry; every-variant interaction not browser tested |
+| Button hover/loading/disabled | \`components___antddesign.scss:153-185\` darker on hover, pressed 1px, disabled neutral; \`components___button.scss:146-149\` | \`button.tsx:10-15,25-29\`, \`globals.css:1140-1162\` | Source states present; rendered click/focus proof still pending |
+| Phone target (all buttons/inputs/selects) | \`components___variables.scss:139,148-156\` 44px at <=767px, tablet >=768px | \`button.tsx:28\`, \`input.tsx:21\`, \`select.tsx:24\`: \`max-[767px]:min-h-11\`; \`globals.css:1128-1133\` specialists | Source boundary matches; no browser/phone screenshot proof |
+| Form layout at phone/tablet | \`components___variables.scss:148-157\` <=767px phone, >=768px tablet, >=992px desktop | \`date-range-picker.tsx:46,68\` 1 then 2 columns; \`globals.css:1171-1184\` grid rules | Source breakpoint matches; not a viewport rendering verification |
+
+### Coverage grep proof, bounded exactly to fetched complete files
+
+The line-by-line source scans used the equivalent regular expression \`/<(button|input|select|textarea)(?=[\\s>])/g\` on each **complete connected repository file**. Counts below are raw JSX, not references inside comments; any nonzero raw tags are intentionally the native implementation in its own shared primitive.
+
+| Source file | \`<button>\` | \`<input>\` | \`<select>\` | \`<textarea>\` |
+| --- | ---: | ---: | ---: | ---: |
+| \`file-upload.tsx\` | 0 | 0 | 0 | 0 |
+| \`file-dropzone.tsx\` | 0 | 0 | 0 | 0 |
+| \`search-field.tsx\` | 0 | 0 | 0 | 0 |
+| \`form-section.tsx\` | 0 | 0 | 0 | 0 |
+| \`date-range-picker.tsx\` | 0 | 0 | 0 | 0 |
+| \`input-group.tsx\` | 0 | 0 | 0 | 0 |
+| \`form-field.tsx\` | 0 | 0 | 0 | 0 |
+| \`button.tsx\` | 1 | 0 | 0 | 0 |
+| \`input.tsx\` | 0 | 1 | 0 | 0 |
+| \`select.tsx\` | 0 | 0 | 1 | 0 |
+
+All changed JSX opening/closing names were read from each fetched file and kept paired. Direct edits use compatible optional props and preserve existing callback/ref signatures. The existing audit script \`scripts/audit/chat17-form-skin-coverage.cjs\` can produce the authoritative repository-wide counts, but it was **not run**. Neither were 375px/768px browser screenshots, min/max/keyboard actual interactions, compiled CSS comparison, lint, typecheck, tests or CI.
+
+**STRICT ledger stays 0 ticked / 12 unticked:** A1–A4, C1–C7, D. Do not mark these complete until the global grep and browser responsive/interaction evidence is collected, and AntD native popup (C2/C3), image crop (C5), and rich editor (C7) differences are resolved.
+
+**Next exact file:** \`src/components/ui/multi-select.tsx\` — complete selected-value tags, readonly/error, dropdown keyboard and AntD popup parity; then \`src/components/ui/searchable-select.tsx\`.
+
+
+
+### Follow-on C2 source pass — multi-select tags and searchable selection
+
+- [x] \`src/components/ui/multi-select.tsx\` — added optional \`readOnly\` with native multiple selection restoration, suppressed Space/arrow mutations when readonly, kept form \`value/defaultValue/name\` and \`onChange/onValuesChange\` contracts; disabled option/readonly tag removal prohibited; removable tags announce visible labels. Native \`Select\` and shared \`Button\` remain the only controls.
+- [x] \`src/components/ui/searchable-select.tsx\` — controlled valid value or options refresh clears a stale native \`setCustomValidity\`/ARIA error, while free-form and invalid values keep existing keyboard/validation behavior; shared Input/PopoverListbox/Button unchanged.
+
+| C2 property / state | Legacy reference, exact value | vNext source | Result |
+| --- | --- | --- | --- |
+| Selected option background/text | \`legacy-styles/components___antddesign.scss:134-140\`, brand #26bac7 with white text and wrapped labels | \`src/components/ui/multi-select.tsx:81-89\`, shared Select; \`globals.css:1165-1169\` checked native option teal/white | Same declared colors; system popup varies |
+| Search option row min-height | \`legacy-styles/components___form.scss:85-93\`, 44px row with 5px/10px padding | \`src/components/ui/searchable-select.tsx:152-161\`, shared listbox option min-height 44px, 5px/10px | Source match |
+| Dropdown scroll max-height | \`components___form.scss:64-78\`, 200px, radius 12px, shadow 0 14px 16px rgba(0,0,0,.04) | \`searchable-select.tsx:152-154\` max-height 200px, \`PopoverListbox\` radius 12px, shadow token | Height/radius match; shadow token needs computed verification |
+| Form field border/focus | \`components___antddesign.scss:511-524\` native AntD selector 10px radius and 14px text | \`multi-select.tsx:81-83\`, \`searchable-select.tsx:139-146\`, shared Select/Input 10px/14px | Static shared role match |
+| Selected tag and remove | \`components___antddesign.scss:134-140\` selected content wraps | \`multi-select.tsx:90-110\` wrapping tags, disabled/readOnly-aware shared Button, 44px phone remove | Functionality/source geometry present, exact AntD tag visual unverified |
+| Keyboard and disabled state | \`components___antddesign.scss:134-140\` selected/disabled option distinction | \`multi-select.tsx:44-79\` native multiple semantics; \`searchable-select.tsx:117-145\` active-descendant + validation | Browser key traversal and OS select popup parity pending |
+| Responsive | \`components___variables.scss:139,148-156\` 44px target at <=767px, tablet >=768px | \`multi-select.tsx:98-106\`, \`searchable-select.tsx:148-160\`, shared Select/Input/Button phone target | Source-only responsive proof |
+
+**Exact fetched-file grep counts:** \`multi-select.tsx\` and \`searchable-select.tsx\` each have raw \`<button>\` **0**, \`<input>\` **0**, \`<select>\` **0**, \`<textarea>\` **0**, based on the same complete-file pattern \`/<(button|input|select|textarea)(?=[\\s>])/g\`. Both use matched shared opening/closing JSX tags and no new hard-coded hex color paint. The global all-caller scan and actual mobile/keyboard/browser checks have not been run; **C2 stays unticked**, as do the other eleven strict categories.
+
+**Next exact file for the replacement lane:** \`src/components/ui/date-input.tsx\` (week/datetime-local/seconds/any-step native fallback vs legacy picker popup; do not tick C3 without value and viewport proof).
