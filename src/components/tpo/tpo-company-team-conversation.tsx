@@ -159,7 +159,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   {data?.status==="READY"?<>
    {data.truncated?<p role="status" className="text-xs text-warning">Showing the latest 100 messages. Earlier history remains stored.</p>:null}
    {data.messages.some(m=>m.decision&&!m.deletedAt)?<aside aria-label="Pinned company Team decisions"
-     className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-3 text-sm">
+     className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
      <h3 className="font-semibold">Decided:</h3>
      {data.messages.filter(m=>m.decision&&!m.deletedAt).slice(-5).map(m=>
        <a key={m.id} href={"#company-team-"+m.id} className="block truncate text-primary-text underline">{m.body}</a>)}
@@ -167,7 +167,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    <ScrollCue axis="y" label="Company Team message history" viewportClassName="max-h-[35rem]"><ol role="log" aria-live="polite" aria-label="Company Team messages" className="space-y-3">
     {data.messages.length===0?<li className="text-sm text-muted-foreground">
       Nothing here yet. Write the first message. @ someone to bring them in, or Ask someone to give a task a name and a date.
-    </li>:data.messages.map((m,index)=><li key={m.id} id={"company-team-"+m.id} className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-3">
+    </li>:data.messages.map((m,index)=><li key={m.id} id={"company-team-"+m.id} className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
       {(index===0||data.messages[index-1].dayKey!==m.dayKey)?<p className="mb-2 text-center text-xs font-semibold text-body">{m.dayLabel}</p>:null}
       <p className="text-xs text-muted-foreground">
         {m.authorMembershipId===actorMembershipId?"You":m.authorName??"Team member"} · {m.createdLabel}
@@ -202,7 +202,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
           void mutate({action:"EDIT",messageId:m.id,body:editBody}).then(ok=>{if(ok)setEditing(null);});}}>
         <Textarea required maxLength={4000} rows={3} 
           value={editBody} onChange={event=>setEditBody(event.target.value)}/>
-        <Button variant="primary" type="submit" disabled={busy||!editBody.trim()} className="underline text-link px-0">Save edit</Button>
+        <Button variant="primary" type="submit" disabled={busy||!editBody.trim()} className="min-h-11 min-[768px]:min-h-9">Save edit</Button>
         <Button variant="ghost" type="button" className="underline text-link px-0" onClick={()=>setEditing(null)}>Cancel</Button>
        </form>:null}
     </li>)}

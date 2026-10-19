@@ -92,3 +92,19 @@ Branch was fast-forwarded to the then-current main before this sweep. Directory 
 **Identity/privacy:** The company and Team data surfaces do not supply verified profile-photo URLs. Avatar uses name initials; it does not fabricate a photo, infer one from email, or access a different tenant. No shared UI avatar implementation was changed.
 
 **Unclosed A5–A7:** Full multi-portal icon family source-instance inventory, header/avatar photo states, visited links, exact external-link indicator, mobile/tablet screenshots, logo/wordmark/tab-title, and zero-mismatch source grep. These checkpoints remain **[ ]** per STRICT TICK RULE, regardless of the focused fixes above. Original 46/46 common SVG asset inventory remains the only complete asset-name coverage claim.
+
+## 2026-10-19 chat-12 — next scoped verification and batch pages
+
+The following two files were checked against the legacy page anatomy and link/token rules, without changing other lanes' shared components.
+
+| Page / element | Legacy source file:line | vNext source file:line | Finding |
+|---|---|---|---|
+| Batch navigation links | `docs/design/legacy-styles/components___common.scss:68-75` teal `$clrThird`, hover underline | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx:38,49-56,59,69,113,122-127` `text-link`, `lms-inline-link`, 2px focus outline | 9/9 Link tags use visible focus, hover provided by legacy shared skin / explicit hover on action links |
+| Batch tabs | `docs/design/old-lms-pages.md:8` one tab strip directly on the white page canvas | `page.tsx:47` shared TpoBatchWorkspaceTabs; duplicate bottom nav eliminated | One source instance |
+| Batch suggestion strips | `old-lms-pages.md:11` thin light-yellow strip | `page.tsx:48-56` `border-l-2 border-warning bg-warning-subtle` | Warning color token retained; rendered-tone proof pending |
+| Bulk-review selection rows | `docs/design/old-lms-shell.css:31-32` 44px TPO action target, teal 2px focus | `src/components/tpo/tpo-roster-verification-bulk.tsx:66,72` 44px `min-h-11` and 2px focus-within on the labelled checkbox rows | Source rules aligned; no icon/remote photo introduced |
+| Exact phone/tablet boundary | `old-lms-shell.css:68-85` mobile below 768px, tablet above | `tpo-roster-verification-bulk.tsx:71` one column below `md`, two above; `batches/[batchId]/page.tsx:96` two metric columns below `md`, four above | Source breakpoint equals 768px, browser unverified |
+
+**File-scoped coverage proof:** source-equivalent regex scan of fetched `tpo-roster-verification-bulk.tsx` and `batches/[batchId]/page.tsx` for `<(button|input|select|textarea)`, `<svg`, and six-digit `#hex` returned **0** in each. The batch overview had **9** opening and **9** closing Next.js Link elements and **9** `focus-visible:outline-2` instances; no raw anchor/inline SVG icons were introduced. The verification component has no navigational Link and needs no additional icon under its existing wording. These are *scoped* proof counts, not a whole-repository zero-instance claim.
+
+**Strict-tick limitations:** A5/A6/A7 across all portals remain unchecked. Visited/external-link states elsewhere, the existing topbar avatar-size mismatch, exact image/icon family across other lanes, and rendered phone/tablet screenshots remain unresolved. Do not treat these two scoped checks as full global icon/avatar/link completion.

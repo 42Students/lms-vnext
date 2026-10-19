@@ -340,16 +340,16 @@
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Branding)
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Readiness Gate)
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
+- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Sign-in methods)
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
@@ -414,7 +414,7 @@
 - [ ] `src/components/admin/college-archive-button.tsx`
 - [ ] `src/components/admin/college-at-glance-panel.tsx`
 - [ ] `src/components/admin/college-branding-form.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx`
+- [ ] `src/components/admin/college-branding-preview.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Embedded branding preview)
 - [ ] `src/components/admin/college-bulk-import.tsx`
 - [ ] `src/components/admin/college-closing-quizzes-card.tsx`
 - [ ] `src/components/admin/college-create-form.tsx`
@@ -424,7 +424,7 @@
 - [ ] `src/components/admin/college-feature-rule-editor.tsx`
 - [ ] `src/components/admin/college-logo-uploader.tsx`
 - [ ] `src/components/admin/college-setup-checklist.tsx`
-- [ ] `src/components/admin/college-signin-method-form.tsx`
+- [ ] `src/components/admin/college-signin-method-form.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Sign-in method controls)
 - [ ] `src/components/admin/managed-college-subdomain.tsx`
 - [ ] `src/components/admin/super-admin-college-company-actions.tsx`
 - [ ] `src/components/admin/super-admin-company-verification.tsx`
@@ -599,3 +599,51 @@ Source base: current `main` was `3a77aebd651756d5a16b9fea375ffc276fa4404b` on in
 - [ ] JSX verification (missing: TypeScript parser/typecheck under no-CI/no-running-code instruction; source tag/stray quote scans passed for edited files only).
 
 **Exact next file:** `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` — readiness list/card tokens, filter states, return-navigation, audit cross-check; then branding/sign-in and remaining College Admin pages. No Section H checkbox ticked.
+
+### Scoped Super Admin college readiness, branding and sign-in — source-proof batch (2026-10-19)
+
+**Scope reviewed:** the five paths marked **SOURCE IMPLEMENTATION REVIEWED** in the work queue. These are **not strict-complete** under Section H: no rendered phone/tablet/desktop comparison or full typecheck was performed, and the shared `PageHeader` still has a known desktop typography mismatch. Keep their boxes unticked rather than claim pixel parity.
+
+**Changes made:** readiness moved its return action into the shared `PageHeader`, uses `PageBackLink` and `StatusBadge` for scoped navigation/verdict, shared `StatTile` for the four persisted counts, shared `EmptyState` for no filtered checks, and border-divider checklist rows rather than card-in-card. The malformed-filter branch now has a shared `PageHeader`; mobile filter labels fill the available width. Branding now presents **one** top-level `PageHeader`, with scoped overview/web-address links in its actions. The embedded `CollegeBrandingPreview` no longer emits a duplicate `PageHeader`/back link; its own `h2` describes read-only preview data with the existing stored/default `StatusBadge`. Sign-in now places the return link in the shared header and leaves the confirmed-save, selected radio, disabled/read-only, error, and policy logic unchanged.
+
+#### Value-by-value source comparison (state and responsive evidence)
+
+| Property / state | Legacy source and actual value | Current scoped implementation and value | Verdict |
+| --- | --- | --- | --- |
+| Outer canvas | `docs/design/old-lms-pages.md:6`: white, 12px radius, 1px neutral-200, 24px padding | All three pages inherit `PageCanvas`; `src/components/ui/page-canvas.tsx:17-22` uses canvas tokens (`globals.css:322-328`) | Source matches inherited canvas; route-render proof outstanding |
+| Main header hierarchy | `docs/design/old-lms-pages.md:7`: one `h1`, inline grey subtitle, actions aligned top right | `readiness/page.tsx:129-136`; `branding/page.tsx:35-41`; `signin/page.tsx:22-24` each calls `PageHeader` once in normal state; shared `page-header.tsx:25-53` emits one `h1` | Source MATCH structural hierarchy; actual alignment proof outstanding |
+| Embedded branding heading | `old-lms-pages.md:6-7`: no extra canvas/page heading inside ordinary content | `college-branding-preview.tsx:132-141` uses titled `section` plus `h2` and `StatusBadge`, **0** `PageHeader` instances | MATCH intended hierarchy |
+| Title size and line-height | `legacy-styles/components___listing-page-header.scss:52-58`: 28px, weight 600, line-height 1.3 | `src/components/ui/page-header.tsx:33-34`: 30px, 600, 1.35 at md | **OPEN MISMATCH**, shared component owner needed |
+| Header bottom border / spacing | `.../components___listing-page-header.scss:33-35`: 1px `$neutral-200`, padding-bottom 16px | `src/components/ui/page-header.tsx:28`: 1px canvas border `#e5e9f0`, `pb-4` (16px) | MATCH token/dimension |
+| Back link mobile target | `legacy-styles/learn-layout.scss:361-383` (linked from `PageBackLink`): 44px target, icon-only below 768px | `src/components/ui/page-back-link.tsx:18-29`: `min-h-11 min-w-11` (44px), `hidden md:inline` label; used in each route | MATCH source contract, keyboard/viewport verification open |
+| Readiness verdict state | `old-lms-pages.md:11`: compact coloured status pill (generic pill anatomy) | `readiness/page.tsx:132-134` uses `StatusBadge` with READY success, NOT_READY error, INCOMPLETE warning; `status-badge.tsx:8-17` token backgrounds | Tone semantics preserved; exact legacy readiness-specific colour source not located |
+| Four readiness counters | `old-lms-pages.md:8`: shared summary/metric presentation | `readiness/page.tsx:152-173` one `StatTile` per persisted `Passed/Failed/Unknown/Total checks`; `stat-tile.tsx:25-34` shared spacing | MATCH shared vNext value styles; **legacy metric dimensions unverified** |
+| Filtered empty state | `old-lms-pages.md:6,11`: content on canvas, no extra nested-card skin | `readiness/page.tsx:233-234` uses `EmptyState`; `empty-state.tsx:6-10` transparent background and responsive padding | MATCH canvas anatomy; empty-copy preserved in description |
+| Readiness rows | `old-lms-pages.md:6,11`: hairline rows, no nested ordinary-content cards | `readiness/page.tsx:236-267`: `border-b border-border py-4 last:border-b-0`, status badge and action retained | MATCH row intent; full measured row-height proof outstanding |
+| Readiness query + filter state | Legacy generic filter control layout (`legacy-styles/components___listing-page-header.scss:88-104`) | `readiness/page.tsx:211-222`: 2 shared `Select` controls, `Button` submit, clear link; defaults from `parsed.status/area` | Controls shared; exact legacy select internals owned by forms lane |
+| Sign-in option active/disabled | `legacy-styles/components___form.scss` and `variables.scss:10,29-32`: teal checked accent, neutral border, disabled treatment | `college-signin-method-form.tsx:54-63`: `Radio` (shared), active `border-primary bg-primary-subtle`; disabled opacity and no-pointer cursor; `Button` disabled while unchanged/saving | Token/state source proof; no keyboard or live provider test |
+| Brand colours | Customer editable primary, secondary, logo and background override must reflect stored data, not fixed page colour | `college-branding-preview.tsx:13-114` reads branding tokens and public-HTTPS images; no decorative hard-coded hex; preview illustration is a **deliberate nested sign-in mock**, not a second main content canvas | Correct data-driven treatment; live tenant-host appearance explicitly not certified |
+
+#### Exact per-file JSX/hex/raw grep proof — fetched GitHub content, not executed app
+
+Regex family applied to the complete source text of each named file:
+`/<(button|input|select|textarea|table)\b/g` by native element; `/#[a-f0-9]{3,8}\b/gi` for hex; `/<PageHeader\b/g`; `/<h1\b/g`; quote-before-`className` scan; matched opening and closing tags of known local/shared element types. This proof is restricted to these five fetched files, **not the entire portal**.
+
+| Full path | Raw native elements | Hex literals | PageHeader JSX | Native h1 JSX | Stray quote/tag mismatch |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` | 0 | 0 | 2 (normal + invalid-filter branches) | 0 (delegated to shared PageHeader) | 0 detected |
+| `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx` | 0 | 0 | 1 | 0 | 0 detected |
+| `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx` | 0 | 0 | 1 | 0 | 0 detected |
+| `src/components/admin/college-branding-preview.tsx` | 0 | 0 | 0 | 0 | 0 detected |
+| `src/components/admin/college-signin-method-form.tsx` | 0 | 0 | 0 | 0 | 0 detected |
+
+#### Phone/tablet/desktop responsive source proof, without browser execution
+
+- Legacy `listing-page-header.scss:130-154`: at up to **767px**, header title 20px, title/subtitle stack with 2px gap, actions full-width and stacked; at 768px+, the row is horizontal. Shared `page-header.tsx:28-49` expresses the same 20px mobile title and `md:` breakpoint at 768px, full-width stacked mobile actions, and desktop side actions. **Title 28/30px desktop mismatch remains.**
+- `readiness/page.tsx:152-174` uses one-column mobile metric grid, **2 columns at 640px**, **4 at 1280px**; filtered select labels at `readiness/page.tsx:212,217` are full width below 640px and at least 160px from 640px; controls have 44px phone and 36px >=768px height. Legacy readiness-specific metric wrapping was not available for numeric comparison; source behavior documented, not marked equal.
+- `branding/page.tsx:35-41` wraps return and verification controls; `college-branding-preview.tsx:152,253-261` stacks swatches/desktop-mobile illustrations below 640/1024px and uses 2 columns at the respective `sm`/`lg` breakpoints. The mobile illustration clamps to 235px and `max-w-full` (`college-branding-preview.tsx:31-36`). Illustration is separate from actual authenticated layout.
+- `signin/page.tsx:22-24` inherits the shared responsive PageHeader. `college-signin-method-form.tsx:54-63` keeps options in one column with 56px minimum row targets; save Button has 44px below 640px and 36px from 640px, and disabled/selection states remain conditional.
+
+**Strict missing evidence:** cannot claim file checkbox completion until shared PageHeader's 28/30px title/line-height discrepancy is reconciled by its owner, all legacy-specific responsive/style states (hover, error, busy, disabled, keyboard) are value-matched, and the actual phone/tablet browser rendering is compared. No CI, tests, screenshots, TypeScript compilation or interaction replay performed. No Section H box ticked.
+
+**Exact next file:** `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`, followed by administrators/session, subdomain/verification and tenant setup pages.

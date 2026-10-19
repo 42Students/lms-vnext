@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { courseApiError } from "./learner-course-api";
 import {
@@ -201,8 +203,8 @@ export function FacultyQuizReview({
 
   return (
     <>
-      {notice?<Alert tone="success" className="mt-2">{notice}</Alert>:null}
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      {notice?<Alert tone="success" className="mt-[var(--lms-space-2)]">{notice}</Alert>:null}
+      <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         <Button
           size="sm"
           className="min-h-11 md:min-h-[var(--lms-control-height)]"
@@ -313,27 +315,14 @@ export function FacultyQuizReview({
         </div>
       </div>
 
-      {loading ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          Loading attempts…
-        </p>
-      ) : null}
+      {loading ? <LoadingState label="Loading attempts…" /> : null}
 
       {error ? (
-        <p
-          role="alert"
-          className="mt-3 text-sm font-semibold text-error"
-        >
-          {error}
-        </p>
+        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
       ) : null}
 
-      {!loading &&
-      attempts &&
-      attempts.length === 0 ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          No submissions yet
-        </p>
+      {!loading && attempts && attempts.length === 0 ? (
+        <EmptyState title="No submissions yet" description="" />
       ) : null}
 
       {!loading && attempts ? <p className="text-sm font-semibold text-foreground">{attempts.length} submission(s)</p> : null}

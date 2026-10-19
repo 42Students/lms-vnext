@@ -10,7 +10,10 @@ const files=[
  "src/app/(authenticated)/hr/activity/page.tsx",
  "src/app/(authenticated)/hr/calendar/page.tsx",
  "src/components/tracker/known-errors-workspace.tsx",
- "src/components/tracker/tracker-live-logs-explorer.tsx"
+ "src/components/tracker/tracker-live-logs-explorer.tsx",
+ "src/app/(authenticated)/hr/conversations/page.tsx",
+ "src/app/(authenticated)/hr/conversations/[threadId]/page.tsx",
+ "src/app/(authenticated)/tracker/audit-findings/page.tsx"
 ];
 for(const name of files){
  const file=path.join(root,name);
@@ -30,6 +33,17 @@ for(const name of files){
  }else if(name.includes("known-errors")){
   content=content.replace(/<p className="border-y border-border py-6 text-sm text-muted-foreground">\s*No tracked errors yet\. This does not prove that live Cloud Logging contains no errors\.\s*<\/p>/,
    '<EmptyState title="No tracked errors" description="This does not prove that live Cloud Logging contains no errors."/>');
+ }else if(name.includes("tracker/audit-findings/page")){
+  content=content.replace('<p role="status" className="text-sm text-body">Review importer logs for the remaining details.</p>',
+   '<EmptyState title="No import details" description="Review importer logs for the remaining details."/>');
+  content=content.replace('<p role="status" className="text-sm text-body">No independent audit findings match these filters.</p>',
+   '<EmptyState title="No matching audit findings" description="No independent audit findings match these filters."/>');
+ }else if(name.includes("hr/conversations/[threadId]")){
+  content=content.replace('<p role="status" className="border-y border-border py-5 text-body">No messages on this page.</p>',
+   '<EmptyState title="No messages" description="No messages on this page."/>');
+ }else if(name.includes("hr/conversations")){
+  content=content.replace('<p role="status" className="border-y border-border py-5 text-body">No matching conversations with the placement cell for this college.</p>',
+   '<EmptyState title="No matching conversations" description="No matching conversations with the placement cell for this college."/>');
  }else{
   content=content.replace('<p role="status" className="text-sm text-body">No live errors loaded.</p>',
    '<EmptyState title="No live errors loaded" description="Load or refresh live logs to see the latest authorized error events."/>');

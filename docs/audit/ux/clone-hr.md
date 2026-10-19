@@ -18,7 +18,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/hr/colleges/error.tsx`
 - [ ] `src/app/(authenticated)/hr/colleges/loading.tsx`
-- [ ] `src/app/(authenticated)/hr/colleges/page.tsx`
+- [x] `src/app/(authenticated)/hr/colleges/page.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
 - [ ] `src/app/(authenticated)/hr/company/error.tsx`
 - [ ] `src/app/(authenticated)/hr/company/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/company/page.tsx`
@@ -59,11 +59,11 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] `src/app/(authenticated)/hr/home/error.tsx`
 - [ ] `src/app/(authenticated)/hr/home/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/home/page.tsx`
-- [ ] `src/app/(authenticated)/hr/layout.tsx`
+- [x] `src/app/(authenticated)/hr/layout.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
 - [ ] `src/app/(authenticated)/hr/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/messages/error.tsx`
 - [ ] `src/app/(authenticated)/hr/messages/loading.tsx`
-- [ ] `src/app/(authenticated)/hr/messages/page.tsx`
+- [x] `src/app/(authenticated)/hr/messages/page.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
 - [ ] `src/app/(authenticated)/hr/not-found.tsx`
 - [ ] `src/app/(authenticated)/hr/notifications/error.tsx`
 - [ ] `src/app/(authenticated)/hr/notifications/loading.tsx`
@@ -288,3 +288,78 @@ No CI, typecheck, browser or app execution was attempted. All modified TSX files
 - [ ] `scripts/codemods/chat15-hr-header-eyebrows.cjs` also recognizes `eyebrow="Recruiter · Hiring drive"`. Commit remains script-only (unexecuted), so current source can still contain legacy eyebrow props.
 
 Next file to resume: `src/app/(authenticated)/hr/drives/page.tsx`, inspect its authorized Published/Closed drive list against the old sheet without dropping card actions or inventing AG Grid imports.
+
+## chat-15 HR complete-file batch — 2026-10-19
+
+**Sync and scope:** Fast-forwarded `chatgpt/chat-15-b` to `main` `dba6bbd5456152d9acc1ba31601d9ca32bcab3aa` before this batch. Only the HR route source files in this table were modified; shared UI source remains owned by its lane. `src/components/tpo/grid/tpo-grid.tsx` on that main contains `AgGridReact` and Quartz, but `package.json` lacked `ag-grid-community` and `ag-grid-react` declarations; E8 runtime remains unverified.
+
+### Source scan: exact current branch counts
+
+Read the full UTF-8 content of each named file directly from GitHub after editing, counting with case-sensitive expressions (unlike a case-insensitive grep, shared `<Input>` and `<Button>` are **not** native tags):
+
+```text
+/<(button|select|input|textarea|table)(?=[\s/>])/g
+/#[0-9a-fA-F]{3,8}\b/g
+/<h1\b|<table\b|<button\b|border-b-\[3px\]|rounded-full|aria-pressed/g
+```
+
+| File | Native controls/tables | Hex literals | Hand-built h1/tab/pill/toggle markers | Responsive source proof |
+| --- | ---: | ---: | ---: | --- |
+| `hr/activity/page.tsx` | 0 | 0 | 0 | `flex flex-wrap` toolbar; shared `Tabs` + `NeedsDoingChips` |
+| `hr/activity/error.tsx` | 0 | 0 | 0 | shared `PageHeader` / `Alert` with wrapping retry |
+| `hr/activity/loading.tsx` | 0 | 0 | 0 | shared `GracefulPageLoading` |
+| `hr/drives/page.tsx` | 0 | 0 | 0 | `md:grid-cols-2` cards at 768px; filter bar `flex-wrap`; shared Tabs/Chips |
+| `hr/drives/new/page.tsx` | 0 | 0 | 0 | shared chip chooser and one-canvas form |
+| `hr/drives/new/loading.tsx` | 0 | 0 | 0 | shared `GracefulPageLoading shape="directory"` |
+| `hr/drives/new/error.tsx` | 0 | 0 | 0 | shared `ErrorState` with original retry |
+| `hr/drives/proposals/page.tsx` | 0 | 0 | 0 | `flex-wrap` search; `min-w-0 flex-[1_1_12rem]` prevents narrow-screen overflow |
+| `hr/drives/proposals/loading.tsx` | 0 | 0 | 0 | shared `GracefulPageLoading shape="directory"` |
+| `hr/drives/proposals/error.tsx` | 0 | 0 | 0 | shared `Alert`, `Button`, `flex-wrap` retry |
+| `hr/drives/recorded-outside/page.tsx` | 0 | 0 | 0 | shared `NeedsDoingChips`, `EmptyState`, `InlineNotice` |
+| `hr/colleges/page.tsx` | 0 | 0 | 0 | pure `redirect("/hr/home")`, no DOM or viewport-dependent content |
+| `hr/messages/page.tsx` | 0 | 0 | 0 | re-export shim, no DOM or viewport-dependent content of its own |
+| `hr/layout.tsx` | 0 | 0 | 0 | `return children` only (after role guard), no wrapper/style/viewport rules |
+
+These are **source grep-equivalent counts** performed on fetched files; do not mistake them for CLI grep over the entire repository, a render test, or a responsive screenshot. The changed JSX files were re-read; every edited custom paired tag was inspected with both opening and closing tag names intact, while shared components are self-closing.
+
+### Reference-to-source value and breakpoint comparison
+
+| Property and state | Legacy source / value | Current vNext source / value | Status |
+| --- | --- | --- | --- |
+| Main canvas paint | `docs/design/old-lms-pages.md:6`: white, 12px radius, 1px #e5e9f0, padding 24px | Authenticated shell's shared canvas; page routes add no enclosing card | Inherited; computed proof pending |
+| Heading mobile type | `docs/design/legacy-styles/components___listing-page-header.scss:131-137`: max-width 767px, title 20px | `src/components/ui/page-header.tsx:24-32`: base 20px | Exact source value |
+| Heading desktop type | `docs/design/old-lms-pages.md:7`: ~30px/600; listing SCSS `components___listing-page-header.scss:53-58` separately says 28px | `src/components/ui/page-header.tsx:24-34`: md 30px, weight 600 | Old sources disagree by 2px; not ticked |
+| Page-head responsive row | Listing SCSS `components___listing-page-header.scss:131-158`: at 767px and below, stack | `src/components/ui/page-header.tsx:19-44`: column by default, `md:flex-row` at 768px | Structural breakpoint match; no rendered comparison |
+| Compact filters and chips | `old-lms-pages.md:8-10`: chips under heading, 3px active tab underline, compact outlined search | `src/components/ui/needs-doing-chips.tsx:31-54`, `src/components/ui/tabs.tsx:88-92`, `src/components/ui/button.tsx:10-28` | Shared components, style values unverified on these pages |
+| Search focus / invalid | `components___form.scss:23-33,130-143`: keyboard-only focus, teal focus, red invalid | `src/styles/legacy-skin.css:138-162` and shared Input/Select | Global skin inherited; interaction untested |
+| Actions on narrow screens | `components___listing-page-header.scss:131-158`: mobile actions >=44px | `src/components/ui/page-header.tsx:35-44`; chip links have `min-h-11` below 640px (`needs-doing-chips.tsx:31-54`) | **Gap:** shared chip min-height switches at 640px, while old mobile boundary is 767px; shared UI owner |
+| List collapse | `components___listing-page-header.scss:131-158`: mobile ends at 767px | `hr/drives/page.tsx`: use `md:grid-cols-2` on deadline/request objects so two columns only from 768px | Source breakpoint match; not visual proof |
+| Info/status/errors | `old-lms-pages.md:11-12`: coloured status pills and slim banners | `StatusBadge`, `Alert`, `ErrorState`, `EmptyState`, `InlineNotice` referenced on the HR routes | Delegated, pixel values and pressed/error states not fully verified |
+
+### Strictly completed route-only shims
+
+- [x] `src/app/(authenticated)/hr/colleges/page.tsx`: no JSX or styles; only redirects to `/hr/home`. **Value table:** typography/background/border/focus/responsive are all N/A (0 rendered DOM). Source scan: 0/0/0. No behavioral change.
+- [x] `src/app/(authenticated)/hr/layout.tsx`: checks active recruiter permission, redirects otherwise, then returns `children` without introducing elements. **Value table:** all visual and responsive properties N/A (0 wrapper DOM); role guard remains intact. Source scan 0/0/0.
+- [x] `src/app/(authenticated)/hr/messages/page.tsx`: direct re-export of `hr/conversations/page`; no visual DOM, custom UI, CSS, or viewport rules in this **route shim**. Value table all own-properties N/A. Source scan 0/0/0. *Conversation page's independent parity remains unticked.*
+
+All other files in the source-scan table stay **[ ]** because responsive screenshots and complete computed legacy property/state matching have not been done. Converted markup is **not** evidence of exact pixel parity. No CI, typecheck, dev server, browser render, or user-session walkthrough was performed.
+
+**Next unticked HR file:** `src/app/(authenticated)/hr/company/page.tsx` after reviewing the current `hr/drives/page.tsx` partial parity notes, then all remaining HR pages/components and full recruiter aliases.
+
+### Follow-on HR page pass: source-level proof after full-file reread
+
+| Page | Exact post-edit source scan: native elements / hex / hand-built h1-tab-pill-toggle | Shared component contracts | Mobile/tablet comparison and remaining blockers |
+| --- | --- | --- | --- |
+| `hr/company/page.tsx` | 0 / 0 / 1 avatar-only `rounded-full` | 4 PageHeader sites; Badge (2), StatusBadge (1), Tabs, NeedsDoingChips, Input, Button and EmptyState | `md:grid-cols-2` company facts and `md:grid-cols-3` report tiles start at 768px (SCSS listing header max 767px); avatar circle is intentionally exempt; pixel values pending |
+| `hr/company/reports/page.tsx` | 0 / 0 / 0 | 3 PageHeader sites, Chips/Tabs/Select/Input/Button, HrCompanyReportsGrid, EmptyState | `md:grid-cols-2` college chooser, `md:grid-cols-4` report metrics, `md:pb-5` separators; server CSV unchanged; Quartz runtime pending |
+| `hr/profile/page.tsx` | 0 / 0 / 0 | 1 PageHeader, shared DataTable and StatusBadge (3), EmptyState, profile editor | Account details `md:grid-cols-2` only from 768px; mobile grid fallback belongs to DataTable owner; validation pending |
+| `hr/home/page.tsx` | 0 / 0 / 0 | 3 PageHeader sites, Alert (2), Badge (3), NeedsDoingChips, EmptyState/ErrorState | Task tiles and week-event cards `md:grid-cols-2` at 768px; warnings no longer custom banners; mobile proof is source only |
+| `hr/round-results/page.tsx` | 0 / 0 / 0 | 3 PageHeader sites, Tabs, HrRoundResultsGrid, EmptyState/ErrorState, StatusBadge | Drive chooser `md:grid-cols-2` at 768px; authorized round table uses current native `TpoGrid` entrypoint; runtime blocked until AG Grid dependencies are declared |
+
+The native/hex/UI count expression remains that of the previous subsection, applied after re-reading the complete updated source files on this branch. `<Input>`, `<Button>`, `<Select>`, `<Badge>`, and `<Tabs>` are excluded from native-tag counts. The only `rounded-full` in the company page is a decorative recruiter **avatar** (not a custom status chip); retain its circle. Named paired `Alert`, `Badge`, `StatusBadge`, `Button` and `Select` tags were re-read with balanced opening and closing names; shared self-closing wrappers remain self-closing.
+
+Legacy sources checked: `docs/design/old-lms-pages.md:6-12`, `docs/design/legacy-styles/components___listing-page-header.scss:53-58,131-158`, `components___form.scss:23-33,130-143`, `components___antddesign.scss:148-184`. Source contrast: `src/components/ui/page-header.tsx:19-44`, `tabs.tsx:70-94`, `needs-doing-chips.tsx:31-54`, `src/styles/legacy-skin.css:102-162`. The all-state computed style table and phone/tablet screenshots are still missing, so **these five pages remain unticked** under the strict rule.
+
+**HR sheets:** Native `AgGridReact` + Quartz are now in `src/components/tpo/grid/tpo-grid.tsx` on main. `HrCompanyReportsGrid` and `HrRoundResultsGrid` are passed only authorized server rows; no unauthorized client fetch or broadened CSV endpoint was added. The required packages were absent from the inspected `package.json`, and no app was run. Mark integration **source-wired, unverified**, never runtime-complete E8.
+
+**Next high-priority files:** `src/app/(authenticated)/hr/calendar/page.tsx`, `src/app/(authenticated)/hr/conversations/page.tsx`, `src/app/(authenticated)/hr/notifications/page.tsx`, then `src/components/hr/hr-drive-draft-form.tsx`.

@@ -496,9 +496,9 @@
 
 @media (prefers-reduced-motion:no-preference) { .learnerNotificationPopover { animation:topbarNotificationPanelIn .2s ease-out; } }
 
-@media (max-width:767px) { .learnerNotificationPopover { position:fixed; top:calc(58px + env(safe-area-inset-top,0px)); right:0; bottom:0; left:0; width:100vw; max-width:100vw; min-width:0; max-height:calc(100dvh - 58px - env(safe-area-inset-top,0px)); border-radius:0; } }
+@media (max-width:767px) { .learnerNotificationDrawer { top:0 !important; right:0 !important; left:0 !important; width:100vw !important; max-width:100vw !important; height:100dvh !important; max-height:100dvh !important; border-radius:0; } }
 
-@media (max-width:767px) { .learnerNotificationPopover > div:first-child { padding:12px 16px; } .learnerNotificationPopover a,.learnerNotificationPopover button { min-height:44px; } }
+@media (max-width:767px) { .learnerNotificationDrawer [data-slot="drawer-header"] { padding:calc(16px + env(safe-area-inset-top,0px)) 20px 16px; border-bottom:1px solid var(--lms-neutral-200); background:var(--lms-neutral-50); } .learnerNotificationDrawer [data-slot="drawer-footer"] { padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px)); } .learnerNotificationDrawer a,.learnerNotificationDrawer button { min-height:44px; } }
 
 @media (prefers-reduced-motion:reduce) { .learnerNotificationPopover,.learnerNotificationPopover a { animation:none; transition:none; } }
 
@@ -547,3 +547,14 @@
 .hrNotificationBody li a time { flex:none; color:var(--lms-muted-text); font-size:12px; }
 
 @media (max-width:767px) { .hrNotificationDrawerBody { padding:12px 16px; overscroll-behavior:contain; } .hrNotificationDrawer li a { min-height:44px; padding:16px; } }
+
+.learnerNotificationBody { min-height:0; overflow:auto; overscroll-behavior:contain; padding:12px 0; scrollbar-width:none; }
+.learnerNotificationBody::-webkit-scrollbar { display:none; }
+.learnerNotificationFooter { flex:none; padding:12px 20px; border-top:1px solid var(--lms-neutral-200); background:var(--lms-neutral-50); }
+.learnerNotificationFooter a { display:inline-flex; min-height:44px; align-items:center; }
+.learnerNotificationDrawerBody { padding:12px 16px; overscroll-behavior:contain; }
+
+.topbarNotificationEmptyIcon { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; color:var(--lms-neutral-400); opacity:.6; }
+.topbarNotificationEmptyIcon svg { width:36px; height:36px; }
+.topbarNotificationEmptyTitle { margin:0; color:var(--lms-muted-text); font-size:14px; font-weight:500; line-height:1.5; }
+.topbarNotificationEmptyDescription { display:block; max-width:260px; color:var(--lms-neutral-400); font-size:14px; line-height:1.5; }

@@ -4,6 +4,7 @@ import funnelStyles from "@/components/hr/recruiter-report-funnel.module.css";
 import { HrCompanyReportsGrid } from "@/components/hr/hr-company-reports-grid";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -111,7 +112,7 @@ export default async function RecruiterCompanyReportsPage({
               Choose a college
             </h2>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
               {report.choices.map((grant) => (
                 <Link
                   key={grant.id}
@@ -194,7 +195,7 @@ export default async function RecruiterCompanyReportsPage({
         {label:"Closed drives",value:summary.closed},
       ]} />
 
-      <section aria-label="All your drives at this college" className="border-b border-border pb-4 sm:pb-5">
+      <section aria-label="All your drives at this college" className="border-b border-border pb-4 md:pb-5">
         <h2 className="font-semibold text-foreground">All your drives at this college</h2>
         <p className="mt-1 text-sm text-body">Hiring progress of applicants already shared by the placement cell, across all your authorized drives. Private applications are not counted.</p>
         <div className="mt-4 space-y-3">
@@ -208,7 +209,7 @@ export default async function RecruiterCompanyReportsPage({
         </div>
       </section>
 
-      <section className="border-b border-border pb-4 sm:pb-5">
+      <section className="border-b border-border pb-4 md:pb-5">
         <h2 className="text-lg font-semibold text-foreground">
           Drive report filters
         </h2>
@@ -218,7 +219,7 @@ export default async function RecruiterCompanyReportsPage({
           action="/hr/company/reports"
           className="mt-4 flex flex-wrap items-end gap-3"
         >
-          <input
+          <Input
             type="hidden"
             name="collegeId"
             value={collegeId}
@@ -256,7 +257,7 @@ export default async function RecruiterCompanyReportsPage({
             </Select>
           </label>
 
-          <Button type="submit">Apply filters</Button>
+          <Button type="submit" variant="secondary">Apply filters</Button>
 
           <Link
             href={recruiterCompanyReportsHref({
@@ -269,13 +270,13 @@ export default async function RecruiterCompanyReportsPage({
         </form>
       </section>
 
-      <section className="border-b border-border pb-4 sm:pb-5">
+      <section className="border-b border-border pb-4 md:pb-5">
         <h2 className="font-semibold text-foreground">Current page hiring totals</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Totals cover only the visible authorized drive rows on this page, not every company drive.
           Outstanding means currently issued offers; these counts may represent multiple offer versions.
         </p>
-        <dl className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+        <dl className="mt-3 grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
           {Object.entries(hrCompanyReportPageSignals(jobs)).map(([label,value])=>(
             <div key={label} className="rounded-[var(--lms-control-radius)] border border-border p-3">
               <dt className="capitalize text-xs text-muted-foreground">{label}</dt>

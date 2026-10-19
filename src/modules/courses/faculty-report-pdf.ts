@@ -48,6 +48,15 @@ export function buildFacultyReportPdf(input: FacultyReportPdfInput): string {
     pages[pages.length - 1]!.push(line);
   };
   const addBlock = (value: string) => wrap(value).forEach(addLine);
+  // Keep a section heading and at least the start of its first result
+  // together; otherwise the final line of a page can become an orphan title.
+  // This changes pagination only, not the existing paper/font geometry.
+  const reserveSectionStart = (required: number) => {
+    const current = pages[pages.length - 1]!;
+    if (current.length && current.length + Math.min(required, MAX_LINES_PER_PAGE) > MAX_LINES_PER_PAGE) {
+      pages.push([]);
+    }
+  };
   addBlock("FACULTY " + input.kind.toUpperCase() + " REPORT");
   addBlock(input.title);
   addBlock(input.subtitle);
@@ -55,8 +64,11 @@ export function buildFacultyReportPdf(input: FacultyReportPdfInput): string {
   addLine("-");
   for (const summary of input.summary) addBlock(summary);
   for (const section of input.sections) {
+    const first = section.rows[0] ?? "No records";
+    const headingLines = wrap(section.title.toUpperCase());
+    reserveSectionStart(headingLines.length + 2 + Math.min(wrap(first).length, 2));
     addLine("");
-    addBlock(section.title.toUpperCase());
+    headingLines.forEach(addLine);
     addLine("-");
     if (section.rows.length === 0) addLine("No records");
     else for (const row of section.rows) addBlock(row);
