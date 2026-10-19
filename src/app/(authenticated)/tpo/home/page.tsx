@@ -38,7 +38,7 @@ export default async function TpoHome(){
   </ul>
  </div>;
  const moduleAccess=await resolveOptionalModuleAccess(ctx);
- if(!moduleAccess.placements.enabled)return <div role="status" className="min-w-0 rounded-[12px] border border-border bg-surface p-6">
+ if(!moduleAccess.placements.enabled)return <div role="status" className="min-w-0 space-y-3">
   <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Placements is switched off for this college</h1>
   <p className="mt-2 text-sm text-body">Placement work is not available until your college enables the Placements module.</p>
  </div>;
