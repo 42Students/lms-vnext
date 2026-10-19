@@ -34,7 +34,7 @@ export function TenantRestoreAction({
   }
  }
  return <>
-  <Button type="button" size="sm" variant="secondary" disabled={pending}
+  <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" loading={pending} disabled={pending}
    onClick={()=>setOpen(true)}>Restore {kind}</Button>
   <ConfirmDialog open={open} onOpenChange={setOpen}
    title={"Restore "+name+"?"}
