@@ -82,3 +82,19 @@ grep -Rnl 'grid/tpo-grid' src/components/tpo --include='*.tsx'
 3. Register `AllCommunityModule` once, map controlled row selection, selection pruning, column state, numeric/date-only sort, clipboard/export callbacks, option editors, and saved views without widening server permissions.
 4. Resolve branch divergence against origin/main without discarding parallel lane edits; run the required greps in the checked-out repository, and record real counts.
 5. Provide the complete, value-by-value legacy/vNext state table (default, hover, selected, focus, disabled, loading, empty, responsive). Only then tick E8.
+
+## Continuation: fallback hardening (2026-10-19)
+
+The AG Grid source remains unavailable and the package manifest does not declare either `ag-grid-community` or `ag-grid-react`. E8 is **[ ]**. This turn deliberately did not create unresolved imports, fabricate Quartz theme parameters, claim native AG Grid grid state, or run CI.
+
+| Incremental contract | vNext evidence | Limit |
+|---|---|---|
+| Explicit engine identity | src/components/tpo/grid/tpo-grid.tsx:12 | `TpoGrid` still delegates to shared Table |
+| Pinned checkbox separation | src/components/tpo/tpo-spreadsheet-grid.tsx:62 | 48px offset, no browser scroll proof |
+| Safe clipboard fallback | src/components/tpo/tpo-spreadsheet-grid.tsx:160 | Browser clipboard permissions not executed |
+| Deduplicated filtered selection | src/components/tpo/tpo-spreadsheet-grid.tsx:68 | Backend still owns authorized/filter-scoped `allIds` |
+| Selection anchor cleanup | src/components/tpo/tpo-spreadsheet-grid.tsx:94 | No interactive keyboard test |
+| Versioned data-free layout | src/components/tpo/tpo-spreadsheet-grid.tsx:50 | Sanitized `:layout-v3` storage on manual resize/pin; legacy `:layout-v2` restored when no valid v3 record, no AG Grid column API |
+| v3 restore | src/components/tpo/tpo-spreadsheet-grid.tsx:104 | Saves widths/pins; URL column chooser remains source of visibility |
+
+Source inspection was performed through GitHub file reads; **no** runtime, exhaustive repository grep, visual state matrix, or AG Grid integration evidence exists. Future continuation: `src/components/tpo/grid/tpo-grid.tsx` when upstream legacy-grid and declared AG Grid dependencies become available; otherwise work E1–E5 coverage.
