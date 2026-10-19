@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -112,15 +113,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      </p>}
     </li>)}
    </ol>}
-   <nav aria-label="Resource directory pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-    <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
-    <div className="flex gap-3">
-     {data.page>1?<Link href={mentorResourceDirectoryHref({...data.query,page:data.page-1})}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
-     {data.page<data.totalPages?<Link href={mentorResourceDirectoryHref({...data.query,page:data.page+1})}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
-    </div>
-   </nav>
+   <Pagination label="Resource directory pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorResourceDirectoryHref({...data.query,page})}/>
   </>}
   <p className="text-xs text-muted-foreground">
    Only registered resource metadata and explicitly safe HTTPS links are shown.
