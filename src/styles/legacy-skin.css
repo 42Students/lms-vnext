@@ -309,3 +309,36 @@
   font-size: 13px !important;
   font-weight: 600 !important;
 }
+
+/* LEGACY RESPONSIVE TYPE SCALE
+ * components___typo.scss:7-10 (phone h1 24px),
+ * components___typo.scss:17-25 (h2 tablet 22px, desktop 30px),
+ * components___typo.scss:32-40 (h3 tablet 18px, desktop 20px),
+ * components___variables.scss:148-157 (767/768/992px breakpoints).
+ */
+@media (max-width: 767px) {
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+    :where(h1):not(:where([data-unskin], [data-unskin] *)) {
+    font-size: 24px !important;
+  }
+}
+@media (min-width: 768px) {
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+    :where(h2):not(:where([data-unskin], [data-unskin] *)) {
+    font-size: 22px !important;
+  }
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+    :where(h3):not(:where([data-unskin], [data-unskin] *)) {
+    font-size: 18px !important;
+  }
+}
+@media (min-width: 992px) {
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+    :where(h2):not(:where([data-unskin], [data-unskin] *)) {
+    font-size: 30px !important;
+  }
+  :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+    :where(h3):not(:where([data-unskin], [data-unskin] *)) {
+    font-size: 20px !important;
+  }
+}
