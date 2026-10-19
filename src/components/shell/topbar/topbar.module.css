@@ -476,3 +476,7 @@
   opacity:.55; cursor:not-allowed;
   background:#fafbfc;
 }
+
+@media (prefers-reduced-motion:reduce) {
+  .orgTrigger,.orgPopover { animation:none; transition:none; }
+}
