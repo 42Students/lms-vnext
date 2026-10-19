@@ -78,7 +78,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
     } catch (e) { setError(e instanceof Error ? e.message : "Calendar update failed."); }
     finally { setPending(false); }
   }
-  if (choices.length === 0) return <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 text-sm text-body">
+  if (choices.length === 0) return <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">
     No pending or scheduled rounds exist in published drives. Create a round in its job workspace first.
   </p>;
   return <section className="space-y-4 border-b border-border pb-6">
