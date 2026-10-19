@@ -19,13 +19,13 @@ export default async function PrepSettings(){
  const parsed=tpoPrepConfigSchema.safeParse(data.config??{courseIds:[],minimumCompleted:0});
  const initial=parsed.success?parsed.data:{courseIds:[],minimumCompleted:0};
  return <div className="min-w-0 space-y-4"><TpoSettingsNav active="prep-readiness"/>
-  <PageHeader eyebrow="TPO · Settings" title="Prep readiness" />
+  <PageHeader title="Prep readiness" />
   {communication.ready?<TpoPrepPercentageEditor key={context.membership?.collegeId??"unscoped"} initial={communication.prepThresholdPct} version={communication.version}/>:
    <p role="status">Readiness percentage storage is unavailable.</p>}
   {!data.ready?<p role="status" className="rounded border border-border p-4">Readiness settings storage is pending migration registration.</p>:
   <>
    {!parsed.success?<p role="alert" className="text-sm">The saved readiness config uses an unsupported shape. No changes will be made until it is reviewed.</p>:null}
-   {!coursesResult.ok?<p role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-warning-border bg-warning-subtle p-3 text-sm">
+   {!coursesResult.ok?<p role="alert" className="rounded-[var(--lms-canvas-radius)] border border-warning-border bg-warning-subtle p-3 text-sm">
      Couldn&apos;t load preparation courses. Saved choices were not changed. <a href="/tpo/settings/prep-readiness" className="font-semibold underline">Retry</a>
    </p>:null}
    {parsed.success&&coursesResult.ok?<TpoPrepReadinessEditor key={context.membership?.collegeId??"unscoped"} choices={courses} initial={{courseIds:initial.courseIds,minimumCompleted:initial.minimumCompleted}}
