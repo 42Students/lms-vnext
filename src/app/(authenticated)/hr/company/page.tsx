@@ -37,7 +37,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const collegeQuery = z.string().uuid().optional().safeParse(repeated?null:one(query.collegeId));
   if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
-      action={<Link href="/hr/company" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Choose college</Link>} /></div>;
+      action={<Link href="/hr/company" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose college</Link>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
   const requestedTab = one(query.tab);
   const teamQuery = hrTeamSearchSchema.safeParse(one(query.q));
@@ -55,7 +55,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const tab = requestedTab === "team" ? "team" : "company";
   if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader eyebrow="Recruiter" title="Company & Team" />
     <ErrorState title="Invalid team filter" description="Search must be 120 characters or fewer."
-      action={<Link href="/hr/company?tab=team" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Clear search</Link>} /></div>;
+      action={<Link href="/hr/company?tab=team" className="text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear search</Link>} /></div>;
   const result = await getRecruiterCompanyTeam(context, requestedCollegeId);
 
   if (result.status !== "READY") {
@@ -80,7 +80,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                 <Link
                   key={grant.id}
                   href={"/hr/company?collegeId=" + encodeURIComponent(grant.collegeId)}
-                  className="rounded-lg border border-border bg-surface-secondary p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+                  className="rounded-lg border border-border bg-surface-secondary p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                 >
                   <div className="font-medium text-foreground">{grant.collegeName}</div>
                   <div className="mt-1 text-xs text-muted-foreground">Open Company & Team</div>
@@ -109,7 +109,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         />
         <Link
           href="/hr/profile"
-          className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Your profile
         </Link>
@@ -122,8 +122,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               key={grant.id}
               href={"/hr/company?collegeId=" + encodeURIComponent(grant.collegeId) + "&tab=" + tab}
               className={grant.collegeId === result.grant.collegeId
-                ? "inline-flex min-h-9 items-center rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
-                : "inline-flex min-h-9 items-center rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"}
+                ? "inline-flex min-h-11 items-center rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                : "inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
             >
               {grant.collegeName}
             </Link>
@@ -135,22 +135,22 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         <Link
           href={base + "&tab=company"}
           className={tab === "company"
-            ? "inline-flex min-h-9 items-center border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
-            : "inline-flex min-h-9 items-center px-3 py-2 text-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"}
+            ? "inline-flex min-h-11 items-center border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            : "inline-flex min-h-11 items-center px-3 py-2 text-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
         >
           Company
         </Link>
         <Link
           href={base + "&tab=team"}
           className={tab === "team"
-            ? "inline-flex min-h-9 items-center border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
-            : "inline-flex min-h-9 items-center px-3 py-2 text-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"}
+            ? "inline-flex min-h-11 items-center border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            : "inline-flex min-h-11 items-center px-3 py-2 text-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
         >
           Team
         </Link>
         <Link
           href={"/hr/company/reports?collegeId=" + encodeURIComponent(result.grant.collegeId)}
-          className="px-3 py-2 text-sm text-muted-foreground hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+          className="px-3 py-2 text-sm text-muted-foreground hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Reports
         </Link>
@@ -174,7 +174,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Website</dt>
               <dd className="mt-1 text-sm text-foreground">{result.company.websiteUrl?.startsWith("https://")||result.company.websiteUrl?.startsWith("http://")
-                ? <a href={result.company.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-primary-text underline">{result.company.websiteUrl}</a>
+                ? <a href={result.company.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-link underline">{result.company.websiteUrl}</a>
                 : "Not provided"}</dd>
             </div>
             <div>
@@ -200,8 +200,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             {overview.recent.length ? <div className="mt-4 space-y-2">
               <h4 className="text-sm font-semibold text-foreground">Recent hiring drives</h4>
               {overview.recent.map(job=><Link key={job.id} href={"/recruiter/drives/"+job.id+"?tab=overview"}
-                className="flex flex-wrap justify-between gap-2 rounded-[9px] border border-border p-3 text-sm hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)] min-h-9">
-                <span className="font-medium text-primary-text">{job.title}</span>
+                className="flex flex-wrap justify-between gap-2 rounded-md border border-border p-3 text-sm hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11">
+                <span className="font-medium text-link">{job.title}</span>
                 <span className="text-muted-foreground">{job.status}</span>
               </Link>)}
             </div> : <p className="mt-4 text-sm text-muted-foreground">No published or closed drives for this relationship.</p>}
@@ -212,7 +212,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-base font-semibold text-foreground">Recruiter team</h2>
             <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
-              className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Export authorized team CSV
             </Link>
           </div>
@@ -225,8 +225,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
-              className="min-h-9 min-w-48 flex-1 rounded-[9px] border border-border bg-surface px-3 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"/>
-            <button type="submit" className="rounded-[9px] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)] min-h-9">Search</button>
+              className="min-h-11 min-w-48 flex-1 rounded-md border border-border bg-surface px-3 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/>
+            <button type="submit" className="rounded-md border border-border px-4 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11">Search</button>
           </form>
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates
             {" · Displaying "+teamPageResult.first+"–"+teamPageResult.last}
@@ -262,10 +262,10 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <div className="flex flex-wrap gap-2">
               {teamPageResult.page>1?<Link
                 href={base+"&tab=team&q="+encodeURIComponent(teamQuery.data)+"&teamPage="+(teamPageResult.page-1)}
-                className="rounded-[9px] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Previous</Link>:null}
+                className="rounded-md border border-border px-3 py-2 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
               {teamPageResult.page<teamPageResult.pages?<Link
                 href={base+"&tab=team&q="+encodeURIComponent(teamQuery.data)+"&teamPage="+(teamPageResult.page+1)}
-                className="rounded-[9px] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Next</Link>:null}
+                className="rounded-md border border-border px-3 py-2 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
             </div>
           </nav>
         </section>
