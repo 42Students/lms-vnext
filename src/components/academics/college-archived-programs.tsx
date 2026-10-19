@@ -23,7 +23,7 @@ export function CollegeArchivedPrograms({ programs }: {
         className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
         <p className="text-sm text-body">{program.name} ({program.code}) · {program.departmentName}</p>
         <Button variant="secondary" type="button" disabled={busy}
-          className="rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm font-semibold text-primary-text"
+          className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text"
           onClick={() => {
             if (!window.confirm(`Restore ${program.name}? Its active name and code must remain unique.`)) return;
             setError("");
