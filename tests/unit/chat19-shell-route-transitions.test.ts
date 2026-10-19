@@ -61,8 +61,8 @@ describe("chat-19 old-LMS route transition parity",()=>{
 });
  it("does not dim the page when navigation is prevented",()=>{
  expect(route()).toContain("event.defaultPrevented");
- expect(route()).toContain('document.addEventListener("click",onNavigate)');
- expect(route()).toContain('document.removeEventListener("click",onNavigate)');
+ expect(route()).toContain('document.addEventListener("click",onNavigate,true)');
+ expect(route()).toContain('document.removeEventListener("click",onNavigate,true)');
 });
  it("cleans up recovery timer when the route changes",()=>{
  expect(route()).toContain("recoveryTimer.current=window.setTimeout(()=>setLeaving(false),3000)");
