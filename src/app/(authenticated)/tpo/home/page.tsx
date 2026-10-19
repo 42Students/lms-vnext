@@ -39,7 +39,7 @@ export default async function TpoHome(){
  </div>;
  const moduleAccess=await resolveOptionalModuleAccess(ctx);
  if(!moduleAccess.placements.enabled)return <div role="status" className="min-w-0 space-y-3">
-  <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Placements is switched off for this college</h1>
+  <PageHeader title="Placements is switched off for this college" />
   <p className="mt-2 text-sm text-body">Placement work is not available until your college enables the Placements module.</p>
  </div>;
  const collegeId=ctx.membership!.collegeId;
