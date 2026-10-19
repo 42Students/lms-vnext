@@ -1,5 +1,9 @@
 "use client";
 import {useMemo,useState} from "react";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/checkbox";
 import Link from "next/link";
 import {collegeVerificationStudentHref} from "@/modules/verification/staff-links";
 import {collegeRoleContactHref} from "@/modules/people/college-role-directory-model";
@@ -42,26 +46,26 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
   </header>
   <nav aria-label="Verification status" className="flex flex-wrap gap-2">
    {(["WAITING","SENT_BACK","VERIFIED"] as const).map(t=>
-    <button type="button" key={t} aria-pressed={tab===t} onClick={()=>onTabChange?onTabChange(t):setTab(t)}
-     className={`rounded-md border px-3 py-2 text-sm ${tab===t?"font-semibold ring-2 ring-offset-1":""}`}>
+    <Button variant={tab===t?"primary":"secondary"} type="button" key={t} aria-pressed={tab===t} onClick={()=>onTabChange?onTabChange(t):setTab(t)}
+     className="min-h-11 sm:min-h-9">
      {t==="SENT_BACK"?"Sent back":t==="WAITING"?"Waiting":"Verified"}{showTabCounts?` (${counts[t]})`:""}
-    </button>)}
+    </Button>)}
   </nav>
   <div className="flex flex-wrap gap-2">
    {!disableLocalSearch&&<label className="min-w-0 flex-1 text-sm">Search learners
-    <input aria-label="Search learners" className="mt-1 block w-full min-w-0 rounded-md border bg-background px-3 py-2"
+    <Input aria-label="Search learners" className="mt-1 w-full"
      value={query} onChange={e=>setQuery(e.target.value)} placeholder="Learner, batch or branch"/>
    </label>}
    <label className="text-sm">Kind
-    <select aria-label="Kind" value={kind} onChange={e=>onKindChange?onKindChange(e.target.value as typeof kind):setKind(e.target.value as typeof kind)}
-     className="mt-1 block w-full rounded-md border bg-background px-3 py-2">
+    <Select aria-label="Kind" value={kind} onChange={e=>onKindChange?onKindChange(e.target.value as typeof kind):setKind(e.target.value as typeof kind)}
+     className="mt-1 w-full">
      <option value="ALL">All</option><option value="EDUCATION">Education</option><option value="IDENTITY">Identity</option>
-    </select>
+    </Select>
    </label>
   </div>
   {loading?<p role="status">Loading verification requests…</p>:
    error?<div role="alert" className="space-y-2"><p>Unable to load verification requests: {error}</p>
-    {onRetry&&<button type="button" className="rounded-md border px-3 py-2" onClick={onRetry}>Retry</button>}</div>:
+    {onRetry&&<Button variant="secondary" type="button" className="min-h-11 sm:min-h-9" onClick={onRetry}>Retry</Button>}</div>:
    visible.length===0?<div role="status" className="rounded-md border p-4">
      {(legacyCollegeCopy||legacyTpoCopy) && counts[tab]===0
       ? <><p className="font-semibold">{tab==="WAITING"
@@ -71,7 +75,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
       : <p>No matching verification requests on this page.</p>}
     </div>:
    <ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-    {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-lg border p-4">
+    {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-4">
      <h2 className="break-words font-medium">{row.learnerName}</h2>
      {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
      <p className="mt-1 text-xs font-semibold text-primary-text">{verificationQueueCardPresentation(row.status).state}</p>
@@ -79,7 +83,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
      {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
       <label className="mt-2 flex items-center gap-2 text-sm">
-       <input type="checkbox" disabled={selectionDisabled} aria-label={"Select "+row.learnerName+" "+row.section}
+       <Checkbox disabled={selectionDisabled} aria-label={"Select "+row.learnerName+" "+row.section}
         checked={selectedKeys?.has(verificationSelectionKey(row))??false}
         onChange={e=>{if(!selectionDisabled)onSelectionChange(row,e.target.checked);}}/>Select for bulk review
       </label>}
@@ -93,8 +97,8 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
      {row.status==="SENT_BACK"&&row.decisionNote?<p className="mt-1 text-sm">Reason sent back: {row.decisionNote}</p>:null}
      <p className="mt-2 text-xs">Submitted {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)} IST</p>
      {row.attention.length>0&&<p className="mt-2 break-words text-sm" aria-label="Needs a closer look">{row.attention.join(" · ")}</p>}
-     <button type="button" disabled={!onReview} onClick={()=>onReview?.(row)}
-      className="mt-3 rounded-md border px-3 py-2 text-sm disabled:opacity-50">{verificationQueueCardPresentation(row.status).action}</button>
+     <Button variant="secondary" type="button" disabled={!onReview} onClick={()=>onReview?.(row)}
+      className="mt-3 min-h-11 sm:min-h-9">{verificationQueueCardPresentation(row.status).action}</Button>
     </li>)}
    </ul>}
  </section>;
