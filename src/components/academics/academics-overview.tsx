@@ -110,7 +110,7 @@ export function AcademicsOverview({
           <p className="m-0 font-semibold text-foreground">
             {period.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-[var(--lms-teal-deep)]">
+          <p className="mt-1 text-xs font-semibold text-primary-text">
             {period.code}
           </p>
         </div>
