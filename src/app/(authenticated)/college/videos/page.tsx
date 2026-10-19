@@ -25,7 +25,7 @@ export default async function CollegeVideosPage({
         <PageHeader eyebrow="College Admin · Courses & Content" title="Video" />
         <ErrorState title="Invalid video filters"
           description="The title, status or page filter is invalid. No content was loaded."
-          action={<Link href="/college/videos" className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>} />
+          action={<Link href="/college/videos" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline">Clear filters</Link>} />
       </div>
     );
   }
@@ -33,7 +33,7 @@ export default async function CollegeVideosPage({
   return <main className="min-w-0 space-y-4">
     <CollegeContentAuthoringControl kind="YOUTUBE" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} />
     <Link prefetch={false} download href={collegeContentCsvHref("VIDEO",parsed.data)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Export filtered video metadata CSV
     </Link>
     <CollegeContentAggregate data={await listCollegeContentAggregate(context, "VIDEO", parsed.data)} />
