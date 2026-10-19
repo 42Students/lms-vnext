@@ -469,3 +469,6 @@
 @media (max-width:767px) { .topbarNotificationState { min-height:88px; padding:32px 16px; } }
 
 .topbarNotificationDrawer [data-slot="drawer-footer"] { padding:12px 20px; background:var(--lms-neutral-50); border-top:1px solid #e5e9f0; }
+
+@media (max-width:767px) { .topbarNotificationDrawer [data-slot="drawer-footer"] { padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px)); } }
+.topbarNotificationDrawer [data-slot="drawer-footer"] a { min-height:44px; display:inline-flex; align-items:center; }
