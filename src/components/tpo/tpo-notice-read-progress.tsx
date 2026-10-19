@@ -1,6 +1,8 @@
 "use client";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
+import { MetricBar } from "@/components/ui/metric-bar";
+import barStyles from "@/components/placements/report-bar-chart.module.css";
 import {useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -42,7 +44,7 @@ export function TpoNoticeReadProgress({id}:{id:string}){
    disabled={busy} onClick={()=>void load()}>{busy?"Loading…":data?"Refresh read status":"Show read status"}</Button>
   {data?<div className="mt-2 min-w-0 space-y-2 text-sm">
    <p>{data.notDelivered?"Awaiting notification delivery":data.read+" of "+data.delivered+" read"}</p>
-   {data.delivered>0?<progress aria-label="Notices read" max={data.delivered} value={data.read} className="w-full"/>:null}
+   {data.delivered>0?<MetricBar role="progressbar" label="Notices read" maximum={data.delivered} value={data.read} unit="people" className={barStyles.track+" w-full"}/>:null}
    {data.unread.length?<Button variant="secondary" type="button" disabled={busy}
     className="min-h-11 min-[768px]:min-h-9"
     onClick={()=>void remind()}>{busy?"Sending…":"Remind them"}</Button>:null}
