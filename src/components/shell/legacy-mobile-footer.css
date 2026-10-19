@@ -19,6 +19,10 @@
   border-top:1px solid #f1f4f9;
   box-shadow:0 -2px 8px rgba(0,0,0,.04);
  }
+ /* Reserve the original 64px footer plus the phone's safe-area in learner/faculty main. */
+ .lms-shell-page:has(> .lms-legacy-mobile-footer) #lms-main-content {
+  padding-bottom:calc(80px + env(safe-area-inset-bottom,0px)) !important;
+ }
  .lms-legacy-mobile-footer-nav {flex:1;min-height:0;display:flex;flex-direction:column;}
  .lms-legacy-mobile-footer-items {
   flex:1;
