@@ -12,7 +12,7 @@ export function AdminOfferingTeachersPanel({roster,academicPeriodName}:{
    No active Faculty assignment was found for this Course Offering.
   </p>:<ul className="grid gap-3 md:grid-cols-2">
    {roster.faculty.map(item=><li key={item.assignmentId}
-    className="min-w-0 rounded-md border border-border p-3">
+    className="min-w-0 rounded-xl border border-border p-3">
     <p className="break-words font-semibold text-foreground">
      {item.facultyName?.trim()||item.facultyEmail||"Unnamed Faculty"}</p>
     <p className="mt-1 text-sm text-body">
