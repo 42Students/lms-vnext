@@ -65,7 +65,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   return ()=>mq.removeEventListener("change",update);
  },[]);
  useEffect(()=>{
-  if(!open||mobile||!compact)return;
+  if(!open||mobile)return; // Both compact and full desktop popovers dismiss on outside interaction.
   const onPointer=(event:PointerEvent)=>{
    if(root.current&&!root.current.contains(event.target as Node))setOpen(false);
   };
