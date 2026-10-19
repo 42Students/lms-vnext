@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import "@/components/shell/legacy-mobile-footer.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 /** Source: lms2-fe/prod-2026 MobileFooter.jsx:175-191 and mobileFooter.scss:1-41.
@@ -27,6 +27,17 @@ const moreLinks = [
 export function TpoMobileFooter() {
   const pathname = usePathname();
   const [moreOpen,setMoreOpen] = useState(false);
+  // A mobile More sheet must not remain over a different route after
+  // Back/Forward or programmatic navigation; the links also close on click.
+  useEffect(()=>{setMoreOpen(false);},[pathname]);
+  useEffect(()=>{
+    const media=typeof window.matchMedia==="function"?window.matchMedia("(min-width: 768px)"):null;
+    const closeOnTablet=()=>{if(media?.matches??window.innerWidth>=768)setMoreOpen(false);};
+    closeOnTablet();
+    media?.addEventListener("change",closeOnTablet);
+    window.addEventListener("resize",closeOnTablet);
+    return ()=>{media?.removeEventListener("change",closeOnTablet);window.removeEventListener("resize",closeOnTablet);};
+  },[]);
   const moreActive = moreLinks.some(([,href])=>pathname===href||pathname.startsWith(href+"/"));
   return <>
     <nav aria-label="TPO mobile footer" className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 md:hidden">
