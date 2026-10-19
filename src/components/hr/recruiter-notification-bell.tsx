@@ -69,7 +69,7 @@ export function RecruiterNotificationBell(){
     variant="secondary" className="relative min-w-9 !px-2">
     <span aria-hidden="true">🔔</span>
     {data?.unread&&data.unread>0?<span aria-hidden="true"
-      className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#ff7576] px-1 text-[10px] leading-3 text-white">
+      className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-error)] px-1 text-[10px] leading-3 text-white">
       {data.unread>99?"99+":data.unread}</span>:null}
   </Button>
   {isOpen?<section ref={popoverRef} role="dialog" aria-modal="false" aria-label="Notifications"
