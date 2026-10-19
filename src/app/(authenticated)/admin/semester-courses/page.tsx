@@ -32,7 +32,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
  const curriculum=curriculumResult.ok?curriculumResult.value:null;
  return <div className="min-w-0 space-y-6">
       <AcademicSetupSteps step={4} />
- {!curriculumResult.ok?<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle px-4 py-2 text-sm text-body">
+ {!curriculumResult.ok?<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
   Semester mapping editor is temporarily unavailable. The directory remains accessible.
  </p>:null}
  {curriculum?<CollegeTermMappingManager data={curriculum}/>:null}
