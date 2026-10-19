@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 
 export type QuickDrive = {
   id: string; title: string; companyName: string; status: string;
@@ -16,26 +18,26 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
   const matching=jobs.filter(job=>(filter==="ALL"||job.status==="PUBLISHED") &&
     (job.title.toLocaleLowerCase("en-IN").includes(pattern)||
       job.companyName.toLocaleLowerCase("en-IN").includes(pattern)));
-  return <section aria-label="Find drives" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+  return <section aria-label="Find drives" className="space-y-3 border-b border-border pb-5">
     <h2 className="font-semibold">Find a drive</h2>
     <div className="flex flex-wrap items-end gap-3">
       <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">Search by drive or company
-        <input type="search" value={query} onChange={e=>setQuery(e.target.value)}
+        <Input type="search" value={query} onChange={e=>setQuery(e.target.value)}
           placeholder="Search by drive or company"
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11 w-full sm:min-h-9" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <select value={filter} onChange={e=>setFilter(e.target.value as "ALL"|"ACTIVE")}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select value={filter} onChange={e=>setFilter(e.target.value as "ALL"|"ACTIVE")}
+          className="min-h-11 w-full sm:min-h-9">
           <option value="ACTIVE">Active drives</option><option value="ALL">All drives</option>
-        </select>
+        </Select>
       </label>
     </div>
     <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
       {matching.length} of {jobs.length} drives
     </p>
-    {matching.length?<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-      {matching.slice(0,60).map(job=><article key={job.id} className="rounded-lg border border-border p-3">
+    {matching.length?<div className="divide-y divide-border border-y border-border">
+      {matching.slice(0,60).map(job=><article key={job.id} className="py-3">
         <p className="font-semibold">{job.title}</p>
         <p className="mt-1 text-sm text-body">{job.companyName} · {job.status}</p>
         <p className="mt-1 text-xs text-muted-foreground">{job.applicants} submitted applications</p>
