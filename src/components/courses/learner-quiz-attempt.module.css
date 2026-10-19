@@ -1,0 +1,32 @@
+/*
+ * Legacy quiz-taking indicator only; leaves answer progression/ARIA untouched.
+ * lms2-fe@prod-2026/src/styles/pages/_quiz.scss:1526-1564,
+ * 2217-2220,2332-2335. The current question number is model-owned.
+ */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  padding: 8px 0 12px;
+  background: #fff;
+}
+.track {
+  height: 3px !important;
+  overflow: hidden;
+  border-radius: 0 !important;
+  background: #e5e9f0 !important;
+}
+.track > div {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  border-radius: 0 !important;
+  background: #26bac7 !important;
+}
+@media (max-width: 767px) {
+  .header { padding: 8px 0 12px; }
+  .track { height: 4px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track > div { transition: none; }
+}
