@@ -105,10 +105,10 @@ export default async function TrackerLogsPage({
             href={"/tracker/logs?environment=" + value}
             aria-current={environment === value ? "page" : undefined}
             className={
-              "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] " +
+              "inline-flex min-h-9 items-center border-b-[3px] px-3 py-2 text-[13px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] " +
               (environment === value
-                ? "border-[var(--lms-teal-deep)] bg-primary-subtle text-foreground"
-                : "border-border bg-surface text-foreground")
+                ? "border-primary text-foreground"
+                : "border-transparent text-body hover:text-primary-text")
             }
           >
             {value}
