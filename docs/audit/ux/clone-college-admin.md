@@ -52,7 +52,7 @@
 - [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
 - [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
+- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/batches/error.tsx`
 - [ ] `src/app/(authenticated)/college/batches/loading.tsx`
 - [ ] `src/app/(authenticated)/college/batches/page.tsx`
@@ -1846,3 +1846,20 @@ Three route screens source-migrated. Service calls, tenant/role scope and existi
 **Strict tick remains 0.** Complete every-state legacy comparison, global grep, responsive screenshots and typechecking absent under lane rules. Checkbox substitution in company filters retains native GET semantics through shared wrapper; not user-tested. No additional page content was added.
 
 **Next exact file:** `src/app/(authenticated)/college/companies/loading.tsx` has shared source proof; continue `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx` and other College Admin workspace pages.
+
+### Replacement chat-4 College batch student roster — 2026-10-20
+
+Full-file source grep proof: `/<(button|input|select|textarea|table)\b/g` → 0; `/#[a-f0-9]{3,8}\b/gi` → 0; `/fixed inset-0|role=["']dialog["']/g` → 0; `/<h1\b/g` → 0. Changed JSX shared tags appear balanced in source scan, not parser proven.
+
+| Property/state | Legacy value and file | VNext value and source | Verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: white single #fff canvas, 1px #e5e9f0, radius 12px padding 24px | Page owns no nested PageCanvas; filter form now hairline border-t instead of separate custom card | **Inherited layout source matches structure, computed pixel still open** |
+| Header/back | legacy-styles/components___listing-page-header.scss:33-58: one heading and hairline title row; mobile back affordance | Shared PageHeader title 'Students · cohort', shared PageBackLink to /college/batches | **Shared desktop 30px vs legacy 28px discrepancy** |
+| Filter controls | legacy-styles/components___form.scss:117-143: 10px radius, 14px/20px, teal 2px focus shadow | Shared Input and Select for name + class, Button shared search | **Legacy control family matches shared token model** |
+| Empty/table | old-lms-pages.md:6,11: hairline table and scoped no-record state inside canvas | Shared DataTable and EmptyState, no hand-rolled table | **DataTable mobile switch 640px vs 767px legacy remains** |
+| Disabled/focus/hover | legacy-styles/components___button.scss:13-24 150ms transition, 49-51 disabled | Shared Button focus-visible, no native button; scoped action renders only when class membership exists | **Source states reviewed, no keyboard/hover replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px, 44px target | Filter flex-wrap, Button min-h-11 md:min-h-9, PageBackLink 44px, DataTable responsive | **Source breakpoint partial match, live 375/767/768 views unverified** |
+
+**Strict tick left open.** No app/runtime, CI, TSX parser or responsive screenshots. Full global grep and exact legacy all-state value table remain absent. Original college-scoped query, UUID verification, filters and max 500 rows remain unchanged.
+
+**Next exact file:** `src/app/(authenticated)/college/batches/[cohortId]/students/loading.tsx` is source-refactored; continue to `src/app/(authenticated)/college/classes/page.tsx` and the next unreviewed academic screen.
