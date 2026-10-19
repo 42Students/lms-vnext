@@ -49,7 +49,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
     encodeURIComponent("\uFEFF" + studentImportReportCsv(report.results)) : null;
 
   return <div className="space-y-6">
-    <section className="- sm: border-t border-border pt-4">
+    <section className="sm: border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">Upload or paste CSV</h2>
       <p className="mt-2 text-sm text-body">
         Maximum 500 learner rows and 1 MB. Use the exact header order below.
