@@ -1,6 +1,8 @@
 "use client";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import {DataTable} from "@/components/ui/data-table";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {FileUpload} from "@/components/ui/file-upload";
@@ -76,19 +78,19 @@ export function CollegeFacultyCsvImport(){
           setCsv(event.target.value);setReport(null);setConfirmed(false);
         }} className="font-mono text-xs"/>
       </label>
-      <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
+      <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" loading={pending} disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
         >
         {pending?"Validating…":"Validate CSV"}
       </Button>
-      {error&&<p role="alert" className="text-sm text-error">{error}</p>}
+      {error&&<Alert tone="error">{error}</Alert>}
     </section>
     {report&&<section className="space-y-4 border-t border-border pt-5">
       <h2 className="text-lg font-semibold">{report.preview?"Preview":"Faculty registration results"}</h2>
-      <p role="status" className="text-sm">{report.valid} valid; {report.invalid} invalid.</p>
-      {report.structuralErrors.length>0&&<p role="alert" className="text-sm text-error">{report.structuralErrors.join(", ")}</p>}
+      <Alert tone="info">{report.valid} valid; {report.invalid} invalid.</Alert>
+      {report.structuralErrors.length>0&&<Alert tone="error">{report.structuralErrors.join(", ")}</Alert>}
       <a download="faculty-import-report.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent("row,status,detail,membershipId\r\n"+csvResult)}
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Download row report
       </a>
       <DataTable<Row> caption="Faculty CSV import row results" rows={report.results}
@@ -98,7 +100,7 @@ export function CollegeFacultyCsvImport(){
           {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="CREATED"||item.status==="VALID"?"success":item.status==="FAILED"||item.status==="INVALID"?"error":"neutral"}>{item.status}</StatusBadge>,mobilePriority:"secondary"},
           {key:"reason",header:"Reason",cell:item=>item.detail,mobilePriority:"secondary"},
         ]}
-        empty={<p className="text-sm text-body">No row-level results are available.</p>}/>
+        empty={<EmptyState title="No row results" description="No row-level results are available."/>}/>
 
       {report.preview&&report.valid>0&&report.structuralErrors.length===0&&
       <div className="space-y-3">
@@ -106,7 +108,7 @@ export function CollegeFacultyCsvImport(){
           <Checkbox checked={confirmed} onChange={event=>setConfirmed(event.target.checked)}/>
           I understand valid rows create real faculty memberships; partial failures require manual review.
         </label>
-        <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={pending||!confirmed} onClick={()=>run("IMPORT")}
+        <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" loading={pending} disabled={pending||!confirmed} onClick={()=>run("IMPORT")}
           >
           {pending?"Registering…":"Confirm faculty registration"}
         </Button>
