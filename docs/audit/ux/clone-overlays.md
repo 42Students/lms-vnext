@@ -751,3 +751,20 @@ Per-file **F2 source** passes for action menus. Evidence uses old-LMS SCSS value
 **F1 [ ], F2 [ ] still strictly open.** Missing: runtime screenshot/keyboard/resize proof at 280/375/640/767/768/1024, source-specific exact menu row variants for all consumers, complete local `git grep`, toast legacy lifetime and popup exit-motion equivalence. These file-level checks mean source edits, not category-level pixel parity.
 
 **Next source file:** `src/components/tpo/tpo-company-memory-workspace.tsx` (+ New menu responsive/actions) then `src/components/placements/placement-drive-workspace.tsx` remaining secondary menu contexts if source checklist continues.
+
+
+### Final company-memory action popup follow-up
+
+| Property/state | Old LMS source | `src/components/tpo/tpo-company-memory-workspace.tsx:208-219` | Source result |
+| --- | --- | --- | --- |
+| Popup maximum safe viewport width | `docs/design/legacy-styles/components___dropdown.scss:107-128`: profile overlays limited to viewport-24px | Shared Dropdown max viewport-24px; inner menu `min(240px,100vw-80px)` so 280px phone gets inner200 + 48px popup horizontal padding + 2px border = **250px**, under256px cap | Comparable geometry match; this is a company menu not a profile popup |
+| Menu action touch target | `components___notification-drawer.scss:21`: 44px | All three `+ New` action links min44px | Analogous touch minimum match |
+| Related hover/active/motion | `components___notification-drawer.scss:18-19,41-49`: `rgba(0,0,0,.035)`, `.06`, 200ms ease | All three links use corresponding neutral hover/active, 200ms; links wrap long unbroken company names | Comparable numeric match; not canonical company menu style |
+| Divider and navigation | Old `components___dropdown.scss:96-128` has no generic divider dimensions or new-work hrefs | Shared `MenuSeparator` and native Link navigation still present; no content changes | State preserved; exact divider parity unproved |
+
+**Responsive source branch:** At 280/375/640/767px the company menu content is bounded by `min(240px,100vw-80px)` and shared 12px viewport side clearance, not a full mobile sheet; at 768/1024px the content floor is 240px inside a 6px-radius anchored popup. Every route action remains 44px and keyboard-focusable. These are static source calculations, **not** viewport screenshots or actual overflow validation.
+
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx` F2 source pass: viewport-safe action popup, three neutral hover/press rows, preserved three Link targets and shared Dropdown markup.
+- [ ] F1/F2 category completion still blocked on local checkout grep, real focus/scroll/animation test, complete exact legacy source variants and computed style cascade.
+
+**Exact next file:** `src/components/tpo/recruiter-leads-workspace.tsx` — mobile stage/action dropdown's nested controls and dismissal semantics, then remaining indexed DropDown consumers.
