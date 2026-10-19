@@ -15,6 +15,7 @@ import { AccountActions } from "./account-actions";
 import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
+import {ShellLogoMark} from "./shell-nav-icons";
 import { MobileNavigation } from "./mobile-navigation";
 import { RouteAnnouncer } from "./route-announcer";
 import {ShellWidgetBoundary} from "./shell-widget-boundary";
@@ -79,21 +80,17 @@ export async function AppShell({
       <PageTitle superAdmin={superAdmin} />
       <div className="min-h-dvh bg-background text-foreground">
         <a href="#lms-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:p-3 focus:text-[var(--lms-link-text)] focus:outline-2 focus:outline-[var(--lms-teal-deep)]">Skip to content</a>
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--lms-sidebar-border)] bg-surface lg:flex">
-        <div className="flex min-h-20 items-center border-b border-[var(--lms-sidebar-border)] px-5">
-          <div>
-            <p className="m-0 text-xs font-bold uppercase tracking-[0.16em] text-primary-text">
-              42Students
-            </p>
-            <p className="mt-1 text-base font-semibold text-foreground">
-              LMS
-            </p>
-          </div>
+      <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar fixed inset-y-0 left-0 z-20 hidden flex-col lg:flex">
+        <div className="flex h-20 shrink-0 items-center justify-center border-b border-[#f1f4f9] px-2">
+          <Link href="/dashboard" aria-label="42Students LMS home"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7]">
+            <ShellLogoMark />
+          </Link>
         </div>
-        <div className="flex-1 overflow-y-auto py-4 pr-3">
+        <div className="lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto py-2">
           <ShellWidgetBoundary name="Sidebar navigation" fallbackHref="/dashboard"><SidebarNav items={navigation} /></ShellWidgetBoundary>
         </div>
-        <div className="border-t border-[var(--lms-sidebar-border)] px-5 py-4">
+        <div className="lms-sidebar-role-details border-t border-[var(--lms-sidebar-border)] px-5 py-4">
           <p className="m-0 text-xs font-semibold text-muted-foreground">
             {getShellRoleLabel(context)}
           </p>
@@ -109,7 +106,7 @@ export async function AppShell({
         </div>
       </aside>
 
-      <div className="min-h-dvh lg:pl-64">
+      <div className="lms-shell-page min-h-dvh">
         <header className="sticky top-0 pt-[env(safe-area-inset-top)] z-10 border-b border-border bg-surface/95 backdrop-blur">
           <div className="mx-auto flex w-full flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
             <div className="flex min-w-0 items-center gap-3">
