@@ -18,9 +18,9 @@ export function CollegeLegacyGroupTabs() {
     <h2 className="pt-3 text-base font-semibold text-foreground">{group.title}</h2>
     {step ? <div className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm" aria-label="Academic setup step">
       <StepIndicator current={step.index} total={step.total} title={step.title} />
-      <div className="flex flex-wrap gap-3">
-       {step.previous?<Link href={step.previous.href} className="text-link underline lms-inline-link">Previous: {step.previous.label}</Link>:null}
-       {step.next?<Link href={step.next.href} className="text-link underline lms-inline-link">Next: {step.next.label}</Link>:null}
+      <div className="flex min-w-0 flex-wrap gap-3">
+       {step.previous?<Link href={step.previous.href} className="inline-flex min-h-11 items-center text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Previous: {step.previous.label}</Link>:null}
+       {step.next?<Link href={step.next.href} className="inline-flex min-h-11 items-center text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Next: {step.next.label}</Link>:null}
       </div>
     </div> : null}
     <Tabs ariaLabel={group.title} value={selected} renderPanel={false}
