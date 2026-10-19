@@ -16,7 +16,7 @@ export default async function CollegeLiveClassesPage({searchParams}:{
  if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
  const parsed=collegeLiveClassQuerySchema.safeParse(liveClassSearchParams(await searchParams));
  if(!parsed.success)return <div className="min-w-0 overflow-x-clip space-y-4">
-  <PageHeader eyebrow="College Admin · Courses & Content" title="Live Classes"/>
+  <PageHeader title="Live Classes"/>
   <ErrorState title="Invalid session filters" description="Invalid page, publication or search filter."
     action={<Link href="/college/live-classes" className="font-semibold text-link lms-inline-link">Clear filters</Link>}/>
  </div>;
