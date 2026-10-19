@@ -166,7 +166,7 @@ export default async function CollegeActivityPage({
         <div className="flex flex-wrap items-end gap-2 sm:col-span-2 lg:col-span-4">
           <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">
             Apply filters
-          </button>
+          </Button>
           <Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">
             Clear
           </Link>
