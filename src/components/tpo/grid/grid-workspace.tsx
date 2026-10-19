@@ -2,6 +2,7 @@
 
 import {useEffect,useId,useMemo,useState,type ReactNode} from "react";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
+import Image from "next/image";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
@@ -124,7 +125,7 @@ export function GridWorkspace<Row>({
     <Button variant="secondary" type="button" onClick={()=>{
      const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{[searchParam]:typed.trim()});
      router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
-    }}>Search</Button>
+    }}><Image src="/assets/images/common/search.svg" alt="" aria-hidden="true" width={19} height={19}/>Search</Button>
    </div>
    {filters.length?<Button variant="secondary" type="button" aria-expanded={filterOpen}
     aria-controls={id+"-filters"} onClick={()=>setFilterOpen(value=>!value)}>
@@ -137,7 +138,7 @@ export function GridWorkspace<Row>({
    <Button variant="secondary" type="button" aria-expanded={exportOpen}
     aria-controls={id+"-export"} onClick={()=>setExportOpen(value=>!value)}>Export</Button>
    <Button variant="secondary" type="button" disabled={!rows.length}
-    onClick={()=>void copyRows()}>Copy {selectedPage.length?"selected":"visible"} rows</Button>
+    onClick={()=>void copyRows()}><Image src="/assets/images/common/file-black.svg" alt="" aria-hidden="true" width={16} height={16}/>Copy {selectedPage.length?"selected":"visible"} rows</Button>
    {selection&&rollOf?<Button variant="secondary" type="button" aria-expanded={pasteOpen}
     aria-controls={id+"-paste"} onClick={()=>setPasteOpen(value=>!value)}>Paste roll numbers</Button>:null}
    {extraActions}
