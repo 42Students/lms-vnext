@@ -8,7 +8,7 @@ export type NeedsDoingChip = {
   key: string;
   label: string;
   count?: number;
-  tone?: "neutral" | "info" | "warning" | "error";
+  tone?: "neutral" | "info" | "success" | "warning" | "error";
   href?: string;
   disabled?: boolean;
 };
@@ -23,6 +23,7 @@ export type NeedsDoingChipsProps = {
 const tones = {
   neutral: "border-[var(--lms-canvas-border)] bg-white text-[var(--lms-body-text)]",
   info: "border-[var(--lms-primary)]/25 bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
+  success: "border-[var(--lms-success-text)]/20 bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
   warning: "border-[var(--lms-warning-text)]/20 bg-[var(--lms-warning-subtle)] text-[var(--lms-warning-text)]",
   error: "border-[var(--lms-error-text)]/20 bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
 } as const;
