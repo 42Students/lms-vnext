@@ -424,3 +424,62 @@ All eight returned raw native form tags **0**, inline svg **0** and literal six-
 Source-only breakpoint basis: old-lms-shell.css:68-85 uses max-width 767px, whereas Tailwind md is min-width 768px; every edited explicit breakpoint uses md not sm. Exact rendered viewport, pointer, keyboard focus and end-to-end mutation verification remain unperformed; no tests/CI/app run. Shared Quartz 44px header versus legacy 40px and DataTable 640px fallback vs 768px remain unowned mismatches. Never globally tick A5/A6/A7/E8 for these scoped checks.
 
 **Next queued area:** remaining TPO company/learner controls, legacy link/icon families and batch/team support components; begin with src/components/tpo/tpo-student-quick-panel.tsx.
+
+
+## chat-12 completed source batch — TPO student panels, batch/Team controls (2026-10-19)
+
+File-scoped source checks only. Old LMS reference docs/design/old-lms-pages.md:5-12 (one canvas, no ordinary nested cards, hairlines, slim warning), docs/design/legacy-styles/components___common.scss:68-75 (teal links and hover underline), components___form.scss:117-143 (10px field radius/teal focus), old-lms-shell.css:68-85 (phone below 768px; md tablet); old-lms-shell-spec.md:24-25 (9px action radius and 36px desktop action). All original vNext content, API constraints and authorization paths retained.
+
+### Source file work queue
+- [x] src/components/tpo/tpo-student-quick-panel.tsx — one Drawer, no nested fact cards, teal links 44px phone and 36px md.
+- [x] src/components/tpo/tpo-students-bulk-add.tsx — flat scoped add-confirm form and hairline warning.
+- [x] src/components/tpo/tpo-students-bulk-debar.tsx — flat debar form, 44px phone/36px md select.
+- [x] src/components/tpo/tpo-students-drive-visibility.tsx — flat version-checked drive overrides and wrapped controls.
+- [x] src/components/tpo/tpo-students-assign-prep.tsx — flat course/due form retaining all guarded workflows.
+- [x] src/components/tpo/tpo-student-saved-views.tsx — private pinned/recent saved views with divided rows.
+- [x] src/components/tpo/tpo-batch-student-bulk-notes.tsx — flat batch note panel, selection labels 44px.
+- [x] src/components/tpo/tpo-batch-facet-filters.tsx — old filters on one canvas; shared hidden Input; 44px labels; md 768px two-column.
+- [x] src/components/tpo/tpo-batch-invitation-control.tsx — original invite/deadline and reminder; shared Checkbox, flat forms and 44px date input.
+- [x] src/components/tpo/tpo-batch-rule-editor.tsx — original guarded versioned batch override; flat controls 44px phone/36px md.
+- [x] src/components/tpo/tpo-batch-lifecycle-control.tsx — missing Checkbox import restored; original finish/reopen guarded mutation, 44px touch.
+- [x] src/components/tpo/tpo-team-ask-panel.tsx — original idempotent/permission checks, 44px phone/36px md actions.
+- [x] src/components/tpo/tpo-team-thread-details.tsx — original session-based detail toggle, flat details, radius 9px action.
+
+### Legacy source values versus vNext authored values
+| File | Old LMS source baseline | VNext value / source proof | Status |
+|---|---|---|---|
+| tpo-student-quick-panel.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | one Drawer, no nested fact cards, teal links 44px phone and 36px md | Source-aligned; browser untested |
+| tpo-students-bulk-add.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | flat scoped add-confirm form and hairline warning | Source-aligned; browser untested |
+| tpo-students-bulk-debar.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | flat debar form, 44px phone/36px md select | Source-aligned; browser untested |
+| tpo-students-drive-visibility.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | flat version-checked drive overrides and wrapped controls | Source-aligned; browser untested |
+| tpo-students-assign-prep.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | flat course/due form retaining all guarded workflows | Source-aligned; browser untested |
+| tpo-student-saved-views.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | private pinned/recent saved views with divided rows | Source-aligned; browser untested |
+| tpo-batch-student-bulk-notes.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | flat batch note panel, selection labels 44px | Source-aligned; browser untested |
+| tpo-batch-facet-filters.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | old filters on one canvas; shared hidden Input; 44px labels; md 768px two-column | Source-aligned; browser untested |
+| tpo-batch-invitation-control.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | original invite/deadline and reminder; shared Checkbox, flat forms and 44px date input | Source-aligned; browser untested |
+| tpo-batch-rule-editor.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | original guarded versioned batch override; flat controls 44px phone/36px md | Source-aligned; browser untested |
+| tpo-batch-lifecycle-control.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | missing Checkbox import restored; original finish/reopen guarded mutation, 44px touch | Source-aligned; browser untested |
+| tpo-team-ask-panel.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | original idempotent/permission checks, 44px phone/36px md actions | Source-aligned; browser untested |
+| tpo-team-thread-details.tsx | Legacy old-lms-pages.md:5-12, form.scss:117-143, shell.css:68-85 | original session-based detail toggle, flat details, radius 9px action | Source-aligned; browser untested |
+
+### Exact complete-file grep equivalents
+Full fetched GitHub contents inspected for raw form opening tags, inline svg, literal six-digit hex using regex equivalent of: grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE; breakpoints by grep -nE 'sm:|md:' FILE. Every file below has 0 raw form tags, 0 inline svg tags, 0 literal six-digit hex, and 0 sm: breakpoints.
+| File | Raw / SVG / hex | JSX opening/closing and curly braces | Responsive source |
+|---|---|---|---|
+| tpo-student-quick-panel.tsx | 0 / 0 / 0 | Button 4/4, Link 7/7, braces 135/135 | sm0, md9 |
+| tpo-students-bulk-add.tsx | 0 / 0 / 0 | Button 3/3, braces 116/116 | sm0, md1 |
+| tpo-students-bulk-debar.tsx | 0 / 0 / 0 | Button 3/3, braces 92/92 | sm0, md3 |
+| tpo-students-drive-visibility.tsx | 0 / 0 / 0 | Button 4/4, braces 107/107 | sm0, md1 |
+| tpo-students-assign-prep.tsx | 0 / 0 / 0 | Button 3/3, braces 60/60 | sm0, flex-wrap |
+| tpo-student-saved-views.tsx | 0 / 0 / 0 | Button 9/9, braces 94/94 | sm0, flex-wrap |
+| tpo-batch-student-bulk-notes.tsx | 0 / 0 / 0 | braces 19/19 | sm0, single-column |
+| tpo-batch-facet-filters.tsx | 0 / 0 / 0 | Button 3/3, Link 1/1, braces 66/66 | sm0, md2 |
+| tpo-batch-invitation-control.tsx | 0 / 0 / 0 | Button 4/4, braces 80/80 | sm0, md2 |
+| tpo-batch-rule-editor.tsx | 0 / 0 / 0 | Button 4/4, braces 76/76 | sm0, md4 |
+| tpo-batch-lifecycle-control.tsx | 0 / 0 / 0 | Button 1/1, braces 35/35 | sm0, md1 |
+| tpo-team-ask-panel.tsx | 0 / 0 / 0 | Button 5/5, braces 94/94 | sm0, md4 |
+| tpo-team-thread-details.tsx | 0 / 0 / 0 | Button 1/1, braces 27/27 | sm0, md1 |
+
+This is scoped source evidence only. Unchecked E8/A5-A7: shared Quartz 44px header vs old 40px, shared DataTable 640px breakpoint vs old 768px, whole-repo icon/link inventory, actual phone/tablet rendered screenshots, hover/focus/disabled behaviour and runtime end-to-end parity. Do not globally tick these categories.
+
+Next: remaining TPO Team and batch support files, and original icon/link caller inventory.
