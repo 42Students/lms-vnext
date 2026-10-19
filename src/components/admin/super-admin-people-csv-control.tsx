@@ -24,6 +24,6 @@ export function SuperAdminPeopleCsvControl({href}:{href:string}) {
    {pending?"Preparing CSV…":"Export filtered CSV (max 500)"}
   </Button>
   <p className="text-xs text-muted-foreground">Names, roles and membership statuses only. No phone or email.</p>
-  {error?<p role="alert" className="text-sm text-error-text">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </div>;
 }
