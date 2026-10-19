@@ -123,7 +123,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
     </section>
 
     {report ? <section aria-label="CSV validation and result report"
-      className="space-y-4 - border-t border-border pt-4">
+      className="space-y-4 border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">
         {report.preview ? "Dry-run report" : "Import result"}
       </h2>
