@@ -66,7 +66,7 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
         className="min-h-11"/>
     </label>
     <Button type="submit" className="min-h-11">Filter</Button>
-    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
+    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Clear</Link>
   </form>
   <CollegeContentCsvExport filename={"live-classes-page-"+data.query.page+".csv"}
    rows={data.items.map(item=>({title:item.title,course:item.courseName+" ("+item.courseCode+")",
