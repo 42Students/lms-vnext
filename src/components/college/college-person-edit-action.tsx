@@ -1,7 +1,8 @@
+"use client";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-"use client";
+
 import {Dialog} from "@/components/ui/dialog";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
