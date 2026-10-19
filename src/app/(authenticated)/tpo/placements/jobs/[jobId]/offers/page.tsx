@@ -11,6 +11,7 @@ import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invali
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {Tabs} from "@/components/ui/tabs";
 export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -44,9 +45,8 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."
    actions={<a href={csvHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Export filtered CSV</a>}/>
   <p className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm text-body">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</p>
-  <nav aria-label="Offer status" className="flex flex-wrap gap-1 border-b border-border">{tabs.map(([value,label,count])=>
-   <Link key={value} href={root+"/offers?status="+value+searchSuffix} aria-current={data.status===value?"page":undefined}
-    className={"inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-semibold md:min-h-9 "+(data.status===value?"border-primary text-[var(--lms-teal-deep)]":"border-transparent text-body hover:border-border hover:text-foreground")}>{label} ({count})</Link>)}</nav>
+  <Tabs ariaLabel="Offer status" value={data.status} renderPanel={false}
+   items={tabs.map(([value,label,count])=>({value,label,count,href:root+"/offers?status="+value+searchSuffix}))}/>
   <form method="get" action={root+"/offers"} className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <input type="hidden" name="status" value={data.status}/>
    <label className="grid gap-1 text-sm font-semibold text-body">Joining outcome
