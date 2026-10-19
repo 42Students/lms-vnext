@@ -1,4 +1,6 @@
 import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterProfileAccess } from "@/components/hr/recruiter-profile-access";
@@ -24,7 +26,7 @@ export default async function HrProfilePage() {
       <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Your details</h2>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
-        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+        <dl className="mt-4 grid gap-4 md:grid-cols-2">
           <RecruiterProfileDetailsEditor key={context.user.id} initialName={profile.displayName}
             initialTitle={profile.title} initialPhone={profile.contactPhoneDigits}
             contactReady={profile.contactReady} userUpdatedAt={profile.userUpdatedAt.toISOString()}
@@ -44,7 +46,7 @@ export default async function HrProfilePage() {
 
       <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Account</h2>
-        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+        <dl className="mt-4 grid gap-4 md:grid-cols-2">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Company</dt>
             <dd className="mt-1 text-sm text-foreground">{profile.companyName}</dd>
@@ -67,16 +69,12 @@ export default async function HrProfilePage() {
         >
           Recruiter account status
         </h2>
-        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+        <dl className="mt-4 grid gap-4 md:grid-cols-2">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Profile status
             </dt>
-            <dd className="mt-1 text-sm font-semibold text-foreground">
-              {overview.profileStatus === "ACTIVE"
-                ? "Active"
-                : overview.profileStatus}
-            </dd>
+            <dd className="mt-1"><StatusBadge tone={overview.profileStatus==="ACTIVE"?"success":"warning"}>{overview.profileStatus==="ACTIVE"?"Active":overview.profileStatus}</StatusBadge></dd>
           </div>
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -117,14 +115,14 @@ export default async function HrProfilePage() {
             caption="Current college access"
             rows={overview.grants}
             getRowKey={grant => grant.id}
-            empty={<p className="text-sm text-muted-foreground">No active college grants are available.</p>}
+            empty={<EmptyState title="No active grants" description="No active college grants are available."/>}
             columns={[
               { key:"college", header:"College", mobilePriority:"primary",
                 cell:(grant)=>grant.collegeName },
               { key:"status", header:"Access status", mobilePriority:"secondary",
-                cell:(grant)=>grant.grantStatus==="ACTIVE"?"Active":grant.grantStatus },
+                cell:(grant)=><StatusBadge tone={grant.grantStatus==="ACTIVE"?"success":"warning"}>{grant.grantStatus==="ACTIVE"?"Active":grant.grantStatus}</StatusBadge> },
               { key:"relationship", header:"Company relationship", mobilePriority:"secondary",
-                cell:(grant)=>grant.relationshipStatus==="ACTIVE"?"Active":grant.relationshipStatus },
+                cell:(grant)=><StatusBadge tone={grant.relationshipStatus==="ACTIVE"?"success":"warning"}>{grant.relationshipStatus==="ACTIVE"?"Active":grant.relationshipStatus}</StatusBadge> },
               { key:"granted", header:"Granted on (IST)", mobilePriority:"secondary",
                 cell:(grant)=><time dateTime={grant.grantedAtIso}>{grant.grantedAtLabel}</time> },
               { key:"validity", header:"Access validity", mobilePriority:"secondary",

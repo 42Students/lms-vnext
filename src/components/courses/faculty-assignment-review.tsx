@@ -13,6 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import { Drawer } from "@/components/ui/drawer";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -358,6 +361,7 @@ function SubmissionGradeCard({
             max={maxPoints}
             step={1}
             value={points}
+            disabled={saving || publishing}
             onChange={(event) =>
               setPoints(event.target.value)
             }
@@ -372,6 +376,7 @@ function SubmissionGradeCard({
             aria-required={submission.gradePublished}
             className="min-h-24"
             value={feedback}
+            disabled={saving || publishing}
             onChange={(event) =>
               setFeedback(
                 event.target.value,
@@ -402,6 +407,7 @@ function SubmissionGradeCard({
             <Button
               size="sm"
               type="button"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={
                 saving || publishing || !draftState.canPublish
@@ -430,18 +436,13 @@ function SubmissionGradeCard({
       </form>
 
       {error ? (
-        <p
-          role="alert"
-          className="mt-3 text-sm font-semibold text-error"
-        >
-          {error}
-        </p>
+        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
       ) : null}
       {needsRefresh?<Button variant="secondary" type="button" onClick={()=>onUpdated(submission)}
-       className="mt-2 inline-flex min-h-11 items-center text-primary-text md:min-h-[var(--lms-control-height)]">
+       className="mt-[var(--lms-space-2)] min-h-11 md:min-h-[var(--lms-control-height)]">
         Reload current submission revision
        </Button>:null}
-      {success?<p role="status" className="mt-2 text-sm text-body">{success}</p>:null}
+      {success?<Alert tone="success" className="mt-[var(--lms-space-2)]">{success}</Alert>:null}
       <ConfirmDialog
         open={confirmAction !== null}
         onOpenChange={nextOpen => { if (!nextOpen && !saving && !publishing) setConfirmAction(null); }}
@@ -504,9 +505,7 @@ export function FacultyAssignmentReview({
       onClick={()=>setOpen(true)}>View submissions</Button>
     <Drawer open={open} onOpenChange={setOpen} title="Assignment submissions"
       description="Draft assignments are hidden from learners.">
-      <p role="status" className="text-sm text-muted-foreground">
-        No submissions yet. Publish this assignment to allow students to submit work.
-      </p>
+      <EmptyState title="No submissions yet" description="Publish this assignment to allow students to submit work." />
     </Drawer>
   </div>;
 
@@ -570,6 +569,7 @@ export function FacultyAssignmentReview({
         <div className="flex gap-2">
           <Button
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={loading}
             onClick={()=>void load()}
@@ -598,27 +598,14 @@ export function FacultyAssignmentReview({
         {pagination.total} matching submissions · Page {pagination.page} of {pagination.totalPages}
       </p> : null}
 
-      {loading ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          Loading submissions…
-        </p>
-      ) : null}
+      {loading ? <LoadingState label="Loading submissions…" /> : null}
 
       {error ? (
-        <p
-          role="alert"
-          className="mt-3 text-sm font-semibold text-error"
-        >
-          {error}
-        </p>
+        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
       ) : null}
 
-      {!loading &&
-      submissions &&
-      submissions.length === 0 ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          {facultySubmissionReviewEmptyLabel(filter)}
-        </p>
+      {!loading && submissions && submissions.length === 0 ? (
+        <EmptyState title={facultySubmissionReviewEmptyLabel(filter)} description="" />
       ) : null}
 
       {!loading && submissions && submissions.length>0 ? (

@@ -22,15 +22,26 @@ export function FacultyReportDownload(props: Props) {
         ...reportData,
         summary:incomplete?["This report is incomplete",...reportData.summary]:reportData.summary,
       });
-      const url = URL.createObjectURL(new Blob([pdf], { type: "application/pdf" }));
-      const title = props.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 70) || props.kind;
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = props.kind + "-report-" + title + ".pdf";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      let url: string | null = null;
+      let link: HTMLAnchorElement | null = null;
+      try {
+        url = URL.createObjectURL(new Blob([pdf], { type: "application/pdf" }));
+        const title = props.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 70) || props.kind;
+        link = document.createElement("a");
+        link.href = url;
+        link.download = props.kind + "-report-" + title + ".pdf";
+        document.body.appendChild(link);
+        link.click();
+        // Keep the object URL available until the browser has accepted the handoff.
+        const pendingUrl = url;
+        window.setTimeout(() => URL.revokeObjectURL(pendingUrl), 30_000);
+        url = null;
+      } finally {
+        link?.remove();
+        if (url !== null) {
+          try { URL.revokeObjectURL(url); } catch { /* best effort on failed download */ }
+        }
+      }
     } catch {
       setError(props.kind==="attendance"?"Couldn\'t generate the attendance report. Please try again.":"Could not generate the PDF. Please try again.");
     }
@@ -38,7 +49,7 @@ export function FacultyReportDownload(props: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-3 print:hidden">
-      <Button type="button" variant="secondary" aria-haspopup={props.incomplete?"dialog":undefined} onClick={()=>{
+      <Button type="button" variant="secondary" aria-haspopup={props.incomplete?"dialog":undefined} className="min-h-11 md:min-h-9" onClick={()=>{
         if(props.incomplete){setError(null);setConfirmationOpen(true);}else downloadPdf();
       }}>{props.kind==="attendance"?"Download Report":"Download PDF"}</Button>
       <ConfirmDialog open={confirmationOpen} onOpenChange={setConfirmationOpen}

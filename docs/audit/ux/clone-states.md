@@ -152,3 +152,50 @@ All converted JSX files were re-fetched and text-inspected for shared-component 
 - [ ] F5 **OPEN:** enumerate remaining custom error/empty/403/404/500/session/maintenance/offline components and verify behaviour and visual responsiveness.
 
 **Next exact source file:** `src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx` — source currently contains a role=alert section with separate background/border/padding; convert to shared error feedback without changing the watchlist warning or Retry.
+
+
+## TPO report error batch — 2026-10-19
+
+**10 source files changed and individually re-read:** eight TPO report error routes now use `Alert tone="error"` instead of one-off `role="alert"` sections; two existing `ErrorState` routes have literal escaped line breaks removed from titles/descriptions. All ten preserve their report-specific warning and the `reset` callback. Work remains on whole-repo F3–F5 parity; this is **file-level source proof, not browser/runtime visual proof**.
+
+### Cross-file legacy-to-vNext value table
+
+| Property/state | Exact legacy source/value | Shared or route-level source/value | Result |
+| --- | --- | --- | --- |
+| Error semantic color | `docs/design/legacy-styles/components___variables.scss:71` — `#ef4444` | `src/app/globals.css:51` — `--lms-error: #ef4444`; shared `Alert` error tone in `src/components/ui/alert.tsx:11` | Canonical status hue equal |
+| Error background | `legacy-styles/components___variables.scss:72` — `rgba(239,68,68,.10)` | `globals.css:52` same, used by `alert.tsx:11` as `--lms-error-subtle`; `ErrorState` via `globals.css:597` | Canonical effective background source equal |
+| Heading family/color | `docs/design/old-lms-pages.md:7` — h1 around 30px / 600 / `#172033` | `src/app/globals.css:327` — `--lms-heading:#172033`; eight route `h1` use `text-[30px] font-semibold` and token color | Known title values equal; two existing ErrorState h2 semantics unchanged |
+| Body text color | `legacy-styles/components___variables.scss:25` — `#54505d` | `globals.css:35,73` — `#54505d` via `--lms-body-text`; each route description uses body token | Equal color |
+| Error container border | Legacy status color in `variables.scss:71` but no exact legacy alert border alpha in examined references | `src/components/ui/alert.tsx:11` — `rgba(239,68,68,.25)`; existing `ErrorState` from `globals.css:597` | **Not yet exact legacy alpha proof; strict category still open** |
+| Component radii / padding | Legacy canvas 12px radius + 24px desktop padding per `old-lms-pages.md:6`; not a specific error-alert component rule | `alert.tsx:17` uses `--lms-control-radius` (9px) and `--lms-space-4/3` (16px/12px); single containing page canvas retained | Inner alert is a notice rather than duplicate canvas; exact old alert geometry not proven |
+| Recovery control | Legacy page anatomy `old-lms-pages.md:7` calls for an outlined action on a notice | Shared `Button variant="secondary"` on each route; no raw button; each invokes `reset` exactly once | Source-level action parity; hover/focus values inherited from shared Button |
+| 767px phone/tablet behavior | `legacy-styles/components___antddesign.scss:21-23` uses a maximum-width 767px breakpoint for mobile layout | `Alert` has `min-w-0 max-w-full flex-col break-words`; changed routes have `w-full`, `text-balance break-words`, `flex-wrap` around actions; existing ErrorState likewise is fluid | **Source-level no fixed-width overflow; browser measurement at phone/tablet not performed** |
+
+### Per-file source grep and responsive checks
+
+Counts below were **computed by exact regex matches on the fetched GitHub file content** on the lane branch. They are equivalent to the indicated single-file grep checks, not whole-repo grep results. `A` is `<Alert`, `C` is `</Alert>`, `E` is `<ErrorState`, `R` is `onClick={reset}`, `S` is raw `<section`, `P` is `animate-pulse`, and `N` is literal backslash-n. Responsive proof is source-only (column `Phone/tablet source`).
+
+| File (`src/app/(authenticated)/tpo/reports/…`) | Changed title line | Changed description line | A/C/E/R/S/P/N | Phone/tablet source |
+| --- | ---: | ---: | --- | --- |
+| `offers-expiry/error.tsx` | 11 | 14 | 1/1/0/1/0/0/0 | w-full + Alert min-w-0/max-w-full, break-words, flex-wrap |
+| `placed-branch/error.tsx` | 11 | 14 | 1/1/0/1/0/0/0 | w-full + Alert min-w-0/max-w-full, break-words, flex-wrap |
+| `joining-status/error.tsx` | 11 | 14 | 1/1/0/1/0/0/0 | w-full + Alert min-w-0/max-w-full, break-words, flex-wrap |
+| `season-pipeline/error.tsx` | 11 | 14 | 1/1/0/1/0/0/0 | w-full + Alert min-w-0/max-w-full, break-words, flex-wrap |
+| `offers-acceptance/error.tsx` | 11 | 14 | 1/1/0/1/0/0/0 | w-full + Alert min-w-0/max-w-full, break-words, flex-wrap |
+| `placement-summary/error.tsx` | 11 | 14 | 1/1/0/1/0/0/0 | w-full + Alert min-w-0/max-w-full, break-words, flex-wrap |
+| `leads/error.tsx` | 11 | 14 | 1/1/0/1/0/0/0 | w-full + Alert min-w-0/max-w-full, break-words, flex-wrap |
+| `unplaced/error.tsx` | 11 | 14 | 1/1/0/1/0/0/0 | w-full + Alert min-w-0/max-w-full, break-words, flex-wrap |
+| `by-company/error.tsx` | 8 | 9 | 0/0/1/1/0/0/0 | ErrorState min-w-0, break-words, flex-wrap |
+| `by-branch/error.tsx` | 8 | 9 | 0/0/1/1/0/0/0 | ErrorState min-w-0, break-words, flex-wrap |
+
+Equivalent checks on a locally available checkout (the **counts above were established from remote bytes**, not from running these commands):
+
+```sh
+rg -n '<Alert|</Alert>|<ErrorState|onClick=\{reset\}|<section|animate-pulse|\\n' 'src/app/(authenticated)/tpo/reports/'{offers-expiry,placed-branch,joining-status,season-pipeline,offers-acceptance,placement-summary,leads,unplaced,by-company,by-branch}/error.tsx
+rg -n 'w-full|break-words|flex-wrap' 'src/app/(authenticated)/tpo/reports/'{offers-expiry,placed-branch,joining-status,season-pipeline,offers-acceptance,placement-summary,leads,unplaced}/error.tsx
+```
+
+- [x] **Source migration done — 10 report error files**, source grep counts verified, original message/retry preserved, responsive *source* containment checked.
+- [ ] **Strict F3/F5 visual-parity tick deferred:** full old error-container spacing/border proof, real 320px/767px browser comparison, and whole-repository zero-instance census are not complete. Do not equate the source checklist with full visual parity.
+
+**Next source file:** `src/app/(authenticated)/tpo/reports/ctc/error.tsx` — inspect existing fallback before changing anything; keep report-specific copy and the retry action.

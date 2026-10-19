@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
@@ -60,6 +61,6 @@ function RecruiterConversationReadControlState({threadId}:{threadId:string}){
   <Button type="button" variant="secondary" className="min-h-9 max-sm:min-h-11" disabled={busy} loading={busy} onClick={acknowledge}>
    {busy?"Updating…":"Mark placement cell messages as read"}
   </Button>
-  {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
+  {notice?<Alert tone={notice==="Read status updated."?"success":"error"}>{notice}</Alert>:null}
  </div>;
 }

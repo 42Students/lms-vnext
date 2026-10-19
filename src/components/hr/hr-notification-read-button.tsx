@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {createHrBellMutationGate} from "@/modules/placements/hr-recruiter-bell-model";
@@ -40,6 +41,6 @@ export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
   <Button type="button" variant="secondary" className="min-h-11 sm:min-h-9" disabled={saving||complete} loading={saving} onClick={()=>void markRead()}>
    {complete?"Marked as read":saving?"Saving…":"Mark as read"}
   </Button>
-  {message?<span role="status" className="text-xs text-body">{message}</span>:null}
+  {message?<Alert tone="error">{message}</Alert>:null}
  </div>;
 }

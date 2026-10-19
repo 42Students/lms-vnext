@@ -1,5 +1,6 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import {Tabs} from "@/components/ui/tabs";
 import {Drawer} from "@/components/ui/drawer";
 import {apiFetch} from "@/lib/api-fetch";
 import Link from "next/link";
@@ -102,14 +103,14 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       Close panel
     </Button>
    </section>
-   <nav aria-label="Student panel pages" className="mt-4 flex flex-wrap gap-2">
-    {tabs.map(t=><Button variant="ghost" key={t} type="button" onClick={()=>void chooseTab(t)}
-      aria-current={tab===t?"page":undefined}
-      className={"rounded-none border-b-2 px-3 "+(tab===t?"border-[var(--lms-primary)] text-link":"border-transparent")}>{t}
-       {t==="Requests"&&detail?.requests.some(row=>row.status==="PENDING")?
-       " ("+detail.requests.filter(row=>row.status==="PENDING").length+" waiting)":""}
-      </Button>)}
-   </nav>
+   <Tabs ariaLabel="Student panel pages" className="mt-4" value={tab} renderPanel={false} controlledOnly
+    onValueChange={next=>{void chooseTab(next as Tab);}}
+    items={tabs.map(t=>({
+      value:t,
+      label:t==="Requests"&&detail?.requests.some(row=>row.status==="PENDING")
+        ?t+" ("+detail.requests.filter(row=>row.status==="PENDING").length+" waiting)"
+        :t,
+    }))}/>
    <div className="mt-5 space-y-4 text-sm">
     {tab==="Profile"?<>
       <h3 className="font-semibold">Recorded learner facts</h3>

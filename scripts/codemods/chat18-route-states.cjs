@@ -73,11 +73,15 @@ const errors = {
 const root = path.resolve(__dirname,"../..");
 const dry = process.argv.includes("--dry-run");
 for (const [relative,[label,shape]] of Object.entries(loading)) {
+ const current = fs.readFileSync(path.join(root,relative),"utf8");
+ if (current.includes("GracefulPageLoading")) { console.log("Already shared "+relative); continue; }
  const content = 'import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";\n\nexport default function Loading() {\n  return <GracefulPageLoading label='+JSON.stringify(label)+' shape='+JSON.stringify(shape)+' />;\n}\n';
  if (!dry) fs.writeFileSync(path.join(root,relative),content);
  console.log((dry?"Would update ":"Updated ")+relative);
 }
 for (const [relative,[title,problem,description,action]] of Object.entries(errors)) {
+ const current = fs.readFileSync(path.join(root,relative),"utf8");
+ if (current.includes('from "@/components/ui/error-state"') || current.includes('from "@/components/ui/alert"')) { console.log("Already shared "+relative); continue; }
  const content = '"use client";\n\nimport { Button } from "@/components/ui/button";\nimport { ErrorState } from "@/components/ui/error-state";\nimport { PageHeader } from "@/components/ui/page-header";\n\nexport default function RouteError({ reset }: {\n  error: Error & { digest?: string };\n  reset: () => void;\n}) {\n  return <div className="min-w-0 space-y-4">\n    <PageHeader title='+JSON.stringify(title)+' />\n    <ErrorState\n      title='+JSON.stringify(problem)+'\n      description='+JSON.stringify(description)+'\n      action={<Button type="button" variant="secondary" onClick={reset}>'+action+'</Button>}\n    />\n  </div>;\n}\n';
  if (!dry) fs.writeFileSync(path.join(root,relative),content);
  console.log((dry?"Would update ":"Updated ")+relative);

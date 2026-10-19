@@ -11,24 +11,24 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 - [x] A3: touch pressed card feedback — `components___accessibility.scss:49-60`; micro CSS 65-72 (scale .98, opacity .9, 50ms ease).
 - [x] A3/A4: pointer, disabled, loading cursor states — `components___button.scss:13-17`, `components___notification-drawer.scss:26-41,192-203`; micro CSS 38-52,203-205; disabled not-allowed is vNext fallback because legacy leaves it unspecified.
 - [x] A4: click versus keyboard focus — `components___accessibility.scss:13-36`; micro CSS 23-33,55-59 (generic 2px #1a95a1 / +3px, elevated 2px / +2px and 12% halo).
-- [x] A4: notification item focus ring — `components___notification-drawer.scss:217-224`; micro CSS 216-221 (1px #6b7280 / +1px).
+- [x] A4: notification item focus ring — `components___notification-drawer.scss:217-224`; micro CSS 225-230 (1px #6b7280 / +1px).
 - [x] A4: hidden scrollbar baseline — `components___common.scss:307-311,329-331` and `old-lms-shell.css:10-11`; existing `globals.css:183-193`.
-- [x] A4: admin table 4px and tab 3px scrollbars — `pages___admin-list-pages.scss:96-106,244-254`; micro CSS 229-259, using real ScrollCue viewport markup (`src/components/ui/scroll-cue.tsx`).
+- [x] A4: admin table 4px and tab 3px scrollbars — `pages___admin-list-pages.scss:96-106,244-254`; micro CSS 238-268, using real ScrollCue viewport markup (`src/components/ui/scroll-cue.tsx`).
 - [x] A4: tap highlight disabled for semantic controls — `components___notification-drawer.scss:38-41,196-203`; micro CSS 180-185.
 - [x] A4: link colour and hover underline — `components___common.scss:68-75`; micro CSS 77-87 and `legacy-skin.css:349-368`.
 - [x] A4: placeholder muted neutral — `components___form.scss:57-60`, `components___variables.scss:28`; micro CSS 109-114 (14px inherited from legacy skin).
-- [x] I: checkbox/radio checked TEAL and switch checked track — `components___antddesign.scss:123-132,742-745`, `components___common.scss:226-228`; micro CSS 89-103,187-193,318-331.
-- [x] I: notification hover/active and focus transition 200ms — `components___notification-drawer.scss:192-224`; micro CSS 206-220.
-- [x] I: notification panel open 200ms ease-out from 8px, backdrop 150ms — `components___notification-drawer.scss:83-102,112-143`; micro CSS 287-312.
-- [x] I: active-tab underline width and opacity 200ms ease-in-out — `components___common.scss:381-415`; micro CSS 384-386 (same native tab pseudo-element; no layout changes).
+- [x] I: checkbox/radio checked TEAL and switch checked track — `components___antddesign.scss:123-132,742-745`, `components___common.scss:226-228`; micro CSS 89-103,187-193,327-340.
+- [x] I: notification list link/button hover, active and focus transition 200ms — `components___notification-drawer.scss:192-224`; micro CSS 206-229 (list-button hover at 216-224, item focus at 225-229).
+- [x] I: notification panel open 200ms ease-out from 8px, backdrop 150ms — `components___notification-drawer.scss:83-102,112-143`; micro CSS 296-321.
+- [x] I: active-tab underline width and opacity 200ms ease-in-out — `components___common.scss:381-415`; micro CSS 393-395 (same native tab pseudo-element; no layout changes).
 - [x] I: selected menu option #26bac7/white (separate from nav tint) — `components___antddesign.scss:134-137`; micro CSS 142-147.
-- [x] I: sticky shadow paint on **already sticky** table cells — `old-lms-shell.css:56`: 0 1px 3px rgba(26,45,72,.035); micro CSS 151-154,281-288. No sticky positioning added.
-- [x] I: reduced-motion preference — `components___accessibility.scss:116-124`, `components___antddesign.scss:184-189`; existing `globals.css:304-312`; micro CSS 173-177,365-377.
-- [x] I: print interaction paint only, no layout — `components___accessibility.scss:116-124`; micro CSS 345-363; `src/app/(authenticated)/authenticated-print.css` owns paper/layout rules.
+- [x] I: sticky shadow paint on **already sticky** table cells — `old-lms-shell.css:56`: 0 1px 3px rgba(26,45,72,.035); micro CSS 151-154,290-297. No sticky positioning added.
+- [x] I: reduced-motion preference — `components___accessibility.scss:116-124`, `components___antddesign.scss:184-189`; existing `globals.css:304-312`; micro CSS 173-177,374-386.
+- [x] I: print interaction paint only, no layout — `components___accessibility.scss:116-124`; micro CSS 354-372; `src/app/(authenticated)/authenticated-print.css` owns paper/layout rules.
 - [ ] A4: text-selection **legacy exact parity** — `components___variables.scss:10-13,24` supplies colours but no `::selection` selector; micro CSS 122-127 uses those tokens. Actual legacy selection paint unverified.
-- [ ] I: table row hover and selection **legacy exact parity** — `components___common.scss:130-139` proves only no-hover exemption; `old-lms-shell.css:45-48` is for sidebar rows, not table rows. Micro CSS 130-137,262-279 and `globals.css:579` implement safe palette-based behavior, but no old selected-table colour is specified.
-- [ ] I: checkbox/radio glyph and switch-thumb **animation parity** — teal checked colours matched, 150ms track-transition aligned to `components___variables.scss:251-259` (micro CSS 318-331); the old SCSS does not define the glyph/thumb animation, and native browser checkmarks are not tweenable by CSS.
-- [ ] I: input browser autofill **exact parity** — `components___form.scss:57-60` gives placeholder but not autofill; micro CSS 115-120,333-343 preserves ink/caret. Browser-autofill background remains user-agent controlled.
+- [ ] I: table row hover and selection **legacy exact parity** — `components___common.scss:130-139` proves only no-hover exemption; `old-lms-shell.css:45-48` is for sidebar rows, not table rows. Micro CSS 130-137,271-288 and `globals.css:579` implement safe palette-based behavior, but no old selected-table colour is specified.
+- [ ] I: checkbox/radio glyph and switch-thumb **animation parity** — teal checked colours matched, 150ms track-transition aligned to `components___variables.scss:251-259` (micro CSS 327-340); the old SCSS does not define the glyph/thumb animation, and native browser checkmarks are not tweenable by CSS.
+- [ ] I: input browser autofill **exact parity** — `components___form.scss:57-60` gives placeholder but not autofill; micro CSS 115-120,342-352 preserves ink/caret. Browser-autofill background remains user-agent controlled.
 - [ ] I: tooltip mouse-enter/mouse-leave **delay parity** — `components___antddesign.scss:46-80` defines visual palette, not delay. `src/components/ui/tooltip.tsx:18-34` opens immediately on pointer-enter. CSS cannot alter the trigger's JS event timing; no delay invented.
 - [ ] I: toast **timeout parity** — no toast lifetime in the supplied legacy SCSS. `src/components/ui/toast.tsx:133-143` uses 4500–15000ms reading time, errors persistent, timers paused during focus/hover. Timer logic is not CSS-editable.
 - [ ] I: toast **placement parity** — old SCSS has no toast placement. Current bottom-right safe-area placement is `src/components/ui/toast.tsx:49-73`; positioning would change layout/JS scope and is not modified.
@@ -51,7 +51,7 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 | Keyboard ring | `components___accessibility.scss:19-23` teal text, 2px, offset 3px | `micro-details.css:27-32` #1a95a1, 2px, 3px | Equal fallback |
 | Click outline | `components___accessibility.scss:13-16` none | `micro-details.css:23-26` none for non-keyboard focus | Equal |
 | Card ring | `components___accessibility.scss:25-36` 2px, +2px, 4px 12% halo | `micro-details.css:55-59` same | Equal |
-| Notification row ring | `components___notification-drawer.scss:221-224` 1px neutral-500 +1px | `micro-details.css:216-220` same | Equal |
+| Notification row ring | `components___notification-drawer.scss:221-224` 1px neutral-500 +1px | `micro-details.css:225-229` same | Equal |
 | Press scale | `components___accessibility.scss:49-60` .98/.9 and 50ms | `micro-details.css:65-72` same | Equal |
 | Hover link | `components___common.scss:68-75` #26bac7 + underline | `micro-details.css:77-87`, `legacy-skin.css:349-368` | Equal |
 | Tap flash | `components___notification-drawer.scss:40,203` transparent | `micro-details.css:182-185` transparent | Equal |
@@ -59,16 +59,17 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 | Checked switch fill | `components___common.scss:226-228` #26bac7 | `micro-details.css:187-193` #26bac7 | Equal paint |
 | Placeholder | `components___form.scss:57-60` #a9a7ae and 14px | `micro-details.css:109-114` + legacy skin | Equal |
 | Generic scrollbars hidden | `components___common.scss:307-311,329-331` none | `globals.css:183-193` none | Equal |
-| Admin table scrollbar | `pages___admin-list-pages.scss:96-106` thin, 4px thumb rgba(0,0,0,.2) 2px radius | `micro-details.css:229-243` same | Equal |
-| Admin tabs scrollbar | `pages___admin-list-pages.scss:244-254` thin, 3px thumb rgba(0,0,0,.2) 2px radius | `micro-details.css:245-259` same | Equal |
+| Admin table scrollbar | `pages___admin-list-pages.scss:96-106` thin, 4px thumb rgba(0,0,0,.2) 2px radius | `micro-details.css:238-252` same | Equal |
+| Admin tabs scrollbar | `pages___admin-list-pages.scss:244-254` thin, 3px thumb rgba(0,0,0,.2) 2px radius | `micro-details.css:254-268` same | Equal |
+| Notification button hover | `components___notification-drawer.scss:192-210` #fafbfc, #e5e9f0 border, 0 1px 3px rgba(0,0,0,.04) | `micro-details.css:216-223` same on list buttons (list links styled by legacy-overlays) | Equal paint |
 | Notification list transitions | `components___notification-drawer.scss:202-215` 200ms ease, active rgba(0,0,0,.06) | `micro-details.css:206-215` same | Equal paint |
-| Tab underline | `components___common.scss:381-415` width/opacity 200ms ease-in-out | `micro-details.css:384-386` same | Equal |
-| Notification panel enter | `components___notification-drawer.scss:125-143` 200ms ease-out, -8px | `micro-details.css:299-305` same | Equal |
-| Notification backdrop enter | `components___notification-drawer.scss:90-102` 150ms ease-out | `micro-details.css:295-298,307-309` same | Equal declaration |
+| Tab underline | `components___common.scss:381-415` width/opacity 200ms ease-in-out | `micro-details.css:393-395` same | Equal |
+| Notification panel enter | `components___notification-drawer.scss:125-143` 200ms ease-out, -8px | `micro-details.css:308-314` same | Equal |
+| Notification backdrop enter | `components___notification-drawer.scss:90-102` 150ms ease-out | `micro-details.css:304-307,316-318` same | Equal declaration |
 | Selected option | `components___antddesign.scss:134-137` teal + white | `micro-details.css:142-147` teal + white | Equal |
-| Sticky shadow | `old-lms-shell.css:56` 0 1px 3px rgba(26,45,72,.035) | `micro-details.css:281-287` same | Equal shadow |
-| Reduced motion | `components___accessibility.scss:116-124` .01ms and scroll auto | `globals.css:304-312`, `micro-details.css:365-377` | Equal |
-| Print interaction | No legacy print-specific declarations in copied SCSS | `micro-details.css:345-363`: transition/animation none, no geometry | Unverifiable |
+| Sticky shadow | `old-lms-shell.css:56` 0 1px 3px rgba(26,45,72,.035) | `micro-details.css:290-296` same | Equal shadow |
+| Reduced motion | `components___accessibility.scss:116-124` .01ms and scroll auto | `globals.css:304-312`, `micro-details.css:374-386` | Equal |
+| Print interaction | No legacy print-specific declarations in copied SCSS | `micro-details.css:354-372`: transition/animation none, no geometry | Unverifiable |
 
 ## Coverage and responsive review
 

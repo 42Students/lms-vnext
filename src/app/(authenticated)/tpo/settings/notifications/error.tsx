@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function TpoMyNotificationsError({
   reset,
@@ -11,11 +12,9 @@ export default function TpoMyNotificationsError({
   return (
     <section
       role="alert"
-      className="border-t border-border pt-5 text-center"
+      className="space-y-3 py-6"
     >
-      <h1 className="m-0 text-[26px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)] sm:text-[30px]">
-        Couldn&apos;t load My Notifications
-      </h1>
+      <PageHeader title={"Couldn't load My Notifications"} />
 
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         Your college-scoped notification records or

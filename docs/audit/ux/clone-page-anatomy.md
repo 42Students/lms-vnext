@@ -257,3 +257,64 @@ Note: three connector read timeouts occurred on the first attempt for the learne
 **Strict tick status:** B5 title/canvas/breadcrumb and E6 card-in-card are still **[ ]**: automated coverage + exceptions and responsive/browser proof outstanding. B6 is still **[ ]**: breakpoint-source alignment on the header was improved but phone/tablet geometry has not been exercised. Independent project/workspace object cards are still exemptions, not general card-in-card wrappers.
 
 **Next exact file:** `src/app/(authenticated)/mentor/reports/error.tsx` (confirmed raw h1 remains). Then `src/app/(authenticated)/learn/projects/error.tsx` and `src/app/(authenticated)/teacher/courses/error.tsx`; after codemod execution, handle complex/action-bearing titles from the skip report and classify nested card wrappers.
+
+## B5/B6/E6 file-completion batch — 2026-10-19, chat-9
+
+This batch migrates and source-verifies **18 recovery/error route files**. The authenticated layout already owns the sole `PageCanvas` (`src/app/(authenticated)/layout.tsx:140-156`). We removed nested decorative rounded/bordered error cards, redundant wrapper separators, and arbitrary local horizontal padding while keeping section content and `reset` handlers. Two faculty pages now retain `role="alert"`; a malformed ordering of `"use client"` on live classes was corrected. Two faculty course-error links now use responsive `PageBackLink`.
+
+### File-level source inventory (18/18 source-verified)
+
+| File under `src/app/(authenticated)/` | PageHeader line | Section line | Shared back link | Source checks |
+| --- | ---: | ---: | ---: | --- |
+| `mentor/reports/error.tsx` | 6 | 5 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `learn/projects/error.tsx` | 13 | 12 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `teacher/courses/error.tsx` | 8 | 7 | 12 | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `mentor/reviews/error.tsx` | 8 | 7 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `teacher/profile/error.tsx` | 13 | 12 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `tpo/reports/leads/error.tsx` | 14 | 13 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `hr/company/reports/error.tsx` | 17 | 13 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `teacher/results/error.tsx` | 10 | 9 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `teacher/live-classes/error.tsx` | 5 | 5 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `learn/my-placements/error.tsx` | 15 | 14 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `tpo/settings/season/error.tsx` | 14 | 13 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `tpo/settings/rules/error.tsx` | 14 | 13 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `tpo/settings/branding/error.tsx` | 17 | 13 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `mentor/activity/error.tsx` | 8 | 7 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `college/attendance/error.tsx` | 14 | 13 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `teacher/notifications/error.tsx` | 13 | 12 | 19 | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `mentor/team-coverage/error.tsx` | 10 | 9 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+| `tpo/settings/notifications/error.tsx` | 17 | 13 | — | [x] 1 header; 0 raw h1; alert; no nested canvas card; client-first |
+
+Each file above was fetched **after** its final change from `chatgpt/chat-9-b`. The connector-backed source scan evaluated `/<h1(?:\\s|>)/g` and `/<PageHeader\\b/g` against the exact file content: **18 files read, 0 native h1, 18 shared headers, 0 decorative outer card wrappers, 18 alert sections, 18 correctly placed client directives, 0 suspicious backslash-entity or stray quote markers**. This is scoped grep-equivalent source proof, *not* a claim that a checked-out repository-wide `git grep` was executed. No CI, tests, app, Playwright, or compiler run.
+
+### Value comparison against old LMS sources
+
+| Property | Legacy source:value | Shared/current implementation | Source result |
+| --- | --- | --- | --- |
+| One large canvas, white background, 1px neutral-200 border, 12px radius, 24px padding, no shadow | `docs/design/old-lms-shell-spec.md:18-20` | `src/components/ui/page-canvas.tsx:13-23`, authenticated `layout.tsx:147-156` | [x] Every scoped route inherits one canvas; the 18 root error sections add no presentation card |
+| Page title 30px, weight 600, color #172033 | `old-lms-shell-spec.md:26-28` (measured legacy TPO) | `src/components/ui/page-header.tsx:28-38`; `src/app/globals.css:324,363-369` | [x] Desktop values source-matched to measured reference |
+| Head divider border1px, bottom padding16px and margin16px | `components___listing-page-header.scss:26-35` | `page-header.tsx:26-29` border-b/pb-4/md:mb-4 | [x] One divider owned by shared header, no second wrapper divider |
+| Mobile header 20px title, 8px vertical gap, margin-bottom8px, actions full width column | `components___listing-page-header.scss:130-154` at max767px | `page-header.tsx:28-49` (md breakpoint 768, mobile 20px CSS variable and flex-col / w-full) | [x] Source-derived breakpoint values match |
+| Title/subtitle wrap at desktop gap16px, tracking -0.02em | `components___listing-page-header.scss:45-58` | `page-header.tsx:30-45` md:flex-wrap/md:gap-4/tracking-[-0.02em] | [x] Source rule; text not truncated |
+| Back-link 44px touch target and label hidden on phones, hover tint color .15s | `components___learn-layout.scss:361-383` | `src/components/ui/page-back-link.tsx:18-29`; used in faculty courses/notifications errors | [x] Source values/semantic destination retained |
+| Action recovery correctness | Existing vNext `reset`/Retry and back links | All 18 route source files in table | [x] Retry handler preserved; exception panel remains an accessible alert |
+
+**Known alternate legacy variant:** `components___listing-page-header.scss:52-60` calls for a 28px/1.3 desktop title, whereas the measured legacy TPO shell reference uses a 30px title; the shared header follows measured TPO 30px and 1.35 line height. This variant remains unresolved for full cross-portal B5 certification.
+
+### Responsive source-proof matrix
+
+| Class | Widths checked against breakpoint logic | Legacy breakpoint | Shared JSX/CSS behavior | Coverage |
+| --- | --- | --- | --- | --- |
+| Phone narrow | 320px, 390px, 767px | max-width:767px | PageHeader mobile `flex-col`, 20px title, stacked full-width actions; back label hidden | same selectors for all 18 |
+| Tablet start | 768px, 991px | min-width:768px | PageHeader desktop `flex-row`, 30px title, actions shrink to right; back label visible | same selectors for all 18 |
+| Tablet wide | 1024px, 1199px | min-width:768px | PageHeader remains row, title/subtitle flex-wrap and `break-words`, avoiding clipped heading | same selectors for all 18 |
+
+Rules were compared statically using `components___variables.scss:148-159` and `components___listing-page-header.scss:130-154` versus `page-header.tsx:26-49`. The one canvas owns padding and borders; its inline `padding:var(--lms-canvas-padding)` wins over old mobile overrides. **No rendered viewport measurements or screenshots** were performed; separate visual acceptance remains open.
+
+### Still-open category-level proof
+
+- [ ] B5 whole-repo PageHeader and breadcrumbs: these 18 routes have source proof, not full authenticated route/delegated component coverage. The orchestrator has not yet run `scripts/codemods/chat9-page-header.cjs --apply` in a checkout.
+- [ ] B6 global responsive: this batch's shared header breakpoint mapping is source-reviewed, but no phone/tablet browser overflow, control placement, or disabled/focus checks have run.
+- [ ] E6 global card boundaries: these 18 root error wrappers are flattened; independent interactive object tiles and other portals still need classification.
+
+**Exact next file:** `src/app/(authenticated)/tpo/settings/recruiters/error.tsx` (confirmed native h1 present at last source inspection). Continue TPO settings error routes and adjacent learner/faculty recovery files; update individual source inventories before any global tick.
