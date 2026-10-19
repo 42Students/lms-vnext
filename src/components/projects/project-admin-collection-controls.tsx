@@ -149,13 +149,13 @@ export function ProjectAdminFilters({
       </label>
       <Button
         type="submit"
-        className="rounded-[9px]"
+        className=""
       >
         Apply
       </Button>
       <Link
         href={filterView?"?view=NOT_SUBMITTED":"?"}
-        className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-body hover:bg-muted"
+        className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-body hover:bg-primary-subtle"
       >
         Clear
       </Link>
