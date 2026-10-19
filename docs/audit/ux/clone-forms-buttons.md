@@ -684,9 +684,9 @@ The old LMS breakpoint comes from `legacy-styles/components___variables.scss:139
 
 | Property | Legacy SCSS file:line/value | New source file:line/value | Static result |
 | --- | --- | --- | --- |
-| Profile width and height | `legacy-styles/components___button.scss:319-326` width **175px**, height **194px** | `file-upload.tsx:143-152`, `file-dropzone.tsx:82-87` **w-[175px] h-[194px]** | Match |
-| Profile crop position | `components___button.scss:326-331` object-fit **cover**, object-position **center** | Same source files: `object-cover object-center` | Match |
-| Profile radius | `components___button.scss:322-329` **8px** | Same source files: `rounded-[8px]` | Match |
+| Profile width and height | `legacy-styles/components___button.scss:304-308` width **175px**, height **194px** | `file-upload.tsx:144-150`, `file-dropzone.tsx:81-85` **w-[175px] h-[194px]** | Match |
+| Profile crop position | `components___button.scss:312-318` object-fit **cover**, object-position **center** | Same source files: `object-cover object-center` | Match |
+| Profile radius | `components___button.scss:311` **8px** | Same source files: `rounded-[8px]` | Match |
 | Generic attachment preview | Not equivalent to the legacy profile photo frame; generic upload affordance `components___antddesign.scss:498-505` | Default `imagePreviewKind="attachment"` retains 10px container and object-contain | Backwards-compatible; separate visual role |
 | Phone/tablet | `components___variables.scss:139,148-156` 44px touch, 767px phone cutoff, 768px tablet | File picker/removal Button already 44px at <=767px; profile image max-width 100% retains width limit | Source-only; actual touch layout not rendered |
 
