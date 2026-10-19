@@ -1,4 +1,5 @@
 "use client";
+import { Input } from "@/components/ui/input";
 
 import Link from "next/link";
 import {useSearchParams} from "next/navigation";
@@ -185,7 +186,7 @@ export function LearnerCareerCalendar({
         </div>
         <label className="mt-3 block max-w-xs text-xs font-semibold text-body">
           Jump to date (IST)
-          <input type="date" aria-label="Choose career calendar date"
+          <Input type="date" aria-label="Choose career calendar date"
             min="2000-01-01" max="2100-12-31" value={anchor}
             onChange={(event)=>{
               const day=parseLearnerCareerDate(event.target.value);
