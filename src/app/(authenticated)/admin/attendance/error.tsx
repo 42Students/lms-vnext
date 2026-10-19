@@ -9,7 +9,7 @@ export default function SuperAdminAttendanceError({
   reset: () => void;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
+    <section className="border-l-2 border-error px-5 py-8 text-center">
       <h1 className="text-lg font-semibold text-foreground">Couldn&apos;t load scoped attendance</h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         The selected college attendance request failed. Retry without changing the safety scope.

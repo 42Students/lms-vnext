@@ -1,5 +1,7 @@
 "use client";
 import {Dialog} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
@@ -76,7 +78,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  const columns:DataTableColumn<Row>[]=[
   {key:"selected",header:"Select",mobilePriority:"action",cell:row=>
    <label className="inline-flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" aria-label={"Select "+(row.name??row.id)}
+    <Checkbox aria-label={"Select "+(row.name??row.id)}
      disabled={row.status!=="SUBMITTED"||busy||allMatching}
      checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/> Select</label>},
   {key:"name",header:"Learner Name",mobilePriority:"primary",
@@ -95,12 +97,12 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening??"Not recorded"},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=>
    <div className="flex flex-wrap gap-2">
-    <button type="button" onClick={()=>void openDetail(row.id)}
-     className="min-h-9 rounded-[9px] border border-border px-3 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Details</button>
+    <Button type="button" variant="secondary" onClick={()=>void openDetail(row.id)}
+     >Details</Button>
     {row.stage==="REJECTED"?
-     <button type="button" disabled={busy||row.status!=="SUBMITTED"}
-      onClick={()=>selectRow(row,"REINSTATE")}
-      className="min-h-9 rounded-[9px] border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reinstate</button>:
+     <Button type="button" disabled={busy||row.status!=="SUBMITTED"}
+      variant="secondary" onClick={()=>selectRow(row,"REINSTATE")}
+      >Reinstate</Button>:
      <Select aria-label={"Move "+(row.name??"learner")+" to"} value=""
       disabled={busy||row.status!=="SUBMITTED"}
       onChange={event=>{if(event.target.value)selectRow(row,event.target.value);}}
@@ -112,15 +114,15 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  ];
  return <section className="space-y-4">
   <div className="flex flex-wrap items-center gap-3 border-b border-border pb-4 text-sm">
-   <label className="flex items-center gap-2"><input type="checkbox" checked={allPage}
+   <label className="flex items-center gap-2"><Checkbox checked={allPage}
     disabled={busy||!eligible.length} onChange={e=>{setAllMatching(false);setSelected(e.target.checked?eligible.map(r=>r.id):[]);}} />
     Select all {eligible.length} on this page</label>
    <strong>{selectedCount} selected</strong>
-   {total>eligible.length?<button type="button" disabled={busy||total>3000}
-    onClick={()=>{setAllMatching(true);setSelected([]);}} className="min-h-9 rounded-[9px] border border-border px-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-    Select all {total.toLocaleString("en-IN")} matching this filter</button>:null}
-   {allMatching?<button type="button" onClick={()=>{setAllMatching(false);setSelected([]);}}
-    className="min-h-9 rounded-[9px] border border-border px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear selection</button>:null}
+   {total>eligible.length?<Button type="button" disabled={busy||total>3000}
+    variant="secondary" onClick={()=>{setAllMatching(true);setSelected([]);}} >
+    Select all {total.toLocaleString("en-IN")} matching this filter</Button>:null}
+   {allMatching?<Button type="button" variant="secondary" onClick={()=>{setAllMatching(false);setSelected([]);}}
+    >Clear selection</Button>:null}
    {total>3000?<span className="text-error">Narrow filters to 3,000 or fewer applicants before bulk actions.</span>:null}
    <Select aria-label="Bulk application action" value={target} onChange={e=>setTarget(e.target.value)}
     className="min-h-9 text-base sm:text-sm">
@@ -130,9 +132,9 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
        stage==="WAITLISTED"?"Move to Waitlisted":stage==="OFFERED"?"Move to Offered":
        stage==="HIRED"?"Mark Hired":stage}</option>)}
    </Select>
-   <button type="button" disabled={!selectedCount||busy} onClick={()=>chooseBulk(target)}
-    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-    Act on {selectedCount} selected</button>
+   <Button type="button" disabled={!selectedCount||busy} onClick={()=>chooseBulk(target)}
+    >
+    Act on {selectedCount} selected</Button>
    <span className="text-body">Changes are tracked with per-row results and students receive in-app notifications.</span>
   </div>
   <DataTable columns={columns} rows={rows} getRowKey={row=>row.id}
@@ -154,7 +156,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      <Textarea rows={3} minLength={3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
       className="w-full text-base sm:text-sm"/></label>
     <label className="flex items-center gap-2 text-sm">
-     <input type="checkbox" checked={email} onChange={e=>setEmail(e.target.checked)}/>
+     <Checkbox checked={email} onChange={e=>setEmail(e.target.checked)}/>
      Also notify candidates by email (currently unavailable)
     </label>
     {email?<p role="alert" className="text-sm text-error">Email delivery is not registered for College Admin stage moves. Uncheck email to use in-app notifications.</p>:null}
@@ -166,11 +168,11 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      {outcome.results.filter(r=>r.status==="skipped").map(r=><p key={r.applicationId}>{rowMap.get(r.applicationId)?.name??r.applicationId}: {r.reason}</p>)}
     </div>:null}
     <div className="flex flex-wrap gap-3">
-     <button type="button" disabled={busy||email||reason.trim().length<3||!selectedCount}
-      onClick={()=>void save()} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-      {busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</button>
-     <button type="button" disabled={busy} onClick={()=>{setDialog(false);setError("");setOutcome(null);}}
-      className="min-h-9 rounded-[9px] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Close</button>
+     <Button type="button" disabled={busy||email||reason.trim().length<3||!selectedCount}
+      onClick={()=>void save()} >
+      {busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</Button>
+     <Button type="button" disabled={busy} variant="secondary" onClick={()=>{setDialog(false);setError("");setOutcome(null);}}
+      >Close</Button>
     </div>
   </Dialog>
  </section>;

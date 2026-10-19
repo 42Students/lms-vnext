@@ -5,6 +5,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck,hasStudentRuleAcknowledgement,canReviewStudentRule,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
 export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,blocked}:{
  collegeId:string;membershipId:string;module:EditableStudentModule;
@@ -73,7 +74,7 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
    </Select>
   </label>
   <label className="flex items-center gap-2 text-sm text-body">
-   <input type="checkbox" checked={nextLocked} onChange={e=>setNextLocked(e.target.checked)}
+   <Checkbox checked={nextLocked} onChange={e=>setNextLocked(e.target.checked)}
     disabled={blocked||pending||choice==="INHERIT"}/>
    Lock this membership rule
   </label>
