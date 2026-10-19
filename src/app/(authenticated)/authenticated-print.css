@@ -32,8 +32,7 @@
   .lms-shell-frame [data-slot="data-table"] tbody { display:table-row-group !important; }
   .lms-shell-frame [data-slot="data-table"] tr { display:table-row !important; }
   .lms-shell-frame [data-slot="data-table"] td { display:table-cell !important; }
-  .lms-shell-frame [data-slot="data-table"] tr,
-  .lms-shell-frame article { break-inside:avoid; }
+  .lms-shell-frame [data-slot="data-table"] tr { break-inside:avoid; }
   .lms-shell-frame [data-slot="data-table"] td,
   .lms-shell-frame [data-slot="data-table"] th {
     position:static !important;
