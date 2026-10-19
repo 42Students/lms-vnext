@@ -129,17 +129,17 @@ export async function CollegeRoleDirectoryWorkspace({
           [title,result.metrics.registered],
           ["Active",result.metrics.active],
           ["Suspended",result.metrics.suspended],
-        ].map(([label,value])=><div key={label} className="rounded-xl border border-border bg-surface p-4">
+        ].map(([label,value])=><div key={label} className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4">
           <p className="text-xs font-semibold text-body">{label}</p>
           <p className="mt-1 text-xl font-bold tabular-nums">{value}</p>
         </div>)}
-        <div className="rounded-xl border border-border bg-surface p-4">
+        <div className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4">
           <p className="text-xs font-semibold text-body">Visible now</p>
           <p className="mt-1 text-sm font-semibold text-body">Not tracked</p>
           <p className="mt-1 text-xs text-muted-foreground">Do not infer presence from login or membership status.</p>
         </div>
       </section>
-      <section className="sm: border-t border-border pt-4" aria-label={title + " directory filters"}>
+      <section className="border-t border-border pt-4" aria-label={title + " directory filters"}>
         <form method="get" action={path} className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-48 flex-1 gap-2 text-sm font-semibold text-body">
             {collegeDirectorySearchHint(kind)}
@@ -352,7 +352,7 @@ export async function CollegeRoleDirectoryWorkspace({
         </form>
       </section>
 
-      <section aria-label={title + " results"} className="rounded-xl border border-border bg-surface">
+      <section aria-label={title + " results"} className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {result.total} matching {kind === "FACULTY" ? "faculty" : "learner"} membership{result.total === 1 ? "" : "s"}
         </p>

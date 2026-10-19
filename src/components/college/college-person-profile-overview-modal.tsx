@@ -25,12 +25,12 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
  }
  return <>
   <button type="button" onClick={()=>void show()}
-   className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">Profile</button>
+   className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text">Profile</button>
   <Dialog open={open} onOpenChange={setOpen} title={"Profile for "+name}>
     <div className="flex items-center justify-between gap-2">
      <h2 className="text-lg font-semibold">Profile · {name}</h2>
      <button type="button" onClick={()=>setOpen(false)}
-      className="min-h-11 rounded border border-border px-3">Close</button>
+      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3">Close</button>
     </div>
     {loading?<p role="status">Loading profile…</p>:null}
     {error?<p role="alert" className="text-error">{error}</p>:null}
@@ -43,13 +43,13 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
      <section><h3 className="font-semibold">Education</h3>
       {!data.education.length?<p className="text-sm text-muted-foreground">No education records.</p>:
       <ul className="mt-2 space-y-2">{data.education.map((item,index)=>
-       <li key={index} className="rounded border border-border p-3 text-sm"><strong>{item.title||"Education"}</strong>
+       <li key={index} className="rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-sm"><strong>{item.title||"Education"}</strong>
         <p>{item.detail||"Institution not recorded"} · {item.year||"Year not recorded"}</p>
         {item.extra?<p className="text-muted-foreground">{item.extra}</p>:null}
        </li>)}</ul>}
      </section>
      <div className="grid gap-4 sm:grid-cols-2">{sections.map(section=>
-      <section key={section} className="rounded border border-border p-3">
+      <section key={section} className="rounded-[var(--lms-control-radius,9px)] border border-border p-3">
        <h3 className="font-semibold capitalize">{section}</h3>
        {data[section].length?<ul className="mt-2 list-inside list-disc text-sm">
         {data[section].map((item,index)=><li key={index}>{item}</li>)}</ul>:
