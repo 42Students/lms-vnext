@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -48,11 +49,10 @@ export default async function TpoDriveCloseoutPage({
         </p>
       </div>)}
     </section>
-    {counts.applied === 0 ? <p role="status"
-      className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
+    {counts.applied === 0 ? <Alert tone="info">
       No applications are persisted for this drive. Other zero counts reflect that
       source, not an assumption about off-platform recruiting.
-    </p> : null}
+    </Alert> : null}
     <p className="text-sm leading-6 text-body">
       Selected is unavailable because no canonical final-selection event is
       stored independently of round PASS and offer issuance. Accepted means
