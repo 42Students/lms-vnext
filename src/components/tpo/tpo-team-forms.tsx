@@ -156,7 +156,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
     }}
     className="w-full" placeholder="Share a private team update"/>
   </label>
-  <label className="flex items-center gap-2 text-sm">
+  <label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[8px] px-3 py-2 text-sm transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
    <Checkbox checked={markDecision} disabled={busy}
     onChange={event=>{setMarkDecision(event.target.checked);sendKey.current=null;}}/>
    Mark as decision

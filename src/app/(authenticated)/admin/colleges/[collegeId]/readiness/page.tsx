@@ -242,7 +242,7 @@ export default async function CollegeReadinessPage({
             <Select name="area" defaultValue={parsed.area} className="min-h-[var(--lms-control-height)] ">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </Select>
-          </label><Button type="submit" className="min-h-[var(--lms-control-height)] ">Filter</Button>
+          </label><Button type="submit">Filter</Button>
           <Link className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>
         </form>
         <p className="mt-2 text-xs text-muted-foreground">Showing {shownChecks.length} of {evaluation.checks.length} required checks; the overall verdict always uses all ten.</p>

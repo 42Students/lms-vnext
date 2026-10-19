@@ -22,7 +22,7 @@ export function TpoTeamThreadDetails({threadId,topic,counterpart,createdDate,dec
   });
  }
  return <section className="space-y-2">
-  <Button variant="secondary" type="button" onClick={toggle} aria-expanded={open}
+  <Button variant={open?"primary":"secondary"} type="button" onClick={toggle} aria-expanded={open}
    aria-controls={"team-details-"+threadId}
    className="min-h-11 sm:min-h-9">
    {open?"Hide details":"Details"}

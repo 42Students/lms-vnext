@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -135,11 +136,16 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
       Start with the first of {selectable.length}
     </Button>
   </section>}
-  <nav aria-label="Verification attention shortcuts" className="flex flex-wrap gap-2">
-   {verificationAttentionShortcuts.map(item=><Button variant="secondary" type="button" key={item.attention} aria-pressed={query.attention===item.attention}
-    onClick={()=>navigate(verificationAttentionShortcutPatch(item.attention))} >{item.label}</Button>)}
-   {query.attention&&query.attention!=="ALL"&&<Button variant="secondary" type="button" onClick={()=>navigate({attention:"ALL",page:"1"})} >All attention states</Button>}
-  </nav>
+  <div className="flex min-w-0 flex-wrap items-center gap-2">
+   <NeedsDoingChips label="Needs doing:" selectedKey={query.attention}
+    items={verificationAttentionShortcuts.map(item=>({key:item.attention,label:item.label}))}
+    onSelect={key=>{
+     const choice=verificationAttentionShortcuts.find(item=>item.attention===key);
+     if(choice)navigate(verificationAttentionShortcutPatch(choice.attention));
+    }}/>
+   {query.attention&&query.attention!=="ALL"&&<Button variant="ghost" type="button"
+    onClick={()=>navigate({attention:"ALL",page:"1"})}>All attention states</Button>}
+  </div>
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} programChoices={programChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts} legacyCollegeCopy
    selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} selectionDisabled={bulkBusy} disableLocalSearch preserveServerOrder allowCollegeStudentLinks allowCollegeContactLinks
