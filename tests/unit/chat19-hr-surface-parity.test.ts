@@ -8,6 +8,7 @@ describe("NORTH-STAR chat-19: legacy recruiter page canvas", () => {
   it("separates Today sections using dividers rather than nested full-size cards", () => {
     const text = source(hr + "home/page.tsx");
     expect(text).toContain('aria-label="Next recruiter actions"');
+    expect(text).toContain('aria-label="Recruiter tasks" className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-2 xl:grid-cols-5"');
     expect(text).toContain('aria-label="Live recruiter hiring drives" className="border-b border-border pb-5"');
     expect(text).not.toContain('<section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">');
     expect(text).toContain('className="border-b border-border pb-5"');
