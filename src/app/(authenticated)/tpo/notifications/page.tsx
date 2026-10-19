@@ -8,6 +8,7 @@ import {
 } from "@/components/activity/notification-list";
 import { NotificationToolbar } from "@/components/activity/notification-toolbar";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   TPO_NOTIFICATIONS_PATH,
@@ -45,11 +46,11 @@ export default async function TpoNotificationsPage({
   });
   if (!parsed.success) {
     return (
-      <section role="alert" className="space-y-3">
+      <section className="space-y-3">
         <PageHeader title="Invalid notification filters" />
-        <Link href={TPO_NOTIFICATIONS_PATH} className="text-primary-text underline">
+        <Alert tone="error"><Link href={TPO_NOTIFICATIONS_PATH} className="text-primary-text underline">
           Return to newest notifications
-        </Link>
+        </Link></Alert>
       </section>
     );
   }
@@ -85,12 +86,12 @@ export default async function TpoNotificationsPage({
         markAllEndpoint="/api/tpo/notifications/read-all"
       />
       {inbox.cursor.invalid ? (
-        <div role="alert" className="border-t border-border py-4 text-sm text-foreground">
+        <Alert tone="error">
           The notification page link is invalid.{" "}
           <Link href={tpoInboxPageHref(inbox.query.view)} className="font-semibold text-[var(--lms-teal-deep)] underline">
             Return to newest notifications
           </Link>
-        </div>
+        </Alert>
       ) : (
         <>
           <NotificationList
@@ -102,9 +103,7 @@ export default async function TpoNotificationsPage({
           {firstPage&&olderUnread>0?<p role="status" className="text-sm text-muted-foreground">
             {olderUnread} unread {olderUnread===1?"is":"are"} older than what is shown. Show older to view the history; Mark all as read clears older ones too.
           </p>:null}
-          {emptyNavigation?<p role="status" className="border-t border-border py-4">
-            Your unread inbox is clear. <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link>
-          </p>:null}
+          {emptyNavigation?<Alert tone="info">Your unread inbox is clear. <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link></Alert>:null}
           {nextHref ? (
             <div className="flex justify-center">
               <Link
