@@ -8,7 +8,7 @@ Scope: `src/app/(authenticated)/learn/**` except `courses/**` (chat-7), learner 
 - [ ] LRN-01: **source fix delivered** in `my-placements/{applications,jobs,placement,schedule}/page.tsx`: four `PageHeader`s, two preserved destination/action links and schedule shared `Tabs` (4 file commits, 2026-10-19). Existing `scripts/codemods/chat1-learner-page-headings.cjs` authored for repeatable 4-file migration; GitHub edits applied its planned JSX transformations without running Node. Strict tick blocked by computed title values, full markup grep and phone/tablet screenshot proof.
 - [ ] LRN-02: **partial**: Announcements (8) and My offers (5) filter link instances now share exact learner SCSS pill dimensions, active/hover/focus selectors and 767px horizontal scroll rules; applied on 2026-10-19. Dynamic route checks, actual computed values and other placement routes remain. Remaining placement pages `my-placements/{announcements,assessments,calendar,interviews,notification-preferences,offers,preparation,rules,schedule,support}/page.tsx`, main `my-placements/page.tsx`: titles, tab order, filters, links, notices, single canvas.
 - [ ] LRN-03: `src/components/placements/learner-{applications,jobs}-browse.tsx`: **partial**: removed hand-rolled `aria-pressed` controls in these two files; shared `SegmentedControl` uses native radio states with 44px min mobile target and `Tabs` supplies underline for application views. Verify keyboard, routing and remaining components before tick.
-- [ ] LRN-04: **9 learner source files swept in total; three more components source-complete this batch** (`learner-placement-{jobs,offers,alerts}.tsx`), plus `learner-placements-dashboard.tsx` and shared `learner-placements-tabs.tsx` inspection. New batch removes the remaining two raw buttons, fixes three card/empty layouts and matches <=767px responsive rules. The other `learner-*` components, full visual/proof checks, and parity of real interactions remain OPEN; see the value table and exact source counts below.
+- [ ] LRN-04: **9 learner source files swept in total; three more components source-complete this batch** (`learner-placement-{jobs,offers,alerts}.tsx`), plus `learner-placements-dashboard.tsx` and shared `learner-placements-tabs.tsx` inspection. New batch removes the remaining two raw buttons, fixes three card/empty layouts and matches <=767px responsive rules. Further learner components and live visual/interaction parity remain OPEN; see the value table and exact source counts below.
 - [ ] LRN-05: **partial**: `learn/attendance/page.tsx` and `learn/calendar/page.tsx` now put their existing action link in the same `PageHeader` row (2026-10-19); learner project detail already renders `PageHeader` for audit and invalid-board-filter states, while regular project workspace keeps its own header. `learn/{attendance,calendar,profile,projects,notifications,placements}/page.tsx` plus nested pages, `src/components/attendance/learner-attendance-workspace.tsx`: PageHeader, responsive titles and controls.
 - [ ] LRN-06: `loading.tsx`/`error.tsx`/`not-found.tsx` in learner trees: shared UI, retry, mobile and tablet states.
 - [ ] LRN-07: `allAssignments`, `allQuizzes`, `assignments`, `quizzes` potentially overlap chat-7's COURSES ownership. No edits before ownership check.
@@ -62,7 +62,7 @@ Source reread: after write, checked placement filter components' tag boundaries 
 
 Static source proof on modified files (GitHub fetch inspection; **not** local exhaustive grep): four new `PageHeader` occurrences, one route using `Tabs`, and zero old `aria-[current=page]:hover:bg-[var(--lms-button-primary)]` filter link class blocks in the two filtered route files. `learn/attendance` and `learn/calendar` preserve one action link each. No TypeScript parser, application runtime, CI, or screenshot executed. The strict tick rule therefore keeps all queue items OPEN.
 
-**Next file:** `src/components/placements/learner-placement-journey.tsx` (LRN-04), then `learner-placement-job-detail.tsx`.
+**Next file after this sweep:** `src/components/placements/learner-placement-academic-evidence.tsx` (raw dynamic fields requiring a codemod), then `src/components/placements/learner-placement-requests.tsx`.
 
 ### LRN-04 subsequent source inspection
 
@@ -122,10 +122,94 @@ Responsive source proof: from viewport widths 320–767px the `max-md:min-h-11` 
 
 **Strict-tick decision:** keep LRN-04 open: these **three files are source-complete for the targeted visual elements**, but one global LRN-04 checklist item encompasses other uninspected learner components. Real phone/tablet screenshots, computed interactions, keyboard navigation and full all-files grep are still required. Do not claim pixel-level completion from static evidence alone.
 
-**Exact next file:** `src/components/placements/learner-placement-journey.tsx`, then `src/components/placements/learner-placement-job-detail.tsx`.
+**Exact next file:** `src/components/placements/learner-placement-academic-evidence.tsx`, then `src/components/placements/learner-placement-requests.tsx`.
 
 ### Post-batch branch synchronization
 
 Branch `chatgpt/chat-1-b` was reapplied onto `main` at `2808e32a641e1e35f513755b840b6ef892c61163` using a force-with-lease update followed by individual source-file commits (GitHub connector equivalent of replaying own changes). At verification: **5 ahead, 0 behind**; only this audit, the lane-owned breakpoint codemod, and the three learner placement components differ from main. The previous learner page/header sweep was already integrated on main by the orchestrator, so it was deliberately not rewritten.
 
 The three new components remain **source-complete, not screenshot-verified**; LRN-04 global remains unticked. No application, tests, parser, browser or CI executed by chat-1.
+
+## Replacement chat-1 learner sweep — source proof ledger (2026-10-19)
+
+**File-level source pass:** 29 assigned learner files inspected and updated; 28 have zero raw controls in the measured files. **NOT a strict checked/ticked LRN-02/04/05 completion.** The two source-preserved calendar grid/event detail `<button>` instances use dynamic CSS-module classes and require a judgement-case codemod (shared-control owner must approve), so the calendar is explicitly partial. Dynamic academic evidence and placement-requests controls are still queued. No pages from `learn/courses/**`, no global skin, shell or `src/components/ui/**` were changed.
+
+### Cross-file value table (source-exact where noted)
+
+| Visual dimension | Legacy value and citation | vNext source and comparison | Status |
+|---|---|---|---|
+| Learner mobile cutoff | `components___learn-notifications.scss:9-10`: $learn-mobile-bp = 767px | `md:` / `max-md:` applied to the audited layouts; phone widths 320–767px remain mobile; 768px+ tablet/desktop switches | Source match |
+| Controls hit height | `components___learn-notifications.scss:10,82-98`: 44px minimum on phone | `min-h-11` or `max-md:min-h-11`; actions move to 36px via `md:min-h-9` when appropriate. Shared Button keeps existing props/behaviour | Source match for controls explicitly touched; other controls await full audit |
+| Continuous canvas | `old-lms-pages.md:5-13`: one white canvas, hairline dividers, no per-section cards for ordinary content | `learner-placement-job-detail.tsx`, `learner-recent-placement-activity.tsx`, `learner-attendance-workspace.tsx`: content sections now have `border-b border-border` rather than redundant outer cards; true stat tiles remain separate | Source match structurally |
+| Neutral borders | `components___variables.scss:34-40` $neutral-200 = #e5e9f0; `old-lms-shell-spec.md:27` 1px border | `border border-border` for genuinely separate cards, `border-b border-border` for sections | Source token match, computed CSS not inspected |
+| Card corners | `components___learn-notifications.scss:22,184-189`: radius 12px | `rounded-xl` on independently bordered job, offer, application cards; ordinary content sections flattened | Source token match |
+| Card inside padding | `components___learn-notifications.scss:210-221`: mobile 16px, wider 24px | job and offer articles `p-4 md:p-6`, journey article `p-4 md:p-6`; detail cards flattened | Source match |
+| Text wrapping | `components___learn-notifications.scss:241-275`: flex content min-width 0, text wraps, mobile titles 14px/desktop 16px | `learner-placement-journey.tsx`, job detail/alerts and recent activity apply `min-w-0` and `break-words`; alert title retains `text-[14px] md:text-[16px]` | Source match where applied |
+| Horizontal layout | `components___learn-notifications.scss:50-74`: wrap desktop, 767px mobile horizontal scrolling for pills | Announcements and Offers `placementFilterNavClass`: `flex-nowrap overflow-x-auto` mobile, `md:flex-wrap md:overflow-visible` tablet/desktop | Source match |
+| Focus | `components___accessibility.scss:19-38`: 2px teal ring, 2-3px offset | Dynamic action switches use shared `Button`; journey link explicitly has 2px teal focus-visible outline + 2px offset; status labels retain semantics | Source-level; keyboard flow not exercised |
+| Alerts empty state | `components___learn-notifications.scss:304-330`: centered, 180px minimum, 48px block/24px inline padding | `learner-placement-alerts.tsx` previously changed to `min-h-[180px] px-6 py-12`; calendar agenda likewise `min-h-[180px] px-6 py-12` | Source match |
+| Alert/snippet typography | `components___learn-notifications.scss:258-287`: 14/16px responsive title, 13/14px responsive text, 1.5 line-height | `learner-placement-alerts.tsx`: `text-[14px] md:text-[16px]` title and `text-[13px] md:text-[14px]` snippet | Source match |
+| Motion sensitivity | `components___learn-layout.scss:85-128` + `components___accessibility.scss:113+`: transform only genuine cards and reduced-motion disables transition | Journey link hover transition `motion-reduce:transition-none`; shared components own focus/motion; no extra page-level animations introduced | Partial; live reduced-motion unverified |
+| Save / confirm / retry interactions | Existing learner service actions and toast/dialog/disabled states, no legacy-specific change to records | `learner-save-drive-button.tsx`, `learner-round-confirm-attendance.tsx`, `learner-placement-partial-alert.tsx` gain mobile height only; original API actions preserved | Source-level no-regression only |
+
+### Full-file static regex inventory for this batch
+
+Each file was fetched in full from `chatgpt/chat-1-b` after edits and inspected using source-text regex counts. This is **equivalent to a per-file grep, not a claim to have run shell grep or an app**.
+
+| Owned file (prefix `src/components/` for placements, attendance; otherwise `src/app/(authenticated)/`) | Raw controls | Six-digit hex | Old 640px `sm:` target usages | 44px target tokens | `md:` tokens | Shared Button tag balance |
+|---|---:|---:|---:|---:|---:|---|
+| `placements/learner-placement-journey.tsx` | 0 | 0 | 0 | 9 | 18 | 0/0 |
+| `placements/learner-placement-job-detail.tsx` | 0 | 0 | 0 | 8 | 22 | 0/0 |
+| `placements/learner-placement-alert-action.tsx` | 0 | 0 | 0 | 2 | 2 | 1/1 |
+| `placements/learner-schedule-reschedule.tsx` | 0 | 0 | 0 | 6 | 6 | 2/2 |
+| `placements/learner-recent-placement-activity.tsx` | 0 | 0 | 0 | 2 | 7 | 0/0 |
+| `placements/learner-placement-partial-alert.tsx` | 0 | 0 | 0 | 1 | 2 | 1/1 |
+| `placements/learner-round-confirm-attendance.tsx` | 0 | 0 | 0 | 1 | 1 | 1/1 |
+| `placements/learner-save-drive-button.tsx` | 0 | 0 | 0 | 1 | 1 | 1/1 |
+| `placements/learner-placement-registration.tsx` | 0 | 0 | 0 | 3 | 1 | 1/1 |
+| `placements/learner-placement-preferences.tsx` | 0 | 0 | 0 | 5 | 2 | 1/1 |
+| `attendance/learner-attendance-workspace.tsx` | 0 | 0 | 0 | 9 | 18 | 5/5 |
+| `placements/learner-career-calendar.tsx` | 2 | 0 | 0 | 10 | 14 | 7/7 |
+| `learn/attendance/calendar/page.tsx` | 0 | 0 | 0 | 8 | 16 | 1/1 |
+| `learn/my-placements/support/page.tsx` | 0 | 0 | 0 | 5 | 7 | 0/0 |
+| `learn/my-placements/preparation/page.tsx` | 0 | 0 | 0 | 2 | 3 | 0/0 |
+| `learn/my-placements/assessments/page.tsx` | 0 | 0 | 0 | 1 | 1 | 0/0 |
+| `learn/my-placements/rules/page.tsx` | 0 | 0 | 0 | 5 | 9 | 0/0 |
+| `learn/my-placements/placement/page.tsx` | 0 | 0 | 0 | 5 | 5 | 0/0 |
+| `learn/my-placements/schedule/page.tsx` | 0 | 0 | 0 | 1 | 1 | 0/0 |
+| `learn/my-placements/offers/page.tsx` | 0 | 0 | 0 | 15 | 17 | 2/2 |
+| `learn/my-placements/announcements/page.tsx` | 0 | 0 | 0 | 17 | 18 | 3/3 |
+| `learn/my-placements/jobs/page.tsx` | 0 | 0 | 0 | 1 | 1 | 0/0 |
+| `learn/my-placements/applications/page.tsx` | 0 | 0 | 0 | 1 | 1 | 0/0 |
+| `learn/profile/page.tsx` | 0 | 0 | 0 | 6 | 2 | 0/0 |
+| `learn/attendance/page.tsx` | 0 | 0 | 0 | 1 | 1 | 0/0 |
+| `learn/calendar/page.tsx` | 0 | 0 | 0 | 1 | 1 | 0/0 |
+| `learn/projects/page.tsx` | 0 | 0 | 0 | 1 | 2 | 0/0 |
+| `learn/profile/academic-record/page.tsx` | 0 | 0 | 0 | 1 | 1 | 0/0 |
+| `learn/profile/completeness/page.tsx` | 0 | 0 | 0 | 2 | 1 | 0/0 |
+
+Source scan patterns: raw `/<(button|input|select|textarea)(?=\\s|>)/g`; hex `/#[0-9a-f]{6}\\b/gi`; old breakpoint `/\\bsm:(min-h-9|grid-cols-2|grid-cols-3|p-5|p-6|flex-row|items-start)\\b/g`; shared Button opening `/<Button(?=\\s|>)/g` versus `/<\\/Button>/g`. Re-run locally for full-tree coverage (NOT run):
+```bash
+grep -RInE '<(button|input|select|textarea)([ >])|#[[:xdigit:]]{6}|sm:(min-h-9|grid-cols-2|p-6)' \
+  'src/app/(authenticated)/learn' src/components/placements/learner-* src/components/attendance/learner-* --include='*.tsx'
+```
+**Known exceptions:** `learner-career-calendar.tsx:238,344` has two legacy raw buttons (dynamic calendar cells and event details; left intact, not accidentally broken); `learner-placement-academic-evidence.tsx:260,279,297,316` has four raw inputs/checkbox, not edited in this sweep; `learner-placement-requests.tsx` requires its separate judgement-case audit. Do not declare full-tree zero instances.
+
+### Responsive proof (source rules, no browser assertions)
+
+- **Phone (320–639px)**: `max-md:min-h-11` on learner shared action buttons, 44px target links, single-column data sections, horizontally scrollable selected filters, 16px card padding, wrapped strings.
+- **Small tablet / large phone (640–767px)**: intentionally **same mobile state**, correcting previous Tailwind `sm:` misuse; user can still reach filters via overflow scroll. Calendar grid keeps its explicitly authored mobile/desktop division.
+- **Tablet (768–1023px)**: `md:grid-cols-2`, wrapped pills, 24px card padding, buttons follow desktop control heights; true split-detail panes remain `lg:` at 1024px.
+- **Desktop (1024px+)**: `lg:` and `xl:` multi-column content, continuous main canvas, separate actual record cards.
+
+The source-level comparison is documented; **no browser, computed style, screenshots, TypeScript checker, codemod runner or CI was executed**. Page-by-page pixel comparison, live keyboard focus, dynamic dropdown positioning, loading/error interactions and global zero-instance checks remain a blocker to checking LRN-02/04/05. Per strict tick rule, keep all seven high-level queue checkboxes unticked until the separate verification evidence exists.
+
+### Repeating-pattern codemod (not executed here)
+
+`scripts/codemods/chat1-learner-page-responsive.cjs`: dry-run by default; explicitly scoped to 11 chat-1 learner pages, parses generated TSX, normalizes 767px cutoff, deduplicates `md:min-h-9` and protects courses. Source edits were applied directly to those pages through GitHub file commits; the script documents the repeated transformation for orchestrator replay.
+
+**Next file in LRN-04:** `src/components/placements/learner-placement-academic-evidence.tsx`; then `src/components/placements/learner-placement-requests.tsx` and `src/components/attendance/learner-attendance-workspace.tsx` remaining interactive refinements.
+
+### Post-sweep branch replay verified
+
+On 2026-10-19, replayed only the **29 paths in this lane's source diff** onto current `main` commit `68d52934a61acdeeda3b4c68804550b86607a5ea` with a force-with-lease ref update followed by scoped [chat-1] file commits. Immediately afterward, GitHub compare reported **29 ahead, 0 behind, 29 changed paths**; no updates to `main`, courses, shared UI, global skin, or shell. Source-level proof only; strict LRN checkboxes remain open.
