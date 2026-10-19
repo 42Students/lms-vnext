@@ -262,3 +262,74 @@ This follow-up was committed directly to `chatgpt/chat-14-b` after fast-forwardi
 ### Verification caveat
 
 Performed source-only checks of sampled modified files for balanced curly braces, invalid split class fragments, duplicate 30px heading font weights, native checkbox wrongly marked as a text input and obvious primary-button foreground mistakes. These are narrow heuristics and **do not replace a TypeScript parse, typecheck, CI or rendered browser comparison**. No tests, build, app, CI or browser were run, as requested. Many College Admin routes remain outside this continuation's touched-file list and may need a later pass.
+
+## Additional College Admin North Star sweep — further 50 files (2026-10-19)
+
+Baseline: fast-forwarded `chatgpt/chat-14-b` to latest available `main` (`6222f78a4a19084be6529aa802810ee98193c1d2`, 686 commits ahead of the previous chat-14 branch) using the expected old ref. The previous chat-14 commits had already been merged into `main`; the fast-forward did **not** discard lane work. All new writes stay on `chatgpt/chat-14-b`, tagged `[chat-14]`; GitHub's branch-specific file update directly commits/pushes each file, so commits were published in approximately ten-file groups.
+
+The live `docs/audit/ux/north-star-sweep-4.md` college audit retains its own source-review state and ownership; this log is an incremental **second-pass** record, not a completed portal acceptance claim. Scope is visual skin only: updated legacy control radius and link/focus tokens, preserved status semantics and genuine separate cards, fixed primary CTA contrast, removed a small number of duplicate card wrappers, and fixed split Tailwind border-class fragments. Existing fields, labels, routes, form submission, permission checks and data rendering were not intentionally changed.
+
+### College Admin placement, group and Projects routes (19)
+
+- [x] `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/retention/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/create/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
+- [x] `src/app/(authenticated)/college/verification/page.tsx`
+- [x] `src/app/(authenticated)/college/videos/page.tsx`
+
+### College academic, directory, elective, group and student components (20)
+
+- [x] `src/components/college/college-admin-profile-editor.tsx`
+- [x] `src/components/college/college-department-insights.tsx`
+- [x] `src/components/college/college-faculty-assignment-actions.tsx`
+- [x] `src/components/college/college-faculty-csv-import.tsx`
+- [x] `src/components/college/college-legacy-group-tabs.tsx`
+- [x] `src/components/college/college-role-directory-workspace.tsx`
+- [x] `src/components/college/college-student-register-form.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/academics/college-cohort-management.tsx`
+- [x] `src/components/academics/college-hall-booking-action.tsx`
+- [x] `src/components/electives/college-elective-offering-manager.tsx`
+- [x] `src/components/groups/college-group-detail-writes.tsx`
+- [x] `src/components/groups/college-group-actions.tsx`
+- [x] `src/components/groups/college-group-import-preview.tsx`
+- [x] `src/components/academics/college-academic-directory.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/admin/college-setup-checklist.tsx`
+- [x] `src/components/admin/college-at-glance-panel.tsx`
+
+### College shared admin, branding, setup and department components (11)
+
+- [x] `src/components/admin/college-branding-form.tsx`
+- [x] `src/components/admin/college-signin-method-form.tsx`
+- [x] `src/components/admin/college-branding-preview.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/college-create-form.tsx`
+- [x] `src/components/admin/college-feature-rule-editor.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/admin/college-dashboard-cards.tsx`
+- [x] `src/components/admin/college-dashboard-section-failure.tsx`
+- [x] `src/components/admin/department-directory.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+
+### Source-only verification and remaining work
+
+- Inspected a representative ten-file sample for brace-count parity, split `sm: border` / ` - border` utilities, primary buttons incorrectly using `text-foreground`, duplicated `data-slot` input attributes, and line breaks before `as` casts; no flagged patterns were found in that sample.
+- **No code execution**, build, TypeScript parser/typecheck, lint, test, CI, dev server, or browser screenshot comparison was performed. Pixel parity and compile correctness remain unverified and require final integration review.
+- College Admin is still **partial** relative to the larger route/component inventory; loading/error boundaries, cross-portal pages, and remaining bespoke component skins need a subsequent source/visual pass. Shared global CSS, UI kit, shell, topbar and sidebar remain with their assigned lanes.
