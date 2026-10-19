@@ -51,7 +51,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
   <label className="block text-sm font-semibold">Selection list (CSV)
    <input type="file" accept=".csv,text/csv" disabled={busy} onChange={e=>void read(e.target.files?.[0]??null)}
-    className="mt-2 block w-full rounded border border-border p-3 text-sm"/>
+    className="mt-2 block w-full rounded-[9px] border border-border p-3 text-sm"/>
   </label>
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
@@ -60,7 +60,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
      {e.annualCtcInr==null?"":" · ₹"+(e.annualCtcInr/100000)+" LPA"}</p>)}
    </div>
    <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+    className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
     {busy?"Recording…":"Confirm and record "+entries.length+" selections"}
    </button>
   </div>:null}
