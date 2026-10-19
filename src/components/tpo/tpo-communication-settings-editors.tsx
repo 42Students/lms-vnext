@@ -5,6 +5,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import {Badge} from "@/components/ui/badge";
 
 type ResponseBody={error?:string;version?:string};
 function saveError(body:ResponseBody){
@@ -37,7 +38,7 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
   <div className="flex flex-wrap gap-2">{[
    "Round scheduled or changed","Offer released, expiring, expired or withdrawn",
    "Drive cancelled","Application deadline today","Debarred or marked absent",
-  ].map(label=><span key={label} className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">{label}</span>)}</div>
+  ].map(label=><Badge key={label} tone="neutral">{label}</Badge>)}</div>
   <label className="block text-sm font-semibold">Monthly limit on optional SMS
    <Input type="number" min={0} max={100000} step={1} value={value} disabled={busy}
     onChange={event=>setValue(event.target.value===""?-1:Number(event.target.value))}
