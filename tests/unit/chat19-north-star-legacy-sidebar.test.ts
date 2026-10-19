@@ -17,6 +17,15 @@ const college:ShellNavItem={
 };
 
 describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
+ it("maps every literal sidebar destination to an actual image or outlined glyph",()=>{
+  const model=source("src/components/shell/shell-model.ts");
+  const paths=[...model.matchAll(/\\bhref\\s*:\\s*"([^"]+)"/g)].map(match=>match[1]);
+  expect(new Set(paths).size).toBeGreaterThan(50);
+  for(const path of paths){
+   expect(SHELL_NAV_ICON_KEYS[path],path).toBeTruthy();
+   expect(SHELL_NAV_ICON_KEYS[path],path).not.toBe("layers");
+  }
+ });
  it("gives every Super Admin and College Admin row a real SVG icon instead of a letter block",()=>{
   for(const row of [...superAdminItems,...collegeAdminItems]){
    expect(SHELL_NAV_ICON_KEYS[row.href]).toBeTruthy();
