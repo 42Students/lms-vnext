@@ -1,5 +1,6 @@
 import { MetricBar } from "@/components/ui/metric-bar";
 import { Button } from "@/components/ui/button";
+import { Tabs } from "@/components/ui/tabs";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
@@ -446,16 +447,16 @@ export default async function HrPlacementJobPage({
           Request another drive
         </Link>
       </div>
-      <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={filters.tab}
-        items={[{value:"overview",label:"Overview",href:`/recruiter/drives/${workspace.job.id}?tab=overview${returnQuery}`},
-          {value:"applicants",label:"Applicants",count:applicants.counts.all,
-           href:`/recruiter/drives/${workspace.job.id}?tab=applicants${returnQuery}`},
-          {value:"rounds",label:"Rounds & interviews",href:`/recruiter/drives/${workspace.job.id}?tab=rounds${returnQuery}`},
-          {value:"offers",label:"Offers",count:offersTotal,href:`/recruiter/drives/${workspace.job.id}?tab=offers${returnQuery}`},
-          {value:"requests",label:"Requests",count:requestData?.requests.length,
-           href:`/recruiter/drives/${workspace.job.id}?tab=requests${returnQuery}`},
-          {value:"discussion",label:"Discussion",href:`/recruiter/drives/${workspace.job.id}?tab=discussion${returnQuery}`},
-          {value:"messages",label:"Messages",href:hrDriveMessagesHref(workspace.job.id)}]}/>
+      <Tabs ariaLabel="Hiring workspace tabs" renderPanel={false} value={query.tab}
+          items={[
+            {value:"overview",label:"Overview",href:"/recruiter/drives/"+workspace.job.id+"?tab=overview"+returnQuery},
+            {value:"applicants",label:"Applicants",count:applicants.counts.all,href:"/recruiter/drives/"+workspace.job.id+"?tab=applicants"+returnQuery},
+            {value:"rounds",label:"Rounds & interviews",href:"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery},
+            {value:"offers",label:"Offers",count:offersTotal,href:"/recruiter/drives/"+workspace.job.id+"?tab=offers"+returnQuery},
+            {value:"requests",label:"Requests",count:requestData?.requests.length,href:"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery},
+            {value:"discussion",label:"Discussion",href:"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery},
+            {value:"messages",label:"Messages",href:hrDriveMessagesHref(workspace.job.id)},
+          ]} />
       {discussionTab?<section aria-label="Drive discussion" className="space-y-4 border-b border-border pb-4 sm:pb-5">
         <RecruiterConversationLiveRefresh/>
         <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
