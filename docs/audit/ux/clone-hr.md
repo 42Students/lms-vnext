@@ -208,6 +208,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 
 - [ ] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
 - [ ] `src/components/placements/recruiter-interview-slot-form.tsx`
+- [ ] `src/components/placements/hr-recruiter-drives-grid.tsx` (new desktop sheet; source-wired, native engine/install/viewport proof pending)
 - [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
 - [ ] `src/components/placements/recruiter-result-controls.tsx`
 - [ ] `src/components/placements/recruiter-resume-download.tsx`
@@ -438,3 +439,22 @@ Legacy back-link reference is `docs/design/legacy-styles/learn-layout.scss:361-3
 **Current E8 blocker:** `src/components/tpo/grid/tpo-grid.tsx` imports native AG Grid Quartz, and `grid/grid-workspace.tsx` exists, but `package.json` on the synchronized branch still does **not** declare `ag-grid-community` or `ag-grid-react`; user instructed not to edit the manifest. No AG Grid runtime/parity claim is made.
 
 **Next unticked file:** `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx` (finish shared heading/content/viewport proof), then `src/components/hr/hr-drive-draft-form.tsx` validation/preview states and `src/app/(authenticated)/hr/drives/page.tsx` E8 worksheet.
+
+
+## chat-15 replacement — HR Drives TpoGrid (source-wired, not strict-complete)
+
+- `src/components/placements/hr-recruiter-drives-grid.tsx`: new client `TpoGrid` sheet with only already-authorized server drive rows and shared visible links for applicants, offers, unanswered requests, open hiring flow, repeat hiring and messages.
+- `src/components/placements/recruiter-placement-portfolio.tsx`: server projection uses its existing attention sort and computes employer-scoped labels. The desktop portal switches to the sheet at 768px while the full original card view is retained on phones and all other callers.
+- `src/app/(authenticated)/hr/drives/page.tsx`: same `pageResult.rows`, filters, sort, tabs, server CSV export and pagination. Adds `sheetScopeKey` containing user ID plus selected college so local grid layouts never cross the scope.
+
+| Property | Legacy source/value | vNext source/value | Result |
+| --- | --- | --- | --- |
+| Dense table on one canvas | `docs/design/old-lms-pages.md:6,10` white canvas and bordered sheet | shared TpoGrid inside `hr/drives/page.tsx`, desktop only | Partially matched; style runtime missing |
+| Mobile/tablet breakpoint | `docs/design/legacy-styles/components___listing-page-header.scss:131-158` mobile max 767px | `recruiter-placement-portfolio.tsx` has `md:block` / `md:hidden` at 768px | Structural breakpoint source match |
+| Row links | `old-lms-pages.md:10` row actions | all original review, offers, requests, hire again, and message routes retained | Source behavior preserved; not tested |
+| Export | `old-lms-pages.md:10` Export toolbar | `hr/drives/page.tsx:147-153` existing `Export matching drives CSV` server route unchanged | Filenames and native grid parity unverified |
+| Feedback/states | `old-lms-pages.md:11-12` badges and default/hover/disabled | mobile cards retain badges; desktop uses shared TpoGrid | Missing live focus/disabled and pixel proof |
+
+Fetched post-edit source scan: 0 raw `button/input/select/textarea/table` tags and 0 inline hex in each of the three files. The scan is source-equivalent and not a local CLI grep. No TypeScript, CI, app, or browser execution; no shared UI or package manifest edits. **Work queue and E8 remain unticked.**
+
+**Exact next unticked visible file:** `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` for applicant/offer/round column and action parity.
