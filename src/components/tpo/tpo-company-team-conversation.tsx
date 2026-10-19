@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
@@ -243,7 +244,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
      </label>:null}
     </div>
     <label className="flex items-center gap-2 text-sm">
-      <input type="checkbox" checked={decision} disabled={busy} onChange={event=>updateDraft({body,decision:event.target.checked,assignee,dueAt})}/>
+      <Checkbox checked={decision} disabled={busy} onChange={event=>updateDraft({body,decision:event.target.checked,assignee,dueAt})}/>
       Mark as decision
     </label>
     <div className="flex items-center justify-between gap-3">

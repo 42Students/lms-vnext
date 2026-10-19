@@ -119,11 +119,11 @@ export function DepartmentDirectory({
       <DataTable
         columns={columns.map(column => column.key === "name" ? {
           ...column,
-          header: <button type="button" aria-label="Sort Department Name"
+          header: <Button variant="ghost" type="button" aria-label="Sort Department Name"
             onClick={() => { setNameOrder(nameOrder === "ASC" ? "DESC" : "ASC"); setPage(1); }}
-            className="inline-flex items-center gap-2 font-semibold">
+            className="gap-2">
             Department Name {nameOrder === "ASC" ? "↑" : "↓"}
-          </button>,
+          </Button>,
         } : column)}
         rows={result.items}
         getRowKey={(row) => row.id}

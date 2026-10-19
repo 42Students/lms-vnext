@@ -1,4 +1,5 @@
 "use client";
+import { Select } from "@/components/ui/select";
 import {ENGAGE_COLUMNS,type EngageColumn,type EngageSort} from "@/modules/placements/tpo-recruiter-table-view-model";
 export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,ascending,onAscending}:{
  columns:readonly EngageColumn[];onColumns:(value:EngageColumn[])=>void;
@@ -8,14 +9,14 @@ export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,as
  return <section className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3"
   aria-label="Recruiter table display">
   <label className="text-sm">Sort by
-   <select className="mt-1 block min-h-10 rounded-[9px] border border-border bg-surface px-3"
+   <Select className="mt-1 block min-h-10 rounded-[9px] border border-border bg-surface px-3"
     value={sort} onChange={e=>onSort(e.target.value as EngageSort)}>
     <option value="LAST_ACTIVITY">Last activity</option>
     <option value="NEXT_FOLLOWUP">Next follow-up</option>
     <option value="ADDED">Added</option>
     <option value="NAME">Name</option>
     <option value="DRIVES">Company drives</option>
-   </select>
+   </Select>
   </label>
   <label className="flex items-center gap-2 text-sm">
    <input type="checkbox" checked={ascending} onChange={e=>onAscending(e.target.checked)}/>

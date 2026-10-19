@@ -17,8 +17,8 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
  const stored=tpoBatchRuleOverridesSchema.safeParse(lifecycle?.rulesOverride??{});
  return <div className="min-w-0 space-y-4"><PageHeader eyebrow="TPO · Batches" title={batch.name+" — Rules"}/>
  <TpoBatchWorkspaceTabs batchId={batchId} active="rules" />
- {!ready?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4">Batch rules are temporarily unavailable. You can review other batch details and try again.</p>:
- <section className="rounded-[var(--lms-canvas-radius)] border border-border p-4"><h2 className="font-semibold">Participation policy</h2>
+ {!ready?<p role="status" className="border-b border-border py-4">Batch rules are temporarily unavailable. You can review other batch details and try again.</p>:
+ <section className="border-b border-border py-4"><h2 className="font-semibold">Participation policy</h2>
  <dl className="mt-3 space-y-2 text-sm"><div><dt className="font-semibold">Registration deadline</dt><dd>{batchRuleDate(lifecycle?.registrationDeadline)}</dd></div>
  <div><dt className="font-semibold">Invited</dt><dd>{batchRuleDate(lifecycle?.invitedAt)}</dd></div>
  <div><dt className="font-semibold">Finished</dt><dd>{lifecycle?.finishedAt?batchRuleDate(lifecycle.finishedAt):"Still accepting placements"}</dd></div></dl>

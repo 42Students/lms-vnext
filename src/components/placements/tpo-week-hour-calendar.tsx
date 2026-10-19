@@ -2,14 +2,16 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect,useMemo,useRef,useState} from "react";
 import {positionWeekEvents,type WeekGridEvent} from "@/modules/placements/tpo-week-grid-model";
-import {calendarLocalIstToOffset,calendarDueAtToIstLocal} from "@/modules/placements/tpo-calendar-followup-model";
+import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
 import {TpoCalendarMoveFollowup,type TpoCalendarLeadOption} from "./tpo-calendar-followup-actions";
+import {calendarDueAtToIstLocal} from "@/modules/placements/tpo-calendar-followup-model";
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
@@ -145,7 +147,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
      const offHours=positioned.filter(e=>e.outsideHours);
      const inHours=positioned.filter(e=>!e.outsideHours);
      return <div key={day} className="relative border-r border-border" style={{height}} aria-label={label(day)+" events"}>
-      {Array.from({length:LAST-FIRST},(_,offset)=><button key={offset} type="button"
+      {Array.from({length:LAST-FIRST},(_,offset)=><Button variant="primary" key={offset} type="button"
        aria-label={"Add follow-up on "+label(day)+" at "+clock(FIRST+offset)}
        disabled={!canCreate||saving} onClick={clickEvent=>void open(day,FIRST+offset,clickEvent.currentTarget)}
        onDragOver={event=>{if(canCreate){event.preventDefault();event.dataTransfer.dropEffect="move";}}}
@@ -153,7 +155,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         event.preventDefault();const followupId=event.dataTransfer.getData("application/x-tpo-followup");
         if(followupId)void moveFollowup(followupId,day,FIRST+offset);
        }}
-       className="absolute inset-x-0 border-t border-border text-left text-xs hover:bg-primary-subtle focus-visible:z-20 focus-visible:outline-2 disabled:cursor-default"
+       className="inset-x-0 text-left"
        style={{top:offset*HEIGHT,height:HEIGHT}}/>)}
       {day===today&&nowMinutes>=FIRST*60&&nowMinutes<=LAST*60?
        <div aria-label="Current time" className="pointer-events-none absolute inset-x-0 z-10 border-t-2 border-warning"
@@ -190,11 +192,11 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   </div>
   {move?<Dialog open={Boolean(move)} onOpenChange={next=>{if(!next)setMove(null);}} title="Move follow-up" className="max-w-lg">
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
-      <Button variant="secondary" type="button" onClick={()=>setMove(null)} className="mt-3">Close</Button>
-   </Dialog>:null}
+      <Button variant="secondary" type="button" onClick={()=>setMove(null)}
+        className="mt-3 min-h-11 md:min-h-9 px-4">Close</Button>
+  </Dialog>:null}
   {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
-  {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next&&!saving)cancelDraft();}} dismissible={!saving}
-    title="New recruiter follow-up" className="max-w-md">
+  {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next)cancelDraft();}} title="New recruiter follow-up" className="max-w-md">
    <div className="space-y-3">
     {slot&&blocked.has(slot.slice(0,10))?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-warning px-3 py-2 text-sm text-[var(--lms-gold-accent)]">This day is blocked for placement scheduling. Choose another date if possible.</p>:null}
     {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}
@@ -214,8 +216,10 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
     {message?<p role="alert" className="text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
     <div className="flex justify-end gap-2">
-     <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft}>Cancel</Button>
-     <Button variant="primary" type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}>{saving?"Saving…":"Add follow-up"}</Button>
+     <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft}
+      className="min-h-11 md:min-h-9 px-4">Cancel</Button>
+     <Button variant="primary" type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
+      className="min-h-11 md:min-h-9 px-4">{saving?"Saving…":"Add follow-up"}</Button>
     </div>
    </div>
   </Dialog>:null}

@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -81,7 +82,7 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
    </div></Dialog>
   </div>:null}
   <label className="flex w-full items-center gap-2 text-xs text-body">
-   <input type="checkbox" checked={reviewed} disabled={busy}
+   <Checkbox checked={reviewed} disabled={busy}
     onChange={event=>setReviewed(event.target.checked)}/>
    I reviewed this learner eligibility decision; it will be audited.
   </label>

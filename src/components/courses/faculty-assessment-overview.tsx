@@ -1,6 +1,9 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
@@ -79,12 +82,12 @@ export function FacultyAssessmentOverview({
     <div className="space-y-5">
       <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
       <div aria-label={kind === "QUIZ" ? "Quiz totals" : "Assignment totals"} className="flex flex-wrap items-center gap-2">
-        <span className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground">
+        <Badge  tone="neutral">
           {items.length} {kind === "QUIZ" ? (items.length === 1 ? "Quiz" : "Quizzes") : (items.length === 1 ? "Assignment" : "Assignments")}
-        </span>
-        <span className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground">
+        </Badge>
+        <Badge  tone="neutral">
           {new Set(items.map(item => item.courseCode)).size} {new Set(items.map(item => item.courseCode)).size === 1 ? "Course" : "Courses"}
-        </span>
+        </Badge>
       </div>
 
       <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
@@ -293,23 +296,23 @@ export function FacultyAssessmentOverview({
 
       {totalPages > 1 ? (
         <nav aria-label="Assessment pages" className="flex items-center justify-between gap-3">
-          <button
+          <Button variant="secondary"
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9"
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-50 "
           >
             Previous
-          </button>
+          </Button>
           <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
-          <button
+          <Button variant="secondary"
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9"
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-50 "
           >
             Next
-          </button>
+          </Button>
         </nav>
       ) : null}
     </div>

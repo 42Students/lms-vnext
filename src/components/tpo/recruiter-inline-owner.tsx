@@ -1,4 +1,6 @@
 "use client";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 type Owner={membershipId:string;displayName:string|null};
 export function RecruiterInlineOwner({lead,onUpdated}:{
@@ -36,23 +38,23 @@ export function RecruiterInlineOwner({lead,onUpdated}:{
   finally{setLoading(false);}
  }
  return <div className="min-w-28 space-y-2">
-  <button type="button" aria-label={"Change owner for "+lead.name}
-   className="text-primary-text underline" onClick={()=>open?setOpen(false):void begin()}>
+  <Button variant="ghost" type="button" aria-label={"Change owner for "+lead.name}
+    onClick={()=>open?setOpen(false):void begin()}>
    {lead.ownerName??"Unassigned"} · Edit
-  </button>
+  </Button>
   {open?<div className="space-y-2">
    {loading?<p role="status" className="text-xs">Loading…</p>:null}
    <label className="block text-xs">Owner
-    <select value={target} onChange={e=>setTarget(e.target.value)}
+    <Select value={target} onChange={e=>setTarget(e.target.value)}
      className="min-h-10 w-full rounded border border-border bg-surface" disabled={loading}>
      <option value="">Select staff</option>
      {owners.map(item=><option key={item.membershipId} value={item.membershipId}>
       {item.displayName??"Placement staff"}</option>)}
-    </select>
+    </Select>
    </label>
-   <button type="button" disabled={loading||!target} onClick={()=>void apply()}
-    className="min-h-10 rounded bg-primary px-3 text-xs text-on-primary">Assign</button>
-   <button type="button" onClick={()=>setOpen(false)} className="ml-2 min-h-10 text-xs text-primary-text">Cancel</button>
+   <Button variant="primary" type="button" disabled={loading||!target} onClick={()=>void apply()}
+    className="min-h-10 px-3">Assign</Button>
+   <Button variant="ghost" type="button" onClick={()=>setOpen(false)} className="ml-2 min-h-10">Cancel</Button>
   </div>:null}
   {error?<p role="alert" className="text-xs text-warning">{error}</p>:null}
  </div>;

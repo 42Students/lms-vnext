@@ -1,7 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
 import { ProjectTaskComments } from "./project-task-comments";
 import { projectTaskVisibleFacts } from "@/modules/projects/project-task-visible-facts-model";
@@ -12,7 +14,8 @@ import { learnerBoardTaskStatusTone, learnerBoardTaskPriorityTone } from "@/modu
 import { createLearnerBoardTaskDialogNavigationGuard } from "@/modules/projects/learner-board-task-dialog-navigation-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useRouter } from "next/navigation";
-import { learnerBoardTaskHref, type LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
+import type { LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
+import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
 
 export function LearnerBoardTaskDetailDialog({
   projectId, filters, task, sprintTitle, currentMembershipId, assigneeName, commentCount=0, submissionUrl=null,
@@ -39,7 +42,7 @@ export function LearnerBoardTaskDetailDialog({
   const facts=projectTaskVisibleFacts(task,assigneeName);
   useEffect(()=>{ navigatingRef.current.reset(); },[task.id]);
   return (
-    <Dialog open={true} historyMode="route" title={task.title} description="Project Board task" className="max-w-[38rem]"
+    <Dialog open={true} title={task.title} description="Project Board task" className="max-w-[38rem]"
       onOpenChange={next=>{if(!next&&navigatingRef.current.shouldReturn())router.replace(returnHref);}}>
       {task.carriedFromSprintId?<p className="mt-2 text-xs font-semibold text-warning-text">
         Carried over

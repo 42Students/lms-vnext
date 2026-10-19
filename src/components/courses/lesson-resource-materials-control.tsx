@@ -1,4 +1,6 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 import {useEffect,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
@@ -102,16 +104,16 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   {editable&&(materials.length<20||editing)?<div className="grid gap-2 rounded-xl border border-border bg-surface p-3">
    <p className="text-sm font-semibold">{editing?"Edit link material":"Add link material"}</p>
    <label className="grid gap-1 text-xs font-semibold">Title
-    <input value={draft.title} maxLength={255} onChange={e=>setDraft(v=>({...v,title:e.target.value}))}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]" disabled={busy}/>
+    <Input value={draft.title} maxLength={255} onChange={e=>setDraft(v=>({...v,title:e.target.value}))}
+     className="min-h-11" disabled={busy}/>
    </label>
    <label className="grid gap-1 text-xs font-semibold">HTTPS link
-    <input type="url" value={draft.externalUrl} maxLength={2048} onChange={e=>setDraft(v=>({...v,externalUrl:e.target.value}))}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]" disabled={busy}/>
+    <Input type="url" value={draft.externalUrl} maxLength={2048} onChange={e=>setDraft(v=>({...v,externalUrl:e.target.value}))}
+     className="min-h-11" disabled={busy}/>
    </label>
    <label className="grid gap-1 text-xs font-semibold">Notes (optional)
-    <textarea value={draft.notes} maxLength={2000} onChange={e=>setDraft(v=>({...v,notes:e.target.value}))}
-     rows={2} className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]" disabled={busy}/>
+    <Textarea value={draft.notes} maxLength={2000} onChange={e=>setDraft(v=>({...v,notes:e.target.value}))}
+     rows={2} className="min-h-28" disabled={busy}/>
    </label>
    <div className="flex gap-2">
     <Button size="sm" type="button" className="min-h-11" disabled={busy} onClick={()=>void submit(editing?"EDIT_LINK":"ADD_LINK",editing??undefined)}>
