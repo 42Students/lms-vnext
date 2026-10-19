@@ -294,6 +294,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
    That value belongs exclusively to the top bar.
    Keep DataTable's existing responsive sticky headers unchanged. */
 
+
 /* I — measured notification-overlay entry, not inferred generic modal
  * geometry. Legacy: components___notification-drawer.scss:83-102
  * (backdrop opacity 0->1 for 150ms ease-out), :112-143 (panel 200ms
