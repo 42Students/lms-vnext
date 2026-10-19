@@ -1,2 +1,12 @@
 "use client";
-export default function ErrorState({reset}:{error:Error&{digest?:string};reset:()=>void}){return <section role="alert" className="space-y-4 p-5"><h2 className="font-semibold">Couldn't load emails</h2><p className="text-sm text-body">Receipt history could not be read; this is not evidence of zero sends.</p><button onClick={reset} className="min-h-11 rounded-[9px] border border-border px-4">Retry</button></section>;}
+
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+
+export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorState
+    title="Couldn't load emails"
+    description="Receipt history could not be read; this is not evidence of zero sends."
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+  />;
+}
