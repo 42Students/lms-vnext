@@ -51,16 +51,16 @@ export function CollegeGroupDetailWrites({
     (b.waitlistPosition??Number.MAX_SAFE_INTEGER)||a.membershipId.localeCompare(b.membershipId));
   const front=ordered[0];
   return <section aria-label="Group rule and waitlist actions" className="space-y-5">
-    <div className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:p-5">
+    <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5">
       <h2 className="text-lg font-semibold text-foreground">Waitlist review</h2>
       <p className="mt-1 text-sm text-body">Only the first waitlisted learner can be promoted. Locked members and full groups cannot be overridden.</p>
       {ordered.length===0?<p className="mt-2 text-sm text-muted-foreground">No waitlisted learners recorded.</p>:
         <ul className="mt-3 space-y-2">{ordered.map(member=><li key={member.membershipId}
-          className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+          className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
           <span className="text-sm text-body">{member.displayName||"Unnamed learner"} · Position {member.waitlistPosition??"not recorded"}{member.isLocked?" · Locked":""}</span>
           <button type="button" disabled={busy||groupStatus!=="ACTIVE"||!hasSpace||
             front?.membershipId!==member.membershipId||member.isLocked}
-            className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50"
+            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50"
             onClick={()=>{void submit({
               action:"PROMOTE_WAITLIST",memberId:member.membershipId,
               expectedMemberVersion:member.version,expectedGroupVersion:groupVersion,confirm:true,
@@ -70,19 +70,19 @@ export function CollegeGroupDetailWrites({
         </li>)}</ul>}
       {!hasSpace?<p className="mt-2 text-xs text-warning">Group capacity is full. No manual promotion is available.</p>:null}
     </div>
-    <div className="space-y-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:p-5">
+    <div className="space-y-3 border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">Eligibility rule</h2>
       <p className="text-sm text-body">Edit the supported V1 criteria as JSON. At least one criterion is required. Saving does not run a refresh or change membership.</p>
       <label className="grid gap-2 text-sm font-semibold text-body">Rule criteria
         <textarea rows={9} spellCheck={false} value={ruleJson} onChange={e=>setRuleJson(e.target.value)}
-          className="w-full min-w-0 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 font-mono text-xs text-foreground" />
+          className="w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-mono text-xs text-foreground" />
       </label>
       <label className="flex items-center gap-2 text-sm text-body">
         <input type="checkbox" checked={autoRefresh} onChange={e=>setAutoRefresh(e.target.checked)}/>
         Enable rule auto-refresh setting (does not execute a refresh now)
       </label>
       <button type="button" disabled={busy} onClick={saveRule}
-        className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">
+        className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
         {busy?"Saving…":"Confirm rule update"}
       </button>
     </div>
