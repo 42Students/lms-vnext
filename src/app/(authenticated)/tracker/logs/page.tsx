@@ -35,7 +35,6 @@ export default async function TrackerLogsPage({
   const header = (
     <>
       <PageHeader
-        eyebrow="42 Tracker"
         title="Known Errors"
         description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
       />
