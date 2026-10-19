@@ -1,4 +1,6 @@
 import { EmptyState } from "@/components/ui/empty-state";
+import { Card } from "@/components/ui/card";
+import { ErrorState } from "@/components/ui/error-state";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
 import { Tabs } from "@/components/ui/tabs";
@@ -158,7 +160,7 @@ function RecruiterCalendarEventCard({
   const href = eventHref(event);
 
   return (
-    <article className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+    <Card as="article">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
@@ -223,7 +225,7 @@ function RecruiterCalendarEventCard({
           Open hiring drive →
         </Link>
       ) : null}
-    </article>
+    </Card>
   );
 }
 
@@ -247,12 +249,8 @@ export default async function HrCalendarPage({
   if (Object.values(query).some(Array.isArray)) {
     return <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="Calendar" />
-      <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
-        Invalid calendar filters.
-      </p>
-      <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text underline">
-        Clear filters
-      </Link>
+      <ErrorState title="Invalid calendar filters" description="Review the selected date, view and event filters."
+        action={<Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text underline">Clear filters</Link>}/>
     </div>;
   }
 
@@ -360,7 +358,7 @@ export default async function HrCalendarPage({
             {label:"Results due",value:calendar.resultsDue.length},
           ]} />
 
-          <section className="border-b border-border pb-4 sm:pb-5">
+          <section className="border-b border-border pb-4 md:pb-5">
             <h2 className="text-base font-semibold text-foreground">Results due in this period</h2>
             <p className="mt-1 text-sm text-body">Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.</p>
             {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -375,7 +373,7 @@ export default async function HrCalendarPage({
             </div> : <EmptyState title="No results due" description="No results deadlines are recorded in this calendar period."/>}
           </section>
 
-          <section className="border-b border-border pb-4 sm:pb-5">
+          <section className="border-b border-border pb-4 md:pb-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h2 className="text-base font-semibold text-foreground">
@@ -665,14 +663,14 @@ export default async function HrCalendarPage({
                       <RecruiterCalendarEventCard key={event.id} event={event} />
                     ))}
                     {day.resultsDue.map((item) => (
-                      <article key={"due:" + item.id} className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+                      <Card as="article" key={"due:" + item.id}>
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due</p>
                         <h4 className="mt-2 font-semibold text-foreground">{item.roundName}</h4>
                         <p className="mt-1 text-sm text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</p>
                         <Link href={hrResultsDueHref(item.jobId,item.id)} className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                           Open hiring rounds →
                         </Link>
-                      </article>
+                      </Card>
                     ))}
                   </div>
                 </div>

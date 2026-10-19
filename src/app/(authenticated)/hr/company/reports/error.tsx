@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 
@@ -8,11 +9,9 @@ export default function RouteError({ reset }: {
   reset: () => void;
 }) {
   return <div className="min-w-0 space-y-4">
-    <PageHeader title="Company Reports" />
-    <ErrorState
-      title="Couldn't load Company Reports"
+    <PageHeader title="Couldn't load Company Reports" />
+    <ErrorState title="Hiring reports unavailable"
       description="Hiring report records could not be retrieved for your selected college. This error does not establish that there are zero applications, drives or offers."
-      action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
-    />
+      action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}/>
   </div>;
 }

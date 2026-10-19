@@ -385,3 +385,30 @@ Do not check the strict C3 category until date/time/month/week popup parity and 
 - [x] `scripts/audit/chat17-form-skin-coverage.cjs` source review: TypeScript AST enumerates raw JSX controls, hard-coded colors, responsive references and JSX parse diagnostics. **No run or result count claimed.**
 
 These are file-level source completions, **not** strict A1–A4, C1–C7 or D ticks. Without actually executing the source inventory and comparing the app at phone/tablet sizes to the old LMS, the owner-defined coverage/responsive requirements are not met. Picker time/week/month equivalence, image cropping, and rich-text editor parity also remain unproven.
+
+
+## 2026-10-19 next batch — complete files with source-only evidence
+
+The following four lane-owned components have been completely reviewed and updated as **files**. Their exact-file JSX source was searched from GitHub's full fetched content; this is a narrower proof than the mandatory whole-`src` grep. Source breakpoint declarations were compared at the old-LMS phone boundary, but no browser viewport or CI was executed.
+
+| Completed file | Legacy value / source file:line | Current implementation file:line | Source outcome |
+| --- | --- | --- | --- |
+| [x] `src/components/ui/multi-select.tsx` | `legacy-styles/components___antddesign.scss:134-140` selected #26bac7 / white, wrapped; `:511-524` selector 10px/14px, `variables.scss:139` 44px touch | `multi-select.tsx:64-100` native selected options, aria-labeled removable-value list, mobile 44px tag/remove; `legacy-skin.css:640-644` selected teal/white, `globals.css:1128-1133` mobile native select | Source colors and touch boundary match. Browser-native popup may differ from AntD; C2 remains open |
+| [x] `src/components/ui/search-field.tsx` | `legacy-styles/components___form.scss:38-61` width clamp(180px,20vw,280px); `variables.scss:139,148-156` mobile touch and 767px boundary | `search-field.tsx:14-18` same clamp, 767px flex-column/full-width input, 44px mobile search button, disabled input blocks submit | Source values match; actual phone rendered widths unverified |
+| [x] `src/components/ui/range-slider.tsx` | `legacy-styles/components___variables.scss:10` teal #26bac7; `:139,148` 44px mobile touch; `components___form.scss:110-115` 13px/600 label | `range-slider.tsx:12-29` teal native accent, valid label fallback, keyboard focus/invalid/disabled and phone min-height 44px | Matched available legacy source attributes; native thumb/track geometry not sourced or browser-verified |
+| [x] `src/components/ui/input-group.tsx` | `legacy-styles/components___form.scss:117-143` 10px field radius, neutral base, teal 15% focus halo/red 20% invalid; `variables.scss:30,139` neutral border, 44px touch | `input-group.tsx:18-38` single grouped shell, compatible div/ARIA/ref props, prefix/suffix, invalid/readonly states; `legacy-skin.css:695-721` overrides nested Input skin to avoid double focus halos | Outer visual declarations match; child Input keeps its shared keyboard/phone behavior |
+
+**Fetched-file raw JSX search (exact per-file counts):**
+
+| File | raw `<button>` | raw `<input>` | raw `<select>` | raw `<textarea>` | Hex codes outside comments |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `multi-select.tsx` | 0 | 0 | 0 | 0 | 0 |
+| `search-field.tsx` | 0 | 0 | 0 | 0 | 0 |
+| `range-slider.tsx` | 0 | 1 (native range — intentional shared implementation) | 0 | 0 | 0 |
+| `input-group.tsx` | 0 | 0 | 0 | 0 | 0 |
+
+The searches are the exact-file equivalent of `grep -E '<(button|input|select|textarea)([[:space:]]|>)'`; comment-only hex references to #26bac7 in `multi-select.tsx` and `range-slider.tsx` are not hard-coded visual properties. All shared `<Select>` and `<Button>` opening and closing tags in `multi-select.tsx` and `search-field.tsx` balance. Responsive evidence is *source-level only*: phone is <=767px (`variables.scss:148`) and tablet begins 768px (`:155`); `multi-select.tsx:84,91`, `search-field.tsx:15-17`, `range-slider.tsx:24` and shared Input's phone rule supply the corresponding implementation. The input group inherits the child control's responsive geometry.
+
+**Whole-tree coverage / strict categories:** Full-`src` grep results and rendered 375px/768px computed styles are still **unknown**, so A1–A4, C1–C7 and D stay unticked. Do not convert file-level checkmarks into category claims. The committed `scripts/audit/chat17-form-skin-coverage.cjs` can supply source counts when run by the orchestrator.
+
+**Next files still needing category-complete parity:** `src/components/ui/select.tsx` (native popup vs AntD), `src/components/ui/date-input.tsx` (time/week/month popups), and rich-text editor parity. Browser comparison, upload crop behavior and whole-tree grep remain open.
