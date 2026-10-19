@@ -37,7 +37,7 @@ export function MentorProjectCloseoutControl({
       className="flex min-h-11 min-w-0 items-start gap-3 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body last:border-b-0">
       <input type="checkbox" checked={checks[i]??false}
         onChange={event=>setChecks(old=>old.map((v,j)=>i===j?event.target.checked:v))}
-        className="mt-1 size-4 accent-[var(--lms-button-primary)]" />{label}
+        className="mt-1 size-4 accent-[var(--lms-primary)]" />{label}
     </label>)}
     <Button type="button" onClick={()=>setConfirming(true)} disabled={pending||!checks.every(Boolean)}
       loading={pending}>{pending?"Completing…":"Confirm project completion"}</Button>
