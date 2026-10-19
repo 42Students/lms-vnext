@@ -11,7 +11,7 @@ function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<strin
  const detail=tpoGeneralRequestReviewFacts(kind,payload);
  return <div className="space-y-2">
   {detail.facts.length?<dl className="grid gap-2 sm:grid-cols-2">{detail.facts.map(item=>
-   <div key={item.label} className="rounded border border-border p-2">
+   <div key={item.label} className="rounded-[var(--lms-control-radius)] border border-border p-2">
     <dt className="text-xs text-muted-foreground">{item.label}</dt>
     <dd className="break-words font-medium">{item.value}</dd>
    </div>)}</dl>:null}
@@ -52,17 +52,17 @@ export function TpoGeneralRequestsPanel(){
  return <section aria-label="Other student requests" className="space-y-3 rounded-xl border border-border p-4">
   <h2 className="font-semibold">Other student requests · {pendingRows.length} waiting</h2>
   <p className="text-sm">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
-  <button type="button" onClick={()=>void load()} className="min-h-11 rounded border border-border px-3 text-sm">Refresh other requests</button>
+  <button type="button" onClick={()=>void load()} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Refresh other requests</button>
   {error?<p role="alert" className="text-error">{error}</p>:null}
   {message?<p role="status">{message}</p>:null}
   {!rows.length?<p role="status" className="text-sm">No other requests to review.</p>:
-   <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[700px] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="rounded border border-border p-3 text-sm">
+   <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[700px] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
     <h3 className="font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
     <p className="break-words">{row.reason}</p>
     <p className="text-xs">{row.status.replaceAll("_"," ")}</p>
     <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
     {row.decisionNote?<p>Decision: {row.decisionNote}</p>:null}
-    {row.status==="PENDING"?<button type="button" disabled={pending} className="mt-2 min-h-11 rounded-[9px] border border-border px-3 font-semibold text-primary-text"
+    {row.status==="PENDING"?<button type="button" disabled={pending} className="mt-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text"
       onClick={()=>{setSelection(row);setNote("");setAction("REJECT");}}>Review request</button>:null}
    </li>)}</ul>}
   <Dialog open={selection!==null} onOpenChange={open=>{if(!open&&!pending)setSelection(null);}}
@@ -73,13 +73,13 @@ export function TpoGeneralRequestsPanel(){
       {pending?"Saving…":"Confirm decision"}</Button></>}>
    <p className="break-words text-sm">{selection?.reason}</p>
    <label className="mt-3 grid gap-1 text-sm">Decision
-    <select value={action} onChange={e=>setAction(e.target.value as "APPROVE"|"REJECT")} className="min-h-11 rounded border border-border p-2">
+    <select value={action} onChange={e=>setAction(e.target.value as "APPROVE"|"REJECT")} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border p-2">
      {approveSupported(selection?.kind??"")?<option value="APPROVE">Approve and apply</option>:null}
      <option value="REJECT">Decline with reason</option>
     </select>
    </label>
    <label className="mt-3 grid gap-1 text-sm">Reason / decision note
-    <textarea value={note} onChange={e=>setNote(e.target.value)} className="min-h-24 rounded border border-border p-2" maxLength={2000}/>
+    <textarea value={note} onChange={e=>setNote(e.target.value)} className="min-h-24 rounded-[var(--lms-control-radius)] border border-border p-2" maxLength={2000}/>
    </label>
    {!approveSupported(selection?.kind??"")?<p className="text-sm">A specialist review is required before this kind can be approved. No placement record will be silently changed.</p>:null}
   </Dialog>

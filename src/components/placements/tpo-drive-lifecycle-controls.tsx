@@ -80,7 +80,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
       <div className="mt-4">
         {readiness.close.allowed ? (
           <Link href={"/tpo/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/close-preview"}
-            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] border border-primary px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
             Review close consequences before confirming
           </Link>
         ) : (
@@ -96,7 +96,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
             type="button"
             onClick={() => { setAction(item.action); setError(null); setAcknowledged(false); }}
             disabled={pending || !item.decision.allowed}
-            className="min-h-11 md:min-h-9 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50"
+            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50"
           >
             {item.action} {item.decision.allowed ? "" : "(unavailable)"}
           </button>
@@ -117,10 +117,10 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
               maxLength={1000}
               rows={2}
               disabled={pending}
-              className="mt-2 block w-full rounded-[9px] border border-border bg-surface p-3 text-sm font-normal"
+              className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal"
             />
           </label>
-          {selected.action==="PUBLISH"?<div role="status" className="rounded border border-border p-3 text-sm">
+          {selected.action==="PUBLISH"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
             <p>{readiness.reach.eligible} students are eligible and will be told in the app.</p>
             <p>{readiness.reach.excluded} registered students are excluded or have turned off matching-job notices.</p>
             <p>Counts reflect a preview. Eligibility is checked again before publishing.</p>
@@ -145,7 +145,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
               type="button"
               disabled={pending || reason.trim().length < 10 || !acknowledged}
               onClick={() => void submit()}
-              className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
             >
               {pending ? "Saving..." : "Confirm " + selected.action.toLowerCase()}
             </button>
@@ -153,7 +153,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
               type="button"
               onClick={() => setAction(null)}
               disabled={pending}
-              className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm"
+              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm"
             >
               Cancel
             </button>

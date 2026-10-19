@@ -58,8 +58,8 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   <section className="border-b border-border pb-6">
    <h2 className="font-semibold">Why learners were excluded</h2>
    <p className="mt-2 text-sm text-body">Up to 100 excluded registered learners shown; eligibility details may change as academic records are verified.</p>
-   <ul className="mt-3 space-y-2 text-sm">{data.excluded.map((row,i)=>
-    <li key={row.name+":"+i} className="rounded border border-border px-3 py-2">
+   <ul className="mt-3 divide-y divide-border text-sm">{data.excluded.map((row,i)=>
+    <li key={row.name+":"+i} className="py-3">
      <strong>{row.name}</strong> · {row.reason}</li>)}</ul>
    {data.totalExcludedDetail>data.excluded.length?<p className="mt-2 text-sm text-body">
     {data.totalExcludedDetail-data.excluded.length} additional excluded learners not shown.</p>:null}
@@ -68,7 +68,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   <section className="border-b border-border pb-6">
    <h2 className="font-semibold">Eligibility rules</h2>
    <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-    {rules.map(([label,value])=><div key={label} className="rounded border border-border p-3 text-sm">
+    {rules.map(([label,value])=><div key={label} className="border-b border-border pb-3 text-sm">
      <dt className="text-body">{label}</dt><dd className="font-semibold">{value===null?"Not restricted":value}</dd></div>)}
    </dl>
    <p className="mt-3 text-sm text-body">{data.policy.allowedProgramIds.length} program(s), {data.policy.allowedCohortIds.length} cohort(s), {data.policy.allowedSectionIds.length} section(s) explicitly targeted.</p>

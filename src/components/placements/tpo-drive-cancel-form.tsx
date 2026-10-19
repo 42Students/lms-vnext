@@ -75,7 +75,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
       </p>
       <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {rows.map(([label, n]) => (
-          <div key={label} className="rounded-lg border border-border bg-muted p-3">
+          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-3">
             <dt className="text-xs text-body">{label}</dt>
             <dd className="text-2xl font-semibold tabular-nums">{n}</dd>
           </div>
@@ -110,7 +110,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                 maxLength={1000}
                 rows={3}
                 disabled={pending}
-                className="mt-2 w-full rounded-[9px] border border-border bg-surface p-3 text-foreground"
+                className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"
               />
             </label>
             <p className="text-xs text-body">Students see the reason. You can choose a reason above or write your own.</p>
@@ -123,7 +123,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             I reviewed the affected applications, rounds and offers. I understand cancellation
             will notify affected learners and cannot be silently undone.
           </label>
-          <button type="submit" disabled={pending || !reviewed} className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-5 font-[650] disabled:opacity-50 text-primary-foreground">
+          <button type="submit" disabled={pending || !reviewed} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-5 font-[650] disabled:opacity-50 text-primary-foreground">
             {pending ? "Cancelling…" : "Review and cancel drive"}
           </button>
     </form>

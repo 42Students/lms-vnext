@@ -112,7 +112,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
   <h2 className="font-semibold">Act on selected requests</h2>
   <p className="text-xs text-muted-foreground">Choose up to {MAX_BULK_REQUESTS} waiting requests of one kind on this page. Each decision is rechecked and saved separately; a failure never approves the next request.</p>
   <div tabIndex={0} role="group" aria-label="Waiting requests, scroll for more" className="max-h-64 min-h-0 space-y-1 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
-   {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 rounded border border-border p-2 text-sm">
+   {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
     <input type="checkbox" checked={selected.includes(row.id)}
      disabled={pending||auditRetry!==null||(!selected.includes(row.id)&&(selected.length>=MAX_BULK_REQUESTS||
       chosenKind!==null&&chosenKind!==row.requestType))}
@@ -123,17 +123,17 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
   <p role="status" className="text-sm">{chosen.length} selected of {rows.length} waiting requests on this page.</p>
   <label className="grid gap-1 text-sm">Decision
    <select value={action} disabled={pending||auditRetry!==null} onChange={event=>{setAction(event.target.value as "APPROVE"|"REJECT");setAcknowledged(false);}}
-    className="min-h-11 rounded-[9px] border border-border bg-surface px-3">
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
     <option value="APPROVE">Approve</option><option value="REJECT">Reject</option>
    </select>
   </label>
   {action==="REJECT"?<label className="grid gap-1 text-sm">Rejection reason (required)
    <textarea value={reason} disabled={pending||auditRetry!==null} minLength={3} maxLength={2000}
     onChange={event=>{setReason(event.target.value);setAcknowledged(false);}}
-    className="min-h-20 rounded-[9px] border border-border p-2"/>
+    className="min-h-20 rounded-[var(--lms-control-radius)] border border-border p-2"/>
   </label>:null}
   <button type="button" disabled={!valid||pending||auditRetry!==null} onClick={()=>{setAcknowledged(false);setConfirmOpen(true);}}
-   className="min-h-11 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+   className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
    Review {chosen.length} selected decision(s)
   </button>
   <Dialog open={confirmOpen} onOpenChange={value=>{if(!pending)setConfirmOpen(value);}}
@@ -157,18 +157,18 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
   </Dialog>
   {outcomes.length>0?<div role="status" aria-live="polite" className="space-y-2 text-sm">
    <p>{outcomes.filter(row=>row.status==="updated").length} decided · {outcomes.filter(row=>row.status==="failed").length} not decided.</p>
-   <ul className="space-y-1">{outcomes.map(row=><li key={row.id} className="rounded border border-border p-2">
+   <ul className="space-y-1">{outcomes.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-2">
     <strong>{row.name}</strong>: {row.message}
    </li>)}</ul>
    {outcomes.some(row=>row.status==="failed")?<div className="space-y-2">
     <p role="alert">Some requests were not decided. Recheck them before retrying.</p>
-    <button type="button" onClick={()=>void copyFailed()} className="min-h-11 rounded-[9px] border border-border px-3 font-semibold text-primary-text">Copy failed</button>
+    <button type="button" onClick={()=>void copyFailed()} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text">Copy failed</button>
    </div>:null}
   </div>:null}
-  {auditRetry?<div role="alert" className="space-y-2 rounded border border-border p-3 text-sm">
+  {auditRetry?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
    <p>Request decisions are saved, but their batch audit has not been confirmed. Retrying will only check the audit, not decide the requests again.</p>
    <button type="button" disabled={pending} onClick={()=>void retryAudit()}
-    className="min-h-11 rounded-[9px] border border-border px-3 font-semibold disabled:opacity-50">
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold disabled:opacity-50">
     {pending?"Checking batch audit…":"Retry batch audit only"}
    </button>
   </div>:null}

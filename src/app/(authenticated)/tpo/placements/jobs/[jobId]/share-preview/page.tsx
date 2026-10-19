@@ -102,7 +102,7 @@ export default async function TpoShortlistSharePreviewPage({
       </Link>)}
     </nav>
     {(linkPage.wasInvalid||!parsedStatus.success)?<p role="status"
-      className="rounded border border-border bg-surface p-3 text-sm text-body">
+      className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
       An invalid company-share status or page was reset to the default view.
     </p>:null}
     <CompanyShareControls jobId={data.job.id} preferenceKey={companySharePreferenceKey(data.job.collegeId,data.job.companyRelationshipId)} ready={shares.ready} status={shareStatus} linkPage={shares.page}

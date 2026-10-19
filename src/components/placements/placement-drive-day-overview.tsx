@@ -22,7 +22,7 @@ export function PlacementDriveDayOverview({ driveDay }: { driveDay: DriveDay }) 
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[["Applications", driveDay.summary.submittedApplications],["Needs screening", driveDay.summary.pendingScreening],["Shortlisted", driveDay.summary.shortlisted],["Rounds", driveDay.summary.roundCount]].map(([label,value]) =>
-          <div key={String(label)} className="rounded-lg border border-border bg-muted px-4 py-3"><p className="m-0 text-xs font-semibold text-muted-foreground">{label}</p><p className="mt-1 text-xl font-semibold text-foreground">{value}</p></div>)}
+          <div key={String(label)} className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted px-4 py-3"><p className="m-0 text-xs font-semibold text-muted-foreground">{label}</p><p className="mt-1 text-xl font-semibold text-foreground">{value}</p></div>)}
       </div>
     </section>
     {driveDay.attention.length > 0 ? <section className="rounded-xl border border-border bg-surface"><div className="border-b border-border px-5 py-4"><h2 className="m-0 text-base font-semibold text-foreground">Attention</h2></div><div className="flex flex-wrap gap-2 p-5">{driveDay.attention.map((item,index) =>
@@ -32,7 +32,7 @@ export function PlacementDriveDayOverview({ driveDay }: { driveDay: DriveDay }) 
       {driveDay.rounds.length === 0 ? <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">Evaluation rounds are not configured yet.</div> :
         driveDay.rounds.map(round => <article key={round.id} id={`round-${round.id}`} className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">Round {round.sequence} · {round.kind}</p><h3 className="mt-1 text-lg font-semibold text-foreground">{round.name}</h3><p className="mt-1 text-sm text-body">{formatWhen(round.scheduledAt, round.timezone)}{round.venue ? " · "+round.venue : ""}</p></div><StatusBadge tone={tone(round.status)}>{round.status}</StatusBadge></div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{[["Participants",round.participantCount],["Staged",round.stagedResultCount],["Applied",round.appliedResultCount],["Missing",round.missingResultCount],["Passed",round.outcomes.pass]].map(([label,value]) => <div key={String(label)} className="rounded-lg border border-border bg-muted px-3 py-2"><p className="m-0 text-xs text-muted-foreground">{label}</p><p className="mt-1 font-semibold text-foreground">{value}</p></div>)}</div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{[["Participants",round.participantCount],["Staged",round.stagedResultCount],["Applied",round.appliedResultCount],["Missing",round.missingResultCount],["Passed",round.outcomes.pass]].map(([label,value]) => <div key={String(label)} className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted px-3 py-2"><p className="m-0 text-xs text-muted-foreground">{label}</p><p className="mt-1 font-semibold text-foreground">{value}</p></div>)}</div>
           {round.participants.length > 0 ?
            <div className="mt-4">
             <DataTable
