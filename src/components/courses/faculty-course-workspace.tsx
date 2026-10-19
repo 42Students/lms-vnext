@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
@@ -73,19 +74,7 @@ function Metric({
   value: string | number;
   detail: string;
 }) {
-  return (
-    <section className="border-r border-border pr-4 last:border-r-0">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-        {value}
-      </p>
-      <p className="mt-1 text-xs leading-5 text-body">
-        {detail}
-      </p>
-    </section>
-  );
+  return <StatTile label={label} value={value} detail={detail} />;
 }
 
 function ContentItem({
