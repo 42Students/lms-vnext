@@ -118,7 +118,7 @@ export default async function CollegeGroupsPage({
         {kind || status ? (
           <Link
             href="/college/groups"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline"
           >
             Clear filters
           </Link>
@@ -144,7 +144,7 @@ export default async function CollegeGroupsPage({
                 cell: (row: GroupListRow) => (
                   <Link
                     href={`/college/groups/${row.id}`}
-                    className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
+                    className="font-semibold text-link hover:underline"
                   >
                     {row.name}
                   </Link>
@@ -204,7 +204,7 @@ export default async function CollegeGroupsPage({
             <span className="flex gap-3">
               {offset > 0 ? (
                 <Link
-                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
+                  className="font-semibold text-link hover:underline"
                   href={query(Math.max(0, offset - limit))}
                 >
                   Previous
@@ -212,7 +212,7 @@ export default async function CollegeGroupsPage({
               ) : null}
               {offset + limit < total ? (
                 <Link
-                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
+                  className="font-semibold text-link hover:underline"
                   href={query(offset + limit)}
                 >
                   Next
