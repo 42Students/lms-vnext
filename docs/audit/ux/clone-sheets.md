@@ -262,61 +262,20 @@ Phone source path: custom forms and saved-view/selection lists are one column, w
 **STRICT TICK RULE:** E8 remains **[ ]**; no runtime, CI, viewport or end-to-end preview / XLSX verification occurred. Next area: `src/components/tpo/recruiter-leads-workspace.tsx` for the still-generic Engage/Leads DataTable and its GridWorkspace composition; afterward full icon/link source inventory. Branch edits stayed limited to chat-12-owned TPO files and audit.
 
 
-## chat-12 continued — Engage sheets and import previews (2026-10-19)
+## 2026-10-19 chat-15 replacement — Recruiter Drives TpoGrid wiring (source-only)
 
-Baseline: branch fast-forwarded to then-current main 2808e32a641e1e35f513755b840b6ef892c61163 before edits; branch only, no force-push. All checks below inspect fetched source; no app execution, CI, typecheck, or screenshot proof.
+- [ ] `src/components/placements/hr-recruiter-drives-grid.tsx`: **new authorized client projection**, TpoGrid with columns Drive / Job type / Pay / Shared applicants / Offers / Deadline / Status / Next; existing row action destinations are carried through, including applicants, offers, unanswered college requests, open hiring flow, hire again, and conversation. No new server fetch or mutation.
+- [ ] `src/components/placements/recruiter-placement-portfolio.tsx`: when `sheetScopeKey` is provided, display `HrRecruiterDrivesGrid` only from 768px upward; preserve the original full-featured cards on narrow screens and for other existing callers. Existing server-sorted attention ordering remains the source for both.
+- [ ] `src/app/(authenticated)/hr/drives/page.tsx`: passes `sheetScopeKey={context.user.id+":"+selectedCollege}`; existing exact employer/college authorization, request stage tabs, query-backed search/filter/sort, server CSV export route and pagination are untouched.
 
-### Work queue, scoped file completion
+| Legacy reference | New source | Source comparison | Tick? |
+| --- | --- | --- | --- |
+| `docs/design/old-lms-pages.md:6,10`: one canvas, hairline table and compact rows | `src/components/tpo/grid/tpo-grid.tsx` with Quartz, via `hr-recruiter-drives-grid.tsx` | Shared native engine on desktop; phone retains full old recruiter cards | No — computed visuals absent |
+| `docs/design/old-lms-pages.md:10`: Drive, Job type, Pay, Applied, Deadline, Status, row menu | `hr-recruiter-drives-grid.tsx` columns | Employer-safe **Shared applicants** substitutes broader TPO Applied metric; status/text and all direct actions remain | No — structural semantics differ |
+| `docs/design/legacy-styles/components___listing-page-header.scss:131-158`: mobile max 767px | `recruiter-placement-portfolio.tsx`: `hidden md:block` / `md:hidden` | Exact source breakpoint 768px; never render a second visible list | No — viewport screenshot pending |
+| Legacy export toolbar and filename contract | `hr/drives/page.tsx:147-153` existing `Export matching drives CSV` | Server-authorized download href retained; TpoGrid only supplies its copy/column chrome | No — legacy-grid filenames and UI not proven |
+| Employer scope and saved layout | `hr/drives/page.tsx`, `hr-recruiter-drives-grid.tsx` | Only already-authorized `pageResult.rows` handed to client; storage key includes user+college | No — live tenant switching untested |
 
-- [x] src/components/tpo/recruiter-leads-workspace.tsx — both roster and Companies tables now native Quartz; all local raw controls migrated; original filters, tenant-scoped rows, selection, export callbacks, stage/owner actions, invitation guards, company communication and people links retained.
-- [x] src/components/tpo/recruiter-roster-display-controls.tsx — flat border-separated sort pane; shared select/checkbox, responsive labels.
-- [x] src/components/tpo/recruiter-saved-view-controls.tsx — nine shared Buttons, flat pane, keyboard/touch sizes and responsive rows; existing saved-view API intact.
-- [x] src/components/tpo/tpo-academic-import-preview.tsx — explicit preview-only stages, 44px validation control, capped scroll; no submission endpoint added.
-- [x] src/components/tpo/tpo-batch-eligibility-import.tsx — original confirmation/preview logic intact, step guidance and 44px template/selection states.
-- [ ] Global E8 category parity: shared header height, importer DataTable breakpoint, complete coverage and visual comparison still unresolved. Scoped file checks above do NOT tick global E8.
+**Source scan:** the three touched/new files were fetched after the commits; `/<(button|input|select|textarea|table)(?=[\\s/>])/g` => 0 raw native controls each; `/#[0-9a-fA-F]{3,8}\\b/g` => 0 inline hex each. All paired JSX wrappers were inspected by source; no local TS compiler, app, CI, or browser executed. Existing legacy-grid directory not available through the connector at this checkpoint; exact old export filenames remain unverified. Existing package manifest lacks declared AG Grid packages despite native imports. **E8 remains [ ].**
 
-### Value table — recruiter roster and Companies sheet
-
-| Property | Legacy source and exact value | vNext source and value | Result |
-|---|---|---|---|
-| Native sheet | lms2-fe/src/components/tpo/grid/TpoGrid.jsx:2-24 — AG Grid Community themeQuartz | recruiter-leads-workspace.tsx:1014-1060 recruiter grid, :978-1012 company grid, shared src/components/tpo/grid/tpo-grid.tsx | Native Quartz port |
-| Row height | Legacy TpoGrid.jsx:14-24: 44px | shared grid/tpo-grid.tsx:31-43,227-253: 44px | Matches source |
-| Header height | Legacy TpoGrid.jsx:14-24: 40px | shared grid/tpo-grid.tsx:31-43,227-253: 44px | MISMATCH; shared component chat-14 owned, remains open |
-| Pinned checkbox | Legacy TpoGrid.jsx:27-31: 48px, pinned left | shared grid/tpo-grid.tsx selection ColDef: 48px, pinned left | Matches source |
-| Toolbar | docs/design/old-lms-pages.md:9: search, Filters, Views, Columns, Export, count | GridWorkspace.tsx:177-268; roster at recruiter-leads-workspace.tsx:1014; existing page search controlled outside to prevent duplicate | Source-aligned |
-| Row selection and bulk | Legacy GridWorkspace.jsx:458-494, TpoGrid.jsx:59-105: filtered select, Shift/Ctrl, TSV | roster passes selectedIds, allIds restricted to sortedVisible; existing campaign, bulk invite, stage and owner widgets unchanged | Source-preserved; runtime still open |
-| Companies actions | docs/design/old-lms-pages.md:9-10: compact table/actions | Companies TpoGrid uses visibleCompanies, numeric columns, original communication Select (mutating API unchanged), people links and add-contact | Source preserved |
-| Canvas | old-lms-pages.md:5-12: no ordinary nested card | roster filter separators at recruiter-leads-workspace.tsx:769,921; saved view and sort panes border-separated; genuine board cards retained | Source aligned |
-| Primary action | old-lms-shell-spec.md:24-25: teal #0a7c88, white, 36px, radius9, font650/14px | recruiter-leads-workspace.tsx:675 shared Button variant primary and primaryStyle token with md:min-h-9; phone min-h-11 | Source/token aligned |
-| Fields/focus/error | legacy-styles/components___form.scss:117-143: 10px radius, 14/400/20, tracking .2, teal halo, disabled/error | shared Input (10 instances) and Select (16), legacy tokens, native focus/error; same input query and business data handlers | Shared component; OS native popup visually open |
-| Phone/tablet boundary | old-lms-shell.css:68-85: phone below 768px; tablet 768–1199 | recruiter-leads-workspace.tsx:151-153 min-h-11 md:min-h-9, :769 md:grid-cols-2 and :921 md:grid-cols-3, native TpoGrid md:hidden fallback | Source proof; rendered proof open |
-| Empty/error/loading | old-lms-pages.md:9-12: inline strips, empty grid and pending | Existing Engage loading/error/empty kept, error slim strips, native dynamic loading placeholder and mobile disclosure | Source present; runtime open |
-
-### Value table — companion files and import flows
-
-| File / value | Legacy source | vNext source and proof | Outcome |
-|---|---|---|---|
-| Roster sort / checkbox | old-lms-pages.md:9 one toolbar, old-lms-shell.css:68-85 tablet breakpoint | recruiter-roster-display-controls.tsx:11-35: border-b; min-h-11 select and Checkbox, flex-wrap and md:flex-none | Matches source |
-| Views | legacy GridWorkspace.jsx:410-438 pinned/recent/manage | recruiter-saved-view-controls.tsx:85-137: original scoped API, pinned/open/edit/delete/JSON actions, border-y panel, 9 shared Button; responsive grid-cols-1 md:grid-cols-2 xl:grid-cols-3 | Behavior retained |
-| Academic preview | legacy ImportPreviewModal.js:10-19 upload/preview/resolve/commit; preview-only allowed | tpo-academic-import-preview.tsx:20-31: explicit preview-only steps, Validate min-h-11, scroll capped max-h-64, matched/unmatched status; never commits | vNext contents retained |
-| Eligibility import | legacy ImportPreviewModal.js:10-19 review and confirm | tpo-batch-eligibility-import.tsx:91-179: choose/preview/skip/ack/confirm/discard/undo unchanged, explanatory steps, 44px template link and checkbox labels | Source preserved |
-| Link color/hover/focus | legacy-styles/components___common.scss:68-75: teal, weight500, hover underline | tpo-batch-eligibility-import.tsx:111: text-link, underline, lms-inline-link, 2px focus-visible outline, min-h-11 | Source linked, visited/open states pending |
-| Importer responsive | old-lms-shell.css:68-85: mobile below 768px | Both import previews use shared DataTable with sm=640px breakpoint | MISMATCH shared UI lane; not global E8 done |
-
-### Scoped grep-equivalent proof
-
-Full fetched contents scanned using JS regex equivalents of:
-grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE
-and grep -nE 'sm:|md:' FILE. This is NOT an executed repo-wide grep.
-
-| File | Raw | Inline svg | Six-digit hex | JSX counts | Responsive source |
-|---|---:|---:|---:|---|---|
-| recruiter-leads-workspace.tsx | 0 | 0 | 0 | Button 25/25, Select 16/16, Link 8/8, braces 624/624, native grid 2, DataTable 0 | sm 0, md 5 |
-| recruiter-roster-display-controls.tsx | 0 | 0 | 0 | Select 1/1, braces 18/18 | md 1, wrapping flex |
-| recruiter-saved-view-controls.tsx | 0 | 0 | 0 | Button 9/9, Select 1/1, braces 97/97 | md 2, responsive grid |
-| tpo-academic-import-preview.tsx | 0 | 0 | 0 | Button 1/1, braces 35/35 | DataTable 640px outstanding |
-| tpo-batch-eligibility-import.tsx | 0 | 0 | 0 | Button 10/10, braces 141/141 | DataTable 640px outstanding |
-
-No src/components/ui, package.json, server/permissions, or API files edited. Remaining: 40px vs 44px Quartz header (chat-14), 768px vs 640px shared DataTable (UI owner), full icon/link inventory, rendered phone/tablet and hover/focus/disabled/loading/empty screenshots, end-to-end export/selection verification. Global A5–A7/E8 unticked.
-
-Exact next file: src/components/tpo/recruiter-lead-csv-import.tsx; after that src/components/tpo/tpo-audit-grid.tsx and remaining TPO drive sheet inventory.
+**Next E8 file:** `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` (applicant/offer/round sheet contract), after a runtime/dependency gate when permitted.

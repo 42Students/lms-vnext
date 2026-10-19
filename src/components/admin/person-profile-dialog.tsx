@@ -252,7 +252,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`roll-${membershipId}`}
-                    className="mb-1.5 block text-xs font-semibold text-body"
+                    className="mb-1.5 block text-[13px] font-semibold text-body"
                   >
                     Roll number
                   </label>
@@ -268,7 +268,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`registration-${membershipId}`}
-                    className="mb-1.5 block text-xs font-semibold text-body"
+                    className="mb-1.5 block text-[13px] font-semibold text-body"
                   >
                     Registration number
                   </label>
@@ -292,7 +292,7 @@ export function PersonProfileDialog({
                 <div className="md:col-span-2">
                   <label
                     htmlFor={`department-${membershipId}`}
-                    className="mb-1.5 block text-xs font-semibold text-body"
+                    className="mb-1.5 block text-[13px] font-semibold text-body"
                   >
                     Primary department
                   </label>
@@ -317,7 +317,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`employment-${membershipId}`}
-                    className="mb-1.5 block text-xs font-semibold text-body"
+                    className="mb-1.5 block text-[13px] font-semibold text-body"
                   >
                     Employment type
                   </label>
@@ -334,7 +334,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`title-${membershipId}`}
-                    className="mb-1.5 block text-xs font-semibold text-body"
+                    className="mb-1.5 block text-[13px] font-semibold text-body"
                   >
                     Academic title
                   </label>

@@ -428,3 +428,27 @@ These commands, if run against the entire glob, will include files outside the 4
 - [ ] F5 **OPEN** — complete 403/404/500, maintenance, offline, session, error and empty inventory plus responsive checks.
 
 **Next exact file:** `src/components/placements/tpo-report-presentation.tsx` (error/status fallbacks), followed by `src/components/placements/tpo-report-record-links.tsx`.
+
+
+### Report state addendum — 50 source files total, 2026-10-19
+
+Two additional source-level migrations were re-fetched from `chatgpt/chat-5-b` after writing:
+
+| Source file | Shared feedback counts | Raw notices | Mobile source/legacy comparison |
+| --- | --- | ---: | --- |
+| `src/components/placements/tpo-report-presentation.tsx` | `InlineNotice` 1, `Alert` 0 | 0 | Existing `inline-flex flex-wrap` action row preserved; InlineNotice uses `min-w-0`/wrapping at `src/components/ui/inline-notice.tsx:32-34`. Exact old focus/offset remains unproven |
+| `src/components/placements/tpo-report-record-links.tsx` | `Alert` **2 opens / 2 closes**, `EmptyState` 2 | 0 | Existing `md:grid-cols-2` and `break-words` links preserved; shared `Alert` uses `max-w-full`; exact 767px layout comparison open |
+
+Status/truncation semantics were retained: presentation errors still announce without dismissing the view, and 100-row report truncation warnings remain distinct from a true zero-record result. This brings the current **distinct TSX source-file count to 50** (36 + 12 + 2), apart from the two audit documents. This line is a count of files migrated at source level, not a claim that all F3/F4/F5 strict parity items are completed.
+
+**Source grep proof (bounded, fetched-byte):** `<Alert`=2, `</Alert>`=2, `<EmptyState`=2, `<InlineNotice`=1, raw `role="alert"/"status"`=0 for these two files. Local repeatable command, **NOT executed here**:
+
+```sh
+rg -n '<Alert|</Alert>|<EmptyState|<InlineNotice|role="(alert|status)"' src/components/placements/tpo-report-{presentation,record-links}.tsx
+```
+
+**Value status:** this addendum reuses the full legacy-to-vNext table just above: base info `#26bac7` and error `#ef4444` match the tokens (`legacy-styles/components___variables.scss:71-74`, `globals.css:51-57`); 9px vNext control radius vs legacy 6px remains mismatched (`globals.css:343` vs `variables.scss:133`); 2px vs 3px focus-offset mismatch remains (`inline-notice.tsx:35-36` vs `legacy-styles/components___accessibility.scss:19-23`); exact warning border/surface and mobile breakpoint visual parity remain **OPEN**. No browser, app execution, TS build, tests or CI.
+
+- [ ] F3, F4, F5 strict category proofs remain open; zero whole-repo bespoke instances, final responsive values and actual browser comparisons have not been established.
+
+**Next exact source:** `src/components/placements/tpo-report-saved-filters.tsx` (one remaining raw status announcement on the latest source read), then remaining placement component alerts and finally cross-portal 403/404/500/offline/maintenance/session paths.

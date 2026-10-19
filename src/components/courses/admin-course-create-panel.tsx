@@ -267,10 +267,10 @@ export function AdminCourseCreatePanel({
   return (
     <section aria-label="Course setup workflow" className="grid gap-4 xl:grid-cols-2">
       <nav aria-label="Course setup steps" className="flex flex-wrap gap-3 border-b border-border pb-4 text-sm xl:col-span-2">
-       <a href="#setup-course" className="font-semibold text-primary-text underline">1. Create Course</a>
-       <a href="#setup-offering" className="font-semibold text-primary-text underline">2. Course Offering</a>
-       <a href="#setup-delivery" className="font-semibold text-primary-text underline">3. Section Delivery</a>
-       <a href="#setup-faculty" className="font-semibold text-primary-text underline">4. Assign Course Faculty</a>
+       <a href="#setup-course" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">1. Create Course</a>
+       <a href="#setup-offering" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">2. Course Offering</a>
+       <a href="#setup-delivery" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">3. Section Delivery</a>
+       <a href="#setup-faculty" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">4. Assign Course Faculty</a>
       </nav>
       <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body xl:col-span-2">
        {nextSetupStep==="COURSE"?"Start by creating or choosing a Course.":
@@ -290,8 +290,8 @@ export function AdminCourseCreatePanel({
           <Button variant="ghost" type="button" className="font-semibold text-primary-text underline" onClick={()=>router.replace(courseBasePath)}>Cancel copy</Button>
           <p className="w-full text-xs text-muted-foreground">Only catalog name, code, description and department are copied. Existing course content, offerings and assignments are not copied.</p>
         </div>:null}
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="course-department">{COLLEGE_COURSES_COPY.departmentLabel}</FieldLabel>
             <Select id="course-department" value={courseDepartmentId} onChange={(event) => setCourseDepartmentId(event.target.value)} required>
               <option value="">Select Department</option>
@@ -302,7 +302,7 @@ export function AdminCourseCreatePanel({
             <FieldLabel htmlFor="course-name">{COLLEGE_COURSES_COPY.nameLabel}</FieldLabel>
             <Input id="course-name" value={courseName} onChange={(event) => setCourseName(event.target.value)} placeholder={COLLEGE_COURSES_COPY.namePlaceholder} maxLength={255} required />
           </div>
-          {superAdmin?<div className="grid gap-3 sm:col-span-2 sm:grid-cols-2">
+          {superAdmin?<div className="grid gap-3 md:col-span-2 md:grid-cols-2">
             <div>
               <FieldLabel htmlFor="course-short-title">Short display name</FieldLabel>
               <Input id="course-short-title" value={shortTitle} onChange={event=>setShortTitle(event.target.value)} maxLength={120} required />
@@ -311,7 +311,7 @@ export function AdminCourseCreatePanel({
               <FieldLabel htmlFor="course-official-code">Official course code (optional)</FieldLabel>
               <Input id="course-official-code" value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={64}/>
             </div>
-            <div className="sm:col-span-2">
+            <div className="md:col-span-2">
               <FieldLabel htmlFor="course-takeaways">Course takeaways (optional)</FieldLabel>
               <Textarea id="course-takeaways" value={takeaways}
                 onChange={event=>setTakeaways(event.target.value)} maxLength={2000}/>
@@ -325,7 +325,7 @@ export function AdminCourseCreatePanel({
             <FieldLabel htmlFor="course-code">Code</FieldLabel>
             <Input id="course-code" value={courseCode} onChange={(event) => setCourseCode(event.target.value)} placeholder="CS201" maxLength={64} required />
           </div>}
-          <div className="sm:col-span-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="course-description">Description</FieldLabel>
             <Textarea id="course-description" className="min-h-24" value={courseDescription} onChange={(event) => setCourseDescription(event.target.value)} maxLength={5000} placeholder="Optional Course description" />
           </div>
@@ -338,8 +338,8 @@ export function AdminCourseCreatePanel({
       <form id="setup-offering" onSubmit={createOffering} className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">New Course Offering</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Place a Course into one Cohort and Academic Period.</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="offering-course">Course</FieldLabel>
             <Select id="offering-course" value={offeringCourseId} onChange={(event) => setOfferingCourseId(event.target.value)} required>
               <option value="">Select Course</option>
@@ -371,7 +371,7 @@ export function AdminCourseCreatePanel({
             <FieldLabel htmlFor="offering-credits">Credits</FieldLabel>
             <Input id="offering-credits" type="number" min={1} max={30} value={offeringCredits} onChange={(event) => setOfferingCredits(event.target.value)} placeholder="Optional" />
           </div>
-          <div className="sm:col-span-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="offering-order">Display order</FieldLabel>
             <Input id="offering-order" type="number" min={0} max={10000} value={offeringDisplayOrder} onChange={(event) => setOfferingDisplayOrder(event.target.value)} />
           </div>
