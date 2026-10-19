@@ -221,7 +221,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     <div className="flex justify-end gap-2">
      <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</Button>
-     <Button variant="secondary" type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
+     <Button variant="primary" type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary">{saving?"Saving…":"Add follow-up"}</Button>
     </div>
    </div>
