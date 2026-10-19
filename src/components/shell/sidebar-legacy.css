@@ -168,6 +168,7 @@
  white-space:nowrap;
 }
 .lms-sidebar-nav .lms-nav-heading {
+ padding:0;
  height:18px;
  min-height:18px;
  display:flex;
