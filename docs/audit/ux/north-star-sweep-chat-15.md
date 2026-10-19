@@ -196,3 +196,24 @@ Three further [chat-15] source commits completed the remaining visible native fo
 During the sweep, `main` advanced by 250 commits. The lane compared both trees against their common ancestor and confirmed that the 44 lane-modified paths and 130 upstream-modified paths were **disjoint**, then built a true two-parent merge based on the upstream tree with the 44 lane blobs overlaid. Merge commit `223cbaa4f8a16278ce61b1991dcf4d0225857614` was pushed to **`chatgpt/chat-15-b` only**. GitHub comparison then reported **56 ahead / 0 behind main**, and representative file SHA reads verified retention of the updated shared `page-canvas.tsx` from main and of this lane's HR/recruiter/tracker files.
 
 This source-only follow-up totals **31 implementation-file commits plus audit changes and the upstream merge**. No application execution, tests, TypeScript compilation, CI or browser screenshots were run. Structural JSX opening/closing checks and duplicate-import checks were performed by reading source text only. Final runtime parity remains for integration verification.
+
+## 2026-10-19 continuation: Faculty, Learner and Projects-learner source parity
+
+The owner expanded lane chat-15 from the previously audited HR/Recruiter/Tracker surfaces into Faculty/Teacher, Learner, and Projects-learner portals. The branch was **911 commits behind with no unique commits** when this continuation began, so it was safely fast-forwarded to the then-current main first (no previous unique work discarded). The legacy OWNER GOAL, NORTH STAR, old LMS pages and shell specifications, source audit log, and shared Button/Input/Select APIs were read.
+
+**62 additional [chat-15] one-file source commits** were pushed only to `chatgpt/chat-15-b`, modifying 61 paths before upstream integration. A true two-parent merge (`741daf0809fcb87a54ccfa4b5cadc5b8c0ce2424`) then integrated **427 concurrently landed main commits**. Thirteen paths were modified on both branches: the newer upstream implementation was retained and this lane's safe compact-control/semantic-colour changes were re-applied, not blindly overwritten. One duplicate conversion, `learner-roadmap-item-dialog`, was already fulfilled upstream and was kept from main. Post-merge GitHub compare returned **63 commits ahead / 0 behind**, with **60 net changed implementation paths** (31 teacher routes, 10 learner routes, 10 course components, 9 project components). No commit was pushed to `main`.
+
+### Faculty / Teacher
+- Standardized existing legacy-deep-teal link text/focus rings to `text-primary-text` and semantic primary focus. Reduced legacy link/action height overrides to the old 36px control height.
+- Migrated native month/search/select filters and submit actions to the shared `Input`, `Select`, and `Button` in Calendar, Contacts, Assessment Health, Discussion History, Gradebook, Live Classes, Teaching Profile, assignment/quiz submission report lists, Response Follow-ups and Results.
+- Removed extra bordered page-like shells from ordinary Calendar, Contacts, Profile, grade/assessment and report sections, preserving records, tables, independent report tiles, and existing page content.
+- Converted the two native assessment-pagination buttons to `Button variant="secondary"` without changing pagination state or handlers.
+
+### Learner / Courses / Projects
+- Migrated native visible controls in Course List, Assessment Overview, Discussions, Quiz Attempt, Video Player, Activity and Offers browse to shared controls. Existing `<input type="hidden">` form fields were intentionally left native.
+- Reduced competing 44px local overrides to 36px on filters, action links and pager controls; maintained per-item views and existing handlers.
+- Applied old LMS 3px/13px underline tabs to learner Courses and Project workspace tabs; removed ordinary nested white cards from course attendance/progress, profile/verification summaries, assignment/quiz details, and faculty pages.
+- Standardized project-board filters, activity, task-status controls, course retry, quiz actions and learner board dialog close; the dialog close remains `type="submit"` so its native method=dialog behavior is unchanged.
+- An additional correction restored `variant="primary"` to the learner Attendance Calendar's Apply action after its shared-Button conversion.
+
+**Verification limits:** JSX opening/closing names were statically compared on converted components, and source strings were inspected before writing. No application, compile, typecheck, tests, CI, browser, or screenshot visual comparison was run; this is a source parity pass, not pixel-level certification. Remaining unswept, independently implemented learner placements/deep-detail flows and cross-portal screenshot regression checks should be handled in follow-on batches.

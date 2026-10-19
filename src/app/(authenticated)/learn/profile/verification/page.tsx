@@ -20,7 +20,7 @@ export default async function LearnerVerificationPage() {
     SENT_BACK: "Needs a change", VERIFIED: "Verified", UPDATE_PENDING: "Verified · update waiting",
   } as const;
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/profile" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Profile</Link>
+    <Link href="/learn/profile" className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Profile</Link>
     <LearnerVerificationLiveRefresh />
     <header><h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Profile verification</h1>
       <p className="mt-2 text-sm text-body">Your own Education and Identity review status. A saved detail does not mean it is verified.</p>
@@ -74,7 +74,7 @@ export default async function LearnerVerificationPage() {
           key={item.section+":"+row.version} section={item.section}
           expectedVersion={row.version}/> : null}
         {row.canResubmit ? <LearnerVerificationSubmit key={item.section+":"+row.version} section={item.section as "EDUCATION"|"IDENTITY"} expectedVersion={row.version} status={row.status} /> : null}
-        <Link href={item.edit} className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review {item.heading.toLowerCase()} details</Link>
+        <Link href={item.edit} className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review {item.heading.toLowerCase()} details</Link>
       </section>;
     })}</div>
   </div>;

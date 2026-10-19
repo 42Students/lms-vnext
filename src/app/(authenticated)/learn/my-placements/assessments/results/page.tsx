@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -49,7 +51,7 @@ export default async function LearnerAssessmentResultsPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href="/learn/my-placements/assessments"
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Assessment schedule
       </Link>
       <PageHeader
@@ -62,15 +64,15 @@ export default async function LearnerAssessmentResultsPage({
         {view!=="all" ? <input type="hidden" name="view" value={view}/> : null}
         <label className="min-w-0 flex-1 text-xs font-semibold text-body">
           Search published results
-          <input type="search" name="q" defaultValue={q} maxLength={100}
+          <Input type="search" name="q" defaultValue={q} maxLength={100}
             placeholder="Company, role or round"
-            className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+            className="mt-1 min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">
+        <Button type="submit" variant="primary">
           Search
-        </button>
+        </Button>
         {q?<Link href={href(view,1,"")}
-          className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
+          className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
       </form>
       <p role="status" className="text-sm text-body">
         Showing {paged.items.length} of {paged.total} matching published assessment outcomes.
@@ -87,7 +89,7 @@ export default async function LearnerAssessmentResultsPage({
           </p>
           {results.counts.all > 0 ? (
             <Link href="/learn/my-placements/assessments/results"
-              className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               View all official results →
             </Link>
           ) : null}
@@ -134,7 +136,7 @@ export default async function LearnerAssessmentResultsPage({
               <div className="mt-4 flex flex-wrap gap-4">
                 <Link href={"/learn/my-placements/applications?applicationId=" +
                   encodeURIComponent(item.applicationId)}
-                  className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+                  className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
                   View application →
                 </Link>
               </div>
@@ -145,12 +147,12 @@ export default async function LearnerAssessmentResultsPage({
       {paged.pages>1?<nav aria-label="Assessment results pagination"
         className="flex flex-wrap items-center justify-between gap-3">
         {paged.page>1?<Link href={href(view,paged.page-1)}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
           Previous
         </Link>:<span/>}
         <span className="text-sm tabular-nums text-body">Page {paged.page} of {paged.pages}</span>
         {paged.page<paged.pages?<Link href={href(view,paged.page+1)}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
           Next
         </Link>:<span/>}
       </nav>:null}

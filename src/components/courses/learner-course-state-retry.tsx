@@ -5,7 +5,7 @@ import {useRouter} from "next/navigation";
 export function LearnerCourseStateRetry(){
  const router=useRouter();
  return <Button type="button" variant="secondary" onClick={()=>router.refresh()}
-  className="mt-3 min-h-11">
+  className="mt-3 min-h-9">
   Retry state
  </Button>;
 }

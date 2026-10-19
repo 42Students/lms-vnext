@@ -236,11 +236,11 @@ export default async function LearnerPlacementsPage({
 
       <div className="flex flex-wrap gap-3">
         <Link href="/learn/my-placements/preparation"
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
           Placement preparation checklist →
         </Link>
         <Link href="/learn/my-placements/notification-preferences"
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
           Placement notification choices →
         </Link>
       </div>
@@ -252,22 +252,22 @@ export default async function LearnerPlacementsPage({
           {debarRead.value.untilDate?" Until "+debarRead.value.untilDate+" (college local date).":""}
           {debarRead.value.remainingDrives!==null?" "+debarRead.value.remainingDrives+" drive(s) remain in the recorded count.":""}
         </p>
-        <Link href="/learn/my-placements/support" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">
+        <Link href="/learn/my-placements/support" className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">
           Think this is wrong? Tell the placement cell
         </Link>
       </section>:null}
       {registrationRead.status==="fulfilled"?<LearnerPlacementRegistration registration={registrationRead.value}/>:(
-        <section role="alert" aria-label="Placement registration" className="rounded-xl border border-border bg-surface p-4">
+        <section role="alert" aria-label="Placement registration" className="border-l-2 border-warning bg-warning-subtle px-4 py-3">
           <h2 className="font-semibold text-foreground">Registration</h2>
           <p className="mt-2 text-sm text-body">Your batch registration status is temporarily unavailable. No registration choice has been assumed.</p>
-          <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-primary-text underline">Retry registration</Link>
+          <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center text-primary-text underline">Retry registration</Link>
         </section>
       )}
       <section aria-labelledby="learner-placement-verification"
         className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="learner-placement-verification" className="text-base font-semibold text-foreground">Profile verification</h2>
-          <Link href="/learn/profile/verification" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">
+          <Link href="/learn/profile/verification" className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">
             Review education and identity verification →
           </Link>
         </div>
@@ -279,7 +279,7 @@ export default async function LearnerPlacementsPage({
           <div className="mt-2 flex flex-wrap gap-3">
             {verificationCue.editHrefs.map(link=>(
               <Link key={link.href} href={link.href}
-                className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+                className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
                 {link.label} →
               </Link>
             ))}
@@ -295,9 +295,9 @@ export default async function LearnerPlacementsPage({
           <h2 id="learner-college-notice-preview" className="text-base font-semibold text-foreground">Latest from the placement cell</h2>
           <div className="flex flex-wrap gap-3">
             <Link href="/learn/my-placements/announcements"
-              className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">View all visible notices →</Link>
+              className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">View all visible notices →</Link>
             <Link href="/learn/my-placements/announcements?source=placement-cell"
-              className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">From placement cell →</Link>
+              className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">From placement cell →</Link>
           </div>
         </div>
         <p className="mt-1 text-xs text-muted-foreground">These are notices visible to your college membership, not necessarily placement-cell announcements.</p>
@@ -306,7 +306,7 @@ export default async function LearnerPlacementsPage({
           : collegeNotices.length===0 ? <p className="mt-3 text-sm text-body">No notices yet.</p>
           : <ul className="mt-3 space-y-2">{collegeNotices.map(notice=><li key={notice.id} className="rounded-lg border border-border px-3 py-2">
               {learnerNoticeHref(notice.id) ? (
-                <Link href={learnerNoticeHref(notice.id)!} className="inline-flex min-h-11 sm:min-h-9 items-center break-words text-sm font-semibold text-primary-text underline">
+                <Link href={learnerNoticeHref(notice.id)!} className="inline-flex min-h-9 sm:min-h-9 items-center break-words text-sm font-semibold text-primary-text underline">
                   {notice.title} →
                 </Link>
               ) : <p className="break-words text-sm font-semibold text-foreground">{notice.title}</p>}
@@ -325,12 +325,12 @@ export default async function LearnerPlacementsPage({
                 <p className="font-semibold text-foreground">{alert.title}{alert.unread?" · Unread":""}</p>
                 <p className="mt-1 line-clamp-2">{alert.body}</p>
                  <time className="mt-1 block text-xs text-muted-foreground" dateTime={alert.createdAt.toISOString()}>{learnerNoticeRelativeDay(alert.createdAt,new Date())}</time>
-                {alert.actionHref?<Link href={alert.actionHref} className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Open update →</Link>:null}
+                {alert.actionHref?<Link href={alert.actionHref} className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">Open update →</Link>:null}
               </li>
             ))}
           </ul>}
           <Link href="/learn/my-placements/announcements#personal-updates"
-            className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all personal updates →</Link>
+            className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all personal updates →</Link>
         </div>
       </section>
       <LearnerPlacementPartialAlert missing={display.failed} />

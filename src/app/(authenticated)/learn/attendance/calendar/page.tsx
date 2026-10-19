@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -67,37 +70,37 @@ export default async function LearnerAttendanceCalendarPage({
 
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+      actions={<Link href={sourceLink} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
         Attendance detail
       </Link>} />
     <form action="/learn/attendance/calendar" method="get"
       className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Month
-        <input name="month" type="month" defaultValue={data.query.month}
-          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+        <Input name="month" type="month" defaultValue={data.query.month}
+          className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course
-        <select name="deliveryId" defaultValue={data.query.deliveryId}
-          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+        <Select name="deliveryId" defaultValue={data.query.deliveryId}
+          className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All accessible Courses</option>
           {data.courses.map(course=>
             <option key={course.deliveryId} value={course.deliveryId}>
               {course.courseCode} · {course.courseName}
             </option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <select name="status" defaultValue={data.query.status}
-          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+        <Select name="status" defaultValue={data.query.status}
+          className="min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All status types</option>
           {Object.entries(statusNames).map(([value,label])=>
             <option key={value} value={value}>{label}</option>)}
-        </select>
+        </Select>
       </label>
       <div className="flex flex-wrap items-center gap-3 sm:col-span-3">
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">
+        <Button variant="primary" type="submit">
           Apply filters
-        </button>
+        </Button>
         <Link href="/learn/attendance/calendar"
           className="text-sm font-semibold text-primary-text">Clear</Link>
       </div>
@@ -122,10 +125,10 @@ export default async function LearnerAttendanceCalendarPage({
     <section aria-label={monthLabel+" attendance calendar"} className="rounded-xl border border-border bg-surface p-3 sm:p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <Link href={previous} aria-label="Previous month"
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">← Previous</Link>
+          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">← Previous</Link>
         <h2 className="text-lg font-semibold text-foreground">{monthLabel}</h2>
         <Link href={next} aria-label="Next month"
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Next →</Link>
+          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Next →</Link>
       </div>
       <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-muted-foreground sm:gap-2">
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day=>
@@ -175,7 +178,7 @@ export default async function LearnerAttendanceCalendarPage({
             <Link href={"/learn/attendance?"+new URLSearchParams({
               month:data.query.month,deliveryId:row.deliveryId,
             }).toString()}
-              className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               View Course attendance →
             </Link>
           </li>)}
