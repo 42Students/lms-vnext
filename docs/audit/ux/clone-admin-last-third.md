@@ -162,3 +162,7 @@ All changes below are committed on `chatgpt/chat-10-b`. **None is ticked complet
 - [ ] Finish line-by-line review of `src/app/(authenticated)/admin/placements/analytics/page.tsx` (report funnel, export bar, scoped error and responsive states), then `src/app/(authenticated)/admin/placements/applications/page.tsx`.
 - [ ] Review shared Projects helpers whose `eyebrow` is passed via component props (e.g. `src/components/projects/project-admin-submissions-page.tsx:44-64`), which the route PageHeader codemod deliberately does not touch.
 - [ ] Repeat repo-wide grep coverage and compute responsive snapshots when the orchestrator runs code; only then mark a STRICT TICK item complete.
+
+
+### Additional scoped codemod
+- `scripts/codemods/chat10-project-helper-eyebrows.cjs` targets 6 admin/college-owned Projects helpers (`project-admin-{at-risk,audit,readiness,reassign-mentor,submissions}-page.tsx` and `super-admin-template-subview-page.tsx`). These have repeated `PageHeader eyebrow` overrides; 4 also destructure an `eyebrow` prop solely to forward it to PageHeader. The codemod strips JSX eyebrow attributes and removes unused binding entries while retaining typed props for existing callers. Run `node scripts/codemods/chat10-project-helper-eyebrows.cjs --write` when scripts may be executed. Not yet run or ticked; review generated files and repeat syntax, grep and responsive proofs first.
