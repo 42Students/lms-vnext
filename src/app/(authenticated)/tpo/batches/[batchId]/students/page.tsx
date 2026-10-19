@@ -74,7 +74,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   <p className="text-xs text-muted-foreground">Invited is a lifecycle event, not a trustworthy per-student delivery count. Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
  </section>
  {!finished&&journey.undecided!==null&&journey.undecided>0?
- <aside aria-label="Suggested placement action" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm">
+ <aside aria-label="Suggested placement action" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
    <strong>Suggested: make them eligible</strong>
    <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
    <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
