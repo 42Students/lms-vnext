@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { PageHeader } from "@/components/ui/page-header";
@@ -21,7 +22,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  const rawPage=Array.isArray(search.page)?search.page[0]:search.page;
  const parsed=parseCompanyShareAuditQuery({kind:rawKind,page:rawPage});
  const back="/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview";
- if(!parsed.success)return <section role="alert" className="space-y-3 border-b border-border py-5">
+ if(!parsed.success)return <section role="alert" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
   <PageHeader title="Invalid share-audit filters" />
   <p className="text-sm text-body">Choose a valid event kind and page number. No access history was loaded.</p>
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Clear filters</Link>
