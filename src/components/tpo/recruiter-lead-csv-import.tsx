@@ -260,7 +260,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                 ).then(()=>setCopyNotice("Non-created rows copied."),()=>setCopyNotice("Could not copy these results."))}>
                   Copy rows not imported
                 </Button>
-                {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
+                {copyNotice?<p role="status" aria-live="polite" className="text-xs text-body">{copyNotice}</p>:null}
                 <h3 className="font-semibold text-foreground">Import results</h3>
                 <p className="text-sm text-body">
                   {result.counts.created} created, {result.counts.duplicate} duplicate,
