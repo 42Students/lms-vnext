@@ -232,8 +232,9 @@ export function LearnerCourseList({
           ) : null}
         </div>
 
-        <div className="mt-[8px] flex flex-wrap items-end gap-[8px]">
-          <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
+        <Disclosure title="More filters" className="mt-3 border-t border-border" contentClassName="pt-3">
+          <div className="flex flex-wrap items-end gap-2">
+          <label className="grid min-w-0 w-full gap-1 text-xs font-semibold text-body sm:w-44">
             Term access
             <Select value={termState} onChange={e=>{setTermState(e.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}
               className="min-h-[var(--lms-control-height)] max-md:min-h-11">
@@ -242,7 +243,7 @@ export function LearnerCourseList({
               <option value="HISTORY">Past semester (read-only)</option>
             </Select>
           </label>
-          <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-0 w-full gap-1 text-xs font-semibold text-body sm:w-44">
             Learning progress
             <Select value={progressFilter} onChange={event=>{setProgressFilter(event.target.value as LearnerCourseProgressFilter);setVisibleLimit(PAGE_SIZE);}}
               className="min-h-[var(--lms-control-height)] max-md:min-h-11">
@@ -253,7 +254,7 @@ export function LearnerCourseList({
               <option value="UNMEASURED">No tracked items</option>
             </Select>
           </label>
-          <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-0 w-full gap-1 text-xs font-semibold text-body sm:w-44">
             Sort Courses
             <Select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setVisibleLimit(PAGE_SIZE);}}
               className="min-h-[var(--lms-control-height)] max-md:min-h-11">
@@ -267,7 +268,8 @@ export function LearnerCourseList({
             className="min-h-[var(--lms-control-height)] max-md:min-h-11">
             Continue learning only
           </FilterChip>
-        </div>
+          </div>
+        </Disclosure>
         {learnerCourseHasActiveFilters({query,typeFilter:effectiveTypeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
           <Button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
             variant="secondary" className="mt-3 min-h-[var(--lms-control-height)] max-md:min-h-11">
@@ -299,7 +301,8 @@ export function LearnerCourseList({
             <Badge tone="neutral">Credits not recorded</Badge>
           ) : null}
         </div>
-        <div className="mt-3 flex flex-wrap gap-2 text-xs">
+        <Disclosure title="Semester information" className="mt-3 border-t border-border" contentClassName="pt-2">
+          <div className="flex flex-wrap gap-2 text-xs">
           <Disclosure title="Semester Details" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 [&>summary]:px-0">
             <dl className="mt-2 space-y-1 text-body">
               <div>Program: {periodRows[0]?.course.programName??"Not recorded"}</div>
@@ -325,7 +328,8 @@ export function LearnerCourseList({
             {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for the full credits breakdown.</p>:null}
             <p className="mt-2 font-semibold">Total {creditSummary.credits} Credits</p>
           </Disclosure>:null}
-        </div>
+          </div>
+        </Disclosure>
       </section>
 
       {rows.some(row => row.unavailable) ? (
@@ -356,7 +360,7 @@ export function LearnerCourseList({
 
               if (row.unavailable) return (
                 <article key={row.course.deliveryId} aria-disabled="true"
-                  className="min-h-72 rounded-xl border border-warning bg-surface p-5">
+                  className="rounded-xl border border-warning bg-surface p-4 sm:p-5">
                   <StatusBadge tone="warning">Unavailable</StatusBadge>
                   <h2 className="mt-3 text-lg font-semibold text-foreground">{row.unavailableLabel}</h2>
                   <p className="mt-2 text-sm text-body">{row.course.courseName || "Course name unavailable"}</p>
@@ -393,10 +397,10 @@ export function LearnerCourseList({
                     </div>
 
                     <div className="flex flex-1 flex-col p-5">
-                      <h2 className="m-0 line-clamp-2 text-lg font-semibold text-foreground">
+                      <h2 className="m-0 line-clamp-2 break-words text-lg font-semibold text-foreground">
                         {row.course.courseName}
                       </h2>
-                      <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-body">
+                      <p className="mt-2 line-clamp-2 break-words text-sm leading-5 text-body">
                         {row.course.courseDescription ??
                           "No course description provided."}
                       </p>
@@ -471,13 +475,13 @@ export function LearnerCourseList({
                           readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
                           nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
                         })!}
-                        className="mt-2 flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-warning px-3 text-sm font-semibold text-foreground transition-colors hover:bg-warning-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                        className="mt-2 inline-flex min-h-11 w-full items-center justify-center break-words px-3 text-center text-sm font-semibold text-warning underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                         Open overdue assignment: {row.firstOverdue.title}
                       </Link>
                     ) : null}
                     {learnerCourseNextItemHref(row) ? (
                       <Link href={learnerCourseNextItemHref(row)!}
-                        className="mt-2 flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                        className="mt-2 flex min-h-11 w-full items-center justify-center break-words rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-center text-sm font-semibold text-primary-text transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                         Continue at next learning item →
                       </Link>
                     ) : null}
