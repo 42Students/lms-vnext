@@ -352,7 +352,7 @@ export function LearnerQuizAttempt() {
         <Alert tone="error" className="mt-2">{error}</Alert>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button onClick={() => void load()} className="min-h-11 md:min-h-9">Try Again</Button>
-          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover md:min-h-9">All Quizzes</Link>
+          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">All Quizzes</Link>
         </div>
       </div>
     );
@@ -393,19 +393,19 @@ export function LearnerQuizAttempt() {
         ) : null}
         {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
         {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt)) ? (
-          <div role="status" className="mt-6 rounded-xl border border-border bg-surface-subtle p-5">
+          <Alert tone="info" className="mt-6">
             <p className="text-sm text-body">{learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))}</p>
             <Link href="/learn/allQuizzes" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
               Return to All Quizzes
             </Link>
-          </div>
+          </Alert>
         ) : null}
         <div className="mt-6 space-y-4">
           {questions.map((question, index) => {
             const submitted = answerMap.get(question.id);
             const selected = new Set(submitted?.selectedOptionIds ?? []);
             return (
-              <article key={question.id} className="rounded-xl border border-border bg-surface-subtle p-4">
+              <article key={question.id} className="border-b border-[var(--lms-canvas-border)] bg-transparent py-[var(--lms-space-4)]">
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="m-0 text-sm font-semibold text-foreground">Question {index + 1}. {question.prompt}</h2>
                   <span className="shrink-0 text-xs font-semibold text-muted-foreground">{question.points} pts</span>
@@ -415,7 +415,7 @@ export function LearnerQuizAttempt() {
                     const isSelected = selected.has(option.id);
                     const correct = canReviewLearnerQuizCorrectAnswers(quiz.quiz.resultsPublished,latestAttempt?.resultsVisible === true) && option.correct === true;
                     return (
-                      <div key={option.id} className="flex flex-wrap items-start gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm">
+                      <div key={option.id} className="flex flex-wrap items-start gap-2 border-b border-[var(--lms-canvas-border)] bg-transparent px-3 py-2 text-sm last:border-b-0">
                         <span aria-hidden="true">{correct ? "✓" : isSelected ? "•" : "○"}</span>
                         <span className="min-w-0 flex-1 break-words text-body">{option.text}</span>
                         {isSelected ? <StatusBadge tone="info">Your answer</StatusBadge> : null}
@@ -492,7 +492,7 @@ export function LearnerQuizAttempt() {
           </div>
         </aside>
 
-        <div className="p-4 md:p-7">
+        <div className="p-4 min-[768px]:p-[var(--lms-canvas-padding)]">
           {current ? (
             <>
               <div className="flex items-start justify-between gap-4">
@@ -507,7 +507,7 @@ export function LearnerQuizAttempt() {
                   const checked = (answers[current.id] ?? []).includes(option.id);
                   const ChoiceControl = current.type === "MULTIPLE_CHOICE" ? Checkbox : Radio;
                   return (
-                    <label key={option.id} className="flex min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 transition-colors duration-[var(--lms-motion-fast)] hover:border-primary focus-within:border-primary focus-within:ring-2 focus-within:ring-[var(--lms-focus-ring)] motion-reduce:transition-none">
+                    <label key={option.id} className="flex min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-form-bg)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:border-primary focus-within:border-primary focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none">
                       <ChoiceControl
                         name={current.id}
                         checked={checked}
@@ -535,7 +535,7 @@ export function LearnerQuizAttempt() {
               {showReview ? "Hide answer review" : "Review answers before submitting"}
             </Button>
             {showReview ? (
-              <section aria-label="Your quiz answer review" className="mt-3 rounded-xl border border-border bg-surface-subtle p-4">
+              <section aria-label="Your quiz answer review" className="mt-3 border-y border-[var(--lms-canvas-border)] bg-transparent py-[var(--lms-space-4)]">
                 <p className="text-sm text-body">Review your responses. These are not grading results.</p>
                 <ol className="mt-3 grid gap-2 md:grid-cols-2">
                   {reviewRows.map((item,index)=>(
