@@ -49,13 +49,13 @@ export default async function SuperAdminProjectsPage({
   if (!collegeId) {
     return (
       <div className="min-w-0 space-y-6">
-        <ProjectAdminNav
-          basePath="/admin/projects"
-          active="workspaces"
-        />
         <PageHeader
           title="Project workspaces"
           description="Live projects, each run by a mentor with a team of students."
+        />
+        <ProjectAdminNav
+          basePath="/admin/projects"
+          active="workspaces"
         />
         <EmptyState
           title="No college selected"
@@ -113,9 +113,9 @@ export default async function SuperAdminProjectsPage({
     if (query.pageSize) retryParams.set("pageSize", String(query.pageSize));
     const suffix = retryParams.toString();
     return <div className="min-w-0 space-y-6">
-      <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
       <PageHeader title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students." />
+      <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
       <ErrorState title="Project workspaces unavailable"
         description="The workspace list could not be loaded. Your search and filters were not changed."
         action={<Link href={"/admin/projects"+(suffix?"?"+suffix:"")}
@@ -128,10 +128,6 @@ export default async function SuperAdminProjectsPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <ProjectAdminNav
-        basePath="/admin/projects"
-        active="workspaces"
-      />
       <PageHeader
         title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
@@ -152,6 +148,7 @@ export default async function SuperAdminProjectsPage({
           </div>
         }
       />
+      <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
 
       {!templatesResult.ok ? <Banner tone="warning">
         Project templates are temporarily unavailable. Your workspaces are still visible; refresh to try again.
