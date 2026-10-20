@@ -82,7 +82,7 @@ export function NotificationList({
 
   if (items.length === 0) {
     return (
-      <div className="border-y border-border bg-transparent px-6 py-12 text-center">
+      <div className="border-y border-[var(--lms-canvas-border)] bg-transparent px-6 py-12 text-center">
         <p className="m-0 font-semibold text-foreground">{emptyText}</p>
         <p className="mt-2 text-sm text-muted-foreground">
           Workflow notifications and announcements appear when their producers publish them.
@@ -95,7 +95,7 @@ export function NotificationList({
     <div className="space-y-5">
       {groupNotificationsByDate(items, groupingNow).map((group) => (
         <section key={group.label} aria-label={group.label} className="space-y-2">
-          <h2 className="text-sm font-semibold text-muted-foreground">{group.label}</h2>
+          <h2 className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{group.label}</h2>
           {group.items.map((item) => (
             variant==="tpo"?<Button variant="ghost" type="button" key={item.id} disabled={pendingId!==null}
               onClick={()=>{
