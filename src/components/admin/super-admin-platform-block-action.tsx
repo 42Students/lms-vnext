@@ -33,9 +33,9 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
   finally{lock.current=false;setPending(false);}
  }
  return <section aria-label="Platform account control" className="border-b border-border pb-5">
-  <h2 className="font-semibold">Platform-wide account access</h2>
+  <h2 className="font-semibold text-foreground">Platform-wide account access</h2>
   <p className="mt-1 text-sm text-body">Unlike college suspension, a platform block prevents login across every college. This action requires an audit reason.</p>
-  <label className="mt-3 grid gap-1 text-sm font-semibold text-body">Reason
+  <label className="mt-3 grid gap-1 text-[13px] font-semibold text-body">Reason
    <Textarea value={reason} maxLength={1000} rows={2} disabled={pending}
     onChange={event=>setReason(event.target.value)} className="w-full"/>
   </label>
