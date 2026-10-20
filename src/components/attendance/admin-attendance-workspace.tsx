@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
+import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -320,7 +321,7 @@ export function AdminAttendanceWorkspace({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
       {notice?<Alert tone="info">{notice}</Alert>:null}
 
       <form
@@ -387,14 +388,14 @@ export function AdminAttendanceWorkspace({
           />
           Show all college courses (including courses not taught to this class)
         </label>
-        <div className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-2)] md:col-span-2 xl:col-span-3">
+        <div className="grid min-w-0 grid-cols-2 items-center gap-[var(--lms-space-2)] md:col-span-2 md:flex md:flex-wrap md:justify-between xl:col-span-3">
           <Button size="sm" variant="secondary"
             aria-label="Previous month"
             onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
             Previous
           </Button>
           <span className="min-w-32 text-center text-sm font-semibold text-body" aria-live="polite">{attendanceMonthLabel(data.month)}</span>
-          <Input className="max-w-40" type="month" aria-label="Attendance month"
+          <Input className="min-w-0 w-full md:max-w-40" type="month" aria-label="Attendance month"
             value={data.month}
             onChange={(event) => {
               if (event.target.value) navigate(event.target.value);
@@ -406,33 +407,6 @@ export function AdminAttendanceWorkspace({
           </Button>
         </div>
       </form>
-
-      <section className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
-        <div className="border-b border-border pb-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-            Retroactive marking window
-          </p>
-          <p className="mt-2 text-2xl font-semibold text-foreground">
-            {data.policy.correctionWindowHours} hours
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Read-only Faculty marking window. College Admin corrections may also be made outside this window.
-          </p>
-        </div>
-        <div className="border-b border-border pb-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-            Minimum attendance
-          </p>
-          <p className="mt-2 text-2xl font-semibold text-foreground">
-            {data.policy.eligibilityThresholdPercent}%
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Learners below this marked-session percentage are highlighted.
-          </p>
-        </div>
-      </section>
-
-      <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
 
       {data.deliveries.length === 0 ? (
         <EmptyState
@@ -615,6 +589,32 @@ export function AdminAttendanceWorkspace({
         </>
       )}
 
+      <Disclosure title="Retroactive marking window" className="min-w-0" contentClassName="min-w-0 pb-[var(--lms-space-4)]">
+      <section className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+        <div className="border-b border-border pb-4">
+          <p className="mt-2 text-2xl font-semibold text-foreground">
+            {data.policy.correctionWindowHours} hours
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Read-only Faculty marking window. College Admin corrections may also be made outside this window.
+          </p>
+        </div>
+        <div className="border-b border-border pb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            Minimum attendance
+          </p>
+          <p className="mt-2 text-2xl font-semibold text-foreground">
+            {data.policy.eligibilityThresholdPercent}%
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Learners below this marked-session percentage are highlighted.
+          </p>
+        </div>
+      </section>
+
+      </Disclosure>
+      <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
+
       <Drawer
         open={Boolean(target)}
         onOpenChange={(open) => {
@@ -639,7 +639,7 @@ export function AdminAttendanceWorkspace({
         }
         footer={
           target ? (
-            <div className="flex w-full flex-wrap justify-end gap-2">
+            <div className="grid w-full min-w-0 grid-cols-2 gap-[var(--lms-space-2)] sm:flex sm:flex-wrap sm:justify-end [&>button]:min-h-11 sm:[&>button]:min-h-[var(--lms-control-height)]">
               {(
                 [
                   "PRESENT",
@@ -749,7 +749,7 @@ export function AdminAttendanceWorkspace({
               <Button
                 key={session.id}
                 variant="secondary"
-                className="w-full justify-between"
+                className="w-full min-w-0 justify-between gap-[var(--lms-space-2)] text-left whitespace-normal break-words"
                 onClick={() => {
                   setTarget({ learner: chooser.learner, session, record });
                   setChooser(null);
