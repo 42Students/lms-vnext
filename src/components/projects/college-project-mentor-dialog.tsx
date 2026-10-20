@@ -4,6 +4,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
+import {Banner} from "@/components/ui/banner";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {useToast} from "@/components/ui/toast";
@@ -88,7 +89,7 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
      <Input value={roleLabel} onChange={e=>setRoleLabel(e.target.value)} maxLength={120} placeholder="Project Mentor"/>
     </label>
     <p className="text-sm text-body">The previous primary mentor will be replaced. Co-mentors remain assigned. Scheduled meetings and task assignments may change.</p>
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+    {error?<Banner tone="error">{error}</Banner>:null}
     <div className="flex justify-end gap-2">
      <Button type="button" variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
      <Button type="button" disabled={!mentorId||busy||searching} onClick={()=>void reassign()}>
