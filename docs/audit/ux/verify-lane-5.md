@@ -125,3 +125,17 @@
 - Extra clutter/alignment fixes (2): editor controls now share a readable 3xl width without consuming entire desktop canvas, and Save details uses the shared Button loading dots while pending. Summary/status/update action remain above deep notes, source metadata, history and fix commits in separate keyboard disclosures.
 - Read full route, IndependentFindingActions six mutation/confirm/error branches, IndependentFindingCopyAction, TrackerAdminNav and status model, shared Input/Select/Textarea/ConfirmDialog/PageHeader/BackLink/StatusBadge, finding loading/error and authenticated parent layout. Checked prior `polish-lane-15.md`; local not-found/template/layout absent. 375/768 source review; no execution/CI.
 - Files changed: `src/components/tracker/independent-finding-actions.tsx`, queue and evidence.
+
+## Surface 19 — Independent audit findings list
+- Surface: `src/app/(authenticated)/tracker/audit-findings/page.tsx`.
+- Regressions fixed: 0. Verified Super Admin scope/permission gates, Zod view/status/severity/kind filters, native advanced disclosure opens when active, search/clear, mobile DataTable and authorized finding links, 50-row pagination, importer-state recovery and refused-file diagnostics disclosure. Names, ids, filters, links and badges unchanged.
+- Extra clutter/alignment fixes: 0. Existing 375px full-width submit and 768px paired controls, compact chips, hairline table and hidden low-priority importer panel remain usable.
+- Read full route, AuditFindingFilterMemory, TrackerAdminNav, DataTable/ScrollCue/Disclosure, NeedsDoingChips, Pagination, Tabs, Input/Select/Banner/EmptyState/ErrorState, loading/error, parent authenticated shell, and `polish-lane-15.md` evidence. Local template/not-found/layout absent. Verified with source inspection only.
+- Files changed: queue and evidence.
+
+## Surface 20 — Tracker issue detail
+- Surface: `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`.
+- Regressions fixed: 0. Status/issue identity and bounded description lead, Report context and sharing are disclosed, workflow editor/version guards and retest controls stay intact; private screenshots and activity cursors still open through scoped routes.
+- Extra clutter/alignment fixes (4): nearby logs loader now uses shared dotted loading state and a full-width 44px phone button; long log events/messages/paths wrap within mobile view instead of overflowing; message newlines retained and errors bounded, without changing API, log filter routes, issue data or copy.
+- Read issue page, complete TrackerWorkflowPanel, TrackerIssueLogsPanel, TrackerIssueCopyActions, TrackerAdminNav, PageHeader, StatusBadge, ThirdPartyLink, workflow model, loading/error and authenticated layout, and prior `polish-lane-15.md` entry. No local template/not-found/layout; 375px and 768px source-only review, no tests/CI.
+- Files changed: `src/components/tracker/tracker-issue-logs-panel.tsx`, queue, proof.
