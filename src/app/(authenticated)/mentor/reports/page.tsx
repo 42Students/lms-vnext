@@ -51,7 +51,7 @@ export default async function MentorReportsPage({searchParams}:{
     </section>:<>
       <section aria-label="Project status totals" className="space-y-3">
         <h2 className="font-semibold">Registered project status</h2>
-        <div className="grid gap-x-4 gap-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4">
+        <div className="grid gap-x-4 gap-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4">
           {statusMetrics.map(([label,count])=>
             <article key={label} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
               <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
@@ -65,7 +65,7 @@ export default async function MentorReportsPage({searchParams}:{
       </section>
       <section aria-label="Recorded attention totals" className="space-y-3">
         <h2 className="font-semibold">Recorded project attention</h2>
-        <div className="grid gap-x-4 gap-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4">
+        <div className="grid gap-x-4 gap-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4">
           {attentionMetrics.map(([label,count])=>
             <article key={label} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
               <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
@@ -78,7 +78,7 @@ export default async function MentorReportsPage({searchParams}:{
         </p>
       </section>
       <FilterBar title="Filters"><form method="get" action="/mentor/reports"
-        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+        className="flex flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch border-b border-border pb-4 max-[767px]:[&_label]:w-full">
         <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
@@ -150,7 +150,7 @@ export default async function MentorReportsPage({searchParams}:{
           "No current Mentor assignments are registered for this membership.":
           "Clear filters to see the other currently assigned project records."}/>:
         <ol className="grid gap-3 md:grid-cols-2">{data.items.map(project=>
-          <li key={project.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+          <li key={project.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="break-words font-semibold text-foreground">{project.title}</h3>
               <span className="text-xs font-semibold text-muted-foreground">{project.status}</span>

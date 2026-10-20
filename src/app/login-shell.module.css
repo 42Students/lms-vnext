@@ -103,7 +103,7 @@
   min-width: 0;
   padding: 40px 42px 38px;
   border: 1px solid var(--auth-border);
-  border-radius: 14px;
+  border-radius: var(--lms-canvas-radius, 12px);
   background: var(--lms-surface, #fff);
   box-shadow: 0 18px 48px rgba(23, 32, 51, .07), 0 3px 10px rgba(23, 32, 51, .025);
 }

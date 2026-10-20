@@ -41,7 +41,7 @@ export default async function TpoScheduleConflictsPage({
           title="Invalid scheduling window"
           description="Only a window of 1–90 days is supported." />
         <Link href="/tpo/placements/schedule-conflicts"
-          className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">Reset window</Link>
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Reset window</Link>
       </div>
     );
   }
@@ -50,7 +50,7 @@ export default async function TpoScheduleConflictsPage({
   return (
     <div className="space-y-6">
       <Link href="/tpo/placements"
-        className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         ← Placement operations
       </Link>
       <PageHeader
@@ -58,7 +58,7 @@ export default async function TpoScheduleConflictsPage({
         title="Round venue conflicts"
         description="Potential same-venue overlaps in scheduled rounds of published drives. This is not a student timetable conflict detector."
       />
-      <form method="get" className="flex flex-wrap items-end gap-3">
+      <form method="get" className="flex flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
         <label className="text-sm font-semibold text-foreground">
           Upcoming window
           <Select name="days" defaultValue={String(data.days)}
@@ -95,7 +95,7 @@ export default async function TpoScheduleConflictsPage({
         count here. Missing venue, mode or duration cannot be considered conflict-free.
       </p>
       <section className="overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-        <div className="border-b border-border p-5">
+        <div className="border-b border-border p-4 md:p-6">
           <h2 className="text-lg font-semibold text-foreground">Confirmed venue/time overlaps</h2>
         </div>
         {data.conflicts.length === 0 ? (
@@ -103,7 +103,7 @@ export default async function TpoScheduleConflictsPage({
         ) : (
           <div className="divide-y divide-border">
             {data.conflicts.map(({ left, right, overlapMinutes }) => (
-              <article key={left.id + ":" + right.id} className="space-y-2 p-5">
+              <article key={left.id + ":" + right.id} className="space-y-2 p-4 md:p-6">
                 <p className="text-sm font-semibold text-foreground">
                   {left.venue} · {overlapMinutes} minute(s) overlap
                 </p>
@@ -122,7 +122,7 @@ export default async function TpoScheduleConflictsPage({
         )}
       </section>
       <section className="overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-        <div className="border-b border-border p-5">
+        <div className="border-b border-border p-4 md:p-6">
           <h2 className="text-lg font-semibold text-foreground">Cannot fully assess</h2>
         </div>
         {data.unassessable.length === 0 ? (

@@ -83,7 +83,7 @@ export default async function TpoPlacementRulesSettingsPage({
   const selectedPage = parseTpoRulesPageParams(params);
   if (selectedPage === null) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <TpoSettingsNav active="rules" />
         <PageHeader title="Placement rules" />
         <ErrorState
@@ -91,7 +91,7 @@ export default async function TpoPlacementRulesSettingsPage({
           description="The requested job page is invalid. No placement job records were loaded."
           action={
             <Link href="/tpo/settings/rules"
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Clear filters
             </Link>
           }
@@ -106,7 +106,7 @@ export default async function TpoPlacementRulesSettingsPage({
   const rulesVersion = (await getCollegePlacementRules(context, context.membership.collegeId)).version;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <TpoSettingsNav active="rules" />
 
       <section className="space-y-2">
