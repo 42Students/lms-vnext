@@ -12,7 +12,7 @@ export default function SuperAdminSettingsError({
   return (
     <section
       role="alert"
-      className="space-y-3"
+      className="min-w-0 space-y-4"
     >
       <PageHeader title={"Unable to load platform settings"} />
       <p className="mt-2 text-sm leading-6 text-body">
@@ -21,7 +21,7 @@ export default function SuperAdminSettingsError({
         Review your selected college scope or retry.
       </p>
       <Button
-        className="mt-5"
+        className="mt-4 min-h-11 w-full sm:min-h-9 sm:w-auto"
         onClick={reset}
       >
         Retry
