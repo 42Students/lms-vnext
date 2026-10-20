@@ -20,12 +20,15 @@ export function TpoDriveCloneAction({jobId,label="Run it again"}:{jobId:string;l
   try{
    setError(null);
    await run(async()=>{
-    const copy=await apiFetch<{jobId?:string}>(
+    const copy=await apiFetch<{jobId?:string;status?:string;sourceJobId?:string}>(
      "/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/clone",{
        method:"POST",headers:{"content-type":"application/json"},credentials:"same-origin",
        body:JSON.stringify({confirmed:true}),
      });
-    if(!copy.jobId)throw new Error("A draft may have been created. Check your drives before trying again.");
+    if(typeof copy?.jobId!=="string" ||
+       !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(copy.jobId) ||
+       copy.sourceJobId!==jobId || copy.status!=="DRAFT")
+       throw new Error("A draft may have been created. Check your drives before trying again.");
     setOpen(false);
     router.push("/tpo/placements/jobs/"+encodeURIComponent(copy.jobId));
     router.refresh();
