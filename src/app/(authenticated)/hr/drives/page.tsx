@@ -187,7 +187,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         const editable=req.status==="REQUEST"||req.status==="SENT_BACK";
         return <li key={req.id} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <p className="font-semibold text-foreground">{title}</p>
-          <p className="mt-1"><StatusBadge tone={req.status==="REJECTED"||req.status==="CANCELLED"?"error":req.status==="SENT_BACK"?"warning":"info"}>{requestStageLabel(req.status)}</StatusBadge></p>
+          <p className="mt-1"><StatusBadge tone={req.status==="REJECTED"||req.status==="CANCELLED"?"error":req.status==="SENT_BACK"?"warning":req.status==="DRAFT"?"info":"info"}>{requestStageLabel(req.status)}</StatusBadge></p>
           {req.status==="SENT_BACK"?<Alert tone="warning" className="mt-2">
             Placement-cell feedback: {req.decisionNote??"Please contact the placement cell for the requested changes."}
           </Alert>:null}

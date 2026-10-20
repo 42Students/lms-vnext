@@ -73,16 +73,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-17.md: file, number of 
 - [x] `src/app/(authenticated)/hr/round-results/page.tsx`
 - [x] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx`
 - [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
-- [x] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
-- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
-- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
-- [x] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
-- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx`
-- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/page.tsx`
-- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx`
-- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
-- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
-- [x] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
+- [ ] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
+- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
+- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
+- [ ] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
+- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx`
+- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/page.tsx`
+- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx`
+- [ ] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
+- [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
+- [ ] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
 - [ ] `src/app/(authenticated)/learn/profile/page.tsx`
