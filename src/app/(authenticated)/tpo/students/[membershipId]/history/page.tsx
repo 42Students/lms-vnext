@@ -48,7 +48,7 @@ export default async function TpoLearnerPlacementHistoryPage({
     encodeURIComponent(history.learner.membershipId) + "/history?page=" + page;
 
   return (
-    <div className="min-w-0 space-y-4 md:space-y-6">
+    <div className="min-w-0 space-y-4 min-[768px]:space-y-6">
       <Link href="/tpo/students" className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         ← Back to Students
       </Link>
@@ -66,7 +66,7 @@ export default async function TpoLearnerPlacementHistoryPage({
           </Link>
         }
       />
-      <section className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 xl:grid-cols-4" aria-label="Placement history totals">
+      <section className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border min-[768px]:grid-cols-2 min-[992px]:grid-cols-4" aria-label="Placement history totals">
         {[
           ["Applications (all seasons)", history.total],
           ["Offer versions (this page)", history.pageFacts.offerVersions],
@@ -75,8 +75,8 @@ export default async function TpoLearnerPlacementHistoryPage({
           ["Accepted offer versions (this page)", history.pageFacts.acceptedOfferVersions],
           ["Confirmed joins (this page)", history.pageFacts.confirmedJoins],
         ].map(([label, value]) => (
-          <div key={label} className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:border-r-0">
-            <p className="text-sm font-medium text-body">{label}</p>
+          <div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-white px-4 py-3">
+            <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
         ))}
@@ -94,7 +94,7 @@ export default async function TpoLearnerPlacementHistoryPage({
             <article key={item.id} className="min-w-0 space-y-4 border-b border-border py-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-lg font-semibold text-foreground">{item.jobTitle}</h2>
+                  <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.jobTitle}</h2>
                   <p className="mt-1 text-sm text-body">
                     {item.companyName} · {item.seasonName} · {item.roleTitle}
                   </p>
@@ -129,7 +129,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   </ul>
                 )}
               </section>
-              <div className="grid gap-4 lg:grid-cols-2">
+              <div className="grid gap-4 min-[992px]:grid-cols-2">
                 <section>
                   <h3 className="mb-2 font-semibold text-foreground">
                     Applied round results ({item.appliedRounds.length})
