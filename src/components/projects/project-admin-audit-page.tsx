@@ -184,15 +184,11 @@ export async function ProjectAdminAuditPage({
   });
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         title="Project audit"
         description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
-        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
-           <PageBackLink href={basePath} label="Project workspaces" />
-          <Link href={basePath + "/audit"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Refresh</Link>
-          {basePath === "/admin/projects" ? <Link href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View activity log</Link> : null}
-        </div>}
+        actions={<PageBackLink href={basePath} label="Project workspaces" />}
       />
       <ProjectAdminNav basePath={basePath} active="audit" />
 
@@ -203,8 +199,12 @@ export async function ProjectAdminAuditPage({
       ) : null}
 
       <Tabs ariaLabel="Audit time range" renderPanel={false} value={selectedAuditRange} items={auditRangeTabs} />
+      <details className="group min-w-0 border-b border-border pb-4" open={Boolean(eventType || importance || subjectType || subjectId || to)}>
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 font-semibold text-primary-text marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9">
+          <span>Filters</span><span aria-hidden="true" className="shrink-0 transition-transform group-open:rotate-180">⌄</span>
+        </summary>
       <form
-        className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-5"
+        className="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-3"
         action={basePath + "/audit"}
       >
         <label>
@@ -282,21 +282,22 @@ export async function ProjectAdminAuditPage({
             defaultValue={to}
           />
         </label>
-        <div className="flex flex-wrap items-end gap-2 md:col-span-2 xl:col-span-5">
+        <div className="flex min-w-0 flex-col gap-2 md:col-span-2 md:flex-row md:items-end xl:col-span-3">
           <Button
             type="submit"
-            className="justify-center"
+            className="w-full justify-center md:w-auto"
           >
             Apply filters
           </Button>
           <Link
             href={basePath + "/audit"}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           >
             Reset
           </Link>
         </div>
       </form>
+      </details>
 
       <section aria-label="Audit page summary" className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min-[992px]:grid-cols-3">
         {([
@@ -311,12 +312,18 @@ export async function ProjectAdminAuditPage({
           <p className="mt-2 text-2xl font-semibold tabular-nums">{item.value}</p>
         </div>)}
       </section>
-      <ProjectAuditPageExport rows={result.items.map(item=>({
+      <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
+          <Link href={basePath + "/audit"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Refresh</Link>
+          {basePath === "/admin/projects" ? <Link href="/admin/audit" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">View activity log</Link> : null}
+        </div>
+        <ProjectAuditPageExport rows={result.items.map(item=>({
         id:item.event.id,action:item.event.eventType,
         summary:item.event.summary,entity:item.event.subjectLabel??"",
         importance:item.event.importance,
         occurredAt:item.event.occurredAt.toISOString(),
       }))}/>
+      </div>
       <ActivityCenter
         groups={groups}
         nextRemaining={result.remainingCount}
