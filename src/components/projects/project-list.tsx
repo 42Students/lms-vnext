@@ -78,7 +78,7 @@ export function ProjectList({
         <Link
           key={item.id}
           href={item.href ?? basePath + "/" + item.id}
-          className="group flex min-h-56 flex-col rounded-xl border border-border bg-surface p-5 transition-shadow duration-200 hover:border-primary hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-200 hover:border-primary hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
