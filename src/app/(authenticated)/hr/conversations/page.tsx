@@ -7,7 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ErrorState } from "@/components/ui/error-state";
-import { Alert } from "@/components/ui/alert";
+import { Banner } from "@/components/ui/banner";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import Link from "next/link";
 import {redirect} from "next/navigation";
@@ -87,9 +87,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     }))}/>
   </section>:<>
    {decisionNoticeResult && !decisionNoticeResult.ok?
-     <Alert tone="warning">
+     <Banner tone="warning">
        Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
-     </Alert>:null}
+     </Banner>:null}
    {decisionNotices.length>0?<section aria-label="Drive request decisions"
      className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Drive request decisions</h2>

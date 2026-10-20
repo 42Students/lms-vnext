@@ -16,18 +16,18 @@ export default async function CollegeVerificationPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
- if(!context.membership)return <main className="min-w-0 space-y-4">
+ if(!context.membership)return <div className="min-w-0 space-y-4">
   <PageHeader title="Profile verification"/>
   <ErrorState title="Profile verification" description="Admin not assigned to a college. Ask a Super Admin to assign a college before reviewing students."/>
- </main>;
+ </div>;
  if(!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
  const raw=await searchParams;
  const parsed=parseCollegeVerificationPageQuery(raw);
- if(!parsed.success)return <main className="min-w-0 space-y-4">
+ if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="Profile verification"/>
   <ErrorState title="Profile verification" description={collegeVerificationFilterError(raw)}
     action={<Link href="/college/verification" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>}/>
- </main>;
+ </div>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>|undefined;
  let loadFailure:"UNAVAILABLE"|"LIMIT"|null=null;
  try{
@@ -41,11 +41,11 @@ export default async function CollegeVerificationPage({searchParams}:{
   const description=loadFailure==="UNAVAILABLE"
    ?"Verification requires the staged database tables before reviews can open."
    :"This college has more requests than the safe queue cap; narrower server-side filtering is required.";
-  return <main className="min-w-0 space-y-4">
+  return <div className="min-w-0 space-y-4">
    <PageHeader title="Profile verification"/>
    <ErrorState title="Profile verification" description={description}
      action={<Link href="/college/verification" prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry</Link>}/>
-  </main>;
+  </div>;
  }
  if(!data)throw new Error("VERIFICATION_QUEUE_UNAVAILABLE");
  const lastPage=verificationLastPage(data.total,data.filter.pageSize);
