@@ -6,6 +6,7 @@ import { StatTile } from "@/components/ui/stat-tile";
 import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import Link from "next/link";
 import {Pagination} from "@/components/ui/pagination";
+import {Disclosure} from "@/components/ui/disclosure";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -38,37 +39,39 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
  const requestedPage=Number(rawPage??"1");
  const page=Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(totalPages,requestedPage)):1;
  if(ready&&!draft)notFound();
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-4">
   <PageHeader title={draft?.title??"Campaign draft"}
     description={draft?draft.sender_name+" · "+draft.status+" · "+draft.total_recipients+" potential recipients · "+draft.segment.replaceAll("_"," "):undefined}
     actions={<Link href="/tpo/recruiters/campaigns"
-      className="inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      className="inline-flex min-h-11 w-full min-w-0 items-center justify-center text-sm sm:w-auto md:min-h-9 font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       ← Campaign history
     </Link>}/>
   {!ready?<Banner tone="warning">{CAMPAIGN_DRAFT_UNAVAILABLE}</Banner>:
    draft?<article className="min-w-0 space-y-4">
-    <section aria-label="Campaign delivery summary" className="grid gap-3 min-[768px]:grid-cols-3">
+    <section aria-label="Campaign delivery summary" className="grid gap-3 sm:grid-cols-3">
       <StatTile label="Provider accepted" value={draft.sent} className={tpoTileStyles.tile} />
       <StatTile label="Failed" value={draft.failed} className={tpoTileStyles.tile} />
       <StatTile label="Skipped" value={draft.skipped+Object.values(draft.suppressed_counts).reduce((a,b)=>a+b,0)} className={tpoTileStyles.tile} />
     </section>
     <p className="text-xs text-muted-foreground">Provider acceptance is not proof of delivery.</p>
+    <TpoCampaignSendControl campaignId={campaignId} ready={deliveryReady}
+      recipients={draft.total_recipients} status={draft.status}/>
     <section className="border-b border-[var(--lms-canvas-border)] pb-4">
      <h2 className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Subject</h2>
      <p className="mt-2 break-words text-[14px] leading-[1.6] text-[var(--lms-body-text)]">{draft.subject}</p>
     </section>
-    <section className="border-b border-[var(--lms-canvas-border)] pb-4">
-     <h2 className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message</h2>
+    <Disclosure title="Message" className="border-b border-[var(--lms-canvas-border)] pb-3">
+     <div className="min-w-0 pt-2">
      <p className="mt-2 whitespace-pre-wrap break-words text-[14px] leading-[1.6] text-[var(--lms-body-text)]">{draft.body}</p>
-    </section>
+     </div>
+    </Disclosure>
     <p className="text-xs text-muted-foreground">Template: {draft.template_key}</p>
-    <TpoCampaignSendControl campaignId={campaignId} ready={deliveryReady}
-      recipients={draft.total_recipients} status={draft.status}/>
+
     {recipients?.ready?<section aria-label="Campaign recipient statuses" className="space-y-3">
      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recipients and delivery status</h2>
      <p className="text-xs text-muted-foreground">Names and recorded provider outcomes only. Sent means the email provider accepted the request, not that the recruiter read it.</p>
      {recipients.rows.length?<ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
-      {recipients.rows.slice((page-1)*25,page*25).map(row=><li key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-[10px] text-sm">
+      {recipients.rows.slice((page-1)*25,page*25).map(row=><li key={row.id} className="flex min-w-0 flex-col items-start gap-2 py-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center sm:justify-between">
        <Link href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
         className="inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center break-words font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{row.name}</Link>
        <StatusBadge tone={receiptTone(row.status)}>
