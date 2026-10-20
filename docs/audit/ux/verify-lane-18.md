@@ -99,3 +99,12 @@
 ## Verify2 surface 8 — `src/app/(authenticated)/error.tsx`
 - Regressions fixed: 0. Read authenticated error boundary, GracefulErrorBoundary (stale chunk guard, request reference, protected error copy, reset/home and reporting), parent authenticated layout with one PageCanvas, route loading and old-lane-18 polish proof. No lost error/reset prop, import, aria role or duplicate public shell.
 - Extra clutter/alignment: verified, no change; in-shell page head and full-width 44px mobile actions remain aligned. Files: queue/proof only; source-only, no CI.
+
+
+## Verify2 surface 9 — `src/components/placements/super-admin-bulk-drive-actions.tsx`
+- Regressions fixed: 0. Inspected preview-versus-confirm guard, status-filtered 25-item selections, id-scoped payload, skipped-only retry, partial result/offer warning, checkbox and ConfirmDialog states. Read actual Super Admin drives page, contextual loading/error, parent admin layout, legacy tokens and prior lane-6 polish. No JSX/import/prop, label or route regression detected.
+- Extra clutter/alignment: verified, no change; large bulk panel stays under disclosure, bounded 44px checklist and mobile action stack remain consistent. Files: queue/proof only; source review, no CI.
+
+## Verify2 surface 10 — `src/components/placements/tpo-mark-own-notification-read.tsx`
+- Regressions fixed: 0. Inspected notification unread CAS request, scoped POST, pending guarded confirmation, success toast, inline error and useToast/ConfirmDialog contract against polish-lane-2 and overlay evidence. Repository search returned no direct current caller; component remains an exported, syntactically valid optional control.
+- Extra clutter/alignment: verified, no change; full-width 44px phone trigger and responsive error region intact. Files: queue/proof only; source review, no CI.
