@@ -286,7 +286,7 @@ export async function ProjectAdminAuditPage({
         </div>
       </form>
 
-      <section aria-label="Audit page summary" className="grid min-w-0 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
+      <section aria-label="Audit page summary" className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
         {([
           {label:"Actions shown",value:result.groups.reduce((sum,g)=>sum+g.count,0)},
           {label:"People who made changes",value:new Set(result.groups.map(g=>g.latest.actor?.id)
