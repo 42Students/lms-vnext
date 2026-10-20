@@ -23,41 +23,44 @@ export default async function HrProfilePage() {
         description="Manage your recruiter details."
       />
 
-      <section className="min-w-0 border-b border-border pb-5">
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Your details</h2>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
-        <p className="mt-2 text-xs text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</p>
-        <p className="mt-2 text-xs text-muted-foreground">Edit your name, designation and optional mobile together, then choose Save changes. Your work email remains your sign-in identity.</p>
-        <div className="mt-4 max-w-4xl">
+        <details className="mt-2 min-w-0">
+          <summary className="flex min-h-11 cursor-pointer items-center text-xs font-semibold text-primary-text min-[768px]:min-h-9">About these details</summary>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</p>
+          <p className="mt-2 max-w-2xl text-xs leading-5 text-muted-foreground">Edit your name, designation and optional mobile together, then choose Save changes. Your work email remains your sign-in identity.</p>
+        </details>
+        <div className="mt-3 max-w-3xl">
           <RecruiterProfileDetailsEditor key={context.user.id} initialName={profile.displayName}
             initialTitle={profile.title} initialPhone={profile.contactPhoneDigits}
             contactReady={profile.contactReady} userUpdatedAt={profile.userUpdatedAt.toISOString()}
             profileUpdatedAt={profile.profileUpdatedAt.toISOString()} />
         </div>
-        <dl className="mt-5 max-w-4xl border-t border-border pt-4">
+        <dl className="mt-4 max-w-3xl border-t border-border pt-4">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Work email</dt>
             <dd className="mt-1 break-all text-sm text-foreground">{profile.email ?? "Not provided"}</dd>
-            <p className="mt-1 text-xs text-muted-foreground">You sign in with this, so it can&apos;t be changed here. A different company means a new work email and a new account.</p>
+            <p className="mt-1 max-w-2xl break-words text-xs leading-5 text-muted-foreground">You sign in with this, so it can&apos;t be changed here. A different company means a new work email and a new account.</p>
           </div>
 
         </dl>
       </section>
 
-      <section className="min-w-0 border-b border-border pb-5">
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Account</h2>
         <dl className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Company</dt>
             <dd className="mt-1 break-words text-sm text-foreground">{profile.companyName}</dd>
-            <p className="mt-1 text-xs text-muted-foreground">Your company comes from your work email. Ask 42 if its name or logo is wrong.</p>
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">Your company comes from your work email. Ask 42 if its name or logo is wrong.</p>
           </div>
         </dl>
       </section>
 
       <section
         aria-labelledby="recruiter-account-status"
-        className="min-w-0 border-b border-border pb-5"
+        className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5"
       >
         <h2
           id="recruiter-account-status"
@@ -90,7 +93,7 @@ export default async function HrProfilePage() {
 
       <section
         aria-labelledby="recruiter-current-grants"
-        className="min-w-0 border-b border-border pb-5"
+        className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5"
       >
         <div className="pb-2">
           <h2
@@ -106,6 +109,15 @@ export default async function HrProfilePage() {
           </p>
         </div>
 
+        <RecruiterProfileAccess
+        key={context.user.id+":"+profile.grants.map(grant=>grant.id).join(",")}
+        grants={profile.grants.map((grant) => ({
+          id: grant.id,
+          collegeId: grant.collegeId,
+          collegeName: grant.collegeName,
+        }))}
+        hideHeading
+      />
         <details className="min-w-0 border-t border-border pt-3">
           <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Current college access</summary>
           <div className="min-w-0 overflow-x-auto pb-4 pt-3">
@@ -138,15 +150,7 @@ export default async function HrProfilePage() {
           Existing access-management functionality below
           is separate from this read-only overview.
         </p>
-        <RecruiterProfileAccess
-        key={context.user.id+":"+profile.grants.map(grant=>grant.id).join(",")}
-        grants={profile.grants.map((grant) => ({
-          id: grant.id,
-          collegeId: grant.collegeId,
-          collegeName: grant.collegeName,
-        }))}
-        hideHeading
-      />
+
       </section>
     </div>
   );
