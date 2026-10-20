@@ -960,6 +960,7 @@ export function SuperAdminHrAccounts({
           ?confirmation.status==="ARCHIVED"?"Suspend":"Reactivate"
           :confirmation?.kind==="revoke"?"Revoke access":"Terminate all sessions"}
         pending={pending}
+        confirmVariant={confirmation?.kind==="quick" && confirmation.status!=="ARCHIVED"?"primary":"danger"}
         onConfirm={() => {
           void confirmAction();
         }}

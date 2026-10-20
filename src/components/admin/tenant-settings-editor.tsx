@@ -81,7 +81,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   <ConfirmDialog open={impactConfirm} onOpenChange={setImpactConfirm}
    title="Review high-impact tenant setting changes"
    description="Host, authentication and messaging overrides can lock users out if deployed incorrectly. Review every changed key and activate only through the approved deployment process."
-   confirmLabel="Save reviewed overrides" pending={saving}
+   confirmLabel="Save reviewed overrides" confirmVariant="primary" pending={saving}
    confirmDisabled={!ready||changed.length===0}
    onConfirm={()=>{void save(true);}}>
     <div className="space-y-2 text-sm text-body">
