@@ -22,22 +22,18 @@ export default async function LearnerApplicationCompanyPage({
   if (!company) notFound();
 
   return (
-    <div className="min-w-0 space-y-5">
-      <Link
-        href={"/learn/my-placements/applications?applicationId=" +
-          encodeURIComponent(company.applicationId)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9"
-      >
-        ← Back to application
-      </Link>
+    <div className="min-w-0 max-w-full space-y-5">
+
       <PageHeader
         title={company.companyName}
         description="Read-only company profile from your own placement application."
-        actions={
+        actions={<div className="flex flex-wrap items-center gap-3">
+          <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(company.applicationId)}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Back to application</Link>
           <StatusBadge tone={company.companyStatus === "ACTIVE" ? "success" : "neutral"}>
             {company.companyStatus.replaceAll("_", " ")}
           </StatusBadge>
-        }
+        </div>}
       />
       <section aria-label="What the company sees" className="border-b border-border py-4 md:py-6">
         <h2 className="text-base font-semibold text-foreground">What the company sees</h2>
