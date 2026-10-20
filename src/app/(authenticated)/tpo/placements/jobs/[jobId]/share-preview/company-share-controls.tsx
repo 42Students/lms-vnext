@@ -115,7 +115,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
    <div className="flex flex-wrap items-end gap-3">
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expires in days
      <Select value={days} onChange={event=>changeExpiry(event.target.value)}
-      className="ml-2 mt-[6px] block">
+      className="w-full">
       {[1,2,3,4,5,6,7,14,30,60,90].map(day=><option key={day} value={day}>{day}</option>)}
      </Select>
     </label>
