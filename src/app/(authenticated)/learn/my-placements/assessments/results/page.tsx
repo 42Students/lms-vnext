@@ -60,7 +60,7 @@ export default async function LearnerAssessmentResultsPage({
         description="Only placement-team-applied test outcomes from your own applications. A scheduled or submitted assessment is not a published result."
       />
       <Tabs ariaLabel="Filter published assessment results" renderPanel={false} value={view} items={views.map(option=>({value:option.id,label:option.label,count:results.counts[option.id],href:href(option.id)}))}/>
-      <form method="get" role="search" aria-label="Placement assessment results filters" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+      <form method="get" role="search" aria-label="Placement assessment results filters" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:items-end sm:gap-3">
         {view!=="all" ? <Input type="hidden" name="view" value={view}/> : null}
         <label className="min-w-0 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Search published results
@@ -68,7 +68,7 @@ export default async function LearnerAssessmentResultsPage({
             placeholder="Company, role or round"
             className="mt-1 min-h-11 md:min-h-[var(--lms-control-height)]"/>
         </label>
-        <Button type="submit" className="min-h-11 md:min-h-[var(--lms-control-height)]">
+        <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]">
           Search
         </Button>
         {q?<Link href={href(view,1,"")}
@@ -78,7 +78,7 @@ export default async function LearnerAssessmentResultsPage({
         Showing {paged.items.length} of {paged.total} matching published assessment outcomes.
       </p>
       {paged.items.length === 0 ? (
-        <section role="status" className="flex min-h-44 flex-col items-start justify-center border-y border-border bg-[var(--lms-neutral-50)] px-4 py-6">
+        <section role="status" className="flex min-h-44 flex-col items-start justify-center border-y border-border px-2 py-6">
           <h2 className="text-base font-semibold text-[var(--lms-heading)]">
             {results.counts.all === 0 ? "No official assessment results yet" : "No results in this category"}
           </h2>
@@ -95,15 +95,15 @@ export default async function LearnerAssessmentResultsPage({
           ) : null}
         </section>
       ) : (
-        <section aria-label="Official assessment outcomes" className="grid min-w-0 gap-3">
+        <section aria-label="Official assessment outcomes" className="min-w-0 divide-y divide-border">
           {paged.items.map((item) => (
-            <article key={item.resultId} className="min-w-0 border-b border-border py-4 md:py-6">
-              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <article key={item.resultId} className="min-w-0 py-4 first:pt-0 last:pb-0 md:py-5">
+              <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
                     {item.companyName}
                   </p>
-                  <h2 className="mt-1 text-base font-semibold text-[var(--lms-heading)]">{item.roundName}</h2>
+                  <h2 className="mt-1 break-words text-base font-semibold text-[var(--lms-heading)]">{item.roundName}</h2>
                   <p className="mt-1 text-sm text-body">
                     {item.roleTitle} · Round {item.roundSequence}
                   </p>
@@ -130,7 +130,7 @@ export default async function LearnerAssessmentResultsPage({
               {item.candidateMessage ? (
                 <section className="mt-4 min-w-0 border-t border-border pt-3">
                   <h3 className="text-xs font-semibold text-[var(--lms-heading)]">Shared feedback</h3>
-                  <p className="mt-2 whitespace-pre-wrap text-sm text-body">{item.candidateMessage}</p>
+                  <p className="mt-2 max-w-3xl whitespace-pre-wrap break-words text-sm leading-6 text-body">{item.candidateMessage}</p>
                 </section>
               ) : null}
               <div className="mt-4 flex flex-wrap gap-4">

@@ -42,7 +42,7 @@ export function LearnerPlacementJobDetail({
   const requirements=learnerDriveEvidenceRequirements(items);
 
   return (
-    <div className="min-w-0 space-y-6" aria-label="Published placement drive">
+    <div className="min-w-0 space-y-5" aria-label="Published placement drive">
       <Breadcrumbs items={[
         { label: "My Placements", href: "/learn/my-placements" },
         { label: "Drives", href: returnHref },
@@ -69,7 +69,7 @@ export function LearnerPlacementJobDetail({
           }
         />
 
-        <dl className="mt-5 grid min-w-0 gap-4 border-t border-border pt-5 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+        <dl className="mt-4 grid min-w-0 gap-x-4 gap-y-3 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-3">
           <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where</dt>
             <dd className="mt-1 font-semibold text-foreground">{item.job.locations.length?item.job.locations.join(", "):"Not specified"}</dd></div>
           <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Job type</dt>
@@ -86,7 +86,7 @@ export function LearnerPlacementJobDetail({
           <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applications close</dt>
             <dd className="mt-1 font-semibold text-foreground">{learnerJobDeadlineLabel(item.job.applicationDeadline)}</dd></div>
         </dl>
-        <div className="mt-5 flex min-w-0 flex-wrap gap-3">
+        <div className="mt-4 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={initialSaved}/>
           <a href="#job-role-options" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] transition-colors duration-150 hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9">
             {summary.appliedCount ? "View my application" : "See roles & application"} ↓
@@ -101,7 +101,7 @@ export function LearnerPlacementJobDetail({
       </section>
       {availability ? (
         <aside role="status" aria-label="Application availability"
-          className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-surface-subtle px-4 py-4 md:px-6 md:py-5">
+          className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
           <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{availability.title}</h2>
           <p className="mt-2 text-sm leading-6 text-body">{availability.detail}</p>
           {availability.kind!=="OPEN" && availability.kind!=="APPLIED" ? (
@@ -138,7 +138,7 @@ export function LearnerPlacementJobDetail({
           These are role-specific eligibility checks from your college placement data.
           Separate placement registration or consent status is not established by this checklist.
         </p>
-        <ul className="mt-4 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+        <ul className="mt-3 grid min-w-0 gap-x-4 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
           {requirements.map(role=>(
             <li key={role.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
               <p className="break-words text-sm font-semibold text-foreground">{role.title}</p>
@@ -219,9 +219,9 @@ export function LearnerPlacementJobDetail({
                 : "No individual eligibility checks were returned for these role options."}
             </p>
           ) : (
-            <div className="mt-4 space-y-4">
+            <div className="mt-4 divide-y divide-border">
               {items.map((row) => (
-                <div key={row.roleOption.id} className="rounded-lg border border-border p-4">
+                <div key={row.roleOption.id} className="border-t border-border pt-4">
                   <h3 className="m-0 text-sm font-semibold text-foreground">{row.roleOption.title}</h3>
                   {row.eligibility.checks.length ? (
                     <ul className="mt-3 space-y-3">
@@ -265,9 +265,9 @@ export function LearnerPlacementJobDetail({
       <section aria-labelledby="drive-pay-title" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5 pt-4 min-[768px]:pb-6 min-[768px]:pt-5">
         <h2 id="drive-pay-title" className="text-lg font-semibold text-foreground">Pay</h2>
         <p className="mt-1 text-sm text-body">Published compensation for each role. Missing amounts are not estimated.</p>
-        <ul className="mt-4 grid gap-3 lg:grid-cols-2">{items.map(row=>{
+        <ul className="mt-4 divide-y divide-border">{items.map(row=>{
           const pay=learnerDrivePayFacts({...row.roleOption,stipendPerMonthInr:row.job.stipendPerMonthInr??null});
-          return <li key={row.roleOption.id} className="rounded-md border border-border p-4">
+          return <li key={row.roleOption.id} className="border-t border-border pt-4">
             <h3 className="font-semibold text-foreground">{row.roleOption.title}</h3>
             <dl className="mt-3 grid grid-cols-1 gap-3 text-sm min-[768px]:grid-cols-2">
               <div><dt className="text-muted-foreground">CTC</dt><dd>{pay.ctc}</dd></div>

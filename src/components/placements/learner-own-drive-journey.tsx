@@ -7,7 +7,7 @@ type Journey=NonNullable<Awaited<ReturnType<typeof getOwnLearnerDriveJourney>>>;
 export function LearnerOwnDriveJourney({journey}:{journey:Journey}){
  const stopped=journey.jobStatus==="CANCELLED"||journey.jobStatus==="CLOSED";
  return <div className="min-w-0 space-y-4" aria-label="Own application journey">
-  {stopped?<aside role="status" className="min-w-0 border-b border-warning bg-surface-subtle p-4 md:p-6">
+  {stopped?<aside role="status" className="min-w-0 border-b border-warning py-4">
    <h2 className="text-base font-semibold">{journey.jobStatus==="CANCELLED"?
     "This drive was cancelled":"This drive is closed"}</h2>
    {journey.reason?<p className="mt-2 text-sm text-body">{journey.reason}</p>:null}

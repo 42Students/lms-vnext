@@ -89,7 +89,7 @@ export function LearnerCareerRounds({
   }
 
   return (
-    <div className="grid min-w-0 gap-4">
+    <div className="min-w-0 divide-y divide-border">
       {filtered.map((round) => {
         const schedule = round.exception ?? round;
         const meetingUrl = safeHref(schedule.meetingUrl);
@@ -104,8 +104,8 @@ export function LearnerCareerRounds({
             data-focused={highlightedKey===round.applicationId+":"+round.roundId?"true":undefined}
             aria-current={highlightedKey===round.applicationId+":"+round.roundId?"true":undefined}
             className={highlightedKey===round.applicationId+":"+round.roundId
-              ? "min-w-0 scroll-mt-24 rounded-xl border-2 border-primary bg-primary-subtle p-4 md:p-6"
-              : "min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6"}>
+              ? "min-w-0 scroll-mt-24 border-l-2 border-primary bg-primary-subtle px-3 py-4 md:px-4"
+              : "min-w-0 border-l-2 border-transparent px-3 py-4 md:px-4"}>
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">{round.companyName}</p>
@@ -128,12 +128,12 @@ export function LearnerCareerRounds({
                 </StatusBadge> : null}
               </div>
             </div>
-            <div className="mt-4 grid gap-2 text-sm text-body md:grid-cols-2">
+            <div className="mt-3 grid min-w-0 gap-2 text-sm text-body sm:grid-cols-2">
               <p className="m-0"><span className="font-semibold text-foreground">When:</span> {formatWhen(schedule.scheduledAt)}</p>
               <p className="m-0"><span className="font-semibold text-foreground">Where:</span> {schedule.mode === "VIRTUAL" ? "Online" : schedule.venue || "Venue pending"}</p>
             </div>
             {round.exception ? <p className="mt-3 text-xs font-semibold text-warning">This schedule includes your approved reschedule request.</p> : null}
-            <div className="mt-4 flex flex-wrap gap-3">
+            <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
               {onSelect ? (
                 <Button
                   type="button" variant="ghost"
