@@ -5,10 +5,10 @@
 - [x] `src/app/(authenticated)/admin/assignments/page.tsx`
 - [x] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
 - [x] `src/app/(authenticated)/admin/organizations/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/joining/[offerId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/auth/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/joining/[offerId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/auth/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/settings/page.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
