@@ -55,3 +55,17 @@
 - Extra clutter/alignment fixes: 0. One optional Add round disclosure, table-first desktop and compact mobile forms preserved with unchanged `round-edit-...` ids, POST field names, optimistic tokens, permission guards, labels and removal links.
 - Full read: HR round editor page, HrRoundEditorGrid/TpoGrid, shared Button/Input/Select/StatusBadge/EmptyState/PageHeader, both HR/recruiter loading/error, parent layouts, prior `polish-lane-15.md` entry. Local not-found/template/layout absent.
 - Files changed: `src/components/hr/hr-round-editor-grid.tsx`, verification queue and proof. No project code execution or CI.
+
+## Surface 9 — Recruiter round removal confirmation
+- Surface: recruiter `drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`, re-exporting the HR removal confirmation page.
+- Regressions fixed (1): mobile `flex-col-reverse` placed destructive Confirm remove ABOVE the safe Keep round escape despite proof's claimed safe-first order. Restored `flex-col` so Keep round comes first at 375px; desktop 768px row remains unchanged.
+- Extra clutter/alignment fixes: 0. Hairline summary, warning status, exact optimistic `expectedUpdatedAt` POST fields, `Keep round` href, 44/36px actions and recruiter grant guards preserved.
+- Inspected HR removal page, recruiter/HR scoped loading/error, parent recruiter/authenticated layouts, PageHeader/PageBackLink/Input/Button/StatusBadge, missing local template/layout/not-found and `polish-lane-15.md` proof.
+- Files changed: `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`, queue, proof. No code execution or CI.
+
+## Surface 10 — Recruiter drive request drafting
+- Surface: `src/app/(authenticated)/recruiter/drives/new/page.tsx` aliasing HR new draft page.
+- Regressions fixed: 0. Verified draft/query grant scopes, edit/fix/copy/restore, all input fields, unsent draft restore and leave confirmation, local preview, presets, round reordering, formal idempotent POST/PATCH, validation and signed routes retain their names and behavior.
+- Extra clutter/alignment fixes (1): parent page still presented two secondary reference destinations at full prominence above the drafting form despite other lane's disclosure proof. Moved only existing `View previously sent discussion proposals` and `Record an outside-platform drive` links under a native keyboard-operable `More drive destinations` disclosure. Back to Drives remains immediate. At 375px links use full-width targets; 768px they flow as compact links. Original hrefs and labels unchanged.
+- Inspected HR and recruiter new page/loading/error, complete `HrDriveDraftForm` including dialogs, shared Input/Select/Textarea/Button/InlineNotice/Alert/ConfirmDialog, draft/services and parent recruiter/authenticated layouts; no route-local template/layout/not-found; compared `polish-lane-15.md` evidence.
+- Files changed: `src/app/(authenticated)/hr/drives/new/page.tsx`, queue, proof. Source-only, no tests/CI.
