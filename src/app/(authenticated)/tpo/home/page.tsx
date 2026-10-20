@@ -189,7 +189,7 @@ export default async function TpoHome(){
     className={"lms-inline-link flex min-w-0 flex-col gap-1 p-3 text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:p-4 " +
       (index<2?"border-b border-border lg:border-b-0 ":"")+
       (index%2===0?"border-r border-border ":"")+
-      (index===1||index===2?"lg:border-r ":"lg:border-r-0 ")}>
+      (index<3?"lg:border-r ":"lg:border-r-0 ")}>
     <span className="text-xs font-semibold leading-5 text-muted-foreground">{tile.label}</span>
     <strong className="break-words text-2xl font-semibold leading-8 tabular-nums text-[var(--lms-heading)]">{tile.value}</strong>
     {tile.detail?<span className="min-w-0 break-words text-xs leading-5 text-muted-foreground">{tile.detail}</span>:null}
