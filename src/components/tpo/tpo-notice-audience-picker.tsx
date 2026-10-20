@@ -24,8 +24,8 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
  const emptyText=targetKind==="batches"?"No batch is in placements":
   targetKind==="branches"?"No student in placements has a branch yet":
   "No published drive yet";
- return <div className="flex flex-wrap items-end gap-3">
-  <label className="grid gap-1 text-sm">Audience
+ return <div className="grid w-full min-w-0 flex-1 grid-cols-1 items-start gap-3 sm:w-auto sm:grid-cols-2">
+  <label className="grid min-w-0 gap-2 text-sm">Audience
    <Select name="audience" value={audience}
     onChange={event=>{setAudience(event.target.value as Audience);setTarget("");setTargets([]);setSearch("");}}
     className="min-h-11 min-[768px]:min-h-9">
@@ -36,12 +36,12 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
     <option value="DRIVE">Published drive</option>
    </Select>
   </label>
-  {multiple&&options?<div className="grid min-w-48 gap-2 text-sm">
-   <label className="grid gap-1">Find {targetKind==="batches"?"batches":"branches"}
+  {multiple&&options?<div className="grid min-w-0 gap-3 text-sm">
+   <label className="grid min-w-0 gap-2">Find {targetKind==="batches"?"batches":"branches"}
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      placeholder="Search options" className="min-h-11 min-[768px]:min-h-9"/>
    </label>
-   <label className="grid gap-1">Choose {targetKind==="batches"?"batches":"branches"}
+   <label className="grid min-w-0 gap-2">Choose {targetKind==="batches"?"batches":"branches"}
     <Select aria-label="Selected audience groups" multiple value={targets}
      onChange={event=>setTargets(Array.from(event.target.selectedOptions,option=>option.value).slice(0,50))}
      className="min-h-28 max-w-full">
@@ -53,14 +53,14 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
     {available.length===0?emptyText:targets.length+" chosen. Use Ctrl or Cmd to choose more."}
    </span>
   </div>:null}
-  {targetKind==="drives"&&options?<div className="grid min-w-48 gap-2 text-sm">
-   <label className="grid gap-1">Find a drive
+  {targetKind==="drives"&&options?<div className="grid min-w-0 gap-3 text-sm">
+   <label className="grid min-w-0 gap-2">Find a drive
     <Input type="search" value={search}
      onChange={event=>{setSearch(event.target.value);setTarget("");}}
      placeholder="Search published drives"
      className="min-h-11 min-[768px]:min-h-9 max-w-full"/>
    </label>
-   <label className="grid gap-1">Choose a drive
+   <label className="grid min-w-0 gap-2">Choose a drive
     <Select name="targetId" required value={target}
      onChange={event=>setTarget(event.target.value)}
      className="min-h-11 min-[768px]:min-h-9 max-w-full">
@@ -70,6 +70,6 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
    </label>
    {!available.length?<span role="status" className="text-xs text-muted-foreground">{emptyText}</span>:null}
   </div>:null}
-  {targetKind&&!options?<Alert tone="error">Options could not load. Refresh to try again. Targeted sending is unavailable.</Alert>:null}
+  {targetKind&&!options?<Alert className="sm:col-span-2" tone="error">Options could not load. Refresh to try again. Targeted sending is unavailable.</Alert>:null}
  </div>;
 }
