@@ -88,7 +88,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  }
  return <>
   <Button variant="ghost" type="button" onClick={()=>void show()}
-   className="lms-inline-link block min-h-11 w-full rounded-[var(--lms-control-radius)] px-2 py-2 text-left text-sm text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+   className="lms-inline-link block min-h-11 w-full rounded-[8px] px-2 py-2 text-left text-sm text-link hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
    Follow-up
   </Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)dismiss();}} title="New follow-up"
