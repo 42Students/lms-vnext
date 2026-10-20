@@ -262,10 +262,7 @@ export function FacultyQuizReview({
       <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="m-0 text-sm font-semibold text-foreground">
-            {quizTitle??"Submissions"}
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="text-[var(--lms-font-sm)] leading-5 text-[var(--lms-body-text)]">
             Submitted scores and answer review are read from
             immutable submitted snapshots.
           </p>

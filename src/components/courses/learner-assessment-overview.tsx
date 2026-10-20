@@ -539,12 +539,12 @@ export function LearnerAssessmentOverview({
             <>
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
-              className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text md:w-auto"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto"
             >
               Open in Learning Path
             </Link>
             <Link href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
-              className="mt-2 inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:underline md:ml-2 md:mt-0 md:w-auto">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">
               Full assignment details
             </Link>
             </>
