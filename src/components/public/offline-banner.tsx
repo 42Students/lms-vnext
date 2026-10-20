@@ -5,8 +5,10 @@
  * State is driven by connection events, not an endless polling spinner.
  */
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export function OfflineBanner() {
+  const pathname = usePathname();
   const [offline, setOffline] = useState(false);
   useEffect(() => {
     const update = () => setOffline(!navigator.onLine);
@@ -19,7 +21,8 @@ export function OfflineBanner() {
       window.removeEventListener("offline", update);
     };
   }, []);
-  if (!offline) return null;
+  // The dedicated offline screen already gives this recovery instruction.
+  if (!offline || pathname === "/offline") return null;
   return (
     <div role="alert" className="sticky top-0 z-50 border-b border-warning bg-warning-subtle px-4 py-3 text-center text-sm font-medium text-foreground shadow-[var(--lms-header-shadow)]">
       You appear to be offline. Check your connection and try again.
