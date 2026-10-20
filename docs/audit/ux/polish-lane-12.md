@@ -124,3 +124,12 @@
 
 **Files changed:** discussion-participation `page.tsx`, `error.tsx`, queue and proof.
 **Verification:** source-only, no runtime/CI.
+
+## 14 · Teacher / Course discussions
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`
+**Problems found (6):** unencoded course identifier in back navigation, weak return-action affordance on narrow screens, two nested highlighted cards over the shared canvas, discussion composer geometry drifting below the message list, error content centered separately from the PageHeader, and no safe recovery to the course directory.
+
+**Fix:** align the header's Course workspace navigation with shared secondary controls and encode the dynamic URL, flatten pinned-thread decoration to a pale compact separator strip while retaining the distinct scrollable chat region, ensure composer min-width stays constrained, and align retry/back controls. Inspected full moderated discussion component's loading, retry, pin/unpin, deletion and leave confirmations, older messages, reply composer, nested region scroll and 375/768 keyboard behaviours. All ids, labels, wording, logic and APIs remain unchanged.
+
+**Files changed:** discussions `page.tsx`, `error.tsx`, shared discussion component, queue and proof.
+**Verification:** static source review; no runtime/CI.
