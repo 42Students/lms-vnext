@@ -100,7 +100,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
      onChange={event=>{setDue(event.target.value);key.current=null;}}
      className="min-h-11 md:min-h-9 w-full"/>
    </label>
-   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+   {error?<InlineNotice tone="error" message={error}/>:null}
    <Button type="submit" className="min-h-11 md:min-h-9" disabled={busy||!title.trim()||!recipientId}
     >
     {busy?"Sending…":"Ask someone"}</Button>
