@@ -52,7 +52,7 @@ export default async function MentorBoardReviewPage({
           " "+data.completedPercent+"% recorded DONE tasks"}
       </p>
       <form method="get" action={base+"/board-review"}
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
         <label className="grid gap-1 text-sm">Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] p-2"/>
