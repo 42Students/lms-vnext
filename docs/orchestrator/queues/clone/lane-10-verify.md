@@ -34,10 +34,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-10.md: surface | regre
 - [x] `src/components/shell/topbar/organization-switcher.tsx`
 - [x] `src/components/shell/topbar/tpo-find-suggestions.tsx`
 - [x] `src/components/shell/topbar/tpo-notification-cluster.tsx`
-- [ ] `src/components/shell/topbar/tpo-quick-create.tsx`
-- [ ] `src/components/shell/tpo-mobile-footer.tsx`
-- [ ] `src/components/shell/tpo-topbar-messages.tsx`
-- [ ] `src/app/maintenance/page.tsx`
+- [x] `src/components/shell/topbar/tpo-quick-create.tsx`
+- [x] `src/components/shell/tpo-mobile-footer.tsx`
+- [x] `src/components/shell/tpo-topbar-messages.tsx`
+- [x] `src/app/maintenance/page.tsx`
 - [ ] `src/app/offline/page.tsx`
 - [ ] `src/app/page.tsx`
 - [ ] `src/app/placements/page.tsx`
