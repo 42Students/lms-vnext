@@ -103,7 +103,7 @@ export function CollegeContactProfileForm({ initial }: {
       {success}
     </p> : null}
     <div className="flex flex-wrap items-center gap-3 md:col-span-2">
-      <Button disabled={pending} type="submit"
+      <Button disabled={pending} loading={pending} type="submit"
         className="min-h-11 md:min-h-9">
         {pending ? "Saving…" : "Confirm and save changes"}
       </Button>
