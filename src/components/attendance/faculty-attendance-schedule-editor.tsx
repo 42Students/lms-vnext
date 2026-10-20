@@ -88,13 +88,13 @@ export function FacultyAttendanceScheduleEditor({
     finally{setBusy(false);setConfirmOpen(false);}
   }
   return <section aria-label="Faculty attendance session scheduling"
-    className="space-y-3 border-t border-border pt-4">
-    <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Schedule an attendance session</h2>
+    className="min-w-0 space-y-3 pt-3">
+    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Schedule an attendance session</h2>
     <p className="text-xs text-muted-foreground">
       Times are entered in IST (Asia/Kolkata) and saved as UTC instants.
       Only sessions you scheduled and have not marked for attendance can be rescheduled.
     </p>
-    <div className="grid gap-3 md:grid-cols-2">
+    <div className="grid min-w-0 gap-3 md:grid-cols-2">
       <label className="grid gap-1 text-[13px] font-semibold leading-4">Action
         <Select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
           className="text-base md:text-sm">
