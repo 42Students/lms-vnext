@@ -1431,3 +1431,28 @@ Source files below were migrated, pushed only to `chatgpt/chat-5-b` with `[chat-
 **Next exact file** `src/components/tpo/tpo-team-forms.tsx`; next `src/components/tpo/tpo-team-handover.tsx` and `src/components/tpo/tpo-campaign-compose.tsx`.
 
 North star remains: vNext looks like a new module inside the old LMS, pixel-level clone of every tiny detail. Do not equate source updates with strict visual parity.
+
+
+## Chat-5 2026-10-20 — 15 TPO messaging/team/campaign source files
+
+The following 15 files were migrated on the branch `chatgpt/chat-5-b` (only `[chat-5]` commits), individually re-fetched, with literal value tables for each file, scoped grep counts, responsive source excerpts and static action-guard non-regression proof recorded in `docs/audit/ux/clone-states.md`. A non-forced fast-forward from the synchronized main baseline `75cef123a9bafdf9126daaeb23556f66cb878caa` preceded branch-only edits. **Do not tick strict F3/F4/F5** from source-only results: full repo grep and phone/tablet rendered pixel proof remain unexecuted.
+
+- [ ] `src/components/tpo/tpo-team-forms.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-team-handover.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-team-assign-unowned.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-team-message-actions.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-team-decision-toggle.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-team-rename.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-company-team-composer.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-team-open-read.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-team-ask-panel.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-new-followup-modal.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-campaign-send-control.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-campaign-compose.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+- [ ] `src/components/tpo/tpo-due-followup-workspace.tsx` — source migrated, re-fetched, source value/grep/responsive evidence recorded; **STRICT visual tick OPEN**
+
+**Scoped source proof:** 9 balanced Alert pairs, 23 InlineNotice occurrences, 3 EmptyState occurrences, **zero** decorated raw alert/status panels; 7 intentionally retained, unstyled live role-status messages. All 15 source file mutation/event/disabled/href probes unchanged from start-of-turn baseline. Fixed invalid block feedback nested inside a span in `tpo-team-decision-toggle.tsx`, and duplicate shared Input/Select/Textarea/Button imports in `tpo-team-forms.tsx`. No code run, no CI/tests/TS typecheck/screenshots.
+
+**Next exact file:** `src/components/tpo/tpo-company-team-conversation.tsx`; then `src/components/tpo/tpo-selected-review-queue.tsx`. Continue lane-only pushing and full legacy value + responsive proof before any strict tick.

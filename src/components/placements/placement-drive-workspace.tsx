@@ -303,12 +303,12 @@ export async function PlacementDriveWorkspace({
             {isTpo ? <Dropdown align="end" label="More drive actions" trigger="More ▾">
               <div className="grid min-w-[min(14rem,calc(100vw_-_5rem))] max-w-full gap-2">
                 <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
-                  className="min-h-11 rounded-[8px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
+                  className="min-h-11 rounded-[var(--lms-radius-control)] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
                   Export applicants
                 </Link>
                 {job.status!=="DRAFT"?<Link
                   href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
-                  className="min-h-11 rounded-[8px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
+                  className="min-h-11 rounded-[var(--lms-radius-control)] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
                   Share with company
                 </Link>:null}
                 {["CLOSED","CANCELLED"].includes(job.status)
