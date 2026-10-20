@@ -38,7 +38,7 @@ export default async function SuperAdminAttendancePage({
 
   if (!collegeId) {
     return (
-      <div className="min-w-0 space-y-5">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           
           title="Attendance"
@@ -57,11 +57,11 @@ export default async function SuperAdminAttendancePage({
   // UX-admin-attendance-01: reject hostile/stale month links before the
   // data service's strict India-month parser can throw an unhandled error.
   if(typeof month!=="string" || !/^\d{4}-(0[1-9]|1[0-2])$/.test(month)){
-    return <div className="min-w-0 space-y-5">
+    return <div className="min-w-0 space-y-6">
       <PageHeader title="Attendance" description="Attendance oversight for the selected college."/>
       <ErrorState title="Invalid attendance month"
         description="Choose a month in YYYY-MM format and retry."
-        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Reset month filter</Link>}/>
+        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Reset month filter</Link>}/>
     </div>;
   }
   const options =
@@ -129,7 +129,7 @@ export default async function SuperAdminAttendancePage({
   };
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Attendance"
         description={`Scoped attendance oversight for ${options.college.name}.`}
