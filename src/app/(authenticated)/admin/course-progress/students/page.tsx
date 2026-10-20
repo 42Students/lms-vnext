@@ -38,14 +38,14 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     actions={<div className="flex flex-wrap items-center gap-2">
       {back}
       <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Export CSV</a>
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Export CSV</a>
     </div>}
   />
   <dl className="grid gap-4 border-y border-border py-4 md:grid-cols-4">
-   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt>Average completion</dt><dd className="text-xl font-semibold">{mean===null?"Not measured":mean+"%"}</dd></div>
-   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt>Students</dt><dd className="text-xl font-semibold">{report.rows.length}</dd></div>
-   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt>Not started</dt><dd className="text-xl font-semibold">{report.rows.filter(row=>row.videos+row.assignments+row.quizzes===0).length}</dd></div>
-   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt>Items measured</dt><dd className="text-xl font-semibold">{lowestMeasured===highestMeasured?
+   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt className="text-xs font-semibold text-muted-foreground">Average completion</dt><dd className="text-xl font-semibold">{mean===null?"Not measured":mean+"%"}</dd></div>
+   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt className="text-xs font-semibold text-muted-foreground">Students</dt><dd className="text-xl font-semibold">{report.rows.length}</dd></div>
+   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt className="text-xs font-semibold text-muted-foreground">Not started</dt><dd className="text-xl font-semibold">{report.rows.filter(row=>row.videos+row.assignments+row.quizzes===0).length}</dd></div>
+   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt className="text-xs font-semibold text-muted-foreground">Items measured</dt><dd className="text-xl font-semibold">{lowestMeasured===highestMeasured?
      highestMeasured:lowestMeasured+"–"+highestMeasured+" per learner"}</dd></div>
   </dl>
   <p className="text-sm text-body">Video completions, submitted assignments and attempted quizzes are counted from persisted learner records. No completion percentage is inferred when there are no measurable items.</p>
