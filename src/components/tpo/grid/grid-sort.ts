@@ -15,7 +15,7 @@ export function sortTpoGridRows<Row>(
   const column = columns.find(item => item.key === sort.key && item.sortKind);
   if (!column || !column.sortKind) return [...rows];
   const compare = (value: string | number | null | undefined): number | null => {
-    if (value === null || value === undefined || value === "") return null;
+    if (value === null || value === undefined || (typeof value === "string" && value.trim() === "")) return null;
     if (column.sortKind === "number") {
       const numeric = typeof value === "number" ? value : Number(String(value).replaceAll(/[,%]/g, ""));
       return Number.isFinite(numeric) ? numeric : null;
