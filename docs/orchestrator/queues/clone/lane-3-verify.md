@@ -32,7 +32,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-3.md: surface | regres
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/reports/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/review-history/page.tsx`
