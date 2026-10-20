@@ -1,0 +1,38 @@
+# Clone queue: lane chat-17, extra list b (work moved from other lanes)
+
+These 34 items were moved to chat-17 from the END of other lanes' queues because chat-17 finished its own. They are not the donors' items any more. Same batch contract as your main queue; full fidelity per item. Tick here, in this file.
+
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/new/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/recorded-outside/[recordId]/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/placed-branch/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
+- [ ] `src/app/e2e/superadmin-login/page.tsx`
+- [ ] `src/app/placements/page.tsx`
+- [ ] `src/app/superadmin-login/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/season/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/see/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/templates/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
+- [ ] `src/app/page.tsx`
+- [ ] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/new/draft/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
+- [ ] `src/app/forbidden/page.tsx`
