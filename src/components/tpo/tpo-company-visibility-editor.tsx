@@ -38,8 +38,8 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
  return <section aria-label="Edit company visibility" className="space-y-3 border-t border-border pt-5">
   <h3 className="font-semibold">What companies see</h3>
   <p className="text-xs text-muted-foreground">Your choices are saved in the college&apos;s sharing policy. Individual recruiter rights, consent and export permissions remain separate safeguards.</p>
-  <section aria-label="How sharing works" className="border-t border-border pt-3 text-sm"><h4 className="font-semibold">How sharing works</h4><ul className="mt-2 list-disc space-y-1 pl-5"><li>The college sets the fields recruiters may see.</li><li>Learner consent and verification still apply.</li><li>Some values appear only as a band when exact sharing is off.</li><li>These settings do not grant access to a learner or drive.</li><li>Changes to sharing settings affect future views and exports.</li></ul></section>
-  {Object.entries(labels).slice(0,3).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
+  <Disclosure title="How sharing works" className="min-w-0 border-t border-border pt-3" contentClassName="pt-2 text-sm"><ul className="list-disc space-y-1 pl-5"><li>The college sets the fields recruiters may see.</li><li>Learner consent and verification still apply.</li><li>Some values appear only as a band when exact sharing is off.</li><li>These settings do not grant access to a learner or drive.</li><li>Changes to sharing settings affect future views and exports.</li></ul></Disclosure>
+  {Object.entries(labels).slice(0,3).map(([key,label])=><label key={key} className="flex min-h-11 min-w-0 items-center justify-between gap-3 border-b border-border py-2 text-sm">
    <span>{label}</span>
    <Checkbox disabled={busy} checked={values[key as keyof Choice]}
     onChange={e=>setValues(current=>({...current,[key]:e.target.checked}))}/>
@@ -52,7 +52,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
     </label>)}
   </Disclosure>
   <Button type="button" disabled={busy} onClick={()=>void save()}
-   className="min-h-11 md:min-h-9">{busy?"Saving…":"Save"}</Button>
+   className="min-h-11 w-full sm:w-auto md:min-h-9">{busy?"Saving…":"Save"}</Button>
   {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message} onDismiss={()=>setMessage("")}/>:null}
   {dialog}
  </section>;
