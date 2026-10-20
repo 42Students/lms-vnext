@@ -31,7 +31,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] `src/app/(authenticated)/hr/conversations/error.tsx`
 - [x] `src/app/(authenticated)/hr/conversations/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/error.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/messages/error.tsx`
@@ -671,3 +671,8 @@ For each route listed below, complete fetched source shows exactly one shared `G
 - `src/app/(authenticated)/tracker/issues/[publicId]/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One shared GracefulErrorBoundary delegates all pixels and accessible retry. Native/hex/h1/overlay count 0/0/0/0; old ref `old-lms-pages.md:6-12`, breakpoint ref `components___listing-page-header.scss:131-158`; no local style or JSX DOM.
 - `src/app/(authenticated)/tracker/issues/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One shared GracefulErrorBoundary delegates all pixels and accessible retry. Native/hex/h1/overlay count 0/0/0/0; old ref `old-lms-pages.md:6-12`, breakpoint ref `components___listing-page-header.scss:131-158`; no local style or JSX DOM.
 - `src/app/(authenticated)/tracker/logs/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One shared GracefulErrorBoundary delegates all pixels and accessible retry. Native/hex/h1/overlay count 0/0/0/0; old ref `old-lms-pages.md:6-12`, breakpoint ref `components___listing-page-header.scss:131-158`; no local style or JSX DOM.
+
+
+#### Delegated HR error-only audit (1 files)
+
+- `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One unchanged shared GracefulErrorBoundary, source native/hex/h1/overlay 0/0/0/0, legacy `old-lms-pages.md:6-12` and mobile max 767px in `components___listing-page-header.scss:131-158`.
