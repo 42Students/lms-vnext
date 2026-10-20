@@ -76,7 +76,7 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
     {draft&&problem?<span className="block text-xs text-error">{problem}</span>:null}
    </label>
    <label className="min-w-0 text-sm">Counts as
-    <Select value={outcome} onChange={e=>setOutcome(e.target.value as AfterCollegeOutcome)}
+    <Select value={outcome} disabled={busy} onChange={e=>setOutcome(e.target.value as AfterCollegeOutcome)}
      className="mt-1 min-h-11 min-[768px]:min-h-9">
      {MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
     </Select>
