@@ -7,6 +7,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { useState } from "react";
 import {
  tpoStudentNudgeTemplates,tpoStudentNudgeLabels,
@@ -88,7 +89,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
     </Button></>}>
    <p className="text-sm">The student will see this message in their LMS notifications.</p>
   </Dialog>
-  {notice?<p role="status" className="text-sm">{notice}</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
