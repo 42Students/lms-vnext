@@ -19,10 +19,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-8.md: surface | regres
 - [x] `src/components/projects/learner-board-task-detail-dialog.tsx`
 - [x] `src/components/projects/mentor-board-task-detail-dialog.tsx`
 - [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
-- [ ] `src/components/projects/mentor-meeting-reschedule.tsx`
-- [ ] `src/components/projects/mentor-sprint-details-edit.tsx`
-- [ ] `src/components/projects/mentor-sprint-write.tsx`
-- [ ] `src/components/projects/mentor-task-create.tsx`
+- [x] `src/components/projects/mentor-meeting-reschedule.tsx`
+- [x] `src/components/projects/mentor-sprint-details-edit.tsx`
+- [x] `src/components/projects/mentor-sprint-write.tsx`
+- [x] `src/components/projects/mentor-task-create.tsx`
 - [ ] `src/components/projects/mentor-task-details-edit.tsx`
 - [ ] `src/components/projects/project-admin-submission-review.tsx`
 - [ ] `src/components/projects/project-archive-control.tsx`
