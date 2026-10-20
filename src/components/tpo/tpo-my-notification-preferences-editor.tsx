@@ -43,7 +43,7 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
  return <section aria-label="Edit my notification preferences" className="space-y-3">
   <p className="text-xs text-muted-foreground">These five preferences are for your own TPO account in this college. In-app history remains accessible. Delivery routing is controlled separately.</p>
   <div className="divide-y divide-border">
-   {TPO_NOTIFICATION_PREFERENCE_FIELDS.map(field=><label key={field.key} className={"flex min-h-14 cursor-pointer items-center justify-between gap-4 rounded-[8px] px-3 py-3 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(value[field.key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+   {TPO_NOTIFICATION_PREFERENCE_FIELDS.map(field=><label key={field.key} className={"flex min-h-14 cursor-pointer items-center justify-between gap-4 rounded-[var(--lms-control-radius-sm,8px)] px-3 py-3 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(value[field.key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
     <span><strong className="block text-sm">{field.label}</strong><span className="text-xs text-body">{field.description}</span></span>
     <Checkbox aria-label={field.label} checked={value[field.key]} disabled={busy}
      onChange={e=>setValue(previous=>({...previous,[field.key]:e.target.checked}))}/>

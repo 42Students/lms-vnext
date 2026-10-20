@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import { Checkbox } from "@/components/ui/selection-controls";
 import { Dialog } from "@/components/ui/dialog";
 import { DataTable } from "@/components/ui/data-table";
@@ -38,8 +39,8 @@ function UIKitTestSurface() {
   const [inlineSaved, setInlineSaved] = useState(false);
   const { showToast } = useToast();
 
-  return <main className="mx-auto max-w-4xl space-y-8 p-4">
-    <h1 className="text-2xl font-semibold">Chat-17 UI kit interaction harness</h1>
+  return <main className="mx-auto max-w-4xl min-w-0 space-y-6 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)]">
+    <PageHeader title="Chat-17 UI kit interaction harness" />
 
     <section aria-label="Modal fixture">
       <Button onClick={() => setDialogOpen(true)}>Open harness dialog</Button>
@@ -75,13 +76,13 @@ function UIKitTestSurface() {
         title="Harness drawer" description="Nested history and focus test.">
         <p>The workspace drawer stays open when its sheet is dismissed.</p>
         <Button onClick={() => setSheetOpen(true)}>Open nested sheet</Button>
-        <div aria-label="Drawer long content" className="h-[950px] min-h-[950px]">Long project activity feed</div>
+        <div aria-label="Drawer long content" className="h-[59.375rem] min-h-[59.375rem]">Long project activity feed</div>
       </Drawer>
       <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen}
         title="Harness nested sheet" description="Second overlay">
         <p>Sheet content is nested above the workspace drawer.</p>
         <Button onClick={() => setSheetOpen(false)}>Close nested sheet</Button>
-        <div aria-label="Sheet long content" className="h-[950px] min-h-[950px]">More project details</div>
+        <div aria-label="Sheet long content" className="h-[59.375rem] min-h-[59.375rem]">More project details</div>
       </BottomSheet>
     </section>
 
@@ -106,9 +107,9 @@ function UIKitTestSurface() {
       </Button>
       <div className="mt-2 w-56">
         <ScrollCue axis="x" label="Harness horizontal overflow">
-          <div className={wideScroll ? "w-[1200px] whitespace-nowrap p-3" : "w-28 whitespace-nowrap p-3"}>
+          <div className={wideScroll ? "w-[75rem] whitespace-nowrap p-3" : "w-28 whitespace-nowrap p-3"}>
             <span>Scroll position: first</span>
-            {wideScroll ? <span className="ml-[850px]">Scroll position: last</span> : null}
+            {wideScroll ? <span className="ml-[53.125rem]">Scroll position: last</span> : null}
           </div>
         </ScrollCue>
       </div>
@@ -120,7 +121,7 @@ function UIKitTestSurface() {
       </Button>
       <ScrollCue axis="x" label="Second child resize overflow">
         <div className="w-20">First child remains small</div>
-        <div data-testid="second-overflow-child" style={{width:secondWide?800:80}}>Changing second child</div>
+        <div data-testid="second-overflow-child" className={secondWide ? "w-[50rem]" : "w-20"}>Changing second child</div>
       </ScrollCue>
     </section>
 

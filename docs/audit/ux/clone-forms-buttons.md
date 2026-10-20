@@ -844,3 +844,58 @@ The calendar grid's 7×44px phone width can exceed a narrow viewport and uses ov
 **STRICT CATEGORY TICKS: 0/12**, unchanged. Missing whole-`src` raw control/hard-code grep, all portals' caller inventories, 375px/768px/1280px screenshots, computed typography/box/focus styles, and real keyboard/drag/file/date/browser testing.
 
 **Next exact source file:** `src/components/ui/input-group.tsx` — audit a single group halo, adornment focus, error/readonly, 44px phone touch, then `src/components/ui/multi-select.tsx`.
+
+
+## 2026-10-20 — next 15 source file parity passes: forms, buttons, labels
+
+These **15 actual files were edited and reread in full** on `chatgpt/chat-17-b` with `[chat-17]` messages. The changes maintain the owner's 'new module inside old LMS' styling rather than modifying page content. The table records literal legacy source/value and the **real changed file:line** source anchor, plus mobile/tablet evidence and caller-compatibility impact. A file-level source pass is not a completed strict checklist category and does not prove rendered pixel geometry.
+
+### File-level legacy value / vNext style and behavior / responsive proof
+
+| Finished file | Checklist | Old LMS SCSS/spec value | Current checked vNext source line; mobile/tablet rule | JSX/prop/state compatibility |
+| --- | --- | --- | --- | --- |
+| `input-group.tsx` | C6 | components___form.scss:117-143 — 10px field, 14px/400/20px text, 15%-teal/20%-red halo | `src/components/ui/input-group.tsx:25`: 36px desktop/tab outer group; 44px phone; single group focus/invalid, decorative adornment off accessibility tree | Group/label, children, prefix/suffix callback/ref remain caller-owned |
+| `multi-select.tsx` | C2 | components___antddesign.scss:134-140 — selected #26bac7/white; components___variables.scss:139 — 44px | `src/components/ui/multi-select.tsx:33`: Selected tags ID added to select's aria-describedby while preserving existing helper IDs; phone tag removal 44px, desktop 36px | value/defaultValue, onValuesChange/onChange, native multiple name/selectedOptions |
+| `button.tsx` | D | old-lms-shell-spec.md:23-24 — 36px, 9px, 14px/650, #0a7c88 / #086873 hover | `src/components/ui/button.tsx:26`: DOM size marker mirrors visual variant; all sizes 44px min on <=767px; default 36px >=768px; loading/busy stays inert | variant, size, loading, native button/ref/type remain |
+| `input.tsx` | C1 | components___form.scss:117-143 — #fbfcfd, 10px, 14/400/20, red/teal focus | `src/components/ui/input.tsx:27`: Text selection uses old soft teal with readable #0a0517 ink; 44px min at <=767px; 36px desktop | native name/value/autoComplete, error, disabled and forwarded ref |
+| `select.tsx` | C2 | components___form.scss:117-143 — 10px, #fbfcfd, error #ef4444 with 6% fill | `src/components/ui/select.tsx:39`: Disabled-invalid field retains muted neutral chrome instead of active red; 44px on phone, 36px tablet | native option/typeahead/multiple, aria-invalid, name, ref |
+| `otp-input.tsx` | C1 | components___form.scss:117-143 — 14/400/20, 10px focus; variables.scss:139 — 44px | `src/components/ui/otp-input.tsx:32`: Caller-supplied digit validation pattern is not overwritten by wrapper default; numeric keypad and 44px phone field | native input, maxlength/minlength, paste, autocomplete, ref |
+| `choice-input.tsx` | C4 | components___antddesign.scss:123-131 — checked teal #26bac7, indeterminate semantics | `src/components/ui/choice-input.tsx:5`: Dynamic checkbox now forwards native mixed state through shared Checkbox; radio path remains native; 44px via labeled SelectionControl | checked/defaultChecked, onChange, aria-checked, ref; indeterminate checkbox-only |
+| `form-grid.tsx` | C6 | components___variables.scss:139,148-156,208-215 — 767/768/992px; gaps 8/16/24px | `src/components/ui/form-grid.tsx:20`: Child field overflow now shrinks safely at 1 phone, 2 tablet, and 3 desktop columns; grid order unchanged | div children/props, data-columns/data-gap preserved |
+| `segmented-control.tsx` | C4 | components___antddesign.scss:123-131 — checked #26bac7; variables.scss:139 — 44px | `src/components/ui/segmented-control.tsx:14`: Required native radio grouping + aria-required; 44px phone labels, 36px tablet option area; disabled/readOnly still inert | value/onChange, option disabled, name, errors, 44px touch |
+| `date-input.tsx` | C3 | components___antddesign.scss:191-222 — selected teal/white and time panel; variables.scss:139 — 44px | `src/components/ui/date-input.tsx:349`: Calendar group now advertises actual Arrow/Home/End behavior; 7×44px scrollable phone cells; normal desktop day grid | native date/time/week/month/datetime values, min/max/step, ref |
+| `disabled-reason.tsx` | D/C6 | components___variables.scss:27-32,139 — muted disabled #a9a7ae and 44px target | `src/components/ui/disabled-reason.tsx:25`: Keyboard-focusable wrapper now announces disabled state and reason; no duplicate tab stop for enabled; button target follows 44px phone/36px desktop | child Button props cloned retaining aria-describedby |
+| `long-text.tsx` | C7 | components___global.scss:15-20 — 16px/24px body, inheriting text hierarchy | `src/components/ui/long-text.tsx:9`: Bidirectional long labels read in correct source direction and wrap anywhere in narrow phone/form columns; typography inherits tablet/desktop | safeDisplayText and original value/title unchanged |
+| `button-group.tsx` | D | old-lms-shell-spec.md:23-24 — 36px/9px joined action; variables.scss:139 — phone 44px | `src/components/ui/button-group.tsx:16`: Joined actions do not shrink below 44px on <=767px, scroll horizontally; tablet >=768px remains inline 36px | role/group label and native child click handlers preserved |
+| `searchable-select.tsx` | C2 | components___form.scss:64-93 — max-height 200px, radius 12px, #d1f1f1 option hover, 44px row | `src/components/ui/searchable-select.tsx:150`: Combobox gets a fallback accessible name without visible copy changes; >=44px options and clear touch control at <=767px; popup full width | onValueChange, controlled value, options, focus/blur/keyboard/ref |
+| `search-field.tsx` | C1 | components___form.scss:38-61 — clamp(180px,20vw,280px), 14px, appearance:none | `src/components/ui/search-field.tsx:21`: Hidden native WebKit cancel glyph matches legacy custom search field; phone full-width input and stacked search action; tablet inline clamp | search native Enter, onSearch, external ref, disabled and name |
+
+### Whole-file raw-element grep equivalent (exact 15 named files only)
+
+The connector returned the **complete bytes** of each listed file. The scan counted JSX opening tags using `/<(button|input|select|textarea)(?=[\\s>])/g` and hexadecimal literals with `/#[0-9a-fA-F]{3,8}\\b/g` after stripping block comments; this is a bounded source grep, **NOT a repository-wide command**. The last column identifies existing mobile/responsive and state source lines, useful for manual verification.
+
+| Source file | Lines read | Raw button/input/select/textarea | Source hex literals | Responsive and state source line numbers |
+| --- | ---: | --- | ---: | --- |
+| `input-group.tsx` | 42 | 0/0/0/0 | 0 | 24, 25, 32, 34, 35, 38 |
+| `multi-select.tsx` | 120 | 0/0/0/0 | 0 | 85, 86, 96, 103, 104, 110 |
+| `button.tsx` | 31 | 1/0/0/0 | 2 | 21, 22, 25, 28, 29 |
+| `input.tsx` | 47 | 0/1/0/0 | 0 | 13, 20, 21, 42 |
+| `select.tsx` | 48 | 0/0/1/0 | 0 | 16, 23, 24, 41 |
+| `otp-input.tsx` | 40 | 0/0/0/0 | 0 | 17, 36 |
+| `choice-input.tsx` | 9 | 0/0/0/0 | 0 | Inherits shared CSS 44px breakpoint |
+| `form-grid.tsx` | 25 | 0/0/0/0 | 0 | 16, 20 |
+| `segmented-control.tsx` | 30 | 0/0/0/0 | 0 | 20, 21, 22, 23, 25, 26 |
+| `date-input.tsx` | 396 | 0/0/0/0 | 0 | 351, 367, 379, 380, 386, 390 |
+| `disabled-reason.tsx` | 33 | 0/0/0/0 | 0 | 19, 21, 23, 25, 27, 29 |
+| `long-text.tsx` | 11 | 0/0/0/0 | 0 | 9 |
+| `button-group.tsx` | 21 | 0/0/0/0 | 0 | 13, 16 |
+| `searchable-select.tsx` | 182 | 0/0/0/0 | 2 | 157, 160, 165, 171, 175, 178 |
+| `search-field.tsx` | 25 | 0/0/0/0 | 0 | 12, 20, 21, 22 |
+
+Native `<button>` occurs only in `button.tsx` (1), native `<input>` only in `input.tsx` (1), and native `<select>` only in `select.tsx` (1); the remaining twelve forms compose shared UI controls, not bypassing them. Hex literals in `button.tsx` (danger hover) and `searchable-select.tsx` (legacy `#d1f1f1` popup hover) are deliberate old reference values, not greenfield branding.
+
+**Responsive source proof:** `docs/design/legacy-styles/components___variables.scss:139,148-156` specifies 44px touch and phone `<=767px`, tablet `768–991px`, desktop `>=992px`. The global `src/app/globals.css:1142-1161` supplies mobile 44px fallbacks; shared Button/Input/Select do so directly. `form-grid` uses 1/2/3 columns across the exact breakpoints via `globals.css:1203-1208`, `multi-select` tags and `button-group` overflow safely; interactive native controls retain browser keyboard semantics. These are CSS/JSX source comparisons, **not actual 375/768/1280px screenshots or computed-style proof**.
+
+**STRICT TICK RULE:** Still **0/12 category ticks**. Full tree raw-button/input/select/textarea/hex grep, all portal callers, rendered responsive screenshots, computed CSS and real mouse/keyboard/drag/picker tests are required. No test, lint, typecheck, runtime or CI ran, per owner direction.
+
+**Next exact lane-owned file:** `src/components/ui/file-upload.tsx` — validate native file chooser button geometry, disabled/unavailable copy, error fields and opt-in profile crop against legacy SCSS; then `src/components/ui/file-dropzone.tsx`.

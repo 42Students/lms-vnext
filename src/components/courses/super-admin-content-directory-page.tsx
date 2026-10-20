@@ -90,7 +90,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false}/>
    :<Banner tone="warning">Content authoring options are temporarily unavailable. Existing content remains visible.</Banner>}
   {sectionsResult.status==="rejected"?<Banner tone="warning">Section filter choices are temporarily unavailable. Your selected filters are still applied.</Banner>:null}
-  <form method="get" className="grid gap-3 py-1 md:grid-cols-2 min-[1366px]:grid-cols-3">
+  <form method="get" className="grid gap-3 py-1 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Search
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      placeholder="Content, lesson or course" className="min-h-11 md:min-h-9"/>

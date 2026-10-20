@@ -20,9 +20,11 @@ export default async function CollegePlacementDrivePage({
   }
   const { jobId } = await params;
   return (
+    <div className="min-w-0 space-y-6">
     <PlacementDriveWorkspace
       context={context}
       jobId={jobId}
     />
+    </div>
   );
 }

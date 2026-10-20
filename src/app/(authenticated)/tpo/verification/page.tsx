@@ -16,10 +16,10 @@ export const dynamic="force-dynamic";
 export default async function TpoVerificationPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const params=await searchParams;
  const parsed=parseTpoVerificationParams(params);
- if(!parsed)return <div className="space-y-3 p-5">
+ if(!parsed)return <div className="min-w-0 space-y-3">
   <PageHeader title="Invalid verification filters" />
   <Alert tone="error">No verification records were loaded. Choose a supported status or reset the filters.</Alert>
-  <Link href="/tpo/verification" className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
+  <Link href="/tpo/verification" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>
  </div>;
  const query=parsed;
  const context=await getCurrentRequestContext();
@@ -27,8 +27,9 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const directory=queue.available&&queue.enabled&&queue.permitted?await listTpoBatches(context):null;
  const branches=[...new Map(directory?.batches.map(item=>[item.departmentId,item.department] as const)??[])];
  return <div className="min-w-0 space-y-4">
+  <PageHeader title="Verification" description="Review learner education and identity verification requests." />
   <nav className="flex flex-wrap items-center gap-3">
-    <Link href="/tpo/students" className="text-sm text-[var(--lms-teal-deep)] underline">Back to students</Link>
+    <Link href="/tpo/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to students</Link>
     {queue.available&&queue.enabled&&queue.permitted?
      <div className="flex flex-wrap gap-2">
        {([["WAITING","Waiting"],["SENT_BACK","Sent back"],["VERIFIED","Verified"]] as const).map(([tab,label])=>
@@ -39,7 +40,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
         }).toString()} filename={"tpo-verification-"+tab.toLowerCase()+".csv"} label={label+" CSV"} />)}
      </div>:null}
   </nav>
-  <form method="get" action="/tpo/verification" className="grid gap-3 border-b border-border py-4 sm:grid-cols-4">
+  <form method="get" action="/tpo/verification" className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-4">
    <label className="grid gap-1 text-sm">Status
     <Select name="tab" defaultValue={query.tab} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="WAITING">Waiting</option><option value="SENT_BACK">Sent back</option><option value="VERIFIED">Verified</option>
@@ -78,15 +79,15 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     </Select>
    </label>
    <label className="grid gap-1 text-sm">Student or roll number
-    <Input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" />
+    <Input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" className="min-h-11 min-w-0 w-full md:min-h-9" />
    </label>
    <label className="grid gap-1 text-sm">Page size
     <Select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="1000">First 1,000 (legacy view)</option>
     </Select>
    </label>
-   <Button type="submit" >Apply filters</Button>
-   <Link href="/tpo/verification" className="self-center text-[var(--lms-teal-deep)] underline">Reset filters</Link>
+   <Button type="submit" className="min-h-11 md:min-h-9">Apply filters</Button>
+   <Link href="/tpo/verification" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Reset filters</Link>
   </form>
   {queue.available&&queue.enabled&&queue.permitted&&queue.counts?
    <p role="status" className="text-sm text-body">
@@ -98,19 +99,18 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    ((query.tab==="WAITING"?queue.counts?.WAITING:query.tab==="VERIFIED"?queue.counts?.VERIFIED:queue.counts?.SENT_BACK)??0)>1000?
     <Alert tone="warning">Showing the first 1,000 students in this view. Narrow the filters to find more students.</Alert>:null}
   {!queue.available?<section className="space-y-3">
-   <PageHeader title="Verification" />
    <Alert tone="warning">Verification records are not available right now. Please try again or contact your college admin.
-   <Link href="/tpo/verification" className="font-semibold text-[var(--lms-teal-deep)] underline">Retry</Link></Alert>
+   <Link href="/tpo/verification" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link></Alert>
   </section>:!queue.enabled||!queue.permitted?<section className="space-y-3">
-   <PageHeader title="You cannot verify profiles here" />
+   <h2 className="text-base font-semibold text-foreground">You cannot verify profiles here</h2>
    <Alert tone="warning">{!queue.enabled
     ?"Your college admin has not allowed the placement cell to verify profiles"
      :"Your verification access has been removed. Ask your college admin."}</Alert>
   </section>:<><TpoVerificationPanel rows={queue.rows} counts={queue.counts} serverTab={query.tab} serverKind={query.kind}/>
-  <nav aria-label="Verification pages" className="flex items-center gap-3 text-sm">
-   {query.page>1?<Link href={tpoVerificationHref({...query,page:query.page-1})} className="text-[var(--lms-teal-deep)] underline">Previous page</Link>:null}
+  <nav aria-label="Verification pages" className="flex min-w-0 flex-wrap items-center gap-3 text-sm">
+   {query.page>1?<Link href={tpoVerificationHref({...query,page:query.page-1})} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Previous page</Link>:null}
    <span>Page {query.page}; up to {query.pageSize} records per page.</span>
-   {queue.hasMore?<Link href={tpoVerificationHref({...query,page:query.page+1})} className="text-[var(--lms-teal-deep)] underline">Next page</Link>:null}
+   {queue.hasMore?<Link href={tpoVerificationHref({...query,page:query.page+1})} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Next page</Link>:null}
   </nav></>}
  </div>;
 }

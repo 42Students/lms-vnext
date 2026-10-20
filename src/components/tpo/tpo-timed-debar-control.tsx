@@ -60,7 +60,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
    {duration==="DRIVES"?<label className="grid gap-1 text-sm">Number of drives
     <Input className="min-h-11 w-full md:min-h-9" type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)}
      /></label>:null}
-   <Button variant="secondary" type="button" 
+   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9"
     disabled={pending||active.length>0||reason.trim().length===0||duration==="DATE"&&!untilDate||
       duration==="DRIVES"&&(!Number.isInteger(Number(untilDrives))||Number(untilDrives)<1||Number(untilDrives)>10000)}
     onClick={()=>{setError("");setConfirm({action:"DEBAR"});}}>Review debarment</Button>
@@ -78,7 +78,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
      <label className="grid gap-1 text-sm">Reason for lifting
       <Textarea value={liftReason} maxLength={500} onChange={e=>setLiftReason(e.target.value)}
        /></label>
-     <Button variant="secondary" type="button" disabled={pending||!liftReason.trim()}
+     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={pending||!liftReason.trim()}
       onClick={()=>{setError("");setConfirm({action:"LIFT",id:row.id});}}
       >Review lift</Button>
     </div>:null}
@@ -89,8 +89,8 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
    description={confirm?.action==="LIFT"
     ?"Lift this restriction and record the reason. The history remains available."
     :"This blocks new placement applications for the student. The reason and duration will be recorded."}
-   footer={<><Button variant="secondary" disabled={pending} onClick={()=>setConfirm(null)}>Cancel</Button>
-    <Button disabled={pending} onClick={()=>void apply()}>{pending?"Saving…":"Confirm"}</Button></>}>
+   footer={<><Button variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>setConfirm(null)}>Cancel</Button>
+    <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>void apply()}>{pending?"Saving…":"Confirm"}</Button></>}>
    <p className="text-sm">The student&apos;s existing applications will remain recorded.</p>
   </Dialog>
   {error?<InlineNotice tone="error" message={error}/>:null}

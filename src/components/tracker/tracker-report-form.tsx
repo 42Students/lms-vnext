@@ -15,7 +15,7 @@ import {
 } from "@/modules/bug-tracker/report-form-options";
 import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 
-const field = "mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
+const field = "mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
 const label = "block text-sm font-semibold text-body";
 
 export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,knownErrorId}:{contextPrefill?:string;canSearchSimilar?:boolean;knownErrorId?:string}={}) {
@@ -156,7 +156,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           </Select>
         </label>
       </div>
-      <fieldset className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-4">
+      <fieldset className="grid min-w-0 gap-3 border-y border-border py-4">
         <legend className="px-1 text-sm font-semibold">Where did this happen?</legend>
         <div className="grid gap-3 md:grid-cols-3">
           <label className={label}>Page
@@ -240,7 +240,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       {error && <p role="alert" className="text-sm text-error">{error}</p>}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
-        <Button disabled={pending} loading={pending} type="submit" className="min-h-11 md:min-h-9">
+        <Button disabled={pending} loading={pending} type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
           {pending ? "Reporting…" : "Report issue"}
         </Button>
       </div>

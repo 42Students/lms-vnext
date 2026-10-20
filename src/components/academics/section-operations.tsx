@@ -11,6 +11,7 @@ import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useToast } from "@/components/ui/toast";
 
 type Choice = {
@@ -697,7 +698,7 @@ export function SectionOperations({
           <h3 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Program enrollments
           </h3>
-          <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+          <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
             columns={enrollmentColumns}
             rows={programEnrollments}
             getRowKey={(row) => row.id}
@@ -708,7 +709,7 @@ export function SectionOperations({
           <h3 id="section-roster" className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Section roster history
           </h3>
-          <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+          <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
             columns={rosterColumns}
             rows={roster}
             getRowKey={(row) => row.id}
@@ -789,7 +790,7 @@ export function SectionOperations({
           </Button>
         </div>
 
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
           columns={facultyColumns}
           rows={facultyAssignments}
           getRowKey={(row) => row.id}
@@ -980,7 +981,7 @@ export function SectionOperations({
           </div>
         </div>
 
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable empty={<EmptyState title="No records to show" description="No records to show."/>}
           columns={scheduleColumns}
           rows={scheduleEvents}
           getRowKey={(row) => row.id}

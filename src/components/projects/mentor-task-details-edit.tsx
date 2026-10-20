@@ -115,7 +115,7 @@ export function MentorTaskDetailsEdit(props:Props) {
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Priority
           <Select value={priority} onChange={event=>setPriority(event.target.value)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 w-full min-[768px]:min-h-9">
             <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </Select>
@@ -128,7 +128,7 @@ export function MentorTaskDetailsEdit(props:Props) {
           Estimate must be a whole number from 0 to 1000.
         </p>:null}
         <label className="grid gap-1 text-sm font-semibold text-body">Type
-          <Select className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px]" value={taskType}
+          <Select className="min-h-11 w-full min-[768px]:min-h-9" value={taskType}
             onChange={e=>setTaskType(e.target.value)}>
             <option value="">Not specified</option><option value="STORY">Story</option>
             <option value="BUG">Bug</option><option value="CHORE">Chore</option>

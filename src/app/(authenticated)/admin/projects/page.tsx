@@ -132,9 +132,9 @@ export default async function SuperAdminProjectsPage({
         title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={
-          <div className="flex flex-wrap items-center justify-end gap-2">
-            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link>
-            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
+          <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
+            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link>
+            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
             <CreateProjectControl
               collegeId={collegeId}
               basePath="/admin/projects"

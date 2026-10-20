@@ -30,13 +30,13 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
     <PageBackLink href="/admin/placements" label="Placement overview" />
     <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Analytics</Link>
    </>}/>
-  <form action="/admin/placements/student-lookup" role="search" className="min-w-0 border-b border-border pb-4">
-   <label className="grid max-w-xl gap-2 text-sm font-semibold text-body">Name, roll number or email
+  <form action="/admin/placements/student-lookup" role="search" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-end">
+   <label className="grid w-full min-w-0 flex-1 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:max-w-xl">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required disabled={!ctx.adminScope?.collegeId} aria-describedby={!ctx.adminScope?.collegeId?"placement-student-scope-hint":undefined} defaultValue={q}
       placeholder="Find one student in this college"
       className="w-full"/>
    </label>
-   <Button type="submit" className="mt-3" disabled={!ctx.adminScope?.collegeId}>Search students</Button>
+   <Button type="submit" className="w-full md:w-auto" disabled={!ctx.adminScope?.collegeId}>Search students</Button>
   </form>
   {invalid?<ErrorState title="Invalid student search"
    description="Enter 3 to 150 characters in a single search to find students in the selected college."

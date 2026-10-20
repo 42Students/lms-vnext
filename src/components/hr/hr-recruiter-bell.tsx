@@ -102,7 +102,7 @@ export function HrRecruiterBell(){
     state.items.length===0?<EmptyState title={HR_BELL_EMPTY} description={HR_BELL_EMPTY_HELP}/>:
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-80"><ul role="list" aria-label="Recent recruiter notifications" className="space-y-[6px] px-3">{state.items.map(item=><li key={item.id}>
      <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-11 items-start gap-2 rounded-lg border border-border bg-surface px-4 py-3 text-sm text-body transition-[background-color,border-color,box-shadow] duration-200 hover:border-border hover:bg-[var(--lms-neutral-50)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:bg-muted focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none">
-      <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--lms-notification-unread,var(--lms-error))]":"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted"}/>
+      <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-[var(--lms-radius-pill)] bg-[var(--lms-notification-unread,var(--lms-error))]":"mt-1.5 h-2 w-2 shrink-0 rounded-[var(--lms-radius-pill)] bg-muted"}/>
       <span className="flex-1 text-sm font-semibold leading-[1.4]">{item.label}</span><time dateTime={item.at} className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</time>
      </Link></li>)}</ul></ScrollCue>}
 
@@ -113,7 +113,7 @@ export function HrRecruiterBell(){
    onClick={()=>setOpen(value=>!value)}
    variant="secondary" className="relative !h-11 !w-11 !min-w-11 !p-0 md:!h-9 md:!w-9 md:!min-w-9 hover:!bg-[rgba(0,0,0,0.035)] active:!bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
    <ShellNavGlyph name="bell"/>
-   {unread>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-error)] px-1 text-[10px] leading-3 text-white">{unread>99?"99+":unread}</span>:null}
+   {unread>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-[var(--lms-radius-pill)] bg-[var(--lms-error)] px-1 text-[10px] leading-3 text-white">{unread>99?"99+":unread}</span>:null}
   </Button>
   {mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} bodyClassName={style.hrNotificationDrawerBody} footer={panelFooter}>
    {panelBody}

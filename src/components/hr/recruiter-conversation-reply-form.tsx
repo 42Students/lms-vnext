@@ -103,8 +103,8 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
   {notice?<InlineNotice tone={notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
-  <div className="flex flex-wrap items-center gap-3">
-  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 md:min-h-9">
+  <div className="flex min-w-0 flex-wrap items-center gap-3">
+  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 w-full md:min-h-9 md:w-auto">
    {sending?"Sending…":"Send reply"}
   </Button>
   <ConfirmActionDialog open={leaveHref!==null} title="Discard this unsent message?"

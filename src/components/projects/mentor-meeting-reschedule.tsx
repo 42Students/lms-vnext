@@ -60,13 +60,13 @@ export function MentorMeetingReschedule(props:{
       <form onSubmit={event=>{
         event.preventDefault();if(parsed.success&&changed){setOpen(false);setConfirm(true);}
       }} className="grid gap-4">
-        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Start (IST)
+        <label className="grid gap-1 text-sm leading-4 font-semibold text-[var(--lms-neutral-400)]">Start (IST)
           <Input data-slot="input" type="datetime-local" required value={start}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
             onChange={event=>setStart(event.target.value)}
             className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">End (IST)
+        <label className="grid gap-1 text-sm leading-4 font-semibold text-[var(--lms-neutral-400)]">End (IST)
           <Input data-slot="input" type="datetime-local" required value={end}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
             onChange={event=>setEnd(event.target.value)}

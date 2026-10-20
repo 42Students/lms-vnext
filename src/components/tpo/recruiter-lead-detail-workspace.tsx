@@ -65,7 +65,7 @@ type EditValues = {
   source: string;
 };
 // Anchor and Link destinations retain native navigation while adopting the shared secondary-button skin.
-const button = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-3 text-[13px] font-[650] leading-5 text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
+const button = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-3 text-sm font-[650] leading-5 text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
 const SOURCES = [
   ["", "Added by hand / Imported"], ["ALUMNI", "Alumni"],
   ["REFERRAL", "Referral"], ["LINKEDIN", "LinkedIn"],
