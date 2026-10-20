@@ -41,7 +41,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
   document.addEventListener("pointerdown",outside);
   return ()=>document.removeEventListener("pointerdown",outside);
  },[popupOpen]);
- return <div ref={rootRef} data-slot="searchable-select" className="relative sm:col-span-2"
+ return <div ref={rootRef} data-slot="searchable-select" className="relative min-[768px]:col-span-2"
   onBlur={event=>{
    if(!event.currentTarget.contains(event.relatedTarget)){setPopupOpen(false);setActiveIndex(-1);}
   }}>
