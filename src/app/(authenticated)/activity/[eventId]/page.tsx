@@ -57,7 +57,7 @@ export default async function ActivityDetailPage({
       <section className="space-y-4 border-b border-border pb-5">
         <div className="flex flex-wrap gap-2">
           <StatusBadge>{event.module}</StatusBadge>
-          <StatusBadge>{event.importance}</StatusBadge>
+          <StatusBadge tone={event.importance==="CRITICAL"?"error":event.importance==="HIGH"?"warning":event.importance==="MEDIUM"?"info":"neutral"}>{event.importance}</StatusBadge>
           <StatusBadge>{event.eventType}</StatusBadge>
         </div>
         <dl className="grid gap-4 text-sm md:grid-cols-2 min-[992px]:grid-cols-3">

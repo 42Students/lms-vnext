@@ -484,9 +484,21 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="checkbox"], [data-slot="radio"] {
   border-color: var(--lms-neutral-300);
 }
-[data-slot="status-badge"], [data-slot="badge"] {
+/* Legacy .ln-status: 22px line box, 6px corner, 15px horizontal inset,
+ * 12px/700 and 90px minimum width (components___common.scss:995-1005).
+ * Generic role tags use the separate pill radius token, never .ln-status. */
+[data-slot="status-badge"] {
   min-height: 22px;
-  border-radius: 999px;
+  min-width: 90px;
+  border-radius: 6px;
+  padding: 2px 15px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+[data-slot="badge"] {
+  min-height: 22px;
+  border-radius: var(--lms-radius-pill);
   padding: 1px 8px;
   font-size: 12px;
   font-weight: 600;
@@ -988,11 +1000,6 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 }
 [data-slot="status-badge"],
 [data-slot="badge"] {
-  border-radius: var(--lms-radius-pill);
-  min-height: 22px;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 18px;
   white-space: normal;
 }
 

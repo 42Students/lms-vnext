@@ -176,8 +176,8 @@ export default async function SuperAdminCompaniesPage({
             name={row.name} trusted={row.trusted} status={row.relationshipStatus}
             driveCount={row.driveCount??0} companyStatus={row.companyStatus}/>:null}
         <div className="mt-3 flex flex-wrap gap-2">
-          <StatusBadge>{row.companyStatus}</StatusBadge>
-          <StatusBadge>{row.relationshipStatus} relationship</StatusBadge>
+          <StatusBadge tone={row.companyStatus==="ACTIVE"?"success":row.companyStatus==="ARCHIVED"?"neutral":"warning"}>{row.companyStatus}</StatusBadge>
+          <StatusBadge tone={row.relationshipStatus==="ACTIVE"?"success":row.relationshipStatus==="SUSPENDED"?"warning":"neutral"}>{row.relationshipStatus} relationship</StatusBadge>
           {row.trusted ? <StatusBadge tone="success">Trusted</StatusBadge> : null}
           {row.verifiedAt ? <StatusBadge tone="success">Verified by 42</StatusBadge> : null}
         </div>

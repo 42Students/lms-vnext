@@ -16,10 +16,10 @@ export type FilterChipProps=Omit<ButtonProps,"variant"|"size"> & {
 };
 const tones={
  neutral:"border-[var(--lms-canvas-border)] bg-white text-[var(--lms-body-text)]",
- info:"border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
- success:"border-[var(--lms-canvas-border)] bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
- warning:"border-[var(--lms-canvas-border)] bg-[var(--lms-warning-subtle)] text-[var(--lms-warning-text)]",
- error:"border-[var(--lms-canvas-border)] bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
+ info:"border-[var(--lms-canvas-border)] bg-[var(--lms-info-subtle)] text-[var(--lms-info)]",
+ success:"border-[var(--lms-canvas-border)] bg-[var(--lms-success-subtle)] text-[var(--lms-success)]",
+ warning:"border-[var(--lms-canvas-border)] bg-[var(--lms-warning-subtle)] text-[var(--lms-warning)]",
+ error:"border-[var(--lms-canvas-border)] bg-[var(--lms-error-subtle)] text-[var(--lms-error)]",
 } as const;
 
 export function FilterChip({
