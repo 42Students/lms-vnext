@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 export default function HrJobError({reset}:{
  error:Error & {digest?:string};reset:()=>void;
 }){
- return <>
+ return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Drive details could not load" />
   <div className="min-w-0 max-w-2xl"><ErrorState title="Drive details unavailable"
    description="Some drive information may be stale or unavailable. We couldn't verify this drive right now. No applicant or offer details are shown until the employer and college access check succeeds."
@@ -17,5 +17,5 @@ export default function HrJobError({reset}:{
     <PageBackLink href="/hr/drives" label="Back to Drives"/>
    </>}
   /></div>
- </>;
+ </div>;
 }
