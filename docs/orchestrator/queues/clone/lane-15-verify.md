@@ -11,20 +11,20 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-15.md: surface | regre
 
 - [x] `src/app/(authenticated)/admin/academics/page.tsx`
 - [x] `src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/admin/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/admin/attendance/page.tsx`
-- [ ] `src/app/(authenticated)/admin/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batches/page.tsx`
-- [ ] `src/app/(authenticated)/admin/classes/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- [x] `src/app/(authenticated)/admin/announcements/page.tsx`
+- [x] `src/app/(authenticated)/admin/assignments/page.tsx`
+- [x] `src/app/(authenticated)/admin/attendance/page.tsx`
+- [x] `src/app/(authenticated)/admin/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/page.tsx`
+- [x] `src/app/(authenticated)/admin/classes/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
