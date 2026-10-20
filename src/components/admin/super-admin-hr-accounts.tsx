@@ -648,7 +648,7 @@ export function SuperAdminHrAccounts({
     : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="Industry access"
         title="Recruiter accounts"
@@ -661,7 +661,7 @@ export function SuperAdminHrAccounts({
       />
 
       <p role="status" className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
-      <section aria-label="Recruiter account lifecycle" className="space-y-1">
+      <section aria-label="Recruiter account lifecycle" className="space-y-1 border-b border-border pb-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--lms-teal-deep)]">Industry access</p>
         <h2 className="text-base font-semibold text-foreground">Recruiter account lifecycle</h2>
         <p className="text-sm text-body">Manage recruiter access, suspension and signed-in devices.</p>
@@ -682,7 +682,7 @@ export function SuperAdminHrAccounts({
         ].join("|")}
         method="get"
         action="/admin/recruiters"
-        className="flex flex-wrap items-end gap-3 print:hidden"
+        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 print:hidden"
       >
         <label className="grid min-w-52 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
           Search
