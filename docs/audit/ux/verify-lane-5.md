@@ -153,3 +153,17 @@
 - Extra clutter/alignment fixes: 0. Durable known errors remain first, optional live logs and Telegram tools in separate disclosures, live query opens its relevant section; 375px stacked and 768px compact actions match prior proof.
 - Read full route, KnownErrorsWorkspace, TrackerLiveLogsExplorer, TrackerTelegramManualPanel, Tabs/PageHeader/Alert/ErrorState, loading/error/authenticated parent layout and previous `polish-lane-15.md`; no local template/not-found/layout. No runtime/CI.
 - Files changed: queue and proof only.
+
+## Surface 23 — My tracker report detail
+- Surface: `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`.
+- Regressions fixed: 0. Checked required imports/exports and props, status/severity badges, report ownership, public ID validation, not-found and retry handling, timestamps in IST, and preserved visible copy/data.
+- Extra clutter/alignment fixes: 0. The single dividing rule and compact definition rows wrap on narrow widths; constrained and breakable descriptions avoid overflow.
+- Inspected the detail route, adjacent loading/error boundaries, inherited tracker/authenticated layout, PageHeader, PageBackLink, Banner, StatusBadge and the matching entry in `polish-lane-15.md`. No route-local template/layout/not-found file.
+- Files changed: queue and verification proof only; verified, no page change. Static source review; no runtime or CI.
+
+## Surface 24 — My tracker reports list
+- Surface: `src/app/(authenticated)/tracker/mine/page.tsx`.
+- Regressions fixed: 0. Verified platform status and own-report scope, list fetch and recovery, status badges, report links, primary new report link and unchanged copy.
+- Extra clutter/alignment fixes: 0. Hairline rows keep long identifiers and descriptions breakable, while the empty result retains its direct reporting action.
+- Inspected page and loading, parent tracker error and authenticated layout; EmptyState, ErrorState, Banner, PageHeader, StatusBadge and Link/Button styling; compared `polish-lane-15.md` evidence. No route-local error/not-found/template/layout.
+- Files changed: queue and verification proof only; verified, no page change. Static source review; no runtime or CI.
