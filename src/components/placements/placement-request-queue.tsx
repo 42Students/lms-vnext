@@ -145,7 +145,7 @@ export function PlacementRequestQueue({
   }
 
   if (requests.length === 0) {
-    return null;
+    return <section aria-label="Learner requests" className="border-b border-border py-5"><h2 className="font-semibold">Learner requests</h2><p className="mt-2 text-sm text-muted-foreground">No learner requests yet.</p></section>;
   }
 
   const openCount = requests.filter(
@@ -153,7 +153,7 @@ export function PlacementRequestQueue({
   ).length;
 
   return (
-    <section className="border-b border-border pb-5">
+    <section className="min-w-0 border-b border-border pb-5">
       <div className="border-b border-border pb-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -207,16 +207,16 @@ export function PlacementRequestQueue({
           return (
             <article
               key={item.id}
-              className="py-4"
+              className="min-w-0 py-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="m-0 font-semibold text-foreground">
+                  <p className="m-0 min-w-0 break-words font-semibold text-foreground">
                     {item.candidateName ??
                       "Learner"}{" "}
                     · {item.roleTitle}
                   </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 break-all text-xs text-muted-foreground">
                     {item.candidateEmail ??
                       "No email"}{" "}
                     ·{" "}
@@ -248,7 +248,7 @@ export function PlacementRequestQueue({
 
               {item.requestType ===
               "ROUND_RESCHEDULE" ? (
-                <div className="mt-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2 text-sm text-body">
+                <div className="mt-3 min-w-0 border-l-2 border-border bg-surface-subtle px-3 py-2 text-sm text-body">
                   <p className="m-0">
                     {item.roundName ??
                       "Round"}{" "}
@@ -275,7 +275,7 @@ export function PlacementRequestQueue({
 
               {item.requestType ===
               "OFFER_EXTENSION" ? (
-                <div className="mt-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2 text-sm text-body">
+                <div className="mt-3 min-w-0 border-l-2 border-border bg-surface-subtle px-3 py-2 text-sm text-body">
                   <p className="m-0">
                     {item.offerRoleTitle ??
                       "Offer"}{" "}
@@ -293,12 +293,14 @@ export function PlacementRequestQueue({
               ) : null}
 
               {item.status === "PENDING" ? (
-                <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div className="mt-4 grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
                   <label>
                     <span className="mb-1 block text-xs font-semibold text-body">
                       Decision note
                     </span>
                     <Input
+                      className="min-h-11 w-full md:min-h-9"
+                      maxLength={1000}
                       placeholder="Optional for approval, required for rejection"
                       value={
                         notes[item.id] ?? ""
@@ -314,10 +316,12 @@ export function PlacementRequestQueue({
                       }
                     />
                   </label>
-                  <div className="flex flex-wrap gap-2">
+                  {validationError[item.id]?<p role="alert" className="text-sm text-destructive lg:col-span-2">{validationError[item.id]}</p>:null}
+                  <div className="grid grid-cols-2 gap-2 lg:flex lg:items-center">
                     <Button
                       size="sm"
-                      disabled={
+                      className="min-h-11 w-full lg:w-auto md:min-h-9"
+                      disabled=
                         pendingId !== null
                       }
                       onClick={() =>
@@ -333,6 +337,7 @@ export function PlacementRequestQueue({
                     </Button>
                     <Button
                       size="sm"
+                      className="min-h-11 w-full lg:w-auto md:min-h-9"
                       variant="secondary"
                       disabled={
                         pendingId !== null
