@@ -39,14 +39,10 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
   [row.learnerName,row.batchName??"",row.branchName??""].some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
  ),sort,preserveServerOrder),[rows,tab,kind,query,sort,preserveServerOrder]);
  return <section className="min-w-0 space-y-4" aria-label="Profile verification workspace">
-  <PageHeader
-    title={legacyTpoCopy ? "Verification" : "Profile verification"}
-    description={legacyTpoCopy
-      ? "Check students' education and identity against their documents. Verified marks are what eligibility uses."
-      : legacyCollegeCopy
-        ? collegeVerificationLegacyCopy.subtitle
-        : "Review learner education and identity submissions. Submitted updates to verified details remain in Waiting until decided."}
-  />
+  {legacyTpoCopy ? <p className="text-sm text-body">Check students&apos; education and identity against their documents. Verified marks are what eligibility uses.</p> :
+   <PageHeader title="Profile verification" description={legacyCollegeCopy
+     ? collegeVerificationLegacyCopy.subtitle
+     : "Review learner education and identity submissions. Submitted updates to verified details remain in Waiting until decided."} />}
   <Tabs
    ariaLabel="Verification status"
    value={tab}
@@ -77,7 +73,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
   {loading?<p role="status">Loading verification requests…</p>:
    error?<div role="alert" className="space-y-2"><p>Unable to load verification requests: {error}</p>
     {onRetry&&<Button variant="secondary" type="button" className="min-h-[var(--lms-control-height)] " onClick={onRetry}>Retry</Button>}</div>:
-   visible.length===0?<div role="status" className="rounded-md border p-4">
+   visible.length===0?<div role="status" className="border-y border-border px-3 py-4">
      {(legacyCollegeCopy||legacyTpoCopy) && counts[tab]===0
       ? <><p className="font-semibold">{tab==="WAITING"
           ? (legacyTpoCopy?"Nobody is waiting":collegeVerificationLegacyCopy.emptyWaiting)
@@ -85,13 +81,13 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
          <p className="mt-1 text-sm text-muted-foreground">{legacyTpoCopy?"Students appear here when they send their education or identity.":collegeVerificationLegacyCopy.emptyDescription}</p></>
       : <p>No matching verification requests on this page.</p>}
     </div>:
-   <ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-    {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+   <ul className="min-w-0 divide-y divide-border border-y border-border">
+    {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 py-4">
      <h2 className="break-words font-medium">{row.learnerName}</h2>
      {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
      <StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>{verificationQueueCardPresentation(row.status).state}</StatusBadge>
-     {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
-     {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
+     {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
+     {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
       <label className="mt-2 flex items-center gap-2 text-sm">
        <Checkbox disabled={selectionDisabled} aria-label={"Select "+row.learnerName+" "+row.section}
