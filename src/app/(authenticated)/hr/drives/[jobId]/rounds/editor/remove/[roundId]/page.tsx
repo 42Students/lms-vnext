@@ -21,15 +21,15 @@ export default async function HrRoundRemovalConfirm({params}:{
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error;}
  const round=rounds.find(row=>row.id===roundId);
  if(!round||!round.editable)notFound();
- return <div className="min-w-0 max-w-full space-y-5">
+ return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Confirm unused round removal"
    description="Only an unused, pending recruiter-created round can be cancelled. The record remains in audit history."
    actions={<PageBackLink href={"/recruiter/drives/"+encodeURIComponent(jobId)+"/rounds/editor"} label="Keep round"/>}/>
-  <div className="border-b border-border pb-5">
+  <div className="border-b border-border pb-4">
    <p className="font-semibold text-foreground">{round.sequence}. {round.name}</p>
    <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone="warning">{round.status}</StatusBadge> · No recorded candidate results.</p>
   </div>
-  <div className="flex flex-wrap gap-3">
+  <div className="flex flex-wrap gap-2">
    <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"}>
     <Input type="hidden" name="action" value="REMOVE"/>
     <Input type="hidden" name="roundId" value={round.id}/>

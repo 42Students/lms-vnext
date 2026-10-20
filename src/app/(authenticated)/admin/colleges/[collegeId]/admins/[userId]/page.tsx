@@ -19,7 +19,7 @@ export default async function AdminDeviceSessionsPage({params}:{
  const format=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
  }).format(new Date(value));
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title={data.target.name+" · Active sessions"}
    description="Current device sessions for the selected administrator. Times are in IST. An unknown or out-of-scope person cannot be inspected."
    actions={<div className="flex flex-wrap items-center gap-2">
@@ -27,7 +27,7 @@ export default async function AdminDeviceSessionsPage({params}:{
     <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Administrator activity history →</Link>
    </div>}/>
-  <p className="text-sm text-body">{data.devices.length} active session(s), up to 100 shown.</p>
+  <p role="status" className="text-sm text-body">{data.devices.length} active session(s), up to 100 shown.</p>
   <DataTable<DeviceRow> caption="Active administrator device sessions" rows={data.devices} getRowKey={row=>row.id}
     empty={<EmptyState title="No active sessions" description="No active sessions for this account."/>}
     columns={[

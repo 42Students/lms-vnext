@@ -170,7 +170,7 @@ export async function SuperAdminTemplateSubviewPage({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       <ProjectAdminNav
         basePath="/admin/projects"
         active="templates"
@@ -285,7 +285,7 @@ export async function SuperAdminTemplateSubviewPage({
                     </StatusBadge>
                   </div>
 
-                  <dl className="mt-4 grid gap-4 md:grid-cols-2">
+                  <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
                     <DetailField
                       label="Release"
                       value={
@@ -373,7 +373,7 @@ export async function SuperAdminTemplateSubviewPage({
                     </StatusBadge>
                   </div>
 
-                  <dl className="mt-4 grid gap-4 md:grid-cols-2">
+                  <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
                     <DetailField
                       label="Sprint"
                       value={

@@ -10,7 +10,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Banner} from "@/components/ui/banner";
 export default async function SuperAdminRetentionPage(){
  const context=await getCurrentRequestContext();
- if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5"><PageHeader title="Data retention report"/>
+ if(!context.adminScope?.collegeId)return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Data retention report"/>
   <EmptyState title="Select a college" description="Choose a college to review candidate retention candidates."/></div>;
  requireSuperAdminSelectedCollege(context,"placements.read");
  const report=await getSuperAdminPlacementRetentionReport(context);
@@ -21,9 +21,9 @@ export default async function SuperAdminRetentionPage(){
   {key:"state",header:"State",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.applicationStatus==="WITHDRAWN"?"neutral":"warning"}>{row.applicationStatus==="WITHDRAWN"?"Withdrawn":"Rejected"}</StatusBadge>},
   {key:"updated",header:"Last updated",mobilePriority:"secondary",cell:row=>fmt(row.lastUpdated)},
   {key:"action",header:"Action",mobilePriority:"action",cell:row=><Link href={"/admin/placements/applications/"+encodeURIComponent(row.id)}
-   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Review →</Link>},
+   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Review →</Link>},
  ];
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Data retention report"
    description="Applications withdrawn or rejected with no recorded application updates for at least 180 days."
    actions={<PageBackLink href="/admin/placements" label="Placements" />}/>
