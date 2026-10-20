@@ -61,7 +61,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
       {!loaded&&busy?<LoadingState label="Reassign class schedules" />:null}
       {loaded?<div className="min-w-0 space-y-3">
         <p className="text-sm">{upcoming} upcoming scheduled session(s) for {name}.</p>
-        <label className="grid min-w-0 gap-2 text-sm font-semibold">Assign to
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assign to
           <Select value={selected} disabled={busy} onChange={e=>setSelected(e.target.value)}>
             <option value="">Choose a replacement faculty</option>
             {options.map(row=><option key={row.id} value={row.id}>{row.name??row.id}</option>)}
