@@ -89,6 +89,7 @@ export function MembershipSwitcher({
         id="membership-switcher"
         value={active?.value ?? ""}
         disabled={pending}
+        aria-busy={pending}
         onChange={(event) => switchWorkspace(event.target.value)}
         className="w-full min-w-0"
       >
