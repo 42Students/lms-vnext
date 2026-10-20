@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorTaskFeedback} from "@/modules/projects/mentor-task-feedback-service";
 import {mentorTaskFeedbackParamsSchema,taskFeedbackStatusLabel} from "@/modules/projects/mentor-task-feedback-model";
@@ -25,7 +26,7 @@ export default async function Page({params}:{
    :<ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.feedback.map(entry=><li key={entry.id}
     className="py-[var(--lms-space-3)]">
     <div className="flex flex-wrap items-center justify-between gap-2">
-     <h2 className="text-sm font-semibold">Version {entry.version} · {taskFeedbackStatusLabel(entry.status)}</h2>
+     <h2 className="text-sm font-semibold">Version {entry.version} · <StatusBadge tone={entry.status==="APPROVED"?"success":"neutral"}>{taskFeedbackStatusLabel(entry.status)}</StatusBadge></h2>
      <span className="text-xs text-muted-foreground">
       {entry.reviewedAt?new Intl.DateTimeFormat("en-IN",{
        dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",

@@ -14,7 +14,7 @@ type Request={id:string;kind:string;status:string;reason:string;payload:Record<s
 function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<string,unknown>}){
  const detail=tpoGeneralRequestReviewFacts(kind,payload);
  return <div className="space-y-2">
-  {detail.facts.length?<dl className="grid gap-2 sm:grid-cols-2">{detail.facts.map(item=>
+  {detail.facts.length?<dl className="grid gap-2 md:grid-cols-2">{detail.facts.map(item=>
    <div key={item.label} className="rounded-[var(--lms-control-radius)] border border-border p-2">
     <dt className="text-xs text-muted-foreground">{item.label}</dt>
     <dd className="break-words font-medium">{item.value}</dd>
@@ -60,7 +60,7 @@ export function TpoGeneralRequestsPanel(){
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
   {!rows.length?<EmptyState title="No other requests to review."/>:
-   <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[700px] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+   <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[700px] min-h-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="border-b border-[var(--lms-canvas-border)] py-3 text-sm">
     <h3 className="font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
     <p className="break-words">{row.reason}</p>
     <p className="text-xs">{row.status.replaceAll("_"," ")}</p>
