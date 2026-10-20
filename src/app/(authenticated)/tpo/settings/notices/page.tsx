@@ -28,7 +28,8 @@ export default async function TpoStudentNoticesSettings(){
   hasMore:announcements.status==="READY"&&announcements.hasMore});
  return <div className="min-w-0 space-y-5">
   <div className="print:hidden"><TpoSettingsNav active="notices"/></div>
-  <PageHeader title="Student Notices & Preparation" description="Use registered placement announcements and preparation settings. This page does not enable email/SMS delivery, bulk learner targeting or unregistered configuration switches." />
+  <PageHeader title="Student Notices & Preparation" description="Registered placement notices and preparation settings." />
+  <p className="text-sm text-body">Use registered placement announcements and preparation settings. This page does not enable email/SMS delivery, bulk learner targeting or unregistered configuration switches.</p>
   <section className="space-y-3 border-t border-border pt-5">
    <h2 className="text-lg font-semibold text-foreground">College placement notices</h2>
    <p className="text-sm text-body" role="status">{view.publishedSummary}</p>
@@ -50,7 +51,7 @@ export default async function TpoStudentNoticesSettings(){
    <section className="space-y-2 border-t border-border pt-5">
     <h2 className="text-lg font-semibold text-foreground">SMS</h2>
     <p className="text-sm font-medium">Always sent (email and SMS), never counted against the limit</p>
-    <div className="flex flex-wrap gap-2">{["Round scheduled or changed",
+    <div className="flex min-w-0 flex-wrap gap-2">{["Round scheduled or changed",
      "Offer released, expiring, expired or withdrawn","Drive cancelled",
      "Application deadline today","Debarred or marked absent"].map(label=>
      <Badge key={label}  tone="neutral">{label}</Badge>)}</div>

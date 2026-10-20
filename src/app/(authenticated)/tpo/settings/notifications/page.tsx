@@ -155,9 +155,9 @@ export default async function TpoMyNotificationsPage({
         <form
           action="/tpo/settings/notifications"
           method="get"
-          className="mt-4 flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4"
+          className="mt-4 flex flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch"
         >
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-1 text-sm font-semibold text-body md:min-w-40">
             Read status
             <Select
               name="view"
@@ -176,7 +176,7 @@ export default async function TpoMyNotificationsPage({
             </Select>
           </label>
 
-          <label className="grid min-w-28 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-1 text-sm font-semibold text-body md:min-w-28">
             Page size
             <Select
               name="pageSize"

@@ -60,7 +60,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
           "Global project template."
         }
         actions={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             <PageBackLink href="/admin/projects/templates" label="Template catalogue" />
             <StatusBadge
               tone={
@@ -127,7 +127,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
           {detail.versions.map((version) => (
             <div
               key={version.id}
-              className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 last:border-0"
+              className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border py-3 last:border-0"
             >
               <div>
                 <p className="m-0 text-sm font-semibold text-foreground">

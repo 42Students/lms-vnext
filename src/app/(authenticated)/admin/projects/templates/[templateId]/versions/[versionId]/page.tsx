@@ -48,7 +48,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
         <h2 className="text-base font-semibold text-foreground">{change.label}</h2>
         <div className="grid min-w-0 gap-4 md:grid-cols-2">
           {[{ label: "Current", value: change.current }, { label: "Selected version", value: change.selected }].map(value =>
-            <div key={value.label} className="min-w-0"><h3 className="text-sm font-semibold text-body">{value.label}</h3>
+            <div key={value.label} className="min-w-0 overflow-hidden"><h3 className="text-sm font-semibold text-body">{value.label}</h3>
               <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 overflow-y-auto overscroll-contain whitespace-pre-wrap break-all rounded-[var(--lms-canvas-radius)] bg-muted p-3 text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{value.value}</pre></div>)}
         </div>
       </article>)}

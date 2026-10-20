@@ -59,14 +59,14 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
       description="Availability within the current safety scope. Existing workspaces retain their pinned versions."
       actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">← Template catalogue</Link>} />
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
-    <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-3">
+    <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-3 md:items-end">
       <label className="grid gap-1 text-sm font-semibold text-body">College name or code
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="w-full" /></label>
       <label className="grid gap-1 text-sm font-semibold text-body">Availability
         <Select name="status" defaultValue={data.query.status} className="w-full">
           {statuses.map(status => <option key={status}>{status}</option>)}
         </Select></label>
-      <Button className="self-end" type="submit">Filter</Button>
+      <Button className="min-h-11 w-full self-end md:min-h-9" type="submit">Filter</Button>
     </form>
     <p className="text-xs text-muted-foreground">{data.total} matching active colleges · page {data.query.page} of {data.totalPages}</p>
     <SuperAdminTemplateCollegeBulk templateId={id.data} published={data.template.status==="PUBLISHED"}
