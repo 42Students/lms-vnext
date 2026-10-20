@@ -54,7 +54,7 @@ export function CollegeLessonReorderActions({
       onOpenChange={(open) => { if (!open) setDirection(null); }}
       title="Change lesson order?"
       description="This changes the shared lesson order for every delivery of this offering."
-      confirmLabel={direction === "UP" ? "Move lesson up" : "Move lesson down"}
+      confirmLabel={direction === "UP" ? "Move lesson up" : "Move lesson down"} confirmVariant="primary"
       pending={pending}
       onConfirm={confirm}
     />
