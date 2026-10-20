@@ -214,8 +214,8 @@ export default async function TpoCompanyDetailPage({
               : "Not recorded"],
           ].map(([name, value]) => (
             <div key={name} className="min-w-0 border-b border-r border-border px-3 py-3 last:border-r-0">
-              <dt className="text-xs font-semibold text-muted-foreground">{name}</dt>
-              <dd className="mt-2 break-words text-sm font-semibold tabular-nums text-foreground">{value}</dd>
+              <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{name}</dt>
+              <dd className={name==="Latest recorded event"?"mt-2 break-words text-[13px] font-semibold leading-5 text-[var(--lms-body-text)]":"mt-2 break-words text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]"}>{value}</dd>
             </div>
           ))}
         </dl>
