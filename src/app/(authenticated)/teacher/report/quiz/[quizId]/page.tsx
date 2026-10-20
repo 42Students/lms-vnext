@@ -46,17 +46,17 @@ export default async function FacultyQuizReportPage({
   } = report;
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
-      <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-        Back
-      </Link>
-      <PageHeader title={quiz.title} />
-      <div className="flex flex-wrap justify-end gap-3">
-        <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-          Individual attempts &amp; question accuracy →
-        </Link>
-      </div>
+    <div className="min-w-0 max-w-full space-y-5">
+      <PageHeader title={quiz.title}
+        description={[quiz.courseName, quiz.sectionName, quiz.lessonName].join(" · ")}
+        actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+          <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Back</Link>
+          <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">
+            Individual attempts &amp; question accuracy →
+          </Link>
+        </div>} />
+      <Disclosure title="Export options" className="min-w-0 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-4 px-2 py-3">
       <nav aria-label="Quiz CSV response filters" className="flex flex-wrap gap-3 text-sm">
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}
@@ -111,19 +111,20 @@ export default async function FacultyQuizReportPage({
           { title: "Not attempted", rows: notAttemptedLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
         ]}
       />
-      <div className={styles.stats}>
+      </Disclosure>
+      <dl aria-label="Quiz report summary" className="grid min-w-0 grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {[
           ["Submitted", `${metrics.submittedLearners}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Questions", metrics.questionCount],
           ["Due date", quiz.dueAt ? facultyReportIstTimestamp(quiz.dueAt) : "—"],
         ].map(([label, value]) => (
-          <div key={label} className={styles.stat}>
-            <p className={styles.statLabel}>{label}</p>
-            <p className={styles.statValue}>{value}</p>
+          <div key={label} className="min-w-0 py-4">
+            <dt className="text-xs font-semibold leading-5 text-muted-foreground">{label}</dt>
+            <dd className="mt-1 break-words text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">{value}</dd>
           </div>
         ))}
-      </div>
+      </dl>
       <div className="flex flex-wrap items-center gap-2">
         <StatusBadge tone={quiz.status === "PUBLISHED" ? "success" : "neutral"}>
           {quiz.status}
@@ -158,15 +159,15 @@ export default async function FacultyQuizReportPage({
                   value={width} maximum={100} unit="percent" />
                 <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </span>}
-                 className="rounded-[var(--lms-canvas-radius)] border border-border p-2 text-sm [&>summary]:min-h-11 md:[&>summary]:min-h-[var(--lms-control-height)] [&>summary]:px-0">
+                 className="border-b border-[var(--lms-canvas-border)] p-2 text-sm [&>summary]:min-h-11 md:[&>summary]:min-h-[var(--lms-control-height)] [&>summary]:px-0">
                 <ul className="mt-2 space-y-1 border-t border-border pt-2">
                   {latestAttempts.filter(attempt=>{
                     if(attempt.maxScore<=0)return false;
                     const percent=Math.round(100*attempt.score/attempt.maxScore);
                     return percent>=bucket.min&&percent<=bucket.max;
                   }).map(attempt=><li key={attempt.id} className="flex justify-between gap-3 text-body">
-                    <span>{facultyReportLearnerName(attempt.learnerDisplayName)}</span>
-                    <span>{attempt.score}/{attempt.maxScore}</span>
+                    <span className="min-w-0 break-words">{facultyReportLearnerName(attempt.learnerDisplayName)}</span>
+                    <span className="shrink-0 tabular-nums">{attempt.score}/{attempt.maxScore}</span>
                   </li>)}
                 </ul>
               </Disclosure>
@@ -191,7 +192,7 @@ export default async function FacultyQuizReportPage({
             {questions.map((question, index) => (
               <li
                 key={question.id}
-                className={styles.accuracyRow+" "+(question.accuracyPercent===null?"":question.accuracyPercent<50?styles.accuracyRowPoor:question.accuracyPercent<75?styles.accuracyRowFair:"")}
+                className={styles.accuracyRow+" !rounded-none !bg-transparent !px-0 !py-3 "+(question.accuracyPercent===null?"":question.accuracyPercent<50?styles.accuracyRowPoor:question.accuracyPercent<75?styles.accuracyRowFair:"")}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -239,7 +240,7 @@ export default async function FacultyQuizReportPage({
             Every currently eligible learner has at least one attempt.
           </p>
         ) : (
-          <ul className="mt-3 grid gap-2 md:grid-cols-2">
+          <ul className="mt-3 grid min-w-0 gap-x-6 sm:grid-cols-2">
             {notAttemptedLearners.map((learner) => (
               <li
                 key={learner.membershipId}
