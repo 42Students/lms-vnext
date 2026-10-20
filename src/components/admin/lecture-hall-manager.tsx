@@ -192,11 +192,10 @@ export function LectureHallManager({
       ) : (
         <DataTable empty={<EmptyState title="No lecture halls" description="No records to show."/>}
           columns={[
-            { key: "name", header: LECTURE_HALL_COPY.columns.name, mobilePriority: "primary", cell: (hall: HallRow) => <span className="font-semibold text-foreground">{hall.name}</span> },
+            { key: "name", header: LECTURE_HALL_COPY.columns.name, mobilePriority: "primary", cell: (hall: HallRow) => <span className="block min-w-0"><span className="block break-words font-semibold text-foreground">{hall.name}</span>{hall.description ? <span className="mt-1 block break-words text-xs text-muted-foreground">{hall.description}</span> : null}</span> },
             { key: "type", header: LECTURE_HALL_COPY.columns.type, cell: (hall) => ROOM_TYPE_LABELS[hall.roomType] ?? hall.roomType },
             { key: "capacity", header: "Capacity", cell: (hall) => hall.capacity },
             { key: "dept", header: LECTURE_HALL_COPY.columns.department, cell: (hall) => hall.departmentName ?? "—" },
-            { key: "description", header: LECTURE_HALL_COPY.columns.description, cell: (hall) => hall.description || "—" },
             {
               key: "upcoming",
               header: "Upcoming classes",
@@ -217,29 +216,22 @@ export function LectureHallManager({
               mobilePriority: "action",
               className: "text-right",
               cell: (hall) => (
-                <div className="flex flex-wrap justify-end gap-2 print:hidden">
+                <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden md:justify-end">
                   <Link href={`${availabilityBase}/${hall.id}`}
-                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                     Availability
                   </Link>
-                  <Button className="min-h-11 md:min-h-9" variant="secondary" size="sm" onClick={() => open(hall)}>
-                    Edit
-                  </Button>
-                  {hall.status === "ACTIVE" ? (
-                    <Button className="min-h-11 md:min-h-9" variant="danger" size="sm" onClick={() => setArchiving(hall)}>
-                      Archive
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="min-h-11 md:min-h-9"
-                      disabled={pending}
-                      onClick={() => setStatus(hall, "ACTIVE")}
-                    >
-                      Restore
-                    </Button>
-                  )}
+                  <details className="group relative min-w-0">
+                    <summary className="inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Actions</summary>
+                    <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-col gap-[var(--lms-space-2)]">
+                      <Button className="min-h-11 md:min-h-9" variant="secondary" size="sm" onClick={() => open(hall)}>Edit</Button>
+                      {hall.status === "ACTIVE" ? (
+                        <Button className="min-h-11 md:min-h-9" variant="danger" size="sm" onClick={() => setArchiving(hall)}>Archive</Button>
+                      ) : (
+                        <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => setStatus(hall, "ACTIVE")}>Restore</Button>
+                      )}
+                    </div>
+                  </details>
                 </div>
               ),
             },
@@ -272,18 +264,18 @@ export function LectureHallManager({
             </Banner>
           ) : null}
           <div>
-            <label className={field} htmlFor="hall-name" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{LECTURE_HALL_COPY.nameLabel}</label>
+            <label className={field} htmlFor="hall-name">{LECTURE_HALL_COPY.nameLabel}</label>
             <Input className="min-h-11 md:min-h-9" id="hall-name" value={draft.name} maxLength={255} placeholder={LECTURE_HALL_COPY.namePlaceholder}
               onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
           </div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div>
-              <label className={field} htmlFor="hall-capacity" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{LECTURE_HALL_COPY.capacityLabel}</label>
+              <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
               <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={5000} value={draft.capacity}
                 onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
             </div>
             <div>
-              <label className={field} htmlFor="hall-type" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{LECTURE_HALL_COPY.typeLabel}</label>
+              <label className={field} htmlFor="hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
               <Select className="min-h-11 md:min-h-9" id="hall-type" value={draft.roomType}
                 onChange={(e) => setDraft({ ...draft, roomType: e.target.value })}>
                 {Object.entries(ROOM_TYPE_LABELS).map(([value, label]) => (
@@ -293,7 +285,7 @@ export function LectureHallManager({
             </div>
           </div>
           <div>
-            <label className={field} htmlFor="hall-dept" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{LECTURE_HALL_COPY.departmentLabel}</label>
+            <label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
             <Select className="min-h-11 md:min-h-9" id="hall-dept" value={draft.departmentId}
               onChange={(e) => setDraft({ ...draft, departmentId: e.target.value })}>
               <option value="">Shared by all departments</option>
@@ -303,7 +295,7 @@ export function LectureHallManager({
             </Select>
           </div>
           <div>
-            <label className={field} htmlFor="hall-desc" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{LECTURE_HALL_COPY.descriptionLabel}</label>
+            <label className={field} htmlFor="hall-desc">{LECTURE_HALL_COPY.descriptionLabel}</label>
             <Input className="min-h-11 md:min-h-9" id="hall-desc" value={draft.description} maxLength={255} placeholder={LECTURE_HALL_COPY.descriptionPlaceholder}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
           </div>

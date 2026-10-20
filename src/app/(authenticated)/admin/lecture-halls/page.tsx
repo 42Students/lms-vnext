@@ -68,56 +68,59 @@ export default async function SuperAdminLectureHallsPage({
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader  title="Lecture Halls"
       description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`} />
-    <section aria-label="Lecture hall filters" className="space-y-4 border-b border-border pb-4">
-      <form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-4">
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room name
-          <Input type="search" name="q" maxLength={100} defaultValue={query.q}
-            placeholder="Search halls" className="min-h-11 w-full md:min-h-9"/>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
-          <Select name="status" defaultValue={query.status} className="min-h-11 w-full md:min-h-9">
-            <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
-            <option value="ARCHIVED">Archived</option>
-          </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
-          <Select name="departmentId" defaultValue={query.departmentId ?? ""}
-            className="min-h-11 w-full md:min-h-9">
-            <option value="">All departments</option>
-            {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-          </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room type
-          <Select name="roomType" defaultValue={query.roomType}
-            className="min-h-11 w-full md:min-h-9">
-            <option value="ALL">All types</option>
-            <option value="CLASSROOM">Classroom</option><option value="LECTURE_HALL">Lecture Hall</option>
-            <option value="LAB">Laboratory</option><option value="SEMINAR_HALL">Seminar Hall</option>
-            <option value="AUDITORIUM">Auditorium</option>
-            <option value="CONFERENCE_ROOM">Conference Room</option>
-          </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
-          <Select name="pageSize" defaultValue={query.pageSize}
-            className="min-h-11 w-full md:min-h-9">
-            {[10,25,50,100].map(size => <option key={size} value={size}>{size}</option>)}
-          </Select>
-        </label>
-        <Button type="submit">Search</Button>
-        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
+    <section aria-label="Lecture hall filters" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+      <form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls" className="min-w-0 space-y-[var(--lms-space-3)]">
+        <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room name
+            <Input type="search" name="q" maxLength={100} defaultValue={query.q}
+              placeholder="Search halls" className="min-h-11 w-full md:min-h-9" />
+          </label>
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+            <Select name="status" defaultValue={query.status} className="min-h-11 w-full md:min-h-9">
+              <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
+              <option value="ARCHIVED">Archived</option>
+            </Select>
+          </label>
+          <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Search</Button>
+        </div>
+        <details className="group min-w-0" open={Boolean(query.departmentId || query.roomType !== "ALL" || query.pageSize !== 25)}>
+          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+          <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+              <Select name="departmentId" defaultValue={query.departmentId ?? ""} className="min-h-11 w-full md:min-h-9">
+                <option value="">All departments</option>
+                {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+              </Select>
+            </label>
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room type
+              <Select name="roomType" defaultValue={query.roomType} className="min-h-11 w-full md:min-h-9">
+                <option value="ALL">All types</option><option value="CLASSROOM">Classroom</option>
+                <option value="LECTURE_HALL">Lecture Hall</option><option value="LAB">Laboratory</option>
+                <option value="SEMINAR_HALL">Seminar Hall</option><option value="AUDITORIUM">Auditorium</option>
+                <option value="CONFERENCE_ROOM">Conference Room</option>
+              </Select>
+            </label>
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+              <Select name="pageSize" defaultValue={query.pageSize} className="min-h-11 w-full md:min-h-9">
+                {[10,25,50,100].map(size => <option key={size} value={size}>{size}</option>)}
+              </Select>
+            </label>
+          </div>
+        </details>
       </form>
-      <div className="flex flex-wrap gap-2">
-        <a href={csvHref} download className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export CSV</a>
-        <form action="/admin/lecture-halls" method="get">
-          {Object.entries(query).map(([name,value]) =>
-            value !== undefined && value !== ""
-              ? <Input key={name} type="hidden" name={name} value={String(value)} />
-              : null)}
-          <Button type="submit" variant="secondary">Refresh</Button>
-        </form>
+      <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-2)]">
+        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
+        <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
+          <a href={csvHref} download className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export CSV</a>
+          <form action="/admin/lecture-halls" method="get">
+            {Object.entries(query).map(([name,value]) => value !== undefined && value !== ""
+              ? <Input key={name} type="hidden" name={name} value={String(value)} /> : null)}
+            <Button type="submit" variant="secondary">Refresh</Button>
+          </form>
+        </div>
       </div>
     </section>
-    <section aria-label="Lecture hall results" className="space-y-3">
+    <section aria-label="Lecture hall results" className="min-w-0 space-y-[var(--lms-space-3)]">
       <p role="status" className="text-sm text-muted-foreground">{total} matching {total === 1 ? "hall" : "halls"} · Showing {first}–{last}</p>
       <LectureHallManager key={collegeId} collegeId={collegeId}
         availabilityBase="/admin/lecture-halls"
@@ -128,8 +131,10 @@ export default async function SuperAdminLectureHallsPage({
           title: "No lecture halls found.", description: "Clear filters or add a lecture hall.",
         }} />
     </section>
-    <p className="text-sm text-muted-foreground">Page {query.page} of {pages} · {query.pageSize} per page</p>
-    <Pagination label="Lecture hall pages" page={query.page} pageCount={pages}
-      hrefForPage={page=>superAdminLectureHallHref({...query,page})}/>
+    <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
+      <p className="text-sm text-muted-foreground">Page {query.page} of {pages} · {query.pageSize} per page</p>
+      <Pagination label="Lecture hall pages" page={query.page} pageCount={pages}
+        hrefForPage={page=>superAdminLectureHallHref({...query,page})}/>
+    </div>
   </div>;
 }
