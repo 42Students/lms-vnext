@@ -339,3 +339,192 @@ No Work queue item checked: no compiler, CI, local app, screenshots, or actual p
 All five complete remote file contents were re-read from the pushed branch and scanned with the same scoped control/hex/overlay patterns listed above; raw `button/select/textarea`, raw `role=tab`, visible utility hexes and custom fixed overlays are **zero** in these five. These source scans do **not** replace an actual repository-wide grep or a live responsive comparison. `DataTable` still switches at `sm=640px`, whereas the old shell's mobile threshold is 767px; shared owner must reconcile. No strict checkbox ticked.
 
 **Next source:** `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` (thin shared-subview wrapper; document absence of hand-rolled controls), then remaining last-third placement detail routes. At least one complete project template directory and tenant directory source conversion now exists, but pixel-level verification is outstanding.
+
+
+## Chat-10 next batch: 15 touched files — source corrections and strict proof gaps (2026-10-20)
+
+This batch edits **15 distinct chat-10-owned Projects components**, including three saved-version confirmation flows moved off native `window.confirm`, five editor/confirmation notice conversions to shared feedback, and five admin list/picker layouts. Every changed file was fetched in full again after the commit. No shared UI components, global skin, learner or mentor components were edited. The only programmatic checks below are against fetched source strings; **no app, repository executable, TypeScript compiler, CI or screenshot was run.**
+
+### Shared element value and state source matrix
+| Legacy item and exact source | vNext inherited rule | Evidence status |
+| --- | --- | --- |
+| Button: legacy primary 36px height, 650 weight, 14px text, 9px radius and hover; 44px phone target (`docs/design/ui-clone-checklist.md`, D) | `src/components/ui/button.tsx:11-20,25-29`: min-height `var(--lms-control-height)`, 650 weight, primary hover tokens, `max-[767px]:min-h-11`, 14px default | Source rules line up structurally; resolved CSS variable value/hover screenshot not gathered |
+| Input/Select: legacy outlined controls and 44px phone target (checklist C, old-lms-pages:5,9) | `input.tsx:21-40`, `select.tsx:24-40`: 1px canvas-border, field radius, hover and 2px focus ring, `max-[767px]:min-h-11` | Source token inheritance; computed border/radius unverified |
+| Textarea: legacy labels and outlined full-width field (checklist C) | `textarea.tsx:22-43`: min-height 112px when rows unspecified, 10px vertical padding, focus ring, invalid, read-only, disabled | Token inheritance; screenshot unverified |
+| Banners: slim pale strip with dot, one sentence and optional outlined action (`docs/design/old-lms-pages.md:7`) | `banner.tsx:10-21`: 6px dot, 10px vertical padding, 1px tone border, flex-wrap, error role=alert vs other role=status | Source anatomy matches; exact rendered tones and width unverified |
+| Status pills: small coloured labels (`old-lms-pages.md:6`) | `status-badge.tsx:9-17`: 22px min height, 12px text, 6px radius, tone vars | Source anatomy; exact legacy pixel values not fully measured |
+| Dialog/popconfirm: shared focus-managed action row (checklist F1/I) | `dialog.tsx:39-54`, `confirm-dialog.tsx:16-19`, `use-confirm-flow.tsx`: constrained viewport, cancel/confirm action buttons and pending state | No native window.confirm in affected files; focus runtime unverified |
+| Page/canvas anatomy (`docs/design/old-lms-pages.md:1-10`) | Inline section border-b, shared PageHeader/Tabs, direct list rows where present | Each file below has an inventory; browser canvas/shell remains unverified |
+| Mobile/tablet: old shell mobile up to 767px (`old-lms-shell.css:73`) | Shared Button/Input/Select max-[767px], projects grid `md:`/`min-[768px]`; shared `EmptyState` uses `sm:` at 640px | Source comparison, not actual 375px/768px render; empty-state breakpoint remains a shared owner gap |
+
+### Per-file value, state, grep and responsive matrices
+
+#### `src/components/projects/super-admin-template-archive-control.tsx` — archived status pill; confirmation of destructive archive; error
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/super-admin-template-archive-control.tsx:14,15,17,28) delegates controls to shared variants; 0 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | archived status pill; confirmation of destructive archive; error; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 1/1 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | No explicit local responsive breakpoint; relies on shared UI controls/Dialog/Banner; shared controls use `max-[767px]:min-h-11`; 0 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=1; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/super-admin-template-create-form.tsx` — create form and validation; pending; cancellation and error
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/super-admin-template-create-form.tsx:40,56,67,112,114) delegates controls to shared variants; 10 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | create form and validation; pending; cancellation and error; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 1/1 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 4; shared controls use `max-[767px]:min-h-11`; 10 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=1; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/super-admin-template-overview-editor.tsx` — edit-mode form; reviewed confirm; saved/error
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/super-admin-template-overview-editor.tsx:18,40,56,61,63,68,75,78,82,83) delegates controls to shared variants; 0 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | edit-mode form; reviewed confirm; saved/error; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 2/2 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 6; shared controls use `max-[767px]:min-h-11`; 0 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=2; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/super-admin-template-plan-editor.tsx` — sprints/tasks form; reviewed confirm; success/error
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/super-admin-template-plan-editor.tsx:34,99,141,166,220,277) delegates controls to shared variants; 4 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | sprints/tasks form; reviewed confirm; success/error; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 2/2 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 2; shared controls use `max-[767px]:min-h-11`; 4 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=2; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/super-admin-template-resource-editor.tsx` — resource rows and controls; reviewed confirm; success/error
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/super-admin-template-resource-editor.tsx:18,33,53,67,70,73,81,97,98) delegates controls to shared variants; 1 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | resource rows and controls; reviewed confirm; success/error; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 2/2 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 5; shared controls use `max-[767px]:min-h-11`; 1 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=2; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/super-admin-template-rollback-control.tsx` — disabled/no-op; review confirm; success/error/warning
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/super-admin-template-rollback-control.tsx:14,19,40,42,43) delegates controls to shared variants; 0 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | disabled/no-op; review confirm; success/error/warning; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 3/3 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | No explicit local responsive breakpoint; relies on shared UI controls/Dialog/Banner; shared controls use `max-[767px]:min-h-11`; 0 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=3; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/college-project-summary-editor.tsx` — compact editing; success/error; responsive touch controls
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/college-project-summary-editor.tsx:14,19,35,54,57,58) delegates controls to shared variants; 0 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | compact editing; success/error; responsive touch controls; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 2/2 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 2; shared controls use `max-[767px]:min-h-11`; 0 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=2; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/college-project-summary-editor-full.tsx` — expanded editing; error/validation; tablet split
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/college-project-summary-editor-full.tsx:20,43,71,109) delegates controls to shared variants; 0 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | expanded editing; error/validation; tablet split; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 1/1 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 1; shared controls use `max-[767px]:min-h-11`; 0 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=1; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/college-project-mentor-dialog.tsx` — search/reassign Dialog; error; busy
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/college-project-mentor-dialog.tsx:92) delegates controls to shared variants; 1 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | search/reassign Dialog; error; busy; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 1/1 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | No explicit local responsive breakpoint; relies on shared UI controls/Dialog/Banner; shared controls use `max-[767px]:min-h-11`; 1 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=1; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/project-admin-submission-review.tsx` — feedback Dialog; lock ConfirmDialog; success/error
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/project-admin-submission-review.tsx:52,74) delegates controls to shared variants; 0 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | feedback Dialog; lock ConfirmDialog; success/error; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 2/2 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | No explicit local responsive breakpoint; relies on shared UI controls/Dialog/Banner; shared controls use `max-[767px]:min-h-11`; 0 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=2; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/admin-readiness-workspace-picker.tsx` — searchable choice list; badge; empty, disabled pager
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/admin-readiness-workspace-picker.tsx:23,26,30,32) delegates controls to shared variants; 6 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | searchable choice list; badge; empty, disabled pager; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 0/0 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 2; shared controls use `max-[767px]:min-h-11`; 6 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=0; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/project-admin-at-risk-page.tsx` — single canvas row list; warning banner; filter chips
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/project-admin-at-risk-page.tsx:42,64,78,98,132,135,140,144,172) delegates controls to shared variants; 9 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | single canvas row list; warning banner; filter chips; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 2/2 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 1; shared controls use `max-[767px]:min-h-11`; 9 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=2; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/project-admin-readiness-page.tsx` — readiness strip; shared table; empty/error
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/project-admin-readiness-page.tsx:92,96,120,125,132,139,144,152,182,187,201) delegates controls to shared variants; 5 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | readiness strip; shared table; empty/error; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 1/1 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 4; shared controls use `max-[767px]:min-h-11`; 5 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=1; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/project-admin-workspace-list.tsx` — workspace objects; card/table; responsive metrics
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/project-admin-workspace-list.tsx:69,87,105,126,138,174) delegates controls to shared variants; 7 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | workspace objects; card/table; responsive metrics; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 0/0 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 5; shared controls use `max-[767px]:min-h-11`; 7 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=0; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+
+#### `src/components/projects/project-admin-audit-page.tsx` — filter + tabs + single summary strip; activity list
+| Property / state | Legacy requirement (source) | Current vNext rule (source) | Proof outcome |
+| --- | --- | --- | --- |
+| Layout / canvas | One continuous white canvas; ordinary form rows should not have nested cards (`old-lms-pages.md:1,9`) | Owned TSX (src/components/projects/project-admin-audit-page.tsx:178,182,183,188,193,195,273,282,289) delegates controls to shared variants; 4 `min-w-0` / wrap / break-word markers | **Source reviewed**; exact computed padding/radius and rendered hierarchy not established |
+| Visible controls, default/hover/focus/disabled | Outlined/solid controls and state transitions per `ui-clone-checklist.md:C,D,I` | Shared `Button/Input/Select/Textarea` styles and disabled states (`button.tsx:11-29`; `input.tsx:21-40`); no owned raw controls | **Source matched inherited component**, keyboard hover/focus screenshot not obtained |
+| Error, empty, pending and success | Slim feedback banner, readable state text; error must be obvious (`old-lms-pages.md:7`; checklist F) | filter + tabs + single summary strip; activity list; inherited `banner.tsx:10-21`, `empty-state.tsx:6-9` and `dialog.tsx:39-54` as present; `Banner` pairs 1/1 | **Source reviewed**, all applicable transitions still need live exercise |
+| Phone 375px / tablet 768px | Legacy mobile <=767px (`old-lms-shell.css:73`), 44px taps (checklist D) | Explicit `md:`/`min-[768px]`/`max-[767px]` source markers: 8; shared controls use `max-[767px]:min-h-11`; 4 fluid/wrap markers | **Static rule evidence only**; not a measured 375px/768px screenshot or overflow test |
+| Full-file scoped grep & JSX tag pairing | No raw `button/select/input/textarea`, overlays, hex, tabs, native confirm (STRICT TICK RULE) | rawButtons=0; rawSelects=0; rawTextareas=0; rawInputs=0; nativeConfirm=0; customDialog=0; hardcodedHex=0; handTabs=0; matching `Banner` pairs=1; container tag pairing=balanced | **0 for all forbidden patterns in this fetched file**; not a repository-wide grep or TypeScript parse |
+
+### Full-source scoped grep-equivalent scan protocol and summary
+```text
+Scope: the 15 complete .tsx sources listed above, ref chatgpt/chat-10-b.
+/<button(?=[\\s>])/g; /<select(?=[\\s>])/g; /<textarea(?=[\\s>])/g;
+/<input(?!\\s+type=["']hidden["'])(?=[\\s>])/g; /window\\.confirm\\s*\\(/g;
+/fixed inset-0|role=["']dialog["']/g; /(?:bg|text|border)-\\[#[0-9a-fA-F]{3,8}\\]/g;
+/role=["']tab(?:list)?["']/g.
+Results across all 15 source files: rawButtons=0, rawSelects=0, rawTextareas=0, rawInputs=0, nativeConfirm=0, customDialog=0, hardcodedHex=0, handTabs=0.
+All 15: shared Banner opening and closing count matches; div/section/article open/close element counts match.
+These are in-memory source scans, not shell greps. No assertion about files outside this scoped set.
+```
+
+### Responsive and remaining acceptance blockers
+- At **375px**, the shared Button/Input/Select have `max-[767px]:min-h-11` for minimum 44px targets; `Banner` wraps and `Dialog` uses width `calc(100% - 2rem)` (`dialog.tsx:44`). Fourteen inherited shared components and the local `md`/768 rules were compared as text, not rendered on a device. Some pages have no local breakpoints by design because the shared components own them.
+- At **768px**, the compact college summary buttons and full editor grid now switch at `md`, not `sm`. The workspace metric grid now switches at `md` instead of 425px; the readiness count strip uses a single shared hairline grouping rather than individual boxes. Shared DataTable's 640px mobile-card threshold vs old LMS 767px shell remains a separate shared-owner discrepancy.
+- Static checks did not examine browser computed text width, scroll overflow, screenshots, native/dialog focus and pending transitions. Those must be completed before any Strict Tick Rule checkbox can be checked. This appendix supplies source value, scoped grep and responsive rule comparison but **is not a claim of pixel-perfect completion**.
+- **STRICT TICK STATUS: 0 of this batch's 15 checked.** They remain open until exact legacy/computed token values, 375px/768px rendering, all states, and syntactic typechecking can be verified. 
+
+### Next exact file
+`src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` — verify the thin route-to-shared-subview contract, then remaining `/admin/projects*` pages and the additional college Projects audit queue.
