@@ -1,6 +1,7 @@
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
+import {Disclosure} from "@/components/ui/disclosure";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoReportRecordLinks } from "@/components/placements/tpo-report-record-links";
@@ -51,7 +52,7 @@ export default async function TpoOffersAcceptanceReportPage({
   };
 
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Offers and acceptance"
@@ -70,7 +71,7 @@ export default async function TpoOffersAcceptanceReportPage({
 
       <section
         aria-label="Offer funnel totals"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
+        className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3"
       >
         {[
           ["Released offers", totals.released],
@@ -82,7 +83,7 @@ export default async function TpoOffersAcceptanceReportPage({
         ].map(([label, value]) => (
           <div
             key={label}
-            className="border-b border-border py-4"
+            className="min-w-0 border-b border-border py-3"
           >
             <p className="text-xs font-semibold uppercase text-body">
               {label}
@@ -99,9 +100,6 @@ export default async function TpoOffersAcceptanceReportPage({
        rows={byCompany.filter(row=>row.accepted+row.declined>0)
          .map(row=>({label:row.label,value:Math.round(row.accepted/(row.accepted+row.declined)*100),
           detail:row.accepted+" accepted of "+(row.accepted+row.declined)+" answered offers"}))}/>
-      <ReportBarChart title="Accepted offers by company" units="offers"
-       rows={byCompany.map(row=>({label:row.label,value:row.accepted}))}/>
-
       <p className="text-sm leading-6 text-body">
         Outstanding and expired-outstanding are mutually exclusive subsets
         of currently ISSUED offers. Expired is derived from the recorded
@@ -134,6 +132,11 @@ export default async function TpoOffersAcceptanceReportPage({
         emptyDescription="No persisted offers match the selected reporting scope."
       />
 
+      <Disclosure title="Company offers and underlying records" className="border-b border-border py-3">
+        <div className="min-w-0 space-y-4 pt-3">
+      <ReportBarChart title="Accepted offers by company" units="offers"
+       rows={byCompany.map(row=>({label:row.label,value:row.accepted}))}/>
+
       <ReportTable
         title="Offer funnel by company"
         headings={[
@@ -161,7 +164,10 @@ export default async function TpoOffersAcceptanceReportPage({
         emptyDescription="No companies have recorded offers for these filters."
       />
       <p className="text-xs text-muted-foreground">Acceptance rate = accepted / (accepted + declined) among answered offers. Waiting for the student is the currently outstanding status; expired outstanding is presented separately and is not counted twice.</p>
-      <TpoReportRecordLinks kind="OFFERS" drives={byDrive} companies={byCompany} />
+          <TpoReportRecordLinks kind="OFFERS" drives={byDrive} companies={byCompany} />
+        </div>
+      </Disclosure>
+
     </div>
   );
 }
