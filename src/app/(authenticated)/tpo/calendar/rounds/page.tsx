@@ -22,17 +22,16 @@ export default async function TpoRoundCalendarPage({searchParams}:{
   const link=(page:number)=>"/tpo/calendar/rounds?"+new URLSearchParams({
    ...(result.q?{q:result.q}:{}),page:String(page),
   }).toString();
-  return <div className="min-w-0 space-y-5">
-    <PageBackLink href="/tpo/calendar" label="Calendar"/>
+  return <div className="min-w-0 space-y-4">
     <PageHeader title="Drive round scheduling"
-      description="Schedule an existing pending drive round, reschedule an active one or cancel it. All times are IST." />
-    <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+      description="Schedule an existing pending drive round, reschedule an active one or cancel it. All times are IST." actions={<PageBackLink href="/tpo/calendar" label="Calendar"/>} />
+    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:min-w-56">Find rounds
       <Input type="search" name="q" maxLength={100} defaultValue={result.q}
        placeholder="Company, drive or round name" />
      </label>
      <Button type="submit" variant="primary" className="min-h-11 w-full px-4 min-[768px]:w-auto min-[768px]:min-h-9">Find</Button>
-     <Link href="/tpo/calendar/rounds" className="lms-inline-link inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Clear</Link>
+     <Link href="/tpo/calendar/rounds" className="lms-inline-link inline-flex min-h-11 items-center justify-center text-[14px] font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Clear</Link>
     </form>
     <p role="status" className="text-[13px] text-[var(--lms-muted-text)]">Page {result.page}: {result.rows.length} rounds{result.limited?" · more available":""}</p>
     <TpoRoundCalendarControl blockedDates={blockedDates.ready?blockedDates.rows.map(row=>row.day):[]} blockedDatesAvailable={blockedDates.ready}
@@ -40,10 +39,10 @@ export default async function TpoRoundCalendarPage({searchParams}:{
       ...row, updatedAt: row.updatedAt.toISOString(),
       scheduledAt: row.scheduledAt?.toISOString() ?? null,
     }))} />
-    <nav aria-label="Round pages" className="flex min-w-0 flex-wrap items-center gap-3">
+    {(result.page>1||result.limited)?<nav aria-label="Round pages" className="flex min-w-0 flex-wrap items-center gap-3">
      {result.page>1?<Link href={link(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 py-2 text-[14px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Previous 200</Link>:null}
      {result.limited?<Link href={link(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 py-2 text-[14px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Next 200</Link>:null}
-    </nav>
+    </nav>:null}
     <p className="text-sm text-body">Venue checks use persisted on-campus bookings.
       Unknown duration is a blocker, not an assumed clear venue.
       A pending round is created under its drive before being scheduled here.</p>

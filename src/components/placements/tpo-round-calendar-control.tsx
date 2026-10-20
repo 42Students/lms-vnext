@@ -7,6 +7,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Disclosure } from "@/components/ui/disclosure";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 type Choice = {
@@ -89,8 +90,8 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
     } catch (e) { setError(e instanceof Error ? e.message : "Calendar update failed."); }
     finally { setPending(false); }
   }
-  if (choices.length === 0) return <EmptyState title="No pending or scheduled rounds exist in published drives." description="Create a round in its job workspace first."/>;
-  return <section className="min-w-0 space-y-4 border-b border-[var(--lms-canvas-border)] pb-6">
+  if (choices.length === 0) return <EmptyState title="No pending or scheduled rounds exist in published drives." description="Create a round in its job workspace first." action={<a href="/tpo/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline">Calendar</a>}/>;
+  return <section className="min-w-0 space-y-4 border-b border-[var(--lms-canvas-border)] pb-4">
     <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive round
       <Select className="mt-2 block min-h-11 w-full rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[10px] py-[7px] text-[14px] min-[768px]:min-h-9"
         value={id} onChange={(event) => choose(event.target.value)}>
@@ -100,12 +101,12 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
         </option>)}
       </Select>
     </label>
-    {round ? <>
+    {round ? <div className="min-w-0 space-y-4">
       <p className="text-sm text-body">Status: {round.status}. Kind: {round.kind}.
         Duration: {round.durationMinutes ?? "Unknown"} minutes. On-campus rounds
         need a recorded duration for venue collision checking.</p>
       <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date/time (IST)
-        <Input type="datetime-local" className="mt-2 block min-h-11 w-full rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[10px] py-[7px] min-[768px]:min-h-9"
+        <Input type="datetime-local" className="mt-2 block min-h-11 w-full md:min-h-9"
           value={dateInput} onChange={(event) => setDateInput(event.target.value)} />
       </label>
       {blockedDay?<Alert tone="warning">This day is blocked in placement settings. Review the clash before scheduling a round.</Alert>:null}
@@ -123,13 +124,15 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
           onChange={(event) => mode === "ON_CAMPUS" ? setVenue(event.target.value) : setMeetingUrl(event.target.value)}
           className="mt-2 block min-h-11 w-full rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[10px] py-[7px] min-[768px]:min-h-9" />
       </label>
+      <Disclosure title="Cancellation reason (for Cancel only)" className="border-t border-[var(--lms-canvas-border)]" contentClassName="pt-3">
       <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Cancellation reason (for Cancel only)
         <Textarea value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000}
           className="mt-2 block min-h-11 w-full rounded-[var(--lms-field-radius)] bg-[var(--lms-form-bg)] px-[10px] py-[15px] min-[768px]:min-h-9" />
       </label>
-      <div className="flex flex-wrap gap-3">
+      </Disclosure>
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Button variant="primary" disabled={pending} type="button" onClick={() => review("SCHEDULE")}
-          className="min-h-11 px-4 min-[768px]:min-h-9">
+          className="min-h-11 w-full px-4 sm:w-auto min-[768px]:min-h-9">
           {round.status === "PENDING" ? "Confirm schedule" : "Confirm reschedule"}
         </Button>
         <Button variant="secondary" disabled={pending} type="button" onClick={() => review("CANCEL")}
@@ -137,7 +140,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
           Confirm cancellation
         </Button>
       </div>
-    </> : null}
+    </div> : null}
     {error ? <InlineNotice tone="error" message={error}/> : null}
     <ConfirmDialog open={reviewAction !== null}
       onOpenChange={next => { if (!next && !pending) { setReviewAction(null); setConfirmBlockedDay(false); } }}

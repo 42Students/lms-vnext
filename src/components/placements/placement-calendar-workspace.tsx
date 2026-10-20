@@ -3,6 +3,7 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/page-header";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Banner } from "@/components/ui/banner";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "./legacy-calendar-theme.module.css";
@@ -559,7 +560,7 @@ export async function PlacementCalendarWorkspace({
   const calendarFollowupsWritable =
     isTpo && process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-4">
       <PageHeader
         title={
           isTpo
@@ -573,7 +574,18 @@ export async function PlacementCalendarWorkspace({
               ? "Review the interview schedule, conflicts and candidate context without leaving the placements workspace."
               : "Interview rounds and other employer events across your college, with company and job filters. Dates and times are shown in Indian Standard Time."
         }
-        actions={
+        actions={isTpo?<nav aria-label="Calendar actions" className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:flex-wrap">
+          <Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] md:min-h-9">
+            Create, reschedule or cancel a drive round →
+          </Link>
+          <Disclosure title="More calendar actions" className="min-w-0 border-0" summaryClassName="border border-[var(--lms-canvas-border)] px-3" contentClassName="pt-2">
+            <div className="flex min-w-0 flex-col gap-2">
+              <Link href="/tpo/calendar/interviews" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Interview schedule readiness →</Link>
+              <Link href="/tpo/calendar/export" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Export upcoming rounds CSV →</Link>
+              <Link href="/tpo/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Placement operations →</Link>
+            </div>
+          </Disclosure>
+        </nav>:
           <Link
             href={
               isTpo
@@ -615,9 +627,9 @@ export async function PlacementCalendarWorkspace({
       </section>:null}
       {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-5">
        <h2 className="text-base font-semibold">Needs doing</h2>
-       <div className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Link href={overdue.length?basePath+"?view=week&date="+placementCalendarDayKey(overdue[0].startsAt)+"&kind=FOLLOW_UP":basePath}
-         className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-link-text)]">
+         className="min-w-0 border-b border-[var(--lms-canvas-border)] p-3 text-sm text-[var(--lms-link-text)]">
          <strong className="block text-lg">{needsWindow?overdue.length:"Unavailable"}</strong>Follow-ups overdue (last 90 days)
         </Link>
         <Link href={blockedRounds.length?basePath+"?view=week&date="+placementCalendarDayKey(blockedRounds[0].startsAt):basePath}
@@ -634,7 +646,7 @@ export async function PlacementCalendarWorkspace({
       </section>:null}
       <section
         aria-label="Calendar summary"
-        className="grid gap-3 border-y border-border min-[768px]:grid-cols-2 min-[992px]:grid-cols-4"
+        className="grid min-w-0 grid-cols-2 gap-2 border-y border-[var(--lms-canvas-border)] min-[992px]:grid-cols-4"
       >
         {(
           isTpo
@@ -714,7 +726,7 @@ export async function PlacementCalendarWorkspace({
               { anchor: previous },
             )}
             aria-label="Previous calendar period"
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             ←
           </Link>
@@ -759,7 +771,7 @@ export async function PlacementCalendarWorkspace({
           ].join(":")}
           action={basePath}
           method="get"
-          className="mt-5 grid gap-3 border-t border-border pt-5 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4"
+          className="mt-4 grid min-w-0 grid-cols-1 gap-3 border-t border-[var(--lms-canvas-border)] pt-4 sm:grid-cols-2 lg:grid-cols-4"
         >
           <Input
             type="hidden"
@@ -791,7 +803,8 @@ export async function PlacementCalendarWorkspace({
             />
           </label>
 
-          {isTpo&&countSourceEvents.length>0?<div aria-label="Quick company filters" className="flex max-w-full flex-wrap items-center gap-2">
+          {isTpo&&countSourceEvents.length>0?<Disclosure title="Companies in this period:" className="min-w-0 border-0 sm:col-span-2 lg:col-span-4" contentClassName="pt-2">
+          <div aria-label="Quick company filters" className="flex max-w-full flex-wrap items-center gap-2">
     <span className="text-xs font-semibold text-muted-foreground">Companies in this period:</span>
     {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
       .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,16).map(name=>
@@ -799,8 +812,8 @@ export async function PlacementCalendarWorkspace({
         selected={state.company===name} className="max-w-52 truncate"
         title={name}>{name}</FilterChipLink>)}
     {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
-       className="inline-flex min-h-11 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>:null}
-   </div>:null}
+       className="inline-flex min-h-11 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>
+   </div>          </Disclosure>:null}
    {isTpo?<datalist id="tpo-calendar-company-choices">
            {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
              .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,200).map(name=><option key={name} value={name}/>)}
@@ -894,7 +907,7 @@ export async function PlacementCalendarWorkspace({
 
       <section
         aria-label="Next scheduled calendar event"
-        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5"
+        className="border-b border-[var(--lms-canvas-border)] py-4"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
