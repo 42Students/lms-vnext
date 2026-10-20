@@ -103,7 +103,7 @@ export default async function ActivityDetailPage({
       </section>
 
       <section className="space-y-3">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Event context</h2>
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Event context</h2>
         {Object.keys(event.metadata).length === 0 ? (
           <p className="border-t border-border pt-4 text-sm text-muted-foreground">
             This event has no structured context.
@@ -116,7 +116,7 @@ export default async function ActivityDetailPage({
       </section>
 
       <section className="border-t border-border pt-4">
-        <h2 className="m-0 text-base font-semibold text-foreground">Legacy audit gap notice</h2>
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Legacy audit gap notice</h2>
         <p className="mt-2 text-sm leading-6 text-body">
           The legacy admin audit table also persisted an actor role snapshot,
           request IP, and user agent. Those are not currently persisted by

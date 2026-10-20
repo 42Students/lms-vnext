@@ -24,7 +24,7 @@ export default async function SuperAdminBatchPromotionPage({
   if (!input.success) return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion" />
     <ErrorState title="Invalid batch promotion filters" description="Use valid program, cohort and optional academic year values."
-      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>} />
+      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-5">
@@ -51,32 +51,32 @@ export default async function SuperAdminBatchPromotionPage({
     <PageHeader  title="Batch Promotion"
       description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Class moves are managed separately in the batch roster." />
     <form method="get" className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-4">
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select name="programId" defaultValue={input.data.programId ?? ""}
           className="min-h-11 min-[768px]:min-h-9">
           <option value="">All programs</option>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
         <Select name="cohortId" defaultValue={input.data.cohortId ?? ""}
           className="min-h-11 min-[768px]:min-h-9">
           <option value="">Select a batch</option>
           {visibleCohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year start override
+      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year start override
         <Input name="yearStart" type="number" min={1900} max={9998} step={1}
           defaultValue={input.data.yearStart ?? ""} className="min-h-11 min-[768px]:min-h-9" />
       </label>
-      <label className="flex min-h-11 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="flex min-h-11 items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
       <Button type="submit" className="min-h-11 min-[768px]:min-h-9 self-end">Preview</Button>
     </form>
     <section aria-label="Batch promotion queue" className="min-w-0 space-y-3 pt-2">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-foreground">Batches</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Batches</h2>
         <p role="status" className="text-sm text-muted-foreground">{visibleCohorts.length} shown of {options.cohorts.length} batches</p>
       </div>
       <DataTable<(typeof visibleCohorts)[number]>
@@ -95,17 +95,17 @@ export default async function SuperAdminBatchPromotionPage({
               ...(input.data.programId?{programId:input.data.programId}:{}),cohortId:batch.id,
               ...(showCompleted?{showCompleted:"1"}:{}),
             })}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Preview →</Link>},
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">Preview →</Link>},
         ]}
       />
     </section>
     {invalidCohort ? <ErrorState title="Batch unavailable" description="The selected batch is not available within this college and program."
-      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Reset selection</Link>} /> :
+      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">Reset selection</Link>} /> :
     !preview || !summary ? <EmptyState title="Choose a batch" description="No learner data is fetched until you select a college-owned batch." /> :
     <>
       <section className="min-w-0 space-y-3 border-b border-border pb-5">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <h2 className="m-0 break-words font-semibold text-foreground">{preview.batch.name}</h2>
+          <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{preview.batch.name}</h2>
           <StatusBadge tone={preview.simulatedReadiness ? "success" : "warning"}>{preview.simulatedReadiness ? "No detected blockers" : "Blocked or incomplete"}</StatusBadge>
         </div>
         <p className="text-sm text-body">{preview.batch.programName} · {preview.batch.status}</p>
@@ -137,23 +137,23 @@ export default async function SuperAdminBatchPromotionPage({
           ) : null}
       </section>
       <section className="border-b border-border pb-5">
-        <h2 className="font-semibold text-foreground">Known batch blockers ({summary.knownBlockers})</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Known batch blockers ({summary.knownBlockers})</h2>
         {preview.blockers.length ? <ul className="mt-2 list-inside list-disc text-sm text-body">
           {preview.blockers.map(b => <li key={b}>{b.replaceAll("_", " ")}</li>)}
         </ul> : <p className="text-sm text-muted-foreground">No batch-level blocker was detected. Learner and runtime checks still apply.</p>}
       </section>
       <section className="min-w-0 space-y-3">
-        <h2 className="font-semibold text-foreground">Learner-level preview</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Learner-level preview</h2>
         <p className="text-xs text-muted-foreground">Showing at most 100 of {preview.learners.length} examined enrollments; a shortened display is not a complete readiness decision.</p>
         {preview.learners.length ? <div className="grid gap-3 md:grid-cols-2">
           {preview.learners.slice(0, 100).map(learner => <article key={learner.membershipId} className="min-w-0 border-b border-border py-3">
-            <h3 className="m-0 break-words font-semibold text-foreground">{learner.name}</h3>
+            <h3 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{learner.name}</h3>
             <p className="mt-1 text-sm text-body">Enrollment: {learner.enrollmentStatus}</p>
             <p className="mt-2 text-sm text-body">{learner.blockers.length ? learner.blockers.join(", ").replaceAll("_", " ") : "No detected learner blocker"}</p>
           </article>)}
         </div> : <EmptyState title="No enrolled learners" description="No registered learner enrollments were present for this batch." />}
       </section>
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← Academics</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">← Academics</Link>
   </div>;
 }

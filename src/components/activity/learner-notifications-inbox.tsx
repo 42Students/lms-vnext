@@ -232,7 +232,7 @@ export function LearnerNotificationsInbox({
         open={selected !== null}
         onOpenChange={(open) => { if (!open) setSelected(null); }}
         title={selected?.title ?? "Notification"}
-        className="shadow-[0_8px_32px_rgba(0,0,0,0.12)]"
+        
         description={selected?.source === "ANNOUNCEMENT" ? "College announcement" : "Personal notification"}
         footer={
           <>

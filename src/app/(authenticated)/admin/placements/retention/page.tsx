@@ -14,7 +14,7 @@ export default async function SuperAdminRetentionPage(){
   <EmptyState title="Select a college" description="Choose a college to review candidate retention candidates."/></div>;
  requireSuperAdminSelectedCollege(context,"placements.read");
  const report=await getSuperAdminPlacementRetentionReport(context);
- const fmt=(d:Date)=>d.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"});
+ const fmt=(d:Date)=>d.toLocaleDateString("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
  const columns:DataTableColumn<(typeof report.rows)[number]>[]=[
   {key:"applicant",header:"Applicant",mobilePriority:"primary",cell:row=>row.applicantName},
   {key:"drive",header:"Drive",mobilePriority:"secondary",cell:row=>row.jobTitle},

@@ -160,7 +160,7 @@ export function OrganizationActions({
         onOpenChange={setArchiveOpen}
         title={`Archive ${name}?`}
         description="This is allowed only when the organization has no active colleges."
-        confirmLabel="Archive organization"
+        confirmLabel="Archive organization" confirmVariant="danger"
         pending={pending}
         onConfirm={archive}
       />
