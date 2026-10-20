@@ -76,10 +76,10 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    Skill catalog temporarily unavailable. You can save the entered skill name.
   </p>:null}
   {popupOpen&&status==="ready"&&items.length>0?<PopoverListbox id={id+"-choices"} label="Suggested skills"
-    className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[120px] w-full overflow-y-auto pt-[5px]" onDismiss={() => {setPopupOpen(false);setActiveIndex(-1);}}>
+    className="absolute left-0 top-full mt-1 z-[var(--lms-z-dropdown)] max-h-48 min-h-32 w-full overflow-y-auto pt-1" onDismiss={() => {setPopupOpen(false);setActiveIndex(-1);}}>
     <ul className="m-0 list-none p-0">
     {items.map((item,index)=><li id={id+"-choice-"+index} key={item.id} role="option" aria-selected={activeIndex===index||item.displayName===value} className="min-h-11">
-      <Button type="button" variant="ghost" className="!min-h-11 w-full justify-start !rounded-none !px-[10px] !py-[5px] text-left text-sm !transition-[background-color] !duration-[200ms] !ease-in-out hover:!bg-[var(--lms-primary-subtle)]"
+      <Button type="button" variant="ghost" className="!min-h-11 w-full justify-start !rounded-none !px-3 !py-2 text-left text-sm !transition-[background-color] !duration-[200ms] !ease-in-out hover:!bg-[var(--lms-primary-subtle)]"
        onClick={()=>{selectedSkill.current=item.displayName;onChange(item.displayName);setPopupOpen(false);setItems([]);setActiveIndex(-1);}}>
        {item.displayName}{item.category?<span className="ml-2 text-xs text-muted-foreground">{item.category}</span>:null}
       </Button>
