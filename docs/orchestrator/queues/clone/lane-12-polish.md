@@ -28,7 +28,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-12.md: surface | probl
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx` (Faculty page)
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx` (Faculty page)
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx` (Faculty page)
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx` (Faculty page)
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx` (Faculty page)
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx` (Faculty page)
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx` (Faculty page)
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx` (Faculty page)

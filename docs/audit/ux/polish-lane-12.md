@@ -133,3 +133,11 @@
 
 **Files changed:** discussions `page.tsx`, `error.tsx`, shared discussion component, queue and proof.
 **Verification:** static source review; no runtime/CI.
+
+## 15 · Teacher / Individual published gradebook
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
+**Problems found (8):** poorly scanned inline totals, tiny primary numbers, repetitive borders on breakdown rows, type labels lacking distinction, weak return navigation, permanently exposed score methodology copy, padded generic retry view, and generic inherited 404 for private learner scope.
+
+**Fix:** numeric two/three column summary strip, separated assessment rows with neutral type badges, secondary back control, collapsible score explanation, consistent error retry and privacy-safe local not-found. Preserved published-only scoring, unknown values, routes and authorization. Read loading and parent faculty/gradebook layouts; no local not-found before fix.
+
+**Files changed:** page, error, new not-found, queue and proof. Static inspection only; no tests/CI.
