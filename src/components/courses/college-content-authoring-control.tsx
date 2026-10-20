@@ -149,9 +149,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content");}
   finally{setBusy(false);}
  }
- return <section className="min-w-0 space-y-3 border-b border-border pb-5">
+ return <section className="min-w-0 space-y-3 md:flex-none">
   <div className="flex flex-wrap items-center gap-3">
-   <h2 className="font-semibold">{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
+   <h2 className={kind==="LIVE_CLASS"?"sr-only":"font-semibold"}>{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
    <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}
     onClick={fresh}>{text}</Button>
   </div>
