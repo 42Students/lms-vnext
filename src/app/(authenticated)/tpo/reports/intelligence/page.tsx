@@ -118,7 +118,7 @@ export default async function TpoPerformanceIntelligencePage({
           highest accepted full-time CTC. Unknown packages are excluded from
           averages, not treated as zero.
         </p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 min-[768px]:grid-cols-2 min-[1024px]:grid-cols-3">
           {([
             ["Accepted full-time offer versions", compensation.acceptedFullTimeOfferVersions],
             ["Versions with known CTC", compensation.knownPackageOfferVersions],
