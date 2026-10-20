@@ -87,7 +87,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     <Alert tone="warning">Change request updates are temporarily unavailable. Messages remain available; refresh to try again.</Alert>:null}
   {changeRequests?.party==="COMPANY" && changeRequests.requests.length>0?
     <section aria-label="Drive change request updates" className="border-b border-[var(--lms-canvas-border)] pb-4">
-      <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Change requests · {changeRequests.requests.length}</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Change requests · {changeRequests.requests.length}</h2>
       <p className="mt-1 text-xs text-muted-foreground">Recorded change requests for this hiring drive. Decisions are controlled by the placement cell.</p>
       <ScrollCue axis="y" label="Drive change request updates" className="mt-3" viewportClassName="max-h-56"><ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {changeRequests.requests.slice(0,8).map(request=><li key={request.id}
