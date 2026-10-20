@@ -14,7 +14,7 @@ Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, e
 
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-20.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-20-b with [chat-20], ticking [x] in this queue in the same push.
 
-- [ ] `src/components/shell/account-actions.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
+- [x] `src/components/shell/account-actions.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
 - [ ] `src/components/shell/admin-scope-switcher.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
 - [ ] `src/components/shell/app-shell.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
 - [ ] `src/components/shell/learner-faculty-mobile-footer.tsx` (Shell piece (top bar, sidebar, switcher, mobile nav, notifications))
