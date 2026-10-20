@@ -54,6 +54,10 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   if(value)query.set(name,value);else query.delete(name);
   window.history.replaceState(null,"",window.location.pathname+"?"+query.toString());
  }
+ function clearFilters(){
+  setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");
+  ["priority","assignee","sprint","release","lane","scope"].forEach(key=>remember(key,""));
+ }
  const bySprint=new Map(sprints.map(item=>[item.id,item]));
  const currentSprint=sprints.find(item=>item.status==="ACTIVE");
  const matching=tasks.filter(task=>(!sprint||task.sprintId===sprint)&&
@@ -105,7 +109,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
    <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Board</h2>
    <div className="flex flex-wrap items-center gap-2">
-     {!readOnly?<MentorTaskCreate projectId={projectId}
+     {!readOnly?<MentorTaskCreate primary projectId={projectId}
        sprintId={creationDefault?.id??""}
        updatedAt={creationDefault?new Date(creationDefault.updatedAt).toISOString():""}
        sprints={creationSprints.map(item=>({
@@ -115,7 +119,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
          membershipId:member.membershipId,displayName:member.displayName,
        }))}/>:null}
      <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link">
+       className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9">
       Review submission</Link>
    </div>
   </div>
@@ -131,6 +135,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
       .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </Select></label>
+   <Disclosure title="More board filters" defaultOpen={Boolean(scope==="all"||priority||assignee||statusFilter)} className="w-full min-w-0" contentClassName="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-4">
    <label className="text-sm font-semibold">Sprint scope
     <Select data-slot="select" value={scope} aria-label="Board sprint scope"
       onChange={e=>{setScope(e.target.value==="all"?"all":"current");remember("scope",e.target.value);}}
@@ -163,8 +168,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <option value="IN_REVIEW">In review</option><option value="DONE">Completed</option>
     </Select>
    </label>
-   <Button variant="ghost" type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");["priority","assignee","sprint","release","lane","scope"].forEach(k=>remember(k,""));}}
-    className="min-h-11">Clear all</Button>
+   </Disclosure>
+   {activeFilterCount>0?<Button variant="ghost" type="button" onClick={clearFilters}
+    className="min-h-11 w-full md:w-auto">Clear all</Button>:null}
   </div>
   <div className="flex flex-wrap items-center gap-2">
     <NeedsDoingChips label="Board lane filters:" selectedKey={statusFilter} onSelect={value=>{
@@ -185,11 +191,11 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     {!sprint&&!release&&scope==="current"?" Showing the current sprint and backlog. Switch “Sprint scope” to see everything.":""}
   </p>
   {matching.length===0?<EmptyState title={tasks.length===0?"No tasks on this board yet.":"No tasks match these filters."}
-    description={tasks.length===0?"Create the first one to give the team somewhere to start.":"Clear all to see the board."} />:null}
+    description={tasks.length===0?"Create the first one to give the team somewhere to start.":"Clear all to see the board."} action={tasks.length>0&&activeFilterCount>0?<Button variant="secondary" onClick={clearFilters}>Clear all</Button>:undefined} />:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   {undo?<Button variant="ghost" type="button" disabled={busy} 
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
-  <div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
+  {matching.length>0?<><p className="text-xs text-muted-foreground md:hidden">Swipe sideways to see board lanes.</p><div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
     className={styles.scrollRegion}><div className={styles.track}>
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
     className={[styles.lane, lane.id==="BACKLOG"?styles.backlogLane:"", lanes.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
@@ -206,7 +212,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        onDragEnd={()=>setDragging(false)}
       className={"space-y-2 border p-3 text-sm "+styles.card}>
       <Button variant="ghost" type="button" onClick={()=>setSelected(task.id)}
-        className="min-h-11 text-left">{task.title}</Button>
+        className="min-h-11 w-full !justify-start !text-left">{task.title}</Button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
       <p className="text-xs text-body">Assignee: {members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"} ·
         {" "}Estimate: {task.estimatePoints??"Unsized"} · {task.taskType??"Task"}</p>
@@ -259,7 +265,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     {!lane.tasks.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
     </ul>
    </BoardColumn>)}
-  </div></div>
+  </div></div></>:null}
   {matching.length>visible.length?<Button variant="secondary" type="button"
     className="min-h-11 px-4"
     onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</Button>:null}
