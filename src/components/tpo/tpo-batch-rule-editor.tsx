@@ -82,12 +82,12 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
   });
  }
  const number=(key:"maxHeldOffers"|"upliftPct"|"minResponseHours",label:string,min:number,max:number,suffix:string)=>
-  <div key={key} className="flex flex-wrap items-end justify-between gap-3 border-t border-border py-3">
+  <div key={key} className="flex min-w-0 flex-col items-stretch gap-3 border-t border-[var(--lms-canvas-border)] py-3 sm:flex-row sm:items-end sm:justify-between">
    <div><strong className="text-sm">{label}</strong>
     <p className="text-xs text-body">College: {college[key]} {suffix}</p>
    </div>
-   <div className="flex flex-wrap items-center gap-2">
-    <Input className="min-h-11 w-24 md:min-h-9" type="number" min={min} max={max} step={1} disabled={busy||readOnly}
+   <div className="flex min-w-0 flex-wrap items-center gap-2">
+    <Input className="min-h-11 w-full sm:w-24 md:min-h-9" type="number" min={min} max={max} step={1} disabled={busy||readOnly}
      aria-label={label} value={draft[key]??college[key]}
      onChange={event=>setRule(key,Number(event.target.value))}
      />
@@ -104,7 +104,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
    <div><strong className="text-sm">Counts as placed when</strong>
     <p className="text-xs text-body">College: {college.countsAsPlacedAt==="OFFER_ACCEPTED"?"the offer is accepted":"the offer is released"}</p>
    </div>
-   <div className="flex flex-wrap items-center gap-2">
+   <div className="flex min-w-0 flex-wrap items-center gap-2">
     <Select className="min-h-11 w-auto max-w-full md:min-h-9" aria-label="Counts as placed when" disabled={busy||readOnly}
      value={draft.countsAsPlacedAt??college.countsAsPlacedAt}
      onChange={event=>setRule("countsAsPlacedAt",event.target.value as TpoBatchRuleFields["countsAsPlacedAt"])}
@@ -121,7 +121,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
   {number("upliftPct","Once placed, can apply again for at least",0,200,"% more CTC")}
   {number("minResponseHours","Time to respond to an offer",12,168,"hours")}
   {readOnly?<p role="status" className="text-sm">Finished batches cannot change placement rules.</p>:null}
-  <div className="flex flex-wrap gap-3">
+  <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap">
    <Button type="button" disabled={readOnly||busy||!changed}
     onClick={()=>void save(draft)} >
     {busy?"Saving…":"Save"}</Button>
