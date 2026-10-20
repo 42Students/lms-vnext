@@ -355,7 +355,7 @@ function CalendarEventCard({
   const href = eventHref(event, audience);
 
   return (
-    <article className="border-b border-border py-4 sm:py-5">
+    <article className="border-b border-border py-4 md:py-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="m-0 text-xs font-bold uppercase tracking-wide text-[var(--lms-link-text)]">
@@ -561,13 +561,6 @@ export async function PlacementCalendarWorkspace({
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow={
-          isTpo
-            ? "TPO"
-            : audience === "SUPER_ADMIN"
-              ? "Super Admin · Placements"
-              : "College Admin · Placements"
-        }
         title={
           isTpo
             ? TPO_OWNER_PAGE_COPY.calendar
@@ -768,7 +761,7 @@ export async function PlacementCalendarWorkspace({
           method="get"
           className="mt-5 grid gap-3 border-t border-border pt-5 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4"
         >
-          <input
+          <Input
             type="hidden"
             name="view"
             value={state.view}
@@ -901,7 +894,7 @@ export async function PlacementCalendarWorkspace({
 
       <section
         aria-label="Next scheduled calendar event"
-        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5"
+        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -1071,11 +1064,10 @@ export async function PlacementCalendarWorkspace({
       ) : null}
 
       {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
-        {bookings?.failed ? <section role="alert" className="border-l-2 border-error bg-error-subtle p-4">
-          <p>Could not load candidate interviews right now. The calendar is still available.</p>
-          <Link href={calendarHref(basePath,audience,state,{})}
-           className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-link-text)] focus-visible:ring-2 focus-visible:ring-primary">Retry interviews</Link>
-        </section> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
+        {bookings?.failed ? <Banner tone="error" action={<Link href={calendarHref(basePath,audience,state,{})}
+           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry interviews</Link>}>
+          Could not load candidate interviews right now. The calendar is still available.
+        </Banner> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
        </PlacementPanelErrorBoundary> : null}
       <section
         aria-label="Calendar agenda"
