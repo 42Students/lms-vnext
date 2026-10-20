@@ -121,7 +121,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
     }
   }
 
-  return <section className="border-b border-border pb-5">
+  return <section className="min-w-0 border-b border-border pb-4">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
         <h2 className="m-0 text-base font-semibold text-foreground">
@@ -133,13 +133,13 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             : "The tasks every workspace created from this template starts with."}
         </p>
       </div>
-      <Button variant="secondary" size="sm" onClick={() => {
+      <Button variant="secondary" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" aria-expanded={expanded} disabled={pending} onClick={() => {
         setDraft(props.blueprint); setVersion(props.currentVersion);
         setError(""); setMessage(""); setExpanded(value => !value);
       }}>{expanded ? "Cancel" : props.section === "sprints" ? "Edit sprints" : "Edit tasks"}</Button>
     </div>
     {message ? <Banner tone="success">{message}</Banner> : null}
-    {expanded ? <form className="mt-4 grid gap-4" onSubmit={save}>
+    {expanded ? <form className="mt-4 grid min-w-0 gap-4" onSubmit={save}>
       {props.section === "sprints" ? <>
         <p className="m-0 text-xs text-muted-foreground">
           No start/end dates here on purpose — a template seeds many workspaces, each starting on a different day.
@@ -163,7 +163,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         {draft.sprints.map((sprint, index) => <fieldset key={index}
           className="grid min-w-0 gap-3 border-b border-border py-4">
           <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Sprint {index + 1}</legend>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid min-w-0 gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
               <Input className={field} required maxLength={64} value={sprint.key}
                 disabled={pending} onChange={event => updateSprint(index, { key: event.target.value })}/>
@@ -195,12 +195,12 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
               value={sprint.description ?? ""} onChange={event =>
                 updateSprint(index, { description: event.target.value || undefined })}/>
           </label>
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" size="sm" variant="secondary" disabled={pending}
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <Button type="button" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" variant="secondary" disabled={pending}
               onClick={() => setDraft(current => moveTemplateSprint(current, sprint.key, -1))}>Move up</Button>
-            <Button type="button" size="sm" variant="secondary" disabled={pending}
+            <Button type="button" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" variant="secondary" disabled={pending}
               onClick={() => setDraft(current => moveTemplateSprint(current, sprint.key, 1))}>Move down</Button>
-            <Button type="button" size="sm" variant="secondary" disabled={pending}
+            <Button type="button" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" variant="secondary" disabled={pending}
               onClick={() => removeSprint(sprint.key)}>Remove</Button>
           </div>
         </fieldset>)}
@@ -258,12 +258,12 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
               value={task.acceptanceCriteria ?? ""} onChange={event =>
                 updateTask(index, { acceptanceCriteria: event.target.value || undefined })}/>
           </label>
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" size="sm" variant="secondary" disabled={pending}
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <Button type="button" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" variant="secondary" disabled={pending}
               onClick={() => setDraft(current => moveTemplateTask(current, task.key, -1))}>Move up</Button>
-            <Button type="button" size="sm" variant="secondary" disabled={pending}
+            <Button type="button" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" variant="secondary" disabled={pending}
               onClick={() => setDraft(current => moveTemplateTask(current, task.key, 1))}>Move down</Button>
-            <Button type="button" size="sm" variant="secondary" disabled={pending}
+            <Button type="button" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" variant="secondary" disabled={pending}
               onClick={() => setDraft(current => ({
                 ...current, tasks: current.tasks.filter(item => item.key !== task.key),
               }))}>Remove</Button>
@@ -275,11 +275,11 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         {!draft.tasks.length ? <p className="text-sm">No tasks yet.</p> : null}
       </>}
       {error ? <Banner tone="error">{error}</Banner> : null}
-      <div className="flex flex-wrap items-center justify-end gap-2">
-        <Button type="button" variant="secondary" disabled={pending} onClick={() => {
+      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+        <Button type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" variant="secondary" disabled={pending} onClick={() => {
           setDraft(props.blueprint); setError("");
         }}>Reset changes</Button>
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={pending}>
           {pending ? "Saving…" : props.section === "sprints" ? "Save sprints" : "Save tasks"}
         </Button>
       </div>
