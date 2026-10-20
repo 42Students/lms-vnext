@@ -22,7 +22,7 @@ export function SplitButton({
   className, menuLabel = "More actions",
 }: SplitButtonProps) {
   return (
-    <div data-slot="split-button" role="group" aria-label={label}
+    <div data-slot="split-button" role="group" aria-label={label} aria-busy={loading || undefined} aria-disabled={disabled || undefined}
       className={cx("inline-flex min-w-0 max-w-full items-stretch", className)}>
       <Button variant={variant} loading={loading} disabled={disabled} onClick={onClick}>
         {label}

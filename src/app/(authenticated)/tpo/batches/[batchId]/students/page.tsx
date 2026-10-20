@@ -56,11 +56,11 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  />
  <section aria-label="Placement journey" className="space-y-3 border-b border-border py-4">
   <h2 className="font-semibold">Placement journey</h2>
-  <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
+  <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
    {([["Students",journey.total],["Eligible",journey.eligible],
       ["Invitation sent",batchScope.lifecycle?.invitedAt?"Yes":"Not yet"],
       ["Registered",journey.registered]] as const).map(([label,value])=>
-      <div key={label} className="border-l-2 border-border px-3 py-2">
+      <div key={label} className="min-w-0 border-b border-r border-border px-3 py-3 last:border-r-0">
        <dt className="text-xs text-muted-foreground">{label}</dt>
        <dd className="text-xl font-semibold tabular-nums">{value===null?"—":value}</dd>
       </div>)}
@@ -199,13 +199,13 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
        <TpoBatchInlineDecision membershipId={student.membershipId}
         batchId={batchId} expected={student.direct}/>:null}
       <Link href={"/tpo/students/"+encodeURIComponent(student.membershipId)+"/participation"}
-       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
        Open learner participation
       </Link>
      </div>},
    ]}/>
  </div>
- <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
- {result.hasMore?<Link href={href(result.page+1)} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}</nav>
+ <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Previous</Link>:null}
+ {result.hasMore?<Link href={href(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Next</Link>:null}</nav>
  </div>;
 }

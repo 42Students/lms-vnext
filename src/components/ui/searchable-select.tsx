@@ -149,7 +149,7 @@ export function SearchableSelect({
     <Input {...props} id={inputId} ref={bindInput} type="text"
       value={value} defaultValue={defaultValue} disabled={disabled} readOnly={readOnly}
       error={error || Boolean(selectionError)} aria-invalid={error || Boolean(selectionError) || props["aria-invalid"]}
-      aria-describedby={describedBy} aria-errormessage={selectionError ? validationId : undefined}
+      aria-describedby={describedBy} aria-errormessage={selectionError ? validationId : props["aria-errormessage"]}
       role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
       aria-controls={open && !disabled && !readOnly ? listId : undefined} aria-expanded={open && !disabled && !readOnly}
       aria-activedescendant={open && validActiveIndex >= 0 ? `${listId}-option-${validActiveIndex}` : undefined}
