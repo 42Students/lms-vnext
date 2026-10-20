@@ -295,16 +295,12 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
    Keep DataTable's existing responsive sticky headers unchanged. */
 
 
-/* I — measured notification-overlay entry, not inferred generic modal
- * geometry. Legacy: components___notification-drawer.scss:83-102
- * (backdrop opacity 0->1 for 150ms ease-out), :112-143 (panel 200ms
- * ease-out with -8px vertical entry). These are visual animations only:
- * click-outside, Escape, focus order and closing are owned by JS.
- */
-@keyframes lms-micro-notification-backdrop-enter {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+/* Legacy: components___notification-drawer.scss:112-143 — notification
+ * panel opens over 200ms ease-out from -8px. Only the actual desktop
+ * [data-slot=notification-popover] receives this state. The TPO mobile bell
+ * is a shared Drawer (tpo-bell-panel.tsx:154-168), NOT a generic Dropdown
+ * sheet. Do not apply the legacy notification backdrop tween to every
+ * mobile-sheet filter menu; backdrop belongs to chat-16's Drawer. */
 @keyframes lms-micro-notification-panel-enter {
   from { opacity: 0; translate: 0 -8px; }
   to { opacity: 1; translate: 0 0; }
@@ -313,8 +309,25 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   [data-slot="notification-popover"]:not(:where([data-unskin], [data-unskin] *)) {
     animation: lms-micro-notification-panel-enter 200ms ease-out both;
   }
-  [data-slot="dropdown-root"][data-mobile-sheet="true"][open]::before {
+}
+
+/* Legacy: components___notification-drawer.scss:83-102 — notification
+   backdrop enters in 150ms ease-out, opacity 0->1. The TPO mobile bell
+   renders dialog#tpo-notification-drawer (tpo-bell-panel.tsx:154-168),
+   not Dropdown's ::before. Override only this real notification backdrop;
+   preserve chat-16's Drawer backdrop colour and all dimensions. */
+@keyframes lms-micro-notification-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  dialog#tpo-notification-drawer[open]::backdrop {
     animation: lms-micro-notification-backdrop-enter 150ms ease-out both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog#tpo-notification-drawer::backdrop {
+    animation: none !important;
   }
 }
 /* Legacy: components___antddesign.scss:48-64 (tooltip charcoal #1a1d21,
