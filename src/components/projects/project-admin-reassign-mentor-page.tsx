@@ -92,13 +92,13 @@ export async function ProjectAdminReassignMentorPage({
           })}
         </div>
       </section>
-      <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4"
+      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
         aria-label="Search all eligible mentors">
         {query.q?<Input type="hidden" name="q" value={query.q}/>:null}
         {query.status?<Input type="hidden" name="status" value={query.status}/>:null}
         {query.fromMentorId?<Input type="hidden" name="fromMentorId" value={query.fromMentorId}/>:null}
         <Input type="hidden" name="pageSize" value={query.pageSize}/>
-        <label className="grid flex-1 gap-1 text-[13px] font-semibold text-body">
+        <label className="grid flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
           Search eligible mentors by name or email (across the college)
           <Input type="search" name="mentorSearch" maxLength={100} defaultValue={mentorSearch}
             placeholder="Enter mentor name or email" className="w-full"/>
@@ -108,11 +108,11 @@ export async function ProjectAdminReassignMentorPage({
         <p className="w-full text-xs text-muted-foreground">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
       <ProjectAdminFilters query={query} />
-      <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         {query.q ? <Input type="hidden" name="q" value={query.q} /> : null}
         {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
         {query.pageSize ? <Input type="hidden" name="pageSize" value={query.pageSize} /> : null}
-        <label className="grid gap-1 text-[13px] font-semibold text-body">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
           Filter by current mentor
           <Select name="fromMentorId" defaultValue={fromMentorId ?? ""}
             className="w-full">

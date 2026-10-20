@@ -86,6 +86,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </section>:null}
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
+  {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4 print:hidden">
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-body">Search

@@ -3,6 +3,7 @@ import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-s
 import { PlacementCalendarWorkspace } from "@/components/placements/placement-calendar-workspace";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 
 type SearchParams = {
   date?: string | string[];
@@ -26,6 +27,7 @@ export default async function SuperAdminPlacementInterviewCalendarPage({
         <PageHeader
           title="Interviews"
           description="Interview-calendar oversight requires an exact college safety scope."
+          actions={<PageBackLink href="/admin/placements" label="Placement overview" />}
         />
         <EmptyState
           title="Select a college scope"
