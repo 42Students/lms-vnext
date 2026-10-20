@@ -27,7 +27,7 @@ export default async function SuperAdminModuleAccessPage({
   const context=await getCurrentRequestContext();
   requirePermission(context,"admin-scope.select");
   const parsed=parseAdminFeaturePageParams(await searchParams);
-  if(!parsed)return <div className="min-w-0 space-y-5">
+  if(!parsed)return <div className="min-w-0 space-y-6">
     <PageHeader title="Module Access"/>
     <ErrorState title="Invalid feature filters"
       description="The search or page value is invalid."
@@ -39,8 +39,8 @@ export default async function SuperAdminModuleAccessPage({
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Module Access"
       description="Select a college to inspect the existing inherited module access rules."
-      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Feature Controls</Link>}/>
-    <section aria-label="Module Access overview" className="border-b border-border pb-5">
+      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Feature Controls</Link>}/>
+    <section aria-label="Module Access overview" className="border-b border-border pb-6">
       <p className="text-sm font-semibold text-body">Effective access · {scopeLabel}</p>
       <h2 className="mt-1 text-base font-semibold text-foreground">Optional module access hierarchy</h2>
       <dl className="mt-3 grid gap-3 text-sm md:grid-cols-3">

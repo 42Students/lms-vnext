@@ -16,13 +16,13 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  requirePermission(context,"admin-scope.select");
  const offeringId=parseSuperAdminStudentProgressParams(await searchParams);
  const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to Course Progress</Link>;
- if(!offeringId)return <div className="space-y-5">
+ if(!offeringId)return <div className="space-y-6">
   <PageHeader title="Student Course Progress"/>
   <ErrorState title="Choose a course offering" description="Select a course and class from Course Progress first." action={back}/>
  </div>;
  let report:Awaited<ReturnType<typeof getSuperAdminStudentCourseProgress>>;
  try{report=await getSuperAdminStudentCourseProgress(context,{offeringId});}
- catch{return <div className="space-y-5">
+ catch{return <div className="space-y-6">
   <PageHeader title="Student Course Progress"/>
   <ErrorState title="Unable to read course progress" description="Check your selected college and course offering." action={back}/>
  </div>;}
@@ -32,7 +32,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const average=report.rows.map(row=>studentCourseCompletion(row))
   .filter((n):n is number=>n!==null);
  const mean=average.length?Math.round(average.reduce((a,n)=>a+n,0)/average.length):null;
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <PageHeader title="Student Course Progress"
     description="Persisted video completion, assignment submissions and quiz attempts for active enrolled students in the selected course offering."
     actions={<div className="flex flex-wrap items-center gap-2">
