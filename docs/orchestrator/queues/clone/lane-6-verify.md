@@ -19,8 +19,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-6.md: surface | regres
 - [x] `src/components/admin/department-actions.tsx`
 - [x] `src/components/admin/inbound-mail-list.tsx`
 - [x] `src/components/admin/learner-module-access-drawer.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/admin/organization-actions.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/admin/organization-actions.tsx`
 - [ ] `src/components/admin/person-membership-actions.tsx`
 - [ ] `src/components/admin/person-onboard-dialog.tsx`
 - [ ] `src/components/admin/person-profile-dialog.tsx`

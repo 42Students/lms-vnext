@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DataTable } from "@/components/ui/data-table";
@@ -92,6 +92,7 @@ export function LectureHallManager({
   const router = useRouter();
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
+  const inFlightRef=useRef(false);
   const [editing, setEditing] = useState<HallRow | "new" | null>(null);
   const [draft, setDraft] = useState<Draft>(EMPTY);
   const [formError, setFormError] = useState<string | null>(null);
@@ -104,12 +105,14 @@ export function LectureHallManager({
   }
 
   function save() {
+    if(pending||inFlightRef.current||editing===null)return;
     const capacity = Number(draft.capacity);
     if (!draft.name.trim()) return setFormError("Enter a name.");
     if (!Number.isInteger(capacity) || capacity < 1 || capacity > 5000) {
       return setFormError("Capacity must be between 1 and 5000.");
     }
 
+    inFlightRef.current=true;
     startTransition(async () => {
       try {
       const body = {
@@ -142,11 +145,13 @@ export function LectureHallManager({
       router.refresh();
       } catch {
         setFormError("Could not save the hall. Check your connection and retry.");
-      }
+      } finally {inFlightRef.current=false;}
     });
   }
 
   function setStatus(hall: HallRow, status: "ARCHIVED" | "ACTIVE") {
+    if(pending||inFlightRef.current)return;
+    inFlightRef.current=true;
     startTransition(async () => {
       try {
       const response = await fetch(`/api/lecture-halls/${hall.id}`, {
@@ -174,14 +179,14 @@ export function LectureHallManager({
       } catch {
         setArchiving(null);
         showToast({tone:"error",title:"Could not update hall status",description:"Check your connection and retry."});
-      }
+      } finally {inFlightRef.current=false;}
     });
   }
 
-  const field = "mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
+  const field = "mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <div className="flex min-w-0 justify-stretch print:hidden md:justify-end">
         <Button className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={() => open("new")}>{LECTURE_HALL_COPY.createTitle}</Button>
       </div>
@@ -218,16 +223,16 @@ export function LectureHallManager({
               mobilePriority: "action",
               className: "text-right",
               cell: (hall) => (
-                <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)] print:hidden">
+                <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden sm:justify-end">
                   <Link href={`${availabilityBase}/${hall.id}`}
                     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                     Availability
                   </Link>
                   <Dropdown label="Lecture hall actions" trigger="Actions" mobileSheet align="end" triggerClassName="md:!min-h-9">
                     <Menu className="w-full min-w-0">
-                      <MenuItem onClick={() => open(hall)}>Edit</MenuItem>
+                      <MenuItem disabled={pending} onClick={() => open(hall)}>Edit</MenuItem>
                       {hall.status === "ACTIVE" ? (
-                        <MenuItem onClick={() => setArchiving(hall)}>Archive</MenuItem>
+                        <MenuItem disabled={pending} onClick={() => setArchiving(hall)}>Archive</MenuItem>
                       ) : (
                         <MenuItem disabled={pending} onClick={() => setStatus(hall, "ACTIVE")}>Restore</MenuItem>
                       )}
@@ -245,6 +250,7 @@ export function LectureHallManager({
       <Dialog
         open={editing !== null}
         onOpenChange={(value) => !value && !pending && setEditing(null)}
+        dismissible={!pending}
         title={editing === "new" ? LECTURE_HALL_COPY.createTitle : "Edit lecture hall"}
         description="Hall names stay unique among the college's active halls."
         footer={
@@ -305,7 +311,7 @@ export function LectureHallManager({
 
       <ConfirmDialog
         open={archiving !== null}
-        onOpenChange={(value) => !value && setArchiving(null)}
+        onOpenChange={(value) => !value && !pending && setArchiving(null)}
         title="Archive lecture hall"
         description={`Archive ${archiving?.name ?? "this hall"}? It can't be archived while it has upcoming classes.`}
         confirmLabel="Archive hall" confirmVariant="danger"
