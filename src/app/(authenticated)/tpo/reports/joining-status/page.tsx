@@ -1,9 +1,5 @@
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
-import { Skeleton } from "@/components/ui/skeleton";
-import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
-import {Suspense} from "react";
-import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -11,6 +7,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoReportRecordLinks } from "@/components/placements/tpo-report-record-links";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatTile } from "@/components/ui/stat-tile";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   ReportCsvLink,
   ReportFilters,
@@ -58,15 +55,12 @@ export default async function TpoJoiningStatusReportPage({
         eyebrow="TPO · Reports"
         title="Joining outcomes"
         description="Recorded joining results for currently accepted offers, grouped by drive and company."
-        actions={<ReportCsvLink workspace={workspace} kind="joining-status" />}
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <Link href="/tpo/reports/joining-followups" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">Review joining follow-ups →</Link>
+          <ReportCsvLink workspace={workspace} kind="joining-status" />
+        </div>}
       />
 
-      <Link href="/tpo/reports/joining-followups"
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
-        Review joining follow-ups →
-      </Link>
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/joining-status" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
@@ -76,7 +70,7 @@ export default async function TpoJoiningStatusReportPage({
 
       <section
         aria-label="Joining outcome totals"
-        className="grid min-w-0 gap-2 md:grid-cols-2 xl:grid-cols-5"
+        className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-5"
       >
         {[
           ["Accepted offers", totals.accepted],
@@ -116,6 +110,8 @@ export default async function TpoJoiningStatusReportPage({
         emptyDescription="No currently accepted offers have joining outcomes in this reporting scope."
       />
 
+      <Disclosure title="Company detail and source records" className="border-b border-border pb-3">
+        <div className="min-w-0 space-y-4 pt-3">
       <ReportTable
         title="Joining outcomes by company"
         headings={[
@@ -136,7 +132,10 @@ export default async function TpoJoiningStatusReportPage({
         ])}
         emptyDescription="No company joining outcomes match these filters."
       />
-      <TpoReportRecordLinks kind="JOINING" drives={byDrive} companies={byCompany} />
+          <TpoReportRecordLinks kind="JOINING" drives={byDrive} companies={byCompany} />
+        </div>
+      </Disclosure>
+
     </div>
   );
 }
