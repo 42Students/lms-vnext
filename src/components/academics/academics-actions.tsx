@@ -159,7 +159,7 @@ export function ProgramActions({
         <div className="flex min-w-0 justify-end">
           <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
             <Menu>
-              <MenuItem onClick={openEdit}>Edit</MenuItem>
+              <MenuItem disabled={pending} onClick={openEdit}>Edit</MenuItem>
               <MenuItem disabled={programHasLinkedRecords}
                 title={programHasLinkedRecords ? "Remove linked semesters, batches, classes before deleting." : "Archive this program"}
                 onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
@@ -167,12 +167,13 @@ export function ProgramActions({
           </Dropdown>
         </div>
       ) : (
-      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
+      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] sm:justify-end">
         <Button
           size="md"
          
           variant="secondary"
           onClick={openEdit}
+          disabled={pending}
         >
           Edit
         </Button>
@@ -232,7 +233,7 @@ export function ProgramActions({
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
 
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
             Program name
             <Input
               value={name}
@@ -242,7 +243,7 @@ export function ProgramActions({
               maxLength={255}
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Code
             <Input
               value={code}
@@ -252,7 +253,7 @@ export function ProgramActions({
               maxLength={64}
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {displayDurationYears?"Duration (years)":"Duration terms"}
             <Input
               type="number"
@@ -267,7 +268,7 @@ export function ProgramActions({
               }
             />
           </label>
-          {departments.length ? <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+          {departments.length ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
             <Select value={departmentId} onChange={event=>setDepartmentId(event.target.value)}>
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
@@ -447,7 +448,7 @@ export function AcademicPeriodActions({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Name
             <Input
               value={name}
@@ -457,7 +458,7 @@ export function AcademicPeriodActions({
               maxLength={255}
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Code
             <Input
               value={code}
@@ -467,7 +468,7 @@ export function AcademicPeriodActions({
               maxLength={64}
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Start date
             <Input
               type="date"
@@ -479,7 +480,7 @@ export function AcademicPeriodActions({
               }
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             End date
             <Input
               type="date"
@@ -575,11 +576,11 @@ export function CohortActions({
         <div className="flex min-w-0 justify-end">
           <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
             <Menu>
-              <MenuItem onClick={openEdit}>Edit</MenuItem>
+              <MenuItem disabled={pending} onClick={openEdit}>Edit</MenuItem>
               <MenuItem disabled={pending} onClick={() =>
                 run(() => mutate("/api/academics/cohorts/" + cohort.id, "PATCH", { action: "ACTIVATE" }), "Cohort activated")
               }>Activate</MenuItem>
-              <MenuItem onClick={() => setConfirmAction("ARCHIVE")}>Archive</MenuItem>
+              <MenuItem disabled={pending} onClick={() => setConfirmAction("ARCHIVE")}>Archive</MenuItem>
             </Menu>
           </Dropdown>
         </div>
@@ -672,7 +673,7 @@ export function CohortActions({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Name
             <Input
               value={name}
@@ -682,7 +683,7 @@ export function CohortActions({
               maxLength={255}
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Code
             <Input
               value={code}
@@ -692,7 +693,7 @@ export function CohortActions({
               maxLength={64}
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
             Expected end period
             <Select
               value={endPeriodId}
@@ -804,7 +805,7 @@ export function SectionActions({
   return (
     <>
       {compactActions ? (
-        <div className="flex min-w-0 flex-nowrap items-center justify-end gap-[var(--lms-space-2)]">
+        <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] sm:flex-nowrap sm:justify-end">
         <Link
           href={operationsHref}
           className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
@@ -813,8 +814,8 @@ export function SectionActions({
         </Link>
           <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
             <Menu>
-              <MenuItem onClick={openEdit}>Edit</MenuItem>
-              <MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
+              <MenuItem disabled={pending} onClick={openEdit}>Edit</MenuItem>
+              <MenuItem disabled={pending} onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
             </Menu>
           </Dropdown>
         </div>
@@ -878,7 +879,7 @@ export function SectionActions({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Name
             <Input
               value={name}
@@ -888,7 +889,7 @@ export function SectionActions({
               maxLength={255}
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Code
             <Input
               value={code}
@@ -898,7 +899,7 @@ export function SectionActions({
               maxLength={64}
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
             Capacity · blank for unlimited
             <Input
               type="number"
