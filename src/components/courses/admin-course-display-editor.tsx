@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
-import {useGuardedAction} from "@/hooks/use-guarded-action";
+import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { apiFetch } from "@/lib/api-fetch";
 
 type Display = {
@@ -101,11 +101,11 @@ export function AdminCourseDisplayEditor({
 
   if (!enabled) {
     return (
-      <section className="border-b border-border pb-5">
+      <section className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <h3 className="m-0 text-base font-semibold text-foreground">
             Course Home content
-          </h2>
+          </h3>
           <StatusBadge tone="warning">
             Migration pending
           </StatusBadge>
@@ -120,13 +120,13 @@ export function AdminCourseDisplayEditor({
   }
 
   return (
-    <section className="border-b border-border pb-5">
+    <section className="min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <h3 className="m-0 text-base font-semibold text-foreground">
             Course Home content
-          </h2>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+          </h3>
+          <p className="mt-1 max-w-[75ch] text-xs leading-5 text-muted-foreground">
             Shared public Course overview. Rich HTML is sanitized to a strict
             attribute-free formatting allowlist before storage.
           </p>
@@ -136,11 +136,11 @@ export function AdminCourseDisplayEditor({
         </StatusBadge>
       </div>
 
-      <div className="mt-4 grid gap-4">
+      <div className="mt-[var(--lms-space-4)] grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)]">
         <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Introduction
           <Input
-            className="mt-1.5 min-h-11 md:min-h-9"
+            className="mt-[var(--lms-space-2)] min-h-11 md:min-h-9"
             value={introductionText}
             maxLength={500}
             placeholder="One-line hook for the Course Home page"
@@ -155,7 +155,7 @@ export function AdminCourseDisplayEditor({
         <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Rich description HTML
           <Textarea
-            className="mt-1.5 min-h-40 font-mono text-sm"
+            className="mt-[var(--lms-space-2)] min-h-40 font-mono text-sm"
             value={bodyHtml}
             maxLength={20000}
             placeholder="<p>Describe the course...</p>"
@@ -174,7 +174,7 @@ export function AdminCourseDisplayEditor({
         <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           What learners will take away
           <Textarea
-            className="mt-1.5 min-h-32"
+            className="mt-[var(--lms-space-2)] min-h-32"
             value={takeaways}
             maxLength={15000}
             placeholder={"One point per line\nUnderstand the core concepts\nApply them in practice"}
@@ -192,7 +192,7 @@ export function AdminCourseDisplayEditor({
         <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Thumbnail URL
           <Input
-            className="mt-1.5 min-h-11 md:min-h-9"
+            className="mt-[var(--lms-space-2)] min-h-11 md:min-h-9"
             type="url"
             inputMode="url"
             value={thumbnailUrl}
@@ -210,10 +210,10 @@ export function AdminCourseDisplayEditor({
         </label>
       </div>
 
-      <div className="mt-5 flex justify-end">
+      <div className="mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch sm:flex-row sm:justify-end">
         <Button
           type="button"
-          className="min-h-11 md:min-h-9"
+          className="min-h-11 w-full sm:w-auto md:min-h-9"
           disabled={pending}
           onClick={save}
         >
