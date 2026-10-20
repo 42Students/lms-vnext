@@ -80,22 +80,22 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     <PageBackLink href="/admin/placements" label="Placement overview" />
     <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Look up a student&apos;s placement status →</Link>
     <Link href="/admin/placements/new"
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create drive →</Link>
+     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create drive →</Link>
    </div>} />
   <form action="/admin/placements/drives" method="get"
    className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-   <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search by drive or company
+   <label className="grid w-full min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-44">Search by drive or company
     <Input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
      className="min-h-11 w-full md:min-h-9"/>
    </label>
-   <label className="grid min-w-36 flex-1 gap-1 text-sm font-semibold text-body">Status
+   <label className="grid w-full min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-36">Status
     <Select name="status" defaultValue={parsed.data.status}
      className="min-h-11 w-full md:min-h-9">
      <option value="ALL">All</option><option value="DRAFT">Draft</option>
      <option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
     </Select>
    </label>
-   <label className="grid min-w-36 flex-1 gap-1 text-sm font-semibold text-body">Rows per page
+   <label className="grid w-full min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-36">Rows per page
     <Select name="pageSize" defaultValue={parsed.data.pageSize}
      className="min-h-11 w-full md:min-h-9">
      {[10,20,50,100].map(n=><option key={n} value={n}>{n}</option>)}
