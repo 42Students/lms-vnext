@@ -107,12 +107,13 @@ export function TpoAcademicImportWorkspace() {
     {open && <section id={id} aria-label="Import academic details"
       className="mt-3 w-full min-w-0 max-w-4xl space-y-3 border-y border-border py-4">
       <h2 className="text-lg font-semibold">Import academic details</h2>
-      <p className="text-sm text-muted-foreground">
+      <details className="border-b border-border pb-3 text-sm text-muted-foreground">
+        <summary className="cursor-pointer py-2 text-[13px] font-semibold">Academic CSV requirements</summary><p>
         One row per student, matched by student membership ID. Upload a CSV with
         CGPA (0–10) and active backlogs. The first row must be the column headings.
         Nothing is saved until you review the matches and confirm import.
         A roll number alone cannot identify a membership in this vNext workflow.
-      </p>
+      </p></details>
       <p aria-label="Import with preview steps" className="text-xs text-muted-foreground print:hidden">
         Choose file or paste rows → Preview matched and unmatched records → Confirm selected import.
       </p>
@@ -123,13 +124,13 @@ export function TpoAcademicImportWorkspace() {
       </a>
       <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Drop a CSV file here, or click to choose" accept=".csv,text/csv" maxBytes={200_000}
          disabled={busy} onFiles={files => void upload(files?.[0] ?? null)}/>
-      <label className="block text-sm font-semibold print:hidden">Or paste CSV rows
+      <details className="border-t border-border pt-3 print:hidden"><summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">Or paste CSV rows</summary><label className="block min-w-0 text-[13px] font-semibold leading-4">Or paste CSV rows
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setPreview(null); setError(""); setNotice("");
         }} rows={5} maxLength={200000}
-          className="mt-1 min-h-32 w-full min-w-0 font-mono text-sm" />
-      </label>
-      <Button variant="secondary" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} type="button" onClick={() => void validate()}
+          className="mt-1.5 min-h-32 w-full min-w-0 font-mono text-sm" />
+      </label></details>
+      <Button variant="secondary" loading={busy} className="min-h-11 w-full md:min-h-9 sm:w-auto print:hidden" disabled={busy} type="button" onClick={() => void validate()}
         >
         {busy ? "Checking…" : "Preview import"}
       </Button>
@@ -163,7 +164,7 @@ export function TpoAcademicImportWorkspace() {
               : preview.map(row => row.studentCode))} />
           Select all matched students
         </label>
-        <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
+        <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 sm:w-auto print:hidden" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
           onClick={() => setConfirmOpen(true)}
           >
           Confirm import
@@ -172,8 +173,8 @@ export function TpoAcademicImportWorkspace() {
       <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy&&!guardedPending)setConfirmOpen(value);}}
         title="Import verified academic details"
         description={"Import "+(preview?.filter(row=>row.match==="WILL_UPDATE"&&!excluded.includes(row.studentCode)).length??0)+" selected academic records? This updates their recorded CGPA and active backlogs."}
-        footer={<><Button variant="secondary" className="min-h-11 md:min-h-9" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-          <Button className="min-h-11 md:min-h-9" disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{setConfirmOpen(false);await commit();})}>Confirm import</Button></>}>
+        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end"><Button variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+          <Button className="min-h-11 w-full md:min-h-9 sm:w-auto" loading={busy||guardedPending} disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{setConfirmOpen(false);await commit();})}>Confirm import</Button></div>}>
         <p className="text-sm">Your academic import choices are kept below if the import cannot be completed.</p>
       </Dialog>
       {error && <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error">{error}</p>}
