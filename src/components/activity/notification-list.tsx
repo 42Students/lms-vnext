@@ -101,11 +101,11 @@ export function NotificationList({
   }
 
   return (
-    <div className={readEndpoint==="/api/learn/notifications" ? "space-y-[var(--lms-space-3)]" : variant==="tpo" ? "space-y-0" : "space-y-5"}>
+    <div className={readEndpoint==="/api/learn/notifications" ? "space-y-[var(--lms-space-3)]" : variant==="tpo" ? "space-y-0" : "min-w-0 space-y-4"}>
       {groupNotificationsByDate(items, groupingNow).map((group) => (
         <section key={group.label} aria-label={group.label}
           className={readEndpoint==="/api/learn/notifications" ? "space-y-[var(--lms-space-2)]" : "space-y-2"}>
-          <h2 className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{group.label}</h2>
+          <h2 className="text-sm font-semibold leading-5 text-muted-foreground">{group.label}</h2>
           {group.items.map((item) => (
             variant==="tpo"?<Button variant="ghost" type="button" key={item.id} disabled={pendingId!==null}
               onClick={()=>{
@@ -128,7 +128,7 @@ export function NotificationList({
               key={item.id}
               className={readEndpoint==="/api/learn/notifications"
                 ? "min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-[var(--lms-space-4)] transition-colors duration-200 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
-                : "border-b border-[var(--lms-canvas-border)] bg-transparent py-4 transition-colors duration-150 hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:py-5"}
+                : "min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4 transition-colors duration-150 hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:py-5"}
             >
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div className="min-w-0 flex-1">
@@ -139,7 +139,7 @@ export function NotificationList({
                     ) : null}
                     {!item.readAt && item.source !== "ANNOUNCEMENT" ? <StatusBadge tone="info">Unread</StatusBadge> : null}
                   </div>
-                  <h3 className="mt-3 text-sm font-semibold leading-[1.35] text-foreground min-[768px]:text-base">
+                  <h3 className="mt-2 break-words text-sm font-semibold leading-6 text-foreground min-[768px]:text-base">
                     {onSelect ? (
                       <Button
                         type="button"
@@ -159,12 +159,12 @@ export function NotificationList({
                     {formatWhen(item.createdAt)}
                   </p>
                 </div>
-                <div className="flex shrink-0 flex-wrap gap-2">
+                <div className="flex w-full shrink-0 flex-wrap gap-2 min-[768px]:w-auto">
                   {item.actionHref ? (
                     item.readAt ? (
                       <Link
                         href={item.actionHref}
-                        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 min-[768px]:min-h-9 min-[768px]:flex-none text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
                       >
                         {item.actionLabel??"Open"}
                       </Link>
@@ -172,7 +172,7 @@ export function NotificationList({
                       <Button
                         size="sm"
                         variant="secondary"
-                        className="min-h-11 min-[768px]:min-h-9"
+                        className="min-h-11 min-w-0 flex-1 min-[768px]:min-h-9 min-[768px]:flex-none"
                         disabled={pendingId !== null}
                         onClick={() => markRead(item.id, item.actionHref ?? undefined)}
                       >

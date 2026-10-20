@@ -69,7 +69,7 @@ export function NotificationToolbar({
       <Button
         size="sm"
         variant="secondary"
-        className="w-full min-[768px]:w-auto"
+        className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
         disabled={pending || unreadCount === 0}
         onClick={() => confirmMarkAll ? setConfirmOpen(true) : void markAllRead()}
       >
