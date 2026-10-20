@@ -28,7 +28,7 @@ export default async function SuperAdminLectureHallAvailability({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context=await getCurrentRequestContext();
-  if(!context.adminScope?.collegeId)return <div className="space-y-4">
+  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Lecture halls" title="Room availability"/>
     <EmptyState title="Select a college to continue"
       description="Choose a college in the Super Admin scope selector before viewing private room schedules."/>
@@ -49,16 +49,16 @@ export default async function SuperAdminLectureHallAvailability({
     }
   }
 
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Lecture halls" title={result?.hall.name ?? "Room availability"}
       description="Read-only scheduled bookings. An empty schedule is not proof of a free room."
-      actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to Lecture Halls</Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-1 text-sm font-semibold">From (IST)
+      actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to Lecture Halls</Link>} />
+    <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+      <label className="grid min-w-0 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold text-body min-[768px]:flex-none">From (IST)
         <Input name="from" type="date" required defaultValue={typeof raw.from === "string" ? raw.from : ""}
           className="w-full" />
       </label>
-      <label className="grid gap-1 text-sm font-semibold">To (IST)
+      <label className="grid min-w-0 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold text-body min-[768px]:flex-none">To (IST)
         <Input name="to" type="date" required defaultValue={typeof raw.to === "string" ? raw.to : ""}
           className="w-full" />
       </label>
