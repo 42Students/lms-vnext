@@ -833,12 +833,12 @@ export function SuperAdminHrAccounts({
                       filters,
                       list.page - 1,
                     )}
-                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
                   >
                     Previous
                   </Link>
                 ) : (
-                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 md:min-h-9">
+                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 min-[768px]:min-h-9">
                     Previous
                   </span>
                 )}
@@ -849,12 +849,12 @@ export function SuperAdminHrAccounts({
                       filters,
                       list.page + 1,
                     )}
-                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
                   >
                     Next
                   </Link>
                 ) : (
-                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 md:min-h-9">
+                  <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 min-[768px]:min-h-9">
                     Next
                   </span>
                 )}
