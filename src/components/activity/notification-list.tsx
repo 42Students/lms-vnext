@@ -127,7 +127,7 @@ export function NotificationList({
              </Button>:<article
               key={item.id}
               className={readEndpoint==="/api/learn/notifications"
-                ? "min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-[var(--lms-space-4)] transition-colors duration-200 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
+                ? "min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-3 transition-colors duration-200 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
                 : "min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4 transition-colors duration-150 hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:py-5"}
             >
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
@@ -159,12 +159,12 @@ export function NotificationList({
                     {formatWhen(item.createdAt)}
                   </p>
                 </div>
-                <div className="flex w-full shrink-0 flex-wrap gap-2 min-[768px]:w-auto">
+                <div className="flex w-full shrink-0 flex-col gap-2 sm:flex-row sm:flex-wrap min-[768px]:w-auto">
                   {item.actionHref ? (
                     item.readAt ? (
                       <Link
                         href={item.actionHref}
-                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 min-[768px]:min-h-9 min-[768px]:flex-none text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+                        className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 min-[768px]:min-h-9 min-[768px]:flex-none text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
                       >
                         {item.actionLabel??"Open"}
                       </Link>
@@ -172,7 +172,7 @@ export function NotificationList({
                       <Button
                         size="sm"
                         variant="secondary"
-                        className="min-h-11 min-w-0 flex-1 min-[768px]:min-h-9 min-[768px]:flex-none"
+                        className="min-h-11 min-w-0 w-full sm:w-auto min-[768px]:min-h-9"
                         disabled={pendingId !== null}
                         onClick={() => markRead(item.id, item.actionHref ?? undefined)}
                       >
@@ -184,7 +184,7 @@ export function NotificationList({
                     <Button
                       size="sm"
                       variant="secondary"
-                      className="min-h-11 min-[768px]:min-h-9"
+                      className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9"
                       disabled={pendingId !== null}
                       onClick={() => markRead(item.id)}
                     >
