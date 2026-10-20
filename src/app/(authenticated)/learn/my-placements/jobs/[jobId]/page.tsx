@@ -77,7 +77,7 @@ export default async function LearnerPlacementJobDetailPage({
   return <div className="min-w-0 space-y-5">
    {rows.length===0 && journey ? (
     <PageHeader title="Placement drive history" description="Your recorded application journey remains available."
-      actions={<Link href={back} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">← Back to drives</Link>} />
+      actions={<Link href={back} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">← Back to drives</Link>} />
    ) : null}
    {rows.length>0?<LearnerPlacementJobDetail items={rows.map(toItem)}
     returnHref={back} initialSaved={savedJobs.some(row=>row.jobId===jobId)}/>:null}
