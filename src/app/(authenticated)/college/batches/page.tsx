@@ -38,14 +38,13 @@ export default async function CollegeBatchesPage({
   const periodChoices = periods.filter(period => period.status !== "CLOSED").map(period => ({
     id: period.id, name: period.name, code: period.code,
   }));
-  return <CollegeAcademicDirectory data={directory} batchPeriods={periodChoices} prepend={<div className="min-w-0 space-y-4">
-    <CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />
-    <div className="flex flex-wrap items-center gap-3">
-    <Link prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] md:min-h-9">
+  return <CollegeAcademicDirectory data={directory} batchPeriods={periodChoices}
+    actions={<Link prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
       Export CSV
-    </Link>
-    <p className="text-xs text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching batches; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
-    </div>
-    </div>} />;
+    </Link>}
+    prepend={<div className="min-w-0 space-y-4">
+      <CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />
+      <p className="text-xs text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching batches; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
+    </div>}/>;
 }
