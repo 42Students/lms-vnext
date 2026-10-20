@@ -25,10 +25,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-15.md: surface | regre
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/page.tsx`
 - [ ] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
 - [ ] `src/app/(authenticated)/admin/companies/page.tsx`
 - [ ] `src/app/(authenticated)/admin/course-progress/page.tsx`
