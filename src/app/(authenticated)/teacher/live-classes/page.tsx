@@ -59,7 +59,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
    description="No published LIVE_CLASS content matches these filters in your current teaching Sections. Unregistered meetings are not invented."/>
    :<ul className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(s=><li key={s.deliveryId+":"+s.id}
      className="min-w-0 space-y-2 bg-transparent py-4 transition-colors duration-150 hover:bg-[rgba(38,186,199,0.045)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:py-6">
-    <h2 className="font-semibold text-foreground">{s.title}</h2>
+    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{s.title}</h2>
     <p className="text-sm text-body">{s.courseName} · {s.sectionName}</p>
     <p className="text-sm text-body">
      {new Intl.DateTimeFormat("en-IN",{
