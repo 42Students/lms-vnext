@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 
 export type PlacementRequestQueueItem = {
@@ -61,6 +62,8 @@ export function PlacementRequestQueue({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
+  const [confirmation,setConfirmation]=useState<{item:PlacementRequestQueueItem;action:"APPROVE"|"REJECT"}|null>(null);
+  const [validationError,setValidationError]=useState<Record<string,string>>({});
   const [pendingId, setPendingId] =
     useState<string | null>(null);
   const [notes, setNotes] = useState<
@@ -71,9 +74,10 @@ export function PlacementRequestQueue({
     item: PlacementRequestQueueItem,
     action: "APPROVE" | "REJECT",
   ) {
-    const note =
-      notes[item.id]?.trim() ?? "";
+    if(pendingId)return;
+    const note = notes[item.id]?.trim()??"";
     if (action === "REJECT" && note.length < 3) {
+      setValidationError(prev=>({...prev,[item.id]:"Explain why this request is rejected (at least 3 characters)."}));
       showToast({
         tone: "error",
         title: "Decision note required",
@@ -82,6 +86,7 @@ export function PlacementRequestQueue({
       });
       return;
     }
+    setValidationError(prev=>({...prev,[item.id]:""}));
     setPendingId(item.id);
     try {
       const response = await fetch(
@@ -122,8 +127,10 @@ export function PlacementRequestQueue({
             ? "The approved domain effect was applied in the same transaction."
             : "The placement state was left unchanged.",
       });
+      setConfirmation(null);
       router.refresh();
     } catch (error) {
+      setValidationError(prev=>({...prev,[item.id]:error instanceof Error?humanize(error.message):"Please try again."}));
       showToast({
         tone: "error",
         title: "Decision failed",
