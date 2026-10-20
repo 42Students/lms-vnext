@@ -157,3 +157,11 @@
 **Fix:** kept scoped-notice authorization check and redirect to the real Discussions route unchanged; corrected loading label/shape, aligned PageHeader, primary Retry and secondary Back to courses recovery at 375 and 768. Inspected parent faculty layout/not-found and target discussion page; did not reconstruct obsolete notice UI.
 
 **Files changed:** notices `error.tsx`, `loading.tsx`, queue and proof. Route is pure redirect, no visible layout. Static review only, no CI.
+
+## 18 · Teacher / Course default route
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx`
+**Problems found (5):** index page is redirect-only but shows incorrect card-style loading fallback, generic loading label, thick duplicate error-canvas border, Retry framed as a secondary action when it is primary, and a centered recovery row with undersized back link on mobile.
+
+**Fix:** retain validated redirect to the existing Course home tab; align loading shape, error PageHeader, mobile 44px Retry and Back to courses actions to the single canvas. Reviewed faculty course tab loader/error/not-found, dynamic course id validation and parent faculty shell. No fake intermediate content added.
+
+**Files changed:** base course `error.tsx`, `loading.tsx`, queue and proof. Source-only review, no CI.
