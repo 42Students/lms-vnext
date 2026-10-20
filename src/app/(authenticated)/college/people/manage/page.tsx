@@ -74,13 +74,19 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
   if (filter.page !== pagination.page) {
     redirect(collegePeopleManageHref({ ...filter, page: pagination.page }));
   }
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-4">
     <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory}
       description="Manage college memberships, roles and lifecycle. For the read-only legacy contact tabs, open Contacts."
-      actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/groups"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Export filtered CSV</Link><PersonOnboardDialog collegeId={membership.collegeId} /></div>} />
-    <section className="pt-4" aria-label="People filters">
-      <form action="/college/people/manage" method="get" role="search" className="flex flex-wrap items-end min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch">
+      actions={<PersonOnboardDialog collegeId={membership.collegeId} />} />
+    <details className="min-w-0 border-b border-border pb-3">
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Other people actions</summary>
+      <nav aria-label="People directory tools" className="flex min-w-0 flex-wrap items-center gap-3 pt-2">
+        <Link href="/college/groups"
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Export filtered CSV</Link>
+      </nav>
+    </details>
+    <section className="min-w-0" aria-label="People filters">
+      <form action="/college/people/manage" method="get" role="search" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
         <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-44 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email or phone
           <Input name="q" type="search" maxLength={100} defaultValue={filter.q}
             />
@@ -105,7 +111,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
             <option value="ENDED">Ended</option>
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 md:min-h-9">Apply</Button>
+        <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply</Button>
         <Link href="/college/people" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>
       </form>
     </section>
@@ -120,7 +126,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
           action={collegePeopleHasFilters(filter)?<Link href="/college/people/manage"
             className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear People filters</Link>:undefined}/>} />
     </section>
-    <nav aria-label="People directory pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+    <nav aria-label="People directory pages" className="flex min-w-0 flex-col items-stretch gap-3 text-sm md:flex-row md:items-center md:justify-between">
       <span className="text-muted-foreground">
         Page {pagination.page} of {pagination.pages} · {pagination.first}–{pagination.last} of {pagination.total}
       </span>
