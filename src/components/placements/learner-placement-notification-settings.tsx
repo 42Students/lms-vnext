@@ -52,7 +52,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
   }
 
   return <section aria-labelledby="placement-notification-title"
-    className="min-w-0 border-b border-border pb-5">
+    className="border-b border-border pb-5">
     <h2 id="placement-notification-title" className="text-lg font-semibold text-foreground">
       Placement notification choices
     </h2>
@@ -60,8 +60,8 @@ export function LearnerPlacementNotificationSettings({initial}:{
       These choices apply only to placement opportunity matching and application
       updates. Essential college, academic and security messages are not controlled here.
     </p>
-    <div className="mt-5 grid min-w-0 gap-4">
-      <label className={"flex min-h-12 min-w-0 cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none "+(matching?"border-primary bg-primary-subtle":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
+    <div className="mt-5 grid gap-4">
+      <label className={"flex min-h-12 cursor-pointer items-start gap-3 rounded-[8px] border p-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(matching?"border-primary bg-primary-subtle":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
         <Checkbox checked={matching} onChange={e=>setMatching(e.target.checked)}
           disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Matching opportunities</span>
@@ -69,7 +69,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
             Choose whether to receive matching placement-job notifications.
           </span></span>
       </label>
-      <label className={"flex min-h-12 min-w-0 cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none "+(updates?"border-primary bg-primary-subtle":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
+      <label className={"flex min-h-12 cursor-pointer items-start gap-3 rounded-[8px] border p-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(updates?"border-primary bg-primary-subtle":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
         <Checkbox checked={updates} onChange={e=>setUpdates(e.target.checked)}
           disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Application updates</span>
@@ -79,10 +79,10 @@ export function LearnerPlacementNotificationSettings({initial}:{
       </label>
     </div>
     <div className="mt-5 flex flex-wrap items-center gap-3">
-      <Button className="max-md:min-h-11" disabled={!changed || pending} onClick={()=>setConfirm(true)}>
+      <Button disabled={!changed || pending} onClick={()=>setConfirm(true)}>
         Review changes
       </Button>
-      <Button className="max-md:min-h-11" variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Reload saved choices</Button>
+      <Button variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Reload saved choices</Button>
       {changed ? <span className="text-xs text-body">Unsaved changes</span>
         : <span className="text-xs text-muted-foreground">No changes to save</span>}
     </div>
@@ -90,8 +90,8 @@ export function LearnerPlacementNotificationSettings({initial}:{
       title="Confirm placement notification choices"
       description="Only the two placement notification preferences will change. Other placement preferences remain intact."
       footer={<div className="flex flex-wrap justify-end gap-2">
-        <Button className="max-md:min-h-11" variant="secondary" disabled={pending} onClick={()=>setConfirm(false)>Keep current choices</Button>
-        <Button className="max-md:min-h-11" disabled={pending || !changed} onClick={()=>void save()}>
+        <Button variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}>Keep current choices</Button>
+        <Button disabled={pending || !changed} onClick={()=>void save()}>
           {pending?"Saving…":"Confirm and save"}
         </Button>
       </div>}>
