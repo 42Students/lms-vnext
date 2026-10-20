@@ -18,8 +18,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/tpo/tpo-team-assign-unowned.tsx`
 - [x] `src/components/ui/button-group.tsx`
 - [x] `src/app/(authenticated)/teacher/loading.tsx`
-- [ ] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
-- [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
+- [x] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
+- [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
 - [ ] `src/components/tpo/tpo-applications-spreadsheet.tsx`
 - [ ] `src/components/tpo/tpo-topbar-new-menu.tsx`
 - [ ] `src/components/admin/admin-program-directory.tsx`
