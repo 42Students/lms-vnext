@@ -42,6 +42,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       <Metric label="Needs screening" value={operations.summary.pendingScreening} description="Candidates waiting for a placement-cell screening decision." />
       <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Jobs with an unresolved operational action." />
     </div>
+    {showDriveSearch?<SuperAdminNeedsAttention items={operations.workQueue} basePath={basePath}/>:
     <section className="border-b border-border pb-6">
       <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">Placement funnel</h2>
@@ -59,7 +60,6 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
           note:conversion(operations.analytics.funnel.joined,operations.analytics.funnel.accepted)+" from previous stage"},
       ]} />
     </section>
-    {showDriveSearch?<SuperAdminNeedsAttention items={operations.workQueue} basePath={basePath}/>:
     <section className="border-b border-border pb-6">
       <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>
@@ -72,7 +72,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
           <Button type="submit" variant="secondary">Apply</Button>
         </form>:null}
       </div>
-      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." /></div> :
+      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." action={<Link href={basePath+"/lifecycle"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Drive lifecycle</Link>} /></div> :
         <div className="divide-y divide-border">{operations.workQueue.map((item, index) =>
           <div key={item.jobId + item.code + index} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
@@ -85,11 +85,11 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
     </section>}
     <section className="border-b border-border pb-6">
       <div className="border-b border-border pb-3"><h2 className="m-0 text-base font-semibold text-foreground">Upcoming rounds</h2><p className="mt-1 text-sm text-body">Scheduled rounds across the active college.</p></div>
-      {operations.upcomingRounds.length === 0 ? <p className="m-0 px-5 py-6 text-sm text-muted-foreground">No future rounds are scheduled.</p> :
+      {operations.upcomingRounds.length === 0 ? <p className="m-0 py-6 text-sm text-muted-foreground">No future rounds are scheduled.</p> :
         <div className="divide-y divide-border">{operations.upcomingRounds.map(round =>
-          <div key={round.roundId} className="flex flex-col gap-2 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+          <div key={round.roundId} className="flex min-w-0 flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div><p className="m-0 font-semibold text-foreground">{round.companyName} · {round.jobTitle}</p><p className="mt-1 text-sm text-body">{round.sequence}. {round.name} · {formatWhen(round.scheduledAt, round.timezone)}</p></div>
-            <Link href={basePath + "/jobs/" + round.jobId} className="text-sm font-semibold text-primary-text hover:text-primary-hover">Open drive →</Link>
+            <Link href={basePath + "/jobs/" + round.jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover md:min-h-9">Open drive →</Link>
           </div>)}</div>}
     </section>
     {showDriveSearch ? <SuperAdminDriveQuickSearch basePath={basePath}
@@ -100,7 +100,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
     <section className="border-b border-border pb-6">
       <div className="border-b border-border pb-3"><h2 className="m-0 text-base font-semibold text-foreground">Job portfolio</h2><p className="mt-1 text-sm text-body">Operational state for every non-archived placement job in this college.</p></div>
       <div className="divide-y divide-border">{operations.jobs.map(item =>
-        <div key={item.job.id} className="flex flex-col gap-3 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+        <div key={item.job.id} className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div><div className="flex flex-wrap items-center gap-2"><p className="m-0 font-semibold text-foreground">{item.job.title}</p><StatusBadge tone={item.job.status === "PUBLISHED" ? "success" : item.job.status === "DRAFT" ? "warning" : "neutral"}>{item.job.status}</StatusBadge></div><p className="mt-1 text-sm text-body">{item.job.company.name} · {item.metrics.submittedApplications} applications · {item.metrics.roundCount} rounds</p></div>
           <Link href={basePath + "/jobs/" + item.job.id} className="text-sm font-semibold text-primary-text hover:text-primary-hover">Open drive →</Link>
         </div>)}</div>
