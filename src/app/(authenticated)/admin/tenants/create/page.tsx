@@ -40,19 +40,19 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
    description="Creating organizations and colleges is a platform-level action. Domains, branding and readiness checks are college-specific, so the current scope is always visible before you edit."
    actions={<PageBackLink href="/admin/tenants" label="Tenant directory" />}/>
   <section className="min-w-0 space-y-3 border-b border-border pb-5" aria-label="Create organization">
-   <h2 className="text-lg font-semibold">Create an organization and its colleges</h2>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Create an organization and its colleges</h2>
    {orgCreate?<OrganizationCreateForm advanceToCollege/>:
     <Banner tone="warning">Organization creation is unavailable in your selected administrative scope.</Banner>}
    <Link href="/admin/organizations" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review organizations</Link>
   </section>
   <section className="min-w-0 space-y-3 border-b border-border pb-5" aria-label="Create college">
-   <h2 className="text-lg font-semibold">2. College</h2>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">2. College</h2>
    {creatable.length?<CollegeCreateForm key={preferredId ?? "default"} preferredOrganizationId={preferredId ?? undefined} advanceToSetup organizations={creatable.map(item=>({id:item.id,name:item.name}))}/>:
     <Banner tone="warning">No organization in the current safety scope can receive a college. Create or select an authorized organization first.</Banner>}
    <Link href="/admin/colleges" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review colleges</Link>
   </section>
   <section className="min-w-0 space-y-2 pt-1">
-   <h2 className="text-lg font-semibold">Get this college ready to go live</h2>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Get this college ready to go live</h2>
    <p className="text-sm text-body">After creation, select that college in the safety-scope switcher before configuring its host, branding, academics and readiness.</p>
    <Link href="/admin/tenants/setup" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">Continue to setup →</Link>
   </section>
