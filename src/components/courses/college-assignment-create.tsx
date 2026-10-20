@@ -120,6 +120,10 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <Input type="number" min={1} max={10000} value={points} disabled={pending}
      onChange={e=>setPoints(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/></label>
+   <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
+    sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
+    "All currently eligible Sections in the selected Course Offering"}.
+    Draft assignments are hidden until they are published.</p>
    <Disclosure title="Instructions and submission settings" className="min-w-0 border-t border-border py-2 sm:col-span-2" contentClassName="pt-3">
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
    <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">Deadline (IST, optional until publishing)
@@ -130,10 +134,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <Textarea rows={3} maxLength={10000} value={description} disabled={pending}
      onChange={e=>setDescription(e.target.value)}
      className="min-h-24 w-full"/></label>
-   <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
-    sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
-    "All currently eligible Sections in the selected Course Offering"}.
-    Draft assignments are hidden until they are published.</p>
+
    <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
     </div>
    </Disclosure>
