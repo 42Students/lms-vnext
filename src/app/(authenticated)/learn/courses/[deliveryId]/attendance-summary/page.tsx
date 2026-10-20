@@ -5,7 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { StatusBadge, attendanceStatusTone } from "@/components/ui/status-badge";
 import { getOwnLearnerCourseAttendanceHistory } from "@/modules/courses/learner-course-drilldown-service";
 import { learnerAttendanceMonthSchema } from "@/modules/courses/learner-course-drilldown-model";
 import { courseSectionDeliveryIdSchema } from "@/modules/courses/validation";
@@ -110,7 +110,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
                       <time dateTime={row.startsAt.toISOString()}
                         className="mt-1 block text-xs text-muted-foreground">{formatWhen(row.startsAt)}</time>
                     </div>
-                    <StatusBadge>{row.status.replaceAll("_", " ")}</StatusBadge>
+                    <StatusBadge tone={attendanceStatusTone(row.status)}>{row.status.replaceAll("_", " ")}</StatusBadge>
                   </li>
                 ))}
               </ul>
