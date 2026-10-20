@@ -17,8 +17,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-5.md: surface | regres
 - [x] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/drives/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/new/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/new/page.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/page.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/proposals/page.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/recorded-outside/page.tsx`

@@ -99,16 +99,22 @@ export default async function RecruiterRequestDrivePage({
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName + ". Your request will be saved for placement-cell review."} />
-    <nav className="flex min-w-0 flex-wrap items-center gap-2 max-[767px]:flex-col max-[767px]:items-stretch" aria-label="Recruiter drive links">
+    <nav className="min-w-0 space-y-2" aria-label="Recruiter drive links">
       <PageBackLink href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)} label="Back to Drives"/>
+    <details className="min-w-0 border-t border-border pt-2">
+      <summary className="inline-flex min-h-11 w-full cursor-pointer items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:w-auto">More drive destinations</summary>
+      <div className="flex min-w-0 flex-col items-start gap-2 pb-2 min-[768px]:flex-row min-[768px]:flex-wrap">
     <Link href={hrSentProposalsHref(collegeId)}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="inline-flex min-h-11 w-full items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 md:w-auto active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       View previously sent discussion proposals
     </Link>
     <Link href={"/hr/drives/recorded-outside?collegeId="+encodeURIComponent(collegeId)}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="inline-flex min-h-11 w-full items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       Record an outside-platform drive
     </Link>
+
+      </div>
+    </details>
     </nav>
     <HrDriveDraftForm
       key={hrDriveDraftFormStateKey(context.user.id,collegeId,
