@@ -622,7 +622,7 @@ export async function PlacementCalendarWorkspace({
       </section>:null}
       {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-5">
        <h2 className="text-base font-semibold">Needs doing</h2>
-       <div className="grid gap-3 sm:grid-cols-3">
+       <div className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
         <Link href={overdue.length?basePath+"?view=week&date="+placementCalendarDayKey(overdue[0].startsAt)+"&kind=FOLLOW_UP":basePath}
          className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-link-text)]">
          <strong className="block text-lg">{needsWindow?overdue.length:"Unavailable"}</strong>Follow-ups overdue (last 90 days)
