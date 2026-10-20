@@ -42,7 +42,7 @@ export default async function AnnouncementsPage({
   const params = parseSuperAdminAnnouncementParams(await searchParams);
   if (!params) {
     return <div className="min-w-0 space-y-6">
-      <PageHeader eyebrow="Super Admin" title="Announcements" description="Review and publish college notices." />
+      <PageHeader title="Announcements" description="Review and publish college notices." />
       <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Reset filters</Link></p>
     </div>;
   }
@@ -53,7 +53,7 @@ export default async function AnnouncementsPage({
         <PageHeader
           eyebrow="Super Admin"
           title="Announcements"
-          description="Migration 0076 registers the announcement tables; this environment has not enabled the verified DB10 runtime flag."
+          description="Announcements are temporarily unavailable. Please try again later."
         />
         <div role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2">
           <p className="m-0 font-semibold text-foreground">Announcements database is not enabled.</p>
