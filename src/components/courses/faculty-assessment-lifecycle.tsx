@@ -74,10 +74,10 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
          action==="PUBLISH"?"Publish":"Delete"}
      </Button>)}
    </div>
-   {saved?<div role="status"><Alert tone="success">
+   {saved?<Alert tone="success">
      {lastAction==="ARCHIVE"?(kind==="QUIZ"?"Quiz deleted successfully.":"Assignment deleted."):"Change saved. Refreshing Section state…"}
-   </Alert></div>:null}
-   {error?<div role="alert"><Alert tone="error">{error}</Alert></div>:null}
+   </Alert>:null}
+   {error?<Alert tone="error">{error}</Alert>:null}
  <ConfirmDialog
    open={confirmAction!==null}
    onOpenChange={open=>{if(!open && pending===null)setConfirmAction(null);}}
