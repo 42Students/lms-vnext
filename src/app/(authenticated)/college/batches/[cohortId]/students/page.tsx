@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { notFound, redirect } from "next/navigation";
 import { and, eq, ilike, or } from "drizzle-orm";
@@ -14,9 +15,9 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { DataTable } from "@/components/ui/data-table";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import { requirePermission } from "@/modules/permissions/policy";
-import {Input} from "@/components/ui/input";
-import {Select} from "@/components/ui/select";
-import {Button} from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 export default async function CollegeBatchStudentsPage({
   params, searchParams,
@@ -71,32 +72,34 @@ export default async function CollegeBatchStudentsPage({
           ilike(learnerProfiles.rollNumber, "%" + q + "%")) : undefined))
       .orderBy(users.displayName).limit(500),
   ]);
-  return <div className="min-w-0 max-w-full overflow-x-clip space-y-5">
+  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
     <PageHeader title={"Students · " + batch.name}
       description={batch.program + " · Search the batch roster and move students to another class."}
-      actions={<PageBackLink href="/college/batches" label="Back to batches"/>} />
-    <FilterBar title="Filters" activeCount={Number(Boolean(q)) + Number(Boolean(sectionId))}><form method="get" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
-      <label className="grid flex-1 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Name, roll or email
-        <Input type="search" name="q" defaultValue={q} maxLength={100}
-          />
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
-        <Select name="sectionId" defaultValue={sectionId ?? ""}
-          >
-          <option value="">All classes</option>
-          {classes.map(item => <option key={item.id} value={item.id}>
-            {item.name} ({item.capacity ?? "No cap"} seats)</option>)}
-        </Select>
-      </label>
-      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
-    </form></FilterBar>
-    <section aria-label="Students in this batch" className="min-w-0 space-y-3">
+      actions={<PageBackLink href="/college/batches" label="Back to batches" />} />
+    <FilterBar title="Filters" activeCount={Number(Boolean(q)) + Number(Boolean(sectionId))}
+      search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll or email
+        <Input type="search" name="q" form="batch-students-roster-filters" defaultValue={q} maxLength={100} />
+      </label>}
+      action={<Button type="submit" form="batch-students-roster-filters" className="min-h-11 min-w-24 md:min-h-9">Search</Button>}>
+      <form id="batch-students-roster-filters" method="get" className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:max-w-[320px]">
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
+          <Select name="sectionId" defaultValue={sectionId ?? ""}>
+            <option value="">All classes</option>
+            {classes.map(item => <option key={item.id} value={item.id}>
+              {item.name} ({item.capacity ?? "No cap"} seats)</option>)}
+          </Select>
+        </label>
+        <Button type="submit" className="min-h-11 w-full md:hidden">Search</Button>
+      </form>
+    </FilterBar>
+    <section aria-label="Students in this batch" className="min-w-0 space-y-[var(--lms-space-3)]">
       <p className="text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
       <DataTable
         caption="Students in this batch"
         rows={students}
         getRowKey={item => item.membershipId}
-        empty={<EmptyState title="No matching students" description="No students in this batch match the current search filters."/>}
+        empty={<EmptyState title="No matching students" description="No students in this batch match the current search filters."
+          action={(q || sectionId) ? <Link href={"/college/batches/" + cohortId + "/students"} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link> : undefined} />}
         columns={[
           { key: "name", header: "Name", mobilePriority: "primary", cell: item => item.name ?? item.membershipId },
           { key: "roll", header: "Roll Number", mobilePriority: "secondary", cell: item => item.roll ?? "—" },
