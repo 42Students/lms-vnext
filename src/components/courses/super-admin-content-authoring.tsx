@@ -15,8 +15,8 @@ export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=true}:
  const selected=resolveSuperAdminAuthoringLesson(lessons,lessonId);
  return <section aria-label="Create lesson content" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold text-foreground">Add {kind==="VIDEOS"?"video":kind==="LIVE_CLASSES"?"live class":"resource"}</h2>
-  {!lessons.length?<p className="text-sm text-muted-foreground">Create a course offering, learning path and lesson before adding content.</p>:<>
-   <label className="grid gap-1 text-sm font-semibold text-body">Lesson
+  {!lessons.length?<p role="status" className="text-sm text-muted-foreground">Create a course offering, learning path and lesson before adding content.</p>:<>
+   <label className="grid gap-1 text-xs font-semibold text-body">Lesson
     <Select value={selected?.id??""} onChange={e=>setLessonId(e.target.value)}
      className="min-h-11 w-full md:min-h-9">
      {lessons.map(x=><option value={x.id} key={x.id}>{x.courseCode} · {x.courseName} · {x.name}</option>)}

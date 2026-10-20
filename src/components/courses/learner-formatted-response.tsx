@@ -9,7 +9,7 @@ export function formatLearnerResponseLine(input:string):ReactNode[]{
 }
 export function LearnerFormattedResponse({text}: {text:string}){
  const lines=text.split(/\r?\n/).slice(0,5000);
- return <div className="space-y-1 break-words text-sm text-body">
+ return <div className="space-y-1 break-words text-sm leading-5 text-body">
   {lines.map((line,index)=>line.startsWith("- ")
    ?<p key={index} className="pl-3">• {formatLearnerResponseLine(line.slice(2))}</p>
    :<p key={index}>{line?formatLearnerResponseLine(line):"\u00a0"}</p>)}

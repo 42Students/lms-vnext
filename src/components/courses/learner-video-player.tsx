@@ -208,7 +208,7 @@ export function LearnerVideoPlayer({
   return <div className="mt-4 space-y-2">
     <video ref={videoRef} controls preload="metadata"
       aria-label="Lesson video"
-      className="aspect-video w-full rounded-xl border border-border bg-foreground">
+      className="aspect-video w-full rounded-[var(--lms-control-radius)] border border-border bg-foreground">
       Your browser does not support HTML video.
     </video>
     <label className="flex flex-wrap items-center gap-2 text-xs font-medium text-body">
@@ -225,7 +225,7 @@ export function LearnerVideoPlayer({
       </Select>
     </label>
     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-      <span role="status">{loading ? "Loading video…" : mediaError ? "Video could not be loaded" :
+      <span role="status" aria-live="polite">{loading ? "Loading video…" : mediaError ? "Video could not be loaded" :
         readOnly ? "Past semester · progress is read only" : isCompleted ? "Completed" : "Progress saves automatically"}</span>
       <span>Saved at {formatDuration(savedSeconds)} / {formatDuration(authoredDurationSeconds>0?authoredDurationSeconds:observedDuration)}</span>
     </div>
