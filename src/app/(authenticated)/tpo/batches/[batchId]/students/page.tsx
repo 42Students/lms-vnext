@@ -35,9 +35,9 @@ const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export default async function BatchStudents({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{page?:string|string[];q?:string|string[];classId?:string|string[];decision?:string|string[];source?:string|string[];registration?:string|string[];order?:string|string[]}>}){
  const {batchId}=await params,raw=await searchParams;
  const parsed=pageSchema.safeParse(Array.isArray(raw.page)?raw.page[0]:raw.page??1);
- if(!parsed.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid page number" description="Choose a valid roster page." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/batches/"+batchId+"/students"}>Start again</Link>}/></div>;
+ if(!parsed.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid page number" description="Choose a valid roster page." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={"/tpo/batches/"+batchId+"/students"}>Start again</Link>}/></div>;
  const view=parseBatchStudentSearchParams(raw);
- if(!view.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid student search" description="Check the roster filters and search values." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link>}/></div>;
+ if(!view.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid student search" description="Check the roster filters and search values." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link>}/></div>;
  const ctx=await getCurrentRequestContext();
  const [result,batchScope,eligibility,registrationCounts]=await Promise.all([
   getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q,view.data.source==="LEARNER"),getTpoBatch(ctx,batchId),
@@ -81,10 +81,10 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    <strong>Suggested: make them eligible</strong>
    <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
    <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
-     className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show me</Link>
+     className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Show me</Link>
  </Alert>:null}
  <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
- <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Download blank eligibility import CSV (this page)</a>
+ <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Download blank eligibility import CSV (this page)</a>
  {finished?<Alert tone="info">This batch is finished. Eligibility decisions and import actions are read-only.</Alert>:<TpoBatchEligibilityImport batchId={batchId}/>}
  {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
    target="STUDENTS" rows={visible.map(student=>({
@@ -104,7 +104,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   Every change is confirmed and audited. Review skipped learners before retrying.</p>
  <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
  {!result.registrationAvailable?<Alert tone="warning">Registration records unavailable.</Alert>:null}
- <form action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
+ <form role="search" aria-label="students filters" action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
   className="grid min-w-0 grid-cols-1 items-end gap-2 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-3">
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class (on this page)
    <Select name="classId" defaultValue={view.data.classId??""}
@@ -158,9 +158,9 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    className="border-b border-border py-3 [&>summary]:min-h-11 md:[&>summary]:min-h-9 [&>summary]:text-link">
   <div className="flex flex-wrap items-center gap-2 py-2">
    <a href={batchStudentViewExportHref(batchId,result.page,view.data)}
-    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export filtered current page CSV</a>
+    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export filtered current page CSV</a>
    <a href={"/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/students/export?page="+result.page}
-    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export current page CSV (unfiltered)</a>
+    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export current page CSV (unfiltered)</a>
   </div>
  </Disclosure>
  <p className="text-xs text-muted-foreground">Name/roll-number search runs against the full active batch roster before pagination. Other evidence filters apply to this loaded page. {visible.length} of {result.students.length} loaded learners match.</p>
@@ -202,13 +202,13 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
        <TpoBatchInlineDecision membershipId={student.membershipId}
         batchId={batchId} expected={student.direct}/>:null}
       <Link href={"/tpo/students/"+encodeURIComponent(student.membershipId)+"/participation"}
-       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
        Open learner participation
       </Link>
      </div>},
    ]}/>
  </div>
- <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Previous</Link>:null}
- {result.hasMore?<Link href={href(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Next</Link>:null}</nav>
+ <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous</Link>:null}
+ {result.hasMore?<Link href={href(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next</Link>:null}</nav>
  </div>;
 }

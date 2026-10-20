@@ -36,7 +36,7 @@ export default async function TpoHome(){
  if(!hasTpoTooling(ctx)) return <div className="min-w-0 space-y-5">
   <PageHeader title="Home" description="Your college has no TPO account on this sign-in, so placement work is run from the college placements area."/>
   <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-   {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{label}</Link></li>)}
+   {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">{label}</Link></li>)}
   </ul>
  </div>;
  const moduleAccess=await resolveOptionalModuleAccess(ctx);
@@ -179,7 +179,7 @@ export default async function TpoHome(){
  <p className="text-sm font-semibold text-muted-foreground">{greeting.date}</p>
  <PageHeader title={greeting.title}/>
  {optionalDataUnavailable ? <InlineNotice tone="info" message="Some Home indicators could not be loaded. Other placement information is still available; refresh to retry."/> : null}
- <div aria-label="Placement overview" className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-4">
+ <div role="group" aria-label="Placement overview" className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-4">
   <StatTile className={tpoTileStyles.tile} label={rows[1]?.title ?? "Drives"} value={operationsResult?operations.summary.publishedJobs:"—"}
     detail={rows[1]?.status} href={rows[1]?.href}/>
   <StatTile className={tpoTileStyles.tile} label={rows[2]?.title ?? "Students"} value={studentStats?.summary.placementPool??"—"}
@@ -197,15 +197,15 @@ export default async function TpoHome(){
   {next?<div className="mt-2 space-y-2">
    <p className="break-words font-semibold">{next.title}</p>
    <p className="text-sm text-muted-foreground">{next.text}</p>
-   <Link href={next.href} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors duration-[150ms] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 motion-reduce:transition-none">{next.action}</Link>
+   <Link href={next.href} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors duration-[150ms] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 motion-reduce:transition-none">{next.action}</Link>
   </div>:rows.find(row=>row.needsAttention)?<div className="mt-2 space-y-2"><p className="text-sm">{rows.find(row=>row.needsAttention)?.status}</p>
-   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors duration-[150ms] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 motion-reduce:transition-none">Open</Link>
+   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors duration-[150ms] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 motion-reduce:transition-none">Open</Link>
   </div>:<div className="mt-2 space-y-1"><p className="font-semibold">Nothing is waiting on you.</p><p className="text-sm text-muted-foreground">New requests, results and replies show up here first.</p></div>}
  </section>
  <section className="min-w-0 space-y-2" aria-label="Your placement work">
   <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">{rows.map(row=><li key={row.key}>
     <Link href={row.href} data-testid={"home.row."+row.key}
-     className="flex min-h-16 min-w-0 items-center gap-3 p-4 text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     className="flex min-h-16 min-w-0 items-center gap-3 p-4 text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
      <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary-subtle text-sm font-semibold">{row.title.slice(0,1)}</span>
      <span className="min-w-0 flex-1"><strong className="block text-sm text-foreground">{row.title}</strong>
       <span className="block break-words text-xs text-muted-foreground">{row.status}</span></span>

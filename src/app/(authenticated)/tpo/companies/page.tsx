@@ -175,7 +175,7 @@ export default async function TpoCompanyMemoryPage({
       </div>
 
       <section className="space-y-4">
-        <form
+        <form role="search" aria-label="tpo companies filters"
           action="/tpo/companies"
           method="get"
           className="grid gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_auto_auto_auto]"

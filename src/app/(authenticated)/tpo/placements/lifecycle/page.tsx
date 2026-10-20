@@ -88,11 +88,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <Link href="/tpo/placements/overview" className="text-sm font-semibold text-primary-text hover:underline">Operations overview</Link>
       <nav aria-label="Drive creation paths" className="flex flex-wrap items-center gap-3">
         <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Recorded outside · history</Link>
-      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[rgba(38,186,199,0.35)] md:min-h-9">Create drive</Link>
+      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgba(38,186,199,0.35)] md:min-h-9">Create drive</Link>
       <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Recorded outside (history)</Link>
       </nav>
     </div>
-    <form action="/tpo/placements/lifecycle" method="get"
+    <form role="search" aria-label="placements lifecycle filters" action="/tpo/placements/lifecycle" method="get"
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
       <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
         <Select name="seasonId" defaultValue={data.season?.id ?? ""} disabled={!data.seasons.length}
@@ -267,9 +267,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
               item.approvedJobId?<Link href={"/tpo/placements/jobs/"+item.approvedJobId}
                 className="text-primary-text underline">Open draft</Link>:null}
           </article>)}
-        <nav className="flex justify-between">
-          {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous</Link>:<span/>}
-          {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next</Link>:null}
+        <nav aria-label="Drive request pagination" className="flex justify-between">
+          {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous</Link>:<span/>}
+          {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next</Link>:null}
         </nav>
       </section>
     ) : <>
