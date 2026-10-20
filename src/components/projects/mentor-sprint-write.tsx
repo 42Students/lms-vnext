@@ -23,12 +23,14 @@ export function MentorSprintCreate({
   const [description,setDescription]=useState("");
   const [goal,setGoal]=useState(""),[done,setDone]=useState("");
   const [startDate,setStartDate]=useState(""),[endDate,setEndDate]=useState(""),[dueDate,setDueDate]=useState("");
-  const [chosenReleaseId,setChosenReleaseId]=useState(releaseId);
+  const initialReleaseId=releases.find(item=>item.id===releaseId&&item.status!=="SHIPPED")?.id??
+    releases.find(item=>item.status!=="SHIPPED")?.id??releaseId;
+  const [chosenReleaseId,setChosenReleaseId]=useState(initialReleaseId);
   const chosenRelease=releases.find(item=>item.id===chosenReleaseId);
-  const dirty=Boolean(title||description||goal||done||startDate||endDate||dueDate||chosenReleaseId!==releaseId);
+  const dirty=Boolean(title||description||goal||done||startDate||endDate||dueDate||chosenReleaseId!==initialReleaseId);
   function discardDraft(){
     setOpen(false);setTitle("");setDescription("");setGoal("");setDone("");
-    setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(releaseId);
+    setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(initialReleaseId);
   }
   const guard=useProjectEditorDiscardGuard(open,dirty,busy,discardDraft);
   const datesValid=(!startDate||!endDate||endDate>=startDate)&&
@@ -72,7 +74,7 @@ export function MentorSprintCreate({
           <Select value={chosenReleaseId} disabled={busy}
             onChange={event=>setChosenReleaseId(event.target.value)}
             className="min-h-11 w-full min-[768px]:min-h-9">
-            {releases.length?releases.filter(release=>release.status!=="SHIPPED").map(release=>
+            {releases.some(release=>release.status!=="SHIPPED")?releases.filter(release=>release.status!=="SHIPPED").map(release=>
               <option key={release.id} value={release.id}>{release.title}</option>):
               <option value={releaseId}>Current release</option>}
           </Select>
