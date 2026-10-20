@@ -42,7 +42,7 @@ export default async function SuperAdminHrPage({
 
   if (!parsed) {
     return (
-      <div className="min-w-0 space-y-4">
+      <div className="min-w-0 space-y-4 md:space-y-6">
         <PageHeader
           title="Recruiter accounts"
           description="Employer recruiter administration."

@@ -9,10 +9,9 @@ export default async function MembershipAuditPage({params}:{params:Promise<{memb
  const data=await listSuperAdminPersonAudit(await getCurrentRequestContext(),membershipId);
  if(!data)notFound();
  const date=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
- return <div className="space-y-5">
+ return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader eyebrow="Super Admin · People" title={"Audit trail · "+(data.membership.name??"Unnamed person")}
-   description={"Recorded events for this exact membership in the selected college: "+data.membership.collegeName}/>
-  <Link href={"/admin/people/directory/"+encodeURIComponent(membershipId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Membership profile</Link>
+   description={"Recorded events for this exact membership in the selected college: "+data.membership.collegeName} actions={<Link href={"/admin/people/directory/"+encodeURIComponent(membershipId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Membership profile</Link>}/>
   <p role="status" className="text-sm text-body">Showing latest {data.events.length} recorded events. This is not an authentication-session or cross-college activity audit.</p>
   <ol className="divide-y divide-border border-y border-border">{data.events.map(event=><li key={event.id} className="py-4">
     <div className="flex flex-wrap items-center justify-between gap-3">
