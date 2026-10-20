@@ -30,7 +30,7 @@ export default async function RecruiterDriveProposalHistory({
  return <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
   <PageHeader title="Sent drive proposals"
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
-  <nav aria-label="Proposal actions" className="flex flex-wrap gap-2">
+  <nav aria-label="Proposal actions" className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:items-center">
    <PageBackLink href="/hr/drives" label="Back to Drives"/>
    <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">Draft another proposal</Link>
   </nav>
@@ -41,27 +41,27 @@ export default async function RecruiterDriveProposalHistory({
     href:"/hr/drives/proposals?collegeId="+encodeURIComponent(grant.collegeId),
    }))}/>
   </section>:data.status==="NO_ACCESS"?<EmptyState title="No active college access" description="No active recruiter college access."/>:<>
-   <form action="/hr/drives/proposals" method="get" role="search" aria-label="Search sent drive proposals" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-[var(--lms-canvas-border)] pb-4">
+   <form action="/hr/drives/proposals" method="get" role="search" aria-label="Search sent drive proposals" className="flex min-w-0 flex-col gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:flex-row min-[768px]:items-end">
     <Input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-0 flex-[1_1_12rem] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by role title
      <Input type="search" name="q" maxLength={100} defaultValue={input.data.q}
        className="w-full mt-[6px] block" placeholder="Role title" />
     </label>
-    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
+    <label className="min-w-0 w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-44">Order
       <Select name="sort" defaultValue={input.data.sort} className="mt-[6px] block">
         <option value="LATEST">Most recent</option>
         <option value="OLDEST">Oldest first</option>
       </Select>
     </label>
-    <Button type="submit" variant="secondary" className="self-end">Search</Button>
+    <Button type="submit" variant="secondary" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Search</Button>
    </form>
    {data.items.length?<Link
      href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
       page:data.page,sort:input.data.sort})}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 min-[768px]:w-auto border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      Export this page (summary CSV)
     </Link>:null}
-   <p role="status" className="text-sm text-body">
+   <p role="status" className="max-w-2xl text-sm text-body">
     {data.total} recorded discussion proposals · Page {data.page} of {data.pages}.
     These are not submitted approval requests.
    </p>
@@ -80,7 +80,7 @@ export default async function RecruiterDriveProposalHistory({
     </div>
     <ol className="divide-y divide-border border-y border-border min-[768px]:hidden">
     {data.items.map(row=><li key={row.id}
-     className="py-4">
+     className="min-w-0 py-3">
      <Link href={"/hr/conversations/"+row.threadId}
       className="block break-words font-semibold text-primary-text min-h-11 min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{row.title}</Link>
      <p className="mt-2 text-xs text-muted-foreground">
@@ -93,8 +93,9 @@ export default async function RecruiterDriveProposalHistory({
      </p>
      <p className="mt-2 text-xs text-[var(--lms-muted-text)]">No approval or drive publication is implied.</p>
     </li>)}
-   </ol></>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."/>}
-   <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-2">
+   </ol></>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."
+    action={<Link href="/hr/drives/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9">Draft another proposal</Link>} />}
+   <nav aria-label="Sent proposal pages" className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
     {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer proposals</Link>:null}
     {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page+1})}
