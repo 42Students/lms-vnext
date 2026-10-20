@@ -31,7 +31,7 @@ export function Textarea({ className, error = false, rows, ...props }: TextareaP
         "enabled:not-read-only:hover:border-[var(--lms-field-hover-border)]",
         "read-only:cursor-default read-only:bg-[var(--lms-neutral-50)] read-only:hover:border-[var(--lms-canvas-border)]",
         "focus-visible:border-[var(--lms-primary)] focus-visible:shadow-[var(--lms-control-shadow)]",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]",
+        "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
         "disabled:cursor-not-allowed disabled:select-none disabled:opacity-100",
         "disabled:border-[var(--lms-canvas-border)] disabled:bg-[var(--lms-neutral-50)] disabled:text-[var(--lms-neutral-400)]",
         "disabled:placeholder:text-[var(--lms-neutral-400)]",
