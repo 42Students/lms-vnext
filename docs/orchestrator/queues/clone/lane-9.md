@@ -20,25 +20,25 @@ Fix every listed deviation using the shared components in src/components/ui and 
 - [x] `src/components/shell/tpo-topbar-messages.tsx` (score 2: rounded-full pill x1)
 - [x] `src/app/(authenticated)/admin/module-access/page.tsx` (score 1: arbitrary px size x1)
 - [x] `src/components/projects/admin-readiness-workspace-picker.tsx` (score 1: arbitrary px size x1)
-- [ ] `src/components/projects/project-admin-submission-review.tsx` (score 1: arbitrary px size x1)
+- [x] `src/components/projects/project-admin-submission-review.tsx` (score 1: arbitrary px size x1)
 
 ## Section 2: page routes, full fidelity pass (38)
 For each page: page head via PageHeader (title, subtitle, actions exactly as the old LMS), canvas card (white, radius 12, border #e5e9f0, padding 24), tabs, filter row, tables/grids/cards, chips and badges, banners and inline notices, every modal and drawer the page opens, buttons and forms, empty/loading/error states, toasts, spacing and typography values, and responsive at 1280, 768 and 375 widths. Read the page and the components it renders, fix every deviation you find, not only the listed ones.
 
-- [ ] `src/app/(authenticated)/activity/[eventId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
-- [ ] `src/app/(authenticated)/admin/module-access/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/hiring/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/job-settings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/joining/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/screenings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/seasons/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/admin/programs/page.tsx`
+- [x] `src/app/(authenticated)/activity/[eventId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
+- [x] `src/app/(authenticated)/admin/module-access/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/hiring/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/job-settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/joining/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/screenings/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/seasons/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/admin/programs/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/at-risk/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/audit/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/page.tsx`
