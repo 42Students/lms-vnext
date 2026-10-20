@@ -58,7 +58,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
      students:count(meta.count),created:count(meta.created),failed:count(meta.failed),
    };
  });
- return <div className="min-w-0 space-y-4">
+ return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader title="Students"
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex flex-wrap items-center justify-end gap-2">
@@ -67,7 +67,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>
-  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-2"><h2 id="register-student-heading" className="text-lg font-semibold text-foreground">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
+  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-5"><h2 id="register-student-heading" className="text-lg font-semibold text-foreground">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
   {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-5">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h2 id="bulk-register-students-heading" className="text-lg font-semibold text-foreground">Bulk Register Students</h2>
