@@ -33,7 +33,7 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 - [ ] I: toast **timeout parity** — no toast lifetime in the supplied legacy SCSS. `src/components/ui/toast.tsx:133-143` uses 4500–15000ms reading time, errors persistent, timers paused during focus/hover. Timer logic is not CSS-editable.
 - [ ] I: toast **placement parity** — old SCSS has no toast placement. Current bottom-right safe-area placement is `src/components/ui/toast.tsx:49-73`; positioning would change layout/JS scope and is not modified.
 - [ ] I: toast **animation exact parity** — `globals.css:269-287` already has 250ms entrance (generic normal token from `components___variables.scss:253-259`); no legacy toast keyframes were found to confirm exact curves.
-- [ ] I: generic dropdown/menu **close** animation — generic menu enters at 250ms material ease in micro CSS 161-169; legacy `components___dropdown.scss:27-35,96-104` specifies shape/shadow but not close animation. Native `details` closes immediately in `src/components/ui/dropdown.tsx`; a CSS exit cannot keep a dismissed popup mounted.
+- [ ] I: generic dropdown/menu **close** animation — removed an unsupported 250ms / -6px micro entrance. Shared `src/components/ui/legacy-overlays.css:330-359` already provides a 200ms ease-out / -8px entrance; legacy `components___dropdown.scss:27-35,96-104` specifies shape/shadow but **not timing**. Native `details` closes immediately in `src/components/ui/dropdown.tsx`, so a CSS exit cannot keep its dismissed popup mounted. Exact old-vs-new exit semantics still require the overlay owner/browser.
 - [ ] I: generic modal/drawer **open/close** animation parity — shared `legacy-overlays.css` owns 180/200ms open/close, `globals.css:218-268` has entrance effects. Legacy `components___antddesign.scss:1033-1065` specifies geometry, not comparable exit keyframes. Ownership remains chat-16; micro CSS does not override it.
 - [ ] A3/I: scrollbar and focus **responsive screenshot comparison** — legacy `old-lms-shell.css:23,41-43,73-100` covers phone/rail behavior. CSS scopes verified statically; side-by-side browser observation still required.
 - [ ] A4: favicon artwork — `src/app/icon.svg:1-6` exists; no old favicon asset is present in the SCSS. Browser favicon cannot be changed from an imported CSS file.
@@ -176,6 +176,20 @@ This bounded batch first confirmed that `origin/main` had integrated all previou
 **CSS cascade proof:** `src/styles/legacy-skin.css:511-514` applies `background-color:var(--lms-scrollbar-thumb)!important` to generic nested WebKit thumbs and a 1px (normal priority) radius. Without priority on the narrow exceptions, the generic fill won despite 20% black being specified in `micro-details.css`. The scoped table/tab thumb declarations now use `!important` for their specific measured values; this does not alter sidebar or body scrollbars. Motion reduction continues to be globally enforced with `animation-duration`/`transition-duration:.01ms!important`, with paint/selection retained.
 
 **Outstanding verification:** Exact legacy selected-table colour, browser selection/autofill, native checkbox glyph motion, original tooltip/notification JS timing and position, modal close timing, favicon and title, actual print output, and phone/tablet/desktop side-by-side visual captures remain blocked on their respective owners and browser measurements. Do not convert their outstanding checklist boxes to `[x]` based on static CSS alone.
+
+## Dropdown entrance deduplication and ownership (2026-10-20)
+
+The old-LMS stylesheet `components___dropdown.scss:27-35,96-104` specifies the dropdown shape/shadow but **does not provide a 250ms entrance or a -6px translation**. The generic 250ms token in `components___variables.scss:253-259` is not proof that all dropdowns use that duration. Earlier chat-20 CSS added `lms-micro-dropdown-enter 250ms` and unintentionally overrode the explicitly owned `src/components/ui/legacy-overlays.css:330-359` popup transition.
+
+| Item | Old LMS | Current vNext result | Status |
+| --- | --- | --- | --- |
+| Generic menu entry duration and vertical offset | Legacy dropdown-specific rule unknown; no comparable keyframes in `components___dropdown.scss:27-35,96-104` | Removed inferred chat-20 `250ms/-6px` declaration; `legacy-overlays.css:330-359` now supplies shared `200ms ease-out/-8px` | Duplicate/overriding animation **removed**; actual old popup motion unverified |
+| Modal/drawer/notification entry | Notification source `components___notification-drawer.scss:90-102,125-143` proves **backdrop 150ms, panel 200ms/-8px** | Notification-specific micro CSS remains, same `200ms/-8px`; generic dialog/drawer remain chat-16 owned | Notification-specific value retained, no global dropdown guess |
+| Closing native `details` | Old AntD popover lifecycle/timing not established by the static dropdown SCSS | `src/components/ui/dropdown.tsx:13-27` toggles `open=false` synchronously and does not preserve the popup for a delayed exit | JS/overlay-owner blocker, **unticked** |
+| Responsive behavior | `old-lms-shell.css:23` mobile boundary at 767px | At 375px sheet and at 768px+ ordinary dropdown, the only remaining entrance is the shared overlay style; no new positioning or breakpoint introduced | Source-only scoped behavior, screenshots pending |
+| Motion reduction | `components___accessibility.scss:116-124` `0.01ms` transition/animation suppression | `legacy-overlays.css:360-373` disables motion; `micro-details.css:164-171` retains a narrow explicit reduce-mode safety rule | Matches reduction semantics |
+
+This addresses a CSS-cascade regression without claiming full old-LMS animation parity. The shared overlay owner remains responsible for JavaScript closing behavior and browser-side timing acceptance.
 
 ## Remaining acceptance queue — ownership and exact unblock condition
 
