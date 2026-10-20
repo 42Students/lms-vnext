@@ -17,7 +17,7 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
   throw error;
  }
  return <div className="min-w-0 space-y-5">
-  <Link href={"/tpo/placements/jobs/"+job.id} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive workspace</Link>
+  <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Drives" title="Edit drive" description={"Update "+job.title+" carefully. Save changes before returning to the drive."}/>
   {job.editable?<TpoDriveEditForm job={job}/>:<Alert tone="warning" aria-label="Drive edit unavailable">
    <p>{job.status==="CLOSED"||job.status==="CANCELLED"
