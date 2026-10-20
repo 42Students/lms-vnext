@@ -1,5 +1,6 @@
 "use client";
 import {Checkbox} from "@/components/ui/checkbox";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {DataTable} from "@/components/ui/data-table";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
@@ -44,6 +45,6 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
     </label>},
    ]}/>
   <p className="text-xs text-muted-foreground">Internship never counts as placed; Internship + full-time counts once the full-time offer is made. Drive consumers must load the authoritative college choice list.</p>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }

@@ -41,7 +41,7 @@ export default async function TpoCompanyFeedbackPage({
   return (
     <div className="space-y-6">
       <Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-        className="text-sm font-semibold text-link hover:underline">
+        className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         ← Company details
       </Link>
       <PageHeader
@@ -69,7 +69,7 @@ export default async function TpoCompanyFeedbackPage({
           ) : (
             <TpoCompanyFeedbackForm companyId={companyId} contacts={data.contacts} />
           )}
-          <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
+          <section className="min-w-0 border-y border-border">
             <h2 className="border-b border-border px-5 py-4 text-lg font-semibold text-foreground">
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
             </h2>
@@ -81,7 +81,7 @@ export default async function TpoCompanyFeedbackPage({
                   <li key={item.id} className="space-y-2 px-5 py-4">
                     <div className="flex flex-wrap justify-between gap-2">
                       <Link href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
-                        className="font-semibold text-link hover:underline">
+                        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                         {item.contactName}
                       </Link>
                       <time className="text-xs text-muted-foreground" dateTime={item.recordedAtIso}>
@@ -99,11 +99,11 @@ export default async function TpoCompanyFeedbackPage({
             <div className="flex gap-3">
               {data.page > 1 ? (
                 <Link href={base + "?page=" + (data.page - 1)}
-                  className="font-semibold text-link hover:underline">← Previous</Link>
+                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Previous</Link>
               ) : null}
               {data.totalPages !== null && data.page < data.totalPages ? (
                 <Link href={base + "?page=" + (data.page + 1)}
-                  className="font-semibold text-link hover:underline">Next →</Link>
+                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Next →</Link>
               ) : null}
             </div>
           </nav>

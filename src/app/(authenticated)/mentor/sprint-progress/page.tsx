@@ -50,36 +50,36 @@ export default async function MentorSprintProgressPage({
     </section> : <>
       <form action="/mentor/sprint-progress" method="get"
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">Search
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Search
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             placeholder="Sprint, release or project" className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Assigned project
           <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Sprint status
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Sprint status
           <Select name="state" defaultValue={data.query.state}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="ALL">All</option><option value="ACTIVE">Active</option>
             <option value="PLANNED">Planned</option><option value="COMPLETED">Completed</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Registered task attention
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Registered task attention
           <Select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All sprints</option><option value="BLOCKED">Has blocked tasks</option><option value="IN_REVIEW">Has submitted tasks in review</option><option value="DONE">Sprints with recorded Done tasks</option><option value="TODO">Sprints with recorded To Do tasks</option><option value="NO_TASKS">Sprints without recorded tasks</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Release status
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Release status
           <Select name="release" defaultValue={data.query.release}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All releases</option><option value="PLANNED">Planned</option>
             <option value="IN_PROGRESS">In progress</option><option value="SHIPPED">Shipped</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Sprint order
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Sprint order
           <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="PROJECT">Project and Sprint order</option><option value="ACTIVE_FIRST">Active Sprints first</option>
           </Select>

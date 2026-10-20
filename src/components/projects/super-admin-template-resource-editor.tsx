@@ -47,27 +47,27 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
     {open?"Close editor":"Edit resources"}</Button>
   </div>
   {open?<div className="space-y-4">
-   {rows.map((row,i)=><fieldset key={row.key} className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 sm:grid-cols-2">
-    <legend className="px-2 text-sm font-semibold">Resource {i+1}</legend>
-    <label className="text-xs font-semibold text-body">Key<Input value={row.key} maxLength={64}
+   {rows.map((row,i)=><fieldset key={row.key} className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 min-[768px]:grid-cols-2">
+    <legend className="px-2 text-[13px] font-semibold text-foreground">Resource {i+1}</legend>
+    <label className="text-[13px] font-semibold text-body">Key<Input value={row.key} maxLength={64}
       onChange={e=>change(i,{key:e.target.value})} className={cls}/></label>
-    <label className="text-xs font-semibold text-body">Title<Input value={row.title} maxLength={200}
+    <label className="text-[13px] font-semibold text-body">Title<Input value={row.title} maxLength={200}
       onChange={e=>change(i,{title:e.target.value})} className={cls}/></label>
-    <label className="text-xs font-semibold text-body">Type<Select value={row.type??"LINK"}
+    <label className="text-[13px] font-semibold text-body">Type<Select value={row.type??"LINK"}
       onChange={e=>change(i,{type:e.target.value as Resource["type"]})} className={cls}>
       {["LINK","PDF","DOCUMENT","SLIDES","VIDEO","FILE"].map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
-    <label className="text-xs font-semibold text-body">Status<Select value={row.status??"ACTIVE"}
+    <label className="text-[13px] font-semibold text-body">Status<Select value={row.status??"ACTIVE"}
       onChange={e=>change(i,{status:e.target.value as Resource["status"]})} className={cls}>
       {["ACTIVE","DRAFT","ARCHIVED"].map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
-    <label className="text-xs font-semibold text-body sm:col-span-2">URL<Input value={row.url??""}
+    <label className="text-xs font-semibold text-body min-[768px]:col-span-2">URL<Input value={row.url??""}
       onChange={e=>change(i,{url:e.target.value||undefined})}
       placeholder="https://" className={cls}/></label>
-    <label className="text-xs font-semibold text-body sm:col-span-2">Description
+    <label className="text-xs font-semibold text-body min-[768px]:col-span-2">Description
      <Textarea value={row.description??""} onChange={e=>change(i,{description:e.target.value||undefined})}
       className={cls+" min-h-20"}/></label>
-    <label className="text-xs font-semibold text-body sm:col-span-2">Access notes
+    <label className="text-xs font-semibold text-body min-[768px]:col-span-2">Access notes
      <Textarea maxLength={2000} value={row.accessNotes??""}
       onChange={e=>change(i,{accessNotes:e.target.value||undefined})}
       className={cls+" min-h-16"}/></label>

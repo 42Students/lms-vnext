@@ -36,7 +36,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/admin/placements/seasons/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/shortlisted/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/[projectId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/[projectId]/readiness/page.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -48,21 +48,21 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/admin/projects/submissions/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/overview/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/resources/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/sprints/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/projects/templates/new/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/projects/templates/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/projects/templates/page.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/recruiters/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/settings/auth/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/settings/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/admin/students/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
-- [ ] `src/app/(authenticated)/admin/tenants/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/tenants/page.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx` — source patch applied: setup warnings use shared Banner, empty college uses EmptyState; missing full grep/computed values/phone-tablet proof
 - [ ] `src/app/(authenticated)/admin/verification/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/admin/videos/page.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -78,8 +78,8 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/college/projects/readiness/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/reassign-mentor/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/submissions/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/college/projects/templates/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
+- [ ] `src/app/(authenticated)/college/projects/templates/page.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
@@ -95,7 +95,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/components/projects/project-admin-at-risk-page.tsx` — source-level patch applied; Missing full chip-state and responsive proof (still unticked)
 - [ ] `src/components/projects/project-admin-audit-page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-admin-collection-controls.tsx` — source-level patch applied; Missing scripted DOM keyboard and pagination boundary proof (still unticked)
-- [ ] `src/components/projects/project-admin-missing-college.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/project-admin-missing-college.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/components/projects/project-admin-nav.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-admin-readiness-page.tsx` — source-level patch applied; Missing full statuses and keyboard/phone proof (still unticked)
 - [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -105,15 +105,15 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/components/projects/project-admin-workspace-page-export.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-template-catalogue-export.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-template-controls.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/project-template-view.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/super-admin-template-archive-control.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/project-template-view.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
+- [ ] `src/components/projects/super-admin-template-archive-control.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
+- [ ] `src/components/projects/super-admin-template-college-bulk.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/components/projects/super-admin-template-create-form.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/super-admin-template-overview-editor.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/super-admin-template-page-export.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/super-admin-template-plan-editor.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/super-admin-template-resource-editor.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/super-admin-template-rollback-control.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/super-admin-template-rollback-control.tsx` — source-level clone patch applied; strict visual and runtime proofs outstanding
 - [ ] `src/components/projects/super-admin-template-subview-page.tsx` — source patch applied: template version pagination uses shared Pagination; missing complete tab/status/keyboard/responsive proof
 - [ ] `src/components/projects/super-admin-template-tabs.tsx` — value/state/responsive/hand-rolled-element audit pending
 
@@ -278,3 +278,49 @@ Seven further distinct owner files changed and re-read. These replace hand-rolle
 
 ### Next source file
 - [ ] `src/app/(authenticated)/admin/tenants/page.tsx` — audit tenant object-card vs list/table geometry and responsive header action row, then `src/components/projects/super-admin-template-college-bulk.tsx`.
+
+
+## Replacement continuation: Super Admin tenant/template and college Projects (2026-10-20)
+
+**Branch sync:** `chatgpt/chat-10-b` was 1,167 commits behind `main` and **0 ahead** (all former chat-10 commits were already merged), so it fast-forwarded by lease to `9880c6d5a1922d6ecefeb75331fde405e8b8e96c` before any new writes. No prior chat-10 changes were lost.
+
+### Source-matched value/state inventory — 13 distinct files
+
+| Changed file:source lines | Legacy reference and shared vNext rule | Outstanding strict proof |
+| --- | --- | --- |
+| `src/app/(authenticated)/admin/tenants/page.tsx:86,101-112` | `docs/design/old-lms-pages.md:5,9-10` one canvas, native-bordered table, lifecycle pills; `src/components/ui/data-table.tsx:95-110` shared cell rules | Scoped table source; table `sm` breakpoint 640 vs legacy shell mobile <=767 remains unverified |
+| `src/components/projects/super-admin-template-college-bulk.tsx:65,72,82` | `docs/design/old-lms-pages.md:10` compact lifecycle pills, slim warnings; `src/components/ui/status-badge.tsx:17`, `banner.tsx:18-21` | Browser checked, disabled, success, partial-failure and empty-state behavior |
+| `src/app/(authenticated)/college/projects/templates/page.tsx:31-35,59,97-105` | `docs/design/old-lms-pages.md:5-10` page header, list toolbar, table, empty/error states | Browser load-failure, search empty and table responsive comparison |
+| `src/components/projects/super-admin-template-archive-control.tsx:14` | `docs/design/old-lms-pages.md:10` archived lifecycle chip; shared `status-badge.tsx:17` | Confirmation, pending and error variants after codemod |
+| `src/components/projects/super-admin-template-rollback-control.tsx:40` | `docs/design/old-lms-pages.md:10` slim warning notice; shared `banner.tsx:18-21` | Error/success feedback states and dialog keyboard behavior |
+| `src/app/(authenticated)/admin/projects/templates/page.tsx:77-112` | `docs/design/old-lms-pages.md:9-10` direct canvas table, row separators, status pills; `data-table.tsx:95-110` | Computed responsive table and all action confirmations |
+| `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx:102,120,128` | `docs/design/old-lms-pages.md:5-10` scope warning, unavailable version and empty history through shared states | Scope/version state screenshots and tab keyboard behavior |
+| `src/components/projects/project-template-view.tsx:136` | `docs/design/old-lms-pages.md:7,10` compact summary count pills; `badge.tsx:16-17` | Phone and tablet template rows and count chip |
+| `src/components/projects/project-admin-collection-controls.tsx:216-218` | `docs/design/old-lms-pages.md:9` shared pagination, `src/components/ui/pagination.tsx:54-84` | Page bounds, keyboard, overflow; former bespoke pager removed |
+| `src/components/projects/project-admin-missing-college.tsx:7-10` | `docs/design/old-lms-pages.md:5-10` one canvas, no-college feedback; `empty-state.tsx:6-9` | Phone/tablet empty-state and recovery focus |
+| `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx:33,40-42` | `docs/design/old-lms-pages.md:6` one heading row with right actions; `page-header.tsx:28-49` | 375px/768px back-link and heading action wrap |
+| `src/app/(authenticated)/admin/placements/student-lookup/page.tsx:46,52-56` | `docs/design/old-lms-pages.md:10` table lifecycle pills, no-applications empty; `status-badge.tsx:17` | Visible applications/offer lifecycle and data-table phone mode |
+| `src/components/projects/project-admin-submissions-page.tsx:167-182` | `docs/design/old-lms-pages.md:11-13` single light-bordered summary strip with counts, not nested tiles | 0/1/4 KPI variants and 375px/768px/1024px strip wrap |
+
+This is a **source-level** value table. It does not certify each property or state as a computed pixel match. Source comparison shows: page titles are specified as 20px at phone and 30px from `md` (`page-header.tsx:28-34`); the old page anatomy specifies ~30px desktop (`old-lms-pages.md:5-6`). Table source uses 13px and 11px/12px cell vertical padding with the shared canvas-border token (`data-table.tsx:97-110`); the legacy page anatomy requires hairline row separators (`old-lms-pages.md:10`). StatusBadge uses 22px minimum height, 12px bold text, 6px radius (`status-badge.tsx:17`); Badge uses a compact no-min-width pill (`badge.tsx:16-17`); Banner uses a slim 10px vertically padded strip (`banner.tsx:18-21`). Exact token resolution and rendered color comparison **not done**.
+
+### Scoped remote source-regex scans (not executed shell greps)
+
+For each of the 13 fetched files above, the latest pushed branch's complete source was scanned for `/<(button|select|textarea)(?=[\\s>])/`, `/<input\\b(?![^>]*type="hidden")/`, `/role="tab(?:list)?"/`, `/(bg|text|border)-\\[#[a-f0-9]+\\]/i`, and `/fixed inset-0|role="dialog"/`: **0 occurrences in every file**. Only 2 files retain `<article>` blocks: `project-template-view.tsx` (a row list within a section) and `project-admin-submissions-page.tsx` (individual review rows); these are *not nested status cards*. This is limited to the 13 exact fetched files and must not be presented as a repository-wide grep.
+
+### Static responsive rule comparison (NOT browser proof)
+
+| Element | Legacy expectation | Current source rule | Result |
+| --- | --- | --- | --- |
+| PageHeader | Old shell phone break at `old-lms-shell.css:73` (767px); single head row desktop `old-lms-pages.md:6` | `page-header.tsx:28-49` mobile column, `md` flex-row at 768px | Source breakpoint aligned; runtime wrapping unverified |
+| Pagination | Mobile 44px touch target and tablet/desktop 36px | `pagination.tsx:54,56-84` min-h-11 then md:min-h-9; overflow wraps | Source expected; click/keyboard unverified |
+| Slim feedback | Mobile copy and actions wrap; one canvas | `banner.tsx:18-21` max-w-full, flex-wrap, break-words, action can wrap | Source expected; computed tokens unverified |
+| DataTable | Legacy mobile boundary 767px `old-lms-shell.css:73` | `data-table.tsx:95-110` switches card rows to table at `sm` (640px) | **Open shared-component mismatch for chat-17**, do not tick pages using it |
+| KPI strip | Stacked mobile, four metrics across large workspace | `project-admin-submissions-page.tsx:167-182` 1 column until 992px; then 4-column, hairline dividers | Source responsive layout; screen comparison still required |
+
+### Completion gate
+
+No Work queue item checked: no compiler, CI, local app, screenshots, or actual phone/tablet render available under the lane's no-run restriction. When the orchestrator executes the already committed codemods, it must re-read the transformed files and run the full scoped greps, TS/JSX parse, and side-by-side screenshots. The 13 source-edited files above are **not certified complete** under the STRICT TICK RULE. Shared DataTable's 640/767 mismatch cannot be patched by chat-10 because `src/components/ui/*` belongs to chat-17.
+
+### Next exact file
+- [ ] `src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx` — inspect wrapper and shared admin section rendering, then remaining `/admin/projects*` and `/college/projects*` routes. Do not alter shared ProjectWorkspace (owned outside this lane).

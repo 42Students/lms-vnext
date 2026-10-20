@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 
 export default function LearnerApplicationsLoading() {
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
       <PageHeader title="Applications"
         description="Retrieving your current applications and verified outcomes." />
       <LoadingState label="Loading your applications…" />

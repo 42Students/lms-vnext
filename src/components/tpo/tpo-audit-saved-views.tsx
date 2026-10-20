@@ -1,6 +1,7 @@
 "use client";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -22,6 +23,7 @@ export function TpoAuditSavedViews({filters}:{filters:{
  const [ready,setReady]=useState(false);
  const [loading,setLoading]=useState(true);
  const [busy,setBusy]=useState(false);
+ const [confirmDelete,setConfirmDelete]=useState(false);
  const [name,setName]=useState("");
  const [selected,setSelected]=useState("");
  const [message,setMessage]=useState("");
@@ -115,7 +117,8 @@ export function TpoAuditSavedViews({filters}:{filters:{
   if(result)setName("");
  }
  async function remove(){
-  if(!selectedView||!window.confirm("Delete this saved audit view?"))return;
+  if(!selectedView||busy)return;
+  setConfirmDelete(false);
   await mutate({action:"DELETE",id:selectedView.id,
    expectedRevision:selectedView.revision},"Saved view deleted.");
  }
@@ -152,9 +155,13 @@ export function TpoAuditSavedViews({filters}:{filters:{
    </Button>
    <Button variant="secondary" type="button" disabled={!selectedView||busy||!name.trim()} onClick={()=>void rename()}
     className="min-h-11 md:min-h-9">Rename</Button>
-   <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>void remove()}
+   <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>setConfirmDelete(true)}
     className="min-h-11 md:min-h-9">Delete</Button>
   </div>:null}
+  <ConfirmDialog open={confirmDelete} onOpenChange={setConfirmDelete}
+   title="Delete saved audit view?" description="Delete this saved audit view?"
+   confirmLabel="Delete view" confirmVariant="danger" pending={busy}
+   onConfirm={()=>void remove()}/>
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}
  </Disclosure>;
