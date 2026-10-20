@@ -47,6 +47,7 @@ import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversa
 import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
 import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
 import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
+import {Tabs} from "@/components/ui/tabs";
 
 function currentTimeMs(){return Date.now();}
 
