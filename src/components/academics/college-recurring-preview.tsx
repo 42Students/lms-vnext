@@ -1,6 +1,9 @@
 "use client";
 
 import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -124,18 +127,18 @@ export function CollegeRecurringPreview({
     <section className="space-y-5">
       <p className="text-sm text-body">Preview does not create sessions. Confirmed execution rechecks conflicts and creates only clear dates.</p>
       {classes.length === 0 ? (
-        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm text-body">
+        <Alert tone="info">
           No active classes are registered for this college. Create a class before previewing a schedule.
-        </p>
+        </Alert>
       ) : (
         <form onSubmit={preview} className="space-y-4 border-t border-border pt-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Session title
             <Input required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+              className="min-h-11 min-w-0 md:min-h-9"/>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Class
             <Select required value={sectionId} onChange={(e) => onClass(e.target.value)}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              className="min-h-11 min-w-0 md:min-h-9">
               <option value="">Select a class</option>
               {classes.map((c) => <option key={c.id} value={c.id}>{c.name} · {c.cohortName}</option>)}
             </Select>
@@ -143,30 +146,30 @@ export function CollegeRecurringPreview({
           {selected ? <p className="text-xs text-muted-foreground">Academic period: {selected.periodStart} to {selected.periodEnd}</p> : null}
           <label className="grid gap-1 text-sm font-semibold text-body">Course (optional)
             <Select value={deliveryId} onChange={e => setDeliveryId(e.target.value)}
-              disabled={!sectionId} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              disabled={!sectionId} className="min-h-11 min-w-0 md:min-h-9">
               <option value="">No course linked</option>
               {deliveries.filter(item => item.sectionId === sectionId).map(item =>
                 <option key={item.id} value={item.id}>{item.name} ({item.code})</option>)}
             </Select>
           </label>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
             <label className="grid gap-1 text-sm font-semibold text-body">From
               <Input type="date" required value={from} min={selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setFrom(e.target.value)}
-                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-11 min-w-0 md:min-h-9" />
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">To (up to 93 days)
               <Input type="date" required value={to} min={from || selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setTo(e.target.value)}
-                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-11 min-w-0 md:min-h-9" />
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">Start (IST)
               <Input type="time" required value={startTime} onChange={(e) => setStartTime(e.target.value)}
-                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-11 min-w-0 md:min-h-9" />
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">End (IST)
               <Input type="time" required value={endTime} onChange={(e) => setEndTime(e.target.value)}
-                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+                className="min-h-11 min-w-0 md:min-h-9" />
             </label>
           </div>
           <fieldset className="space-y-2">
@@ -174,7 +177,7 @@ export function CollegeRecurringPreview({
             <div className="flex flex-wrap gap-3">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
                 <label key={day} className="flex items-center gap-2 text-sm text-body">
-                  <input type="checkbox" checked={weekdays.includes(index)}
+                  <Checkbox checked={weekdays.includes(index)}
                     onChange={(e) => setWeekdays((current) => e.target.checked
                       ? [...current, index].sort()
                       : current.filter((n) => n !== index))} />
@@ -183,17 +186,17 @@ export function CollegeRecurringPreview({
               ))}
             </div>
           </fieldset>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             <label className="grid gap-1 text-sm font-semibold text-body">Faculty (optional)
               <Select value={facultyId} onChange={(e) => setFacultyId(e.target.value)}
-                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+                className="min-h-11 min-w-0 md:min-h-9">
                 <option value="">No faculty selected</option>
                 {faculty.map((f) => <option key={f.id} value={f.id}>{f.displayName || "Unnamed faculty"}</option>)}
               </Select>
             </label>
             <label className="grid gap-1 text-sm font-semibold text-body">Lecture hall (optional)
               <Select value={hallId} onChange={(e) => setHallId(e.target.value)}
-                className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+                className="min-h-11 min-w-0 md:min-h-9">
                 <option value="">No lecture hall selected</option>
                 {halls.map((h) => <option key={h.id} value={h.id}>{h.name}</option>)}
               </Select>
@@ -219,13 +222,13 @@ export function CollegeRecurringPreview({
         <Button type="button" disabled={pending || !title.trim() || result.ready===0}
           onClick={execute}>{pending?"Creating…":"Confirm and create "+result.ready+" sessions"}</Button>
         {result.blocked>0 ? <p className="text-xs text-error">Conflicting dates will be skipped; clear dates may still be created.</p> : null}
-        {result.slots.length === 0 ? <p className="text-sm text-body">No selected weekdays match this date range.</p> : (
-          <div className="max-h-[32rem] overflow-auto rounded-[var(--lms-control-radius)] border border-border">
+        {result.slots.length === 0 ? <EmptyState title="No matching dates" description="No selected weekdays match this date range."/> : (
+          <div className="max-h-[32rem] min-w-0 overflow-auto border-y border-border">
             <DataTable<Result["slots"][number]>
               caption="Recurring sessions preview"
               rows={result.slots}
               getRowKey={slot => slot.startsAt}
-              empty={<p className="p-3 text-sm text-body">No selected weekdays match this date range.</p>}
+              empty={<EmptyState title="No matching dates" description="No selected weekdays match this date range."/>}
               columns={[
                 {key:"date",header:"Date (IST)",mobilePriority:"primary",cell:slot=>slot.localDate},
                 {key:"time",header:"Time (IST)",mobilePriority:"secondary",cell:recurringSlotTimeIst},
