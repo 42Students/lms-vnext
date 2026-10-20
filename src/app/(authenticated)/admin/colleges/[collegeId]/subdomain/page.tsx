@@ -27,7 +27,7 @@ export default async function CollegeWebAddress({ params }: {
   lastCheckedAt:domain.lastCheckedAt?.toISOString()??null,
   lastCheckResult:domain.lastCheckResult,
  }));
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
    <PageHeader title={college.name}
      description="Manage this college's verified web addresses, including its subdomain. Only a verified address can become primary."
      actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>
