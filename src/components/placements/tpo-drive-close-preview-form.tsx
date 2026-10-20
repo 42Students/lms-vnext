@@ -14,6 +14,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  const {run}=useGuardedAction({timeoutMs:40000});
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [confirmedReason,setConfirmedReason]=useState("");
+ const [reasonText,setReasonText]=useState("");
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(pending)return;
   const reason=String(new FormData(event.currentTarget).get("reason")??"").trim();
@@ -53,25 +54,29 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
   ["Round records",preview.counts.rounds],
   ["Offer versions",preview.counts.offers],
  ] as const;
- return <form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-6">
+ return <form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-5">
   <h2 className="text-lg font-semibold text-foreground">Review consequences</h2>
   <p className="max-w-prose text-sm text-body">Closing stops new applications. Applicants without accepted offers who are still in the process are marked Not selected and told; pending withdrawal requests are settled. Accepted offers remain valid. Application, round and offer history is retained.</p>
-  <dl className="grid min-w-0 grid-cols-3 gap-3 border-y border-border">
+  <dl className="grid min-w-0 grid-cols-3 gap-2 border-y border-border sm:gap-4">
    {consequences
-    .map(([label,n])=><div key={label} className="min-w-0 px-1 py-4">
-     <dt className="text-xs text-body">{label}</dt><dd className="break-words text-2xl font-semibold tabular-nums">{n}</dd>
+    .map(([label,n])=><div key={label} className="min-w-0 py-3">
+     <dt className="text-xs text-body">{label}</dt><dd className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{n}</dd>
     </div>)}
   </dl>
   <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">Reason for closure (audited)
    <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
-    className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/></label>
+    disabled={pending} value={reasonText} onChange={event=>{setReasonText(event.target.value);setError(null);}}
+    className="min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/>
+   <span className="text-xs font-normal text-muted-foreground">{reasonText.length}/1000 characters</span></label>
   <p className="text-xs text-body">If the drive version or these counts change, closing is rejected and you must review the consequences again.</p>
   {error?<InlineNotice tone="error" message={error}/>:null}
-  <Button type="submit" disabled={pending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
+  <Button type="submit" disabled={pending} className="min-h-11 w-full sm:w-auto md:min-h-9">
    {pending?"Closing…":"Review and close drive"}</Button>
-  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
+  <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!next&&!pending)setConfirmOpen(false);}} pending={pending}
     title="Close this drive?"
     description="New applications stop, open applicants are marked Not selected and told, and pending withdrawal requests are settled. Accepted offers remain valid. This action is audited."
-    confirmLabel="Review and close drive" onConfirm={()=>void performClose()}/>
+    confirmLabel="Review and close drive" confirmVariant="danger" onConfirm={()=>void performClose()}>
+    <p className="text-sm text-body">Applications: {preview.counts.applications} · Round records: {preview.counts.rounds} · Offer versions: {preview.counts.offers}</p>
+  </ConfirmDialog>
  </form>;
 }
