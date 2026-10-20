@@ -58,6 +58,7 @@ export function TpoPublicJoinLinkCard({
       setStatus(data.status);
       setFreshUrl(window.location.origin + data.path);
       setFeedback(action === "REPLACE" ? "New link made" : "Link made");
+      setReplaceOpen(false);
     } catch(error) {
       setFeedback(error instanceof Error?error.message:"Couldn't make the link");
     } finally {
@@ -199,7 +200,9 @@ export function TpoPublicJoinLinkCard({
       <ConfirmDialog open={replaceOpen} onOpenChange={next=>{if(!busy)setReplaceOpen(next);}}
         title={PUBLIC_JOIN_LINK_COPY.replaceTitle} description={PUBLIC_JOIN_LINK_COPY.replaceExplanation}
         confirmVariant="primary" confirmLabel={PUBLIC_JOIN_LINK_COPY.replaceConfirm}
-        pending={busy} onConfirm={()=>{setReplaceOpen(false);void makeLink();}} />
+        pending={busy} onConfirm={()=>{void makeLink();}}>
+        {feedback?<p role="alert" className="text-sm text-error">{feedback}</p>:null}
+      </ConfirmDialog>
     </section>
   );
 }
