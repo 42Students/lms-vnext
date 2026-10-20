@@ -161,11 +161,11 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <h3 className="font-semibold">Applications</h3>
       {detail&&!detail.applications?.length?<p>No recorded placement applications.</p>:null}
       {detail?.applications?.map(row=><div key={row.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-3">
-        <span>{row.title} · {row.status.replaceAll("_"," ")}</span>
+        <span className="min-w-0 break-words [overflow-wrap:anywhere]">{row.title} · {row.status.replaceAll("_"," ")}</span>
         <Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open drive</Link>
       </div>)}
       <Link href={participation} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Manage placement participation</Link>
-      <TpoStudentNudgePanel rows={[{id:student.membershipId,label:student.displayName,
+      <TpoStudentNudgePanel key={student.membershipId} rows={[{id:student.membershipId,label:student.displayName,
        registered:student.registeredForPlacements}]}/>
     </>:null}
     {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status" className="text-sm text-body">Loading student records…</p>:null}
@@ -177,7 +177,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       {detail?.requests.map(row=><article key={row.id} className="min-w-0 space-y-1 border-b border-border py-3">
         <p className="font-semibold">{row.type.replaceAll("_"," ")} · {row.status}</p>
         <p className="text-xs text-muted-foreground">{row.job} · {when(row.requestedAt)}</p>
-        <p>{row.reason}</p>{row.note?<p>Decision: {row.note}</p>:null}
+        <p className="break-words [overflow-wrap:anywhere]">{row.reason}</p>{row.note?<p className="break-words [overflow-wrap:anywhere]">Decision: {row.note}</p>:null}
         {row.status==="PENDING"?<TpoRequestDecisionControl
           requestId={row.id} requestType={row.type} expectedUpdatedAt={row.updatedAt}
           onSuccess={()=>void fetchDetail()}/>:null}
@@ -187,13 +187,13 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     </>:null}
     {tab==="Notes"?<>
       <h3 className="font-semibold">Internal Notes</h3>
-      <TpoStudentNoteEditor membershipIds={[student.membershipId]} afterSave={()=>void fetchDetail()}/>
+      <TpoStudentNoteEditor key={student.membershipId} membershipIds={[student.membershipId]} afterSave={()=>void fetchDetail()}/>
       {detail?.studentNotes?.map(row=><article key={row.id} className="min-w-0 space-y-1 border-b border-border py-3">
-       <p>{row.note}</p><p className="text-xs text-muted-foreground">{when(row.createdAt)} · Author {row.authorUserId}</p>
+       <p className="break-words [overflow-wrap:anywhere]">{row.note}</p><p className="break-words [overflow-wrap:anywhere] text-xs text-muted-foreground">{when(row.createdAt)} · Author {row.authorUserId}</p>
       </article>)}
       {detail&&!detail.notes.length?<p>No private application notes recorded for this student.</p>:null}
       {detail?.notes.map(row=><article key={row.id} className="min-w-0 space-y-1 border-b border-border py-3">
-        <p>{row.body}</p>
+        <p className="break-words [overflow-wrap:anywhere]">{row.body}</p>
         <p className="text-xs text-muted-foreground">{row.job} · {when(row.createdAt)}</p>
       </article>)}
       <Link href={history} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open placement history</Link>
@@ -205,7 +205,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <h3 className="font-semibold">Team and student activity</h3>
       {detail&&!detail.teamHistory?.length?<p>No recorded team actions for this student.</p>:null}
       <ol className="space-y-2">{detail?.teamHistory?.map(row=><li key={row.id} className="min-w-0 border-b border-border py-3">
-       <p className="font-semibold">{row.summary}</p>
+       <p className="break-words [overflow-wrap:anywhere] font-semibold">{row.summary}</p>
        <p className="mt-1 text-xs text-muted-foreground">{when(row.occurredAt)} · {row.eventType}</p>
       </li>)}</ol>
       <p>Open the tenant-authorized historical application, round result, offer and joining timeline.</p>
