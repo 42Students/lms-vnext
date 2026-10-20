@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { Dropdown } from "@/components/ui/dropdown";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import {
   useState,
   useTransition,
@@ -77,6 +80,18 @@ function useAcademicMutation() {
   }
 
   return { pending, run };
+}
+
+function AcademicActionMenu({ children }: { children: ReactNode }) {
+  return <Dropdown
+    align="end" mobileSheet label="More actions"
+    trigger={<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.75" /><circle cx="12" cy="12" r="1.75" /><circle cx="19" cy="12" r="1.75" /></svg>}
+    triggerClassName="!min-h-11 !w-11 justify-center !p-0 md:!min-h-9 md:!w-9"
+  ><Menu className="w-full min-w-0">{children}</Menu></Dropdown>;
+}
+
+function AcademicDialogFooter({ children }: { children: ReactNode }) {
+  return <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">{children}</div>;
 }
 
 export function ProgramActions({
@@ -163,18 +178,13 @@ export function ProgramActions({
         >
           Edit
         </Button>
-        <Button
-          size="md"
-         
-          variant="ghost"
+        <AcademicActionMenu><MenuItem
           disabled={programHasLinkedRecords}
           title={programHasLinkedRecords
             ? "Remove linked semesters, batches, classes before deleting."
             : "Archive this program"}
           onClick={() => setArchiveOpen(true)}
-        >
-          Archive
-        </Button>
+        >Archive</MenuItem></AcademicActionMenu>
       </div>
       )}
 
@@ -184,7 +194,7 @@ export function ProgramActions({
         title="Edit program"
         description="You can change the department before any semesters, batches or learners are linked."
         footer={
-          <>
+          <AcademicDialogFooter>
             <Button
               variant="secondary"
               disabled={pending}
@@ -219,19 +229,13 @@ export function ProgramActions({
             >
               {pending ? "Saving…" : "Save"}
             </Button>
-          </>
+          </AcademicDialogFooter>
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          {departments.length ? <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
-            <Select value={departmentId} onChange={event=>setDepartmentId(event.target.value)}>
-              {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
-            </Select>
-          </label> : null}
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Program name
-            </label>
+
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+            Program name
             <Input
               value={name}
               onChange={(event) =>
@@ -239,11 +243,9 @@ export function ProgramActions({
               }
               maxLength={255}
             />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Code
-            </label>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Code
             <Input
               value={code}
               onChange={(event) =>
@@ -251,11 +253,9 @@ export function ProgramActions({
               }
               maxLength={64}
             />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              {displayDurationYears?"Duration (years)":"Duration terms"}
-            </label>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            {displayDurationYears?"Duration (years)":"Duration terms"}
             <Input
               type="number"
               min={1}
@@ -268,7 +268,12 @@ export function ProgramActions({
                 )
               }
             />
-          </div>
+          </label>
+          {departments.length ? <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+            <Select value={departmentId} onChange={event=>setDepartmentId(event.target.value)}>
+              {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
+            </Select>
+          </label> : null}
         </div>
       </Dialog>
 
@@ -379,24 +384,12 @@ export function AcademicPeriodActions({
             >
               Edit
             </Button>
-            <Button
-              size="md"
-              variant="secondary"
-              disabled={pending}
-              onClick={() =>
-                run(
-                  () =>
-                    mutate(
-                      `/api/academics/periods/${period.id}`,
-                      "PATCH",
-                      { action: "ACTIVATE" },
-                    ),
+            <AcademicActionMenu><MenuItem disabled={pending}
+                onClick={() => run(
+                  () => mutate(`/api/academics/periods/${period.id}`, "PATCH", { action: "ACTIVATE" }),
                   "Academic period activated",
-                )
-              }
-            >
-              Activate
-            </Button>
+                )}
+              >Activate</MenuItem></AcademicActionMenu>
           </>
         ) : (
           <Button
@@ -416,7 +409,7 @@ export function AcademicPeriodActions({
         title="Edit academic period"
         description="Periods are editable only while planned."
         footer={
-          <>
+          <AcademicDialogFooter>
             <Button
               variant="secondary"
               disabled={pending}
@@ -452,14 +445,12 @@ export function AcademicPeriodActions({
             >
               {pending ? "Saving…" : "Save"}
             </Button>
-          </>
+          </AcademicDialogFooter>
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Name
-            </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Name
             <Input
               value={name}
               onChange={(event) =>
@@ -467,11 +458,9 @@ export function AcademicPeriodActions({
               }
               maxLength={255}
             />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Code
-            </label>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Code
             <Input
               value={code}
               onChange={(event) =>
@@ -479,11 +468,9 @@ export function AcademicPeriodActions({
               }
               maxLength={64}
             />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Start date
-            </label>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Start date
             <Input
               type="date"
               value={startDate}
@@ -493,11 +480,9 @@ export function AcademicPeriodActions({
                 )
               }
             />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              End date
-            </label>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            End date
             <Input
               type="date"
               value={endDate}
@@ -505,7 +490,7 @@ export function AcademicPeriodActions({
                 setEndDate(event.target.value)
               }
             />
-          </div>
+          </label>
         </div>
       </Dialog>
 
@@ -607,31 +592,17 @@ export function CohortActions({
             <Button
               size="md"
               variant="secondary"
-              disabled={pending}
-              onClick={() =>
-                run(
-                  () =>
-                    mutate(
-                      `/api/academics/cohorts/${cohort.id}`,
-                      "PATCH",
-                      { action: "ACTIVATE" },
-                    ),
-                  "Cohort activated",
-                )
-              }
+              onClick={openEdit}
             >
-              Activate
+              Edit
             </Button>
-            <Dropdown trigger="More" label="Cohort actions" align="end" mobileSheet
-              triggerClassName="md:!min-h-9">
-              <div className="grid min-w-0 gap-[var(--lms-space-1)]">
-                <Button role="menuitem" size="md" variant="secondary"
-                  className="w-full justify-start" onClick={openEdit}>Edit</Button>
-                <Button role="menuitem" size="md" variant="ghost"
-                  className="w-full justify-start"
-                  onClick={() => setConfirmAction("ARCHIVE")}>Archive</Button>
-              </div>
-            </Dropdown>
+            <AcademicActionMenu>
+              <MenuItem disabled={pending} onClick={() => run(
+                () => mutate(`/api/academics/cohorts/${cohort.id}`, "PATCH", { action: "ACTIVATE" }),
+                "Cohort activated",
+              )}>Activate</MenuItem>
+              <MenuItem onClick={() => setConfirmAction("ARCHIVE")}>Archive</MenuItem>
+            </AcademicActionMenu>
           </>
         ) : cohort.status === "ACTIVE" ? (
           <Button
@@ -665,7 +636,7 @@ export function CohortActions({
         title="Edit planned cohort"
         description="The Program and start period are immutable after creation."
         footer={
-          <>
+          <AcademicDialogFooter>
             <Button
               variant="secondary"
               disabled={pending}
@@ -699,14 +670,12 @@ export function CohortActions({
             >
               {pending ? "Saving…" : "Save"}
             </Button>
-          </>
+          </AcademicDialogFooter>
         }
       >
-        <div className="grid gap-4">
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Name
-            </label>
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Name
             <Input
               value={name}
               onChange={(event) =>
@@ -714,11 +683,9 @@ export function CohortActions({
               }
               maxLength={255}
             />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Code
-            </label>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Code
             <Input
               value={code}
               onChange={(event) =>
@@ -726,11 +693,9 @@ export function CohortActions({
               }
               maxLength={64}
             />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Expected end period
-            </label>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+            Expected end period
             <Select
               value={endPeriodId}
               onChange={(event) =>
@@ -751,7 +716,7 @@ export function CohortActions({
                 </option>
               ))}
             </Select>
-          </div>
+          </label>
         </div>
       </Dialog>
 
@@ -863,16 +828,10 @@ export function SectionActions({
         >
           Open
         </Link>
-        <Dropdown trigger="More" label="Section actions" align="end" mobileSheet
-          triggerClassName="md:!min-h-9">
-          <div className="grid min-w-0 gap-[var(--lms-space-1)]">
-            <Button role="menuitem" size="md" variant="secondary"
-              className="w-full justify-start" onClick={openEdit}>Edit</Button>
-            <Button role="menuitem" size="md" variant="ghost"
-              className="w-full justify-start"
-              onClick={() => setArchiveOpen(true)}>Archive</Button>
-          </div>
-        </Dropdown>
+        <AcademicActionMenu>
+          <MenuItem onClick={openEdit}>Edit</MenuItem>
+          <MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
+        </AcademicActionMenu>
       </div>
       )}
 
@@ -882,7 +841,7 @@ export function SectionActions({
         title="Edit section"
         description="Cohort and Academic Period ownership are immutable."
         footer={
-          <>
+          <AcademicDialogFooter>
             <Button
               variant="secondary"
               disabled={pending}
@@ -917,14 +876,12 @@ export function SectionActions({
             >
               {pending ? "Saving…" : "Save"}
             </Button>
-          </>
+          </AcademicDialogFooter>
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Name
-            </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Name
             <Input
               value={name}
               onChange={(event) =>
@@ -932,11 +889,9 @@ export function SectionActions({
               }
               maxLength={255}
             />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Code
-            </label>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Code
             <Input
               value={code}
               onChange={(event) =>
@@ -944,11 +899,9 @@ export function SectionActions({
               }
               maxLength={64}
             />
-          </div>
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
-              Capacity · blank for unlimited
-            </label>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+            Capacity · blank for unlimited
             <Input
               type="number"
               min={1}
@@ -958,7 +911,7 @@ export function SectionActions({
                 setCapacity(event.target.value)
               }
             />
-          </div>
+          </label>
         </div>
       </Dialog>
 
