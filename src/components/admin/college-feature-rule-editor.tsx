@@ -71,7 +71,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  }
  return <div className="mt-3 space-y-2 border-t border-border pt-3 print:hidden">
   {ancestorLocked?<Alert tone="warning">Locked by a broader policy. Only Inherit is available for cleanup.</Alert>:null}
-  <label className="grid gap-1 text-xs font-semibold text-body">College stored value
+  <label className="grid gap-1 text-[13px] font-semibold text-body">College stored value
    <Select className="min-h-11 md:min-h-9" value={choice} disabled={busy} onChange={e=>setChoice(e.target.value as CollegeChoice)}>
     <option value="INHERIT">Inherit</option><option value="ON" disabled={ancestorLocked}>On</option><option value="OFF" disabled={ancestorLocked}>Off</option>
    </Select>
