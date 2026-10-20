@@ -99,7 +99,7 @@ export function LearnerJobsBrowse({
   const savedOpen=paged.filter(item=>!item.deadlinePassed);
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
 
-  const selectClass = "mt-1 min-h-11 md:min-h-9";
+  const selectClass = "mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11";
   return (
     <div className="space-y-5">
       <SegmentedControl label="Drive bookmarks"
@@ -168,7 +168,7 @@ export function LearnerJobsBrowse({
             label: label + " (" + availabilityCounts[key] + ")",
           }))} />
         <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex min-h-11 md:min-h-9 items-center gap-2 text-sm font-semibold text-body">
+          <label className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center gap-2 text-sm font-semibold text-body">
             <Checkbox
               checked={filters.eligibleOnly}
               onChange={(event) => updateQuery({
@@ -178,7 +178,7 @@ export function LearnerJobsBrowse({
             />
             Eligible only
           </label>
-          <label className="inline-flex min-h-11 md:min-h-9 items-center gap-2 text-sm font-semibold text-body">
+          <label className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center gap-2 text-sm font-semibold text-body">
             <Checkbox
               checked={filters.closingSoon}
               onChange={(event) => updateQuery({
@@ -188,12 +188,12 @@ export function LearnerJobsBrowse({
             />
             Closing in 7 days
           </label>
-          <label className="ml-auto inline-flex min-h-11 md:min-h-9 items-center gap-2 text-sm text-body">
+          <label className="ml-auto inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center gap-2 text-sm text-body">
             Sort by
             <Select value={filters.sort}
               aria-label="Sort placement drives"
               onChange={(event) => updateQuery({ sort: event.target.value })}
-              className="min-h-11 md:min-h-9">
+              className="min-h-[var(--lms-control-height)] max-md:min-h-11">
               <option value="deadline">Deadline soonest</option>
               <option value="newest">Newest first</option>
               <option value="ctc">Highest CTC</option>
@@ -225,7 +225,7 @@ export function LearnerJobsBrowse({
           `Showing ${pagination.firstNumber}–${pagination.lastNumber} of ${visible.length} matching roles`}
       </p>
       {pagination.recovered ? (
-        <p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+        <p role="status" className="border-b border-border py-3 text-sm text-body">
           Your requested results page is no longer available after filtering.
           Showing page {page} instead.
           <Button variant="link" type="button" onClick={()=>updateQuery({page:String(page)})}
@@ -235,7 +235,7 @@ export function LearnerJobsBrowse({
         </p>
       ):null}
 
-      {savedOnly && matchingItems.length===0?<div className="flex min-h-44 min-w-0 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
+      {savedOnly && matchingItems.length===0?<div className="flex min-h-44 min-w-0 flex-col items-center justify-center gap-3 border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
         <h2 className="font-semibold text-foreground">No saved drives yet</h2>
         <p className="text-sm text-body">Save drives from All Drives by tapping the heart. They will appear here.</p>
         <Button variant="link" type="button" className="min-h-11 px-0"
@@ -244,12 +244,12 @@ export function LearnerJobsBrowse({
         <div className="space-y-3">
           <EmptyState title={empty.title} description={empty.description} />
           <Link href="/learn/my-placements"
-            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
             Review placement dashboard →
           </Link>
         </div>
       ) : empty.kind==="FILTERED_OUT" ? (
-        <div className="flex min-h-44 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center" role="status">
+        <div className="flex min-h-44 flex-col items-center justify-center gap-3 border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center" role="status">
           <p className="font-semibold text-foreground">{empty.title}</p>
           <p className="mt-2 text-sm text-body">{empty.description}</p>
           {empty.showReset ? <Button variant="link" type="button"
