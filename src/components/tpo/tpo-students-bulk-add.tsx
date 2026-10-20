@@ -7,6 +7,9 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 import { useState } from "react";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
@@ -165,9 +168,7 @@ export function TpoStudentsBulkAdd({
   }
 
   if (available.length === 0) return (
-    <section role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
-      No learners are listed on this filtered roster page. There is nobody to select.
-    </section>
+    <EmptyState title="No learners are listed on this filtered roster page." description="There is nobody to select."/>
   );
   return (
     <section id="student-bulk-add" className="min-w-0 space-y-4 border-y border-border py-4">
@@ -181,9 +182,7 @@ export function TpoStudentsBulkAdd({
         </p>
       </div>
       {drives.length === 0 ? (
-        <p role="status" className="text-sm text-body">
-          No open drives are available. Create or publish a drive before adding learners.
-        </p>
+        <EmptyState title="No open drives are available." description="Create or publish a drive before adding learners."/>
       ) : (
         <>
           <label className="grid gap-1 text-sm">Search open drives
@@ -191,7 +190,7 @@ export function TpoStudentsBulkAdd({
              
              placeholder="Search company or drive"/>
           </label>
-          {visibleDrives.length===0?<p role="status">No open drives match your search.</p>:null}
+          {visibleDrives.length===0?<EmptyState title="No open drives match your search."/>:null}
           <div className="grid gap-3 md:grid-cols-2">
             <label className="text-sm font-semibold text-foreground">
               Published drive
@@ -216,7 +215,7 @@ export function TpoStudentsBulkAdd({
               </Select>
             </label>
           </div>
-          {roleError ? <p role="alert" className="text-sm text-error">{roleError}</p> : null}
+          {roleError ? <InlineNotice tone="error" message={roleError}/> : null}
           <div className="max-h-80 min-w-0 space-y-1 overflow-auto overscroll-contain border-y border-border py-2">
             {learners.map((learner) => (
               <label key={learner.membershipId} className="flex min-h-11 items-center gap-3 rounded-[var(--lms-control-radius)] p-2 text-sm hover:bg-surface-secondary">
@@ -255,7 +254,7 @@ export function TpoStudentsBulkAdd({
           </div>
         </>
       )}
-      {pageSelected.length>200?<p role="alert">Select at most 200 students for this drive. The same selection remains available for other actions.</p>:null}
+      {pageSelected.length>200?<Alert tone="error">Select at most 200 students for this drive. The same selection remains available for other actions.</Alert>:null}
       <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
         title="Add selected students to a drive"
         description={"Add "+pageSelected.length+" selected learner(s) to "+
@@ -273,7 +272,7 @@ export function TpoStudentsBulkAdd({
          alreadyAppliedCount+" of them already applied."}</p>
         <p className="text-sm">Each eligible learner will be told about the new application. Existing applications remain unchanged.</p>
       </Dialog>
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
       {results.length > 0 ? (
         <div aria-live="polite" className="space-y-2">
           <h3 className="text-sm font-semibold text-foreground">Per-learner result</h3>
