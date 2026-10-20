@@ -171,10 +171,6 @@ export async function ProjectAdminAuditPage({
 
   return (
     <div className="space-y-6">
-      <ProjectAdminNav
-        basePath={basePath}
-        active="audit"
-      />
       <PageHeader
         title="Project audit"
         description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
@@ -183,6 +179,7 @@ export async function ProjectAdminAuditPage({
           {basePath === "/admin/projects" ? <a href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">View activity log</a> : null}
         </div>}
       />
+      <ProjectAdminNav basePath={basePath} active="audit" />
 
       {filters.ignoredInvalidFilters ? (
         <Banner tone="warning" role="alert">
