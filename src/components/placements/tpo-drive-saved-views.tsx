@@ -5,11 +5,13 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Saved={name:string;query:string};
 const MAX=8;
 export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
  const router=useRouter(),key="tpo-drive-views:"+scopeKey;
  const [views,setViews]=useState<Saved[]>([]),[name,setName]=useState(""),[error,setError]=useState(""),[copied,setCopied]=useState("");
+ const [confirmClear,setConfirmClear]=useState(false);
  useEffect(()=>{
   let live=true;
   void Promise.resolve().then(()=>{
@@ -36,6 +38,11 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   try{localStorage.setItem(key,JSON.stringify(next));setViews(next);setError("");}
   catch{setError("Browser storage is unavailable.");}
  }
+ function clearAll(){
+  setConfirmClear(false);
+  try{localStorage.removeItem(key);setViews([]);setCopied("");setError("");}
+  catch{setError("Browser storage is unavailable.");}
+ }
  return <section aria-label="Saved drive views" className="border-b border-border pb-6">
   <h2 className="font-semibold">My saved views</h2>
   <p className="mt-1 text-xs text-body">Save up to {MAX} named filter links in this browser for your college account. They do not change records or share filters with colleagues.</p>
@@ -49,13 +56,13 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
    </Button>
   </div>
   {error?<InlineNotice tone="error" message={error}/>:null}{copied?<InlineNotice tone="success" message={"Link copied for "+copied+"."}/>:null}
-  {views.length>1?<Button variant="link" type="button" onClick={()=>{
-   if(!window.confirm("Delete all "+views.length+" saved drive views from this browser?"))return;
-   try{localStorage.removeItem(key);setViews([]);setCopied("");setError("");}
-   catch{setError("Browser storage is unavailable.");}
-  }} className="mt-2 min-h-11 md:min-h-9 text-sm font-semibold text-error underline">
+  {views.length>1?<Button variant="link" type="button" onClick={()=>setConfirmClear(true)}
+    className="mt-2 min-h-11 md:min-h-9 text-sm font-semibold text-error underline">
     Clear all saved views
   </Button>:null}
+  <ConfirmDialog open={confirmClear} onOpenChange={setConfirmClear}
+   title="Clear saved drive views?" description={"Delete all "+views.length+" saved drive views from this browser?"}
+   confirmLabel="Clear all" confirmVariant="danger" onConfirm={clearAll}/>
   {views.length?<ul className="mt-3 flex flex-wrap gap-2">{views.map(view=>
    <li key={view.name} className="inline-flex items-center gap-1 rounded-[var(--lms-control-radius)] border border-border">
     <Button variant="ghost" type="button" onClick={()=>router.push("/tpo/placements/lifecycle"+(view.query?"?"+view.query:""))}

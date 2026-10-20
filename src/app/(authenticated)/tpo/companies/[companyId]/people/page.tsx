@@ -20,7 +20,7 @@ export default async function TpoCompanyPeoplePage({
   if (!company) notFound();
   return (
     <div className="space-y-5">
-      <Link className="text-sm font-semibold text-link lms-inline-link"
+      <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
         href={"/tpo/companies/" + encodeURIComponent(companyId)}>
         ← Back to company
       </Link>
@@ -30,9 +30,9 @@ export default async function TpoCompanyPeoplePage({
       ) : <Alert tone="warning">DB09 contact writes are unavailable.</Alert>}
       {company.contacts.length === 0
         ? <EmptyState title="No contact people are linked to this company yet."/>
-        : <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
+        : <ul className="divide-y divide-border border-y border-border">
             {company.contacts.map(contact => (
-              <li key={contact.id} className="p-4 text-sm">
+              <li key={contact.id} className="py-4 text-sm">
                 <strong>{contact.name}</strong>
                 <span className="ml-2 text-body">{contact.designation ?? "Designation not recorded"}</span>
                 <p className="mt-1 break-all text-muted-foreground">{contact.email ?? "Email not recorded"}</p>

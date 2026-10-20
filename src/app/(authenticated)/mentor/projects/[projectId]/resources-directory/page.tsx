@@ -41,32 +41,32 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
    </p>
    <form method="get" action={base+"/resources-directory"}
     className={mentorResourceDirectoryFilterLayout}>
-    <label className="grid gap-1 text-sm font-semibold text-body">Resource title or description
+    <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Requirement
+    <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Requirement
      <Select name="required" defaultValue={data.query.required}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="ALL">All</option><option value="REQUIRED">Required</option>
       <option value="OPTIONAL">Optional</option>
      </Select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">HTTPS link availability
+    <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">HTTPS link availability
      <Select name="link" defaultValue={data.query.link}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="ALL">All</option><option value="HTTPS">Safe HTTPS link</option>
       <option value="UNAVAILABLE">No safe HTTPS link</option>
      </Select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Description recorded
+    <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Description recorded
      <Select name="description" defaultValue={data.query.description}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="ALL">Any</option><option value="RECORDED">Has a description</option>
       <option value="MISSING">No written description</option>
      </Select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Resource order
+    <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Resource order
      <Select name="order" defaultValue={data.query.order}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
       <option value="SEQUENCE">Recorded sequence</option><option value="TITLE">Title (A–Z)</option>
@@ -80,9 +80,9 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     </Link>
    </form>
    <div className="flex flex-wrap items-center gap-3">
-    <Link href={"/api/projects/"+encodeURIComponent(projectId)+
+    <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
       "/mentor-resources-export"+filters}
-      download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
      Export resource metadata CSV (max 200)
     </Link>
     {data.exportOmitted>0?<p role="status" className="text-xs text-body">
@@ -94,7 +94,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     description={data.registered===0?
      "No active resources were persisted for this authorized project.":
      "Clear the filters to see other registered resource metadata."}/>:
-   <ol className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+   <ol className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
     {data.items.map(resource=><li key={resource.id}
      className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
      <div className="flex flex-wrap items-start justify-between gap-2">

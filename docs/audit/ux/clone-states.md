@@ -626,3 +626,99 @@ rg -n 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g loading.tsx
 
 - [ ] F3, F4, F5 remain unticked: source conversion does not establish all matching legacy properties, zero whole-repo raw coverage or 320px/767px/tablet rendered proof.
 - [ ] Next source: `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx` — inspect prepared readiness controls and unavailability states, then further settings pages.
+
+## Chat-5 2026-10-20 — 41-file strict parity source audit (main fast-forward + branch-only pushes)
+
+Initial merge context: `main` SHA `a7616350ee830c5e187533defabafb477a27172e`; existing `chatgpt/chat-5-b` at `b43a3f9204799480b4de65d689abb92123c1a3e4` was exactly **0 ahead / 1,114 behind**. Safely fast-forwarded **only chatgpt/chat-5-b** to `main` non-forcibly with expected SHA, then all writes stayed on the branch. This is a true fast-forward to the current parent, not a discarded lane commit. Main can receive additional merges independently while this turn continues. No direct main writes, application code execution, tests, lint, CI or browser captures were run.
+
+**Scope, not a strict tick:** 41 unique TSX files (11 TPO settings pages, 12 TPO reports pages, 15 TPO client controls, 3 owned shared-state primitives) individually edited and saved via the GitHub contents API. Branch source re-fetched after writes and every touched `<Alert>` opening/closing was counted. All original user-facing messages, saved values, limits, permission checks and retry/action links were preserved. Where empty-text components split a sentence into a title and description, no new factual assertions were inserted. All F3/F4/F5 category checkboxes **remain unticked** pending the missing exact properties, whole-repo cover and *rendered* phone/tablet proofs.
+
+### Status feedback source grep — per-file inventory
+
+These numbers come from **re-fetched branch TSX text scanned for JSX tags**, not a local `rg` executable run or compiled TypeScript. Each listed `Alert` open/close count is verified equal; `InlineNotice` and `EmptyState` counts are JSX occurrences, not rendered rows. Raw counts include exempt live metadata.
+
+| File | Alert open/close | InlineNotice | EmptyState | Raw role=status/alert |
+| --- | ---: | ---: | ---: | ---: |
+| `src/app/(authenticated)/tpo/settings/after-college/page.tsx` | 1/1 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx` | 1/1 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/settings/branding/page.tsx` | 2/2 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/settings/job-types/page.tsx` | 1/1 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/settings/notices/page.tsx` | 2/2 | 0 | 0 | 2 |
+| `src/app/(authenticated)/tpo/settings/notifications/page.tsx` | 2/2 | 0 | 1 | 0 |
+| `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx` | 4/4 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/settings/public-page/page.tsx` | 4/4 | 1 | 0 | 0 |
+| `src/app/(authenticated)/tpo/settings/recruiters/page.tsx` | 1/1 | 0 | 1 | 0 |
+| `src/app/(authenticated)/tpo/settings/team/page.tsx` | 2/2 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/settings/trusted/page.tsx` | 2/2 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/reports/[slug]/page.tsx` | 1/1 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/reports/accreditation/page.tsx` | 2/2 | 0 | 2 | 2 |
+| `src/app/(authenticated)/tpo/reports/after-college/page.tsx` | 3/3 | 0 | 1 | 0 |
+| `src/app/(authenticated)/tpo/reports/branch-season/page.tsx` | 1/1 | 0 | 3 | 0 |
+| `src/app/(authenticated)/tpo/reports/by-company/page.tsx` | 1/1 | 0 | 1 | 1 |
+| `src/app/(authenticated)/tpo/reports/intelligence/page.tsx` | 1/1 | 0 | 1 | 0 |
+| `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx` | 1/1 | 0 | 2 | 0 |
+| `src/app/(authenticated)/tpo/reports/leads/page.tsx` | 1/1 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx` | 2/2 | 0 | 1 | 0 |
+| `src/app/(authenticated)/tpo/reports/page.tsx` | 2/2 | 0 | 2 | 1 |
+| `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx` | 2/2 | 0 | 1 | 1 |
+| `src/app/(authenticated)/tpo/reports/unplaced/page.tsx` | 2/2 | 0 | 0 | 0 |
+| `src/components/tpo/tpo-batch-undo-control.tsx` | 0/0 | 1 | 0 | 0 |
+| `src/components/tpo/tpo-builtin-job-types-editor.tsx` | 0/0 | 1 | 0 | 0 |
+| `src/components/tpo/tpo-communication-settings-editors.tsx` | 0/0 | 6 | 0 | 0 |
+| `src/components/tpo/tpo-custom-job-type-placed.tsx` | 0/0 | 1 | 0 | 0 |
+| `src/components/tpo/tpo-custom-job-type-rename.tsx` | 0/0 | 1 | 0 | 0 |
+| `src/components/tpo/tpo-find-shortcut.tsx` | 1/1 | 0 | 0 | 2 |
+| `src/components/tpo/tpo-home-return-refresh.tsx` | 1/1 | 0 | 0 | 1 |
+| `src/components/tpo/tpo-notice-acknowledge.tsx` | 0/0 | 1 | 0 | 0 |
+| `src/components/tpo/tpo-notice-read-progress.tsx` | 0/0 | 2 | 0 | 0 |
+| `src/components/tpo/tpo-notification-refresh.tsx` | 1/1 | 0 | 0 | 1 |
+| `src/components/tpo/tpo-placement-cell-read-action.tsx` | 0/0 | 2 | 0 | 0 |
+| `src/components/tpo/tpo-safe-csv-download.tsx` | 0/0 | 1 | 0 | 0 |
+| `src/components/tpo/tpo-student-clipboard-actions.tsx` | 1/1 | 0 | 0 | 1 |
+| `src/components/tpo/tpo-student-note-editor.tsx` | 0/0 | 2 | 0 | 0 |
+| `src/components/tpo/tpo-trusted-domain-editor.tsx` | 1/1 | 0 | 1 | 1 |
+| **37 non-shared TSX files** | **46/46** | **19** | **17** | **13** |
+
+Three owned primitive files also reviewed and changed:
+- `src/components/ui/alert.tsx`: default/success/error/warning/info fill tokens preserved; control radius changed to `var(--lms-radius-control)=6px` to match old LMS.
+- `src/components/ui/banner.tsx`: same 6px radius; action and generic role semantics unchanged.
+- `src/components/ui/inline-notice.tsx`: 6px outer and dismiss-button radii, keyboard focus offset changed to **3px** to match old `:focus-visible` rule; success timeout and error/alert role semantics untouched.
+
+**Exempt raw role/status instances within 37 TSX files:** 13: TPO reports' textual report counts and disabled export pseudo-link; settings notices' source counts and preparation summaries; TPO finder live searching and empty-listbox announcements; TPO live-refresh progress and clipboard status. Three retain styled `role=status` native markup: the disabled export label and two searchable listbox progress/empty entries, which are not standalone banners. Full repository grep remains OPEN.
+
+### Actual source-of-truth property/value table — including mismatches
+
+| Property / state | Legacy exact source and value | vNext exact source and value | Status |
+| --- | --- | --- | --- |
+| Success fill (default) | `docs/design/legacy-styles/components___variables.scss:67-68` `rgba(5,150,105,0.10)` | `src/app/globals.css:46-47` `--lms-success-subtle: rgba(5,150,105,0.1)`; `inline-notice.tsx:10` | **MATCH** |
+| Warning fill (default) | `components___variables.scss:69-70` `rgba(217,119,6,0.10)` | `globals.css:49-50` same value; `alert.tsx:12`, `banner.tsx:12` use `--lms-warning-subtle` | **MATCH** |
+| Error fill (default) | `components___variables.scss:71-72` `rgba(239,68,68,0.10)` | `globals.css:51-52`, `alert.tsx:13` use `--lms-error-subtle` | **MATCH** |
+| Info fill (default) | `components___variables.scss:73-74` `#eff8fa` | `globals.css:56-57`, `alert.tsx:10`, `inline-notice.tsx:11` use `--lms-info-subtle` | **MATCH** |
+| Status hues | `components___variables.scss:67-74` success `#059669`, warning `#d97706`, error `#ef4444`, info `#26bac7` | `globals.css:46-57` same source colors | **MATCH** |
+| Control rounding | `components___variables.scss:133` `$radius-control:6px` | `globals.css:827` `--lms-radius-control:6px`; `alert.tsx:18`, `banner.tsx:17`, `inline-notice.tsx:33,36` now reference that token | **MATCH in owned primitives**; other lanes' `--lms-control-radius:9px` unresolved |
+| Vertical/horizontal spacing | `components___variables.scss:116-123` scale 4,8,12,16,24,32,40,48px | `globals.css:350-357` scale 4,8,12,16,24,32,48,64px | **MATCH space-1..6**; **MISMATCH space-7/8**; visual padding on EmptyState not yet verified |
+| Keyboard focus (dismiss) | `components___accessibility.scss:19-23` 2px outline, **3px** offset | `inline-notice.tsx:36` 2px focus-visible outline, **3px** offset after fix | **MATCH offset/width**; outline hue / hover / active tests OPEN |
+| Body of alert | `docs/design/old-lms-pages.md:7` slim pale-yellow strip with dot and one sentence | `src/components/ui/banner.tsx:17-20` wrap, 6px dot, 10px vertical padding; `alert.tsx:18` separate content box | **OPEN** height/dot location/pixel alignment, pale-yellow status appearance not fully measured |
+| Neutral card shell | `old-lms-pages.md:6` single white canvas, 12px radius, border `#e5e9f0`, 24px padding | `globals.css:338-346,365-372` canvas token values align and no extra per-section cards are added by EmptyState | **MATCH structure**; screenshot OPEN |
+| Breakpoint phone/tablet | `components___variables.scss:143-160` mobile max-width `767px`, 768px tablet/min-desktop transition | migrated TSX retains `min-[768px]`, `sm:` 640px, `md:` 768px or 768/992 variants; shared Alert `min-w-0 max-w-full` and `break-words` | **OPEN**: 640–767px precise legacy match unproven |
+| Screen-reader error/default | legacy accessibility `components___accessibility.scss:19-23` focus for interactive content | `alert.tsx:17-21` `role=alert` for error, `role=status` for info/warning; InlineNotice analogous | Semantic source **reviewed**; ARIA live timing not browser-tested |
+| Motion/disabled/active/hover | `components___accessibility.scss:38-59` mobile scale on active role-button; `components___antddesign.scss` Ant button states | shared Button/Link props kept; migrated wrappers are non-interactive | **OPEN** full default/hover/active/disabled/loading behavior and visual equality |
+
+**Per-file responsive source proof (no viewport substitution):**
+- Settings: `prep-readiness`, `blocked-dates`, `job-types`, `after-college`, `branding`, `team`, `trusted`, `notifications`, `public-page`, `recruiters`, `notices` keep existing page wrappers, responsive grid/table priorities, forms and links. Alert itself wraps with `min-w-0 max-w-full break-words`; InlineNotice uses `min-w-0 flex-1 break-words`.
+- Reports: `unplaced`, `leads`, `offers-expiry`, `joining-followups`, `intelligence`, `after-college`, `branch-season`, `placement-summary`, `by-company`, `accreditation`, `[slug]`, gallery root retain the prior `sm:`, `xl:`, `flex-wrap` form controls and DataTable `mobilePriority`. Both invalid-report PageHeader elements were restored outside the colored notice region to respect legacy anatomy.
+- Components: 15 action controls retain button/input dimensions and access/async behavior. Remaining live `role=status` in refresh and listbox stays a plain progress/selection announcement; external `InlineNotice` handles errors/confirmed saves and `EmptyState` handles the trusted-domain no-data list.
+
+**Reproduction commands for a real checkout (NOT executed):**
+```sh
+rg -n 'role="(alert|status)"|<(Alert|Banner|InlineNotice|EmptyState|Skeleton)\\b|</(Alert|Banner)>' src/app/'(authenticated)'/tpo src/components/tpo src/components/ui
+rg -n 'rounded|border|bg-|px-|py-|focus-visible' src/components/ui/{alert,banner,inline-notice}.tsx
+rg -n 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g loading.tsx
+```
+Coverage above is **scoped to 37 migrated TSX files**, not a claimed zero for the full `src` tree. The no-code-execution rule means no automated TSX parser/typecheck, browser screenshots, CI, app run, or actual end-to-end responsive comparison was possible; do not tick.
+
+- [ ] **F3 OPEN:** legacy per-state status borders, typography, dot placement, desktop/phone/tablet pixel values, hover/active/disabled visuals, repo-wide zero bespoke wrappers.
+- [ ] **F4 OPEN:** category-wide motion duration, shimmer vs old LMS dev dotted spinner and no-reduced-motion regressions.
+- [ ] **F5 OPEN:** all 403/404/500/offline/maintenance/session-expired and other portal state comparisons; no 320/767/1024px captures.
+
+**Next exact file:** `src/components/tpo/tpo-prep-readiness-editor.tsx` (remaining mixed saved-config warnings and success feedback, then adjacent TPO controls). The previously listed `src/components/tpo/tpo-communication-settings-editors.tsx` is now source-migrated.

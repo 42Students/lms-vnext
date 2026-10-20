@@ -45,8 +45,8 @@ export default async function MentorProjectActivityHistoryPage({
       </section> : <>
       <form method="get"
         action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
-        className={mentorProjectActivityMobileFilters}>
-        <label className="grid gap-1 text-sm font-semibold text-body">Event importance
+        className={mentorProjectActivityMobileFilters+" !rounded-none !border-0 !bg-transparent !p-0"}>
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Event importance
           <Select name="importance" defaultValue={data.query.importance}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="ALL">All</option><option value="LOW">Low</option>
@@ -54,7 +54,7 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="CRITICAL">Critical</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Event type
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Event type
           <Select name="view" defaultValue={data.query.view}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All recorded events</option>
@@ -65,7 +65,7 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Recorded within
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Recorded within
           <Select name="window" defaultValue={data.query.window}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All recorded events</option>
@@ -75,14 +75,14 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="OLDER_THAN_30_DAYS">Older than 30×24 hours</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Chronology
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Chronology
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="NEWEST">Newest recorded first</option>
             <option value="OLDEST">Oldest recorded first</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Rows per page
           <Select name="pageSize" defaultValue={String(data.query.pageSize)}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="20">20 events</option>
@@ -99,10 +99,10 @@ export default async function MentorProjectActivityHistoryPage({
         {data.total} matching persisted event{data.total===1?"":"s"}
       </p>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={"/api/projects/"+encodeURIComponent(projectId)+
+        <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
           "/mentor-activity-export"+(data.query.importance==="ALL"&&data.query.view==="ALL"&&data.query.window==="ALL"&&data.query.order==="NEWEST"?"":"?"+
             new URLSearchParams({importance:data.query.importance,view:data.query.view,window:data.query.window,order:data.query.order}).toString())}
-          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none md:py-0">
           Export recorded events CSV (max 200)
         </Link>
         {data.total>200?<span role="status">

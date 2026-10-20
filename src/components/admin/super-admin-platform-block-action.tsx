@@ -31,7 +31,7 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
   }catch{setError(friendlyApiError({}));}
   finally{lock.current=false;setPending(false);}
  }
- return <section aria-label="Platform account control" className="border-b border-border pb-5 print:hidden">
+ return <section aria-label="Platform account control" className="border-b border-border pb-5">
   <h2 className="font-semibold text-foreground">Platform-wide account access</h2>
   <p className="mt-1 text-sm text-body">Unlike college suspension, a platform block prevents login across every college. This action requires an audit reason.</p>
   <label className="mt-3 grid gap-1 text-[13px] font-semibold text-body">Reason
