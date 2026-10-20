@@ -2,6 +2,8 @@
 
 These items were moved from chat-3's queue to chat-20 (chat-20 finished its own queue). They are NOT chat-3's any more. Same rules as your main queue; full fidelity per item. Tick here, in this file.
 
+Overlap review, 2026-10-20: all 12 remaining unchecked paths also occur in origin/main lane-1b.md as already checked. Six also occur in lane-19b.md, including three still unchecked there. Per the orchestrator's ownership rule, chat-20 skips these cross-owned paths; no [x] entries below were added for them. See docs/audit/ux/clone-lane-20.md for per-item proof.
+
 - [x] `src/components/courses/faculty-assignment-review.tsx` (score 1: arbitrary px size x1)
 - [x] `src/components/courses/faculty-quiz-learner-preview.tsx` (score 1: arbitrary px size x1)
 - [x] `src/components/courses/faculty-report-student-table.tsx` (score 1: arbitrary px size x1)
