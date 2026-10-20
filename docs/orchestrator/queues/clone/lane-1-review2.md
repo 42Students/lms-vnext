@@ -8,13 +8,13 @@ These 29 page routes were moved to chat-1 from the end of other lanes' review qu
 - [x] `src/app/(authenticated)/recruiter/colleges/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
 - [x] `src/app/company-join/[token]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/[slug]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/archived/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/[slug]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/archived/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/page.tsx`
+- [x] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/page.tsx`
 - [ ] `src/app/(authenticated)/learn/projects/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
