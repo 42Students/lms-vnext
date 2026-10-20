@@ -22,10 +22,10 @@ export function RecordedOutsideForm({collegeId,choices}:{
   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">External reference (optional HTTPS)
    <Input name="externalReferenceUrl" type="url" maxLength={2000} placeholder="https://..." className="w-full"/>
   </label>
-  <label className="grid gap-1 text-sm text-body min-[768px]:col-span-2">Private staff notes, no learner details
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:col-span-2">Private staff notes, no learner details
    <Textarea name="notes" maxLength={1000} rows={3} className="w-full"/>
   </label>
-  <Button variant="primary" type="submit" disabled={!choices.length} className="min-[768px]:col-span-2">
+  <Button variant="primary" type="submit" disabled={!choices.length} className="justify-self-start min-[768px]:col-span-2">
    Record outside-platform drive
   </Button>
   <p className="text-xs text-muted-foreground min-[768px]:col-span-2">

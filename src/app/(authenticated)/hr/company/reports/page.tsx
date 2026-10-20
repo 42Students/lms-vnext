@@ -120,7 +120,7 @@ export default async function RecruiterCompanyReportsPage({
                   href={recruiterCompanyReportsHref({
                     collegeId: grant.collegeId,
                   })}
-                  className="block min-h-11 border-b border-border py-4 hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  className="block min-h-11 border-b border-border py-3 hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                 >
                   <span className="font-semibold text-link">
                     {grant.collegeName}
@@ -226,7 +226,7 @@ export default async function RecruiterCompanyReportsPage({
             value={collegeId}
           />
 
-          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body md:w-auto md:min-w-44">
+          <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-44">
             Drive status
             <Select
               name="status"
@@ -245,7 +245,7 @@ export default async function RecruiterCompanyReportsPage({
             </Select>
           </label>
 
-          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body md:w-auto md:min-w-32">
+          <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-32">
             Rows per page
             <Select
               name="pageSize"

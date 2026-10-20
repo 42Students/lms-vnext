@@ -10,12 +10,12 @@ These 17 page routes were moved to chat-14 from the end of other lanes' review q
 - [x] `src/app/(authenticated)/hr/colleges/page.tsx`
 - [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/page.tsx`
+- [x] `src/app/(authenticated)/hr/company/reports/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/page.tsx`
