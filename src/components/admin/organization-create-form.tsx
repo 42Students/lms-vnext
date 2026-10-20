@@ -56,7 +56,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
   return (
     <form
       onSubmit={submit}
-      className="flex min-w-0 flex-col gap-3 border-t border-border pt-4 md:flex-row md:items-end print:hidden"
+      className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-border pt-4 md:grid-cols-[minmax(0,1fr)_auto] print:hidden"
     >
       <div className="min-w-0 flex-1">
         <label
@@ -68,7 +68,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
         <Input
           id="organization-name"
           value={name}
-          onChange={(event) => setName(event.target.value)}
+          onChange={(event) => { setName(event.target.value); setError(null); }}
           required
           maxLength={255}
           placeholder="e.g., ABC University"
@@ -77,9 +77,9 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending || !name.trim()} loading={pending}>
         {pending ? "Creating…" : "Create Organization"}
       </Button>
-      {restored?<Alert tone="info" className="md:w-full">Draft restored</Alert>:null}
+      {restored ? <p role="status" className="text-xs leading-5 text-muted-foreground md:col-span-2">Draft restored</p> : null}
       {error ? (
-        <Alert tone="error" className="md:w-full">
+        <Alert tone="error" className="md:col-span-2">
           {error}
         </Alert>
       ) : null}
