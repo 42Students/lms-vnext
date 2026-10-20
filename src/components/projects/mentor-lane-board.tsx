@@ -122,33 +122,33 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   <div className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
    <label className="text-sm font-semibold">Release
     <Select data-slot="select" value={release} onChange={e=>{setRelease(e.target.value);setSprint("");remember("release",e.target.value);remember("sprint","");}}
-      className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All releases</option>{releases.map(r=><option key={r.id} value={r.id}>{r.title}</option>)}
     </Select></label>
    <label className="text-sm font-semibold">Sprint
     <Select data-slot="select" value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
-      className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
       .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </Select></label>
    <label className="text-sm font-semibold">Sprint scope
     <Select data-slot="select" value={scope} aria-label="Board sprint scope"
       onChange={e=>{setScope(e.target.value==="all"?"all":"current");remember("scope",e.target.value);}}
-      className="ml-2 min-h-11 rounded border border-border bg-surface p-2">
+      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
       <option value="current">Current sprint + backlog</option>
       <option value="all">All sprints (full history)</option>
     </Select>
    </label>
    <label className="text-sm font-semibold">Priority
     <Select data-slot="select" value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
-     className="ml-2 min-h-11 rounded border border-border bg-surface p-2">
+     className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
     </Select>
    </label>
    <label className="text-sm font-semibold">Assignee
     <Select data-slot="select" value={assignee} onChange={e=>{setAssignee(e.target.value);remember("assignee",e.target.value);}}
-     className="ml-2 min-h-11 rounded border border-border bg-surface p-2">
+     className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">Everyone</option><option value="UNASSIGNED">Unassigned</option>
      {members.filter(m=>m.role==="LEARNER").map(m=>
       <option key={m.membershipId} value={m.membershipId}>{m.displayName??"Learner"}</option>)}
@@ -156,7 +156,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    </label>
    <label className="text-sm font-semibold">Lane
     <Select data-slot="select" value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);remember("lane",e.target.value);}}
-      className="ml-2 min-h-11 rounded border border-border bg-surface p-2">
+      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
       <option value="">All lanes</option>
       <option value="BACKLOG">Backlog</option>
       {editable.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
