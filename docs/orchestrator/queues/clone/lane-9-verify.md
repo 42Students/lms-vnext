@@ -11,7 +11,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 
 - [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
 - [x] `src/components/tpo/tpo-batch-inline-decision.tsx`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
 - [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
 - [ ] `src/components/tpo/tpo-company-create-form.tsx`
 - [ ] `src/components/tpo/tpo-find-shortcut.tsx`
