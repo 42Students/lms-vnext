@@ -19,15 +19,15 @@ export default async function TpoPreparationCoursePlan(){
  });
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Students" title="Preparation course plan" />
-  <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 lms-inline-link">Back to learners needing support</Link>
+  <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to learners needing support</Link>
   <p className="text-sm text-body">This lists the college placement cell&apos;s recorded readiness-course selection. It is a planning preview, not a course enrollment, assignment, learner completion record, or outreach workflow.</p>
   {!plan.ready?<Alert tone="warning">{!settings.ready?"Preparation settings storage is unavailable.":"Saved preparation settings could not be validated; ask an administrator to review them."}</Alert>:<>
     <p role="status" className="text-sm">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>
     {plan.unresolved>0?<Alert tone="warning">{plan.unresolved} configured course reference(s) are not in this bounded active catalog; their availability is unknown.</Alert>:null}
-    {plan.courses.length===0?<EmptyState title="No active preparation courses in the configured subset."/>:<ul className="space-y-2">{plan.courses.map(course=><li key={course.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    {plan.courses.length===0?<EmptyState title="No active preparation courses in the configured subset."/>:<ul className="space-y-2">{plan.courses.map(course=><li key={course.id} className="border-b border-border py-4">
       <h2 className="font-semibold">{course.name}</h2><p className="text-xs text-muted-foreground">{course.code}</p>
     </li>)}</ul>}
   </>}
-  <Link href="/tpo/settings/prep-readiness" className="inline-flex min-h-9 items-center text-link underline lms-inline-link">Open existing preparation settings editor</Link>
+  <Link href="/tpo/settings/prep-readiness" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open existing preparation settings editor</Link>
  </div>;
 }
