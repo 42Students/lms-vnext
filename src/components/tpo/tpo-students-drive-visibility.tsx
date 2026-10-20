@@ -7,6 +7,8 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {tpoDriveVisibilitySelection,tpoDriveVisibilityValid} from "@/modules/placements/tpo-drive-visibility-bulk-model";
 import {mapTpoBulkBounded} from "@/modules/placements/tpo-bulk-bounded-execution";
@@ -89,18 +91,18 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
  return <section aria-label="Show or hide a drive for selected students" className="min-w-0 space-y-3 border-y border-border py-4">
   <h2 className="font-semibold">Show or hide a drive for selected students</h2>
   <p className="text-sm text-body">Apply an individual include or exclude decision with a reason. The eligibility rules still protect college and cohort targeting. Existing applications are preserved. Each selected override is version-checked so another officer’s newer decision is not overwritten.</p>
-  <p role="status">{picked.length} selected from the current filtered roster (up to 200 per review).</p>
-  {drives.length===0?<p>No draft or published drives can be changed here.</p>:null}
-  <div className="flex min-w-0 flex-wrap gap-3">
-   <label className="grid min-w-0 flex-1 gap-1 text-sm">Drive
-    <Select className="min-h-11 max-w-full md:min-h-9" value={jobId} disabled={pending} onChange={e=>{setJobId(e.target.value);setResults([]);}}
+  <p role="status" className="break-words text-sm text-body">{picked.length} selected from the current filtered roster (up to 200 per review).</p>
+  {drives.length===0?<p role="status" className="text-sm text-body">No draft or published drives can be changed here.</p>:null}
+  <div className="grid min-w-0 gap-3 md:grid-cols-2">
+   <label className="grid min-w-0 gap-1 text-sm">Drive
+    <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={jobId} disabled={pending} onChange={e=>{setJobId(e.target.value);setResults([]);}}
      >
      <option value="">Choose a drive</option>
      {drives.map(job=><option key={job.id} value={job.id}>{job.name} · {job.status}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm">Action
-    <Select value={decision} disabled={pending} onChange={e=>{setDecision(e.target.value as typeof decision);setResults([]);}}
+   <label className="grid min-w-0 gap-1 text-sm">Action
+    <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={decision} disabled={pending} onChange={e=>{setDecision(e.target.value as typeof decision);setResults([]);}}
      >
      <option value="INCLUDE">Show / Include</option>
      <option value="EXCLUDE">Hide / Exclude</option>
@@ -108,34 +110,41 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
     </Select>
    </label>
   </div>
-  <label className="grid gap-1 text-sm">Reason
-   <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
+  <label className="grid min-w-0 gap-1 text-sm">Reason
+   <Textarea className="w-full min-w-0" value={reason} disabled={pending} onChange={e=>setReason(e.target.value)} maxLength={500}
     />
   </label>
   {decision==="CLEAR"?<p className="text-sm text-warning-text">Clearing an override returns to ordinary eligibility rules. It does not restore an older override or undo an application.</p>:null}
-  <Button variant="secondary" type="button" disabled={!valid||pending} onClick={()=>setConfirm(true)}
+  <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!valid||pending} onClick={()=>setConfirm(true)}
    >
    Review drive visibility for {picked.length} student(s)
   </Button>
   <Dialog open={confirm} onOpenChange={open=>{if(!pending)setConfirm(open);}}
    title="Confirm drive eligibility overrides?"
    description={"This "+decision.toLowerCase()+" action is applied separately to "+picked.length+" selected learners. The server rechecks each college and learner."}
-   footer={<><Button variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
-    <Button disabled={pending||!valid} onClick={()=>void submit()}>{pending?"Saving…":"Confirm changes"}</Button></>}>
-   <ul className="list-disc pl-5 text-sm">{picked.map(row=><li key={row.id}>{row.name}</li>)}</ul>
-   <p className="mt-2 text-sm">Reason: {reason.trim()}</p>
+   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
+    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending||!valid} onClick={()=>void submit()}>{pending?"Saving…":"Confirm changes"}</Button>
+   </div>}>
+   <div className="min-w-0 space-y-2">
+    <p className="break-words text-sm text-body">Reason: {reason.trim()}</p>
+    <ScrollCue axis="y" label="Learners in visibility override" viewportClassName="max-h-52">
+     <ul className="min-w-0 divide-y divide-border text-sm">{picked.map(row=><li key={row.id} className="min-w-0 break-words py-2">{row.name}</li>)}</ul>
+    </ScrollCue>
+    {error?<InlineNotice tone="error" message={error}/>:null}
+   </div>
   </Dialog>
   {results.length>0?<div role="status" aria-live="polite" className="space-y-2 text-sm">
    <p>{results.filter(row=>row.status==="saved").length} saved · {results.filter(row=>row.status==="failed").length} not saved.</p>
    {results.some(row=>row.status==="saved"&&row.action!=="CLEAR"&&row.overrideId)
-     ?<Button variant="secondary" type="button" disabled={pending} onClick={()=>void undoLast()}
+     ?<Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" loading={pending} disabled={pending} onClick={()=>void undoLast()}
        >
        Undo saved changes (only if still current)
       </Button>:null}
-   <ul className="max-h-48 space-y-1 overflow-y-auto">{results.map(item=><li key={item.id}>
+   <ul className="max-h-48 min-w-0 divide-y divide-border overflow-y-auto">{results.map(item=><li key={item.id} className="min-w-0 break-words py-2">
     {item.name} — {item.status==="saved"?"Saved.":"Not saved; open the learner eligibility record before retrying."}
    </li>)}</ul>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error&&!confirm?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
