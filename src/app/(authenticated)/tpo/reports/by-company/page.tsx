@@ -90,15 +90,15 @@ export default async function TpoByCompanyReportPage({
       <form action="/tpo/reports/by-company" method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-        <label className="grid min-w-0 w-full flex-1 gap-1 text-sm font-semibold text-body min-[768px]:w-auto">Search company name
+        <label className="grid min-w-0 w-full flex-1 gap-[6px] min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search company name
           <Input type="search" name="q" maxLength={100} defaultValue={view.query.q} className="w-full"/>
-        </label><label className="grid min-w-0 w-full gap-1 text-sm font-semibold text-body min-[768px]:w-auto">Recorded placement outcome
+        </label><label className="grid min-w-0 w-full gap-[6px] min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded placement outcome
           <Select name="outcome" defaultValue={view.query.outcome}
             className="w-full">
             <option value="ALL">All companies</option><option value="HAS_PLACED">At least one placed learner</option>
             <option value="NO_PLACED">No placed learners recorded</option>
           </Select>
-        </label><label className="grid min-w-0 w-full gap-1 text-sm font-semibold text-body min-[768px]:w-auto">Order companies
+        </label><label className="grid min-w-0 w-full gap-[6px] min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order companies
           <Select name="sort" defaultValue={view.query.sort} className="w-full">
             <option value="NAME">Company name</option><option value="PLACED_DESC">Placed learners (high first)</option>
             <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="APPLICATIONS_DESC">Submitted applications (high first)</option><option value="DRIVES_DESC">Recorded drives (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option><option value="HIGHEST_CTC_DESC">Highest accepted full-time CTC (high first)</option>

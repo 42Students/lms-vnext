@@ -136,7 +136,7 @@ export function CollegeEditDialog({
            ["Landmark",landmark,setLandmark,255],
            ["Pin Code",postalCode,setPostalCode,32],
           ] as const).map(([field,value,setter,maxLength])=><label key={field}
-           className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field}
+           className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field}
            <Input className="min-h-11 md:min-h-9" value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
           </label>)}
 

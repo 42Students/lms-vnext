@@ -83,46 +83,46 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-18.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/academics/academics-actions.tsx`
-- [ ] `src/components/academics/academics-create-panel.tsx`
-- [ ] `src/components/academics/college-academic-directory.tsx`
-- [ ] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/academics/college-hall-booking-action.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/academics/college-structure-directory.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/admin-scoped-read-page.tsx`
-- [ ] `src/components/admin/college-branding-form.tsx`
-- [ ] `src/components/admin/college-create-form.tsx`
-- [ ] `src/components/admin/college-edit-dialog.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/descendant-feature-rule-editor.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
-- [ ] `src/components/admin/person-profile-dialog.tsx`
-- [ ] `src/components/admin/super-admin-batch-roster-manager.tsx`
-- [ ] `src/components/admin/super-admin-college-company-actions.tsx`
-- [ ] `src/components/admin/super-admin-company-edit.tsx`
-- [ ] `src/components/admin/super-admin-faculty-assignment-create.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
+- [x] `src/app/(authenticated)/tpo/requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/components/academics/academics-actions.tsx`
+- [x] `src/components/academics/academics-create-panel.tsx`
+- [x] `src/components/academics/college-academic-directory.tsx`
+- [x] `src/components/academics/college-cohort-management.tsx`
+- [x] `src/components/academics/college-hall-booking-action.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/admin-scoped-read-page.tsx`
+- [x] `src/components/admin/college-branding-form.tsx`
+- [x] `src/components/admin/college-create-form.tsx`
+- [x] `src/components/admin/college-edit-dialog.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/admin/descendant-feature-rule-editor.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/admin/person-profile-dialog.tsx`
+- [x] `src/components/admin/super-admin-batch-roster-manager.tsx`
+- [x] `src/components/admin/super-admin-college-company-actions.tsx`
+- [x] `src/components/admin/super-admin-company-edit.tsx`
+- [x] `src/components/admin/super-admin-faculty-assignment-create.tsx`
 - [ ] `src/components/admin/super-admin-hr-account-dialog.tsx`
 - [ ] `src/components/admin/super-admin-hr-accounts.tsx`
 - [ ] `src/components/announcements/announcement-admin-workspace.tsx`

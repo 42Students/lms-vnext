@@ -41,24 +41,24 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
      </div>:null}
   </nav>
   <form method="get" action="/tpo/verification" className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-4">
-   <label className="grid gap-1 text-sm">Status
-    <Select name="tab" defaultValue={query.tab} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+    <Select name="tab" defaultValue={query.tab} className="min-h-11">
      <option value="WAITING">Waiting</option><option value="SENT_BACK">Sent back</option><option value="VERIFIED">Verified</option>
     </Select>
    </label>
-   <label className="grid gap-1 text-sm">Section
-    <Select name="kind" defaultValue={query.kind} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+    <Select name="kind" defaultValue={query.kind} className="min-h-11">
      <option value="ALL">All sections</option><option value="EDUCATION">Education</option><option value="IDENTITY">Identity</option>
     </Select>
    </label>
-   <label className="grid gap-1 text-sm">Request kind
-    <Select name="waitingState" defaultValue={query.waitingState} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request kind
+    <Select name="waitingState" defaultValue={query.waitingState} className="min-h-11">
      <option value="ALL">First check or update</option><option value="SUBMITTED">First check</option><option value="UPDATE_PENDING">Update</option>
     </Select>
    </label>
-   <label className="grid gap-1 text-sm">Waiting since
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Waiting since
     <Select name="waitingSince" defaultValue={query.waitingSince}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"
+     className="min-h-11"
      disabled={query.tab!=="WAITING"}>
      <option value="ALL">Any time</option>
      <option value="TODAY">Today</option>
@@ -66,23 +66,23 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
      <option value="OVER_WEEK">Over a week</option>
     </Select>
    </label>
-   <label className="grid gap-1 text-sm">Batch
-    <Select name="batchId" defaultValue={query.batchId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+    <Select name="batchId" defaultValue={query.batchId??""} className="min-h-11">
      <option value="">All batches</option>
      {directory?.batches.map(item=><option key={item.id} value={item.id}>{item.program} · {item.name}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm">Branch
-    <Select name="branchId" defaultValue={query.branchId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Branch
+    <Select name="branchId" defaultValue={query.branchId??""} className="min-h-11">
      <option value="">All branches</option>
      {branches.map(([id,name])=><option key={id} value={id}>{name}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm">Student or roll number
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Student or roll number
     <Input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" className="min-h-11 min-w-0 w-full md:min-h-9" />
    </label>
-   <label className="grid gap-1 text-sm">Page size
-    <Select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Page size
+    <Select name="pageSize" defaultValue={query.pageSize} className="min-h-11">
      <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="1000">First 1,000 (legacy view)</option>
     </Select>
    </label>

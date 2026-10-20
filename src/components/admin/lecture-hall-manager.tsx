@@ -176,7 +176,7 @@ export function LectureHallManager({
     });
   }
 
-  const field = "mb-1.5 block text-[var(--lms-font-sm)] font-semibold text-body";
+  const field = "mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
 
   return (
     <div className="space-y-4">
@@ -272,18 +272,18 @@ export function LectureHallManager({
             </Banner>
           ) : null}
           <div>
-            <label className={field} htmlFor="hall-name">{LECTURE_HALL_COPY.nameLabel}</label>
+            <label className={field} htmlFor="hall-name" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{LECTURE_HALL_COPY.nameLabel}</label>
             <Input className="min-h-11 md:min-h-9" id="hall-name" value={draft.name} maxLength={255} placeholder={LECTURE_HALL_COPY.namePlaceholder}
               onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
           </div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div>
-              <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
+              <label className={field} htmlFor="hall-capacity" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{LECTURE_HALL_COPY.capacityLabel}</label>
               <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={5000} value={draft.capacity}
                 onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
             </div>
             <div>
-              <label className={field} htmlFor="hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
+              <label className={field} htmlFor="hall-type" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{LECTURE_HALL_COPY.typeLabel}</label>
               <Select className="min-h-11 md:min-h-9" id="hall-type" value={draft.roomType}
                 onChange={(e) => setDraft({ ...draft, roomType: e.target.value })}>
                 {Object.entries(ROOM_TYPE_LABELS).map(([value, label]) => (
@@ -293,7 +293,7 @@ export function LectureHallManager({
             </div>
           </div>
           <div>
-            <label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+            <label className={field} htmlFor="hall-dept" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{LECTURE_HALL_COPY.departmentLabel}</label>
             <Select className="min-h-11 md:min-h-9" id="hall-dept" value={draft.departmentId}
               onChange={(e) => setDraft({ ...draft, departmentId: e.target.value })}>
               <option value="">Shared by all departments</option>
@@ -303,7 +303,7 @@ export function LectureHallManager({
             </Select>
           </div>
           <div>
-            <label className={field} htmlFor="hall-desc">{LECTURE_HALL_COPY.descriptionLabel}</label>
+            <label className={field} htmlFor="hall-desc" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{LECTURE_HALL_COPY.descriptionLabel}</label>
             <Input className="min-h-11 md:min-h-9" id="hall-desc" value={draft.description} maxLength={255} placeholder={LECTURE_HALL_COPY.descriptionPlaceholder}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
           </div>

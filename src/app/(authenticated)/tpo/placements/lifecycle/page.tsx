@@ -96,45 +96,45 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
       <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
         <Select name="seasonId" defaultValue={data.season?.id ?? ""} disabled={!data.seasons.length}
-          className="mt-2 block w-full">
+          className="mt-[6px] block w-full">
           <option value="">All college seasons</option>
           {data.seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </Select>
       </label>
       <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
         <Select name="cohortId" defaultValue={data.cohortId??""}
-          className="mt-2 block w-full">
+          className="mt-[6px] block w-full">
           <option value="">All batches</option>
           {data.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.programName} · {batch.name}</option>)}
         </Select>
       </label>
       <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
         <Select name="companyId" defaultValue={data.companyId??""}
-          className="mt-2 block w-full">
+          className="mt-[6px] block w-full">
           <option value="">All companies</option>
           {data.companies.map(company=><option key={company.id} value={company.id}>{company.name}</option>)}
         </Select>
       </label>
       {data.view!=="REQUESTS"?<label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Created by
         <Select name="ownerUserId" defaultValue={data.ownerUserId??""}
-          className="mt-2 block w-full">
+          className="mt-[6px] block w-full">
           <option value="">Any creator</option>
           {data.owners.map(owner=><option key={owner.id} value={owner.id}>{owner.name??"College staff"}</option>)}
         </Select>
       </label>:null}
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lifecycle
         <Select name="view" defaultValue={data.view}
-          className="mt-2 block w-full">
+          className="mt-[6px] block w-full">
           <option value="ALL">All jobs</option><option value="REQUESTS">Requests</option><option value="DRAFT">Drafts</option>
           <option value="LIVE">Live</option><option value="CLOSED">Closed</option>
         </Select>
       </label>
       <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company or drive
        <Input name="search" defaultValue={data.search} maxLength={100}
-        className="mt-2 block w-full"/>
+        className="mt-[6px] block w-full"/>
       </label>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline state
-        <Select name="deadline" defaultValue={data.deadline} className="mt-2 block w-full">
+        <Select name="deadline" defaultValue={data.deadline} className="mt-[6px] block w-full">
           <option value="ALL">All deadlines</option>
           <option value="TODAY">Today (IST)</option>
           <option value="DUE_SOON">Live · next 7 days</option>
@@ -143,13 +143,13 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         </Select>
       </label>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Card columns
-        <Select name="display" defaultValue={data.display} className="mt-2 block w-full">
+        <Select name="display" defaultValue={data.display} className="mt-[6px] block w-full">
           <option value="DETAILED">Detailed</option><option value="COMPACT">Compact</option>
         </Select>
       </label>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where it is
         <Select name="journey" defaultValue={data.journey}
-          className="mt-2 block w-full">
+          className="mt-[6px] block w-full">
           <option value="ALL">Every stage</option>
           <option value="TAKING_APPLICATIONS">Taking applications</option>
           <option value="RUNNING_ROUNDS">Rounds in progress</option>
@@ -158,42 +158,42 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         </Select>
       </label>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
-        <Select name="workMode" defaultValue={data.workMode} className="mt-2 block w-full">
+        <Select name="workMode" defaultValue={data.workMode} className="mt-[6px] block w-full">
           <option value="ALL">All modes</option><option value="ONSITE">On-site</option>
           <option value="REMOTE">Remote</option><option value="HYBRID">Hybrid</option>
         </Select>
       </label>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment type
-        <Select name="employmentType" defaultValue={data.employmentType} className="mt-2 block w-full">
+        <Select name="employmentType" defaultValue={data.employmentType} className="mt-[6px] block w-full">
           <option value="ALL">All employment</option><option value="FULL_TIME">Full-time</option>
           <option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
         </Select>
       </label>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort drives
-        <Select name="sort" defaultValue={data.sort} className="mt-2 block w-full">
+        <Select name="sort" defaultValue={data.sort} className="mt-[6px] block w-full">
           <option value="COMPANY">Company name</option><option value="DEADLINE_ASC">Earliest recorded deadline</option>
           <option value="DEADLINE_DESC">Latest recorded deadline</option>
         </Select>
       </label>
-      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. applied
+      <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Min. applied
         <Input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
-          className="mt-2 block w-full"/>
+          className="mt-[6px] block w-full"/>
       </label>
-      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. applied
+      <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Max. applied
         <Input name="maxApplied" type="number" min={0} max={100000} defaultValue={data.maxApplied??""}
-          className="mt-2 block w-full"/>
+          className="mt-[6px] block w-full"/>
       </label>
-      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. offers
+      <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Min. offers
         <Input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
-          className="mt-2 block w-full"/>
+          className="mt-[6px] block w-full"/>
       </label>
-      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. offers
+      <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Max. offers
         <Input name="maxOffers" type="number" min={0} max={100000} defaultValue={data.maxOffers??""}
-          className="mt-2 block w-full"/>
+          className="mt-[6px] block w-full"/>
       </label>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Pay category
         <Select name="payCategory" defaultValue={data.payCategory}
-          className="mt-2 block w-full">
+          className="mt-[6px] block w-full">
           <option value="ALL">All categories</option><option value="REGULAR">Regular</option>
           <option value="DREAM">Dream</option>
         </Select>

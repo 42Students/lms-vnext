@@ -96,44 +96,44 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         </>}
       </p>
       : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
-        <label className="grid gap-1 text-sm font-medium text-body">Program
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select required value={programId} onChange={e => setProgramId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Choose program</option>
             {programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Start academic period
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start academic period
           <Select required value={startPeriodId} onChange={e => setStartPeriodId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Choose period</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Batch name
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Batch code
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Expected end period (optional)
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period (optional)
           <Select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Not specified</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Academic Year
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
           <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)}
             placeholder="2026–2027" className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Start Date
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
           <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">End Date
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
           <Input type="date" value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
@@ -274,15 +274,15 @@ export function CollegeCohortRowActions({ row, periods }: {
       <form onSubmit={save} className="space-y-3">
         
         <p className="text-sm text-muted-foreground">Program and starting period cannot change after creation.</p>
-        <label className="grid gap-1 text-sm font-medium text-body">Batch name
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Batch code
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Expected end period
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period
           <Select value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Not specified</option>
@@ -291,13 +291,13 @@ export function CollegeCohortRowActions({ row, periods }: {
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm">Academic Year
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
           <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-sm">Start Date
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
           <Input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-sm">End Date
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
           <Input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
         {endDateLocked && <p className="text-xs text-muted-foreground">

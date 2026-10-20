@@ -88,8 +88,8 @@ export default async function TpoAccreditationReportPage({
        <h2 id="section-naac-5-2-1-placed-students" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">NAAC 5.2.1 · Placed students</h2>
        <p role="status" className="text-sm">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
        <form role="search" aria-label="reports accreditation filters" method="get" className="flex flex-wrap items-end gap-3">
-        <label className="text-sm">Batch
-         <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-11 min-[768px]:min-h-9">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+         <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-[6px] block min-h-11 min-[768px]:min-h-9">
           <option value="">Pick a batch</option>
           {batches.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.name}</option>)}
          </Select>

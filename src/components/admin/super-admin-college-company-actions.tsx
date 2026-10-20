@@ -31,11 +31,11 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
    className="mt-2 min-h-11 md:min-h-9 print:hidden">
    Add company</Button>:
    <form onSubmit={e=>void submit(e)} className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 print:hidden">
-    <label className="grid gap-1 text-sm">Company name<Input name="name" required minLength={2}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company name<Input name="name" required minLength={2}
      maxLength={200} className="min-h-11 w-full md:min-h-9"/></label>
-    <label className="grid gap-1 text-sm">Company domain<Input name="primaryDomain" maxLength={255}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company domain<Input name="primaryDomain" maxLength={255}
      placeholder="example.com" className="min-h-11 w-full md:min-h-9"/></label>
-    <label className="grid gap-1 text-sm md:col-span-2">Website (HTTPS preferred)
+    <label className="grid gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Website (HTTPS preferred)
      <Input name="websiteUrl" type="url" className="min-h-11 w-full md:min-h-9"/></label>
     {error?<Alert tone="error" className="md:col-span-2">{error}</Alert>:null}
     <div className="flex flex-wrap gap-3 md:col-span-2">
