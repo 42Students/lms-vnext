@@ -40,7 +40,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
       <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} />
       <section aria-label="Filter managed batches" className="border-b border-border pb-4">
         <form action="/admin/batches" method="get" className="flex flex-wrap items-end gap-3">
-          <label className="grid min-w-0 w-full md:min-w-48 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 w-full md:min-w-48 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 md:min-h-9">
@@ -48,19 +48,19 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
             </Select>
           </label>
-          <label className="grid min-w-0 w-full md:min-w-40 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 w-full md:min-w-40 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search batches
             <Input type="search" name="q" defaultValue={data.query.q}
               className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-0 w-full md:min-w-36 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 w-full md:min-w-36 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 md:min-h-9">
               {statuses.map(status => <option key={status} value={status}>{status === "INACTIVE" ? "Inactive (planned / archived)" : legacyAcademicStatus(status, true)}</option>)}
             </Select>
           </label>
-          <label className="grid min-w-0 w-full md:min-w-32 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+          <label className="grid min-w-0 w-full md:min-w-32 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
             <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 md:min-h-9">
               {[10,25,50,100].map(n=><option value={n} key={n}>{n}</option>)}
             </Select>
