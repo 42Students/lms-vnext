@@ -2,8 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeVerificationLegacyCopy } from "@/modules/verification/college-legacy-verification-copy";
-import { PageHeader } from "@/components/ui/page-header";
-import { collegeVerificationLegacyCopy } from "@/modules/verification/college-legacy-verification-copy";
 import { Banner } from "@/components/ui/banner";
 import {ActionPagination} from "@/components/ui/action-pagination";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
