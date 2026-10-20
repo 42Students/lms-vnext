@@ -110,14 +110,14 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
       Manage offerings
     </Button>
     {opened && <section aria-label="Elective course offerings"
-      className="mt-2 min-w-64 max-w-xl space-y-3 border-t border-border pt-3">
+      className="mt-2 min-w-0 w-full max-w-xl space-y-3 border-t border-border pt-3">
       {loading && <p role="status">Loading eligible courses and groups…</p>}
       {data && <>
         <h3 className="text-sm font-semibold text-foreground">Courses in this elective slot</h3>
         {data.offerings.length === 0 && <p className="text-sm text-muted-foreground">
           No courses added yet.</p>}
         {data.offerings.map(offering => <div key={offering.offeringId}
-          className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
+          className="flex min-w-0 flex-col items-start gap-2 border-b border-border py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
           <span>{offering.courseName} ({offering.courseCode}) · Seats: {offering.capacity ?? "No cap"} · Enrolled: {offering.activeMembers} · Waitlist: {offering.waitlistedCount} · {offering.status}</span>
           <div className="flex flex-wrap items-center gap-2">
             <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/offerings/" +
