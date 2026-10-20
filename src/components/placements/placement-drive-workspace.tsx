@@ -5,6 +5,7 @@ import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Banner } from "@/components/ui/banner";
+import { Alert } from "@/components/ui/alert";
 import { listCohorts } from "@/modules/academics/cohort-service";
 import { listPrograms } from "@/modules/academics/program-service";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -379,7 +380,10 @@ export async function PlacementDriveWorkspace({
       {isTpo&&job.status==="DRAFT"?
        <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
       {isTpo&&!lifecycleReadiness?
-       <Banner tone="warning">Could not load: Publication readiness. Publishing is unavailable until these checks recover. Refresh the drive to try again.</Banner>:null}
+       <Alert tone="warning">
+        Could not load: Publication readiness. Publishing is unavailable until these checks recover.
+        Refresh the drive to try again.
+       </Alert>:null}
       <section aria-label="Drive status and details" className="border-b border-border pb-6">
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>{headerFacts.status}</StatusBadge>
@@ -443,7 +447,7 @@ export async function PlacementDriveWorkspace({
             {nextStep.primary.label}
           </Link>
           {nextStep.more.length > 0 ? (
-            <div className="mt-4 grid gap-2 md:grid-cols-3">
+            <div className="mt-4 grid gap-2 min-[768px]:grid-cols-3">
               {nextStep.more.map(step => (
                 <Link key={step.href} href={step.href}
                   className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-[var(--lms-link-text)] hover:border-primary hover:underline">
@@ -458,9 +462,9 @@ export async function PlacementDriveWorkspace({
       {journey?<section aria-label="Drive applicant journey" className="border-b border-border pb-6">
         <h2 className="font-semibold text-foreground">Journey</h2>
         <p className="mt-1 text-xs text-body">{journey.definition}</p>
-        <div className="mt-4 grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-4 grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border min-[768px]:grid-cols-3 lg:grid-cols-6">
           {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
-            className="border-b border-border p-3 text-foreground hover:bg-primary-subtle md:border-r md:border-b-0 md:last:border-r-0">
+            className="border-b border-border p-3 text-foreground hover:bg-primary-subtle min-[768px]:border-r min-[768px]:border-b-0 min-[768px]:last:border-r-0">
             <span className="block text-xs text-body">{stage.name}</span>
             <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
           </Link>)}
@@ -484,7 +488,7 @@ export async function PlacementDriveWorkspace({
                     <h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
                     <span className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs font-semibold">{round.status}</span>
                   </div>
-                  <dl className="mt-3 grid gap-2 text-sm text-body md:grid-cols-2">
+                  <dl className="mt-3 grid gap-2 text-sm text-body min-[768px]:grid-cols-2">
                     <div><dt className="font-semibold">When</dt><dd>{round.scheduledAt
                       ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.scheduledAt)+" IST"
                       : "Date to be decided"}</dd></div>
@@ -677,7 +681,10 @@ export async function PlacementDriveWorkspace({
         }))}
       />
       {isTpo&&job.status==="PUBLISHED"&&!bulkCandidates?
-       <Banner tone="warning">Could not load: Bulk applicants. Other drive sections are still available. Refresh the drive to retry this section.</Banner>:null}
+       <Alert tone="warning">
+        Could not load: Bulk applicants. Other drive sections are still available.
+        Refresh the drive to retry this section.
+       </Alert>:null}
       {bulkCandidates ? (
         <PlacementBulkAddApplicants
           jobId={jobId}
