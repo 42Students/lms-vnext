@@ -574,10 +574,10 @@ export function SuperAdminHrAccounts({
       header: "Name",
       cell: (account) => (
         <div>
-          <p className="m-0 font-semibold text-foreground">
+          <p className="m-0 break-words font-semibold text-foreground">
             {hrDisplayName(account)}
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 break-words text-xs text-muted-foreground">
             {account.email || account.title || "—"}
           </p>
         </div>
@@ -603,7 +603,7 @@ export function SuperAdminHrAccounts({
             <p className="m-0 text-sm font-semibold text-body">
               {account.grants.length} active
             </p>
-            <p className="m-0 max-w-64 text-xs leading-5 text-muted-foreground">
+            <p className="m-0 max-w-64 break-words text-xs leading-5 text-muted-foreground">
               {account.grants
                 .map((grant) => grant.collegeName)
                 .join(", ")}
@@ -647,25 +647,23 @@ export function SuperAdminHrAccounts({
     : 0;
 
   return (
-    <div className="min-w-0 space-y-4">
+    <div className="min-w-0 space-y-4 md:space-y-5">
       <PageHeader
-        eyebrow="Industry access"
         title="Recruiter accounts"
         description="Recruiter accounts: manage company links and college access. Account actions follow the current administrative scope."
         actions={
-          <Button className="min-h-11 md:min-h-9 print:hidden" onClick={openCreate}>
+          <Button className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" onClick={openCreate}>
             Add recruiter
           </Button>
         }
       />
 
       <p role="status" className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
-      <section aria-label="Recruiter account lifecycle" className="space-y-1 border-b border-border pb-4">
+      <section aria-label="Recruiter account lifecycle" className="min-w-0 space-y-1 border-b border-border pb-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--lms-teal-deep)]">Industry access</p>
         <h2 className="text-base font-semibold text-foreground">Recruiter account lifecycle</h2>
         <p className="text-sm text-body">Manage recruiter access, suspension and signed-in devices.</p>
       </section>
-      <h2 className="text-base font-semibold text-foreground">Recruiter accounts</h2>
       {!statusSummary&&<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
         Account totals are temporarily unavailable. The directory is still usable.
         <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()} className="ml-2 min-h-11 md:min-h-9">Retry totals</Button>
