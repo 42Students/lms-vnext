@@ -27,7 +27,7 @@ export default async function SuperAdminPlacementInterviewCalendarPage({
         <PageHeader
           title="Interviews"
           description="Interview-calendar oversight requires an exact college safety scope."
-          actions={<PageBackLink href="/admin/placements" label="Placement overview" />}
+          actions={<PageBackLink href="/admin/placements" label="Placement overview"/>}
         />
         <EmptyState
           title="Select a college scope"
