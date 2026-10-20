@@ -70,17 +70,17 @@ export default async function CollegeBatchStudentsPage({
           ilike(learnerProfiles.rollNumber, "%" + q + "%")) : undefined))
       .orderBy(users.displayName).limit(500),
   ]);
-  return <main className="min-w-0 overflow-x-clip space-y-5">
+  return <main className="min-w-0 max-w-full overflow-x-clip space-y-5">
     <PageHeader title={"Students · " + batch.name}
       description={batch.program + " · Search the batch roster and move students to another class."}
       actions={<PageBackLink href="/college/batches" label="Back to batches"/>} />
     <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-t border-border pt-4">
-      <label className="grid flex-1 gap-1 text-sm font-semibold">Name, roll or email
-        <Input type="search" name="q" defaultValue={q} maxLength={100}
+      <label className="grid min-w-0 w-full flex-1 gap-1 text-sm font-semibold text-body md:min-w-48">Name, roll or email
+        <Input type="search" name="q" defaultValue={q} maxLength={100} className="min-h-11 min-w-0 md:min-h-9"
           />
       </label>
-      <label className="grid gap-1 text-sm font-semibold">Class/Section
-        <Select name="sectionId" defaultValue={sectionId ?? ""}
+      <label className="grid min-w-0 w-full gap-1 text-sm font-semibold text-body md:w-auto">Class/Section
+        <Select name="sectionId" defaultValue={sectionId ?? ""} className="min-h-11 min-w-0 md:min-h-9"
           >
           <option value="">All classes</option>
           {classes.map(item => <option key={item.id} value={item.id}>
