@@ -51,7 +51,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
   const parsed=parseAdminModuleDetailPageParams(await searchParams);
   if (!parsed) {
     return (
-      <div className="space-y-5">
+      <div className="space-y-6">
         <PageHeader eyebrow="Super Admin · Module Access" title="Module Access" />
         <ErrorState title="Invalid module access filters"
           description="The module, scope or requested page is invalid. No college module rules were loaded."
@@ -110,7 +110,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <LearnerModuleAccessDrawer collegeId={college.id}/>
 
-      <section className="border-t border-border pt-5">
+      <section className="border-t border-border pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -167,7 +167,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         ))}
       </section>
 
-      <section className="border-t border-border pt-5" aria-label="Placements college access impact">
+      <section className="border-t border-border pt-6" aria-label="Placements college access impact">
         <h2 className="text-base font-semibold text-foreground">Placements: college-level access impact</h2>
         {modules.filter(decision=>decision.module==="placements").map(decision=>(
           <div key={decision.module} className="mt-3 space-y-2 text-sm text-body">
@@ -245,7 +245,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       </section>
 
-      <section aria-label="Academic module rules" className="border-t border-border pt-5">
+      <section aria-label="Academic module rules" className="border-t border-border pt-6">
         <h2 className="font-semibold text-foreground">Department, Program, Batch and Class access</h2>
         <p className="mt-2 text-sm text-body">Select an academic scope, set Projects, Placements or Electives On, Off, or Inherit, and apply an optional lock.</p>
         <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>

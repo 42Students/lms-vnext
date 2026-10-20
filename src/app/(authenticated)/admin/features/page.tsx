@@ -38,7 +38,7 @@ type SearchParams = Record<
   decision: AdminModuleDecision;
 }) {
   return (
-    <div className="min-w-0 space-y-1.5">
+    <div className="min-w-0 space-y-2">
       <StatusBadge
         tone={
           decision.enabled
@@ -75,7 +75,7 @@ export default async function SuperAdminFeaturesPage({
 
   if (!parsed) {
     return (
-      <div className="min-w-0 space-y-5">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           title="Feature Controls"
           description="College module access, policy inheritance and guarded inline changes."
@@ -118,13 +118,13 @@ export default async function SuperAdminFeaturesPage({
   );
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Feature Controls"
         description="Effective college-level access for the three optional modules configured in vNext: Projects, Placements and Electives. Values are resolved using the existing persisted-rule inheritance and source defaults."
       />
 
-      <section aria-label="Feature Controls overview" className="border-t border-border pt-5">
+      <section aria-label="Feature Controls overview" className="border-t border-border pt-6">
         <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability · {scopeLabel}</p>
         <h2 className="mt-1 text-base font-semibold text-foreground">Optional modules by college</h2>
         <dl className="mt-3 grid gap-0 divide-y divide-border border-y border-border text-sm md:grid-cols-3 md:divide-x md:divide-y-0">
@@ -133,7 +133,7 @@ export default async function SuperAdminFeaturesPage({
           <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
         </dl>
       </section>
-      <section className="border-t border-border pt-5">
+      <section className="border-t border-border pt-6">
         <FilterBar title="Filters"><form
           action="/admin/features"
           method="get"
