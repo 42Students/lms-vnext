@@ -68,7 +68,7 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
   <Button variant="secondary" type="button" onClick={()=>setOpen(v=>!v)} >
    Edit workspace summary</Button>
   {open?<div className="mt-4 space-y-4">
-   <div className="grid gap-3 sm:grid-cols-2">
+   <div className="grid gap-3 md:grid-cols-2">
     {field("Workspace title","title",200)}
     <label className="text-sm font-semibold">Status<Select className={style}
      value={form.status} onChange={e=>change("status",e.target.value)}>
