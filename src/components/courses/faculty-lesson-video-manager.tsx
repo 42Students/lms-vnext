@@ -315,10 +315,10 @@ export function FacultyLessonVideoManager({
               <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit} onClick={()=>saveDuration(video)}>Save duration</Button>
             </label>
           </div>
-          {!canEdit?<p role="status" className="text-xs text-muted-foreground">Shared video · read only in this Section.</p>:null}
+          {!canEdit?<Alert tone="info">Shared video · read only in this Section.</Alert>:null}
           {previewId===video.id&&deliveryId?<FacultyVideoPreview key={video.id} videoId={video.id} deliveryId={deliveryId}/>:null}
           {video.lessonContentId?<p className="text-xs text-muted-foreground">Linked to lesson content</p>:null}
-          {video.processingStatus==="PROCESSING"?<p role="status" className="text-xs text-muted-foreground">Checking file. Playback and publishing are not available yet.</p>:null}
+          {video.processingStatus==="PROCESSING"?<Alert tone="warning">Checking file. Playback and publishing are not available yet.</Alert>:null}
         </li>;
       })}
     </ol>
