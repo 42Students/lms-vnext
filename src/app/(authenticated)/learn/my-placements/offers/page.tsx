@@ -107,7 +107,7 @@ export default async function LearnerOffersPage({
     <div className="min-w-0 space-y-6">
       <Link
         href="/learn/my-placements/applications"
-        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
       >
         ← Applications
       </Link>
@@ -141,7 +141,7 @@ export default async function LearnerOffersPage({
         </label>
         <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Search</Button>
         {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
-          className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-primary-text underline">Clear search</Link> : null}
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
       <form method="GET" action="/learn/my-placements/offers" className="flex flex-wrap items-end gap-3">
         {view!=="all"?<Input type="hidden" name="status" value={view}/>:null}
@@ -162,7 +162,7 @@ export default async function LearnerOffersPage({
       </form>
       {hasActiveFacets ? (
         <Link href={learnerOfferClearFiltersHref(view)}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline">
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline">
           Clear offer filters (keep selected status)
         </Link>
       ) : null}
@@ -204,7 +204,7 @@ export default async function LearnerOffersPage({
       {pageClamped ? (
         <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           The requested offer page no longer exists in your filtered results. Showing page {paginated.page} of {paginated.pages}.
-          <Link href={pageUrl(paginated.page)} className="ml-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Use this page link</Link>
+          <Link href={pageUrl(paginated.page)} className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">Use this page link</Link>
         </p>
       ) : null}
       {learnerOfferFocusMissing(query.focus,focused.found) ? (
@@ -215,7 +215,7 @@ export default async function LearnerOffersPage({
       ) : null}
       {expiringSoon > 0 && view !== "pending" ? (
         <Link href={learnerOfferStatusHref("pending",{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
           Review {expiringSoon} awaiting-response {expiringSoon===1?"offer":"offers"} with a deadline in 24 hours →
         </Link>
       ) : null}
@@ -226,12 +226,12 @@ export default async function LearnerOffersPage({
       ) : null}
       {!requestRead.available ? <p role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
-        <section role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
+        <section role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">
           <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
           <p className="mt-2 text-sm text-body">{emptyState.description}</p>
           {offers.counts.all > 0 ? (
             <Link href="/learn/my-placements/offers"
-              className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
               See all offers →
             </Link>
           ) : null}
@@ -275,18 +275,18 @@ export default async function LearnerOffersPage({
       )}
       {paginated.total>0 ? <nav aria-label="Offer results pagination" className="flex flex-wrap items-center gap-3 text-sm">
         <p className="text-muted-foreground">{paginated.from}–{paginated.to} of {paginated.total} matching offers</p>
-        {paginated.page>1 ? <Link href={pageUrl(paginated.page-1)} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Previous</Link> : null}
+        {paginated.page>1 ? <Link href={pageUrl(paginated.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Previous</Link> : null}
         <span aria-current="page">Page {paginated.page} of {paginated.pages}</span>
-        {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Next</Link> : null}
+        {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text">Next</Link> : null}
       </nav> : null}
       <section aria-label="How offers work at your college" className="min-w-0 border-b border-border py-4 md:py-6">
         <h2 className="font-semibold text-foreground">How offers work at your college</h2>
         <p className="mt-2 text-sm text-body">Check the offer response deadline and official terms before replying. Accepting a letter of intent is not the same as confirmed joining. College rules may affect how many offers you can hold.</p>
         <div className="mt-3 flex flex-wrap gap-4">
           <Link href="/learn/my-placements/rules?from=offers"
-            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Read placement rules</Link>
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">Read placement rules</Link>
           <Link href="/learn/my-placements/placement"
-            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Need more time? Send a request to the placement cell</Link>
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">Need more time? Send a request to the placement cell</Link>
         </div>
       </section>
       <p className="text-xs text-muted-foreground">

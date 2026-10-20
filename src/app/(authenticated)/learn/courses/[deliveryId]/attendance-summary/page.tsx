@@ -39,7 +39,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
-        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Course attendance
       </Link>
       <PageHeader title="Course attendance history" />
@@ -88,7 +88,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
       ) : (
         <section aria-label="Course attendance by month" className="space-y-4">
           {filtered.map((month) => (
-            <article key={month.month} className="rounded-xl border border-border bg-surface p-4 md:p-5">
+            <article key={month.month} className="border-b border-border py-4 md:py-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="font-semibold text-foreground">{month.month}</h2>

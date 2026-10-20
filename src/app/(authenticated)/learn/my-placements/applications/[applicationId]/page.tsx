@@ -52,7 +52,7 @@ export default async function LearnerApplicationDetailPage({params}:{
         Screening and interview decisions appear in your placement journey.
       </p>
       {record.events.length?<ol className="mt-4 space-y-3">
-        {record.events.map(event=><li key={event.id} className="rounded-lg border border-border p-4">
+        {record.events.map(event=><li key={event.id} className="border-b border-border py-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-sm font-semibold text-foreground">{event.label}</h3>
             <time className="text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>{when(event.occurredAt)}</time>
