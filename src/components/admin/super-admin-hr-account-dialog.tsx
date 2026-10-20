@@ -123,6 +123,7 @@ export function SuperAdminHrAccountDialog({
             Cancel
           </Button>
           <Button className="min-h-11 md:min-h-9"
+            loading={pending}
             type="submit"
             form={formId}
             disabled={pending || !eligible}
