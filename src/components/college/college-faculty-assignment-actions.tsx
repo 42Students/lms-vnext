@@ -98,49 +98,49 @@ export function CollegeFacultyAssignmentCreate({
     className="min-w-0">
     <h2 className="sr-only">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
     <form onSubmit={event => void submit(event)} className="mt-[var(--lms-space-3)] grid min-w-0 max-w-[1100px] gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5">Program
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select required className={fieldClass} value={programId}
           onChange={event => resetParents("program", event.target.value)}>
           <option value="">Choose program</option>
           {programs.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5">Batch
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
         <Select required className={fieldClass} value={cohortId}
           onChange={event => resetParents("batch", event.target.value)}>
           <option value="">Choose batch</option>
           {batches.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5">Class/Section
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
         <Select required className={fieldClass} value={sectionId}
           onChange={event => resetParents("class", event.target.value)}>
           <option value="">Choose class</option>
           {classes.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5">Semester
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
         <Select className={fieldClass} value={semesterNumber}
           onChange={event => { setSemesterNumber(event.target.value); setSelected([]); }}>
           <option value="">All semesters</option>
           {semesters.map(term => <option key={term} value={term}>Semester {term}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5">Academic Year
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
         <Select className={fieldClass} value={academicYear}
           onChange={event => { setAcademicYear(event.target.value); setSelected([]); }}>
           <option value="">All years</option>
           {years.map(year => <option key={year} value={year}>{year}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5">Faculty
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
         <Select required className={fieldClass} value={membershipId}
           onChange={event => setMembershipId(event.target.value)}>
           <option value="">Choose faculty</option>
           {faculty.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5">{FACULTY_ASSIGNMENT_COPY.roleLabel}
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{FACULTY_ASSIGNMENT_COPY.roleLabel}
         <Select className={fieldClass} value={role}
           onChange={event => setRole(event.target.value as CourseTeachingRole)}>
           <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
@@ -204,7 +204,7 @@ export function CollegeFacultyAssignmentEnd({
   }
   return <div className="min-w-0 space-y-[var(--lms-space-2)]">
     <Button variant="secondary" type="button" loading={saving} disabled={saving}
-      onClick={()=>{setConfirming(true);setError(null);}} className="min-h-11 md:min-h-9">
+      onClick={()=>{setConfirming(true);setError(null);}} className="min-h-11 w-full sm:w-auto md:min-h-9">
       {saving?"Ending…":"End assignment"}
     </Button>
     {success?<Alert tone="success">{success}</Alert>:null}
