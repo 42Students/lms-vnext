@@ -31,7 +31,7 @@ export default async function FacultyLearnerGradebookPage({
       title={data.learner.displayName||data.learner.email||"Unnamed learner"}
       description={data.delivery.courseName+" · "+data.delivery.sectionName}/>
     <section className="border-b border-border pb-5" aria-label="Recorded score totals">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-3">
         <p className="text-sm text-body">Published scores: {data.learner.gradedCount}/{data.learner.publishedAssessments}</p>
         <p className="text-sm text-body">Recorded points: {data.learner.earned===null?
           "Unknown":data.learner.earned+" / "+data.learner.possible}</p>

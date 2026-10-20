@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import {TpoOptionalEmailsEditor} from "@/components/tpo/tpo-optional-emails-editor";
@@ -41,7 +42,7 @@ export default async function TpoStudentNoticesSettings(){
    <Link href={view.prepHref} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Configure available preparation courses</Link>
   </section>
   {communication.ready?<TpoSmsCapEditor key={ctx.membership?.collegeId??"unscoped"} initial={communication.smsMonthlyCap} version={communication.version}/>:
-   <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">Communication settings are not available in this database.</p>}
+   <Alert tone="warning">Communication settings are not available in this database.</Alert>}
   {communication.ready?<TpoOptionalEmailsEditor key={ctx.membership?.collegeId??"unscoped"} initial={{
     notifyDriveOpenEmail:communication.notifyDriveOpenEmail,
     notifyResultApplied:communication.notifyResultApplied,
@@ -58,7 +59,7 @@ export default async function TpoStudentNoticesSettings(){
    </section>
   <section className="space-y-2 border-t border-border pt-5">
    <h2 className="text-lg font-semibold">Emails switched on</h2>
-   <p role="status" className="text-sm text-warning-text">Couldn&apos;t check which emails are switched on.</p>
+   <Alert tone="warning">Couldn&apos;t check which emails are switched on.</Alert>
    <p className="text-xs text-muted-foreground">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
    <Link href="/tpo/settings/templates" className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">View available message templates</Link>
   </section>

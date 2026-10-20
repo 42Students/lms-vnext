@@ -1,6 +1,7 @@
 "use client";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -10,7 +11,7 @@ export function SuperAdminTemplateArchiveControl({templateId,title,status}:{
 }){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const {askConfirm,dialog}=useConfirmFlow();
- if(status==="ARCHIVED")return <span className="text-xs text-muted-foreground">Archived</span>;
+ if(status==="ARCHIVED")return <StatusBadge tone="neutral">Archived</StatusBadge>;
  async function archive(){
   if(!(await askConfirm("Archive template \""+title+"\"? Existing workspaces keep their pinned snapshot. This template will no longer be available for new assignments.")))return;
   setBusy(true);setError("");

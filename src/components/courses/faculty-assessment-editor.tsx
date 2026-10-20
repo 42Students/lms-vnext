@@ -10,6 +10,8 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime, authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
@@ -56,6 +58,7 @@ export function FacultyAssessmentEditor({
     useState(false);
   const [deleting, setDeleting] =
     useState(false);
+  const [confirmAction, setConfirmAction] = useState<"SAVE" | "ARCHIVE" | "DISCARD" | null>(null);
   const [error, setError] =
     useState<string | null>(null);
 
@@ -78,9 +81,10 @@ export function FacultyAssessmentEditor({
       : `/api/courses/quizzes/${assessment.id}/transition`;
 
   async function save(
-    event: FormEvent<HTMLFormElement>,
+    event?: FormEvent<HTMLFormElement>,
+    confirmed = false,
   ) {
-    event.preventDefault();
+    event?.preventDefault();
     if (saving || deleting) return;
 
     const cleanTitle = title.trim();
@@ -105,9 +109,8 @@ export function FacultyAssessmentEditor({
       return;
     }
 
-    if (!window.confirm(titleOnly?"Confirm title correction? Learner submissions and assessment requirements will stay unchanged.":assessment.kind === "QUIZ" && assessment.status !== "DRAFT"
-      ? "Confirm metadata-only Quiz edits? Existing questions and learner attempts remain unchanged."
-      : "Confirm these draft assessment edits?")) return;
+    if (!confirmed) { setConfirmAction("SAVE"); return; }
+    setConfirmAction(null);
     setError(null);
     setSaving(true);
     try {
@@ -152,15 +155,10 @@ export function FacultyAssessmentEditor({
     }
   }
 
-  async function deleteAssessment() {
+  async function deleteAssessment(confirmed = false) {
     if (saving || deleting || !facultyAssessmentCanArchive(assessment.kind,assessment.status)) return;
-    if (
-      !window.confirm(
-        `Archive this ${assessment.kind.toLowerCase()} from active Course surfaces? Existing historical attempts/submissions will be preserved.`,
-      )
-    ) {
-      return;
-    }
+    if (!confirmed) { setConfirmAction("ARCHIVE"); return; }
+    setConfirmAction(null);
 
     setError(null);
     setDeleting(true);
@@ -205,7 +203,8 @@ export function FacultyAssessmentEditor({
   return (
     <>
       <Button
-        size="sm"
+        size="md"
+        className="min-h-11 md:min-h-[var(--lms-control-height)]"
         variant="secondary"
         onClick={() => {
           // Reset from latest server props every time: cancelled edits and
@@ -217,6 +216,7 @@ export function FacultyAssessmentEditor({
             ? String(assessment.maxPoints ?? 10)
             : String(assessment.maxAttempts ?? 1));
           setError(null);
+          setConfirmAction(null);
           setOpen(true);
         }}
       >
@@ -227,7 +227,7 @@ export function FacultyAssessmentEditor({
         open={open}
         onOpenChange={(next) => {
           if (!next && (saving || deleting)) return;
-          if (!next && dirty && !window.confirm(assessment.kind==="QUIZ"?"Discard quiz changes?":"Discard this assignment draft?")) return;
+          if (!next && dirty) { setConfirmAction("DISCARD"); return; }
           setOpen(next);
         }}
         title={`Edit ${assessment.kind === "QUIZ" ? "Quiz" : "Assignment"}`}
@@ -242,7 +242,8 @@ export function FacultyAssessmentEditor({
             {facultyAssessmentCanArchive(assessment.kind,assessment.status) ? <Button
               variant="danger"
               disabled={saving || deleting}
-              onClick={deleteAssessment}
+              loading={deleting}
+              onClick={() => void deleteAssessment()}
             >
               {deleting
                 ? "Deleting…"
@@ -252,6 +253,7 @@ export function FacultyAssessmentEditor({
               type="submit"
               form={`faculty-assessment-edit-${assessment.id}`}
               disabled={saving || deleting}
+              loading={saving}
             >
               {saving
                 ? "Saving…"
@@ -268,7 +270,7 @@ export function FacultyAssessmentEditor({
           {titleOnly?<Banner tone="info">
             Learner submissions exist. Deadline, points, audience, resources and submission methods are locked. You can still correct the title.
           </Banner>:null}
-          <label className="block text-sm font-semibold text-body">
+          <label className="block text-[13px] font-semibold leading-4 text-body">
             Title
             <Input
               className="mt-1.5"
@@ -281,7 +283,7 @@ export function FacultyAssessmentEditor({
             />
           </label>
 
-          <label className="block text-sm font-semibold text-body">
+          <label className="block text-[13px] font-semibold leading-4 text-body">
             Description
             <Textarea
               className="mt-1.5"
@@ -296,7 +298,7 @@ export function FacultyAssessmentEditor({
             />
           </label>
 
-          <label className="block text-sm font-semibold text-body">
+          <label className="block text-[13px] font-semibold leading-4 text-body">
             Due date (IST)
             <Input
               className="mt-1.5"
@@ -309,7 +311,7 @@ export function FacultyAssessmentEditor({
             />
           </label>
 
-          <label className="block text-sm font-semibold text-body">
+          <label className="block text-[13px] font-semibold leading-4 text-body">
             {assessment.kind === "ASSIGNMENT"
               ? "Maximum points"
               : "Maximum attempts"}
@@ -334,16 +336,32 @@ export function FacultyAssessmentEditor({
               <span className="mt-1 block text-xs font-normal text-muted-foreground">The published Quiz attempt limit is locked. Quiz deadlines cannot change after learner attempts or closure.</span> : null}
           </label>
 
-          {error ? (
-            <p
-              role="alert"
-              className="text-sm font-semibold text-error"
-            >
-              {error}
-            </p>
-          ) : null}
+          {error ? <Alert tone="error">{error}</Alert> : null}
         </form>
       </Drawer>
+      <ConfirmDialog
+        open={confirmAction !== null}
+        onOpenChange={next => { if (!next && !saving && !deleting) setConfirmAction(null); }}
+        title={confirmAction === "SAVE"
+          ? (titleOnly
+              ? "Confirm title correction? Learner submissions and assessment requirements will stay unchanged."
+              : assessment.kind === "QUIZ" && assessment.status !== "DRAFT"
+                ? "Confirm metadata-only Quiz edits? Existing questions and learner attempts remain unchanged."
+                : "Confirm these draft assessment edits?")
+          : confirmAction === "ARCHIVE"
+            ? "Archive this " + assessment.kind.toLowerCase() + " from active Course surfaces? Existing historical attempts/submissions will be preserved."
+            : assessment.kind === "QUIZ" ? "Discard quiz changes?" : "Discard this assignment draft?"}
+        confirmLabel={confirmAction === "SAVE" ? "Save changes" : confirmAction === "ARCHIVE" ? "Archive" : "Discard edits"}
+        confirmVariant={confirmAction === "SAVE" ? "primary" : "danger"}
+        pending={saving || deleting}
+        onConfirm={() => {
+          const action = confirmAction;
+          setConfirmAction(null);
+          if (action === "SAVE") void save(undefined, true);
+          else if (action === "ARCHIVE") void deleteAssessment(true);
+          else if (action === "DISCARD") setOpen(false);
+        }}
+      />
     </>
   );
 }

@@ -22,18 +22,18 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
       visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>}/>
   <form method="get" action="/college/live-classes"
     className="flex flex-wrap items-end gap-3 border-b border-border pb-4 print:hidden">
-    <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
+    <label className="grid min-w-0 flex-1 gap-1 text-xs font-semibold text-body">
       Session, lesson or course
       <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
         className="min-h-11 min-w-0 md:min-h-9"/>
     </label>
-    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+    <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">
       Course code (exact)
       <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
         placeholder="e.g. CS101"
         className="min-h-11 min-w-0 md:min-h-9"/>
     </label>
-    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+    <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">
       Publication
       <Select name="status" defaultValue={data.query.status}
         className="min-h-11 md:min-h-9">
@@ -41,7 +41,7 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
         <option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option>
       </Select>
     </label>
-    <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Section
+    <label className="grid min-w-48 gap-1 text-xs font-semibold text-body">Section
       <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
         className="min-h-11 md:min-h-9">
         <option value="">All classes</option>
@@ -50,35 +50,35 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
         </option>)}
       </Select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Session audience
+    <label className="grid gap-1 text-xs font-semibold text-body">Session audience
       <Select name="scope" defaultValue={data.query.scope}
         className="min-h-11 md:min-h-9">
         <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option>
         <option value="SECTION">Section-specific</option>
       </Select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Timing
+    <label className="grid gap-1 text-xs font-semibold text-body">Timing
       <Select name="view" defaultValue={data.view}
         className="min-h-11 md:min-h-9">
         <option value="ALL">All sessions</option><option value="UPCOMING">Upcoming or ongoing</option>
         <option value="PAST">Past sessions</option>
       </Select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">From (IST)
+    <label className="grid gap-1 text-xs font-semibold text-body">From (IST)
       <DateInput mode="date" name="from" defaultValue={data.from??""}
         className="min-h-11 md:min-h-9"/>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Through (IST)
+    <label className="grid gap-1 text-xs font-semibold text-body">Through (IST)
       <DateInput mode="date" name="to" defaultValue={data.to??""}
         className="min-h-11 md:min-h-9"/>
     </label>
     <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
-    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
+    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
   </form>
   <section aria-label="Persisted live classes" className="border-y border-border">
     <p className="border-b border-border p-4 text-sm text-muted-foreground">{data.total} matching live classes</p>
     {data.items.length===0?<p className="p-5 text-sm text-body">No saved sessions match these filters.</p>:
-      <div className="divide-y divide-border">{data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 p-4">
+      <div className="divide-y divide-border">{data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 px-1 py-4 md:px-4">
         <div className="flex flex-wrap justify-between gap-2">
           <h2 className="min-w-0 break-words font-semibold text-foreground">{item.title}</h2>
           <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
@@ -90,7 +90,7 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
         <p className="text-xs text-muted-foreground">{item.deliveryId?"Section-specific session":"Shared offering session"}</p>
         <p className="break-words text-sm text-body">Lesson: {item.lessonName} · {item.cohortName} · {item.periodName}</p>
         <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-          className="block break-words text-sm font-semibold text-primary-text hover:underline">
+          className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-primary-text hover:text-primary-hover hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           {item.courseName} ({item.courseCode})
         </Link>
       </article>)}</div>}

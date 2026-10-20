@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import {TpoOutcomeLabelsEditor} from "@/components/tpo/tpo-outcome-labels-editor";
 import {readTpoOutcomeLabels} from "@/modules/placements/tpo-outcome-label-settings-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -15,6 +16,6 @@ export default async function AfterCollegeSettings(){
  <PageHeader title="After college" /><p className="text-sm text-muted-foreground">See the outcomes students or the placement cell can select after college.</p>
  <ol className="grid min-w-0 gap-2 min-[768px]:grid-cols-2">{choices.map(choice=><li className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3" key={choice.value}><strong>{choice.label}</strong><p className="text-xs text-muted-foreground">{choice.value==="DEBARRED"?"Automatic":choice.value.startsWith("PLACED_")?"Updated by placement results":"Set by you or the student"}</p></li>)}</ol>
  {settings.ready?<TpoOutcomeLabelsEditor initial={settings.labels} version={settings.version}/>:
-  <p role="status" className="rounded border border-border p-4 text-sm">Outcome-label storage is not available yet.</p>}
+  <Alert tone="warning">Outcome-label storage is not available yet.</Alert>}
  </div>;
 }

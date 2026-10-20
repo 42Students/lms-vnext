@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -54,7 +56,7 @@ export default async function TpoByCompanyReportPage({
   const query = await searchParams;
   if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/by-company"/>;
   const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{}),...(first(query.sort)?{sort:first(query.sort)}:{}),...(first(query.outcome)?{outcome:first(query.outcome)}:{})});
-  if(!viewQuery.success)return <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6"><PageHeader title="Invalid company report filters" /><p className="mt-2 text-sm text-body">Check search length and page number.</p></section>;
+  if(!viewQuery.success)return <section className="space-y-3"><PageHeader title="Invalid company report filters" /><Alert tone="error"><p className="mt-2 text-sm text-body">Check search length and page number.</p></Alert></section>;
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
     seasonId: first(query.seasonId) || undefined,
@@ -105,14 +107,11 @@ export default async function TpoByCompanyReportPage({
       </form>
       <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope; the visible-companies CSV matches this search, order and page.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
-      {view.total===0&&companyReportHasUserFilters(view.query)?<section role="status"
-        className="border-b border-border px-1 py-4">
-        <p className="text-sm text-body">No company records match these filters within the selected reporting scope.</p>
+      {view.total===0&&companyReportHasUserFilters(view.query)?<EmptyState title="No company records match these filters within the selected reporting scope." action={
         <Link href={companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined})}
           className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">
           Clear company filters
-        </Link>
-      </section>:null}
+        </Link>}/>:null}
 
       <ReportTable
         title="Company placement performance"

@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { PageLoading } from "@/components/ui/page-loading";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
@@ -71,7 +72,7 @@ export default async function LearnerPlacementJobsPage() {
       )} />
 
       
-      <Suspense fallback={<p className="text-sm text-body">Loading drive filters…</p>}>
+      <Suspense fallback={<PageLoading label="Loading drive filters" variant="form" count={2} />}>
         <LearnerJobsBrowse items={rows.map(toItem)} snapshotNowIso={snapshotNowIso}
           savedJobIds={savedJobs.map(job=>job.jobId)} />
       </Suspense>

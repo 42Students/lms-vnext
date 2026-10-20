@@ -1,4 +1,4 @@
-import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 
 type ProjectTemplateBlueprintView = {
   overview?: {
@@ -133,9 +133,9 @@ function TemplateRows({
         <h2 className="m-0 text-base font-semibold text-foreground">
           {title}
         </h2>
-        <StatusBadge tone="neutral">
+        <Badge tone="neutral">
           {rows?.length ?? 0}
-        </StatusBadge>
+        </Badge>
       </div>
       {!rows?.length ? (
         <p className="mb-0 mt-3 text-sm text-muted-foreground">

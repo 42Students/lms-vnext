@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -56,10 +57,7 @@ export default async function TpoPlacementTeamPage() {
       />
 
       {!sources.teamAssignmentsAvailable ? (
-        <section
-          role="status"
-          className="border-t border-border pt-5"
-        >
+        <Alert tone="warning">
           <h2 className="font-semibold text-foreground">
             Faculty team assignments unavailable
           </h2>
@@ -71,18 +69,15 @@ export default async function TpoPlacementTeamPage() {
             membership is assumed to be a coordinator merely
             because it has the Faculty role.
           </p>
-        </section>
+        </Alert>
       ) : null}
 
       {!sources.studentAssignmentsAvailable ? (
-        <section
-          role="status"
-          className="text-sm leading-6 text-body border-t border-border pt-5"
-        >
+        <Alert tone="warning">
           Drive Day student-coordinator assignments are unavailable
           in the registered database. No zero-assignment conclusion
           should be drawn from this source.
-        </section>
+        </Alert>
       ) : null}
 
       <section className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-5">
