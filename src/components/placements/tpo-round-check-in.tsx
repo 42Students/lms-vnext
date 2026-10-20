@@ -40,24 +40,24 @@ export function TpoRoundCheckIn({
     } finally { setBusy(false); }
   }
   return (
-    <div className="mt-2 flex flex-wrap gap-2">
+    <div className="mt-2 grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
       {attendance !== "PRESENT" ? (
         <Button variant="secondary" type="button" disabled={busy} onClick={() => setTarget("PRESENT")}
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold text-primary-text disabled:opacity-60">
+          className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-60 sm:w-auto md:min-h-9">
           Mark checked-in
         </Button>
       ) : null}
       {attendance !== "ABSENT" ? (
         <Button variant="secondary" type="button" disabled={busy} onClick={() => setTarget("ABSENT")}
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold text-primary-text disabled:opacity-60">
+          className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-60 sm:w-auto md:min-h-9">
           Mark no-show
         </Button>
       ) : null}
-      {error ? <InlineNotice tone="error" message={error}/> : null}
+      {error ? <div className="min-w-0 sm:w-full"><InlineNotice tone="error" message={error}/></div> : null}
       <ConfirmDialog open={target !== null}
         onOpenChange={next => { if (!next && !busy) setTarget(null); }}
         title={"Confirm "+(target === "ABSENT" ? "no-show" : "checked-in")+"?"}
-        description={"Confirm "+(target === "ABSENT" ? "no-show" : "checked-in")+" for "+displayName+"? This records an audited attendance change."}
+        description={"Confirm "+(target === "ABSENT" ? "no-show" : "checked-in")+" for "+displayName+"? This records an audited attendance change. Current attendance: "+attendance.toLowerCase()+"."}
         confirmLabel={target === "ABSENT" ? "Mark no-show" : "Mark checked-in"}
         confirmVariant={target === "ABSENT" ? "danger" : "primary"} pending={busy}
         onConfirm={() => { if (target) void mark(target); }}/>

@@ -263,3 +263,11 @@
 **Problems fixed (8):** finalized offers exposed correction form at all times; dense two-column form felt unfinished when no change intended; note textareas too short; conditional fields didn't indicate required status; confirmation lacked date and outcome summary; every choice inherited destructive red styling; phone form hierarchy lacked a clear disclosure task; long correction controls increased list height. Kept pending offer edit visible by default, collapsed correction behind native disclosure, enlarged note areas, added required attributes, made modal show selected outcome/date while styling Did not join as destructive and positive states primary. All guards, endpoint, payload, IDs and wording retained.
 
 **Files:** `src/components/placements/tpo-joining-update-form.tsx`, queue, proof. No CI.
+
+## Surface 44 — TPO round check-in controls
+
+**Reviewed:** WAITING/PRESENT/ABSENT transitions, CANCELLED/COMPLETED removal, optimistic expectedAttendance, explicit audited no-show/check-in modal, pending/409/failure and refresh, shared Button/ConfirmDialog/InlineNotice. 375/768 source mobile styles; no runtime/CI.
+
+**Problems fixed (5):** action buttons compressed/uneven at 375px; 12px labels too small for key attendance action; errors shared the same line as action controls; modal did not disclose existing attendance; flex controls could become clipped in row containers. Stacked 44px full-width phone actions, adjusted font to legacy 14px, gave errors their own width and added explicit current status to confirmation. Existing two-step intentional change, result semantics and all API payload fields unchanged.
+
+**Files:** `src/components/placements/tpo-round-check-in.tsx`, queue and proof. No CI.
