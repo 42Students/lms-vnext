@@ -118,14 +118,14 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
  return <section aria-label="Bulk request decisions" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
    <h2 className="min-w-0 text-[var(--lms-font-md)] font-semibold leading-[26px]">
-    <button type="button" aria-expanded={expanded} aria-controls={selectionId} disabled={pending}
+    <Button variant="ghost" type="button" aria-expanded={expanded} aria-controls={selectionId} disabled={pending}
      onClick={()=>setExpanded(value=>!value)}
-     className="inline-flex min-h-11 max-w-full items-center gap-[var(--lms-space-2)] text-left text-[var(--lms-heading)] outline-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
+     className="max-w-full">
      <svg aria-hidden="true" className={expanded?"h-4 w-4 shrink-0 rotate-90":"h-4 w-4 shrink-0"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       <path d="m9 18 6-6-6-6"/>
      </svg>
      Act on selected requests
-    </button>
+    </Button>
    </h2>
    <p role="status" className="min-w-0 text-[13px] leading-5 text-[var(--lms-body-text)]">
     {chosen.length} selected of {rows.length} waiting requests on this page.
