@@ -24,7 +24,7 @@ export default async function SuperAdminBatchPromotionPage({
   if (!input.success) return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion" />
     <ErrorState title="Invalid batch promotion filters" description="Use valid program, cohort and optional academic year values."
-      action={<Link href="/admin/batch-promotion" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-5">
@@ -95,12 +95,12 @@ export default async function SuperAdminBatchPromotionPage({
               ...(input.data.programId?{programId:input.data.programId}:{}),cohortId:batch.id,
               ...(showCompleted?{showCompleted:"1"}:{}),
             })}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Preview →</Link>},
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Preview →</Link>},
         ]}
       />
     </section>
     {invalidCohort ? <ErrorState title="Batch unavailable" description="The selected batch is not available within this college and program."
-      action={<Link href="/admin/batch-promotion" className="font-semibold text-primary-text">Reset selection</Link>} /> :
+      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Reset selection</Link>} /> :
     !preview || !summary ? <EmptyState title="Choose a batch" description="No learner data is fetched until you select a college-owned batch." /> :
     <>
       <section className="min-w-0 space-y-3 border-b border-border pb-5">
@@ -154,6 +154,6 @@ export default async function SuperAdminBatchPromotionPage({
         </div> : <EmptyState title="No enrolled learners" description="No registered learner enrollments were present for this batch." />}
       </section>
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline min-[768px]:min-h-9">← Academics</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">← Academics</Link>
   </div>;
 }

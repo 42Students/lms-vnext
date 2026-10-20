@@ -50,12 +50,12 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    aria-expanded={open} aria-controls={open?"admin-college-bulk-import-panel":undefined}
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
   {open?<div id="admin-college-bulk-import-panel" className="space-y-3">
-   <label className="grid gap-1 text-[13px] font-semibold text-body print:hidden">Organization
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Organization
     <Select className="min-h-11 md:min-h-9" value={organizationId} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);}}>
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
     </Select></label>
-   <label className="grid gap-1 text-[13px] font-semibold text-body print:hidden">CSV (name, code, city, state, country)
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">CSV (name, code, city, state, country)
     <Textarea rows={5} maxLength={150000} value={csv} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
      className="min-h-11 font-mono" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"

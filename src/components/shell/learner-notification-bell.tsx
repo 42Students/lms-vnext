@@ -106,7 +106,7 @@ export function LearnerNotificationBell(){
     <ul className="mt-2 space-y-2">
      {due.slice(0,3).map(item=><li key={item.key}>
       <Link href={item.href} onClick={()=>setOpen(false)}
-       className="block min-h-11 rounded-lg border border-warning p-3 text-sm text-body">
+       className="block min-h-11 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
        {item.body}
       </Link></li>)}
     </ul>
@@ -119,7 +119,7 @@ export function LearnerNotificationBell(){
      const target=learnerNotificationTarget(row.notification.actionHref)??"/learn/notifications";
      return <li key={row.notification.id}>
       <Link href={target} onClick={()=>setOpen(false)}
-        className="block min-h-11 rounded-[8px] border border-border bg-surface px-4 py-3 text-sm text-body hover:bg-[var(--lms-neutral-50)]">
+        className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm text-body hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
        <span className="block font-semibold text-foreground">{row.notification.title}
         {row.notification.readAt===null?" · New":""}</span>
        <span className="mt-1 block line-clamp-2 leading-[1.5] text-muted-foreground">{row.notification.body}</span>
@@ -136,7 +136,7 @@ export function LearnerNotificationBell(){
     onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
     className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
     <span aria-hidden="true">🔔</span>
-    {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-topbar-unread)] px-1 text-[10px] font-bold leading-none text-white">
+    {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-[var(--lms-radius-pill)] bg-[var(--lms-topbar-unread)] px-1 text-[10px] font-bold leading-none text-white">
      {count>99?"99+":count}</span>:null}
   </Button>
   {open ? mobile ? <Drawer id="lms-learner-mobile-notifications" open={open} onOpenChange={setOpen} title="Notifications" className={style.learnerNotificationDrawer} bodyClassName={style.learnerNotificationDrawerBody} footer={panelFooter}>{panelBody}</Drawer> : <PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}

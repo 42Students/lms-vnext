@@ -64,7 +64,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
           </label>
           <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Refresh</Button>
-          <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
+          <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>
         </form>
       </section>
       <section aria-label="Manage classes" className="space-y-3 pt-2">
@@ -83,7 +83,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             {key:"description",header:"Description",mobilePriority:"secondary",cell:row=>row.description?.trim()||"—"},
             {key:"students",header:"Students",mobilePriority:"secondary",cell:row=><>
               {row.activeLearners}{row.capacity!==null&&row.activeLearners>=row.capacity?
-                <span className="ml-2 rounded border border-border px-2 text-xs font-semibold text-foreground" title="Class is full; learners cannot be moved into it.">Class full</span>:null}
+                <span className="ml-2 rounded-[var(--lms-radius-pill)] border border-border bg-surface px-2 text-xs font-semibold text-foreground" title="Class is full; learners cannot be moved into it.">Class full</span>:null}
             </>},
             {key:"capacity",header:"Max Students",mobilePriority:"secondary",cell:row=>row.capacity??"—"},
             {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeClassRowActions row={row}/>},
@@ -91,11 +91,11 @@ export default async function SuperAdminClassesPage({ searchParams }: {
         <nav aria-label="Class pages" className="flex items-center justify-between gap-3 text-sm">
           <span role="status" aria-live="polite">{data.items.length} of {data.total} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
-            {data.query.page>1?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
-            {data.query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
+            {data.query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
+            {data.query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
           </div>
         </nav>
-        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text">
+        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Batch Promotion →
         </Link>
       </section>
