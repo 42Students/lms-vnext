@@ -43,7 +43,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
    <div className="min-w-0 divide-y divide-border border-y border-border">
     {rows.map(row=><article key={row.id} className="min-w-0 py-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-       <h2 className="min-w-0 break-words text-base font-semibold">{row.subject||"(No subject)"}</h2>
+       <h2 className="min-w-0 break-words text-base font-semibold text-foreground">{row.subject||"(No subject)"}</h2>
        <StatusBadge>{({NEW:"To read",TRIAGED:"Being handled",RESOLVED:"Done"} as Record<string,string>)[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>
       </div>
       <p className="mt-1 break-all text-sm text-body">From {row.fromAddress} · To {row.toAddress}</p>
@@ -68,7 +68,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
     </div>
     {message?<p role="status" className="mt-3 text-sm text-body">{message}</p>:null}
     <section className="mt-5 min-w-0 border-t border-border pt-4">
-      <h3 className="text-sm font-semibold">Plain text message</h3>
+      <h3 className="text-sm font-semibold text-foreground">Plain text message</h3>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{selected.bodyPlain.slice(0,15000)}</p>
       {selected.bodyPlain.length>15000?<p className="text-xs text-muted-foreground">Message preview truncated after 15,000 characters.</p>:null}
     </section>
