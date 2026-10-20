@@ -324,12 +324,7 @@ export function PlacementRequestQueue({
                       disabled=
                         pendingId !== null
                       }
-                      onClick={() =>
-                        decide(
-                          item,
-                          "APPROVE",
-                        )
-                      }
+                      onClick={()=>setConfirmation({item,action:"APPROVE"})}
                     >
                       {pendingId === item.id
                         ? "Saving…"
@@ -342,12 +337,13 @@ export function PlacementRequestQueue({
                       disabled={
                         pendingId !== null
                       }
-                      onClick={() =>
-                        decide(
-                          item,
-                          "REJECT",
-                        )
-                      }
+                      onClick={()=>{
+                        if((notes[item.id]?.trim().length??0)<3){
+                          setValidationError(prev=>({...prev,[item.id]:"Explain why this request is rejected (at least 3 characters)."}));
+                          return;
+                        }
+                        setConfirmation({item,action:"REJECT"});
+                      }}
                     >
                       Reject
                     </Button>
@@ -363,6 +359,15 @@ export function PlacementRequestQueue({
           );
         })}
       </div>
+      <ConfirmDialog open={confirmation!==null} pending={pendingId!==null}
+        onOpenChange={next=>{if(!next&&!pendingId)setConfirmation(null);}}
+        title={confirmation?.action==="APPROVE"?"Approve learner request?":"Reject learner request?"}
+        description={confirmation?.action==="APPROVE"
+          ?"Approving applies the placement effect immediately."
+          :"Reject with the recorded decision note? Placement state will remain unchanged."}
+        confirmLabel={confirmation?.action==="APPROVE"?"Approve request":"Reject request"}
+        confirmVariant={confirmation?.action==="APPROVE"?"primary":"danger"}
+        onConfirm={()=>{if(confirmation)void decide(confirmation.item,confirmation.action);}}/>
     </section>
   );
 }
