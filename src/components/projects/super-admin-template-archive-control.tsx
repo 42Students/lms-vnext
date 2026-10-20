@@ -2,6 +2,7 @@
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Banner } from "@/components/ui/banner";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -24,6 +25,5 @@ export function SuperAdminTemplateArchiveControl({templateId,title,status}:{
  return <div className={styles.legacy+" "+styles.contents}><span><Button type="button" variant="secondary" disabled={busy} onClick={()=>void archive()}
     className="">
     {busy?"Archiving…":"Archive"}</Button>
-    {error?<span role="alert" className="block text-xs text-error">{error}</span>:null}
-  </span>{dialog}</div>;
+    </span>{error?<Banner tone="error">{error}</Banner>:null}{dialog}</div>;
 }

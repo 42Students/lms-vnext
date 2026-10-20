@@ -1,6 +1,7 @@
 "use client";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {useRouter,usePathname,useSearchParams} from "next/navigation";
 import {useId,useState} from "react";
@@ -36,7 +37,7 @@ export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter stude
    <Select className="mt-1 min-h-11 w-full text-base md:min-h-9 md:text-sm" value={resolvedTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)} onChange={event=>update(field,event.target.value)}>
     <option value={field.allValue??""}>All</option>{field.options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
    </Select>
-   {invalidTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)&&<span role="alert" className="mt-1 block text-xs text-warning">Unknown saved filter value. Clear grid filters to recover.</span>}
+   {invalidTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)&&<InlineNotice tone="error" message="Unknown saved filter value. Clear grid filters to recover."/>}
   </label>)}
   {fields.some(field=>query.has(field.urlKey??"filter."+field.key))&&<Button variant="secondary" type="button"
    onClick={()=>{const next=clearTpoGridFilters(new URLSearchParams(query.toString()),fields);router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});}}

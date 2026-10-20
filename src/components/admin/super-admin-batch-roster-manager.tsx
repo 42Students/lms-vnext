@@ -42,14 +42,14 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
   finally{pendingRef.current=false;setMoving(null);}
  }
  return <section className="space-y-4 border-b border-border pb-5" aria-label="Batch student roster">
-  <div className="grid gap-3 min-[768px]:grid-cols-2">
+  <div className="grid gap-3 md:grid-cols-2 print:hidden">
    <label className="grid gap-1 text-[13px] font-semibold text-body">Search name, roll no. or email
     <Input type="search" maxLength={120} value={search} onChange={e=>setSearch(e.target.value)}
-     className="min-h-11 w-full min-[768px]:min-h-9"/>
+     className="min-h-11 w-full md:min-h-9"/>
    </label>
    <label className="grid gap-1 text-[13px] font-semibold text-body">Class
     <Select value={source} onChange={e=>setSource(e.target.value)}
-     className="min-h-11 w-full min-[768px]:min-h-9">
+     className="min-h-11 w-full md:min-h-9">
       <option value="ALL">All classes</option><option value="UNASSIGNED">Not in a class</option>
       {classes.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
     </Select>
@@ -68,10 +68,10 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
     {key:"class",header:"Current class",mobileLabel:"Current class",mobilePriority:"secondary",
      cell:row=>row.classId?labels.get(row.classId)??"Unknown":"Not assigned"},
     {key:"move",header:"Move to",mobileLabel:"Move to",mobilePriority:"action",cell:row=>
-     <div className="flex min-w-0 flex-wrap items-center gap-2">
+     <div className="flex min-w-0 flex-wrap items-center gap-2 print:hidden">
       <Select aria-label={"Destination class for "+(row.name??"student")} value={destinations[row.learnerEnrollmentId]??""}
        onChange={event=>setDestinations(current=>({...current,[row.learnerEnrollmentId]:event.target.value}))}
-       disabled={Boolean(moving)} className="min-h-11 min-w-0 flex-1">
+       disabled={Boolean(moving)} className="min-h-11 min-w-0 flex-1 md:min-h-9">
        <option value="">Select class</option>
        {options.filter(choice=>!row.classId||choice.academicPeriodId===classes.find(item=>item.id===row.classId)?.academicPeriodId)
         .map(choice=><option key={choice.id} value={choice.id}
@@ -79,7 +79,7 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
          {choice.name}{choice.capacity!==null&&choice.learnerCount>=choice.capacity?" · Full":""}
         </option>)}
       </Select>
-      <Button type="button" variant="secondary"
+      <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
        disabled={Boolean(moving)||!destinations[row.learnerEnrollmentId]||destinations[row.learnerEnrollmentId]===row.classId}
        onClick={()=>setPendingRow(row)}>{moving===row.learnerEnrollmentId?"Moving…":"Move"}</Button>
      </div>},

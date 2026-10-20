@@ -115,14 +115,14 @@ export function SuperAdminHrAccountDialog({
       }
       footer={
         <>
-          <Button
+          <Button className="min-h-11 md:min-h-9"
             variant="secondary"
             disabled={pending}
             onClick={onClose}
           >
             Cancel
           </Button>
-          <Button
+          <Button className="min-h-11 md:min-h-9"
             type="submit"
             form={formId}
             disabled={pending || !eligible}
@@ -151,18 +151,18 @@ export function SuperAdminHrAccountDialog({
             </label>
             {createCompany?<div className="mb-4 space-y-3 border-b border-border pb-4">
               <label className="grid gap-1 text-[13px] font-semibold text-body">Company name
-                <Input value={newCompanyName} minLength={2} maxLength={150} required
+                <Input className="min-h-11 md:min-h-9" value={newCompanyName} minLength={2} maxLength={150} required
                   onChange={event=>setNewCompanyName(event.target.value)} disabled={pending}/>
               </label>
               <label className="grid gap-1 text-[13px] font-semibold text-body">First college
-                <Select required value={newCompanyCollegeId} disabled={pending||optionsLoading}
+                <Select className="min-h-11 md:min-h-9" required value={newCompanyCollegeId} disabled={pending||optionsLoading}
                   onChange={event=>setNewCompanyCollegeId(event.target.value)}>
                   <option value="">Select a college</option>
                   {colleges.map(c=><option key={c.collegeId} value={c.collegeId}>{c.collegeName}</option>)}
                 </Select>
               </label>
               <label className="grid gap-1 text-[13px] font-semibold text-body">Company domain (optional)
-                <Input value={newCompanyDomain} placeholder="company.com" maxLength={253}
+                <Input className="min-h-11 md:min-h-9" value={newCompanyDomain} placeholder="company.com" maxLength={253}
                   disabled={pending} onChange={event=>setNewCompanyDomain(event.target.value)}/>
               </label>
               <p className="text-xs text-muted-foreground">
@@ -177,7 +177,7 @@ export function SuperAdminHrAccountDialog({
               Company and first college
             </label>
 
-            <Select
+            <Select className="min-h-11 md:min-h-9"
               id={`${id}-relationship`}
               value={companyRelationshipId}
               required
@@ -237,7 +237,7 @@ export function SuperAdminHrAccountDialog({
                 >
                   {optionsError}
                 </p>
-                <Button
+                <Button className="min-h-11 md:min-h-9"
                   variant="secondary"
                   size="sm"
                   onClick={onReloadOptions}
@@ -273,20 +273,20 @@ export function SuperAdminHrAccountDialog({
           </div>
         )}
 
-        <div className="grid gap-4 min-[768px]:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           <label className="grid gap-1 text-[13px] font-semibold text-body">First Name
-            <Input id={`${id}-first-name`} autoComplete="given-name" value={firstName}
+            <Input className="min-h-11 md:min-h-9" id={`${id}-first-name`} autoComplete="given-name" value={firstName}
               minLength={1} maxLength={120} required disabled={pending}
               onChange={event=>setFirstName(event.target.value)}/>
           </label>
           <label className="grid gap-1 text-[13px] font-semibold text-body">Last Name
-            <Input id={`${id}-last-name`} autoComplete="family-name" value={lastName}
+            <Input className="min-h-11 md:min-h-9" id={`${id}-last-name`} autoComplete="family-name" value={lastName}
               maxLength={120} disabled={pending}
               onChange={event=>setLastName(event.target.value)}/>
           </label>
         </div>
 
-        <div className="grid gap-4 min-[768px]:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           <div>
             <label
               htmlFor={`${id}-phone`}
@@ -294,7 +294,7 @@ export function SuperAdminHrAccountDialog({
             >
               Mobile number
             </label>
-            <Input
+            <Input className="min-h-11 md:min-h-9"
               id={`${id}-phone`}
               type="tel"
               inputMode="tel"
@@ -317,7 +317,7 @@ export function SuperAdminHrAccountDialog({
             >
               Email · optional
             </label>
-            <Input
+            <Input className="min-h-11 md:min-h-9"
               id={`${id}-email`}
               type="email"
               autoComplete="email"
@@ -339,7 +339,7 @@ export function SuperAdminHrAccountDialog({
           >
             Designation · optional
           </label>
-          <Input
+          <Input className="min-h-11 md:min-h-9"
             id={`${id}-title`}
             value={title}
             maxLength={160}
@@ -359,7 +359,7 @@ export function SuperAdminHrAccountDialog({
             >
               Recruiter status
             </label>
-            <Select
+            <Select className="min-h-11 md:min-h-9"
               id={`${id}-status`}
               value={status}
               disabled={

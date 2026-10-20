@@ -3,6 +3,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -74,7 +75,7 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
        maxLength={200}
       value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);setReviewed(false);}}/>
     </label>:null}
-    {!valid?<p role="status" className="text-xs text-error">Enter a reason of at least 3 characters.</p>:null}
+    {!valid?<InlineNotice tone="error" message="Enter a reason of at least 3 characters."/>:null}
     <div className="flex gap-2">
      <Button variant="secondary" type="button" onClick={()=>setReasonOpen(false)} >Cancel</Button>
      <Button variant="primary" type="button" disabled={!valid} onClick={()=>setReasonOpen(false)}
@@ -90,8 +91,8 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
   <Button variant="primary" type="button" onClick={()=>void save()} disabled={!valid||busy||!reviewed}
    className="min-h-11 md:min-h-9">
    {busy?"Saving…":"Save decision"}</Button>
-  {error?<p role="alert" className="w-full text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="w-full text-sm">{notice}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
   {actionId?<div className="w-full"><TpoBatchUndoControl batchId={batchId} actionId={actionId}/></div>:null}
  </div>;
 }

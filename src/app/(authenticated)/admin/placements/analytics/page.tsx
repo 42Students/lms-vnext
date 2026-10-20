@@ -24,7 +24,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   programId:raw.programId||undefined,cohortId:raw.cohortId||undefined,
   appliedFrom:raw.appliedFrom||undefined,appliedTo:raw.appliedTo||undefined,
  });
- if(!parsed.success)return <div className="space-y-4">
+ if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="Analytics"/>
   <ErrorState title="Invalid analytics filters"
    description="Check the selected dates or filters."
@@ -77,9 +77,9 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."
    actions={<a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
-    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
     Export report (CSV) →</a>}/>
-  <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-4">
+  <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-2 min-[992px]:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold">Drive or company
     <Input name="q" defaultValue={q.q} maxLength={100} className="min-w-0"/></label>
    {select("jobId","Job",filters.jobs)}
@@ -98,7 +98,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   {data.truncated?<Banner tone="warning">
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
   </Banner>:null}
-  <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
+  <dl className="grid grid-cols-2 gap-3 md:grid-cols-3 min-[992px]:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
    <div key={key} className="min-w-0 border-b border-border px-1 py-3"><dt className="text-sm capitalize text-muted-foreground">{hiringMetricLabel(key)}</dt>
     <dd className="mt-1 text-2xl font-semibold tabular-nums">{totals[key]}</dd></div>)}</dl>
   <section className="border-b border-border pb-5" aria-label="Hiring Funnel">
@@ -106,7 +106,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     <h2 className="text-lg font-semibold">Hiring Funnel</h2>
     <p className="text-sm text-muted-foreground">Current persisted stages · the percentage is relative to the previous stage.</p>
    </div>
-   <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{funnel.map(step=>
+   <ol className="mt-4 grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">{funnel.map(step=>
     <li key={step.key} className={styles.step}>
      <span className={styles.label}>{step.label}</span>
      <strong className={styles.count}>{step.count.toLocaleString("en-IN")}</strong>

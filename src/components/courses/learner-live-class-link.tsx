@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 /**
  * LEARNER-course-detail-R03:
@@ -26,7 +27,8 @@ export function LearnerLiveClassLink({href,endsAt}:{href:string;endsAt?:string|n
   try{await navigator.clipboard.writeText(href);setMessage("Meeting link copied.");}
   catch{setMessage("Could not copy the meeting link. Open the meeting instead.");}
  }
- if(ended)return <p role="status" className="mt-3 text-sm text-muted-foreground">
+ if(ended)return <p role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+  <StatusBadge tone="neutral">Ended</StatusBadge>
   This live session has ended. Join Meeting and Copy meeting link are no longer available.
  </p>;
  return <div className="mt-3 flex flex-wrap items-center gap-2">

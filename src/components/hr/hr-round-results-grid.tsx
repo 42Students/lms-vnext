@@ -29,6 +29,6 @@ export function HrRoundResultsGrid({rows,scopeKey}:{
   scopeKey:string;
 }) {
   return <TpoGrid rows={rows} rowKey={row=>row.key} columns={columns}
-    mobilePrimaryKeys={["candidate","outcome","status"]}
+    mobilePrimaryKeys={["candidate","outcome","status","score","waitlist"]}
     storageKey={"hr-results:"+scopeKey}/>;
 }

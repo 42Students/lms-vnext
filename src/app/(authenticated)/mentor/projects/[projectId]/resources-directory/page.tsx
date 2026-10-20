@@ -40,7 +40,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     {" "}{data.linkableCount} with HTTPS links.
    </p>
    <form method="get" action={base+"/resources-directory"}
-    className={mentorResourceDirectoryFilterLayout}>
+    className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full"}>
     <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
       className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>

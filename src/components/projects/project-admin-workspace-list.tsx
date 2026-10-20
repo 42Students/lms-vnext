@@ -97,7 +97,7 @@ export function ProjectAdminWorkspaceList({
       {key:"members",header:"Members",mobilePriority:"secondary",cell:item=>item.memberCount},
       {key:"action",header:"Action",mobilePriority:"action",cell:item=>
         <div className="flex flex-wrap items-center gap-2">
-          <Link href={basePath+"/"+item.id} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open</Link>
+          <Link href={basePath+"/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open</Link>
           <ProjectArchiveControl projectId={item.id} projectTitle={item.title}
             status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
         </div>},
@@ -135,7 +135,7 @@ export function ProjectAdminWorkspaceList({
               "Project workspace."}
           </p>
 
-          <div className="mt-4 grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border py-3 text-xs min-[425px]:grid-cols-3 min-[425px]:divide-x min-[425px]:divide-y-0 [&>*]:min-w-0 [&>*]:px-2 [&>*]:py-2 min-[425px]:[&>*]:py-0">
+          <div className="mt-4 grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border py-3 text-xs md:grid-cols-3 md:divide-x md:divide-y-0 [&>*]:min-w-0 [&>*]:px-2 [&>*]:py-2 md:[&>*]:py-0">
             <Metric
               label="Mentor"
               value={
@@ -169,7 +169,7 @@ export function ProjectAdminWorkspaceList({
               href={
                 basePath +
                 "/" +
-                item.id
+                encodeURIComponent(item.id)
               }
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
             >

@@ -268,7 +268,7 @@ export function SectionOperations({
         row.status === "ACTIVE" ? (
           <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
             <Button
-              size="sm"
+              size="md"
               className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={pending}
@@ -287,7 +287,7 @@ export function SectionOperations({
               Complete
             </Button>
             <Button
-              size="sm"
+              size="md"
               className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="ghost"
               disabled={pending}
@@ -346,7 +346,7 @@ export function SectionOperations({
         row.status === "ACTIVE" ? (
           <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
             <Button
-              size="sm"
+              size="md"
               className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={pending}
@@ -365,7 +365,7 @@ export function SectionOperations({
               Complete
             </Button>
             <Button
-              size="sm"
+              size="md"
               className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="ghost"
               disabled={pending}
@@ -425,7 +425,7 @@ export function SectionOperations({
       cell: (row: FacultyAssignment) =>
         !row.endedAt ? (
           <Button
-            size="sm"
+            size="md"
             variant="ghost"
             disabled={pending}
             onClick={() =>
@@ -498,7 +498,7 @@ export function SectionOperations({
       cell: (row: ScheduleEvent) =>
         row.status === "SCHEDULED" ? (
           <Button
-            size="sm"
+            size="md"
             variant="ghost"
             disabled={pending}
             onClick={() =>
@@ -810,7 +810,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-title"
-              className="mb-1.5 block text-xs font-semibold text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
             >
               Title
             </label>
@@ -826,7 +826,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-start"
-              className="mb-1.5 block text-xs font-semibold text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
             >
               Starts
             </label>
@@ -842,7 +842,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-end"
-              className="mb-1.5 block text-xs font-semibold text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
             >
               Ends
             </label>
@@ -858,7 +858,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-location"
-              className="mb-1.5 block text-xs font-semibold text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
             >
               Location
             </label>
@@ -876,7 +876,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-course"
-              className="mb-1.5 block text-xs font-semibold text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
             >
               Course · optional
             </label>
@@ -905,7 +905,7 @@ export function SectionOperations({
           <div>
             <label
               htmlFor="schedule-faculty"
-              className="mb-1.5 block text-xs font-semibold text-body"
+              className="mb-1.5 block text-[13px] font-semibold leading-4 text-body"
             >
               Faculty · optional
             </label>
