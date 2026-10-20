@@ -470,8 +470,8 @@ export function LearnerQuizAttempt() {
           role="progressbar" value={step + 1} maximum={questions.length} className={styles.track+" mt-4"} />
       </div>
 
-      <div className="grid lg:grid-cols-[220px_1fr]">
-        <aside className="border-b border-border p-4 lg:border-b-0 lg:border-r">
+      <div className="grid min-w-0 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <aside className="order-2 min-w-0 border-t border-border p-4 lg:order-1 lg:border-r lg:border-t-0">
           <p className="text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">Progress</p>
           <div className="mt-3 grid grid-cols-5 gap-2 lg:grid-cols-3">
             {questions.map((question, index) => (
@@ -492,7 +492,7 @@ export function LearnerQuizAttempt() {
           </div>
         </aside>
 
-        <div className="p-4 min-[768px]:p-[var(--lms-canvas-padding)]">
+        <div className="order-1 min-w-0 p-4 min-[768px]:p-[var(--lms-canvas-padding)] lg:order-2">
           {current ? (
             <>
               <div className="flex items-start justify-between gap-4">
@@ -555,14 +555,14 @@ export function LearnerQuizAttempt() {
             ) : null}
           </div>
           {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
-          <div className="mt-7 flex flex-wrap justify-between gap-2">
-            <Button variant="secondary" className="min-h-11 md:min-h-9" disabled={step === 0} onClick={() => setStep((value) => Math.max(0, value - 1))}>Previous</Button>
+          <div className="mt-7 grid min-w-0 grid-cols-2 gap-2">
+            <Button variant="secondary" className="min-h-11 w-full md:min-h-9" disabled={step === 0} onClick={() => setStep((value) => Math.max(0, value - 1))}>Previous</Button>
             {step < questions.length - 1 ? (
-              <Button className="min-h-11 md:min-h-9" disabled={!current || (answers[current.id]??[]).length===0}
+              <Button className="min-h-11 w-full md:min-h-9" disabled={!current || (answers[current.id]??[]).length===0}
                 title={!current || (answers[current.id]??[]).length===0?"Answer this question or use the question numbers to skip.":undefined}
                 onClick={() => setStep((value) => Math.min(questions.length - 1, value + 1))}>Next</Button>
             ) : (
-              <Button className="min-h-11 md:min-h-9" loading={submitting} disabled={submitting} onClick={requestSubmit}>{submitting ? "Submitting…" : "Submit"}</Button>
+              <Button className="min-h-11 w-full md:min-h-9" loading={submitting} disabled={submitting} onClick={requestSubmit}>{submitting ? "Submitting…" : "Submit"}</Button>
             )}
           </div>
         </div>
