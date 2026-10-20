@@ -44,12 +44,12 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/verification/CollegeVerificationPanel.tsx`
 - [x] `src/components/auth/connection-failure-notice.tsx`
 - [x] `src/components/courses/course-detail-anchor-tabs.tsx`
-- [ ] `src/components/placements/learner-placements-tabs.tsx`
-- [ ] `src/components/public/error-page-view.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-preview.tsx`
-- [ ] `src/components/ui/date-range-picker.tsx`
-- [ ] `src/components/ui/long-text.tsx`
-- [ ] `src/components/ui/permission-action.tsx`
+- [x] `src/components/placements/learner-placements-tabs.tsx`
+- [x] `src/components/public/error-page-view.tsx`
+- [x] `src/components/tpo/tpo-academic-import-preview.tsx`
+- [x] `src/components/ui/date-range-picker.tsx`
+- [x] `src/components/ui/long-text.tsx`
+- [x] `src/components/ui/permission-action.tsx`
 - [ ] `src/app/(authenticated)/teacher/error.tsx`
 - [ ] `src/app/(authenticated)/admin/layout.tsx`
 - [ ] `src/app/(authenticated)/hr/error.tsx`
