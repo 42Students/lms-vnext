@@ -229,7 +229,7 @@ export function CreateProjectControl({
   const form = (
         <form onSubmit={submit} className="grid min-w-0 grid-cols-1 items-start gap-4 md:grid-cols-2">
           <label className="min-w-0">
-            <span className="mb-1.5 block text-sm font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Assigned template
             </span>
             <Select
@@ -250,7 +250,7 @@ export function CreateProjectControl({
             </Select>
           </label>
           <label className="min-w-0">
-            <span className="mb-1.5 block text-sm font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Project title
             </span>
             <Input
@@ -262,7 +262,7 @@ export function CreateProjectControl({
             />
           </label>
           <label className="min-w-0">
-            <span className="mb-1.5 block text-sm font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Slug
             </span>
             <Input
@@ -280,7 +280,7 @@ export function CreateProjectControl({
             </span>
           </label>
           <label className="min-w-0 md:col-span-2">
-            <span className="mb-1.5 block text-sm font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Summary
             </span>
             <Textarea
@@ -293,7 +293,7 @@ export function CreateProjectControl({
             />
           </label>
           <label className="min-w-0">
-            <span className="mb-1.5 block text-sm font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Primary mentor
             </span>
             <Select
@@ -329,7 +329,7 @@ export function CreateProjectControl({
             </Select>
           </label>
           {classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try again</Button></p>:null}
-          <label className="grid gap-1 text-sm font-semibold text-body">Status
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
             <Select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
               className="w-full">
               <option value="PLANNED">Planned</option>
@@ -347,12 +347,12 @@ export function CreateProjectControl({
               <Button variant="ghost" type="button" className="text-primary-text underline"
                 onClick={()=>setLearnerMembershipIds([])}>Clear</Button>
             </div>
-            <div className="mt-3 max-h-40 min-w-0 space-y-2 overflow-y-auto overscroll-contain">
-              {roster.map(student=><label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 break-words text-sm text-body focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
+            <div tabIndex={0} aria-label="Class learner roster" className="mt-3 max-h-40 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
+              {roster.map(student=><label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 py-2 text-[13px] leading-5 text-body focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
                 <Checkbox checked={learnerMembershipIds.includes(student.membershipId)}
                   onChange={e=>setLearnerMembershipIds(old=>e.target.checked?
                     [...old,student.membershipId]:old.filter(id=>id!==student.membershipId))}/>
-                {student.displayName} · {student.rollNumber}
+                <span className="min-w-0 break-words">{student.displayName} · {student.rollNumber}</span>
               </label>)}
               {loadedRosterSectionId===sectionId&&!roster.length?<p className="text-xs text-muted-foreground">No learners available.</p>:null}
             </div>
@@ -381,6 +381,7 @@ export function CreateProjectControl({
             <Button
               type="submit"
               className="w-full md:w-auto"
+              loading={pending}
               disabled={
                 pending ||
                 !templateId ||
@@ -407,7 +408,8 @@ export function CreateProjectControl({
       ) : (
         <Dialog
           open={open}
-          onOpenChange={setOpen}
+          onOpenChange={next=>{if(!submitLock.current&&!pending)setOpen(next);}}
+          dismissible={!pending}
           title="Create workspace"
           description="Create an independent Project workspace from the exact published template version assigned to this college."
         >
