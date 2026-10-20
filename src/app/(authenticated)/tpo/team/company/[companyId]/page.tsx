@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
@@ -14,7 +13,7 @@ export default async function CompanyTeamPage({params}:{params:Promise<{companyI
  let state:Awaited<ReturnType<typeof readTpoCompanyTeam>>;
  try{state=await readTpoCompanyTeam(context,companyId);}
  catch(error){if(error instanceof TpoCompanyTeamError&&error.code==="NOT_FOUND")notFound();throw error;}
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader title={state.companyName}
     description="Private placement-team company conversation. Recruiters and learners cannot view it."
     actions={<PageBackLink href={"/tpo/companies/"+encodeURIComponent(companyId)} label="Company profile" />}/>

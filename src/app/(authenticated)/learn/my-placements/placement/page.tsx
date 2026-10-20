@@ -40,29 +40,29 @@ export default async function LearnerPlacementCellPage({
       <section className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Need help with a placement decision?</h2>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling, offer extensions, registration changes, off-campus offers, corrections, absence disputes or placement after placement. Your placement team owns the final decision.</p>
-        <Link href="/learn/my-placements/support" className="mr-4 mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">My support-request history →</Link>
-        <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Read placement rules →</Link>
+        <Link href="/learn/my-placements/support" className="mr-4 mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">My support-request history →</Link>
+        <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Read placement rules →</Link>
       </section>
-      <nav aria-label="Placement cell resources" className="flex min-w-0 flex-wrap gap-2">
-        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read all college notices →</Link>
-        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Placement-cell authored notices →</Link>
-        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Notification preferences →</Link>
+      <nav aria-label="Placement cell resources" className="flex min-w-0 flex-wrap gap-3">
+        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">Read all college notices →</Link>
+        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">Placement-cell authored notices →</Link>
+        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">Notification preferences →</Link>
       </nav>
       {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
-        <Alert tone="warning" role="alert">
+        <Alert tone="warning">
           Personal placement alerts are temporarily unavailable. Your official offers and requests remain accessible.
-          <Link href="/learn/my-placements/placement" className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          <Link href="/learn/my-placements/placement" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
             Retry personal alerts
           </Link>
         </Alert>
       )}
-      {!requestRead.available ? <Alert tone="warning" role="alert">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry requests</Link></Alert> : null}
+      {!requestRead.available ? <Alert tone="warning">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry requests</Link></Alert> : null}
       {offerRows.length===0 ? (
         <section role="status" className="border-b border-border pb-5">
           <h2 className="text-base font-semibold text-foreground">Official offers</h2>
           <p className="mt-2 text-sm text-body">{learnerPlacementCellOfferEmptyMessage(offerRows.length)}</p>
           <Link href="/learn/my-placements/applications"
-            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
             Review my applications →
           </Link>
         </section>
@@ -90,7 +90,7 @@ export default async function LearnerPlacementCellPage({
       </section>
       <section id="rules" className="scroll-mt-24 border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Placement rules</h2>
-        <Link href="/learn/my-placements/rules?from=cell" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Read placement rules</Link>
+        <Link href="/learn/my-placements/rules?from=cell" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Read placement rules</Link>
       </section>
     </div>
   );

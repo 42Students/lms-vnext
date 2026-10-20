@@ -122,27 +122,27 @@ export default async function TpoLeadsReportPage({
       <ReportNavigation workspace={workspace} />
       <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
        <p className="min-w-0 flex-1 text-sm text-body">This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.</p>
-       <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Open Engage →</Link>
-       <Link href="/tpo/companies" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Company memory →</Link>
+       <Link href="/tpo/recruiters" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Open Engage →</Link>
+       <Link href="/tpo/companies" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Company memory →</Link>
       </nav>
 
 
       <section aria-label="Recruiter engagement by company" className="space-y-3">
        <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
        <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Recorded drives and students placed use the selected placement season or drive. A drive counts as run only when it has a completed round in the selected season/drive. Zero means no completed round is recorded, not proof that nothing occurred.</p>
-       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
-        {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+       <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
+        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+        {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-60 flex-1 gap-1 text-sm font-semibold">Company
-         <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9">
+         <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 md:min-h-9">
           <option value="">All companies</option>
           {companyEngagement.filter(row=>row.companyId).map(row=>
            <option key={row.companyId!} value={row.companyId!}>{row.companyName}</option>)}
          </Select>
         </label>
-        <Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
+        <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
         {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
-         className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">Clear company</Link>:null}
+         className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Clear company</Link>:null}
        </form>
        <p className="text-xs text-muted-foreground">The company filter applies to this company table and its CSV only. Headline recruiter lead metrics, stage summaries and acquisition source totals remain college-wide.</p>
        {!companyFilter.valid?<Banner tone="error">This company is not in the authorized college report. Clear the company filter.</Banner>:null}
@@ -150,7 +150,7 @@ export default async function TpoLeadsReportPage({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
         ...(selectedCompanyId?{companyId:selectedCompanyId}:{}),
-       }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Export company engagement CSV</a>
+       }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Export company engagement CSV</a>
        <ReportTable title="Engage and placement outcomes by company"
         headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
         rows={companyFilter.rows.map(row=>{

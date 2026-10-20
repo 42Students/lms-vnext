@@ -14,9 +14,9 @@ export default async function RecruiterChangeRequestsPage({params}:{params:Promi
  try{data=await getDriveChangeRequests(context,jobId);}
  catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e;}
  if(data.party!=="COMPANY")notFound();
- return <div className="min-w-0 max-w-full space-y-4">
-  <PageHeader title={data.job.title+" · Change requests"}
-   description="Recruiter · Drive. Suggest changes to the college, reply to their questions and review recorded decisions."
+ return <div className="min-w-0 space-y-5">
+  <PageHeader eyebrow="Recruiter · Drive" title={data.job.title+" · Change requests"}
+   description="Suggest changes to the college, reply to their questions and review recorded decisions."
    actions={<PageBackLink href={"/recruiter/drives/"+encodeURIComponent(jobId)} label="Back to drive"/>}/>
   {!data.storageReady?<Alert tone="warning">
    {data.pendingMessage} The college cannot receive changes here until registration is complete.</Alert>:
