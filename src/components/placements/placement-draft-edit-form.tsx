@@ -357,15 +357,15 @@ export function PlacementDraftEditForm({
   }
 
   return (
-    <Disclosure title="Edit draft opportunity" className="border-y border-border">
+    <Disclosure title="Edit draft opportunity" className="border-y border-[var(--lms-canvas-border)]">
       <form
         onSubmit={submit}
       onChange={markDirty}
-        className="grid gap-5 border-t border-border py-5"
+        className="grid gap-5 border-t border-[var(--lms-canvas-border)] py-5"
       >
-        <div className="grid gap-4 lg:grid-cols-2">
-          <label className="lg:col-span-2">
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+        <div className="grid gap-4 min-[992px]:grid-cols-2">
+          <label className="min-[992px]:col-span-2">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job title
             </span>
             <Input
@@ -376,8 +376,8 @@ export function PlacementDraftEditForm({
               defaultValue={value.job.title}
             />
           </label>
-          <label className="lg:col-span-2">
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+          <label className="min-[992px]:col-span-2">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Description
             </span>
             <Textarea
@@ -391,7 +391,7 @@ export function PlacementDraftEditForm({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Employment type
             </span>
             <Select
@@ -407,7 +407,7 @@ export function PlacementDraftEditForm({
             </Select>
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Work mode
             </span>
             <Select
@@ -421,7 +421,7 @@ export function PlacementDraftEditForm({
             </Select>
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Locations
             </span>
             <Input
@@ -434,7 +434,7 @@ export function PlacementDraftEditForm({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Openings
             </span>
             <Input
@@ -448,7 +448,7 @@ export function PlacementDraftEditForm({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum CTC (LPA)
             </span>
             <Input
@@ -465,7 +465,7 @@ export function PlacementDraftEditForm({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Maximum CTC (LPA)
             </span>
             <Input
@@ -482,7 +482,7 @@ export function PlacementDraftEditForm({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Application mode
             </span>
             <Select
@@ -500,7 +500,7 @@ export function PlacementDraftEditForm({
             </Select>
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Employer application URL
             </span>
             <Input
@@ -516,7 +516,7 @@ export function PlacementDraftEditForm({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Application deadline
             </span>
             <Input
@@ -530,15 +530,15 @@ export function PlacementDraftEditForm({
           </label>
         </div>
 
-        <div className="border-t border-border pt-5">
-          <h3 className="m-0 text-sm font-semibold text-foreground">
+        <div className="border-t border-[var(--lms-canvas-border)] pt-5">
+          <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Eligibility rules
           </h3>
           <p className="mt-1 text-xs leading-5 text-body">
             Leave programs and cohorts unselected to keep the opportunity college-wide.
           </p>
 
-          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          <div className="mt-4 grid gap-4 min-[992px]:grid-cols-2">
             <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible programs
@@ -644,7 +644,7 @@ export function PlacementDraftEditForm({
               ["minUndergraduatePercentage", "Minimum UG %", value.policy.minUndergraduatePercentage, "0.01"],
             ].map(([name,label,current,step]) => (
               <label key={String(name)}>
-                <span className="mb-1.5 block text-xs font-semibold text-body">
+                <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   {label}
                 </span>
                 <Input
@@ -662,7 +662,7 @@ export function PlacementDraftEditForm({
               </label>
             ))}
             <label className="sm:col-span-2">
-              <span className="mb-1.5 block text-xs font-semibold text-body">
+              <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Passing years
               </span>
               <Input
@@ -673,7 +673,7 @@ export function PlacementDraftEditForm({
               />
             </label>
             <label className="sm:col-span-2">
-              <span className="mb-1.5 block text-xs font-semibold text-body">
+              <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Missing evidence
               </span>
               <Select
