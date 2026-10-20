@@ -46,6 +46,7 @@ export function PlacementCandidateEvidenceEditor({
     useState(false);
   const [loading, setLoading] =
     useState(false);
+  const [inlineError, setInlineError] = useState("");
   const [pending, setPending] =
     useState(false);
   const [evidence, setEvidence] =
@@ -56,6 +57,8 @@ export function PlacementCandidateEvidenceEditor({
   ] = useState(false);
 
   async function loadEvidence() {
+    if (loading) return;
+    setInlineError("");
     setLoading(true);
     try {
       const response = await fetch(
@@ -83,6 +86,7 @@ export function PlacementCandidateEvidenceEditor({
       );
       setLoaded(true);
     } catch (error) {
+      setInlineError(error instanceof Error ? error.message : "Please try again.");
       showToast({
         tone: "error",
         title: "Could not load evidence",
@@ -100,6 +104,8 @@ export function PlacementCandidateEvidenceEditor({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
+    if (pending || !loaded) return;
+    setInlineError("");
     setPending(true);
     try {
       const data = new FormData(
@@ -207,6 +213,7 @@ export function PlacementCandidateEvidenceEditor({
       await loadEvidence();
       await onSaved?.();
     } catch (error) {
+      setInlineError(error instanceof Error ? error.message : "Please try again.");
       showToast({
         tone: "error",
         title: "Could not verify evidence",
@@ -220,13 +227,32 @@ export function PlacementCandidateEvidenceEditor({
     }
   }
 
+  const evidenceFields = [
+    ["cgpa", "CGPA", evidence?.cgpa, "0.01", "10"],
+    ["tenthPercentage", "10th %", evidence?.tenthPercentage, "0.01", "100"],
+    ["undergraduatePercentage", "UG %", evidence?.undergraduatePercentage, "0.01", "100"],
+    ["activeBacklogs", "Active backlogs", evidence?.activeBacklogs, "1", "100"],
+    ["pastBacklogs", "Past backlogs", evidence?.pastBacklogs, "1", "100"],
+    ["gapYears", "Gap years", evidence?.gapYears, "1", "50"],
+    ["passingYear", "Passing year", evidence?.passingYear, "1", "2200"],
+  ] as const;
+  const renderEvidenceField = ([name,label,value,step,max]: typeof evidenceFields[number]) => (
+    <label key={name} className="min-w-0">
+      <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">{label}</span>
+      <Input className="min-h-11 w-full md:min-h-9" name={name} type="number" min={0}
+        max={max} step={step} defaultValue={value==null?"":String(value)} />
+    </label>
+  );
+
   return (
-    <Disclosure title="Academic evidence" className="mt-3 border-y border-border">
-      <div className="border-t border-border py-3">
+    <Disclosure title="Academic evidence" className="min-w-0 border-y border-border py-2">
+      <div className="min-w-0 space-y-3 pt-3">
         {!loaded ? (
           <Button
             size="sm"
-            variant="ghost"
+            type="button"
+            className="min-h-11 w-full sm:w-auto md:min-h-9"
+            variant="secondary"
             disabled={loading}
             onClick={loadEvidence}
           >
@@ -237,9 +263,9 @@ export function PlacementCandidateEvidenceEditor({
         ) : (
           <form
             onSubmit={save}
-            className="grid gap-3"
+            className="min-w-0 space-y-4"
           >
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <span className="text-xs text-muted-foreground">
                 Source
               </span>
@@ -264,89 +290,9 @@ export function PlacementCandidateEvidenceEditor({
               </StatusBadge>
             </div>
 
-            <div className="grid gap-3 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-3">
-              {[
-                [
-                  "cgpa",
-                  "CGPA",
-                  evidence?.cgpa,
-                  "0.01",
-                  "10",
-                ],
-                [
-                  "activeBacklogs",
-                  "Active backlogs",
-                  evidence?.activeBacklogs,
-                  "1",
-                  "100",
-                ],
-                [
-                  "pastBacklogs",
-                  "Past backlogs",
-                  evidence?.pastBacklogs,
-                  "1",
-                  "100",
-                ],
-                [
-                  "tenthPercentage",
-                  "10th %",
-                  evidence?.tenthPercentage,
-                  "0.01",
-                  "100",
-                ],
-                [
-                  "undergraduatePercentage",
-                  "UG %",
-                  evidence?.undergraduatePercentage,
-                  "0.01",
-                  "100",
-                ],
-                [
-                  "gapYears",
-                  "Gap years",
-                  evidence?.gapYears,
-                  "1",
-                  "50",
-                ],
-                [
-                  "passingYear",
-                  "Passing year",
-                  evidence?.passingYear,
-                  "1",
-                  "2200",
-                ],
-              ].map(
-                ([
-                  name,
-                  label,
-                  value,
-                  step,
-                  max,
-                ]) => (
-                  <label
-                    key={String(name)}
-                  >
-                    <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
-                      {label}
-                    </span>
-                    <Input
-                      className="min-h-11 md:min-h-9"
-                      name={String(name)}
-                      type="number"
-                      min={0}
-                      max={String(max)}
-                      step={String(step)}
-                      defaultValue={
-                        value == null
-                          ? ""
-                          : String(value)
-                      }
-                    />
-                  </label>
-                ),
-              )}
-
-              <label className="flex items-center gap-2 self-end pb-2 text-[var(--lms-font-sm)] font-semibold text-body">
+            <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {evidenceFields.slice(0,3).map(renderEvidenceField)}
+              <label className="flex min-h-11 min-w-0 items-center gap-2 self-end py-2 text-[var(--lms-font-sm)] font-semibold text-body">
                 <Checkbox
                   type="checkbox"
                   checked={lateralEntry}
@@ -365,7 +311,7 @@ export function PlacementCandidateEvidenceEditor({
                     Diploma %
                   </span>
                   <Input
-                    className="min-h-11 md:min-h-9"
+                    className="min-h-11 w-full md:min-h-9"
                     name="diplomaPercentage"
                     type="number"
                     min={0}
@@ -383,7 +329,7 @@ export function PlacementCandidateEvidenceEditor({
                     12th %
                   </span>
                   <Input
-                    className="min-h-11 md:min-h-9"
+                    className="min-h-11 w-full md:min-h-9"
                     name="twelfthPercentage"
                     type="number"
                     min={0}
@@ -397,10 +343,16 @@ export function PlacementCandidateEvidenceEditor({
                 </label>
               )}
             </div>
+            <Disclosure title="Other academic details" className="border-t border-border py-3">
+              <div className="grid min-w-0 gap-3 pt-2 sm:grid-cols-2 lg:grid-cols-3">
+                {evidenceFields.slice(3).map(renderEvidenceField)}
+              </div>
+            </Disclosure>
 
-            <div>
+            <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:justify-end">
               <Button
                 type="submit"
+                className="min-h-11 w-full sm:w-auto md:min-h-9"
                 size="sm"
                 disabled={pending}
               >
@@ -411,6 +363,7 @@ export function PlacementCandidateEvidenceEditor({
             </div>
           </form>
         )}
+        {inlineError ? <p role="alert" className="text-sm text-destructive">{inlineError}</p> : null}
       </div>
     </Disclosure>
   );
