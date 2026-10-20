@@ -833,10 +833,16 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   --lms-table-hover: rgba(38, 186, 199, .045);
   --lms-radius-shell-control: 9px;
   --lms-touch-target: 44px;
+  /* Complete legacy SCSS stacking scale (components___variables.scss:281-288).
+   * No positional rules are changed by declaring the remaining layers. */
+  --lms-z-below: -1;
   --lms-z-base: 0;
   --lms-z-raised: 10;
   --lms-z-dropdown: 100;
   --lms-z-sticky: 200;
+  --lms-z-drawer: 500;
+  --lms-z-modal: 800;
+  --lms-z-toast: 1000;
   --lms-leading-tight: 1.25;
   --lms-leading-snug: 1.4;
   --lms-leading-normal: 1.6;
