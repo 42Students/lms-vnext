@@ -84,7 +84,7 @@ export default async function CollegeGroupsPage({
 
       <form
         method="get"
-        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4"
+        className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch"
       >
         <label className="block min-w-0 w-full md:w-auto md:min-w-44 text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
           <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
