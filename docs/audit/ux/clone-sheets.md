@@ -705,3 +705,29 @@ Filenames above were fully fetched from branch chatgpt/chat-12-b. Regex-equivale
 | src/components/tpo/tpo-grid-filter-panel.tsx | 0/0/0 | 2/2; 0/0 | 55/55 | 0/5 |
 
 All six remain dependent on actual phone (360/767px), tablet (768/1024px) and desktop browser screenshot/focus/hover/disabled validation for pixel-level acceptance. Global A5/A6/A7/E8 untouched and unticked. Shared UI/tokens and API permissions were not altered; no CI/typecheck/app run. Next inspect TPO students detail pages and company memory routes.
+
+## chat-12 2026-10-20 — Company directory/detail and learner history/participation
+
+- [x] src/app/(authenticated)/tpo/companies/page.tsx — source-level old LMS canvas/metrics/link and 768px responsive comparison completed; browser unverified.
+- [x] src/app/(authenticated)/tpo/companies/[companyId]/page.tsx — source-level old LMS canvas/metrics/link and 768px responsive comparison completed; browser unverified.
+- [x] src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx — source-level old LMS canvas/metrics/link and 768px responsive comparison completed; browser unverified.
+- [x] src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx — source-level old LMS canvas/metrics/link and 768px responsive comparison completed; browser unverified.
+
+### Property/value comparison table
+| File | Legacy source and values | Current authored source locator and values | Result |
+|---|---|---|---|
+| src/app/(authenticated)/tpo/companies/page.tsx | old-lms-pages.md:6,7,8 and 9: one outer white canvas, hairline rows and continuous funnel/metric strip; old-lms-shell.css:23,31,73: 44px phone controls, 768px tablet; old-lms-shell-spec.md:24-25 36px desktop; components___common.scss:68-75 teal underlined links | 66: <Link href="/tpo/companies" className="lms-inline-link mt-4 inline-flex min-h-11; 132: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-; 138: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-; 167: className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:bor; 181: className="grid gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_au | Source aligned; screenshot and browser interactions pending |
+| src/app/(authenticated)/tpo/companies/[companyId]/page.tsx | old-lms-pages.md:6,7,8 and 9: one outer white canvas, hairline rows and continuous funnel/metric strip; old-lms-shell.css:23,31,73: 44px phone controls, 768px tablet; old-lms-shell-spec.md:24-25 36px desktop; components___common.scss:68-75 teal underlined links | 92: className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibo; 104: className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-contr; 108: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-; 139: className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-contr; 144: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms- | Source aligned; screenshot and browser interactions pending |
+| src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx | old-lms-pages.md:6,7,8 and 9: one outer white canvas, hairline rows and continuous funnel/metric strip; old-lms-shell.css:23,31,73: 44px phone controls, 768px tablet; old-lms-shell-spec.md:24-25 36px desktop; components___common.scss:68-75 teal underlined links | 52: <Link href="/tpo/students" className="lms-inline-link inline-flex min-h-11 items; 63: className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-contr; 78: <div key={label} className="min-w-0 border-b border-r border-border bg-surface p; 103: className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold ; 219: <Link href={href(history.page - 1)} className="lms-inline-link inline-flex min-h | Source aligned; screenshot and browser interactions pending |
+| src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx | old-lms-pages.md:6,7,8 and 9: one outer white canvas, hairline rows and continuous funnel/metric strip; old-lms-shell.css:23,31,73: 44px phone controls, 768px tablet; old-lms-shell-spec.md:24-25 36px desktop; components___common.scss:68-75 teal underlined links | 41: className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-; 83: <Link href={journey.history} className="lms-inline-link inline-flex min-h-11 ite; 84: <Link href={journey.roster} className="lms-inline-link inline-flex min-h-11 item | Source aligned; screenshot and browser interactions pending |
+
+### Scoped source grep and responsive proof
+Each complete file fetched from branch. Grep-equivalent: `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE`, `grep -nE 'sm:|md:' FILE`. JSX opening and closing Button/Link counts and curly delimiters source-matched (not a TypeScript compiler or browser test).
+| File | Raw/SVG/hex | Button; Link balance | Braces | sm/md |
+|---|---|---|---|---|
+| src/app/(authenticated)/tpo/companies/page.tsx | 0/0/0 | 1/1; 8/8 | 63/63 | 0/12 |
+| src/app/(authenticated)/tpo/companies/[companyId]/page.tsx | 0/0/0 | 0/0; 12/12 | 129/129 | 0/12 |
+| src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx | 0/0/0 | 0/0; 5/5 | 88/88 | 0/6 |
+| src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx | 0/0/0 | 0/0; 3/3 | 32/32 | 0/3 |
+
+No CI, app execution, responsive screenshots or interaction testing. Global A5–A7/E8 remain unticked per strict rule; no claim all pages are pixel-matched. Next: Company Management, People, Contact Log, Feedback and Students Requests/Preparation views.
