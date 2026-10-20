@@ -52,39 +52,39 @@ export default async function MentorSprintProgressPage({
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Search
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
-            placeholder="Sprint, release or project" className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground" />
+            placeholder="Sprint, release or project" className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+          <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint status
           <Select name="state" defaultValue={data.query.state}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="ALL">All</option><option value="ACTIVE">Active</option>
             <option value="PLANNED">Planned</option><option value="COMPLETED">Completed</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Registered task attention
-          <Select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+          <Select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All sprints</option><option value="BLOCKED">Has blocked tasks</option><option value="IN_REVIEW">Has submitted tasks in review</option><option value="DONE">Sprints with recorded Done tasks</option><option value="TODO">Sprints with recorded To Do tasks</option><option value="NO_TASKS">Sprints without recorded tasks</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Release status
           <Select name="release" defaultValue={data.query.release}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All releases</option><option value="PLANNED">Planned</option>
             <option value="IN_PROGRESS">In progress</option><option value="SHIPPED">Shipped</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint order
-          <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+          <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="PROJECT">Project and Sprint order</option><option value="ACTIVE_FIRST">Active Sprints first</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
@@ -106,8 +106,8 @@ export default async function MentorSprintProgressPage({
       <p className="text-sm text-body">{data.total} matching sprint{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No persisted sprint progress"
         description="No sprints matched the selected state and current Mentor assignments. Unmaterialized or missing pre-migration work is not counted." />
-      : <div className="divide-y divide-border">{data.items.map(item =>
-        <article key={item.id} className="py-4">
+      : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
+        <article key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div><h2 className="font-semibold text-foreground">{item.title}</h2>
               <p className="mt-1 text-sm text-body">{item.projectTitle} · {item.releaseTitle}</p>
