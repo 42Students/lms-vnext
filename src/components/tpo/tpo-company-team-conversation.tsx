@@ -135,15 +135,15 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   }
  }
  return <section aria-label={"Company Team conversation for "+companyName}
-   className="space-y-4 border-t border-border pt-4">
-  <div className="flex flex-wrap items-start justify-between gap-3">
-   <div>
-    <h2 className="font-semibold text-foreground">Team · {companyName}</h2>
+   className="min-w-0 space-y-4 border-t border-border pt-4 [overflow-wrap:anywhere]">
+  <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+   <div className="min-w-0 flex-1">
+    <h2 className="break-words font-semibold text-foreground">Team · {companyName}</h2>
     <p className="mt-1 text-xs text-body">
      Only your placement team sees this. Recruiters and students never do.
     </p>
    </div>
-   <div className="flex w-full flex-wrap items-center gap-2 text-sm sm:w-auto">
+   <div className="flex w-full shrink-0 flex-wrap items-center gap-2 text-sm sm:w-auto">
     {data?.status==="READY"?<Button variant="ghost" type="button" disabled={busy}
       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
       onClick={()=>void mutate({action:"FOLLOW",following:!data.following})}>
@@ -162,7 +162,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
      className="border-y border-[var(--lms-canvas-border)] py-3 text-sm">
      <h3 className="font-semibold">Decided:</h3>
      {data.messages.filter(m=>m.decision&&!m.deletedAt).slice(-5).map(m=>
-       <a key={m.id} href={"#company-team-"+m.id} className="lms-inline-link block min-h-11 truncate text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{m.body}</a>)}
+       <a key={m.id} href={"#company-team-"+m.id} className="lms-inline-link flex min-h-11 min-w-0 items-center break-words py-1 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{m.body}</a>)}
    </aside>:null}
    {data.messages.length===0?<EmptyState title="Nothing here yet." description="Write the first message. @ someone to bring them in, or Ask someone to give a task a name and a date."/>:null}
    <ScrollCue axis="y" label="Company Team message history" viewportClassName="max-h-[35rem]"><ol role="log" aria-live="polite" aria-label="Company Team messages" className="space-y-3">
@@ -173,10 +173,10 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
         {m.editedAt?" · edited":""}
       </p>
       {m.decision&&!m.deletedAt?<strong className="text-xs text-success">Decision</strong>:null}
-      <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">
+      <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body [overflow-wrap:anywhere]">
        {m.deletedAt?"Message removed":formatTokens(m.body,data.members)}
       </p>
-      {m.askAssigneeMembershipId?<div className="mt-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-xs">
+      {m.askAssigneeMembershipId?<div className="mt-2 min-w-0 border-l-2 border-[var(--lms-canvas-border)] py-1 pl-3 text-xs text-body">
         {m.askOverdue?"Overdue ask":"Open ask"} · {data.members.find(person=>person.membershipId===m.askAssigneeMembershipId)?.name??"Team member"}
         {m.dueLabel?" · by "+m.dueLabel:""} · {m.askStatus??"OPEN"}
         {m.askStatus==="OPEN"&&m.askAssigneeMembershipId===actorMembershipId?
@@ -186,23 +186,23 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
          <Button variant="ghost" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" type="button" disabled={busy}
            onClick={()=>void mutate({action:"ASK_CANCEL",messageId:m.id})}>Cancel ask</Button>:null}
        </div>:null}
-       {!m.deletedAt?<div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
+       {!m.deletedAt?<div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs">
          <Button variant="ghost" type="button" disabled={busy} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
            onClick={()=>void mutate({action:"DECISION",messageId:m.id,marked:!m.decision})}>
            {m.decision?"Take the decision mark off":"Mark as decision"}</Button>
          {m.authorMembershipId===actorMembershipId?<>
            <Button variant="ghost" type="button" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
-             onClick={()=>{setEditing(m.id);setEditBody(m.body);}}>Edit (within 15 minutes)</Button>
+             disabled={busy} onClick={()=>{setEditing(m.id);setEditBody(m.body);}}>Edit (within 15 minutes)</Button>
            <Button variant="ghost" type="button" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
-             onClick={()=>setDeleting(m.id)}>Delete</Button>
+             disabled={busy} onClick={()=>setDeleting(m.id)}>Delete</Button>
          </>:null}
        </div>:null}
-       {editing===m.id?<form className="mt-2 space-y-2" onSubmit={event=>{event.preventDefault();
+       {editing===m.id?<form className="mt-2 min-w-0 space-y-2 border-t border-[var(--lms-canvas-border)] pt-3" onSubmit={event=>{event.preventDefault();
           void mutate({action:"EDIT",messageId:m.id,body:editBody}).then(ok=>{if(ok)setEditing(null);});}}>
-        <Textarea required maxLength={4000} rows={3} 
+        <Textarea className="min-w-0 w-full" required maxLength={4000} rows={3} 
           value={editBody} onChange={event=>setEditBody(event.target.value)}/>
-        <Button variant="primary" type="submit" disabled={busy||!editBody.trim()} className="min-h-11 md:min-h-9">Save edit</Button>
-        <Button variant="ghost" type="button" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" onClick={()=>setEditing(null)}>Cancel</Button>
+        <Button variant="primary" type="submit" loading={busy} disabled={busy||!editBody.trim()} className="min-h-11 w-full sm:w-auto md:min-h-9">Save edit</Button>
+        <Button variant="ghost" type="button" disabled={busy} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9" onClick={()=>setEditing(null)}>Cancel</Button>
        </form>:null}
     </li>)}
    </ol></ScrollCue>
@@ -252,7 +252,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
     </details>
     <div className="flex min-w-0 flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
      <span className="text-xs text-muted-foreground">{body.length}/4000</span>
-     <Button variant="primary" type="submit" disabled={busy||!body.trim()} className="min-h-11 w-full sm:w-auto md:min-h-9"
+     <Button variant="primary" type="submit" loading={busy} disabled={busy||!body.trim()} className="min-h-11 w-full sm:w-auto md:min-h-9"
       >
        {busy?"Sending…":"Send"}
      </Button>
