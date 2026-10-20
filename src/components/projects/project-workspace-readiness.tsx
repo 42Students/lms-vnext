@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireProjectManageAccess} from "@/modules/projects/access";
 import {getProjectReadiness} from "@/modules/projects/readiness-service";
 import {projectReadinessLegacyCopy as copy} from "@/modules/projects/readiness-override-copy";
+import { effectiveProjectSubmissionReady } from "@/modules/projects/readiness-override-model";
 import {ProjectReadinessOverrideForm} from "./project-readiness-override-form";
 import {PageHeader} from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
@@ -37,12 +38,15 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         action={<PageBackLink href={basePath} label="Back to workspaces" />}/>
     </div>;
   const readiness=result.value;
+  const isReady = readiness.projectStatus !== "ARCHIVED" &&
+    effectiveProjectSubmissionReady(readiness.execution.complete, readiness.readinessOverride.state);
   return <div className="min-w-0 space-y-4">
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <div className="min-w-0">
       <PageBackLink href={basePath} label="Back to workspaces" />
       <PageHeader title={copy.title} eyebrow="Projects"
-        description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side." />
+        description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side."
+        actions={<StatusBadge tone={isReady ? "success" : "warning"}>{isReady ? "Ready" : "Not ready"}</StatusBadge>} />
     </div>
     <Tabs ariaLabel="Workspace sections" renderPanel={false} value="readiness"
       items={([

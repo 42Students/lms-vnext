@@ -23,10 +23,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-20.md: surface | regre
 - [x] `src/app/(authenticated)/college/projects/submissions/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/page.tsx`
 - [ ] `src/app/(authenticated)/college/quizzes/page.tsx`
 - [ ] `src/app/(authenticated)/college/resources/page.tsx`
 - [ ] `src/app/(authenticated)/college/semester-courses/page.tsx`
