@@ -39,12 +39,12 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
 - [x] `src/app/(authenticated)/college/activity/page.tsx`
 - [x] `src/app/(authenticated)/college/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/college/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/departments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/settings/page.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/college/assignments/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/departments/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/settings/page.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
 - [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
 - [ ] `src/app/(authenticated)/college/batches/page.tsx`
 - [ ] `src/app/(authenticated)/college/branding/page.tsx`
