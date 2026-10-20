@@ -84,7 +84,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
             <Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
-      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-3">
+      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select required value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
            className="min-h-11 w-full md:min-h-9">
@@ -124,12 +124,12 @@ export function CollegeClassCreate({ cohorts, periods }: {
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] md:col-span-2 xl:col-span-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
+        <label className="grid min-w-0 gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
           <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <p className="text-xs text-muted-foreground md:col-span-2 xl:col-span-3">Moving a student into a full section is refused.</p>
-        <div className="md:col-span-2 xl:col-span-3">
+        <p className="text-xs text-muted-foreground md:col-span-2">Moving a student into a full section is refused.</p>
+        <div className="flex justify-stretch border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:justify-end">
           <Button variant="primary" disabled={pending} type="submit" className="w-full md:w-auto">
             {pending ? "Creating…" : "Create class"}
           </Button>
@@ -188,9 +188,9 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
     </Button>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
       title={"Edit class " + row.name}>
-      <form onSubmit={save} className="space-y-3">
+      <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground md:col-span-2">
           Batch and academic period are immutable. Name and code changes require no dependent records.
         </p>
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
@@ -206,13 +206,13 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
             onChange={e => setCapacity(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Description
           <Textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <p className="text-xs text-muted-foreground">Active learner enrollments: {row.activeLearners}.</p>
-        {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
-        <div className="flex justify-end gap-2">
+        <p className="text-xs text-muted-foreground md:col-span-2">Active learner enrollments: {row.activeLearners}.</p>
+        {notice ? <p role="alert" className="text-sm text-body md:col-span-2">{notice}</p> : null}
+        <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
           <Button variant="secondary" disabled={pending} type="button" onClick={cancel}
             >
             Cancel
