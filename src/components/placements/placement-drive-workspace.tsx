@@ -410,7 +410,7 @@ export async function PlacementDriveWorkspace({
         job.legacyPostingDetails.campusPool?.reportingTime||
         job.legacyPostingDetails.campusPool?.travelNote||
         job.legacyPostingDetails.skillsWanted?.length)?(
-        <section aria-label="Supplementary employer details" className="border-b border-border pb-6">
+        <section aria-label="Supplementary employer details" className="min-w-0 border-b border-border pb-4">
           <h2 className="font-semibold text-foreground">Employer information</h2>
           {job.legacyPostingDetails.portal?.studentsRegisterSeparately?(
             <p className="mt-2 text-sm text-body">
@@ -439,7 +439,7 @@ export async function PlacementDriveWorkspace({
       ):null}
       {deadlineState?.extendable?(
         <section id="drive-deadline-actions" aria-label="Set or extend deadline"
-          className="border-b border-border pb-6">
+          className="min-w-0 border-b border-border pb-4">
           <Disclosure title={deadlineState.applicationDeadline?"Extend deadline":"Set deadline"} className="[&>summary]:font-semibold [&>summary]:text-[var(--lms-link-text)]">
             <div className="mt-4"><TpoDriveDeadlineForm job={deadlineState}/></div>
           </Disclosure>
@@ -457,21 +457,21 @@ export async function PlacementDriveWorkspace({
             <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {nextStep.more.map(step => (
                 <Link key={step.href} href={step.href}
-                  className="inline-flex min-h-11 min-w-0 flex-col items-start justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 py-2 text-sm text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
+                  className="group inline-flex min-h-11 min-w-0 flex-col items-start justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 py-2 text-sm text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
                   <span className="block font-semibold">{step.label}</span>
-                  <span className="mt-1 block text-xs text-body">{step.description}</span>
+                  <span className="mt-1 block break-words text-xs text-body group-hover:text-white">{step.description}</span>
                 </Link>
               ))}
             </div>
           ) : null}
         </section>
       ) : null}
-      {journey?<section aria-label="Drive applicant journey" className="border-b border-border pb-6">
+      {journey?<section aria-label="Drive applicant journey" className="min-w-0 border-b border-border pb-4">
         <h2 className="font-semibold text-foreground">Journey</h2>
         <p className="mt-1 text-xs text-body">{journey.definition}</p>
         <div className="mt-4 grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-3 xl:grid-cols-6">
           {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
-            className="min-w-0 border-b border-r border-border p-3 text-foreground hover:bg-primary-subtle even:border-r-0 md:even:border-r xl:border-b-0 xl:last:border-r-0">
+            className="min-w-0 border-b border-r border-border p-3 text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] even:border-r-0 md:even:border-r md:[&:nth-child(3n)]:border-r-0 xl:[&:nth-child(3n)]:border-r xl:border-b-0 xl:last:border-r-0">
             <span className="block text-xs text-body">{stage.name}</span>
             <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
           </Link>)}
@@ -479,7 +479,7 @@ export async function PlacementDriveWorkspace({
         <p className="mt-3 text-xs text-body">{journey.excluded} registered learners excluded or not notified from {journey.considered} considered.</p>
       </section>:null}
       {isTpo && driveDay.rounds.length > 0 ? (
-        <section aria-label="Round journey" className="border-b border-border pb-6">
+        <section aria-label="Round journey" className="min-w-0 border-b border-border pb-4">
           <h2 className="text-base font-semibold text-foreground">Rounds</h2>
           <p className="mt-1 text-sm text-body">Round status, schedule and outcome progress. Open a round to see who has reached it.</p>
           <div className="mt-3 divide-y divide-border">
@@ -492,10 +492,10 @@ export async function PlacementDriveWorkspace({
               return (
                 <article key={round.id} className="min-w-0 py-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
-                    <span className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs font-semibold">{round.status}</span>
+                    <h3 className="min-w-0 break-words text-base font-semibold leading-6 text-foreground">{round.sequence}. {round.name}</h3>
+                    <StatusBadge tone={round.status==="COMPLETED"?"success":round.status==="CANCELLED"?"error":round.status==="SCHEDULED"?"info":"warning"}>{round.status}</StatusBadge>
                   </div>
-                  <dl className="mt-3 grid gap-2 text-sm text-body min-[768px]:grid-cols-2">
+                  <dl className="mt-3 grid min-w-0 gap-3 text-sm text-body sm:grid-cols-2">
                     <div><dt className="font-semibold">When</dt><dd>{round.scheduledAt
                       ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.scheduledAt)+" IST"
                       : "Date to be decided"}</dd></div>
@@ -519,11 +519,11 @@ export async function PlacementDriveWorkspace({
                   {round.platform ? <p className="mt-2 text-sm text-body">Platform: {round.platform}</p> : null}
                   {round.testUrl&&/^https:\/\//i.test(round.testUrl)?<ThirdPartyLink href={round.testUrl} label="Open test instructions →"/>:null}
                   {round.whatToBring ? <p className="mt-1 text-sm text-body">Bring: {round.whatToBring}</p> : null}
-                  <div className="mt-3 flex flex-wrap gap-4 text-sm">
+                  <div className="mt-3 flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}
-                      className="font-semibold text-[var(--lms-link-text)] underline">See who reached this round →</Link>
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">See who reached this round →</Link>
                     {round.kind !== "TALK" ? <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
-                      className="font-semibold text-[var(--lms-link-text)] underline">Enter results →</Link> : null}
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">Enter results →</Link> : null}
                   </div>
                 </article>
               );
@@ -534,11 +534,11 @@ export async function PlacementDriveWorkspace({
       {isTpo && driveDay.rounds.length>0 ? (
         <details className="group min-w-0 border-b border-border pb-4">
           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Enter round results <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
             {driveDay.rounds.filter(round=>round.kind!=="TALK").map(round=>
               <Link key={round.id}
                 href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
                 {round.name}
               </Link>)}
           </div>
@@ -547,7 +547,7 @@ export async function PlacementDriveWorkspace({
       {isTpo ? (
         <section
           aria-label="Current screening shortlist"
-          className="border-b border-border pb-6"
+          className="min-w-0 border-b border-border pb-4"
         >
           <h2 className="text-base font-semibold text-foreground">
             Persisted screening shortlist
@@ -558,16 +558,16 @@ export async function PlacementDriveWorkspace({
                 "This is an application count, not a unique learner count."
               : "Current shortlist could not be loaded. No count is inferred."}
           </p>
-          <div className="mt-3 flex flex-wrap gap-4 text-sm">
+          <div className="mt-3 flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
             <Link
               href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist"}
-              className="font-semibold text-[var(--lms-link-text)] hover:underline"
+              className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-[var(--lms-link-text)] hover:underline sm:w-auto md:min-h-9"
             >
               View persisted shortlist →
             </Link>
             <a
               href={"/api/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist/export"}
-              className="font-semibold text-[var(--lms-link-text)] hover:underline"
+              className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-[var(--lms-link-text)] hover:underline sm:w-auto md:min-h-9"
             >
               Download formula-safe shortlist CSV
             </a>
@@ -703,7 +703,7 @@ export async function PlacementDriveWorkspace({
         />
       ) : null}
       {job.status==="PUBLISHED"?<section id="drive-registered-not-applied" aria-label="Registered students who have not applied"
-        className="border-b border-border pb-6">
+        className="min-w-0 border-b border-border pb-4">
         <h2 className="mb-2 font-semibold text-foreground">Registered, not applied</h2>
         <p className="mb-3 text-sm text-body">{reminderPreview && reminderPreview.allowed
           ? reminderPreview.count+" eligible registered students have not applied. Remind once per day, before the deadline."
