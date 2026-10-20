@@ -163,3 +163,9 @@
 8 UI issues addressed: inconsistent page spacing, double borders, wide read-only notice, unconstrained form, brittle host wrapping, dense DNS detail text, crowded action controls and narrow mobile taps. Aligned page and panel spacing to legacy 8/12/16px scale, constrained the editable area to 920px, made action groups stack at 375px and align at 768px, improved address wrapping and normalized label gutters. Reviewed the read-only, empty, pending, verified, error and confirmation states; loading/error files and parent college layout were inspected. Source review only; no tests or CI.
 
 Files: college/domains/page.tsx; components/admin/tenant-domain-manager.tsx; audit proof and queue.
+
+## Surface 26 — Elective allocation
+
+**6 issues fixed:** Inconsistent page spacing, overly tight field labels, redundant form separators, a short scroll viewport, small row hover feedback and cramped mobile filtering. Aligned 8/12/16px legacy rhythm, removed a duplicate border, expanded the scrollable learner list, and made each 44px checkbox target visibly interactive. Inspected selection/form-submit, capacity and partial outcome states, invalid identifiers, empty options, server redirects, role gates, 375px/768px, loading/error and nearest parent layout. Source-based review only; no test, build or CI.
+
+**Files:** src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx, this proof and the queue.
