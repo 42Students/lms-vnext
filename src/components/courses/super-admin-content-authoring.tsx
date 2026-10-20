@@ -14,7 +14,7 @@ export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=true}:
  // Never leave a foreign/stale ID selected or silently hide the current college authoring control.
  const selected=resolveSuperAdminAuthoringLesson(lessons,lessonId);
  return <details aria-label="Create lesson content" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-  <summary className="inline-flex min-h-11 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Add {kind==="VIDEOS"?"video":kind==="LIVE_CLASSES"?"live class":"resource"}</summary>
+  <summary className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">Add {kind==="VIDEOS"?"video":kind==="LIVE_CLASSES"?"live class":"resource"}</summary>
   <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-4)]">
   {!lessons.length?<p role="status" className="text-sm text-muted-foreground">Create a course offering, learning path and lesson before adding content.</p>:<>
    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson

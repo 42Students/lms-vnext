@@ -69,12 +69,12 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
   }
 
   return (
-    <section aria-label={SEMESTER_COPY.createTitle} className="border-t border-border pt-4">
+    <section aria-label={SEMESTER_COPY.createTitle} className="min-w-0 border-t border-border pt-4">
       <h2 className="m-0 text-lg font-semibold text-foreground">{SEMESTER_COPY.createTitle}</h2>
       {programs.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">Create a program before adding semesters.</p>
       ) : (
-        <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+        <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-3)] md:grid-cols-2">
           <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.programLabel}
             <Select required value={programId} onChange={e => setProgramId(e.target.value)}
@@ -99,7 +99,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
             Total credits are calculated from courses mapped to this semester.
           </p>
           <div className="flex items-end justify-stretch md:col-span-2 md:justify-end">
-            <Button variant="primary" type="submit" disabled={pending} className="w-full md:w-auto">
+            <Button variant="primary" type="submit" disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">
               {pending ? "Saving…" : SEMESTER_COPY.createButton}
             </Button>
           </div>

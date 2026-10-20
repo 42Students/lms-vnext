@@ -83,9 +83,9 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  const offerings=[...new Map(lessons.map(item=>[item.offeringId,{id:item.offeringId,name:item.courseCode+" · "+item.courseName}])).values()];
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
  return <div className="min-w-0 space-y-4">
+  <PageBackLink href="/admin/courses" label="Courses" />
   <PageHeader title={title}
-   description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."}
-   actions={<PageBackLink href="/admin/courses" label="Courses" />} />
+   description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."} />
   {lessonsResult.status==="fulfilled"
    ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false}/>
    :<Banner tone="warning">Content authoring options are temporarily unavailable. Existing content remains visible.</Banner>}
@@ -130,16 +130,16 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    </details>
    <Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
   </form>
-  <p className="text-sm text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · up to 25 per page</p>
+  <p className="m-0 break-words text-sm text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · up to 25 per page</p>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(item=><article key={item.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">
     <div className="flex flex-wrap items-start justify-between gap-2">
-     <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
+     <h2 className="m-0 min-w-0 flex-1 break-words text-base font-semibold text-foreground">{item.title}</h2>
      <StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="DRAFT"?"warning":"neutral"}>{item.status}</StatusBadge>
     </div>
-    <p className="text-sm text-body">{adminContentTypeLabel(item.contentType)} · Lesson: {item.lessonName}</p>
-    <p className="text-sm text-body">{item.courseName} ({item.courseCode}) · {item.cohortName}</p>
-    <p className="text-xs text-muted-foreground">{item.periodName} · Lesson {item.lessonStatus} · Offering {item.offeringStatus}</p>
+    <p className="break-words text-sm text-body">{adminContentTypeLabel(item.contentType)} · Lesson: {item.lessonName}</p>
+    <p className="break-words text-sm text-body">{item.courseName} ({item.courseCode}) · {item.cohortName}</p>
+    <p className="break-words text-xs text-muted-foreground">{item.periodName} · Lesson {item.lessonStatus} · Offering {item.offeringStatus}</p>
     <div className="flex flex-wrap items-center gap-3">
       <StatusBadge tone={studentContentVisible(item)?"success":"neutral"}>Students {studentContentVisible(item)?"Visible":"Hidden"}</StatusBadge>
       <span className="text-xs text-muted-foreground">Order within lesson: {item.sequence+1}</span>
@@ -149,7 +149,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     {item.durationSeconds!==null?<p className="text-sm text-body">Duration: {Math.ceil(item.durationSeconds/60)} minutes</p>:null}
     {item.startsAt?<p className="text-sm text-body">Starts: {ist(item.startsAt)}</p>:null}
     {item.endsAt?<p className="text-sm text-body">Ends: {ist(item.endsAt)}</p>:null}
-    {item.contentType==="RESOURCE"&&item.notes?<p className="whitespace-pre-wrap text-sm text-body">{item.notes}</p>:null}
+    {item.contentType==="RESOURCE"&&item.notes?<p className="whitespace-pre-wrap break-words text-sm text-body">{item.notes}</p>:null}
     {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?
      <details className="min-w-0">
       <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Actions</summary>
@@ -161,7 +161,8 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
      </details>:
      <p className="text-xs text-muted-foreground">Content editing is unavailable for an inactive offering or lesson.</p>}
    </article>)}
-  </div>:<EmptyState title="No content found." description="Select a course and lesson to view content."/>}
+  </div>:<EmptyState title="No content found." description="Select a course and lesson to view content."
+    action={<Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/>}
   <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminContentHref(kind,{...data.query,page})}/>
  </div>;

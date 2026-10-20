@@ -1,2 +1,2 @@
-"use client";import {Button} from "@/components/ui/button";import {ErrorState} from "@/components/ui/error-state";
-export default function ErrorPage({reset}:{error:Error & {digest?:string};reset:()=>void}){return <ErrorState title="Could not load semester mapping" description="No selected-college mappings could be read." action={<Button onClick={reset}>Retry</Button>}/>;}
+"use client";import {Button} from "@/components/ui/button";import {PageHeader} from "@/components/ui/page-header";import {ErrorState} from "@/components/ui/error-state";
+export default function ErrorPage({reset}:{error:Error & {digest?:string};reset:()=>void}){return <div className="min-w-0 space-y-4"><PageHeader title="Semester–Course Mapping"/><ErrorState title="Could not load semester mapping" description="No selected-college mappings could be read." action={<Button className="min-h-11 w-full sm:min-h-9 sm:w-auto" onClick={reset}>Retry</Button>}/></div>;}
