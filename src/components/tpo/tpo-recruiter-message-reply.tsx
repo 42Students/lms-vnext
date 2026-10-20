@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -67,11 +68,13 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
  }
  return <section className="space-y-3 border-t border-border pt-4" aria-label="Reply to recruiter">
   <h2 className="font-semibold text-foreground">Reply</h2>
-  <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
+  <Disclosure title="Quick replies" className="min-w-0" contentClassName="pt-2">
+  <div role="group" aria-label="Quick replies" className="flex min-w-0 flex-wrap gap-2">
     {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
       className="min-h-11 md:min-h-9 shrink-0 rounded-[var(--lms-control-radius)] px-3 text-sm font-medium"
       onClick={()=>persistDraft(body?body+" "+reply:reply)}>{reply}</Button>)}
    </div>
+  </Disclosure>
   <form onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
    <label className="block text-sm text-body">Message
     <Textarea className="mt-1 min-h-28 w-full"
@@ -81,16 +84,16 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
        e.preventDefault();if(body.trim()&&!busy)void post("messages");}}}/>
    </label>
    <p className="text-xs text-muted-foreground" aria-live="polite">Enter to send · Shift + Enter for a new line · {body.length}/4000</p>
-   <div className="flex flex-wrap gap-2">
+   <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center">
     <Button variant="secondary" type="button" disabled={busy||!body.trim()} onClick={discardDraft}
-     className="min-h-11 md:min-h-9 px-4">Discard draft</Button>
+     className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Discard draft</Button>
     <Button variant="primary" type="submit" disabled={busy||!body.trim()}
-     className="min-h-11 md:min-h-9 px-4">
+     className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
       Send message
     </Button>
     {discardReview?<p role="status" className="w-full text-sm">Discard your unsent message? Select Discard draft again to confirm, or keep typing to cancel.</p>:null}
     {unread?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void post("read")}
-     className="min-h-11 md:min-h-9 px-4">
+     className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
       Mark as read
     </Button>:null}
    </div>
