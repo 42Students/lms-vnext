@@ -83,10 +83,10 @@ export default async function CollegeGroupsPage({
 
       <form
         method="get"
-        className="flex flex-wrap items-end gap-3 border-t border-border pt-4"
+        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4"
       >
         <label className="block min-w-[180px]">
-          <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Type
           </span>
           <Select name="kind" defaultValue={kind ?? ""}>
