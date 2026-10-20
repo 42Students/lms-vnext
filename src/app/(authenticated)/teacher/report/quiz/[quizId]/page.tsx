@@ -136,8 +136,8 @@ export default async function FacultyQuizReportPage({
         </span>
       </div>
 
-      <section className="border-b border-border py-4">
-        <h2 className="text-lg font-semibold text-foreground">
+      <section aria-labelledby="section-score-distribution" className="border-b border-border py-4">
+        <h2 id="section-score-distribution" className="text-lg font-semibold text-foreground">
           Score distribution
         </h2>
         {metrics.submittedLearners===0?<p role="status" className="mt-3 text-sm text-muted-foreground">
@@ -175,8 +175,8 @@ export default async function FacultyQuizReportPage({
         </div>
       </section>
 
-      <section className="border-b border-border py-4">
-        <h2 className="text-lg font-semibold text-foreground">
+      <section aria-labelledby="section-question-accuracy" className="border-b border-border py-4">
+        <h2 id="section-question-accuracy" className="text-lg font-semibold text-foreground">
           Question accuracy
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -187,7 +187,7 @@ export default async function FacultyQuizReportPage({
             This quiz has no questions yet.
           </p>
         ) : (
-          <ol className="mt-4 space-y-3">
+          <ol aria-label="quiz entries" className="mt-4 space-y-3">
             {questions.map((question, index) => (
               <li
                 key={question.id}
@@ -230,8 +230,8 @@ export default async function FacultyQuizReportPage({
         note: "Attempt " + attempt.attemptNumber,
       }))} />
 
-      <section className="border-b border-border py-4">
-        <h2 className="text-lg font-semibold text-foreground">
+      <section aria-labelledby="section-not-attempted" className="border-b border-border py-4">
+        <h2 id="section-not-attempted" className="text-lg font-semibold text-foreground">
           Not attempted
         </h2>
         {notAttemptedLearners.length === 0 ? (
@@ -254,8 +254,8 @@ export default async function FacultyQuizReportPage({
         )}
       </section>
 
-      <section className="border-b border-border py-4">
-        <h2 className="text-lg font-semibold text-foreground">Review individual attempts</h2>
+      <section aria-labelledby="section-review-individual-attempts" className="border-b border-border py-4">
+        <h2 id="section-review-individual-attempts" className="text-lg font-semibold text-foreground">Review individual attempts</h2>
         <p className="mt-1 text-sm text-body">Inspect submitted answers and manage results visibility for this Section.</p>
         <FacultyQuizReview
           quizId={quiz.id}
