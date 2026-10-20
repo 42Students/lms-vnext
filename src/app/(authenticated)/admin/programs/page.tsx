@@ -13,7 +13,7 @@ import { listDepartments } from "@/modules/departments/service";
 
 export default async function SuperAdminProgramsPage() {
   const context = await getCurrentRequestContext();
-  if(!isSuperAdmin(context))return <div className="min-w-0 space-y-6">
+  if(!isSuperAdmin(context))return <div className="min-w-0 space-y-5">
     <PageHeader title="Programs"/>
     <ErrorState title="Program access denied"
       description="Your account cannot access Super Admin programs."
@@ -23,7 +23,7 @@ export default async function SuperAdminProgramsPage() {
 
   if (!collegeId) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-5">
         <PageHeader  title="Programs"
           description="Choose a college scope before managing programs." />
         <EmptyState title="Select a college to continue"
@@ -43,7 +43,7 @@ export default async function SuperAdminProgramsPage() {
     return {programs,departments,contents};
   })().then(value=>({ok:true as const,value}))
      .catch(()=>({ok:false as const}));
-  if(!outcome.ok)return <div className="min-w-0 space-y-6">
+  if(!outcome.ok)return <div className="min-w-0 space-y-5">
     <PageHeader title="Programs"/>
     <ErrorState title="Programs unavailable"
       description="The selected college's program directory could not be verified. No changes were made."
@@ -52,12 +52,12 @@ export default async function SuperAdminProgramsPage() {
   const {programs,departments,contents}=outcome.value;
 
   return (
-    <div className="min-w-0 space-y-6">
-      <PageHeader
-        title="Programs"
-        description="Manage programs within the selected college safety scope."
-        actions={<PageBackLink href="/admin/academics" label="Academic Setup overview" />}
-      />
+    <div className="min-w-0 space-y-5">
+      <div className="min-w-0">
+        <PageBackLink href="/admin/academics" label="Academic Setup overview" />
+        <PageHeader title="Programs"
+          description="Manage programs within the selected college safety scope." />
+      </div>
       <AcademicSetupSteps step={2} />
       <AdminProgramDirectory
         programs={programs.map((program) => ({
