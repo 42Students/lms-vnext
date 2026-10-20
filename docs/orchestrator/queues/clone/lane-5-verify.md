@@ -35,14 +35,14 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-5.md: surface | regres
 - [x] `src/app/(authenticated)/tracker/mine/page.tsx`
 - [x] `src/app/(authenticated)/tracker/page.tsx`
 - [x] `src/app/auth/handoff/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/[token]/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/confirmed/page.tsx`
-- [ ] `src/app/college-join/[token]/page.tsx`
-- [ ] `src/app/company-join/[token]/page.tsx`
-- [ ] `src/app/company-share/[token]/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/page.tsx`
-- [ ] `src/app/e2e/superadmin-login/page.tsx`
-- [ ] `src/app/enterprises/page.tsx`
+- [x] `src/app/campaign-unsubscribe/[token]/page.tsx`
+- [x] `src/app/campaign-unsubscribe/confirmed/page.tsx`
+- [x] `src/app/college-join/[token]/page.tsx`
+- [x] `src/app/company-join/[token]/page.tsx`
+- [x] `src/app/company-share/[token]/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/page.tsx`
+- [x] `src/app/e2e/superadmin-login/page.tsx`
+- [x] `src/app/enterprises/page.tsx`
 - [ ] `src/app/forbidden/page.tsx`
 - [ ] `src/app/home/page.tsx`
 - [ ] `src/app/hr-invite/[token]/page.tsx`
