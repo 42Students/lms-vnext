@@ -273,11 +273,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         </nav>
       </section>
     ) : <>
-      <section aria-label="Drive lifecycle counts" className="grid grid-cols-2 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 md:grid-cols-4">
+      <section aria-label="Drive lifecycle counts" className="grid min-w-0 grid-cols-2 gap-0 border-y border-[var(--lms-canvas-border)] min-[768px]:grid-cols-4">
         {metrics.map(([name,n]) =>
-          <div key={name} className="border-r border-border px-3 py-2 last:border-r-0">
-            <p className="text-xs text-body">{name}</p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">{n}</p>
+          <div key={name} className="min-w-0 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] min-[768px]:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0">
+            <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{name}</p>
+            <p className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{n}</p>
           </div>)}
       </section>
       <p className="text-sm text-body">Requests are tracked separately from drafts and published drives.</p>
