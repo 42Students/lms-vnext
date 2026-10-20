@@ -139,7 +139,7 @@ export default async function TpoCompanyContactLogPage({
           </nav>
         </>
       )}
-      <p className="text-xs leading-5 text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-[1.6]">
         This log includes persisted, explicitly linked CRM activity only.
         Unlinked contacts, private notes, phone numbers, email addresses and
         external conversations are not displayed. Entries are internal

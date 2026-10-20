@@ -82,7 +82,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
               <article key={round.id} className="border-b border-border py-5">
                 <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
                   <div>
-                    <h2 className="text-lg font-semibold text-foreground">{round.companyName} · {round.name}</h2>
+                    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{round.companyName} · {round.name}</h2>
                     <p className="text-sm text-body">{round.jobTitle} · Started {
                       round.scheduledAt ? new Date(round.scheduledAt).toLocaleString("en-IN", {
                         timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
@@ -143,7 +143,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                   <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-link">
                     Assigned round
                   </p>
-                  <h2 className="mt-1 text-lg font-semibold text-foreground">
+                  <h2 className="mt-1 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
                     {round.company} ·{" "}
                     {round.jobTitle}
                   </h2>

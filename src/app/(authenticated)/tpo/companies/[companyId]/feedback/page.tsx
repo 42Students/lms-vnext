@@ -70,7 +70,7 @@ export default async function TpoCompanyFeedbackPage({
             <TpoCompanyFeedbackForm companyId={companyId} contacts={data.contacts} />
           )}
           <section className="min-w-0 border-y border-[var(--lms-canvas-border)]">
-            <h2 className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] text-[var(--lms-font-lg)] font-semibold text-foreground">
+            <h2 className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
             </h2>
             {data.notes.length === 0 ? (
