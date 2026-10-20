@@ -6,6 +6,9 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-export";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { ErrorState } from "@/components/ui/error-state";
+import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
 import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
@@ -58,7 +61,7 @@ export async function ProjectAdminAuditPage({
   const filters = parseProjectAdminAuditQuery(searchParams);
   const { eventType, importance, subjectType, subjectId, from, to } = filters;
 
-  const result =
+  const activityRead =
     await listActivityEvents(
       context,
       {
@@ -73,7 +76,18 @@ export async function ProjectAdminAuditPage({
         beforeId: filters.beforeId,
         limit: 40,
       },
-    );
+    ).then(value => ({ ok: true as const, value }))
+     .catch(() => ({ ok: false as const }));
+  if (!activityRead.ok) return <div className="min-w-0 space-y-6">
+    <PageHeader title="Project audit"
+      description="Who changed what, and when — check daily for anything unexpected."
+      actions={<PageBackLink href={basePath} label="Project workspaces" />} />
+    <ProjectAdminNav basePath={basePath} active="audit" />
+    <ErrorState title="Project audit unavailable"
+      description="Could not load project audit events. Your filters have not changed."
+      action={<Link href={basePath+"/audit"} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry audit</Link>} />
+  </div>;
+  const result = activityRead.value;
 
   const groups: ActivityCenterGroup[] =
     result.groups.map((group) => ({
@@ -170,11 +184,12 @@ export async function ProjectAdminAuditPage({
   });
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Project audit"
         description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
-        actions={<div className="flex flex-wrap items-center justify-end gap-2">
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
+           <PageBackLink href={basePath} label="Project workspaces" />
           <a href={basePath + "/audit"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Refresh</a>
           {basePath === "/admin/projects" ? <a href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View activity log</a> : null}
         </div>}
@@ -283,7 +298,7 @@ export async function ProjectAdminAuditPage({
         </div>
       </form>
 
-      <section aria-label="Audit page summary" className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
+      <section aria-label="Audit page summary" className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min-[992px]:grid-cols-3">
         {([
           {label:"Actions shown",value:result.groups.reduce((sum,g)=>sum+g.count,0)},
           {label:"People who made changes",value:new Set(result.groups.map(g=>g.latest.actor?.id)
