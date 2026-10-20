@@ -302,3 +302,17 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** read access/module-enabled conditional, role-appropriate list/attention/services, query validation, ProjectParticipantListControls/Pagination, learner mobile disclosure filters, ProjectList and load/error fallback. Existing text, filter GET names, 25/10/50 page sizes, archive state, list links and shared types align.
 - **Extra clutter/alignment fixes (0):** learner rows remain hairline dividers, summary facts compact, mobile filters and pagination hit areas accessible; no extra source changes.
 - **Files changed:** proof and queue only.
+
+## Surface 44 — Learner quizzes alias
+- **Surface:** `src/app/(authenticated)/learn/quizzes/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 44.
+- **Regressions found/fixed (0):** read redirect to /learn/allQuizzes and nearest learner role gate plus alias contextual GracefulPageLoading/error boundary with insideShell recovery. No unexpected quiz UI, invalid JSX, missing import or accessibility regression.
+- **Extra clutter/alignment fixes (0):** alias renders no page content; its fallbacks already use compact legacy canvas.
+- **Files changed:** proof and queue only.
+
+## Surface 45 — Admin course setup workflow
+- **Surface:** `src/components/courses/admin-course-create-panel.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 45.
+- **Regressions found/fixed (3):** root grid still used `xl:grid-cols-2`, splitting the four dependent steps side by side against proof; restored single-column step order. Step navigator still flex-wrapped instead of accessible horizontal phone scroller; added nowrap overflow scroll and shrink-0 links. Status message still rendered as card with radius/border rather than hairline/accent; flattened to subtle primary rail. Reviewed Course/Offering/Delivery/Faculty IDs, field labels, prefill, role restrictions, API requests, guarded actions and confirm dialog; none changed.
+- **Extra clutter/alignment fixes (1):** applied `scroll-mt-24` to all four existing section form anchors under sticky shell, without changing their IDs or labels.
+- **Files changed:** `src/components/courses/admin-course-create-panel.tsx`; proof and queue.

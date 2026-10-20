@@ -265,21 +265,21 @@ export function AdminCourseCreatePanel({
   }
 
   return (
-    <section aria-label="Course setup workflow" className="grid min-w-0 gap-[var(--lms-space-4)] xl:grid-cols-2">
-      <nav aria-label="Course setup steps" className="flex min-w-0 flex-wrap gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-sm xl:col-span-2">
-       <a href="#setup-course" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">1. Create Course</a>
-       <a href="#setup-offering" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">2. Course Offering</a>
-       <a href="#setup-delivery" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">3. Section Delivery</a>
-       <a href="#setup-faculty" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">4. Assign Course Faculty</a>
+    <section aria-label="Course setup workflow" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)]">
+      <nav aria-label="Course setup steps" className="flex min-w-0 flex-nowrap gap-[var(--lms-space-3)] overflow-x-auto whitespace-nowrap border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-sm">
+       <a href="#setup-course" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">1. Create Course</a>
+       <a href="#setup-offering" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">2. Course Offering</a>
+       <a href="#setup-delivery" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">3. Section Delivery</a>
+       <a href="#setup-faculty" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">4. Assign Course Faculty</a>
       </nav>
-      <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body xl:col-span-2">
+      <p role="status" className="border-l-2 border-primary bg-primary-subtle px-4 py-3 text-sm text-body">
        {nextSetupStep==="COURSE"?"Start by creating or choosing a Course.":
         nextSetupStep==="OFFERING"?"Course created. Choose a Cohort and Academic Period for its Offering.":
         nextSetupStep==="DELIVERY"?"Offering created. Choose the compatible Section for the Delivery.":
         nextSetupStep==="FACULTY"?"Section Delivery created. Assign Faculty to that Section.":
         "Teaching assignment saved. The Course setup flow is complete."}
       </p>
-      <form id="setup-course" onSubmit={createCourse} className="border-b border-border pb-5">
+      <form id="setup-course" onSubmit={createCourse} className="scroll-mt-24 border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">{COLLEGE_COURSES_COPY.createTitle}</h2>
         {departments.length===0?<p role="status" className="mt-3 text-sm text-body">
           No departments in this college yet. Create a department before adding a course.{" "}
@@ -335,7 +335,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form id="setup-offering" onSubmit={createOffering} className="border-b border-border pb-5">
+      <form id="setup-offering" onSubmit={createOffering} className="scroll-mt-24 border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">New Course Offering</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Place a Course into one Cohort and Academic Period.</p>
         <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
@@ -381,7 +381,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form id="setup-delivery" onSubmit={createDelivery} className="border-b border-border pb-5">
+      <form id="setup-delivery" onSubmit={createDelivery} className="scroll-mt-24 border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Add Section Delivery</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Connect an Offering to an exact Section. Only structurally compatible Sections are shown.</p>
         <div className="mt-4 grid gap-3">
@@ -405,7 +405,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form id="setup-faculty" onSubmit={assignTeacher} className="border-b border-border pb-5">
+      <form id="setup-faculty" onSubmit={assignTeacher} className="scroll-mt-24 border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Assign Course Faculty</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Assign an active Faculty Membership to one exact Section Delivery.</p>
         <div className="mt-4 grid gap-3">
