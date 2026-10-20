@@ -119,7 +119,7 @@ export default async function SuperAdminPeoplePage({
           description="Use the Super Admin scope selector in the top bar to choose a college before viewing membership data."
         />
         <Link href="/admin/people/directory"
-          className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Browse all permitted Users &amp; Roles without selecting a college →
         </Link>
       </div>
@@ -151,24 +151,24 @@ export default async function SuperAdminPeoplePage({
       />
       <form method="get" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 min-[1366px]:grid-cols-4">
        <label className="grid gap-1 text-[13px] font-semibold leading-4">Search contacts
-        <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-11 w-full md:min-h-9"/>
+        <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
        </label>
        <label className="grid gap-1 text-[13px] font-semibold leading-4">Role
-        <Select name="role" defaultValue={role} className="min-h-11 w-full md:min-h-9">
+        <Select name="role" defaultValue={role} className="min-h-11 w-full md:min-h-[var(--lms-control-height)]">
           {["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
        </label>
        <label className="grid gap-1 text-[13px] font-semibold leading-4">Status
-        <Select name="status" defaultValue={status} className="min-h-11 w-full md:min-h-9">
+        <Select name="status" defaultValue={status} className="min-h-11 w-full md:min-h-[var(--lms-control-height)]">
           {["ALL","ACTIVE","SUSPENDED","ENDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
        </label>
        <PageSizeSelect name="pageSize" defaultValue={pageSize} options={[10,20,50]} />
        <Button type="submit" className="min-h-11 md:min-h-[var(--lms-control-height)]">Search</Button>
-       <Link href="/admin/people" className="inline-flex min-h-11 items-center md:min-h-9 justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+       <Link href="/admin/people" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
       </form>
       <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>
-      <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Browse platform users & roles →
       </Link>
       <DataTable empty={<EmptyState title="No records to show." />}
