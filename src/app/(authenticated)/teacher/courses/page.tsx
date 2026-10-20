@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseList } from "@/components/courses/faculty-course-list";
 import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { listFacultyCourseCardSummaries } from "@/modules/courses/faculty-course-card-summary-service";
 
 export default async function TeacherCoursesPage({searchParams}: {
@@ -13,13 +14,13 @@ export default async function TeacherCoursesPage({searchParams}: {
   const query=parseFacultyCourseListLocation(await searchParams);
   if(!query)return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="My Courses" />
-    <div role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+    <Alert tone="error" className="min-w-0">
       The Course filters could not be understood. No other Section has been loaded.
       <Link href="/teacher/courses"
         className="ml-2 font-semibold text-primary-text underline inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Reset filters
       </Link>
-    </div>
+    </Alert>
   </div>;
   const list = await getFacultyCourseList(context,query);
   const summaries = await listFacultyCourseCardSummaries(list.items);
