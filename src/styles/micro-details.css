@@ -60,12 +60,13 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   box-shadow: 0 0 0 4px rgba(26, 149, 161, 0.12);
 }
 
-/* Legacy: components___accessibility.scss:49-60 — 50ms touch press,
-   scale .98 and opacity .9. Avoid any dialog, input or press action that
-   already has its own transform; native cards remain interactive. */
-@media (hover: none) and (prefers-reduced-motion: no-preference) {
+/* Legacy: components___accessibility.scss:49-60,116-124 — on touch,
+   tappable cards press to .98 scale and .9 opacity. The visual pressed state
+   is preserved for reduced-motion users; only its 50ms tween is suppressed.
+   Exclude disabled/actions with their own component-specific transforms. */
+@media (hover: none) {
   main :where([role="button"]:not([data-slot="button"]):not([aria-disabled="true"]),
-    [data-slot="card"][role="button"]):active:not(:where([data-unskin], [data-unskin] *)) {
+    [data-slot="card"][role="button"]:not([aria-disabled="true"])):active:not(:where([data-unskin], [data-unskin] *)) {
     transform: scale(0.98);
     opacity: 0.9;
     transition: transform 0.05s ease, opacity 0.05s ease;
