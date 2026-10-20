@@ -42,7 +42,7 @@
 .footerLinks { display: inline-flex; flex-wrap: wrap; gap: 20px; }
 .footerLinks a { color: var(--lms-body-text, #54505d); text-decoration: none; }
 .footerLinks a:hover { color: var(--lms-link-text, #0a7c88); text-decoration: underline; }
-.page a:focus-visible, .page button:focus-visible { outline: 2px solid var(--lms-link-text, #0a7c88); outline-offset: 3px; }
+.page a:focus-visible, .page button:focus-visible { outline: 2px solid var(--lms-primary-text, #1a95a1); outline-offset: 3px; }
 .primary:disabled, .secondary:disabled, .copy:disabled { opacity: .55; cursor: not-allowed; }
 @media(max-width:767px) {
   .header { padding: 20px 22px; }
