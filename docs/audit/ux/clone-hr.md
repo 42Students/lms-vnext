@@ -60,7 +60,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/hr/home/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/hr/home/page.tsx`
 - [x] `src/app/(authenticated)/hr/layout.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
-- [ ] `src/app/(authenticated)/hr/loading.tsx`
+- [x] `src/app/(authenticated)/hr/loading.tsx` (single shared GracefulPageLoading; no own DOM/styles/controls; all visual values, states and phone/tablet delegated unchanged; native/hex/h1/overlay source counts 0)
 - [ ] `src/app/(authenticated)/hr/messages/error.tsx`
 - [x] `src/app/(authenticated)/hr/messages/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [x] `src/app/(authenticated)/hr/messages/page.tsx` (own markup: none; source scan: 0 raw controls / 0 inline hex / 0 custom UI / 0 breakpoint rules; route shim only)
@@ -128,7 +128,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/recruiter/home/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [x] `src/app/(authenticated)/recruiter/home/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [x] `src/app/(authenticated)/recruiter/layout.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
-- [ ] `src/app/(authenticated)/recruiter/loading.tsx`
+- [x] `src/app/(authenticated)/recruiter/loading.tsx` (single shared GracefulPageLoading; no own DOM/styles/controls; all visual values, states and phone/tablet delegated unchanged; native/hex/h1/overlay source counts 0)
 - [x] `src/app/(authenticated)/recruiter/messages/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/recruiter/messages/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [x] `src/app/(authenticated)/recruiter/messages/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
@@ -153,7 +153,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [x] `src/app/(authenticated)/tracker/issues/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/tracker/issues/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/loading.tsx`
+- [x] `src/app/(authenticated)/tracker/loading.tsx` (single shared GracefulPageLoading; no own DOM/styles/controls; all visual values, states and phone/tablet delegated unchanged; native/hex/h1/overlay source counts 0)
 - [x] `src/app/(authenticated)/tracker/logs/error.tsx` (one shared GracefulErrorBoundary, own DOM/style/hex/raw controls: 0; no local states/breakpoints; unchanged error/reset props)
 - [x] `src/app/(authenticated)/tracker/logs/loading.tsx` (one shared GracefulPageLoading, own DOM/style/hex/raw controls: 0; no local state values or breakpoints; delegate unchanged)
 - [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
@@ -689,3 +689,10 @@ For each route listed below, complete fetched source shows exactly one shared `G
 
 - `src/app/(authenticated)/hr/notifications/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One unchanged shared GracefulErrorBoundary, source native/hex/h1/overlay 0/0/0/0, legacy `old-lms-pages.md:6-12` and mobile max 767px in `components___listing-page-header.scss:131-158`.
 - `src/app/(authenticated)/hr/placements/error.tsx`: no caller-specific visual property; default/hover/active/focus/disabled/error/loading/phone/tablet N/A. One unchanged shared GracefulErrorBoundary, source native/hex/h1/overlay 0/0/0/0, legacy `old-lms-pages.md:6-12` and mobile max 767px in `components___listing-page-header.scss:131-158`.
+
+
+#### Root loading delegates (3 files)
+
+- `src/app/(authenticated)/hr/loading.tsx`: N/A local typography/background/spacing/border/hover/active/focus/disabled/loading/error/mobile/tablet because its only JSX is shared `<GracefulPageLoading />`. Source grep equivalents native/hex/h1/custom-dialog 0/0/0/0; legacy `old-lms-pages.md:6-12`, mobile breakpoint `components___listing-page-header.scss:131-158`; props not altered.
+- `src/app/(authenticated)/recruiter/loading.tsx`: N/A local typography/background/spacing/border/hover/active/focus/disabled/loading/error/mobile/tablet because its only JSX is shared `<GracefulPageLoading />`. Source grep equivalents native/hex/h1/custom-dialog 0/0/0/0; legacy `old-lms-pages.md:6-12`, mobile breakpoint `components___listing-page-header.scss:131-158`; props not altered.
+- `src/app/(authenticated)/tracker/loading.tsx`: N/A local typography/background/spacing/border/hover/active/focus/disabled/loading/error/mobile/tablet because its only JSX is shared `<GracefulPageLoading />`. Source grep equivalents native/hex/h1/custom-dialog 0/0/0/0; legacy `old-lms-pages.md:6-12`, mobile breakpoint `components___listing-page-header.scss:131-158`; props not altered.
