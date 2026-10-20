@@ -291,7 +291,7 @@ export function DateInput({
             onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
             onKeyDown={handleCalendarKey}
             data-slot={mode === "time" ? "legacy-time-picker" : mode === "datetime-local" ? "legacy-datetime-picker" : mode === "month" ? "legacy-month-picker" : mode === "week" ? "legacy-week-picker" : "legacy-date-calendar"}
-            className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] max-[767px]:w-[min(22rem,calc(100vw_-_2rem))] !rounded-[12px] border border-[var(--lms-neutral-200)] bg-white p-3 !shadow-[var(--lms-search-dropdown-shadow)]">
+            className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] !rounded-[var(--lms-canvas-radius)] border border-[var(--lms-neutral-200)] bg-white p-3 !shadow-[var(--lms-search-dropdown-shadow)] max-[767px]:fixed max-[767px]:inset-x-4 max-[767px]:bottom-[max(1rem,env(safe-area-inset-bottom))] max-[767px]:top-auto max-[767px]:max-h-[min(70dvh,30rem)] max-[767px]:!w-auto max-[767px]:overflow-y-auto max-[767px]:!p-2">
             {mode !== "time"
               ? <div className="mb-3 flex items-center justify-between gap-2">
                   <Button type="button" variant="ghost" size="icon-sm"
@@ -306,7 +306,7 @@ export function DateInput({
                 </div> : null}
             {mode === "time"
               ? <div className="grid grid-cols-2 gap-2" role="group" aria-label="Hours and minutes">
-                  <div aria-label="Hour" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  <div className="min-w-0"><p className="mb-2 text-center text-[13px] font-semibold text-[var(--lms-body-text)]">Hour</p><div aria-label="Hour" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {Array.from({ length: 24 }, (_, hour) => {
                       const available = Array.from({ length: 60 }, (_, minute) => timeAllowed(hour, minute)).some(Boolean);
                       return <Button key={hour} data-picker-hour={hour} variant="ghost" type="button" size="sm" disabled={!available}
@@ -316,8 +316,8 @@ export function DateInput({
                         {pad2(hour)}
                       </Button>;
                     })}
-                  </div>
-                  <div aria-label="Minute" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  </div></div>
+                  <div className="min-w-0"><p className="mb-2 text-center text-[13px] font-semibold text-[var(--lms-body-text)]">Minute</p><div aria-label="Minute" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {Array.from({ length: 60 }, (_, minute) => (
                       <Button key={minute} data-picker-minute={minute} variant="ghost" type="button" size="sm"
                         disabled={!timeAllowed(draftHour, minute)}
@@ -329,7 +329,7 @@ export function DateInput({
                         {pad2(minute)}
                       </Button>
                     ))}
-                  </div>
+                  </div></div>
                 </div>
               : mode === "month"
                 ? <div className="grid grid-cols-3 gap-2" role="group" aria-label={String(viewMonth.getFullYear())}>
@@ -346,7 +346,7 @@ export function DateInput({
                       </Button>;
                     })}
                   </div>
-                : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End" className="overflow-x-auto overscroll-x-contain text-center max-[767px]:[grid-template-columns:repeat(7,minmax(44px,1fr))]">
+                : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End" className="min-w-0 text-center max-[767px]:gap-[2px] max-[767px]:[grid-template-columns:repeat(7,minmax(44px,1fr))]">
               {weekdayLabels.map(day => <span key={day} aria-hidden="true"
                 className={cx("py-1 text-[12px] font-semibold",
                   day === "Su" ? "text-[var(--lms-calendar-sunday)]" : "text-[var(--lms-muted-text)]")}>
@@ -376,7 +376,7 @@ export function DateInput({
               })}
             </CalendarGrid>}
             {mode === "datetime-local"
-              ? <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2 border-t border-[var(--lms-neutral-200)] pt-3">
+              ? <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2 border-t border-[var(--lms-neutral-200)] pt-3 max-[767px]:flex-col max-[767px]:items-stretch">
                   <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Time
                     <Input type="time" step={Number(props.step ?? 60)} value={draftTime}
@@ -387,7 +387,7 @@ export function DateInput({
                   </label>
                   <Button type="button" variant="primary" size="sm"
                     disabled={!canApplyDateTime} onClick={() => choose(dateTimeCandidate)}
-                    className="max-[767px]:min-h-11">Apply</Button>
+                    className="max-[767px]:min-h-11 max-[767px]:w-full">Apply</Button>
                 </div> : null}
           </PopoverPanel> : null}
     </div>
