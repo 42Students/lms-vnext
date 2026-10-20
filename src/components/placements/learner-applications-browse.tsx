@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Dialog } from "@/components/ui/dialog";
+import { Disclosure } from "@/components/ui/disclosure";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
 import {learnerWithdrawalMode} from "@/modules/placements/learner-withdrawal-mode-model";
 import {learnerApplicationJourneyTimeline} from "@/modules/placements/learner-application-journey-timeline-model";
@@ -196,14 +197,14 @@ export function LearnerApplicationsBrowse({
         <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
           The linked application is not available in your current learner history.
           <Button variant="ghost" type="button" onClick={()=>updateQuery({applicationId:null})}
-            className="ml-2 min-h-11">Return to application list</Button>
+            className="mt-2 min-h-11 w-full sm:ml-2 sm:mt-0 sm:w-auto">Return to application list</Button>
         </div>
       ) : null}
       {selectedStage.stale ? (
         <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
           That screening stage is no longer present in your applications. Showing all stages while keeping your other filters.
           <Button variant="ghost" type="button" onClick={()=>updateQuery({stage:null})}
-            className="ml-2 min-h-[var(--lms-control-height)] max-[767px]:min-h-11">
+            className="mt-2 min-h-11 w-full sm:ml-2 sm:mt-0 sm:w-auto md:min-h-[var(--lms-control-height)]">
             Update stage link
           </Button>
         </p>
@@ -261,6 +262,7 @@ export function LearnerApplicationsBrowse({
           Finished means rejected or withdrawn here. Shortlisting and applied round results
           do not by themselves prove an offer, hiring, or employer completion.
         </p>
+        <Disclosure title="Screening stage" className="border-b border-border" contentClassName="pb-3">
         <SegmentedControl label="Screening stage filter chips"
           className="w-fit max-w-full"
           value={filters.stage}
@@ -269,6 +271,7 @@ export function LearnerApplicationsBrowse({
             value: stageKey,
             label: (stageKey === "all" ? "All screening stages" : humanize(stageKey)) + " (" + count + ")",
           }))} />
+        </Disclosure>
         <div className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Company or role
@@ -363,10 +366,11 @@ export function LearnerApplicationsBrowse({
       ) : null}
 
       <Drawer open={selected!==null}
+        bodyClassName="min-w-0 [&_dd]:min-w-0 [&_dd]:break-words [&_dd]:[overflow-wrap:anywhere]"
         onOpenChange={(open) => {if(!open)updateQuery({applicationId:null});}}
         title={selected ? selected.companyName + " · " + selected.jobTitle : "Application"}
         description={selected ? "Your application history and confirmed outcome" : undefined}
-        footer={<>
+        footer={<div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           {selected ? (
             <>
               {ownApplicationJobHref(selected.jobId) ? <Link
@@ -414,7 +418,7 @@ export function LearnerApplicationsBrowse({
             {selectedInterview?"Open this interview":"Interviews"}
           </Link>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => updateQuery({applicationId:null})}>Got it</Button>
-        </>}>
+        </div>}>
         {selected ? (
           <div className="space-y-5">
             {selected.driveStatus==="CANCELLED"?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">
@@ -477,7 +481,7 @@ export function LearnerApplicationsBrowse({
               </p>
             </section>
             {selected.screening.candidateMessage ? (
-              <section className="rounded-lg border border-border bg-surface-subtle p-4 text-sm text-body">
+              <section className="min-w-0 border-t border-border pt-4 text-sm text-body">
                 <h3 className="font-semibold text-foreground">Placement team feedback</h3>
                 <p className="mt-2 whitespace-pre-wrap">{selected.screening.candidateMessage}</p>
               </section>
@@ -520,7 +524,7 @@ export function LearnerApplicationsBrowse({
           ?"A scheduled round has been booked. Your request goes to the placement cell; it does not immediately withdraw your application."
           :"This changes the official status of your submitted application. This action cannot be undone here."}
         footer={
-          <>
+          <div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:justify-end [&_button]:min-h-11 [&_button]:w-full sm:[&_button]:w-auto md:[&_button]:min-h-9">
             <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={withdrawPending}
               onClick={() => { setWithdrawTarget(null); setWithdrawError(null); }}>
               Keep application
@@ -533,7 +537,7 @@ export function LearnerApplicationsBrowse({
             >
               {withdrawPending ? "Withdrawing…" : "Confirm withdrawal"}
             </Button>
-          </>
+          </div>
         }
       >
         {withdrawTarget ? (

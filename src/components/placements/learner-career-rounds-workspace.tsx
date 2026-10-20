@@ -14,6 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FilterChip } from "@/components/ui/filter-chip";
 import { Dialog } from "@/components/ui/dialog";
+import { Disclosure } from "@/components/ui/disclosure";
 import { learnerRoundSearchHref,learnerRoundSearchQuerySchema }
   from "@/modules/placements/learner-round-search-query-model";
 import { learnerInterviewScheduleCounts,learnerInterviewScheduleViewSchema,
@@ -360,6 +361,7 @@ export function LearnerCareerRoundsWorkspace({
             </p>
           </div>
         ) : null}
+        <Disclosure title="Search employers or rounds" className="border-b border-border" contentClassName="pb-3">
         <div className="grid min-w-0 gap-3 md:grid-cols-3">
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search employers or rounds
@@ -402,6 +404,7 @@ export function LearnerCareerRoundsWorkspace({
             to revisit it without sharing another learner&apos;s records.
           </p>
         </div>
+        </Disclosure>
       </section>
 
       {kind==="ASSESSMENT"&&dueBucket==="past"&&pastReview&&pastReview.count>0 ? (
@@ -466,7 +469,7 @@ export function LearnerCareerRoundsWorkspace({
         onOpenChange={(open) => { if (!open) {setSelectedKey(null);setCopyStatus(null);} }}
         title={selected?.roundName ?? "Placement round"}
         description={selected ? selected.companyName + " · " + selected.roleTitle : undefined}
-        footer={<>
+        footer={<div className="flex min-w-0 w-full flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           <Link
             href={selected
               ? "/learn/my-placements/applications?applicationId=" + encodeURIComponent(selected.applicationId)
@@ -493,10 +496,10 @@ export function LearnerCareerRoundsWorkspace({
             </Link>
           ) : null}
           <Button className="min-h-[var(--lms-control-height)] max-md:min-h-11 w-full md:w-auto" onClick={() => setSelectedKey(null)}>Close</Button>
-        </>}
+        </div>}
       >
         {selected ? (
-          <div className="space-y-4">
+          <div className="min-w-0 space-y-4">
             {kind==="INTERVIEW" && selected && Number.isFinite(nowMs) ? (
               <p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm font-semibold text-body">
                 {learnerInterviewCountdown({
@@ -510,7 +513,7 @@ export function LearnerCareerRoundsWorkspace({
                 {mobileInterviewSummary}
               </p>
             ) : null}
-            <dl className="grid gap-4 text-sm md:grid-cols-2">
+            <dl className="grid min-w-0 gap-4 text-sm md:grid-cols-2 [&_dd]:min-w-0 [&_dd]:break-words [&_dd]:[overflow-wrap:anywhere]">
               <div><dt className="text-xs font-semibold text-muted-foreground">Date & time (IST)</dt>
                 <dd className="mt-1 text-foreground">
                   {date === null ? "Schedule pending" :
@@ -568,7 +571,7 @@ export function LearnerCareerRoundsWorkspace({
             </div>
             {withdrawalTarget ? <LearnerInterviewWithdrawalRequest key={withdrawalTarget.applicationId+":"+withdrawalTarget.roundId+":"+withdrawalTarget.expectedUpdatedAt} target={withdrawalTarget} />:null}
             {kind === "INTERVIEW" ? (
-              <section className="rounded-lg border border-border bg-surface-subtle p-4">
+              <section className="min-w-0 border-t border-border pt-4">
                 <h3 className="text-sm font-semibold text-foreground">Save to your calendar</h3>
                 <p className="mt-1 text-sm leading-6 text-body">
                   Calendar exports use the recorded interview start and duration.
@@ -576,14 +579,14 @@ export function LearnerCareerRoundsWorkspace({
                   Approved reschedules use your own updated time. No calendar event is
                   created until you import the file or confirm it with Google.
                 </p>
-                {interviewCalendar ? <div className="mt-3 flex flex-wrap gap-3">
+                {interviewCalendar ? <div className="mt-3 flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap">
                   <a download={interviewCalendar.filename}
                     href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(interviewCalendar.ics)}
                     className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto">
                     Download .ics
                   </a>
                   <a href={interviewCalendar.googleUrl} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)]">
                     Add to Google Calendar ↗
                   </a>
                 </div> : <p className="mt-2 text-sm text-muted-foreground">
@@ -593,7 +596,7 @@ export function LearnerCareerRoundsWorkspace({
               </section>
             ) : null}
             {kind === "ASSESSMENT" ? (
-              <section className="space-y-3 rounded-lg border border-border bg-surface-subtle p-4">
+              <section className="min-w-0 space-y-3 border-t border-border pt-4">
                 <h3 className="m-0 text-sm font-semibold text-foreground">Personal submission reminder</h3>
                 <p className="text-sm leading-6 text-body">
                   This is only a reminder on this device. It is not sent to your employer or placement team
@@ -627,14 +630,14 @@ export function LearnerCareerRoundsWorkspace({
       <Dialog open={confirmExternalTest!==null} onOpenChange={open=>{if(!open)setConfirmExternalTest(null);}}
         title="Open employer assessment?"
         description="This opens an external provider in a new tab. Leaving the LMS does not submit or confirm an assessment."
-        footer={<>
-          <Button variant="secondary" onClick={()=>setConfirmExternalTest(null)}>Stay here</Button>
+        footer={<div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:justify-end">
+          <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>setConfirmExternalTest(null)}>Stay here</Button>
           {confirmExternalTest ? <a href={confirmExternalTest} target="_blank" rel="noopener noreferrer"
             onClick={()=>setConfirmExternalTest(null)}
             className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
             Open external assessment ↗
           </a>:null}
-        </>}>
+        </div>}>
         <p className="text-sm text-body">{externalAssessment?.notice??"Confirm the provider instructions before proceeding."}</p>
       </Dialog>
     </div>
