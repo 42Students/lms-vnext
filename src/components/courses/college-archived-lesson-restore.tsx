@@ -23,7 +23,7 @@ export function CollegeArchivedLessonRestore({id,name}:{id:string;name:string}){
    setError("Lesson could not be restored. Check for a conflicting active lesson and try again.");
   }finally{setPending(false);}
  }
- return <span className="inline-flex flex-col items-start gap-1">
+ return <div className="inline-flex max-w-full flex-col items-start gap-1">
   <Button variant="ghost" type="button" disabled={pending} onClick={()=>setConfirming(true)}
    className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9">Restore</Button>
   <ConfirmDialog open={confirming} onOpenChange={setConfirming}
@@ -31,5 +31,5 @@ export function CollegeArchivedLessonRestore({id,name}:{id:string;name:string}){
    description="Restoring makes the Lesson available in its active Learning Path. Historical progress and submissions are kept."
    confirmLabel="Restore Lesson" pending={pending} onConfirm={()=>void restore()}/>
   {error?<Alert tone="error">{error}</Alert>:null}
- </span>;
+ </div>;
 }
