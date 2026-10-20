@@ -61,10 +61,10 @@ export default async function MentorReviewOverviewPage({
    className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
  </form>
  <div className="flex flex-wrap items-center gap-3 text-sm">
-  <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
+  <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
    new URLSearchParams({status:data.query.status,feedback:data.query.feedback,
     ...(data.query.version===undefined?{}:{version:String(data.query.version)})}).toString()}
-   download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+   download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
    Export filtered delivery review CSV (max 200)
   </Link>
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}

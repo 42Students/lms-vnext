@@ -84,10 +84,10 @@ export default async function MentorBoardReviewPage({
         <Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
+        <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
           (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
             "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-          download className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          download className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none md:py-0">
           Download filtered CSV (max 500)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -97,10 +97,10 @@ export default async function MentorBoardReviewPage({
       <section aria-label="Sprint status summaries" className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Sprint summaries</h2>
-          <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
+          <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
             (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
               "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-            download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
             Download filtered Sprint summary CSV (max 100)
           </Link>
         </div>

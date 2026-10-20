@@ -99,10 +99,10 @@ export default async function MentorProjectActivityHistoryPage({
         {data.total} matching persisted event{data.total===1?"":"s"}
       </p>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={"/api/projects/"+encodeURIComponent(projectId)+
+        <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
           "/mentor-activity-export"+(data.query.importance==="ALL"&&data.query.view==="ALL"&&data.query.window==="ALL"&&data.query.order==="NEWEST"?"":"?"+
             new URLSearchParams({importance:data.query.importance,view:data.query.view,window:data.query.window,order:data.query.order}).toString())}
-          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none md:py-0">
           Export recorded events CSV (max 200)
         </Link>
         {data.total>200?<span role="status">

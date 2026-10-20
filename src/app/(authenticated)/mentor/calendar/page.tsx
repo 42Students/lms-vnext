@@ -115,11 +115,11 @@ export default async function MentorCalendarPage({searchParams}:{
     </form>
     </FilterBar>
      <div className="flex flex-wrap items-center gap-3 text-sm">
-      <Link href={"/api/mentor/calendar/export?"+new URLSearchParams({
+      <Link data-unskin="" href={"/api/mentor/calendar/export?"+new URLSearchParams({
         sprint:parsed.data.sprint,join:parsed.data.join,projectId:parsed.data.projectId??"",attention:parsed.data.attention,status:parsed.data.status,type:parsed.data.type,
         projectState:parsed.data.projectState,
         search:parsed.data.search,period:parsed.data.period,
-      }).toString()} download className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      }).toString()} download className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Export filtered meeting metadata CSV (max 200)
       </Link>
       {displayed.length>200?<span role="status">Export omits {displayed.length-200} meetings.</span>:null}
