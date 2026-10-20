@@ -206,7 +206,60 @@ export function AnnouncementAdminWorkspace({
   }
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
+    <div className="space-y-6">
+      <section className="space-y-3">
+        <h2 className="m-0 text-lg font-semibold text-foreground">Announcements</h2>
+        {items.length === 0 ? (
+          <EmptyState title="No announcements" description={emptyMessage}/>
+        ) : (
+          items.map((item) => {
+            const targetLabel = targetLabels.get(`${item.receiverType}:${item.receiverId}`) ?? item.receiverId;
+            const safeLink = safeAnnouncementLink(item.message);
+            return (
+              <article key={item.id} className="border-t border-border py-5">
+                <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
+                      <span>{item.receiverType} · {targetLabel}</span>
+                      {item.isPinned ? <span>· Pinned</span> : null}
+                      <span>· {item.visibilityState.charAt(0) + item.visibilityState.slice(1).toLowerCase()}</span>
+                    </div>
+                    <h3 className="mt-2 text-base font-semibold text-foreground">{item.title}</h3>
+                    <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.message}</p>
+                    {item.buttonLabel&&item.buttonUrl&&/^https:\/\/[^\s]+$/i.test(item.buttonUrl)?<a href={item.buttonUrl}
+                      className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                      {item.buttonLabel} ↗
+                    </a>:null}
+                    {safeLink ? <a href={safeLink} className="mt-2 inline-flex min-h-11 items-center break-all text-sm font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open linked resource ↗</a> : null}
+                    {item.expiresAt ? <p className="mt-2 text-xs text-muted-foreground">Show until {new Date(item.expiresAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p> : null}
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Sender: {item.senderType} · Version {item.version}
+                    </p>
+                  </div>
+                  <div className="flex min-w-0 shrink-0 flex-wrap items-center gap-2">
+                    {!item.deletedAt ? (
+                      <>
+                        <Button size="sm" variant="secondary" disabled={pending} onClick={() => {setEditConsent(false);setEditing(item);}}>Edit</Button>
+                        <Dropdown trigger="More" label="Announcement actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+                          <div className="grid min-w-0 gap-2">
+                        <Button role="menuitem" size="sm" variant="secondary" disabled={pending} onClick={() => mutate(item, "PIN")}>
+                          {item.isPinned ? "Unpin" : "Pin"}
+                        </Button>
+                        <Button role="menuitem" size="sm" variant="danger" disabled={pending} onClick={() => mutate(item, "DELETE")}>Delete</Button>
+                          </div>
+                        </Dropdown>
+                      </>
+                    ) : (
+                      <Button size="sm" disabled={pending} onClick={() => mutate(item, "RESTORE")}>Restore</Button>
+                    )}
+                  </div>
+                </div>
+              </article>
+            );
+          })
+        )}
+      </section>
+
       <Disclosure title="Create announcement" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
         <section className="space-y-4 pt-[var(--lms-space-3)]">
         <div>
