@@ -1,5 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -43,7 +46,7 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
     <Textarea rows={2} maxLength={2000} disabled={busy} value={note}
      onChange={event=>setNote(event.target.value)} className="w-full"/>
    </label>:null}
-   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+   {error?<InlineNotice tone="error" message={error}/>:null}
    <Button variant="primary" type="button" disabled={busy} onClick={()=>void submit()} className="min-h-11 md:min-h-9"
     >
     {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}</Button>
@@ -86,7 +89,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
   <p className="text-xs text-muted-foreground">Ask one teammate to do something, with an optional due date.</p>
   <form onSubmit={event=>void create(event)} className="grid min-w-0 gap-3">
    <p className="text-sm">Ask {recipientName}</p>
-   {recipientAwayLabel?<p role="status" className="text-xs text-warning-text">{recipientName.split(" ")[0]} is away until {recipientAwayLabel}.</p>:null}
+   {recipientAwayLabel?<Alert tone="warning">{recipientName.split(" ")[0]} is away until {recipientAwayLabel}.</Alert>:null}
    <label className="grid gap-1 text-sm">What needs doing?
     <Input required maxLength={200} disabled={busy} value={title}
      onChange={event=>{setTitle(event.target.value);key.current=null;}}
@@ -97,7 +100,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
      onChange={event=>{setDue(event.target.value);key.current=null;}}
      className="min-h-11 md:min-h-9 w-full"/>
    </label>
-   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+   {error?<InlineNotice tone="error" message={error}/>:null}
    <Button type="submit" className="min-h-11 md:min-h-9" disabled={busy||!title.trim()||!recipientId}
     >
     {busy?"Sending…":"Ask someone"}</Button>
@@ -116,7 +119,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
     <AskActions threadId={threadId} ask={ask} ownId={actorId}/>
    </li>;
   })}</ul>
-  {items.length===0?<p className="text-sm text-muted-foreground">No asks here yet.</p>:null}
-  {items.length===200?<p role="status" className="text-xs text-muted-foreground">Showing the 200 most recent asks.</p>:null}
+  {items.length===0?<EmptyState title="No asks here yet."/>:null}
+  {items.length===200?<Alert tone="warning">Showing the 200 most recent asks.</Alert>:null}
  </section>;
 }
