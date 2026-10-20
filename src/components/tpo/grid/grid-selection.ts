@@ -16,15 +16,18 @@ export function gridSelectionClick(
   rowId: string,
   anchorId: string | null,
   keys: GridClickModifiers = {},
+  allowedIds: readonly string[] = visibleIds,
 ): GridSelectionResult {
   const rowIndex = visibleIds.indexOf(rowId);
-  if (rowIndex < 0) return { selected: selectedGridIdsWithin(previouslySelected, visibleIds), anchor: null };
-  const prior = selectedGridIdsWithin(previouslySelected, visibleIds);
+  // Preserve previously selected, still-authorized rows outside the current
+  // filtered page for Ctrl/Meta and checkbox actions; never retain denied IDs.
+  const prior = selectedGridIdsWithin(previouslySelected, allowedIds);
+  if (rowIndex < 0 || !allowedIds.includes(rowId)) return { selected: prior, anchor: null };
   const anchorIndex = anchorId === null ? -1 : visibleIds.indexOf(anchorId);
   if (keys.shiftKey && anchorIndex >= 0) {
     const from = Math.min(rowIndex, anchorIndex);
     const to = Math.max(rowIndex, anchorIndex);
-    const range = visibleIds.slice(from, to + 1);
+    const range = visibleIds.slice(from, to + 1).filter(id => allowedIds.includes(id));
     return {
       selected: keys.ctrlKey || keys.metaKey
         ? [...new Set([...prior, ...range])] : range.slice(),
@@ -47,14 +50,15 @@ export function gridSelectionCheckbox(
   checked: boolean,
   anchorId: string | null,
   shiftKey = false,
+  allowedIds: readonly string[] = visibleIds,
 ): GridSelectionResult {
+  const previous = selectedGridIdsWithin(previouslySelected, allowedIds);
   const index = visibleIds.indexOf(rowId);
-  if (index < 0) return { selected: selectedGridIdsWithin(previouslySelected, visibleIds), anchor: null };
+  if (index < 0 || !allowedIds.includes(rowId)) return { selected: previous, anchor: null };
   const anchor = anchorId !== null ? visibleIds.indexOf(anchorId) : -1;
-  const range = shiftKey && anchor >= 0
+  const range = (shiftKey && anchor >= 0
     ? visibleIds.slice(Math.min(index, anchor), Math.max(index, anchor) + 1)
-    : [rowId];
-  const previous = selectedGridIdsWithin(previouslySelected, visibleIds);
+    : [rowId]).filter(id => allowedIds.includes(id));
   return {
     selected: checked ? [...new Set([...previous, ...range])] : previous.filter(id => !range.includes(id)),
     anchor: rowId,
