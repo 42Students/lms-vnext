@@ -73,20 +73,8 @@ export default async function FacultyNotificationsPage({
       <PageHeader
         title="Notifications"
       />
-      <AnnouncementFeed
-        enabled={announcementsEnabled}
-        items={announcements.map((announcement) => ({
-          id: announcement.id,
-          title: announcement.title,
-          message: announcement.message,
-          senderType: announcement.senderType,
-          receiverType: announcement.receiverType,
-          isPinned: announcement.isPinned,
-          createdAt: announcement.createdAt,
-        }))}
-      />
       <section aria-labelledby="faculty-personal-notifications" className="space-y-4">
-        <h2 id="faculty-personal-notifications" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+        <h2 id="faculty-personal-notifications" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
           Personal notifications
         </h2>
         <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX}
@@ -107,9 +95,9 @@ export default async function FacultyNotificationsPage({
               emptyText={view === "unread" ? "No unread notifications." : "Nothing yet."}
             />
             {nextHref ? (
-              <div className="flex justify-center">
+              <div className="flex min-w-0 justify-start">
                 <Link href={nextHref}
-                  className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] sm:w-auto md:min-h-[var(--lms-control-height)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                   Older notifications
                 </Link>
               </div>
@@ -117,6 +105,18 @@ export default async function FacultyNotificationsPage({
           </>
         )}
       </section>
+      <AnnouncementFeed
+        enabled={announcementsEnabled}
+        items={announcements.map((announcement) => ({
+          id: announcement.id,
+          title: announcement.title,
+          message: announcement.message,
+          senderType: announcement.senderType,
+          receiverType: announcement.receiverType,
+          isPinned: announcement.isPinned,
+          createdAt: announcement.createdAt,
+        }))}
+      />
     </div>
   );
 }

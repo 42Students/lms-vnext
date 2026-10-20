@@ -74,7 +74,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <ConfirmDialog open={reloadOpen} onOpenChange={setReloadOpen}
     title="Reload the latest Faculty profile?" description="Any unsaved changes in every section will be lost."
     confirmLabel="Reload latest profile" onConfirm={() => window.location.reload()} />
-  <p className="text-sm text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
+  <p className="max-w-prose text-sm leading-6 text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
   {error?<Alert tone="error" className="space-y-2">
    <p>{error}</p>
    {needsReload?<Button variant="secondary" type="button" className="min-h-11 min-[768px]:min-h-9" onClick={()=>{
@@ -83,10 +83,10 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   </Alert>:null}
   {pending&&savingSection?<LoadingState label={"Saving "+facultyProfileSaveSectionLabel(savingSection)+"…"} />:null}
   {success?<Alert tone="success">{success}</Alert>:null}
-  <nav aria-label="Profile sections" className="min-w-0 border-b border-border pb-4">
+  <nav aria-label="Profile sections" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
     <p className="mb-3 text-sm font-semibold text-foreground">Jump to a profile section</p>
-    <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible">{FACULTY_PROFILE_NAV.map(item=><a key={item.section}
-      className="inline-flex min-h-11 shrink-0 items-center border-b-[3px] border-transparent bg-transparent px-[var(--lms-space-3)] py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] transition-[border-color,color] duration-[200ms] ease-in-out hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)] motion-reduce:transition-none"
+    <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible">{FACULTY_PROFILE_NAV.map(item=><a key={item.section}
+      className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border-b-[3px] border-transparent bg-transparent px-[var(--lms-space-3)] py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] transition-[border-color,color] duration-[200ms] ease-in-out hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)] motion-reduce:transition-none"
       href={"#"+facultyProfileAnchor(item.section)}>{item.label}</a>)}</div>
   </nav>
   <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
