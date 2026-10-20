@@ -143,21 +143,21 @@ export default async function ElectiveRoster({
           <Button type="submit" variant="danger" className="min-h-11 md:min-h-9">Remove faculty</Button>
         </form>}
       </div>)}
-      {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-[8px]">
+      {!archived && <form action={changeFaculty} className="flex min-w-0 flex-wrap items-end gap-[8px] max-[767px]:flex-col max-[767px]:items-stretch">
         <Input type="hidden" name="action" value="ASSIGN" />
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
-          <Select name="membershipId" required defaultValue="" >
+        <label className="grid min-w-0 gap-1 text-sm max-[767px]:w-full">Faculty
+          <Select name="membershipId" required defaultValue="" className="w-full max-w-full">
             <option value="" disabled>Choose faculty</option>
             {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
-          <Select name="role" >
+        <label className="grid min-w-0 gap-1 text-sm max-[767px]:w-full">Role
+          <Select name="role" className="w-full max-w-full">
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
           </Select>
         </label>
-        <Button type="submit" disabled={faculty.length === 0} className="min-h-11 md:min-h-9">
+        <Button type="submit" disabled={faculty.length === 0} className="min-h-11 w-full md:min-h-9 md:w-auto">
           Assign faculty
         </Button>
       </form>}
@@ -180,10 +180,10 @@ export default async function ElectiveRoster({
           { key: "actions", header: "Actions", mobilePriority: "action",
             cell: member => !archived && ["ACTIVE", "WAITLISTED"].includes(member.state)
               ? <div className="grid gap-2">
-                {targets.length > 0 && <form action={mutate} className="flex flex-wrap items-center gap-2">
+                {targets.length > 0 && <form action={mutate} className="flex min-w-0 flex-wrap items-center gap-2 max-[767px]:flex-col max-[767px]:items-stretch">
                   <Input type="hidden" name="action" value="MOVE" />
                   <Input type="hidden" name="membershipId" value={member.membershipId} />
-                  <Select name="targetOfferingId" required defaultValue=""
+                  <Select name="targetOfferingId" required defaultValue="" className="max-w-full max-[767px]:w-full"
                     aria-label="Move to another offering"
                     >
                     <option value="" disabled>Move to another offering</option>
@@ -195,7 +195,7 @@ export default async function ElectiveRoster({
                   </label>
                   <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Move</Button>
                 </form>}
-                <form action={mutate} className="flex flex-wrap items-center gap-2">
+                <form action={mutate} className="flex min-w-0 flex-wrap items-center gap-2 max-[767px]:flex-col max-[767px]:items-stretch">
                   <Input type="hidden" name="action" value="REMOVE" />
                   <Input type="hidden" name="membershipId" value={member.membershipId} />
                   <label className="inline-flex min-h-11 items-center gap-2">
