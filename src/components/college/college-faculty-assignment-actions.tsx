@@ -2,14 +2,14 @@
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import {Alert} from "@/components/ui/alert";
-import {EmptyState} from "@/components/ui/empty-state";
-import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
-import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
+import { useCollegeConfirmation } from "@/components/college/use-college-confirmation";
 
 import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS } from "@/modules/courses/college-courses-copy";
-import {apiFetch} from "@/lib/api-fetch";
+import { apiFetch } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -95,52 +95,52 @@ export function CollegeFacultyAssignmentCreate({
   }
   const fieldClass = "min-w-0";
   return <>{confirmation}<section aria-label="Assign Faculty to multiple courses"
-    className="border-t border-border pt-4">
-    <h2 className="text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
-    <form onSubmit={event => void submit(event)} className="mt-4 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
-      <label className="grid gap-1 text-sm font-semibold">Program
+    className="min-w-0">
+    <h2 className="sr-only">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
+    <form onSubmit={event => void submit(event)} className="mt-[var(--lms-space-3)] grid min-w-0 max-w-[1100px] gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5>Program
         <Select required className={fieldClass} value={programId}
           onChange={event => resetParents("program", event.target.value)}>
           <option value="">Choose program</option>
           {programs.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold">Batch
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5>Batch
         <Select required className={fieldClass} value={cohortId}
           onChange={event => resetParents("batch", event.target.value)}>
           <option value="">Choose batch</option>
           {batches.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold">Class/Section
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5>Class/Section
         <Select required className={fieldClass} value={sectionId}
           onChange={event => resetParents("class", event.target.value)}>
           <option value="">Choose class</option>
           {classes.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold">Semester
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5>Semester
         <Select className={fieldClass} value={semesterNumber}
           onChange={event => { setSemesterNumber(event.target.value); setSelected([]); }}>
           <option value="">All semesters</option>
           {semesters.map(term => <option key={term} value={term}>Semester {term}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold">Academic Year
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5>Academic Year
         <Select className={fieldClass} value={academicYear}
           onChange={event => { setAcademicYear(event.target.value); setSelected([]); }}>
           <option value="">All years</option>
           {years.map(year => <option key={year} value={year}>{year}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold">Faculty
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5>Faculty
         <Select required className={fieldClass} value={membershipId}
           onChange={event => setMembershipId(event.target.value)}>
           <option value="">Choose faculty</option>
           {faculty.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold">{FACULTY_ASSIGNMENT_COPY.roleLabel}
+      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold leading-5>{FACULTY_ASSIGNMENT_COPY.roleLabel}
         <Select className={fieldClass} value={role}
           onChange={event => setRole(event.target.value as CourseTeachingRole)}>
           <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
@@ -148,11 +148,11 @@ export function CollegeFacultyAssignmentCreate({
           <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
         </Select>
       </label>
-      <fieldset className="space-y-2 md:col-span-2 lg:col-span-4">
+      <fieldset className="min-w-0 space-y-[var(--lms-space-3)] md:col-span-2 xl:col-span-4">
         <legend className="text-sm font-semibold">Courses to Assign ({selected.length} selected)</legend>
-        <div className="max-h-64 space-y-2 overflow-auto rounded-[var(--lms-control-radius)] border border-border p-3">
+        <div className="max-h-[20rem] min-w-0 space-y-[var(--lms-space-2)] overflow-y-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-[var(--lms-space-3)]">
           {choices.length === 0 && <EmptyState title="No eligible courses" description="Select a program, batch and class to view eligible courses."/>}
-          {choices.map(item => <label key={item.id} className="flex items-center gap-2 text-sm">
+          {choices.map(item => <label key={item.id} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] px-[var(--lms-space-2)] text-sm leading-5 hover:bg-[var(--lms-primary-subtle)]">
             <Checkbox checked={selected.includes(item.id)}
               onChange={event => setSelected(previous => event.target.checked
                 ? [...previous, item.id] : previous.filter(id => id !== item.id))} />
@@ -160,15 +160,15 @@ export function CollegeFacultyAssignmentCreate({
           </label>)}
         </div>
       </fieldset>
-      <div className="md:col-span-2 lg:col-span-4">
-        <Button variant="primary" type="submit" className="min-h-11 md:min-h-9" loading={saving} disabled={saving || !selected.length || !membershipId}>
+      <div className="min-w-0 md:col-span-2 xl:col-span-4">
+        <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={saving} disabled={saving || !selected.length || !membershipId}>
           {saving ? "Assigning…" : `Assign to ${selected.length} course(s)`}
         </Button>
       </div>
     </form>
-    {(deliveriesTruncated || facultyTruncated) && <Alert tone="warning" className="mt-3">Only the first 200 active delivery or faculty records are listed. Narrow the selection or use its own course workspace.</Alert>}
-    {error && <Alert tone="error" className="mt-3">{error}</Alert>}
-    {message && <Alert tone="success" className="mt-3">{message}</Alert>}
+    {(deliveriesTruncated || facultyTruncated) && <Alert tone="warning" className="mt-[var(--lms-space-3)]">Only the first 200 active delivery or faculty records are listed. Narrow the selection or use its own course workspace.</Alert>}
+    {error && <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>}
+    {message && <Alert tone="success" className="mt-[var(--lms-space-3)]">{message}</Alert>}
   </section></>;
 }
 
@@ -202,7 +202,7 @@ export function CollegeFacultyAssignmentEnd({
       setSaving(false);
     }
   }
-  return <div className="space-y-2">
+  return <div className="min-w-0 space-y-[var(--lms-space-2)]">
     <Button variant="secondary" type="button" loading={saving} disabled={saving}
       onClick={()=>{setConfirming(true);setError(null);}} className="min-h-11 md:min-h-9">
       {saving?"Ending…":"End assignment"}
