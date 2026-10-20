@@ -65,6 +65,20 @@ export async function ProjectAdminReadinessPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
+  const pageValue=one(searchParams.page);
+  const sizeValue=one(searchParams.pageSize);
+  const statusValue=one(searchParams.status);
+  const validPage=pageValue===undefined||(/^[1-9][0-9]*$/.test(pageValue)&&Number.isSafeInteger(Number(pageValue)));
+  const validSize=sizeValue===undefined||["10","20","25","50","100"].includes(sizeValue);
+  const validStatus=statusValue===undefined||statusValue===""||
+    ["PLANNED","ACTIVE","COMPLETED","ARCHIVED"].includes(statusValue);
+  if(!validPage||!validSize||!validStatus)return <div className="min-w-0 space-y-6">
+    <PageHeader title="Submission readiness" actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
+    <ProjectAdminNav basePath={basePath} active="readiness" />
+    <ErrorState title="Invalid readiness filters"
+      description="Review the workspace status, page or rows filters. No workspace records were loaded."
+      action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/>
+  </div>;
   const query: ProjectAdminCollectionQuery = {
     q: one(searchParams.q),
     status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
@@ -104,7 +118,7 @@ export async function ProjectAdminReadinessPage({
         actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
           <PageBackLink href={basePath} label="Project workspaces" />
           <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export overrides CSV</a></div>}
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto">Export overrides CSV</a></div>}
       />
       <ProjectAdminNav basePath={basePath} active="readiness" />
       <section className="border-b border-border pb-5">
