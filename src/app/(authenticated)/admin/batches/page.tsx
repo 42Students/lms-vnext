@@ -34,7 +34,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
     : [];
   const periods = periodRows.filter(row => row.status !== "CLOSED")
     .map(row => ({ id: row.id, name: row.name, code: row.code, startDate:row.startDate, endDate:row.endDate }));
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batches"/>
       {data ? <AcademicSetupSteps step={5} /> : null}
     {!selected ? <p role="status" className="text-sm text-body">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
@@ -72,7 +72,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           </label>
           <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Refresh</Button>
-          <Link href="/admin/batches" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
+          <Link href="/admin/batches" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>
         </form>
       </section>
 

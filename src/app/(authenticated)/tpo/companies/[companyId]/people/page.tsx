@@ -19,7 +19,7 @@ export default async function TpoCompanyPeoplePage({
   const company = await listTpoCompanyPeople(context, companyId);
   if (!company) notFound();
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
         href={"/tpo/companies/" + encodeURIComponent(companyId)}>
         ← Back to company
