@@ -44,7 +44,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   // value. Keep the existing recoverable invalid-college state on ambiguity.
   const repeated=Object.values(query).some(Array.isArray);
   const collegeQuery = z.string().uuid().optional().safeParse(repeated?null:one(query.collegeId));
-  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Company & Team" />
+  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-6"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
       action={<Link href="/hr/company" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Choose college</Link>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
@@ -77,7 +77,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         {result.status==="NO_ACCESS"?<EmptyState
           title="No active college access"
           description="Your recruiter account has no active college access. Contact the placement cell that invited you."/>:
-          <section className="space-y-3 border-b border-border pb-5">
+          <section className="space-y-3 border-b border-border pb-6">
             <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Choose a college</h2>
             <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(grant=>({
               key:grant.collegeId,label:grant.collegeName,
@@ -117,7 +117,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           {value:"reports",label:"Reports",href:"/hr/company/reports?collegeId="+encodeURIComponent(result.grant.collegeId)}]}/>
 
       {tab === "company" ? (
-        <section className="border-b border-border pb-5">
+        <section className="border-b border-border pb-6">
           <div className="flex min-w-0 flex-wrap items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
@@ -130,7 +130,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             </div>
             <Badge  tone="neutral">Linked by the placement cell</Badge>
           </div>
-          <dl className="mt-5 grid gap-4 md:grid-cols-2">
+          <dl className="mt-6 grid gap-4 md:grid-cols-2">
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Website</dt>
               <dd className="mt-1 text-sm text-foreground">{result.company.websiteUrl?.startsWith("https://")||result.company.websiteUrl?.startsWith("http://")
@@ -144,7 +144,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           </dl>
           <p className="mt-3 text-sm text-body">Industry not set</p>
           <p className="mt-2 text-xs text-muted-foreground">One company for everyone at it. The placement cell manages the verified company relationship.</p>
-          <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-5">
+          <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-6">
             <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Hiring footprint with this college</h3>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
             <SummaryStrip label="Hiring footprint with this college" className="mt-4" steps={[
@@ -165,7 +165,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           </section>
         </section>
       ) : (
-        <section className="border-b border-border pb-5">
+        <section className="border-b border-border pb-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recruiter team</h2>
             <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}

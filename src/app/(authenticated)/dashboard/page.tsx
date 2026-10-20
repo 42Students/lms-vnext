@@ -69,12 +69,12 @@ function MetricCard({
   return href ? (
     <Link
       href={href}
-      className="flex min-h-11 flex-col rounded-[var(--lms-radius-card)] border border-border bg-surface p-5 transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
+      className="flex min-h-11 flex-col rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
     >
       {content}
     </Link>
   ) : (
-    <section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
+    <section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
       {content}
     </section>
   );

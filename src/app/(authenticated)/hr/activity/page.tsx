@@ -35,7 +35,7 @@ export default async function HrJobActivityPage({searchParams}:{
      href={"/api/placements/recruiter/activity/export?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)}
      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto"
    >Export activity CSV</Link>:undefined}/>
-  {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-5">
+  {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-6">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
    <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(grant=>({
     key:grant.collegeId,label:grant.collegeName,
