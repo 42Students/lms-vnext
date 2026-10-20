@@ -15,7 +15,7 @@ export default function LearnerProjectsError({
         Check your connection, then try again. Your project data has not been changed.
       </p>
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <Button className="max-md:min-h-11" onClick={reset}>Retry</Button>
+        <Button type="button" className="max-md:min-h-11" onClick={reset}>Retry</Button>
       </div>
     </section>
   );
