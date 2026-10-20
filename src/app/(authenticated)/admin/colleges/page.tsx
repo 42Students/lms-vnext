@@ -150,7 +150,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
           description="Every college belongs to an organization, so the organization is the required first tenant boundary."
         />
       ) : null}
-      <form role="search" aria-label="Search colleges" className="grid min-w-0 items-end gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto_auto]" method="get">
+      <form role="search" aria-label="Search colleges" className="grid min-w-0 items-end gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]" method="get">
        <label className="flex min-w-0 w-full flex-1 flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search college, code, city or organization
         <Input type="search" name="q" defaultValue={q} maxLength={100} />
        </label>
