@@ -23,7 +23,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   if (!query) return <div className="space-y-4">
     <PageHeader title="Drives" />
     <ErrorState title="Invalid drive filters" description="Search, status, season, company or page is invalid."
-      action={<Link href="/college/placements/drives">Clear filters</Link>} />
+      action={<Link href="/college/placements/drives" className="hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
   </div>;
   const data = await listCollegeDrives(context, query);
   const formatter = new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
@@ -31,7 +31,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
     {key:"drive",header:"Drive",mobilePriority:"primary",cell:item=><div className="min-w-0">
       <p className="break-words font-semibold">{item.title}</p>
       <Link href={`/college/placements/jobs/${item.id}/overview`}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open drive</Link>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open drive</Link>
     </div>},
     {key:"company",header:"Company",cell:item=>item.companyName},
     {key:"type",header:"Type",cell:item=>item.type.replaceAll("_"," ")},
@@ -42,9 +42,9 @@ export default async function CollegeDrivesPage({ searchParams }: {
     {key:"status",header:"Status",cell:item=>item.status==="PUBLISHED"?"Live":item.status==="DRAFT"?"Draft":item.status==="CLOSED"?"Closed":item.status==="ARCHIVED"?"Archived":item.status},
     {key:"actions",header:"Actions",mobilePriority:"action",cell:item=><div className="flex min-w-0 flex-wrap items-center gap-2">
       <Link href={`/college/placements/jobs/${item.id}/applications`}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View applications</Link>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View applications</Link>
       <Link href={`/college/placements/jobs/${item.id}/settings`}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Edit</Link>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Edit</Link>
       <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
       {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id}
         title={item.title} currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
@@ -54,7 +54,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   return <div className="space-y-6">
     <PageHeader title="Drives"
       description="College-owned placement drives. This list is independent of cross-college recruiter access."
-      actions={<Link href="/college/placements" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center lms-inline-link">Operations workspace</Link>} />
+      actions={<Link href="/college/placements" className="text-link underline min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Operations workspace</Link>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title or company
         <Input type="search" name="q" defaultValue={query.q} maxLength={100}
@@ -110,8 +110,8 @@ export default async function CollegeDrivesPage({ searchParams }: {
     </section>
     <nav aria-label="Drive pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
       <span>Page {data.query.page} of {data.totalPages}</span><div className="flex flex-wrap gap-3">
-        {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]" href={driveListHref({...query,page:query.page-1})}>Previous</Link>:null}
-        {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
+        {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={driveListHref({...query,page:query.page-1})}>Previous</Link>:null}
+        {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
       </div>
     </nav>
   </div>;
