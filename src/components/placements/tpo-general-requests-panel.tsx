@@ -13,9 +13,9 @@ type Request={id:string;kind:string;status:string;reason:string;payload:Record<s
  studentName:string|null;version:string;requestedAt:string;decisionNote:string|null};
 function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<string,unknown>}){
  const detail=tpoGeneralRequestReviewFacts(kind,payload);
- return <div className="space-y-2">
-  {detail.facts.length?<dl className="grid gap-2 md:grid-cols-2">{detail.facts.map(item=>
-   <div key={item.label} className="rounded-[var(--lms-control-radius)] border border-border p-2">
+ return <div className="min-w-0 space-y-2">
+  {detail.facts.length?<dl className="grid min-w-0 gap-x-4 gap-y-2 sm:grid-cols-2">{detail.facts.map(item=>
+   <div key={item.label} className="min-w-0 border-b border-border py-2">
     <dt className="text-xs text-muted-foreground">{item.label}</dt>
     <dd className="break-words font-medium">{item.value}</dd>
    </div>)}</dl>:null}
@@ -26,14 +26,17 @@ function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<strin
 }
 export function TpoGeneralRequestsPanel(){
  const [rows,setRows]=useState<Request[]>([]),[error,setError]=useState("");
+ const [loading,setLoading]=useState(true);
  const [selection,setSelection]=useState<Request|null>(null),[action,setAction]=useState<"APPROVE"|"REJECT">("REJECT");
  const [note,setNote]=useState(""),[message,setMessage]=useState("");
  const {run,pending}=useGuardedAction();
  async function load(){
+  setLoading(true);
   try{
    const data=await apiFetch<{requests:Request[]}>("/api/placements/tpo/requests/general",{cache:"no-store"});
    setRows(data.requests);setError("");
   }catch{setError("Other student requests could not be loaded. Retry to refresh.");}
+  finally{setLoading(false);}
  }
  useEffect(()=>{void Promise.resolve().then(load);},[]);
  async function decide(){
@@ -56,26 +59,31 @@ export function TpoGeneralRequestsPanel(){
  return <section aria-label="Other student requests" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold">Other student requests · {pendingRows.length} waiting</h2>
   <p className="text-sm">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
-  <Button variant="secondary" type="button" onClick={()=>void load()} className="min-h-11 px-3">Refresh other requests</Button>
+  <Button variant="secondary" type="button" onClick={()=>void load()} loading={loading} disabled={loading} className="min-h-11 w-full px-3 sm:w-auto md:min-h-9">Refresh other requests</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
-  {!rows.length?<EmptyState title="No other requests to review."/>:
-   <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[min(70vh,44rem)] min-h-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="border-b border-[var(--lms-canvas-border)] py-3 text-sm">
+  {loading&&!rows.length?<p role="status" className="py-4 text-sm text-body">Loading other student requests…</p>:!rows.length?<EmptyState title="No other requests to review."/>:
+   <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[min(70vh,44rem)] min-h-0 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3 text-sm">
     <h3 className="font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
     <p className="break-words">{row.reason}</p>
     <p className="text-xs">{row.status.replaceAll("_"," ")}</p>
-    <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
+    <details className="min-w-0 py-1"><summary className="min-h-11 cursor-pointer py-3 font-semibold text-primary-text md:min-h-9 md:py-2">Request details</summary>
+     <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
+    </details>
     {row.decisionNote?<p>Decision: {row.decisionNote}</p>:null}
-    {row.status==="PENDING"?<Button variant="secondary" type="button" disabled={pending} className="mt-2 min-h-11 px-3"
+    {row.status==="PENDING"?<Button variant="secondary" type="button" disabled={pending} className="mt-2 min-h-11 w-full px-3 sm:w-auto md:min-h-9"
       onClick={()=>{setSelection(row);setNote("");setAction("REJECT");}}>Review request</Button>:null}
    </li>)}</ul>}
   <Dialog open={selection!==null} onOpenChange={open=>{if(!open&&!pending)setSelection(null);}}
    title={"Review "+(selection?.kind.replaceAll("_"," ").toLowerCase()??"request")}
    description="The learner receives your reason. An approval must save its domain consequence and the audit in the same transaction."
-   footer={<><Button variant="secondary" disabled={pending} onClick={()=>setSelection(null)}>Cancel</Button>
-    <Button disabled={pending||(action==="APPROVE"&&!approveSupported(selection?.kind??""))} onClick={()=>void decide()}>
-      {pending?"Saving…":"Confirm decision"}</Button></>}>
-   <p className="break-words text-sm">{selection?.reason}</p>
+   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={()=>setSelection(null)}>Cancel</Button>
+    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending||(action==="APPROVE"&&!approveSupported(selection?.kind??""))} onClick={()=>void decide()}>
+      {pending?"Saving…":"Confirm decision"}</Button></div>}>
+   <div className="min-w-0 space-y-3 break-words">
+    <p className="text-sm">{selection?.reason}</p>
+    {selection?<TpoGeneralRequestFacts kind={selection.kind} payload={selection.payload}/>:null}
    <label className="mt-3 grid gap-1 text-sm">Decision
     <Select value={action} onChange={e=>setAction(e.target.value as "APPROVE"|"REJECT")} >
      {approveSupported(selection?.kind??"")?<option value="APPROVE">Approve and apply</option>:null}
@@ -86,6 +94,8 @@ export function TpoGeneralRequestsPanel(){
     <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}/>
    </label>
    {!approveSupported(selection?.kind??"")?<p className="text-sm">A specialist review is required before this kind can be approved. No placement record will be silently changed.</p>:null}
+   {selection&&error?<InlineNotice tone="error" message={error}/>:null}
+   </div>
   </Dialog>
  </section>;
 }
