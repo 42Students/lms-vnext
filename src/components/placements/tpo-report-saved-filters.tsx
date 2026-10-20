@@ -58,14 +58,14 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
  }
  return <Disclosure title={`Saved filters (${views.length}/12)`} className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4 print:hidden">
   <p className="mt-2 text-xs text-muted-foreground">Save this report&apos;s active filters in this browser for your account. Nothing is sent to other users or devices.</p>
-  <div className="mt-3 flex flex-wrap items-end gap-2">
+  <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
    <label className="grid min-w-0 w-full flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:min-w-40 min-[768px]:w-auto">Name this view
-    <Input className="min-h-11 min-[768px]:min-h-9" value={name} onChange={e=>setName(e.target.value)} maxLength={50}
+    <Input className="min-h-11 w-full sm:w-auto md:min-h-9" value={name} onChange={e=>setName(e.target.value)} maxLength={50}
       placeholder="e.g. Current season"/>
    </label>
    <Button variant="secondary" type="button" className="min-h-11 min-[768px]:min-h-9" onClick={save} disabled={!name.trim()} >Save current</Button>
   </div>
-  <div className="mt-3 flex flex-wrap items-end gap-2">
+  <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
    <label className="grid min-w-0 w-full flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:min-w-40 min-[768px]:w-auto">Choose saved view
     <Select className="min-h-11 min-[768px]:min-h-9" value={picked} disabled={views.length===0} onChange={e=>{setPicked(e.target.value);setMessage("");}}
      >

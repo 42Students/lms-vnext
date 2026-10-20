@@ -1,5 +1,6 @@
 import { Alert } from "@/components/ui/alert";
 import { Tabs } from "@/components/ui/tabs";
+import { Dropdown } from "@/components/ui/dropdown";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -25,42 +26,42 @@ export default async function CampaignHistory({searchParams}:PageProps){
  const result=await listTpoMessagingHistory(context,query.data);
  const drafts=await listTpoCampaignDrafts(context);
  const deliveryReady=await tpoCampaignDispatchReady();
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 space-y-4">
   <PageHeader title="Emails"
-   description="Persisted email/SMS batch receipts for your college. Provider acceptance does not prove recipient delivery."/>
+   description="Persisted email/SMS batch receipts for your college. Provider acceptance does not prove recipient delivery."
+   actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+     <Link href="/tpo/recruiters/campaigns/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:w-auto md:min-h-9">New email campaign</Link>
+     <Dropdown mobileSheet align="end" label="More campaign history actions" trigger="More ···"><nav aria-label="Campaign history actions" className="min-w-48 space-y-1">
+       <Link href="/tpo/recruiters" className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-link">Back to Engage</Link>
+          <Link href={"/api/placements/tpo/campaigns/history/export"+(first(params.purpose)?"?purpose="+encodeURIComponent(first(params.purpose)!):"")}
+     className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-link">Export filtered history as CSV</Link>
+     </nav></Dropdown>
+   </div>} />
   <Tabs ariaLabel="Engage views" renderPanel={false} value="campaigns"
     items={([["table","Table"],["board","Board"],["companies","Companies"],["campaigns","Emails"]] as const)
       .map(([value,label])=>({value,label,href:"/tpo/recruiters?view="+value}))}/>
   <p className="text-sm text-body">
    To send one, select recruiters in the table and choose Act, then Send an email.
   </p>
-  <form role="search" aria-label="recruiters campaigns filters" method="get" action="/tpo/recruiters/campaigns" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-   <label className="text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Purpose
+  <form role="search" aria-label="recruiters campaigns filters" method="get" action="/tpo/recruiters/campaigns" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+   <label className="min-w-0 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Purpose
     <Input name="purpose" maxLength={120} defaultValue={first(params.purpose)??""}
      placeholder="Filter by purpose" className="mt-[6px] block min-h-11 min-[768px]:min-h-9 border border-border px-3"/>
    </label>
-   <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Apply</Button>
-   <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline lms-inline-link">Clear</Link>
+   <Button variant="secondary" type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3 text-sm sm:w-auto md:min-h-9">Apply</Button>
+   <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center justify-center text-sm text-link underline lms-inline-link md:min-h-9">Clear</Link>
   </form>
-  <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
-   <Link href="/tpo/recruiters/campaigns/new"
-    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-    New email campaign
-   </Link>
-   <Link href="/tpo/recruiters" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link lms-inline-link hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to Engage</Link>
-   <Link href={"/api/placements/tpo/campaigns/history/export"+(first(params.purpose)?"?purpose="+encodeURIComponent(first(params.purpose)!):"")}
-     className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Export filtered history as CSV</Link>
-  </nav>
+
   <section aria-label="Email campaigns" className="space-y-3">
    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Email campaigns</h2>
    {!drafts.ready?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
      {CAMPAIGN_DRAFT_UNAVAILABLE}
     </p>:drafts.rows.length===0?
     <p role="status" className="text-sm text-body">No email campaigns yet.</p>:
-    <ul className="grid gap-3 min-[768px]:grid-cols-2">
+    <ul className="grid min-w-0 gap-3 md:grid-cols-2">
      {drafts.rows.map(item=><li key={item.campaign_id}
       className="border-b border-border py-4">
-      <Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline lms-inline-link"
+      <Link className="inline-flex min-h-11 min-w-0 items-center break-words font-semibold text-link underline lms-inline-link md:min-h-9"
        href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}>
        {item.title}
       </Link>
@@ -78,7 +79,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   </section>
   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Delivery batch receipts</h2>
   <p role="status" className="text-sm text-body">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
-  {result.rows.length ? <ol aria-label="recruiters campaigns entries" className="grid gap-3 min-[768px]:grid-cols-2">
+  {result.rows.length ? <ol aria-label="recruiters campaigns entries" className="grid min-w-0 gap-3 md:grid-cols-2">
     {result.rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
       <h2 className="break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}

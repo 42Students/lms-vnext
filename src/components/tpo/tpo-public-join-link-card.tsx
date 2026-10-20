@@ -127,7 +127,7 @@ export function TpoPublicJoinLinkCard({
   }
 
   return (
-    <section aria-label={title} className="border-t border-border pt-5">
+    <section aria-label={title} className="min-w-0 space-y-3 border-t border-border pt-5">
       <h2 className="text-lg font-semibold text-foreground">{title}</h2>
       {isCompany ? (
         <>
@@ -141,10 +141,10 @@ export function TpoPublicJoinLinkCard({
             </p>
           )}
           {status.domain ? <p className="mt-2 text-sm text-body">Email domains: @{status.domain}</p> :
-          companyId ? <div className="mt-3 flex flex-wrap gap-2">
+          companyId ? <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
            <Input aria-label="Company email domain" value={domainDraft} onChange={event=>setDomainDraft(event.target.value)}
             placeholder="company.com" className="min-h-11 min-[768px]:min-h-9 min-w-0 flex-1"/>
-           <Button type="button" variant="secondary" className="min-h-11 min-[768px]:min-h-9"
+           <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9"
             disabled={busy||!domainDraft.trim()} onClick={()=>void saveDomain()}>Add domain</Button>
           </div> : null}
         </>
@@ -154,11 +154,11 @@ export function TpoPublicJoinLinkCard({
         </p>
       )}
       {!status.ready ? (
-        <p role="status" className="mt-3 text-sm text-body">
-          {isCompany ? "Couldn't load the company link" : "Couldn't load the public link"}
+        <div role="status" className="mt-3 flex min-w-0 flex-col items-start gap-2 text-sm text-body sm:flex-row sm:items-center">
+          <p className="m-0">{isCompany ? "Couldn't load the company link" : "Couldn't load the public link"}</p>
           <Button type="button" variant="ghost" disabled={busy} onClick={()=>void retryStatus()}
-            className="ml-3 min-h-11 min-[768px]:min-h-9 underline">Retry</Button>
-        </p>
+            className="min-h-11 w-full underline sm:w-auto min-[768px]:min-h-9">Retry</Button>
+        </div>
       ) : (
         <>
           {status.link ? (
@@ -174,7 +174,7 @@ export function TpoPublicJoinLinkCard({
           <Button
             type="button" disabled={busy || (isCompany && !status.domain)}
             onClick={()=>{if(status.link)setReplaceOpen(true);else void makeLink();}}
-            className="mt-4 min-h-11 min-[768px]:min-h-9"
+            className="mt-4 min-h-11 w-full sm:w-auto min-[768px]:min-h-9"
           >
             {status.link ? PUBLIC_JOIN_LINK_COPY.replace :
               isCompany ? PUBLIC_JOIN_LINK_COPY.initial : PUBLIC_JOIN_LINK_COPY.publicInitial}
@@ -187,7 +187,7 @@ export function TpoPublicJoinLinkCard({
                   onFocus={(event) => event.currentTarget.select()}
                   className="min-h-11 w-full min-w-0 min-[768px]:min-h-9 min-[768px]:w-auto min-[768px]:flex-1" />
                 <Button type="button" variant="secondary" onClick={copyLink}
-                  className="min-h-11 min-[768px]:min-h-9">
+                  className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9">
                   Copy
                 </Button>
               </div>

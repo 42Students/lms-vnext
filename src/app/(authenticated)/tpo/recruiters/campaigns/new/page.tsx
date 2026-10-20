@@ -27,10 +27,10 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
  </div>;
  const ready=await tpoCampaignDraftStorageReady();
  const deliveryReady=ready&&await tpoCampaignDispatchReady();
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-4">
   <PageHeader title="New email campaign"
    description="Reach recruiter leads in your college with a saved and auditable audience snapshot."
-   actions={<Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center text-sm text-link underline lms-inline-link md:min-h-9">← Campaign history</Link>} />
+   actions={<Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 w-full items-center justify-center text-sm text-link underline lms-inline-link sm:w-auto md:min-h-9">← Campaign history</Link>} />
   {ready?<TpoCampaignCompose deliveryReady={deliveryReady} selectedLeadIds={selectedLeadIds}/>:
    <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body">
     {CAMPAIGN_DRAFT_UNAVAILABLE}

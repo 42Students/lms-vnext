@@ -21,9 +21,13 @@ export default async function PrepSettings(){
  const initial=parsed.success?parsed.data:{courseIds:[],minimumCompleted:0};
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Prep readiness" description="Set the readiness percentage and required preparation-course choices for this college." />
-  <TpoSettingsNav active="prep-readiness"/>
+  <TpoSettingsNav active="prep-readiness" compact/>
+  <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] xl:items-start">
+  <div className="min-w-0">
   {communication.ready?<TpoPrepPercentageEditor key={context.membership?.collegeId??"unscoped"} initial={communication.prepThresholdPct} version={communication.version}/>:
    <Alert tone="warning">Readiness percentage storage is unavailable.</Alert>}
+  </div>
+  <div className="min-w-0">
   {!data.ready?<Alert tone="warning">Readiness settings storage is pending migration registration.</Alert>:
   <>
    {!parsed.success?<Alert tone="error">The saved readiness config uses an unsupported shape. No changes will be made until it is reviewed.</Alert>:null}
@@ -33,5 +37,7 @@ export default async function PrepSettings(){
    {parsed.success&&coursesResult.ok?<TpoPrepReadinessEditor key={context.membership?.collegeId??"unscoped"} choices={courses} initial={{courseIds:initial.courseIds,minimumCompleted:initial.minimumCompleted}}
     expectedVersion={data.updatedAt?.toISOString()??"none"}/>:null}
   </>}
+  </div>
+  </div>
  </div>;
 }

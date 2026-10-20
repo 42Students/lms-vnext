@@ -64,7 +64,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
    setError("Could not reach the server. Your entered times are still here.");
   }finally{submitLock.current=false;setSubmitting(false);}
  }
- return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid gap-3 md:grid-cols-2">
+ return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid min-w-0 gap-3 min-[768px]:grid-cols-2">
   <Input type="hidden" name="action" value="CREATE"/>
   <label className="grid gap-1 text-sm text-body">Interview round
    <Select name="roundId" required defaultValue="" className="text-sm">
@@ -94,13 +94,13 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   <label className="grid gap-1 text-sm text-body">Panel label (not a learner name)
    <Input name="panelLabel" maxLength={160} className="text-sm"/>
   </label>
-  <label className="grid gap-1 text-sm text-body md:col-span-2">Meeting location
+  <label className="grid min-w-0 gap-1 text-sm text-body md:col-span-2">Meeting location
    <Input name="meetingLocation" maxLength={500} className="text-sm"/>
   </label>
   {error?<div className="md:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
   {notice?<div className="md:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
   <Button type="submit" disabled={!rounds.length||submitting} loading={submitting} aria-busy={submitting}
-    variant="primary" className="md:col-span-2">
+    variant="primary" className="min-h-11 w-full min-[768px]:min-h-9 md:col-span-2">
     {submitting?"Sending time block…":"Propose slot"}
   </Button>
  </form>;
@@ -140,15 +140,15 @@ export function RecruiterInterviewSlotActions({action,slot}:{
   }finally{actionLock.current=false;setBusy(null);setConfirmCancel(false);}
  }
  return <div className="space-y-2">
-  <div className="flex flex-wrap gap-2">
+  <div className="grid grid-cols-1 gap-2 min-[768px]:flex min-[768px]:flex-wrap">
    {slot.status==="PROPOSED"?<Button type="button" disabled={busy!==null} onClick={()=>void act("OFFER")}
-    variant="secondary">Offer time to college</Button>:null}
+    variant="secondary" className="min-h-11 min-[768px]:min-h-9">Offer time to college</Button>:null}
    {(slot.status==="OFFERED"||slot.status==="BOOKED")&&slot.bookedCount<slot.capacity?
     <Button type="button" disabled={busy!==null} onClick={()=>void act("BOOK")}
-     variant="secondary">Reserve one internal slot</Button>:null}
+     variant="secondary" className="min-h-11 min-[768px]:min-h-9">Reserve one internal slot</Button>:null}
    {(slot.status==="PROPOSED"||slot.status==="OFFERED")?<Button type="button" disabled={busy!==null}
     onClick={()=>void act("CANCEL")}
-    variant="secondary">Cancel time block</Button>:null}
+    variant="secondary" className="min-h-11 min-[768px]:min-h-9">Cancel time block</Button>:null}
   </div>
   {busy?<p role="status" className="text-xs text-body">Updating time block…</p>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
