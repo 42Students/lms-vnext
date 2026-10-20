@@ -48,8 +48,8 @@ export function CollegeLegacyDriveSettings({
     }catch(error){setFeedback(error instanceof Error?error.message:"Could not reopen drive");}
     finally{setBusy(false);}
   }
-  return <section className="space-y-4 border-t border-border pt-4">
-    <h2 className="font-semibold">Drive status</h2>
+  return <section className="space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
+    <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Drive status</h2>
     <p className="font-medium">{status}</p>
     {action?<div className="space-y-3">
       {confirmation==="CLOSE"?<div className="space-y-3" role="group" aria-label={action.confirmation}>
