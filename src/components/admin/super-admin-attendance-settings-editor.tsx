@@ -17,17 +17,19 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
  const parsed=attendancePolicyUpdateSchema.safeParse({
   collegeId,eligibilityThresholdPercent:Number(threshold),correctionWindowHours:Number(hours),
  });
- const withinRange=Number.isInteger(Number(hours))&&Number(hours)>=1&&Number(hours)<=maxCorrectionHours;
+ const withinRange=hours.trim()!==""&&Number.isInteger(Number(hours))&&Number(hours)>=1&&Number(hours)<=maxCorrectionHours;
+ const thresholdValid=threshold.trim()!==""&&Number.isInteger(Number(threshold))&&Number(threshold)>=1&&Number(threshold)<=100;
+ const dirty=threshold!==String(eligibilityThresholdPercent)||hours!==String(correctionWindowHours);
  function requestSave(){
-  if(saving)return;
-  if(!parsed.success||!withinRange){
+  if(saving||!dirty)return;
+  if(!parsed.success||!withinRange||!thresholdValid){
    setMessage("Minimum attendance must be 1–100%; late marking must be 1–"+maxCorrectionHours+" hours.");
    setFailed(true);return;
   }
   setMessage("");setFailed(false);setConfirming(true);
  }
  async function save(){
-  if(saving||!parsed.success||!withinRange)return;
+  if(saving||!parsed.success||!withinRange||!thresholdValid)return;
   setSaving(true);setMessage("");setFailed(false);
   try{
    const response=await fetch("/api/attendance/admin/policy",{
@@ -44,25 +46,28 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
   <div className="grid gap-4 md:grid-cols-2 print:hidden">
    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Late marking allowed for
     <Input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
-     onChange={e=>setHours(e.target.value)} aria-describedby="late-marking-help"
+     onChange={e=>{setHours(e.target.value);setMessage("");setFailed(false);}} aria-describedby="late-marking-help"
+     aria-invalid={failed&&!withinRange}
      className="min-h-11 w-full md:min-h-9"/>
-    <span id="late-marking-help" className="text-xs font-normal text-muted-foreground">How long after a class ends attendance can be marked or corrected. (hours)</span>
+    <span id="late-marking-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">How long after a class ends attendance can be marked or corrected. (hours)</span>
    </label>
    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Minimum attendance
     <Input type="number" min={1} max={100} step={1} value={threshold}
-     onChange={e=>setThreshold(e.target.value)} aria-describedby="minimum-attendance-help"
+     onChange={e=>{setThreshold(e.target.value);setMessage("");setFailed(false);}} aria-describedby="minimum-attendance-help"
+     aria-invalid={failed&&!thresholdValid}
      className="min-h-11 w-full md:min-h-9"/>
-    <span id="minimum-attendance-help" className="text-xs font-normal text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
+    <span id="minimum-attendance-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
    </label>
   </div>
   <p className="hidden text-sm text-body print:block">Late marking: {correctionWindowHours} hours · Minimum attendance: {eligibilityThresholdPercent}%</p>
-  <Button variant="primary" type="button" loading={saving} disabled={saving} onClick={requestSave}
+  <Button variant="primary" type="button" loading={saving} disabled={saving||!dirty} onClick={requestSave}
    className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden">{saving?"Saving…":"Save attendance policy"}</Button>
   {message?<Alert tone={failed?"error":"success"}>{message}</Alert>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance settings for this college?"
    description="Changes apply to the selected college." confirmVariant="primary" confirmLabel="Save settings"
    pending={saving} onConfirm={()=>void save()}>
     <p className="text-sm text-body">Late marking: {hours} hours · Minimum attendance: {threshold}%</p>
+    {failed&&message?<Alert tone="error">{message}</Alert>:null}
   </ConfirmDialog>
  </section>;
 }

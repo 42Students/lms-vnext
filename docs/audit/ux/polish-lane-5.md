@@ -287,3 +287,17 @@ Files: `src/app/(authenticated)/admin/course-progress/students/page.tsx`, queue 
 - Changes: compact aligned current logo row, separate destructive removal in keyboard-accessible Logo management disclosure retaining its confirmation, reset native file input on clearing, early client MIME/size feedback before creating preview object URLs while retaining authoritative upload checks, immediate removed-state to prevent stale logo flash, 44px crop action and consistent hairline preview divider. Full API crop, zoom/positions, dimensions/size safeguards, pending/error states, canEdit permission, signed/storage behavior and retained wording untouched.
 - Inspected full CollegeLogoUploader upload/crop/network/remove and ConfirmDialog, parent Look and feel page, CollegeBrandingForm and stored preview, shared Input/Disclosure/Button/Alert/Card, route loading/error/not-found/layout. Source-level 375/768/1280 review; no browser/code/CI run.
 - Files: src/components/admin/college-logo-uploader.tsx, queue and proof.
+
+## Surface 42 — OrganizationCreateForm
+
+- Problems fixed (5): restored-draft notice and server error could wrap into the primary input/action row at 768; restored status was a competing full alert; user edits left stale failure text visible; full-width desktop notices did not align under the field; primary action lost a stable second column on tablet.
+- Changes: legacy input + primary action share a two-column tablet/desktop row and stack at 375; restored draft becomes quiet accessible status, feedback spans the whole row below controls, and editing clears stale error. Preserved form draft persistence, 409 duplicate handling, required/name limits, create behavior and optional college-step navigation.
+- Inspected: OrganizationCreateForm create/success/duplicate/network/missing next step/restored/pending; shared Input/Button/Alert, useGuardedAction/useFormDraft and legacy `components___form.scss`/`old-lms-shell.css`. Source-only 375/768/1280 review; no browser, code execution, tests or CI.
+- Files: src/components/admin/organization-create-form.tsx, docs/orchestrator/queues/clone/lane-5-polish.md, docs/audit/ux/polish-lane-5.md.
+
+## Surface 43 — SuperAdminAttendanceSettingsEditor
+
+- Problems fixed (6): Save could reopen confirmation for unchanged policy; invalid number inputs had no field error affordance; input fixes left stale failure visible; long helper text lacked measure; save failure was outside the active confirmation dialog; tablet alignment relied on loose row widths.
+- Changes: dirty-only primary action, visible invalid-field state after validation, clear stale errors as values change, readable help measures and a retryable error inside ConfirmDialog while preserving the existing external alert. Shared 44px phone/36px desktop controls, two-column 768 layout and untouched confirmation/PUT/refresh semantics.
+- Inspected: policy schema, form validation, pending/success/failure/confirmation and shared ConfirmDialog/Input/Button/Alert plus legacy form rules. Source-only 375/768/1280 review; no tests/browser/CI.
+- Files: src/components/admin/super-admin-attendance-settings-editor.tsx, docs/orchestrator/queues/clone/lane-5-polish.md, docs/audit/ux/polish-lane-5.md.
