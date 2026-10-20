@@ -118,3 +118,13 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 20. Inspected route and typed historyQuery, parent template subview rendering, separate loading/error, version pagination schema/service, comparison link model, statuses and 25-per-page hint.
 - Regressions found/fixed: 0. Invalid/multi-value page is rejected by strict schema, history page and compare links retain their destinations; mobile count and paging wrap, titles and notes break safely and template version labels remain unchanged.
 - Extra clutter/alignment fixes: 0. Files changed: queue and proof. No browser/CI.
+
+## Surface 21 — `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 21. Inspected route/loading/error, complete `SuperAdminTemplateCreateForm` with baseline and all three native optional disclosures, inputs, validation, typed payload builder, pending/error, keyboard/phone/desktop controls, and parent layout.
+- Regressions found/fixed: 0. Required baseline and optional state values remain independently bound, disclosures keep fields mounted and editable, route permission check precedes global action and confirmation/responses retain their targets. No broken JSX, duplicate attrs or missing labels found.
+- Extra clutter/alignment fixes: 0; back link remains before heading, mobile action width and directory loader aligned. Files changed: queue and proof. No CI/runtime.
+
+## Surface 22 — `src/app/(authenticated)/admin/projects/templates/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 22. Inspected route/loading/error, template directory query/filter model, `SuperAdminTemplateArchiveControl`, `SuperAdminTemplatePageExport`, table columns/statuses/version counts, CSV, pagination, permissions and parent shell.
+- Regressions found/fixed: 0. Filter and New template actions maintain 44px mobile width, ListToolbar is sole results-count source, row actions wrap and no-result recovers with Clear filters. CSV uses existing page-only rows.
+- Extra clutter/alignment fixes: 0; no source change needed. Files changed: queue and proof. Source-only verification.
