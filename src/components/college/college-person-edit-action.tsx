@@ -73,9 +73,9 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
       }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
     });
   }
-  return <div className="inline-block min-w-0 max-w-full">{confirmation}
+  return <div className="inline-block">{confirmation}
     <Button variant="secondary" type="button" onClick={()=>void load()}
-      className="min-h-11 w-full md:min-h-9 md:w-auto">
+      className="min-h-11 md:min-h-9">
       {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
     </Button>
     {success&&<Alert tone="success" className="mt-2">{success}</Alert>}
@@ -83,9 +83,21 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
         
         {loading&&<Skeleton variant="form" count={4} label="Loading profile"/>}
         {error&&<Alert tone="error" className="my-2">{error}</Alert>}
-        {person&&<form onSubmit={submit} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+        {person&&<form onSubmit={submit} className="grid min-w-0 gap-3 md:grid-cols-2">
+          <p className="md:col-span-2 text-xs text-muted-foreground">
+            Canonical identity name, login phone and login email are managed separately to protect access to other memberships.
+          </p>
+          <label className="grid gap-1 text-sm">Name
+            <Input value={person.name} readOnly className={field+" opacity-70"}/>
+          </label>
+          <label className="grid gap-1 text-sm">Login Mobile
+            <Input value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
+          </label>
+          <label className="grid gap-1 text-sm">Login Email
+            <Input value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
+          </label>
           {kind==="FACULTY"?<>
-            <label className="grid min-w-0 gap-[6px] text-sm">Department
+            <label className="grid gap-1 text-sm">Department
               <Select className={field} value={person.primaryDepartmentId??""}
                 onChange={e=>patch("primaryDepartmentId",e.target.value)}>
                 <option value="">No department</option>
@@ -94,7 +106,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
                 {departments.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
               </Select>
             </label>
-            <label className="grid min-w-0 gap-[6px] text-sm">Faculty Type
+            <label className="grid gap-1 text-sm">Faculty Type
               <Select className={field} value={person.employmentType??""}
                 onChange={e=>patch("employmentType",e.target.value)}>
                 <option value="">Not specified</option>
@@ -103,70 +115,52 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
                 {LEGACY_FACULTY_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
               </Select>
             </label>
-            <label className="grid min-w-0 gap-[6px] text-sm">Academic title
+            <label className="grid gap-1 text-sm">Academic title
               <Input className={field} maxLength={128} value={person.academicTitle??""}
                 onChange={e=>patch("academicTitle",e.target.value)}/>
             </label>
           </>:<>
-            <label className="grid min-w-0 gap-[6px] text-sm">Roll Number
+            <label className="grid gap-1 text-sm">Roll Number
               <Input className={field} maxLength={128} value={person.rollNumber??""}
                 onChange={e=>patch("rollNumber",e.target.value)}/>
             </label>
-            <label className="grid min-w-0 gap-[6px] text-sm">Registration Number
+            <label className="grid gap-1 text-sm">Registration Number
               <Input className={field} maxLength={128} value={person.registrationNumber??""}
                 onChange={e=>patch("registrationNumber",e.target.value)}/>
             </label>
           </>}
-          <label className="grid min-w-0 gap-[6px] text-sm">Gender
+          <label className="grid gap-1 text-sm">Gender
             <Select className={field} value={person.gender} onChange={e=>patch("gender",e.target.value)}>
               {["","Male","Female","Other","Prefer not to say"].map(value=>
                 <option key={value} value={value}>{value||"Not specified"}</option>)}
             </Select>
           </label>
-          <label className="grid min-w-0 gap-[6px] text-sm">Date of Birth
+          <label className="grid gap-1 text-sm">Date of Birth
             <Input className={field} type="date" value={person.dateOfBirth}
               onChange={e=>patch("dateOfBirth",e.target.value)}/>
           </label>
-          <label className="grid min-w-0 gap-[6px] text-sm">Contact mobile
+          <label className="grid gap-1 text-sm">Contact mobile
             <Input className={field} maxLength={32} value={person.contactPhone}
               onChange={e=>patch("contactPhone",e.target.value)}/>
           </label>
-          <label className="grid min-w-0 gap-[6px] text-sm">Contact email
+          <label className="grid gap-1 text-sm">Contact email
             <Input className={field} type="email" value={person.contactEmail}
               onChange={e=>patch("contactEmail",e.target.value)}/>
           </label>
-          <label className="grid min-w-0 gap-[6px] text-sm md:col-span-2">Address
+          <label className="grid gap-1 text-sm md:col-span-2">Address
             <Textarea className="min-w-0" rows={2} maxLength={1000}
               value={person.address} onChange={e=>patch("address",e.target.value)}/>
           </label>
-          <label className="grid min-w-0 gap-[6px] text-sm md:col-span-2">Bio
+          <label className="grid gap-1 text-sm md:col-span-2">Bio
             <Textarea className="min-w-0" rows={3} maxLength={3000}
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
           </label>
-          <details className="min-w-0 border-t border-border pt-[var(--lms-space-3)] md:col-span-2">
-            <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Canonical identity</summary>
-            <div className="grid min-w-0 gap-[var(--lms-space-4)] pt-[var(--lms-space-2)] md:grid-cols-2">
-          <p className="text-xs text-muted-foreground md:col-span-2">
-            Canonical identity name, login phone and login email are managed separately to protect access to other memberships.
-          </p>
-          <label className="grid min-w-0 gap-[6px] text-sm">Name
-            <Input value={person.name} readOnly className={field+" opacity-70"}/>
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-sm">Login Mobile
-            <Input value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-sm">Login Email
-            <Input value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
-          </label>
-
-            </div>
-          </details>
-          <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-4)] md:col-span-2 md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto>
-            <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-              className="min-h-11 md:min-h-9">Cancel</Button>
+          <div className="flex gap-2 md:col-span-2">
             <Button variant="primary" type="submit" disabled={pending} loading={pending} className="min-h-11 md:min-h-9">
               {pending?"Saving…":"Save changes"}
             </Button>
+            <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
+              className="min-h-11 md:min-h-9">Cancel</Button>
           </div>
         </form>}
     </Dialog>
