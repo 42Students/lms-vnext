@@ -30,7 +30,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
       <PageHeader title="Project template"/>
       <ErrorState title="Project template access denied"
         description="The active administrator does not have permission to view global project templates."
-        action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
+        action={<PageBackLink href="/admin/projects/templates" label="Back to templates" />}/>
     </div>;
   }
   let detail: Awaited<ReturnType<typeof getProjectTemplateDetail>>;
@@ -61,7 +61,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
         }
         actions={
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <PageBackLink href="/admin/projects/templates" label="Template catalogue" />
+            <PageBackLink href="/admin/projects/templates" label="Back to templates" />
             <StatusBadge
               tone={
                 detail.template.status === "PUBLISHED"
