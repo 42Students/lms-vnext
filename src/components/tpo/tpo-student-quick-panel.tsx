@@ -2,6 +2,7 @@
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
 import {Drawer} from "@/components/ui/drawer";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {apiFetch} from "@/lib/api-fetch";
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
@@ -84,24 +85,16 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  const participation="/tpo/students/"+encodeURIComponent(student.membershipId)+"/participation";
  return <Drawer open={true} onOpenChange={next=>{if(!next)onClose();}}
   title={"Student panel for "+student.displayName}
-  description={student.branchName+" · "+student.cohortName} footer={   <div className="flex w-full flex-wrap items-center justify-between gap-2">
-    <Button variant="secondary" type="button" disabled={index<=0} onClick={()=>onNavigate(rows[index-1].membershipId)}
-      >← Previous</Button>
-    <span className="text-xs text-muted-foreground">{index+1} of {rows.length} on this page</span>
-    <Button variant="secondary" type="button" disabled={index<0||index>=rows.length-1}
-      onClick={()=>onNavigate(rows[index+1].membershipId)}
-      >Next →</Button>
+  description={student.branchName+" · "+student.cohortName} footer={<div className="grid w-full min-w-0 grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+    <span className="col-span-2 text-center text-xs text-muted-foreground sm:col-span-1 sm:col-start-2 sm:row-start-1">{index+1} of {rows.length} on this page</span>
+    <Button variant="secondary" type="button" className="min-h-11 w-full sm:col-start-1 sm:row-start-1 md:min-h-9" disabled={index<=0} onClick={()=>onNavigate(rows[index-1].membershipId)}>← Previous</Button>
+    <Button variant="secondary" type="button" className="min-h-11 w-full sm:col-start-3 sm:row-start-1 md:min-h-9" disabled={index<0||index>=rows.length-1}
+      onClick={()=>onNavigate(rows[index+1].membershipId)}>Next →</Button>
    </div>}>
-   <section className="flex flex-wrap items-start justify-between gap-2 border-b border-border pb-4">
-    <div><p className="text-xs text-muted-foreground">TPO · Student</p>
-      <h2 className="text-xl font-bold">{student.displayName}</h2>
-      <p className="text-sm text-body">{student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName}</p>
-      <p className="text-xs text-muted-foreground">{student.cohortName} · {tpoStudentDisplayLabel(student.journeyState)}</p>
-      <p className="mt-2 text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
-    </div>
-    <Button variant="secondary" type="button" autoFocus  onClick={onClose}>
-      Close panel
-    </Button>
+   <section className="min-w-0 border-b border-border pb-4">
+    <p className="min-w-0 break-words text-sm text-body">{student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName}</p>
+    <p className="mt-1 min-w-0 break-words text-xs text-muted-foreground">{student.cohortName} · {tpoStudentDisplayLabel(student.journeyState)}</p>
+    <p className="mt-2 min-w-0 break-words text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
    </section>
    <Tabs ariaLabel="Student panel pages" className="mt-4" value={tab} renderPanel={false} controlledOnly
     onValueChange={next=>{void chooseTab(next as Tab);}}
@@ -111,10 +104,13 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         ?t+" ("+detail.requests.filter(row=>row.status==="PENDING").length+" waiting)"
         :t,
     }))}/>
-   <div className="mt-5 space-y-4 text-sm">
+   <div className="mt-4 min-w-0 space-y-5 text-sm">
     {tab==="Profile"?<>
-      <h3 className="font-semibold">Recorded learner facts</h3>
-      <dl className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <h3 className="font-semibold">Needs attention</h3>
+      {attention.length?<ul className="list-disc space-y-1 pl-5 break-words">{attention.map(item=><li key={item}>{item}</li>)}</ul>
+       :<p className="text-body">No attention flags derived from the current roster evidence.</p>}
+      <h3 className="border-t border-border pt-4 font-semibold">Recorded learner facts</h3>
+      <dl className="grid min-w-0 grid-cols-1 gap-x-5 gap-y-0 md:grid-cols-2">
        {[
         ["Program",student.programName],["Branch",student.branchName],
         ["Batch",student.cohortName],["Roll number",student.rollNumber??"Not recorded"],
@@ -132,13 +128,10 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         ["Offers waiting on their answer",student.offersAwaitingAnswer],
         ["Prep %","Not recorded"],
         ["Registration",student.registrationChoice??"Not recorded"],
-       ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-3">
-        <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
+        ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-2.5">
+        <dt className="break-words text-xs text-muted-foreground">{label}</dt><dd className="min-w-0 break-words font-semibold">{value}</dd>
        </div>)}
       </dl>
-      <h3 className="font-semibold">Needs attention</h3>
-      {attention.length?<ul className="list-disc space-y-1 pl-5">{attention.map(item=><li key={item}>{item}</li>)}</ul>
-       :<p>No attention flags derived from the current roster evidence.</p>}
       {detail?.requests.filter(row=>row.status==="PENDING").length?
        <p role="status" className="text-sm font-semibold">{detail.requests.filter(row=>row.status==="PENDING").length} student request(s) waiting for a decision.</p>:null}
       {student.participationReason?<div className="space-y-1 border-l-2 border-warning bg-warning-subtle px-3 py-3">
@@ -147,20 +140,22 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
        <p className="text-xs text-muted-foreground">Set at {student.participationLevel??"placement"} level
         {student.participationDecidedAt?" · "+when(student.participationDecidedAt.toString()):""}</p>
       </div>:null}
-      <Link href={participation} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Placement eligibility</Link>
-      <Link href={"/tpo/team?about="+encodeURIComponent("STUDENT:"+student.membershipId)}
-        className="lms-inline-link ml-3 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Discuss with team</Link>
+      <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+       <Link href={participation} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Placement eligibility</Link>
+       <Link href={"/tpo/team?about="+encodeURIComponent("STUDENT:"+student.membershipId)}
+        className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Discuss with team</Link>
+      </div>
     </>:null}
     {tab==="Placement"?<>
       <h3 className="font-semibold">Placement journey</h3>
-      <dl className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <dl className="grid min-w-0 grid-cols-1 gap-x-5 gap-y-0 md:grid-cols-2">
        {[
         ["Participation",tpoStudentDisplayLabel(student.participationStatus)],["Applications",student.applicationCount],
         ["Active applications",student.activeApplicationCount],["Offers",student.offerCount],
         ["Accepted offers",student.acceptedOfferCount],["Best so far",student.bestCompany?
          student.bestCompany+": "+tpoStudentDisplayLabel(student.bestSoFar):tpoStudentDisplayLabel(student.bestSoFar)],
-       ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-3">
-        <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
+        ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-2.5">
+        <dt className="break-words text-xs text-muted-foreground">{label}</dt><dd className="min-w-0 break-words font-semibold">{value}</dd>
        </div>)}
       </dl>
       <h3 className="font-semibold">Applications</h3>
@@ -173,13 +168,13 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <TpoStudentNudgePanel rows={[{id:student.membershipId,label:student.displayName,
        registered:student.registeredForPlacements}]}/>
     </>:null}
-    {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status">Loading student records…</p>:null}
-    {error?<div role="alert" className="space-y-2 text-error"><p>{error}</p>
-     <Button variant="secondary" type="button"  onClick={()=>void fetchDetail()}>Retry loading student details</Button></div>:null}
+    {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status" className="text-sm text-body">Loading student records…</p>:null}
+    {error?<div className="min-w-0 space-y-2"><InlineNotice tone="error" message={error}/>
+     <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void fetchDetail()}>Retry loading student details</Button></div>:null}
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
       {detail&&!detail.requests.length?<p>No placement requests recorded for this student.</p>:null}
-      {detail?.requests.map(row=><article key={row.id} className="space-y-1 border-l-2 border-warning bg-warning-subtle px-3 py-3">
+      {detail?.requests.map(row=><article key={row.id} className="min-w-0 space-y-1 border-b border-border py-3">
         <p className="font-semibold">{row.type.replaceAll("_"," ")} · {row.status}</p>
         <p className="text-xs text-muted-foreground">{row.job} · {when(row.requestedAt)}</p>
         <p>{row.reason}</p>{row.note?<p>Decision: {row.note}</p>:null}
@@ -193,11 +188,11 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     {tab==="Notes"?<>
       <h3 className="font-semibold">Internal Notes</h3>
       <TpoStudentNoteEditor membershipIds={[student.membershipId]} afterSave={()=>void fetchDetail()}/>
-      {detail?.studentNotes?.map(row=><article key={row.id} className="space-y-1 border-l-2 border-warning bg-warning-subtle px-3 py-3">
+      {detail?.studentNotes?.map(row=><article key={row.id} className="min-w-0 space-y-1 border-b border-border py-3">
        <p>{row.note}</p><p className="text-xs text-muted-foreground">{when(row.createdAt)} · Author {row.authorUserId}</p>
       </article>)}
       {detail&&!detail.notes.length?<p>No private application notes recorded for this student.</p>:null}
-      {detail?.notes.map(row=><article key={row.id} className="space-y-1 border-l-2 border-warning bg-warning-subtle px-3 py-3">
+      {detail?.notes.map(row=><article key={row.id} className="min-w-0 space-y-1 border-b border-border py-3">
         <p>{row.body}</p>
         <p className="text-xs text-muted-foreground">{row.job} · {when(row.createdAt)}</p>
       </article>)}
