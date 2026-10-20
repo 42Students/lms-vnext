@@ -394,6 +394,7 @@ export function AdminCourseOverview({
       cell: (assignment) =>
         new Intl.DateTimeFormat("en-IN", {
           dateStyle: "medium",
+          timeZone: "Asia/Kolkata",
         }).format(assignment.startedAt),
     },
     {

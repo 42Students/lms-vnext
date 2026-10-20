@@ -23,17 +23,17 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-18.md: surface | regre
 - [x] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
 - [x] `src/app/(authenticated)/college/batches/page.tsx`
 - [x] `src/app/(authenticated)/college/branding/page.tsx`
-- [ ] `src/app/(authenticated)/college/classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/college-profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/companies/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/college/course-progress/page.tsx`
-- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/courses/page.tsx`
-- [ ] `src/app/(authenticated)/college/departments/page.tsx`
-- [ ] `src/app/(authenticated)/college/domains/page.tsx`
+- [x] `src/app/(authenticated)/college/classes/page.tsx`
+- [x] `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`
+- [x] `src/app/(authenticated)/college/college-profile/page.tsx`
+- [x] `src/app/(authenticated)/college/companies/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/page.tsx`
+- [x] `src/app/(authenticated)/college/course-progress/page.tsx`
+- [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/page.tsx`
+- [x] `src/app/(authenticated)/college/courses/page.tsx`
+- [x] `src/app/(authenticated)/college/departments/page.tsx`
+- [x] `src/app/(authenticated)/college/domains/page.tsx`
 - [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
 - [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
 - [ ] `src/app/(authenticated)/college/electives/page.tsx`
