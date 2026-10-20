@@ -37,7 +37,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
     </section>
     <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Program and batch enrollments</h2>
-      <form method="get" role="search" aria-label="Enrollment lifecycle filter" className="mt-3 flex min-w-0 flex-wrap items-end gap-3"
+      <form method="get" role="search" aria-label="Enrollment lifecycle filter" className="mt-3 flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch"
         action={`/college/students/${encodeURIComponent(membershipId)}`}>
         <label className="grid w-full min-w-0 basis-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-[220px] md:basis-auto">
           Enrollment lifecycle

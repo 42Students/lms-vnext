@@ -62,7 +62,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     Candidate interview appointment storage is not registered. No schedule or conflict counts are inferred from round-level placeholders.
    </Banner>:<>
    <SummaryStrip label="Interview summary" steps={[{label:"Scheduled",value:data.summary?.scheduled??0},{label:"Today",value:data.summary?.today??0},{label:"Companies",value:data.summary?.companies??0},{label:"Conflicts",value:data.summary?.conflicts??0}]}/>
-   <form method="get" role="search" aria-label="Interview appointment filters" className="grid min-w-0 gap-3 border-b border-border pb-4 md:grid-cols-3">
+   <form method="get" role="search" aria-label="Interview appointment filters" className="grid min-w-0 md:grid-cols-3 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:grid-cols-1">
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student, company or role
      <Input type="search" name="q" defaultValue={valid.data.q} maxLength={100} />
     </label>
@@ -105,9 +105,9 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       empty={<EmptyState title="No matching interviews" description="No interviews match these filters."/>} />
    </section>
    <nav aria-label="Interview result pages" className="flex min-w-0 flex-wrap items-center gap-4 text-sm">
-    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
     <span>Page {valid.data.page} of {data.pageCount}</span>
-    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
    </nav>
   </>}
  </div>;
