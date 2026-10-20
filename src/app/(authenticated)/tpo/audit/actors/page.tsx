@@ -135,26 +135,31 @@ export default async function TpoActorAuditPage({
         </Link>
       </div>
     </form>
-    <section className="space-y-3">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+    <section className="min-w-0 space-y-4">
+      <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">
         {data.total} matching canonical record(s)
       </h2>
       <DataTable
         caption="Matching canonical placement audit records"
         rows={data.rows}
         getRowKey={(row)=>row.id}
-        empty={<p role="status" className="text-sm text-body leading-[22px]">
-          {data.total===0
+        empty={<EmptyState
+          title={data.total===0
             ?"No canonical placement events match these exact filters."
             :"This page is outside the available records. Choose an earlier page."}
-        </p>}
+          action={<Link href={data.total===0
+              ?(hasExactFilters?"/tpo/audit/actors":"/tpo/audit")
+              :urlForPage(data.totalPages)}
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            {data.total===0?(hasExactFilters?"Reset filters":"← All audit sources"):"Choose an earlier page."}
+          </Link>}/>} 
         columns={[
+          {key:"action",header:"Action",mobileLabel:"Action",mobilePriority:"primary",
+           cell:(row)=>row.eventType},
           {key:"when",header:"Recorded (IST)",mobileLabel:"Recorded (IST)",mobilePriority:"secondary",
            cell:(row)=><time dateTime={row.occurredAt}>{dateTime.format(new Date(row.occurredAt))}</time>},
           {key:"actor",header:"Actor",mobileLabel:"Actor",mobilePriority:"secondary",
            cell:(row)=>row.actorName?.trim()||"System / unknown"},
-          {key:"action",header:"Action",mobileLabel:"Action",mobilePriority:"primary",
-           cell:(row)=>row.eventType},
           {key:"type",header:"Entity type",mobileLabel:"Entity type",mobilePriority:"secondary",
            cell:(row)=>row.entityType},
           {key:"entity",header:"Entity ID",mobileLabel:"Entity ID",mobilePriority:"action",
@@ -166,11 +171,18 @@ export default async function TpoActorAuditPage({
             <span title="No safe direct page is registered for this entity type">{row.entityId}</span>},
         ]}
       />
-      <Pagination label="Actor audit pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>urlForPage(page)}/>
+      {data.totalPages>1?<Pagination label="Actor audit pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>urlForPage(page)}/>:null}
     </section>
-    <p className="text-xs text-muted-foreground leading-5">
-      TPO-only tenant scope. Export is capped at 2,000 rows and uses neutralized CSV
-      formula cells. No private metadata, IP addresses or free-text notes are exported.
-    </p>
+    <div className="min-w-0 space-y-2 border-t border-[var(--lms-canvas-border)] pt-4">
+      <p className="max-w-[72ch] text-sm text-body leading-[22px]">
+        Only the canonical PLACEMENTS activity stream has consistent actor/entity attribution.
+        Domain-history and share events remain on the original Audit log. An empty result
+        does not prove no action occurred in a domain without an activity writer.
+      </p>
+      <p className="max-w-[72ch] text-xs text-muted-foreground leading-5">
+        TPO-only tenant scope. Export is capped at 2,000 rows and uses neutralized CSV
+        formula cells. No private metadata, IP addresses or free-text notes are exported.
+      </p>
+    </div>
   </div>;
 }
