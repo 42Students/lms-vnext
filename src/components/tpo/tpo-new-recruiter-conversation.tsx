@@ -1,10 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { InlineNotice } from "@/components/ui/inline-notice";
-import { EmptyState } from "@/components/ui/empty-state";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {useEffect,useRef,useState} from "react";
+import {useEffect,useId,useRef,useState} from "react";
 import {Dialog} from "@/components/ui/dialog";
 import {useRouter} from "next/navigation";
 import {TPO_QUICK_REPLIES} from "@/modules/placements/tpo-message-draft-model";
@@ -14,6 +14,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
  recruiters:Recruiter[];actorUserId:string;
 }){
  const router=useRouter();
+ const formId=useId();
  const [open,setOpen]=useState(false),[id,setId]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  const [message,setMessage]=useState("");
@@ -75,14 +76,20 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div>
-  <Button variant="secondary" ref={launchRef} type="button" className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold"
+  <Button variant="secondary" ref={launchRef} type="button" className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold sm:w-auto md:min-h-9"
    onClick={()=>open?close():openDialog()}>New message</Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)close();}} dismissible={!busy}
-   title="New message to a recruiter">
-    <form onSubmit={event=>{event.preventDefault();void create();}} className="space-y-3">
+   title="New message to a recruiter"
+   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
+     <Button variant="secondary" type="button" onClick={()=>editMessage("")} disabled={!message||busy}
+       className="min-h-11 w-full sm:w-auto md:min-h-9">Discard draft</Button>
+     <Button variant="primary" type="submit" form={formId} disabled={!id||!message.trim()||busy} loading={busy}
+       className="min-h-11 w-full sm:w-auto md:min-h-9">{busy?"Sending…":"Send"}</Button>
+   </div>}>
+    <form id={formId} onSubmit={event=>{event.preventDefault();void create();}} className="space-y-3">
      <label className="block text-sm font-semibold text-body">Recruiter
       <Select ref={selectRef} aria-label="Recruiter" required value={id}
-       onChange={e=>{setId(e.target.value);setCreatedThreadId(null);}}
+       onChange={e=>{setId(e.target.value);setCreatedThreadId(null);}} disabled={busy}
        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
        <option value="">Choose a recruiter</option>
        {recruiters.map(r=><option key={r.userId} value={r.userId}>
@@ -90,14 +97,17 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
        </option>)}
       </Select>
      </label>
-     <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
+     {recruiters.length===0?<InlineNotice tone="info" message="No recruiters have verified, active placement access."/>:null}
+     <Disclosure title="Quick replies" className="border-t border-border" contentClassName="px-2 pb-2">
+      <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
       {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
        onClick={()=>editMessage(message?message+" "+reply:reply)}
        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-medium">{reply}</Button>)}
-     </div>
+      </div>
+     </Disclosure>
      <label className="block text-sm font-semibold text-body">Message
       <Textarea aria-label="New message" placeholder="Write a message" required maxLength={4000}
-       className="mt-1 min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base md:text-sm"
+       disabled={busy} className="mt-1 min-h-28 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base md:text-sm"
        value={message} onChange={event=>editMessage(event.target.value)}
        onKeyDown={event=>{
         if(event.key==="Enter"&&(event.ctrlKey||event.metaKey||!event.shiftKey)&&
@@ -112,18 +122,10 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
      <p className="text-xs text-muted-foreground">
       This starts their General thread. Messages about a drive are best sent from that drive.
      </p>
-     {recruiters.length===0?<EmptyState title="No recruiters have verified, active placement access."/>:null}
      {error?<InlineNotice tone="error" message={error}/>:null}
      {createdThreadId?<a href={"/tpo/messages/"+encodeURIComponent(createdThreadId)}
       className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open conversation</a>:null}
-     <div className="flex justify-end gap-2">
-      <Button variant="secondary" type="button" onClick={()=>editMessage("")} disabled={!message||busy}
-       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Discard draft</Button>
-      <Button variant="primary" type="submit" disabled={!id||!message.trim()||busy}
-       className="min-h-11 md:min-h-9">
-       {busy?"Sending…":"Send"}
-      </Button>
-     </div>
+
     </form>
   </Dialog>
  </div>;
