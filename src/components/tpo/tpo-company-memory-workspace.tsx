@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import {Avatar} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
+import {ErrorState} from "@/components/ui/error-state";
+import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
 import {MetricBar} from "@/components/ui/metric-bar";
 import chartStyles from "./legacy-company-bar.module.css";
 
@@ -181,16 +183,22 @@ export function TpoCompanyMemoryWorkspace({
 
   if (phase !== "ready" || !company) {
     return (
-      <section className="border-b border-border py-6">
-        <p role={phase === "loading" ? "status" : "alert"}>
-          {phase === "loading" ? "Loading Company Memory…" : error}
-        </p>
-        {phase === "error" || phase === "not-found" || phase === "migration-pending" ? (
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Button variant="secondary" onClick={retry}>Retry</Button>
-            <Link className={buttonStyle} href="/tpo/recruiters?view=companies">Back to companies</Link>
-          </div>
-        ) : null}
+      <section aria-label={"Company Memory for " + companyName} className="min-w-0 space-y-4">
+        <PageHeader title={companyName} description="Recruiter contacts, drives and hiring history"
+          actions={<PageBackLink href="/tpo/recruiters?view=companies" label="Companies" />} />
+        {phase === "loading" ? (
+          <GracefulPageLoading label="Loading Company Memory…" shape="directory" />
+        ) : (
+          <ErrorState
+            title={phase === "not-found" ? "Company not found" :
+              phase === "migration-pending" ? "Company details unavailable" : "Company Memory could not be loaded"}
+            description={error}
+            action={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row">
+              <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={retry}>Retry</Button>
+              <Link className={buttonStyle} href="/tpo/recruiters?view=companies">Back to companies</Link>
+            </div>}
+          />
+        )}
       </section>
     );
   }
@@ -198,16 +206,17 @@ export function TpoCompanyMemoryWorkspace({
   const latest = company.timeline[0] ?? null;
 
   return (
-    <section className="space-y-5" aria-label={"Company Memory for " + company.name}>
-      <PageBackLink href="/tpo/recruiters?view=companies" label="Companies" />
+    <section className="min-w-0 space-y-4 md:space-y-5" aria-label={"Company Memory for " + company.name}>
       <PageHeader
         title={company.name}
         description={company.drivesRan > 1 || company.hiredPerYear.length > 1
           ? "Repeat hiring relationship"
           : "Recruiter contacts, drives and hiring history"}
         actions={
-        <div className="flex flex-wrap gap-2">
-          <Dropdown align="end" label={"New work for "+company.name} trigger="+ New">
+        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+          <PageBackLink href="/tpo/recruiters?view=companies" label="Companies" />
+          <Dropdown align="end" mobileSheet label={"New work for "+company.name} trigger="+ New"
+            className="w-full sm:w-auto" triggerClassName="w-full justify-center sm:w-auto">
            <nav aria-label={"New work for "+company.name}
             className="w-[min(15rem,calc(100vw_-_5rem))] max-w-full space-y-1">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
@@ -227,17 +236,11 @@ export function TpoCompanyMemoryWorkspace({
             href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)+"/team"}>
             Open in Team
           </Link>:null}
-          <Link className={buttonStyle} href={"/tpo/recruiters?add=1&company=" + encodeURIComponent(company.name)}>
-            Add contact
-          </Link>
-          <Link className={buttonStyle} href={"/tpo/placements/new?company=" + encodeURIComponent(company.name)}>
-            Create drive
-          </Link>
         </div>
         }
       />
       {company.alsoTypedAs.length ? (
-        <p className="text-xs text-muted-foreground">
+        <p className="min-w-0 break-words text-xs leading-5 text-muted-foreground">
           Also typed as {company.alsoTypedAs.join(", ")}
         </p>
       ) : null}
@@ -249,10 +252,18 @@ export function TpoCompanyMemoryWorkspace({
           ["Accepted-offer drives", String(company.acceptedOfferDrives)],
           ["students placed", company.studentsHired == null ? "Verification pending" : String(company.studentsHired)],
           ["Last activity", latest ? latest.type.toLowerCase()+" / "+legacyActivityDay(latest.createdAt) : "no activity yet"],
-        ].map(([label, value]) => (
-          <div key={label} className="min-w-0 border-b border-r border-border px-3 py-3 last:border-r-0 md:px-4">
+        ].map(([label, value], index) => (
+          <div key={label}
+            className={"min-w-0 px-3 py-3 md:px-4 " +
+              (index < 4 ? "border-b border-border " : "") +
+              (index % 2 === 0 && index < 4 ? "border-r border-border " : "") +
+              (index < 3 ? "md:border-b " : "md:border-b-0 ") +
+              ([0, 1, 3].includes(index) ? "md:border-r " : "md:border-r-0 ") +
+              (index < 4 ? "xl:border-r " : "xl:border-r-0 ") +
+              "xl:border-b-0 " +
+              (index === 4 ? "col-span-2 md:col-span-2 xl:col-span-1" : "")}>
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-            <p className="mt-1 break-words font-semibold text-foreground">{value}</p>
+            <p className="mt-1 break-words font-semibold leading-6 text-foreground">{value}</p>
           </div>
         ))}
       </div>
@@ -269,7 +280,7 @@ export function TpoCompanyMemoryWorkspace({
           <p className="mt-1 text-xs text-muted-foreground">Years hiring: {company.hiredPerYear.length}. Counts are distinct confirmed JOINED learners with a recorded joining year, not estimated offers.</p>
           <ul className="mt-3 space-y-3">
             {company.hiredPerYear.map(item=>(
-              <li key={item.year} className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3 text-sm">
+              <li key={item.year} className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)_3rem] items-center gap-2 text-sm sm:grid-cols-[4rem_minmax(0,1fr)_3rem] sm:gap-3">
                 <span>{item.year}</span>
                 <MetricBar size="default" role="img" className={chartStyles.branchBar} label={item.hired+" joined learners in "+item.year}
                   value={item.hired} maximum={Math.max(1,...company.hiredPerYear.map(row=>row.hired))} />
@@ -284,12 +295,12 @@ export function TpoCompanyMemoryWorkspace({
         actorMembershipId={actorMembershipId}/>:<p role="status" className="text-sm text-body">
         Link this company to an authorized college employer before starting a private Team conversation.
       </p>}
-      <div className="grid gap-5 xl:grid-cols-2">
-        <div className="space-y-5">
+      <div className="grid min-w-0 gap-4 xl:grid-cols-2 xl:gap-6">
+        <div className="min-w-0 space-y-4">
           <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">People</h2>
             {company.people.length === 0 ? (
-              <p className="mt-3 text-sm text-muted-foreground">No contacts yet.</p>
+              <p className="mt-3 text-sm text-body">No contacts yet. <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}>Add contact</Link></p>
             ) : (
               <div className="mt-3 divide-y divide-border">
                 {company.people.map(person => (
@@ -301,7 +312,7 @@ export function TpoCompanyMemoryWorkspace({
                         href={"/tpo/recruiters/" + encodeURIComponent(person.id)}>
                         {person.name}
                       </Link>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="break-words text-sm text-muted-foreground">
                         {[person.designation, person.email].filter(Boolean).join(" · ") || "No contact details"}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -339,11 +350,11 @@ export function TpoCompanyMemoryWorkspace({
           </section>
         </div>
 
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-4">
           <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">Drives</h2>
             {company.drives.length===0?
-              <p className="mt-3 text-sm text-muted-foreground">No drives yet.</p>:
+              <p className="mt-3 text-sm text-body">No drives yet. <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}>Create drive</Link></p>:
               <div className="mt-3">
                 <TpoCompanyMemoryDriveGrid companyName={company.name} drives={company.drives}
                   search={driveSearch} onSearchChange={setDriveSearch}/>
@@ -358,7 +369,7 @@ export function TpoCompanyMemoryWorkspace({
               <ol className="mt-3 space-y-3">
                 {company.timeline.map(item => (
                   <li className="border-l-2 border-border pl-3" key={item.id}>
-                    <p className="text-sm"><strong>{item.person}</strong> · {item.type.toLowerCase()}{item.note?": "+item.note:""}</p>
+                    <p className="break-words text-sm leading-6"><strong>{item.person}</strong> · {item.type.toLowerCase()}{item.note?": "+item.note:""}</p>
                     <p className="text-xs text-muted-foreground">{legacyActivityTime(item.createdAt)}</p>
                   </li>
                 ))}
