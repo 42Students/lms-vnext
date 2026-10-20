@@ -71,7 +71,7 @@ function createdRecordId(result:unknown,kind:"course"|"offering"|"delivery"){
  return typeof id==="string"&&/^[a-f0-9-]{36}$/i.test(id)?id:null;
 }
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
-  return <label htmlFor={htmlFor} className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{children}</label>;
+  return <label htmlFor={htmlFor} className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{children}</label>;
 }
 
 export function AdminCourseCreatePanel({
@@ -265,8 +265,8 @@ export function AdminCourseCreatePanel({
   }
 
   return (
-    <section aria-label="Course setup workflow" className="grid gap-4 xl:grid-cols-2">
-      <nav aria-label="Course setup steps" className="flex flex-wrap gap-3 border-b border-border pb-4 text-sm xl:col-span-2">
+    <section aria-label="Course setup workflow" className="grid min-w-0 gap-[var(--lms-space-4)] xl:grid-cols-2">
+      <nav aria-label="Course setup steps" className="flex min-w-0 flex-wrap gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-sm xl:col-span-2">
        <a href="#setup-course" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">1. Create Course</a>
        <a href="#setup-offering" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">2. Course Offering</a>
        <a href="#setup-delivery" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">3. Section Delivery</a>
@@ -290,7 +290,7 @@ export function AdminCourseCreatePanel({
           <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" onClick={()=>router.replace(courseBasePath)}>Cancel copy</Button>
           <p className="w-full text-xs text-muted-foreground">Only catalog name, code, description and department are copied. Existing course content, offerings and assignments are not copied.</p>
         </div>:null}
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
+        <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-department">{COLLEGE_COURSES_COPY.departmentLabel}</FieldLabel>
             <Select id="course-department" value={courseDepartmentId} onChange={(event) => setCourseDepartmentId(event.target.value)} required>
@@ -331,14 +331,14 @@ export function AdminCourseCreatePanel({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 md:min-h-9" loading={pending} disabled={pending || !courseDepartmentId || !courseName.trim() || (superAdmin?!shortTitle.trim():!courseCode.trim())}>Create Course</Button>
+          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending || !courseDepartmentId || !courseName.trim() || (superAdmin?!shortTitle.trim():!courseCode.trim())}>Create Course</Button>
         </div>
       </form>
 
       <form id="setup-offering" onSubmit={createOffering} className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">New Course Offering</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Place a Course into one Cohort and Academic Period.</p>
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
+        <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
           <div className="md:col-span-2">
             <FieldLabel htmlFor="offering-course">Course</FieldLabel>
             <Select id="offering-course" value={offeringCourseId} onChange={(event) => setOfferingCourseId(event.target.value)} required>
@@ -377,7 +377,7 @@ export function AdminCourseCreatePanel({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 md:min-h-9" loading={pending} disabled={pending || !offeringCourseId || !offeringCohortId || !offeringAcademicPeriodId}>Create Offering</Button>
+          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending || !offeringCourseId || !offeringCohortId || !offeringAcademicPeriodId}>Create Offering</Button>
         </div>
       </form>
 
@@ -401,7 +401,7 @@ export function AdminCourseCreatePanel({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 md:min-h-9" loading={pending} disabled={pending || !deliveryOfferingId || !deliverySectionId}>Add Section Delivery</Button>
+          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending || !deliveryOfferingId || !deliverySectionId}>Add Section Delivery</Button>
         </div>
       </form>
 
@@ -436,7 +436,7 @@ export function AdminCourseCreatePanel({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 md:min-h-9" loading={pending} disabled={pending || !teacherDeliveryId || !teacherMembershipId}>Assign Faculty</Button>
+          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending || !teacherDeliveryId || !teacherMembershipId}>Assign Faculty</Button>
         </div>
       </form>
       <ConfirmDialog
