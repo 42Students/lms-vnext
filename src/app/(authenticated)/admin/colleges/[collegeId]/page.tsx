@@ -22,7 +22,7 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
   ["Country",item.country??"Not recorded"],
   ["Created (IST)",new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.createdAt)],
  ];
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <PageHeader title={item.name} description="Read-only tenant identity and setup links in the authorized scope."
    actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
   <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">

@@ -15,7 +15,7 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
   const {companyId}=await params;
   const data=await listSuperAdminCompanyDriveHistory(context,companyId);
   if(!data)notFound();
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-6">
     <PageHeader title={data.company.name}
       description="Drive history and recorded joining outcomes within the selected college only."
       actions={<Link href="/admin/companies" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto">← Companies</Link>} />

@@ -38,7 +38,7 @@ export default async function SuperAdminCompaniesPage({
   const view=params.view==="GLOBAL"?"GLOBAL":context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
   const candidates = findPossibleCompanyDuplicates(data.rows);
   const nameConflicts=findCompanyNameIdentityConflicts(data.rows);
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-6">
     <PageHeader title="Companies"
       description="Read-only employer relationships within the selected Super Admin organization or college scope. Sensitive CRM contacts and sharing defaults are not displayed." />
     <Tabs ariaLabel="Company directory tabs" renderPanel={false} value={view}
@@ -120,7 +120,7 @@ export default async function SuperAdminCompaniesPage({
           <option value="ALL">Any time</option><option value="7">Past 7 days</option><option value="30">Past 30 days</option><option value="90">Past 90 days</option>
         </Select>
       </label>
-      <Button type="submit" className="min-h-11 md:min-h-9 self-end px-5">Filter</Button>
+      <Button type="submit" className="min-h-11 md:min-h-9 self-end px-4">Filter</Button>
     </form>
     <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
       className="inline-flex min-h-11 items-center border-b-2 border-transparent aria-[current=page]:border-primary px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
