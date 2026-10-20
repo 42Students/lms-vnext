@@ -39,3 +39,13 @@
 - Regressions found/fixed: 0. Read page and route error/loading, HR/parent layout, lane-14 proof; inspected recruiter slot form/actions, Alert, EmptyState, PageBackLink, shared Select/Input/InlineNotice/ConfirmDialog and the API POST route. Verified expected redirect path and form field/action contracts including IST parsing and versioned slot actions. Existing disclosure opens on empty and error/retry paths remain.
 - Extra clutter/alignment: 0; time blocks, propose recovery, disabled permissions and responsive actions already have appropriate hierarchy.
 - Files changed: verified, no change. Static only; no CI.
+
+## 9. `src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx`
+- Regressions found/fixed: 0. Read page, error/loading, nearest HR/drive parent layouts and fallback, related `getRecruiterDriveConversations` and thread filtering, shared Button/Input/EmptyState/PageHeader, and lane-14 polish entry. Authorized threads, continue link, POST open form and accessible details maintain their wiring.
+- Extra clutter/alignment: 0; primary Continue discussion is prominent and the secondary open/create path is disclosed only when threads exist.
+- Files changed: verified, no change. No CI/runtime.
+
+## 10. `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
+- Regressions found/fixed: 0. Read page and route error/loading, parent layout, HrRoundEditorGrid/TpoGrid, PageBackLink, field primitives, POST `/api/placements/recruiter/drives/[jobId]/rounds/route.ts`, and lane-14 proof. Checked action, inputs, optimistic timestamp, editable gating, removal links, column props, empty state and mobile row fallback.
+- Extra clutter/alignment: 0; desktop grid and inline edit details are intentionally different tasks; mobile actions remain touch-sized and status visible.
+- Files changed: verified, no change. No CI/runtime.
