@@ -144,7 +144,7 @@ export default async function AnnouncementsPage({
         <label className="min-w-0 w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search announcement title or message
           <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 w-full"/>
         </label>
-        <div className="min-w-0 min-[768px]:col-span-2 min-[1200px]:col-span-4">
+        <div className="order-last min-w-0 min-[768px]:col-span-3">
           <details className="group min-w-0 border-t border-[var(--lms-canvas-border)]">
             <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Filters <span aria-hidden="true">⌄</span></summary>
             <div className="grid min-w-0 gap-3 pb-4 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-4">
