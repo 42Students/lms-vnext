@@ -11,7 +11,7 @@ export default async function CollegeContactProfilePage() {
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
   const profile = await getOwnCollegeContactProfile(context);
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
     <PageHeader
       title="College contact profile"
       description="Manage the college display name, public support contacts and policy links."
@@ -20,7 +20,7 @@ export default async function CollegeContactProfilePage() {
         Branding workspace
       </Link>}
     />
-      <Alert tone="info">
+      <Alert tone="info" className="max-w-[80ch]">
         College profile manages operational contact details. Sign-in branding, domains and logos are managed by a Super Admin.
       </Alert>
     <CollegeContactProfileForm initial={profile} />

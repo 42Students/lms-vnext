@@ -360,7 +360,7 @@ export function LearnerCareerRoundsWorkspace({
             </p>
           </div>
         ) : null}
-        <div className="grid min-w-0 gap-3 md:grid-cols-3">
+        <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search employers or rounds
             <Input
@@ -392,9 +392,9 @@ export function LearnerCareerRoundsWorkspace({
             </Select>
           </label>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
           <Button type="button" onClick={saveSearchInUrl}
-            variant="secondary" className="min-h-11 min-[768px]:min-h-9">
+            variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">
             Save {kind==="INTERVIEW"?"interview":"assessment"} search link
           </Button>
           <p className="text-xs text-muted-foreground">
@@ -593,7 +593,7 @@ export function LearnerCareerRoundsWorkspace({
               </section>
             ) : null}
             {kind === "ASSESSMENT" ? (
-              <section className="space-y-3 rounded-lg border border-border bg-surface-subtle p-4">
+              <section className="space-y-3 border-t border-border pt-4">
                 <h3 className="m-0 text-sm font-semibold text-foreground">Personal submission reminder</h3>
                 <p className="text-sm leading-6 text-body">
                   This is only a reminder on this device. It is not sent to your employer or placement team
@@ -607,7 +607,7 @@ export function LearnerCareerRoundsWorkspace({
                   </p>
                 ) : null}
                 <Button
-                  variant="secondary"
+                  variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
                   onClick={() => toggleReminder(selected.applicationId, selected.roundId)}
                 >
                   {personalReminderAt ? "Undo personal reminder" : "Mark submitted (personal reminder only)"}
@@ -628,10 +628,10 @@ export function LearnerCareerRoundsWorkspace({
         title="Open employer assessment?"
         description="This opens an external provider in a new tab. Leaving the LMS does not submit or confirm an assessment."
         footer={<>
-          <Button variant="secondary" onClick={()=>setConfirmExternalTest(null)}>Stay here</Button>
+          <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>setConfirmExternalTest(null)}>Stay here</Button>
           {confirmExternalTest ? <a href={confirmExternalTest} target="_blank" rel="noopener noreferrer"
             onClick={()=>setConfirmExternalTest(null)}
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary sm:w-auto md:min-h-[var(--lms-control-height)]">
             Open external assessment ↗
           </a>:null}
         </>}>

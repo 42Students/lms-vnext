@@ -88,3 +88,48 @@
 
 **Files changed:** assignment editor, method picker, resource links, manage/error.tsx, manage/loading.tsx, queue and proof.
 **Verification:** static TypeScript/JSX inspection; runtime, tests and CI deliberately not run.
+
+## 10 · Teacher / Attendance corrections redirect
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx`
+**Problems found (5):** legacy placeholder route has no visible content but mismatched route loading label, generic card skeleton, inconsistent error padding on the single shell canvas, desktop-sized Retry control on phones, and no navigation fallback after failed authorization check.
+
+**Fix:** preserve validation, Section authorization and redirect to attendanceDetail exactly (never resurrect the unimplemented request-history page); align route loading to the correction check, use existing directory loading shape, align PageHeader/error text and full-size primary Retry with a safe Back to courses link. Reviewed parent faculty access/error/not-found, and redirect destination routing; no local not-found/template exists.
+
+**Files changed:** attendance-corrections `error.tsx`, `loading.tsx`, queue and proof. `page.tsx` intentionally unchanged: no rendered layout exists.
+**Verification:** static review only; no build or CI.
+
+## 11 · Teacher / Course attendance detail
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx`
+**Problems found (7):** scheduling form placed before the attendance page heading, duplicate schedule workflows competing with the workspace's existing Schedule Class drawer, visual density at the top before marking attendance, large secondary inline heading, busy shortcut navigation at 375px, generic card loading, and centered error actions.
+
+**Fix:** keep the attendance workspace and its PageHeader/primary marking flow first, move full inline scheduling tools into an accessible secondary Disclosure after the workspace, reduce its heading size and redundant top border, make Course/coverage links stack on phones, use directory loading and align retry/return actions. Reviewed shared 1,281-line attendance workspace including session/month toggles, roster mark/unmark, pending confirmation, schedule drawer, selected-day and student drawers, responsive scrolling, and empty/error states; all routes, session deep-link key, authorization checks, forms and confirmations preserved.
+
+**Files changed:** attendanceDetail `page.tsx`, `error.tsx`, `loading.tsx`, faculty-attendance-schedule-editor, queue and proof.
+**Verification:** static reading only; no app/CI run.
+
+## 12 · Teacher / Discussion moderation history
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
+**Problems found (7):** unrestricted filter toolbar with poor mobile alignment, secondary directory button narrower than 44px hit target in error state, event action rendered like a full heading, timestamp and actor line fragmented, long audit privacy caveat overexposed, pagination shown for one page, and error actions without a safe exit.
+
+**Fix:** use legacy responsive filter strip with full-width mobile Filter, compact neutral status badge per audit action and aligned date/actor rows, native disclosure for the audit scope explanation, conditional pagination, and single-canvas retry/back recovery. Date formatter remains Asia/Kolkata, audit actions privacy-preserving, invalid filter redirect preserved. Reviewed inherited faculty route not-found/loading/layout and shared Pagination/Select/EmptyState states.
+
+**Files changed:** discussion-history `page.tsx`, `error.tsx`, queue and proof.
+**Verification:** static inspection only; no runtime/CI.
+
+## 13 · Teacher / Discussion participation summary
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
+**Problems found (7):** decorative dividers under every metric, unnecessarily tall desktop counts, pinned text competing with sender identity, long methodology disclaimer overexposed, back navigation lacking button affordance, weak metric grouping on 375px screens, and error retry without a safe exit.
+
+**Fix:** align the four counts as one 2-up mobile/4-up desktop summary strip, keep hairlines only between major sections, mark pinned activity with a compact neutral Badge, provide a compact single-canvas Recent activity list and put counting rules in an accessible Disclosure. Preserve IST timestamps, privacy boundaries, empty-list representation, and authorized Section scope. Reviewed shared component/inherited loading/not-found/parent layout.
+
+**Files changed:** discussion-participation `page.tsx`, `error.tsx`, queue and proof.
+**Verification:** source-only, no runtime/CI.
+
+## 14 · Teacher / Course discussions
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`
+**Problems found (6):** unencoded course identifier in back navigation, weak return-action affordance on narrow screens, two nested highlighted cards over the shared canvas, discussion composer geometry drifting below the message list, error content centered separately from the PageHeader, and no safe recovery to the course directory.
+
+**Fix:** align the header's Course workspace navigation with shared secondary controls and encode the dynamic URL, flatten pinned-thread decoration to a pale compact separator strip while retaining the distinct scrollable chat region, ensure composer min-width stays constrained, and align retry/back controls. Inspected full moderated discussion component's loading, retry, pin/unpin, deletion and leave confirmations, older messages, reply composer, nested region scroll and 375/768 keyboard behaviours. All ids, labels, wording, logic and APIs remain unchanged.
+
+**Files changed:** discussions `page.tsx`, `error.tsx`, shared discussion component, queue and proof.
+**Verification:** static source review; no runtime/CI.

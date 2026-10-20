@@ -65,12 +65,15 @@ export default async function CollegeOverviewPage() {
   const closingQuizzes=closingResult.status==="fulfilled"?closingResult.value:null;
 
   return (
-    <div className="min-w-0 max-w-full overflow-x-clip space-y-[16px]">
+    <div className="min-w-0 max-w-full space-y-[16px]">
       <PageHeader
         title={COLLEGE_LEGACY_PAGE_TITLES.dashboard}
         description={`${college.name} · ${formatCollegeHeaderDate(new Date())}`}
-        actions={
-          <>
+        actions={<CollegeEditDialog college={college} triggerLabel="Edit college" />}
+      />
+      <details className="min-w-0 border-b border-border pb-3">
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Other college actions</summary>
+        <nav aria-label="College overview tools" className="flex min-w-0 flex-wrap items-center gap-2 pt-3">
             <Link href="/college/contacts"
               className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Contacts
@@ -89,14 +92,10 @@ export default async function CollegeOverviewPage() {
             >
               Branding
             </Link>
-            <CollegeEditDialog
-              college={college}
-              triggerLabel="Edit college"
-            />
-          </>
-        }
-      />
-      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 border-t border-border pt-[16px]">
+
+        </nav>
+      </details>
+      <section className="grid min-w-0 grid-cols-2 gap-4 border-b border-border pb-4 md:grid-cols-4">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Code
@@ -181,6 +180,8 @@ export default async function CollegeOverviewPage() {
           <p className="text-xs text-muted-foreground">Showing the 20 most recent sessions. Open attendance to review more.</p>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Attendance not taken"/>}
+      <details className="min-w-0 border-t border-border pt-2">
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Low attendance</summary>
       {lowAttendance?<>
       <section aria-label="Low attendance" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -207,6 +208,9 @@ export default async function CollegeOverviewPage() {
           <p className="text-xs text-muted-foreground">Showing first 200 at-risk learners. Open attendance for full reports.</p>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Low attendance"/>}
+      </details>
+      <details className="min-w-0 border-t border-border pt-2">
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Courses with no teacher</summary>
       {unstaffed?<>
       <section aria-label="Courses with no teacher" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -233,6 +237,9 @@ export default async function CollegeOverviewPage() {
         </ul>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Courses with no teacher"/>}
+      </details>
+      <details className="min-w-0 border-t border-border pt-2">
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Waiting to be graded</summary>
       {pendingGrades?<>
       <section aria-label="Waiting to be graded" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -256,6 +263,9 @@ export default async function CollegeOverviewPage() {
           </ul>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Waiting to be graded"/>}
+      </details>
+      <details className="min-w-0 border-t border-border pt-2">
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Setup gaps</summary>
       {setupGaps?<>
       <section aria-label="Setup gaps" className="space-y-3 border-t border-border pt-[16px]">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Setup gaps</h2>
@@ -273,7 +283,11 @@ export default async function CollegeOverviewPage() {
         </p>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Setup gaps"/>}
-      <CollegeAdminQuickActions />
+      </details>
+      <details className="min-w-0 border-t border-border pt-2">
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Quick Actions</summary>
+        <CollegeAdminQuickActions />
+      </details>
       {dashboard?<CollegeSetupChecklist phases={dashboard.setup.phases}/>:<CollegeDashboardSectionFailure title="College setup checklist"/>}
     </div>
   );

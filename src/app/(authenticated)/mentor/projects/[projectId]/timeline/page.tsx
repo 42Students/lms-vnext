@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
-import styles from "./legacy-timeline-filters.module.css";
+
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Timeline, TimelineEntry } from "@/components/ui/timeline";
 import Link from "next/link";
@@ -35,32 +35,34 @@ export default async function MentorProjectTimelinePage({
     <PageHeader title="Release & Sprint timeline"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no timeline was loaded."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:py-0 bg-surface hover:bg-primary-subtle hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Sprint workspace
       </Link>} />
     {!data.enabled?<section role="status"
-      className="border-b border-border pb-6">
+      className="border-b border-border pb-4">
       Projects access is disabled; no timeline was loaded.
     </section>:<>
-      <NeedsDoingChips className={styles.filters} label="Release status filters:" selectedKey={data.query.releaseStatus}
+      <div className="min-w-0 space-y-2 border-b border-border pb-3">
+      <NeedsDoingChips className="min-w-0" label="Release status filters:" selectedKey={data.query.releaseStatus}
         items={(["ALL","PLANNED","IN_PROGRESS","SHIPPED"] as const).map(status=>({
           key: status, label: status.replaceAll("_"," "),
           href: mentorTimelineHref({...data.query,releaseStatus:status,page:1}),
         }))} />
-      <NeedsDoingChips className={styles.filters} label="Sprint status filters:" selectedKey={data.query.sprintStatus}
+      <NeedsDoingChips className="min-w-0" label="Sprint status filters:" selectedKey={data.query.sprintStatus}
         items={(["ALL","PLANNED","ACTIVE","COMPLETED"] as const).map(status=>({
           key: status, label: status==="ALL"?"All Sprint states":status,
           href: mentorTimelineHref({...data.query,sprintStatus:status,page:1}),
         }))} />
+      </div>
       <p role="status" aria-live="polite" className="text-sm text-body">
         {data.total} registered release{data.total===1?"":"s"} match.
       </p>
       {data.items.length===0?<EmptyState title="No matching registered releases"
-        description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed."/>
+        description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed." action={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Sprint workspace</Link>}/>
       :<Timeline aria-label="Registered releases">
         {data.items.map(release=><TimelineEntry key={release.id}>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+            <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">
               Release {release.sequence+1}: {release.title}
             </h2>
             <StatusBadge tone={release.status==="SHIPPED"?"success":release.status==="IN_PROGRESS"?"info":"neutral"}>{release.status}</StatusBadge>
@@ -70,7 +72,7 @@ export default async function MentorProjectTimelinePage({
             :<ol aria-label="Sprints in this release" className="mt-3 divide-y divide-[var(--lms-canvas-border)]">{release.sprints.map(sprint=>
               <li key={sprint.id} className="min-w-0 py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">
+                  <h3 className="m-0 text-sm font-semibold leading-5 text-[var(--lms-heading)]">
                     Sprint {sprint.sequence+1}: {sprint.title}
                   </h3>
                   <StatusBadge tone={sprint.status==="COMPLETED"?"success":sprint.status==="ACTIVE"?"info":"neutral"}>{sprint.status}</StatusBadge>
@@ -83,7 +85,7 @@ export default async function MentorProjectTimelinePage({
                 </p>
               </li>)}</ol>}
         </TimelineEntry>)}</Timeline>}
-      <Pagination label="Release timeline pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTimelineHref({...data.query,page})}/>
+      {data.totalPages>1?<Pagination label="Release timeline pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTimelineHref({...data.query,page})}/>:null}
     </>}
     <p className="text-xs text-muted-foreground">
       The registered schema has no planned start/end dates on Releases or Sprints.

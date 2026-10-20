@@ -66,31 +66,31 @@ export function CollegeContactProfileForm({ initial }: {
   }
 
   return <><form onSubmit={submit}
-    className="grid max-w-3xl gap-4 border-t border-border pt-5 md:grid-cols-2">
-    <label className="grid gap-2 text-sm font-semibold text-body md:col-span-2">
+    className="grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)] md:grid-cols-2">
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body md:col-span-2">
       Public college display name
       <Input required maxLength={160} className={inputClass} value={name}
         onChange={event => setName(event.target.value)} />
     </label>
-    <label className="grid gap-2 text-sm font-semibold text-body">
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
       Support email
       <Input type="email" maxLength={320} className={inputClass}
         value={email} onChange={event => setEmail(event.target.value)}
         placeholder="help@example.edu" />
     </label>
-    <label className="grid gap-2 text-sm font-semibold text-body">
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
       Support phone
       <Input type="tel" maxLength={32} className={inputClass}
         value={phone} onChange={event => setPhone(event.target.value)}
         placeholder="+91 98765 43210" />
     </label>
-    <label className="grid gap-2 text-sm font-semibold text-body">
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
       Terms of use URL (HTTPS)
       <Input type="url" maxLength={2048} className={inputClass}
         value={terms} onChange={event => setTerms(event.target.value)}
         placeholder="https://college.example.edu/terms" />
     </label>
-    <label className="grid gap-2 text-sm font-semibold text-body">
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
       Privacy policy URL (HTTPS)
       <Input type="url" maxLength={2048} className={inputClass}
         value={privacy} onChange={event => setPrivacy(event.target.value)}
@@ -102,9 +102,9 @@ export function CollegeContactProfileForm({ initial }: {
     {success ? <p role="status" className="text-sm text-success md:col-span-2">
       {success}
     </p> : null}
-    <div className="flex flex-wrap items-center gap-3 md:col-span-2">
+    <div className="flex min-w-0 flex-col-reverse items-stretch gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] sm:flex-row sm:items-center md:col-span-2">
       <Button disabled={pending} loading={pending} type="submit"
-        className="min-h-11 md:min-h-9">
+        className="min-h-11 w-full sm:w-auto md:min-h-9">
         {pending ? "Saving…" : "Confirm and save changes"}
       </Button>
       <Button disabled={pending} type="button" onClick={() => {
@@ -115,11 +115,11 @@ export function CollegeContactProfileForm({ initial }: {
         setPrivacy(initial.privacyUrl ?? "");
         setError(null);
         setSuccess(null);
-      }} variant="secondary" className="min-h-11 md:min-h-9">
+      }} variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">
         Reset
       </Button>
     </div>
-    <p className="text-xs leading-5 text-muted-foreground md:col-span-2">
+    <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground md:col-span-2">
       Only display name and public support/policy fields are editable here.
       College code, private addresses, account contacts, sign-in images and branding colours are unchanged.
       A stale version is rejected rather than overwriting a concurrent update.

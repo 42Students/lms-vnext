@@ -97,15 +97,15 @@ export function ProjectTaskSubmissionControl({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(!pending)setOpen(next);}}
         title="Submit for review"
       >
         <form
           onSubmit={submit}
-          className="grid gap-4"
+          className="grid min-w-0 gap-[var(--lms-space-4)]"
         >
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Work link
             </span>
             <Input
@@ -122,8 +122,8 @@ export function ProjectTaskSubmissionControl({
               }
             />
           </label>
-          <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+          <label className="min-w-0">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Note
             </span>
             <Textarea
@@ -143,10 +143,11 @@ export function ProjectTaskSubmissionControl({
               {error}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
+          <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="secondary"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={() => setOpen(false)}
             >
@@ -154,6 +155,8 @@ export function ProjectTaskSubmissionControl({
             </Button>
             <Button
               type="submit"
+              className="w-full sm:w-auto"
+              loading={pending}
               disabled={
                 pending ||
                 !submissionUrl.trim()

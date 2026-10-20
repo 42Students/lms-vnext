@@ -31,7 +31,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   requireSuperAdminSelectedCollege(context,"placements.manage");
   const {jobId}=await params;
   const query=driveInterviewsParams(await searchParams);
-  if(!query) return <div className="min-w-0 space-y-5">
+  if(!query) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Interviews" description="Schedule candidate interviews and review interview rounds."/>
     <ErrorState title="Invalid interview filters"
       description="Round kind, status or page is invalid. No records were loaded."
@@ -56,31 +56,31 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <PageHeader title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<PageBackLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} label="Drive overview" />} />
-    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
+    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <label className="grid gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
         <Select name="kind" defaultValue={query.kind} className="min-w-0">
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
         </Select>
       </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      <label className="grid gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={query.status} className="min-w-0">
           {["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"].map(status=>
             <option key={status} value={status}>{status}</option>)}
         </Select>
       </label>
-      <Button type="submit">Filter</Button>
+      <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
     </form>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointments.interviews}
       preferredApplicationId={query.applicationId}/>
-    <section aria-label="Persisted interview rounds" className="min-w-0 space-y-3 border-b border-border pb-5">
+    <section aria-label="Persisted interview rounds" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
       <p className="text-sm text-muted-foreground">{data.total} matching interview/GD rounds</p>
       <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
         caption="Persisted interview rounds"
         empty={<EmptyState title={data.total===0?"No matching interview rounds":"No rounds on this page"}
           description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."}/>}/>
     </section>
-    <div className="space-y-2">
+    <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
       <p className="text-sm text-muted-foreground">Page {query.page} of {data.totalPages}</p>
       <Pagination page={query.page} pageCount={data.totalPages}
         hrefForPage={page=>adminInterviewsHref(jobId,{...query,page})} label="Interview round pages"/>

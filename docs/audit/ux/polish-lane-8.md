@@ -89,3 +89,19 @@
 **Source states reviewed:** bad query/clear, inaccessible data, no matching rows, 25-item pages, advanced filters, no available batches/periods, create validation/pending/success/failure, edit/cancel/unsaved discard/blocked status, lifecycle actions, schedule route, 375/768 layout; route loading/error and inherited college layout/not-found; shared DataTable/FilterBar/Disclosure/Dialog inspected. No execution, CI or browser render.
 
 **Files changed:** `src/app/(authenticated)/college/classes/page.tsx`, `src/components/academics/college-structure-directory.tsx`, `src/components/academics/college-section-management.tsx`; proof and queue tick in same commit.
+
+## Surface 16 — src/app/(authenticated)/college/classes/recurring-preview/page.tsx
+
+**8 problems/fixes:** PageHeader divider repeated at form entry; three identity inputs stacked into a tall wizard; date/time fields crowded at tablet widths; 6px label gaps deviated from legacy; weekday checkboxes made unstable wrapping and small targets; optional faculty/hall inputs competed with time controls; Preview/Confirm buttons could be narrow at 375px; preview results lacked a distinct section edge. Removed duplicate border, aligned first fields into 2-column tablet grid (order/meaning unchanged), dates/times adaptive 2/4 columns, normalized 8/12/16px gaps, 2/4/7-column weekday selector with 44px targets, equal responsive selector gutters, full-width phone actions and single result table divider. IST calculation, preview stale-data checks, API payload, default weekdays, constraints, conflict notices, success/skips, ConfirmDialog unchanged.
+
+**Source states:** no classes, invalid/missing selection, selected period, preview pending/error/empty/ready/blocked, stale form, zero weekdays, final confirm/pending/skipped/success, server error, 375/768 layout. Examined route loading.tsx/error.tsx, college layout/inherited not-found, shared DataTable and ConfirmDialog. Static source review only; no CI/screenshots.
+
+**Files changed:** src/app/(authenticated)/college/classes/recurring-preview/page.tsx; src/components/academics/college-recurring-preview.tsx; proof/queue tick.
+
+## Surface 17 — src/app/(authenticated)/college/college-profile/page.tsx
+
+**7 problems/fixes:** 24px root spacing clashed with legacy compact page anatomy; read-only Super Admin clarification ran full canvas; form began under redundant second divider; contact form max width felt narrow on tablet but still lacked consistent 920px editing cap; field labels floated awkwardly within uneven grid widths; Reset competed side by side with primary submit at 375px; explanatory version-control note ran too wide on desktop. Matched 16px page rhythm, max-width 80ch for immutable-info notice, removed double divider, set 920px two-column responsive form with min-w-0 fields, standardized 8px label gaps, in-flow bordered footer with full-width phone Save and Reset stacked and right-sized tablet actions, and limited legal/optimistic-version note to reading width. Existing display-name/email/phone/Terms/Privacy fields, native input types, Reset, confirmation, optimistic version, PATCH endpoint, success/error remain untouched.
+
+**States/source review:** role guard, profile loaded, invalid required/email/url, reset of unsaved values, confirm cancel/proceed, pending/error/stale 409/success, at 375px and 768px. Reviewed route loading.tsx/error.tsx, nearest college layout and inherited not-found, shared Button/ConfirmDialog/Input. Static source inspection, not rendered/browser verified. No CI.
+
+**Files changed:** src/app/(authenticated)/college/college-profile/page.tsx, src/components/colleges/college-contact-profile-form.tsx, proof and queue.
