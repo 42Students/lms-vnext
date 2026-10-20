@@ -223,9 +223,9 @@ export function LearnerAssessmentOverview({
   return (
     <div className="min-w-0 space-y-[16px]">
       {kind==="QUIZ" ? (
-        <section aria-label="Quiz summary" className="flex flex-wrap items-center gap-3 border-b border-border pb-4 text-sm font-semibold text-body">
+        <section aria-label="Quiz summary" className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-3 text-sm font-semibold text-body">
           <Badge tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
-          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0 rounded-[9px] border border-border px-[12px] py-[4px]">
+          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0 border-b border-border">
             {submittedQuizzes.length>0 ? (
               <>
                 <ul role="region" aria-label="Submitted quizzes, scroll for more" tabIndex={0}
@@ -372,12 +372,12 @@ export function LearnerAssessmentOverview({
               {key:"overview",header:"Overview",mobilePriority:"primary" as const,
                 cell:(item)=><div className="min-w-0">
                   <strong className="block break-words text-foreground">{item.title}</strong>
-                  {item.description?<p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.description}</p>:null}
+                  {item.description?<p className="mt-1 max-w-prose line-clamp-2 break-words text-xs text-muted-foreground">{item.description}</p>:null}
                 </div>},
               {key:"course",header:"Course",mobilePriority:"secondary" as const,
-                cell:(item)=>item.courseName},
+                cell:(item)=><span className="break-words">{item.courseName}</span>},
               {key:"lesson",header:"Lesson",mobilePriority:"secondary" as const,
-                cell:(item)=>item.lessonName},
+                cell:(item)=><span className="break-words">{item.lessonName}</span>},
               {key:"status",header:"Status",mobilePriority:"secondary" as const,
                 cell:(item)=><span className="block min-w-0">
                   <StatusBadge tone={quizOverviewActionState(item,currentNowMs).tone}>
@@ -394,11 +394,11 @@ export function LearnerAssessmentOverview({
               {key:"actions",header:"Actions",mobilePriority:"action" as const,
                 cell:(item)=>{
                   const state=quizOverviewActionState(item,currentNowMs);
-                  return <div className="flex flex-wrap gap-2">
+                  return <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                     <Link href={`/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review?"&review=true":""}`}
-                      className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">{state.action}</Link>
+                      className="inline-flex min-h-11 w-full items-center justify-center break-words font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">{state.action}</Link>
                     <Link href={"/learn/allQuizzes/"+encodeURIComponent(item.id)+"?deliveryId="+encodeURIComponent(item.deliveryId)}
-                      className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Attempt history</Link>
+                      className="inline-flex min-h-11 w-full items-center justify-center break-words font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">Attempt history</Link>
                   </div>;
                 }},
             ]}
