@@ -1,4 +1,5 @@
 import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
@@ -130,8 +131,8 @@ export default async function TpoLeadsReportPage({
        <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
        <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Recorded drives and students placed use the selected placement season or drive. A drive counts as run only when it has a completed round in the selected season/drive. Zero means no completed round is recorded, not proof that nothing occurred.</p>
        <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
-        {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+        {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+        {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-60 flex-1 gap-1 text-sm font-semibold">Company
          <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9">
           <option value="">All companies</option>
