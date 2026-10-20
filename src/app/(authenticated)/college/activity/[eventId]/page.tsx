@@ -18,22 +18,22 @@ export default async function CollegeActivityDetailPage({
       description={event.summary}
       actions={<PageBackLink href="/college/activity" label="Back to Activity Log"/>} />
     <dl className="grid min-w-0 gap-4 border-y border-border py-4 text-sm md:grid-cols-2">
-      <div><dt className="font-semibold text-muted-foreground">Occurred (IST)</dt>
+      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Occurred (IST)</dt>
         <dd className="mt-1 text-body">{date}</dd></div>
-      <div><dt className="font-semibold text-muted-foreground">Actor</dt>
+      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Actor</dt>
         <dd className="mt-1 text-body">{actor?.displayName ?? actor?.email ?? "System"} ({actor?.id ?? "Unrecorded"})</dd></div>
-      <div><dt className="font-semibold text-muted-foreground">Event type</dt>
+      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event type</dt>
         <dd className="mt-1 break-all text-body">{event.eventType}</dd></div>
-      <div><dt className="font-semibold text-muted-foreground">Importance</dt>
+      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Importance</dt>
         <dd className="mt-1 text-body"><StatusBadge tone={event.importance==="CRITICAL"?"error":event.importance==="HIGH"?"warning":"neutral"}>{event.importance}</StatusBadge></dd></div>
-      <div><dt className="font-semibold text-muted-foreground">Entity type</dt>
+      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity type</dt>
         <dd className="mt-1 text-body">{event.subjectType}</dd></div>
-      <div><dt className="font-semibold text-muted-foreground">Entity reference</dt>
+      <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity reference</dt>
         <dd className="mt-1 break-all text-body">{event.subjectLabel ?? event.subjectId}</dd></div>
     </dl>
     <section className="border-t border-border pt-5">
-      <h2 className="m-0 text-base font-semibold text-foreground">Sanitized event metadata</h2>
-      <pre className="mt-3 overflow-x-auto overscroll-x-contain whitespace-pre-wrap break-words rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-xs text-body">
+      <h2 className="m-0 text-lg font-semibold text-foreground">Sanitized event metadata</h2>
+      <pre className="mt-3 overflow-x-auto overscroll-x-contain whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] bg-transparent px-0 py-4 text-xs text-body">
         {JSON.stringify(event.metadata, null, 2)}
       </pre>
     </section>

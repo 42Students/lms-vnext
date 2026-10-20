@@ -38,25 +38,25 @@ export function SuperAdminTemplateCreateForm(){
  return <form onSubmit={event=>void submit(event)} className="grid min-w-0 gap-5">
   <p className="m-0 text-sm text-body">The draft starts with one release, one sprint and one task. Review and publish after creation.</p>
   <div className="grid min-w-0 gap-4 md:grid-cols-2">
-   {fields.map(field=><label key={field.key} className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
+   {fields.map(field=><label key={field.key} className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
     {field.label}<Input required={field.required} maxLength={field.limit} disabled={saving}
      value={values[field.key]} onChange={event=>edit(field.key,field.key==="slug"?event.target.value.toLowerCase():event.target.value)}
      pattern={field.key==="slug"?"[a-z0-9]+(?:-[a-z0-9]+)*":undefined}
      className="w-full"/>
    </label>)}
   </div>
-  <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Summary (optional)
+  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Summary (optional)
    <Textarea maxLength={2000} disabled={saving} value={values.summary} onChange={event=>edit("summary",event.target.value)}
     className="w-full"/>
   </label>
-  <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Goal (optional)
+  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Goal (optional)
    <Textarea maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
     className="w-full"/>
   </label>
   <fieldset className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-2">
     <legend className="px-2 text-[var(--lms-font-sm)] font-semibold text-foreground">Overview and submission</legend>
     {([{key:"courseLabel",label:"Course label"},{key:"phase",label:"Phase"}] as const)
-      .map(item=><label key={item.key} className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">{item.label}
+      .map(item=><label key={item.key} className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{item.label}
        <Input maxLength={160} disabled={saving} value={values[item.key]}
         onChange={e=>edit(item.key,e.target.value)}
         className="w-full"/></label>)}
@@ -64,13 +64,13 @@ export function SuperAdminTemplateCreateForm(){
        {key:"definitionOfDone",label:"Definition of done (one per line)"},
        {key:"personas",label:"Personas (one per line)"},
        {key:"submissionInstructions",label:"Submission instructions"}] as const).map(item=>
-      <label key={item.key} className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body md:col-span-2">
+      <label key={item.key} className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
        {item.label}
        <Textarea value={values[item.key]} onChange={e=>edit(item.key,e.target.value)}
         maxLength={4000} disabled={saving}
         className="w-full"/>
       </label>)}
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Submission type
+    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission type
       <Select disabled={saving} value={values.submissionType}
        onChange={e=>edit("submissionType",e.target.value)}
        className="w-full">
@@ -79,33 +79,33 @@ export function SuperAdminTemplateCreateForm(){
       </Select>
     </label>
   </fieldset>
-  <label className="grid gap-1 text-sm font-semibold text-body">First task priority
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First task priority
    <Select disabled={saving} value={values.priority} onChange={event=>edit("priority",event.target.value)} className="w-full">
     <option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option>
    </Select>
   </label>
-  <label className="grid gap-1 text-sm font-semibold text-body">First task acceptance criteria (optional)
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First task acceptance criteria (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.acceptanceCriteria} onChange={event=>edit("acceptanceCriteria",event.target.value)} className="w-full"/>
   </label>
-  <label className="grid gap-1 text-sm font-semibold text-body">First release description (optional)
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First release description (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.releaseDescription} onChange={event=>edit("releaseDescription",event.target.value)} className="w-full"/>
   </label>
-  <label className="grid gap-1 text-sm font-semibold text-body">First sprint description (optional)
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First sprint description (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.sprintDescription} onChange={event=>edit("sprintDescription",event.target.value)} className="w-full"/>
   </label>
-  <label className="grid gap-1 text-sm font-semibold text-body">First task description (optional)
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First task description (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.taskDescription} onChange={event=>edit("taskDescription",event.target.value)} className="w-full"/>
   </label>
-  <label className="grid gap-1 text-sm font-semibold text-body">Overview description (optional)
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Overview description (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.overviewDescription} onChange={event=>edit("overviewDescription",event.target.value)} className="w-full"/>
   </label>
   <fieldset className="min-w-0 space-y-3 border-y border-border py-4">
    <legend className="px-2 text-[var(--lms-font-sm)] font-semibold text-foreground">Starting resource link (optional)</legend>
    <p className="text-xs text-muted-foreground">Add a public HTTP(S) resource. Both title and URL are required when adding one.</p>
-   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Resource title
+   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title
     <Input maxLength={200} disabled={saving} value={values.resourceTitle} onChange={event=>edit("resourceTitle",event.target.value)} className="w-full"/>
    </label>
-   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">Resource URL
+   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource URL
     <Input type="url" maxLength={2048} disabled={saving} value={values.resourceUrl} onChange={event=>edit("resourceUrl",event.target.value)} className="w-full"/>
    </label>
   </fieldset>
