@@ -424,7 +424,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
                 {key:"students",header:"Students",mobilePriority:"secondary",cell:item=>
                   <span title="Distinct actively assigned learners across the slot’s active course groups. Not pending picks.">{item.confirmedStudents}</span>},
                 {key:"offerings",header:"Active offerings",mobilePriority:"secondary",cell:item=>item.activeOfferings},
-                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>item.status},
+                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="ACTIVE"?"success":"neutral"}>{item.status}</StatusBadge>},
                 {key:"manage",header:"Manage",mobilePriority:"action",cell:item=>
                   <div className="flex flex-wrap items-start gap-2">
                     {electiveOptions && item.status === "ACTIVE" ? <>
