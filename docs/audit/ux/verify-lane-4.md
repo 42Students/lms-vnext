@@ -124,3 +124,13 @@
 - Regressions found/fixed: 1 — the All time preset explicitly sets `range=ALL`, but Load more omitted that parameter and silently reverted older pages to the 30-day default. Preserve it in the pagination URL after cloning `exportParams`, so the strict export route does not receive the UI-only flag. Reviewed the full page, route error/loading, authenticated layout, lane-14 polish proof, ActivityCenter/Disclosure, DateInput/CalendarGrid/Popover, Select/Input/Button/PageHeader, permission-gated query service and sanitized event metadata. No missing imports, dropped ARIA props, duplicated attributes or broken JSX identified by source review.
 - Extra clutter/alignment: 2 — audit-findings tertiary link and Reset now use a subtle legacy hover rather than primary-button fill; retained exact link labels, destinations, filters, shortcut IDs, click targets and other lane tokens.
 - Files changed: `src/app/(authenticated)/activity/page.tsx`. Static source inspection only; no runtime, typecheck, tests or CI.
+
+## 26. `src/app/(authenticated)/college-admin/departments/page.tsx`
+- Regressions found/fixed: 0. Read role-aware redirect, legacyDepartmentDestination's active-membership and COLLEGE_ADMIN guard, route loading/error, alias layout and not-found, authenticated shell canvas, ErrorState, GracefulPageLoading, Button, and lane-14 polish evidence. No missing imports, broken tags or changed target; no local editor is rendered.
+- Extra clutter/alignment: 0. One bounded canvas and phone-width retry remain consistent with the legacy fallback.
+- Files changed: verified, no change. Source only; no runtime or CI.
+
+## 27. `src/app/(authenticated)/college-admin/programs/page.tsx`
+- Regressions found/fixed: 0. Read route redirect, loading/error, alias and authenticated layouts, shared fallbacks, same legacy role resolver and lane-14 polish evidence. Destination still derives exclusively from authorized request context; no copy, field or label drift.
+- Extra clutter/alignment: 0. Loading and retry remain single-canvas and phone safe; redirect renders no redundant UI.
+- Files changed: verified, no change. Source only; no runtime or CI.
