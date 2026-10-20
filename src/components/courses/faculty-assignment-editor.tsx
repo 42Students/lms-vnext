@@ -195,9 +195,9 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
     onClick={()=>void submit("CREATE")} variant="primary">{publishNow?"Create and publish":"Create draft"}</Button>
    </div>
    : <>
-    <Button type="button" disabled={!assignmentActionAvailable(existing.status,"EDIT")||pending||(!methodsDirty&&!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,true))}
+    <Button type="button" loading={pending} disabled={!assignmentActionAvailable(existing.status,"EDIT")||pending||(!methodsDirty&&!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,true))}
      onClick={()=>void submit("EDIT")} variant="secondary">Save draft</Button>
-    <Button type="button" disabled={pending||existing.status!=="DRAFT"}
+    <Button type="button" loading={pending} disabled={pending||existing.status!=="DRAFT"}
      onClick={()=>void submit("PUBLISH")} variant="primary">Publish</Button>
     <Button type="button" disabled={pending||!assignmentActionAvailable(existing.status,"ARCHIVE")}
      onClick={()=>void submit("ARCHIVE")} variant="danger">Archive</Button>
