@@ -5,6 +5,7 @@ import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-s
 import {EmptyState} from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { collegeHallAvailabilitySchema } from "@/modules/academics/college-hall-availability-model";
@@ -55,11 +56,11 @@ export default async function SuperAdminLectureHallAvailability({
       actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to Lecture Halls</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:flex-none">From (IST)
-        <Input name="from" type="date" required defaultValue={typeof raw.from === "string" ? raw.from : ""}
+        <DateInput mode="date" name="from" required defaultValue={typeof raw.from === "string" ? raw.from : ""}
           className="w-full" />
       </label>
       <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:flex-none">To (IST)
-        <Input name="to" type="date" required defaultValue={typeof raw.to === "string" ? raw.to : ""}
+        <DateInput mode="date" name="to" required defaultValue={typeof raw.to === "string" ? raw.to : ""}
           className="w-full" />
       </label>
       <Button type="submit">View schedule</Button>

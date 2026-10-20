@@ -46,7 +46,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
    <ol className="min-w-0 space-y-3">{result.items.map(item=><li key={item.id} className="border-b border-border py-4 last:border-b-0">
     <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.module}</h2>
     <p className="mt-2 text-sm text-body">{item.change}</p>
-    <p className="mt-2 text-xs text-muted-foreground">{item.actorName} · {item.occurredAt.toLocaleString("en-IN")}</p>
+    <p className="mt-2 text-xs text-muted-foreground">{item.actorName} · {item.occurredAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
    </li>)}</ol>}
   {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Older changes →</Link>:null}
   <Link href={"/admin/audit?collegeId="+encodeURIComponent(collegeId)+"&subjectType=MEMBERSHIP&subjectId="+encodeURIComponent(membershipId)}

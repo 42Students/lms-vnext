@@ -62,7 +62,7 @@ export default async function SuperAdminCompaniesPage({
     </div>
     <form method="get" className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 min-[1366px]:grid-cols-3">
       <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
-        <Input name="q" defaultValue={data.query.q} placeholder="Search company name or domain"
+        <Input type="search" name="q" defaultValue={data.query.q} placeholder="Search company name or domain"
           className="min-h-11 md:min-h-9" />
       </label>
       <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search in
