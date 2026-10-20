@@ -305,15 +305,10 @@ export function PlacementRequestQueue({
                       value={
                         notes[item.id] ?? ""
                       }
-                      onChange={(event) =>
-                        setNotes(
-                          (current) => ({
-                            ...current,
-                            [item.id]:
-                              event.target.value,
-                          }),
-                        )
-                      }
+                      onChange={(event)=>{
+                        setNotes(current=>({...current,[item.id]:event.target.value}));
+                        setValidationError(current=>({...current,[item.id]:""}));
+                      }}
                     />
                   </label>
                   {validationError[item.id]?<p role="alert" className="text-sm text-destructive lg:col-span-2">{validationError[item.id]}</p>:null}
@@ -321,9 +316,7 @@ export function PlacementRequestQueue({
                     <Button
                       size="sm"
                       className="min-h-11 w-full lg:w-auto md:min-h-9"
-                      disabled=
-                        pendingId !== null
-                      }
+                      disabled={pendingId !== null}
                       onClick={()=>setConfirmation({item,action:"APPROVE"})}
                     >
                       {pendingId === item.id
