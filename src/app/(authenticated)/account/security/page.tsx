@@ -20,7 +20,7 @@ export default async function AccountSecurityPage() {
   const rows = await listActiveSessions(session.userId).catch(() => null);
 
   return (
-    <div className="min-w-0 max-w-full space-y-5">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         title="Signed-in devices"
         description="Every place you're signed in. Sign out any device you don't recognise."
