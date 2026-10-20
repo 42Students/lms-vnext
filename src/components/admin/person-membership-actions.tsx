@@ -221,7 +221,6 @@ export function PersonMembershipActions({
           <Button
             variant="secondary"
             size="sm"
-            className="min-h-11 md:min-h-9"
             disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() => setSuspendOpen(true)}
           >
@@ -233,7 +232,6 @@ export function PersonMembershipActions({
           <Button
             variant="secondary"
             size="sm"
-            className="min-h-11 md:min-h-9"
             disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() =>
               lifecycle({ action: "REACTIVATE" })
@@ -249,7 +247,6 @@ export function PersonMembershipActions({
           <Button
             variant="ghost"
             size="sm"
-            className="min-h-11 md:min-h-9"
             disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() => setEndOpen(true)}
           >
@@ -308,16 +305,14 @@ export function PersonMembershipActions({
           <>
             <Button
               variant="secondary"
-              className="min-h-11 md:min-h-9"
-              disabled={lifecyclePending}
+                disabled={lifecyclePending}
               onClick={() => setSuspendOpen(false)}
             >
               Cancel
             </Button>
             <Button
               variant="danger"
-              className="min-h-11 md:min-h-9"
-              loading={lifecyclePending}
+                loading={lifecyclePending}
               disabled={
                 lifecyclePending ||
                 Boolean(rolePending) ||

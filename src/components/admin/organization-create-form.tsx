@@ -61,12 +61,12 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
       <div className="min-w-0 flex-1">
         <label
           htmlFor="organization-name"
-          className="mb-1.5 block text-[13px] font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           Organization name
         </label>
         <Input
-          className="min-h-11 md:min-h-9" id="organization-name"
+          id="organization-name"
           value={name}
           onChange={(event) => setName(event.target.value)}
           required
@@ -74,7 +74,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           placeholder="e.g., ABC University"
         />
       </div>
-      <Button type="submit" disabled={pending || !name.trim()} className="min-h-11 md:min-h-9">
+      <Button type="submit" disabled={pending || !name.trim()} loading={pending}>
         {pending ? "Creating…" : "Create Organization"}
       </Button>
       {restored?<Alert tone="info" className="md:w-full">Draft restored</Alert>:null}
