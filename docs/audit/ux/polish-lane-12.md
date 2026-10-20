@@ -106,3 +106,12 @@
 
 **Files changed:** attendanceDetail `page.tsx`, `error.tsx`, `loading.tsx`, faculty-attendance-schedule-editor, queue and proof.
 **Verification:** static reading only; no app/CI run.
+
+## 12 · Teacher / Discussion moderation history
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
+**Problems found (7):** unrestricted filter toolbar with poor mobile alignment, secondary directory button narrower than 44px hit target in error state, event action rendered like a full heading, timestamp and actor line fragmented, long audit privacy caveat overexposed, pagination shown for one page, and error actions without a safe exit.
+
+**Fix:** use legacy responsive filter strip with full-width mobile Filter, compact neutral status badge per audit action and aligned date/actor rows, native disclosure for the audit scope explanation, conditional pagination, and single-canvas retry/back recovery. Date formatter remains Asia/Kolkata, audit actions privacy-preserving, invalid filter redirect preserved. Reviewed inherited faculty route not-found/loading/layout and shared Pagination/Select/EmptyState states.
+
+**Files changed:** discussion-history `page.tsx`, `error.tsx`, queue and proof.
+**Verification:** static inspection only; no runtime/CI.
