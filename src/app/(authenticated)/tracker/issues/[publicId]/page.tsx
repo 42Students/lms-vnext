@@ -104,8 +104,10 @@ export default async function TrackerIssueDetailPage({
           <StatusBadge>{issue.environment}</StatusBadge>
           {issue.resolution ? <StatusBadge>{issue.resolution}</StatusBadge> : null}
         </div>
-        <p className="m-0 whitespace-pre-wrap text-sm leading-6 text-body">{issue.description}</p>
-        <TrackerIssueCopyActions publicId={issue.publicId} description={issue.description} page={issue.page}/>
+        <p className="m-0 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{issue.description}</p>
+        <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
+          <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Report context</summary>
+          <div className="min-w-0 space-y-3 pt-3">
         <dl className="grid gap-3 text-sm md:grid-cols-2 xl:grid-cols-3">
           <div><dt className="font-semibold text-muted-foreground">Reporter</dt><dd className="m-0">{issue.reporterName} · {issue.accountRole}</dd></div>
           <div><dt className="font-semibold text-muted-foreground">Location</dt><dd className="m-0">{[issue.page, issue.screen, issue.section].filter(Boolean).join(" · ")}</dd></div>
@@ -121,13 +123,53 @@ export default async function TrackerIssueDetailPage({
               <span className="break-all text-body">{issue.evidenceLink}</span>}
           </p>
         ) : null}
+          </div>
+        </details>
+        <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
+          <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Issue sharing</summary>
+          <div className="min-w-0 pt-3">
+        <TrackerIssueCopyActions publicId={issue.publicId} description={issue.description} page={issue.page}/>
+          </div>
+        </details>
       </section>
 
       <TrackerWorkflowPanel issue={workflow} />
       <TrackerIssueLogsPanel publicId={issue.publicId}/>
 
-      <section className="space-y-3">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Screenshots</h2>
+      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+        <summary className="flex min-h-11 cursor-pointer items-center text-base font-semibold text-foreground md:min-h-9">Activity</summary>
+        {detail.activities.length === 0 ? (
+          <p className="border-y border-border py-5 text-sm text-muted-foreground">No workflow history yet.</p>
+        ) : (
+          <ol className="divide-y divide-border border-y border-border">
+            {detail.activities.map((activity) => (
+              <li key={activity.id} className="py-4">
+                <p className="m-0 text-sm font-semibold text-foreground">{activity.type}</p>
+                <p className="mt-1 text-sm text-body">
+                  {auditActivityTransition(activity)}
+                </p>
+                {activity.note ? <p className="mt-1 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-body">{activity.note}</p> : null}
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {activity.actorName ?? (activity.actorUserId ? "Platform administrator" : "Authorized tracker reporter")} · {when(activity.createdAt)}
+                </p>
+              </li>
+            ))}
+          </ol>
+        )}
+        {detail.nextActivityCursor ? (
+          <Link href={(auditMode ? "/tracker/audit-findings/" : "/tracker/issues/") + encodeURIComponent(publicId) + "?" + new URLSearchParams({
+            ...detail.nextActivityCursor,
+            ...(cursor.attachmentBeforeCreatedAt && cursor.attachmentBeforeId ? {
+              attachmentBeforeCreatedAt:cursor.attachmentBeforeCreatedAt,attachmentBeforeId:cursor.attachmentBeforeId,
+            }:{}),
+          }).toString()}
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            Older audit events
+          </Link>
+        ) : null}
+      </details>
+      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+        <summary className="flex min-h-11 cursor-pointer items-center text-base font-semibold text-foreground md:min-h-9">Screenshots</summary>
         {detail.attachments.length === 0 ? (
           <p className="border-y border-border py-5 text-sm text-muted-foreground">No screenshot metadata.</p>
         ) : (
@@ -153,40 +195,8 @@ export default async function TrackerIssueDetailPage({
             Older screenshot metadata
           </Link>
         ) : null}
-      </section>
+      </details>
 
-      <section className="space-y-3">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Activity</h2>
-        {detail.activities.length === 0 ? (
-          <p className="border-y border-border py-5 text-sm text-muted-foreground">No workflow history yet.</p>
-        ) : (
-          <ol className="divide-y divide-border border-y border-border">
-            {detail.activities.map((activity) => (
-              <li key={activity.id} className="py-4">
-                <p className="m-0 text-sm font-semibold text-foreground">{activity.type}</p>
-                <p className="mt-1 text-sm text-body">
-                  {auditActivityTransition(activity)}
-                </p>
-                {activity.note ? <p className="mt-1 whitespace-pre-wrap text-sm text-body">{activity.note}</p> : null}
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {activity.actorName ?? (activity.actorUserId ? "Platform administrator" : "Authorized tracker reporter")} · {when(activity.createdAt)}
-                </p>
-              </li>
-            ))}
-          </ol>
-        )}
-        {detail.nextActivityCursor ? (
-          <Link href={(auditMode ? "/tracker/audit-findings/" : "/tracker/issues/") + encodeURIComponent(publicId) + "?" + new URLSearchParams({
-            ...detail.nextActivityCursor,
-            ...(cursor.attachmentBeforeCreatedAt && cursor.attachmentBeforeId ? {
-              attachmentBeforeCreatedAt:cursor.attachmentBeforeCreatedAt,attachmentBeforeId:cursor.attachmentBeforeId,
-            }:{}),
-          }).toString()}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
-            Older audit events
-          </Link>
-        ) : null}
-      </section>
     </div>
   );
 }
