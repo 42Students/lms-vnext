@@ -52,8 +52,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-13.md: surface | regre
 - [ ] `src/components/placements/tpo-drive-close-preview-form.tsx`
 - [x] `src/components/placements/tpo-interview-reschedule-form.tsx`
 - [x] `src/components/placements/tpo-recruiter-grant-controls.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/placements/tpo-waitlist-promotion-control.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/placements/tpo-waitlist-promotion-control.tsx`
 - [ ] `src/components/tpo/tpo-audit-saved-views.tsx`
 - [ ] `src/components/tpo/tpo-batch-student-saved-views.tsx`
 - [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`
