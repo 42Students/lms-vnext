@@ -5,6 +5,7 @@ import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communicatio
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -220,7 +221,7 @@ export default async function TpoPlacementBrandingPage() {
       </section>
 
       {communication.ready?<TpoEmailSignatureEditor initial={communication.emailSignature} version={communication.version}/>:
-       <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">Email signature settings are not available in this database.</p>}
+       <Alert tone="warning">Email signature settings are not available in this database.</Alert>}
       <section className="border-t border-border pt-4 text-sm leading-6 text-body">
         <h2 className="m-0 text-sm font-semibold text-foreground">
           Source and scope
