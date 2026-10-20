@@ -39,9 +39,9 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/campaign-unsubscribe/[token]/page.tsx`
 - [x] `src/app/campaign-unsubscribe/confirmed/page.tsx`
 - [x] `src/app/college-join/[token]/page.tsx`
-- [ ] `src/app/company-join/[token]/page.tsx`
-- [ ] `src/app/home/page.tsx`
-- [ ] `src/app/maintenance/page.tsx`
-- [ ] `src/app/offline/page.tsx`
-- [ ] `src/app/platform/page.tsx`
-- [ ] `src/app/request-demo/page.tsx`
+- [x] `src/app/company-join/[token]/page.tsx`
+- [x] `src/app/home/page.tsx`
+- [x] `src/app/maintenance/page.tsx`
+- [x] `src/app/offline/page.tsx`
+- [x] `src/app/platform/page.tsx`
+- [x] `src/app/request-demo/page.tsx`

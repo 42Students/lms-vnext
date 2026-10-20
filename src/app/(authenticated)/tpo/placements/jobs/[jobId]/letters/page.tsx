@@ -38,8 +38,8 @@ export default async function TpoOfferLettersPage({
     <PageHeader title={job.title+" · Offer letter evidence"}
       description="Persisted offer records are listed below. An issued offer is not proof that an offer letter was generated, sent, received or acknowledged."
       actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-radius-control)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 print:hidden">← Back to drive</Link>} />
-    <Banner tone="warning">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">← Back to drive</Link>} />
+    <Alert tone="warning">
       Letter-issued and letter-acknowledged states are unavailable: the registered
       placement offer schema has no letter document, delivery or acknowledgement
       record. Bulk letter-status changes are disabled until their owner-approved
