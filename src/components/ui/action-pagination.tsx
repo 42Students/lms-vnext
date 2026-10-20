@@ -24,7 +24,7 @@ export function ActionPagination({
  const pages=paginationWindow(current,total);
  const hasPrevious=current>1;
  const hasNext=current<total&&(hasMore??true);
- const base="min-h-11 min-w-11 rounded-[8px] border border-[var(--lms-canvas-border)] bg-white px-3 text-[14px] font-semibold leading-[42px] text-[var(--lms-body-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
+ const base="min-h-11 min-w-11 rounded-[8px] border border-[var(--lms-canvas-border)] bg-white px-3 text-[14px] font-semibold leading-[42px] text-[var(--lms-body-text)] enabled:hover:border-[var(--lms-primary)] enabled:hover:text-[var(--lms-primary-text)] disabled:opacity-50 md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]";
  const go=(target:number)=>{
   if(disabled||target===current||target<1||target>total)return;
   if(target>current&&!hasNext)return;
