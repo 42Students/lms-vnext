@@ -109,3 +109,18 @@
 - Regressions found/fixed: 0. Read page/error/loading, HR layout, lane-14 proof, HrRoundResultsGrid/TpoGrid, Tabs and recruiter result projection/query/URL models. Checked job/round UUID guards, no-job and no-round states, outcome filters, authorized candidate projection and read-only grid semantics.
 - Extra clutter/alignment: 0; drive selection, round tabs and result filters remain appropriately progressive, with responsive row controls and a filtered-empty recovery link.
 - Files changed: verified, no change. Source-only, no CI.
+
+## 23. `src/app/(authenticated)/account/security/page.tsx`
+- Regressions found/fixed: 0. Inspected account-security route error/loading and authenticated layout, lane-14 proof, DeviceList and ConfirmDialog/Toast/StatusBadge/Button, current-session and active-session read, device timestamp/label logic. Validated current-device distinction, sign-out confirmation, async pending locks, bulk action disclosure and no-device recovery.
+- Extra clutter/alignment: 0; 375px rows and destructive actions already separate and touch-sized, no new code required.
+- Files changed: verified, no change. No runtime/CI.
+
+## 24. `src/app/(authenticated)/activity/[eventId]/page.tsx`
+- Regressions found/fixed: 0. Read route page/error/loading/not-found, authenticated layout, lane-14 proof, Breadcrumbs, PageHeader, PageBackLink, StatusBadge, admin permission gate, activity service and metadata-sanitizer redaction. Checked actor/time facts, subject scope, ID disclosure, long audit metadata and IST formatting.
+- Extra clutter/alignment: 0; technical fields remain disclosed while core facts/JSON preserve readable line breaks on phones.
+- Files changed: verified, no change. No CI/runtime.
+
+## 25. `src/app/(authenticated)/activity/page.tsx`
+- Regressions found/fixed: 1 — the All time preset explicitly sets `range=ALL`, but Load more omitted that parameter and silently reverted older pages to the 30-day default. Preserve it in the pagination URL after cloning `exportParams`, so the strict export route does not receive the UI-only flag. Reviewed the full page, route error/loading, authenticated layout, lane-14 polish proof, ActivityCenter/Disclosure, DateInput/CalendarGrid/Popover, Select/Input/Button/PageHeader, permission-gated query service and sanitized event metadata. No missing imports, dropped ARIA props, duplicated attributes or broken JSX identified by source review.
+- Extra clutter/alignment: 2 — audit-findings tertiary link and Reset now use a subtle legacy hover rather than primary-button fill; retained exact link labels, destinations, filters, shortcut IDs, click targets and other lane tokens.
+- Files changed: `src/app/(authenticated)/activity/page.tsx`. Static source inspection only; no runtime, typecheck, tests or CI.
