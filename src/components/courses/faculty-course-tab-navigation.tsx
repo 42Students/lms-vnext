@@ -42,22 +42,22 @@ export function FacultyCourseTabNavigation({
   }, [router]);
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="min-w-0">
+    <div className="flex min-w-0 flex-col gap-4">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0 flex-1">
           <PageBackLink href="/teacher/courses" label="Back to courses" />
-          <p className="mt-2 text-sm font-semibold text-foreground">
+          <p className="mt-2 min-w-0 break-words text-[14px] font-semibold leading-5 text-[var(--lms-heading)]">
             {courseName} · {sectionName}
           </p>
         </div>
         {teachingSections.length > 1 ? (
-          <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-body-text)] md:w-auto text-[var(--lms-neutral-400)] leading-4">
+          <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-body-text)] sm:max-w-[18rem]">
             {activeTab==="attendanceDetail"?"Select class to view attendance":"Teaching Section"}
             <Select
               id="faculty-course-section"
               value={deliveryId}
               onChange={(event) => router.push(facultyCourseTabHref(event.target.value, activeTab))}
-              className="min-h-11 w-full min-w-0 md:min-h-9 md:w-auto"
+              className="min-h-11 w-full min-w-0 md:min-h-9"
             >
               {teachingSections.map((section) => (
                 <option key={section.deliveryId} value={section.deliveryId}>{section.label}</option>
@@ -66,20 +66,20 @@ export function FacultyCourseTabNavigation({
           </label>
         ) : null}
       </div>
-      <div className="flex flex-wrap gap-2 text-sm">
+      <nav aria-label="Course tools" className="grid min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
         <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-          className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+          className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] py-2 text-center text-[13px] font-semibold leading-5 text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
           Author Assignments
         </Link>
         <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-          className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+          className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] py-2 text-center text-[13px] font-semibold leading-5 text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
           Build Quizzes
         </Link>
         <Link href={"/teacher/live-classes?deliveryId="+encodeURIComponent(deliveryId)}
-          className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+          className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] py-2 text-center text-[13px] font-semibold leading-5 text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
           Live Classes
         </Link>
-      </div>
+      </nav>
       <Tabs ariaLabel="Faculty course tabs" value={activeTab} renderPanel={false}
         items={facultyCourseTabs.map(tab => ({
           value: tab.path,

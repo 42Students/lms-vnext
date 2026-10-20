@@ -1,12 +1,9 @@
 "use client";
 
-import { PageHeader } from "@/components/ui/page-header";
-import {
-  useState,
-  useTransition,
-} from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function MembershipRecovery({
   reason,
@@ -19,50 +16,38 @@ export function MembershipRecovery({
 
   function recover() {
     setError(null);
-
     startTransition(async () => {
-      const response = await fetch(
-        "/api/auth/memberships",
-        { method: "DELETE" },
-      );
-
-      if (!response.ok) {
-        setError(
-          "Could not clear the previous college selection. Sign out and sign in again.",
-        );
-        return;
+      try {
+        const response = await fetch("/api/auth/memberships", { method: "DELETE" });
+        if (!response.ok) {
+          setError("Could not clear the previous college selection. Sign out and sign in again.");
+          return;
+        }
+        router.push("/dashboard");
+        router.refresh();
+      } catch {
+        setError("Could not clear the previous college selection. Sign out and sign in again.");
       }
-
-      router.push("/dashboard");
-      router.refresh();
     });
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh min-w-0 max-w-3xl items-start bg-background px-4 py-6 sm:px-6 sm:py-8">
-      <section className="w-full min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-[var(--lms-canvas-padding)]">
-        <p className="m-0 text-sm font-semibold text-primary-text">
-          College access changed
-        </p>
-        <PageHeader title="Choose another active college" />
-        <p className="mt-4 text-base leading-7 text-body">
+    <main className="min-h-dvh min-w-0 bg-[#f1f4f9] px-3 py-4 sm:px-4 md:p-6">
+      <section className="mx-auto w-full min-w-0 max-w-3xl rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 md:p-[var(--lms-canvas-padding)]">
+        <PageHeader title="Choose another active college" description="College access changed" />
+        <p className="mt-4 max-w-prose text-[14px] leading-6 text-[var(--lms-body-text)]">
           {reason === "MEMBERSHIP_NOT_ACTIVE"
             ? "Your previously selected college membership is no longer active."
             : "Your previously selected college membership is no longer available."}{" "}
           Your canonical account remains signed in.
         </p>
-        <div className="mt-6">
-          <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={recover}>
-            {pending
-              ? "Clearing selection…"
-              : "Continue to college selection"}
+        <div className="mt-6 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+          <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending} onClick={recover}>
+            {pending ? "Clearing selection…" : "Continue to college selection"}
           </Button>
         </div>
         {error ? (
-          <p
-            role="alert"
-            className="mt-4 text-sm font-semibold text-error"
-          >
+          <p role="alert" className="mt-4 max-w-prose break-words rounded-[var(--lms-control-radius)] border border-[var(--lms-error)]/30 bg-[var(--lms-surface)] px-3 py-2 text-[13px] leading-5 text-[var(--lms-error)]">
             {error}
           </p>
         ) : null}
